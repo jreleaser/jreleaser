@@ -41,7 +41,7 @@ import static org.jreleaser.sdk.ssh.SshUtils.disconnect;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public class SftpArtifactUploader extends AbstractArtifactUploader<SftpUploader> {
+public class SftpArtifactUploader extends AbstractArtifactUploader<org.jreleaser.model.api.upload.SftpUploader, SftpUploader> {
     private SftpUploader uploader;
 
     public SftpArtifactUploader(JReleaserContext context) {

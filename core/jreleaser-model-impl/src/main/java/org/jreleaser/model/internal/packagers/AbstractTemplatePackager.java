@@ -27,7 +27,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.6.0
  */
-public abstract class AbstractTemplatePackager<S extends AbstractTemplatePackager<S>> extends AbstractPackager<S> implements TemplatePackager {
+public abstract class AbstractTemplatePackager<A extends org.jreleaser.model.api.packagers.TemplatePackager, S extends AbstractTemplatePackager<A, S>> extends AbstractPackager<A, S> implements TemplatePackager<A> {
     protected final List<String> skipTemplates = new ArrayList<>();
     protected String templateDirectory;
 

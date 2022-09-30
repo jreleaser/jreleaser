@@ -394,7 +394,7 @@ public final class Maven extends AbstractModelObject<Maven> implements Domain, A
         return map;
     }
 
-    public <A extends MavenDeployer> Map<String, A> findMavenDeployersByType(String deployerType) {
+    public <A extends MavenDeployer<?>> Map<String, A> findMavenDeployersByType(String deployerType) {
         switch (deployerType) {
             case org.jreleaser.model.api.deploy.maven.ArtifactoryMavenDeployer.TYPE:
                 return (Map<String, A>) artifactory;
@@ -411,7 +411,7 @@ public final class Maven extends AbstractModelObject<Maven> implements Domain, A
         return Collections.emptyMap();
     }
 
-    public <A extends MavenDeployer> List<A> findAllActiveMavenDeployers() {
+    public <A extends MavenDeployer<?>> List<A> findAllActiveMavenDeployers() {
         List<A> deployers = new ArrayList<>();
         deployers.addAll((List<A>) getActiveArtifactories());
         deployers.addAll((List<A>) getActiveGiteas());

@@ -35,7 +35,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public abstract class AbstractSshUploader<S extends AbstractSshUploader<S>> extends AbstractUploader<S> implements SshUploader {
+public abstract class AbstractSshUploader<A extends org.jreleaser.model.api.upload.SshUploader, S extends AbstractSshUploader<A, S>> extends AbstractUploader<A, S> implements SshUploader<A> {
     protected String username;
     protected String password;
     protected String host;

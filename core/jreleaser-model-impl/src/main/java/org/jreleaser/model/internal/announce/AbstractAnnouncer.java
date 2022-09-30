@@ -30,7 +30,7 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class AbstractAnnouncer<S extends AbstractAnnouncer<S>> extends AbstractModelObject<S> implements Announcer {
+public abstract class AbstractAnnouncer<S extends AbstractAnnouncer<S, A>, A extends org.jreleaser.model.api.announce.Announcer> extends AbstractModelObject<S> implements Announcer<A> {
     protected final Map<String, Object> extraProperties = new LinkedHashMap<>();
     @JsonIgnore
     protected String name;

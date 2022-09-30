@@ -34,7 +34,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public final class SdkmanAnnouncer extends AbstractAnnouncer<SdkmanAnnouncer> {
+public final class SdkmanAnnouncer extends AbstractAnnouncer<SdkmanAnnouncer, org.jreleaser.model.api.announce.SdkmanAnnouncer> {
     private String consumerKey;
     private String consumerToken;
     private String candidate;
@@ -43,6 +43,11 @@ public final class SdkmanAnnouncer extends AbstractAnnouncer<SdkmanAnnouncer> {
     private Sdkman.Command command;
 
     private final org.jreleaser.model.api.announce.SdkmanAnnouncer immutable = new org.jreleaser.model.api.announce.SdkmanAnnouncer() {
+        @Override
+        public String getType() {
+            return org.jreleaser.model.api.announce.SdkmanAnnouncer.TYPE;
+        }
+
         @Override
         public String getConsumerKey() {
             return consumerKey;
@@ -128,6 +133,7 @@ public final class SdkmanAnnouncer extends AbstractAnnouncer<SdkmanAnnouncer> {
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.announce.SdkmanAnnouncer asImmutable() {
         return immutable;
     }

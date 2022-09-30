@@ -34,6 +34,9 @@ class PublishWorkflowItem extends AbstractWorkflowItem {
 
     @Override
     protected void doInvoke(JReleaserContext context) {
-        Distributions.process(context, RB.$("distributions.action.publishing.capitalize"), DistributionProcessor::publishDistribution);
+        Distributions.process(context, DistributionProcessor.PackagingAction.of(
+            RB.$("distributions.action.publishing.capitalize"),
+            DistributionProcessor.PackagingAction.Type.PUBLISH,
+            DistributionProcessor::publishDistribution));
     }
 }

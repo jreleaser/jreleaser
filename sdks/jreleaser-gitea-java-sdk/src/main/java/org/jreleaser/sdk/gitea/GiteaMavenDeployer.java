@@ -38,7 +38,8 @@ import java.util.Set;
  * @author Andres Almiray
  * @since 1.3.0
  */
-public class GiteaMavenDeployer extends AbstractMavenDeployer<org.jreleaser.model.internal.deploy.maven.GiteaMavenDeployer> {
+public class GiteaMavenDeployer extends AbstractMavenDeployer<org.jreleaser.model.api.deploy.maven.GiteaMavenDeployer,
+    org.jreleaser.model.internal.deploy.maven.GiteaMavenDeployer> {
     private org.jreleaser.model.internal.deploy.maven.GiteaMavenDeployer deployer;
 
     public GiteaMavenDeployer(JReleaserContext context) {

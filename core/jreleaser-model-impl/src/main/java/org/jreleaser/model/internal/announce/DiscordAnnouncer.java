@@ -42,12 +42,17 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public final class DiscordAnnouncer extends AbstractAnnouncer<DiscordAnnouncer> {
+public final class DiscordAnnouncer extends AbstractAnnouncer<DiscordAnnouncer, org.jreleaser.model.api.announce.DiscordAnnouncer> {
     private String webhook;
     private String message;
     private String messageTemplate;
 
     private final org.jreleaser.model.api.announce.DiscordAnnouncer immutable = new org.jreleaser.model.api.announce.DiscordAnnouncer() {
+        @Override
+        public String getType() {
+            return org.jreleaser.model.api.announce.DiscordAnnouncer.TYPE;
+        }
+
         @Override
         public String getWebhook() {
             return webhook;
@@ -113,6 +118,7 @@ public final class DiscordAnnouncer extends AbstractAnnouncer<DiscordAnnouncer> 
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.announce.DiscordAnnouncer asImmutable() {
         return immutable;
     }

@@ -33,11 +33,18 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
-public class ZulipAnnouncer implements Announcer {
+public class ZulipAnnouncer implements Announcer<org.jreleaser.model.api.announce.ZulipAnnouncer> {
     private final JReleaserContext context;
+    private final org.jreleaser.model.internal.announce.ZulipAnnouncer zulip;
 
-    ZulipAnnouncer(JReleaserContext context) {
+    public ZulipAnnouncer(JReleaserContext context) {
         this.context = context;
+        this.zulip = context.getModel().getAnnounce().getZulip();
+    }
+
+    @Override
+    public org.jreleaser.model.api.announce.ZulipAnnouncer getAnnouncer() {
+        return zulip.asImmutable();
     }
 
     @Override
@@ -47,13 +54,11 @@ public class ZulipAnnouncer implements Announcer {
 
     @Override
     public boolean isEnabled() {
-        return context.getModel().getAnnounce().getZulip().isEnabled();
+        return zulip.isEnabled();
     }
 
     @Override
     public void announce() throws AnnounceException {
-        org.jreleaser.model.internal.announce.ZulipAnnouncer zulip = context.getModel().getAnnounce().getZulip();
-
         String message = "";
         if (isNotBlank(zulip.getMessage())) {
             message = zulip.getResolvedMessage(context);

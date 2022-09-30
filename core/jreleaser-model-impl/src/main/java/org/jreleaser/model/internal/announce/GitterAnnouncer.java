@@ -43,12 +43,17 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public final class GitterAnnouncer extends AbstractAnnouncer<GitterAnnouncer> {
+public final class GitterAnnouncer extends AbstractAnnouncer<GitterAnnouncer, org.jreleaser.model.api.announce.GitterAnnouncer> {
     private String webhook;
     private String message;
     private String messageTemplate;
 
     private final org.jreleaser.model.api.announce.GitterAnnouncer immutable = new org.jreleaser.model.api.announce.GitterAnnouncer() {
+        @Override
+        public String getType() {
+            return org.jreleaser.model.api.announce.GitterAnnouncer.TYPE;
+        }
+
         @Override
         public String getWebhook() {
             return webhook;
@@ -114,6 +119,7 @@ public final class GitterAnnouncer extends AbstractAnnouncer<GitterAnnouncer> {
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.announce.GitterAnnouncer asImmutable() {
         return immutable;
     }

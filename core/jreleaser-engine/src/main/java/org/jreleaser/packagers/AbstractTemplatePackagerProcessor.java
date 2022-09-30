@@ -48,7 +48,7 @@ import static org.jreleaser.util.FileUtils.grantFullAccess;
  * @author Andres Almiray
  * @since 0.6.0
  */
-abstract class AbstractTemplatePackagerProcessor<T extends TemplatePackager> extends AbstractPackagerProcessor<T> {
+abstract class AbstractTemplatePackagerProcessor<T extends TemplatePackager<?>> extends AbstractPackagerProcessor<T> {
     protected AbstractTemplatePackagerProcessor(JReleaserContext context) {
         super(context);
     }

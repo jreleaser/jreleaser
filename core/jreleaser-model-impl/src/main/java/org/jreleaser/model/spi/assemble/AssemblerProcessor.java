@@ -25,10 +25,10 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public interface AssemblerProcessor<A extends Assembler> {
-    A getAssembler();
+public interface AssemblerProcessor<A extends org.jreleaser.model.api.assemble.Assembler, S extends Assembler<A>> {
+    S getAssembler();
 
-    void setAssembler(A assembler);
+    void setAssembler(S assembler);
 
     void assemble(Map<String, Object> props) throws AssemblerProcessingException;
 }

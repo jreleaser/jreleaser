@@ -33,11 +33,18 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.8.0
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
-public class TelegramAnnouncer implements Announcer {
+public class TelegramAnnouncer implements Announcer<org.jreleaser.model.api.announce.TelegramAnnouncer> {
     private final JReleaserContext context;
+    private final org.jreleaser.model.internal.announce.TelegramAnnouncer telegram;
 
-    TelegramAnnouncer(JReleaserContext context) {
+    public TelegramAnnouncer(JReleaserContext context) {
         this.context = context;
+        this.telegram = context.getModel().getAnnounce().getTelegram();
+    }
+
+    @Override
+    public org.jreleaser.model.api.announce.TelegramAnnouncer getAnnouncer() {
+        return telegram.asImmutable();
     }
 
     @Override
@@ -47,13 +54,11 @@ public class TelegramAnnouncer implements Announcer {
 
     @Override
     public boolean isEnabled() {
-        return context.getModel().getAnnounce().getTelegram().isEnabled();
+        return telegram.isEnabled();
     }
 
     @Override
     public void announce() throws AnnounceException {
-        org.jreleaser.model.internal.announce.TelegramAnnouncer telegram = context.getModel().getAnnounce().getTelegram();
-
         String message = "";
         if (isNotBlank(telegram.getMessage())) {
             message = telegram.getResolvedMessage(context);

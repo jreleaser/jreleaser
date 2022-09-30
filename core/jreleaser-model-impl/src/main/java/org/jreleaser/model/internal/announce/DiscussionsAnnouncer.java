@@ -38,7 +38,7 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public final class DiscussionsAnnouncer extends AbstractAnnouncer<DiscussionsAnnouncer> {
+public final class DiscussionsAnnouncer extends AbstractAnnouncer<DiscussionsAnnouncer, org.jreleaser.model.api.announce.DiscussionsAnnouncer> {
     private String organization;
     private String team;
     private String title;
@@ -46,6 +46,11 @@ public final class DiscussionsAnnouncer extends AbstractAnnouncer<DiscussionsAnn
     private String messageTemplate;
 
     private final org.jreleaser.model.api.announce.DiscussionsAnnouncer immutable = new org.jreleaser.model.api.announce.DiscussionsAnnouncer() {
+        @Override
+        public String getType() {
+            return org.jreleaser.model.api.announce.DiscussionsAnnouncer.TYPE;
+        }
+
         @Override
         public String getOrganization() {
             return organization;
@@ -121,6 +126,7 @@ public final class DiscussionsAnnouncer extends AbstractAnnouncer<DiscussionsAnn
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.announce.DiscussionsAnnouncer asImmutable() {
         return immutable;
     }

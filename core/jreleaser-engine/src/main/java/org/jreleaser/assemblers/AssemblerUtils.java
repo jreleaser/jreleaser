@@ -71,7 +71,7 @@ public final class AssemblerUtils {
         }
     }
 
-    public static Set<Path> copyJars(JReleaserContext context, JavaAssembler assembler, Path jarsDirectory, String platform) throws AssemblerProcessingException {
+    public static Set<Path> copyJars(JReleaserContext context, JavaAssembler<?> assembler, Path jarsDirectory, String platform) throws AssemblerProcessingException {
         Set<Path> paths = new LinkedHashSet<>();
 
         // resolve all first

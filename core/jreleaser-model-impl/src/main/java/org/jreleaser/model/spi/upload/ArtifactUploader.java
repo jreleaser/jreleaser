@@ -23,7 +23,7 @@ import org.jreleaser.model.internal.upload.Uploader;
  * @author Andres Almiray
  * @since 0.3.0
  */
-public interface ArtifactUploader<U extends Uploader> {
+public interface ArtifactUploader<A extends org.jreleaser.model.api.upload.Uploader, U extends Uploader<A>> {
     U getUploader();
 
     void setUploader(U uploader);

@@ -23,7 +23,7 @@ import java.util.List;
  * @author Andres Almiray
  * @since 0.6.0
  */
-public interface TemplatePackager extends Packager {
+public interface TemplatePackager<A extends org.jreleaser.model.api.packagers.TemplatePackager> extends Packager<A> {
     String getTemplateDirectory();
 
     void setTemplateDirectory(String templateDirectory);

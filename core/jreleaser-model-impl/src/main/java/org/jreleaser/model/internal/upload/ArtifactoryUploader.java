@@ -49,7 +49,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.3.0
  */
-public final class ArtifactoryUploader extends AbstractUploader<ArtifactoryUploader> {
+public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.model.api.upload.ArtifactoryUploader, ArtifactoryUploader> {
     private final List<ArtifactoryRepository> repositories = new ArrayList<>();
     private String host;
     private String username;
@@ -164,6 +164,7 @@ public final class ArtifactoryUploader extends AbstractUploader<ArtifactoryUploa
         super(org.jreleaser.model.api.upload.ArtifactoryUploader.TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.upload.ArtifactoryUploader asImmutable() {
         return immutable;
     }

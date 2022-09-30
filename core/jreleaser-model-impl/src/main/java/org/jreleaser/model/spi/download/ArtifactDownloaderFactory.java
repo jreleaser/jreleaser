@@ -24,7 +24,8 @@ import org.jreleaser.model.internal.download.Downloader;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public interface ArtifactDownloaderFactory<D extends Downloader, AD extends ArtifactDownloader<D>> {
+public interface ArtifactDownloaderFactory<A extends org.jreleaser.model.api.download.Downloader,
+    D extends Downloader<A>, AD extends ArtifactDownloader<A, D>> {
     String getName();
 
     AD getArtifactDownloader(JReleaserContext context);

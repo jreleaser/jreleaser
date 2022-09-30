@@ -277,7 +277,7 @@ public final class Download extends AbstractModelObject<Download> implements Dom
         return map;
     }
 
-    public <A extends Downloader> Map<String, A> findDownloadersByType(String downloaderType) {
+    public <A extends Downloader<?>> Map<String, A> findDownloadersByType(String downloaderType) {
         switch (downloaderType) {
             case org.jreleaser.model.api.download.FtpDownloader.TYPE:
                 return (Map<String, A>) ftp;
@@ -292,7 +292,7 @@ public final class Download extends AbstractModelObject<Download> implements Dom
         return Collections.emptyMap();
     }
 
-    public <A extends Downloader> List<A> findAllActiveDownloaders() {
+    public <A extends Downloader<?>> List<A> findAllActiveDownloaders() {
         List<A> downloaders = new ArrayList<>();
         downloaders.addAll((List<A>) getActiveFtps());
         downloaders.addAll((List<A>) getActiveHttps());

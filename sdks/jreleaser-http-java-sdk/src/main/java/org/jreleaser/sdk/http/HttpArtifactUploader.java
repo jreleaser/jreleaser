@@ -41,8 +41,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.4.0
  */
-@org.jreleaser.infra.nativeimage.annotations.NativeImage
-public class HttpArtifactUploader extends AbstractArtifactUploader<HttpUploader> {
+public class HttpArtifactUploader extends AbstractArtifactUploader<org.jreleaser.model.api.upload.HttpUploader, HttpUploader> {
     private HttpUploader uploader;
 
     public HttpArtifactUploader(JReleaserContext context) {

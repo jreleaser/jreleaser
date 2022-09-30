@@ -27,6 +27,8 @@ import org.jreleaser.model.api.common.TimeoutAware;
  * @since 0.1.0
  */
 public interface Announcer extends Domain, Activatable, TimeoutAware, ExtraProperties {
+    String getType();
+
     String getName();
 
     boolean isSnapshotSupported();

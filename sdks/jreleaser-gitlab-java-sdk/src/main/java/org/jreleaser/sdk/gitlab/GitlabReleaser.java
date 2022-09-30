@@ -67,9 +67,17 @@ import static org.jreleaser.util.StringUtils.uncapitalize;
  * @since 0.1.0
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
-public class GitlabReleaser extends AbstractReleaser {
+public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.release.GitlabReleaser> {
+    private final org.jreleaser.model.internal.release.GitlabReleaser gitlab;
+
     public GitlabReleaser(JReleaserContext context, List<Asset> assets) {
         super(context, assets);
+        gitlab = context.getModel().getRelease().getGitlab();
+    }
+
+    @Override
+    public org.jreleaser.model.api.release.GitlabReleaser getReleaser() {
+        return gitlab.asImmutable();
     }
 
     @Override
@@ -88,7 +96,6 @@ public class GitlabReleaser extends AbstractReleaser {
 
     @Override
     protected void createRelease() throws ReleaseException {
-        org.jreleaser.model.internal.release.GitlabReleaser gitlab = context.getModel().getRelease().getGitlab();
         context.getLogger().info(RB.$("git.releaser.releasing"), gitlab.getResolvedRepoUrl(context.getModel()));
         String tagName = gitlab.getEffectiveTagName(context.getModel());
 
@@ -441,7 +448,7 @@ public class GitlabReleaser extends AbstractReleaser {
         return links;
     }
 
-    private void collectUploadLinks(Uploader uploader, List<GlLinkRequest> links) {
+    private void collectUploadLinks(Uploader<?> uploader, List<GlLinkRequest> links) {
         List<String> keys = uploader.resolveSkipKeys();
         keys.add(org.jreleaser.model.api.release.GitlabReleaser.SKIP_GITLAB_LINKS);
 

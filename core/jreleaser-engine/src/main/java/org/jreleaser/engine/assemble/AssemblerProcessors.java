@@ -34,13 +34,13 @@ import java.util.stream.StreamSupport;
  * @since 0.2.0
  */
 public class AssemblerProcessors {
-    public static <A extends Assembler> AssemblerProcessor<A> findProcessor(JReleaserContext context, A assembler) {
-        Map<String, AssemblerProcessor> processors = StreamSupport.stream(ServiceLoader.load(AssemblerProcessorFactory.class,
+    public static <A extends org.jreleaser.model.api.assemble.Assembler, S extends Assembler<A>> AssemblerProcessor<A, S> findProcessor(JReleaserContext context, S assembler) {
+        Map<String, AssemblerProcessor<?, ?>> processors = StreamSupport.stream(ServiceLoader.load(AssemblerProcessorFactory.class,
                 AssemblerProcessors.class.getClassLoader()).spliterator(), false)
             .collect(Collectors.toMap(AssemblerProcessorFactory::getName, factory -> factory.getAssemblerProcessor(context)));
 
         if (processors.containsKey(assembler.getType())) {
-            AssemblerProcessor<A> assemblerProcessor = processors.get(assembler.getType());
+            AssemblerProcessor assemblerProcessor = processors.get(assembler.getType());
             assemblerProcessor.setAssembler(assembler);
             return assemblerProcessor;
         }

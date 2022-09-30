@@ -52,7 +52,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImageAssembler> {
+public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImageAssembler, org.jreleaser.model.api.assemble.NativeImageAssembler> {
     private final List<String> args = new ArrayList<>();
     private final Artifact graal = new Artifact();
     private final Set<Artifact> graalJdks = new LinkedHashSet<>();
@@ -247,6 +247,7 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.assemble.NativeImageAssembler asImmutable() {
         return immutable;
     }

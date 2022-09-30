@@ -34,11 +34,16 @@ import static org.jreleaser.model.api.announce.HttpAnnouncers.TYPE;
  * @author Andres Almiray
  * @since 1.3.0
  */
-public final class HttpAnnouncers extends AbstractAnnouncer<HttpAnnouncers> {
+public final class HttpAnnouncers extends AbstractAnnouncer<HttpAnnouncers, org.jreleaser.model.api.announce.HttpAnnouncers> {
     private final Map<String, HttpAnnouncer> httpAnnouncers = new LinkedHashMap<>();
 
     private final org.jreleaser.model.api.announce.HttpAnnouncers immutable = new org.jreleaser.model.api.announce.HttpAnnouncers() {
         private Map<String, ? extends org.jreleaser.model.api.announce.HttpAnnouncer> httpAnnouncers;
+
+        @Override
+        public String getType() {
+            return org.jreleaser.model.api.announce.HttpAnnouncers.TYPE;
+        }
 
         @Override
         public Map<String, ? extends org.jreleaser.model.api.announce.HttpAnnouncer> getHttpAnnouncers() {
@@ -100,6 +105,7 @@ public final class HttpAnnouncers extends AbstractAnnouncer<HttpAnnouncers> {
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.announce.HttpAnnouncers asImmutable() {
         return immutable;
     }

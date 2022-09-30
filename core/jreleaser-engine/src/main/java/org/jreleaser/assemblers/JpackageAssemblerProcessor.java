@@ -53,7 +53,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.10.0
  */
-public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<JpackageAssembler> {
+public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<org.jreleaser.model.api.assemble.JpackageAssembler, JpackageAssembler> {
     public JpackageAssemblerProcessor(JReleaserContext context) {
         super(context);
     }

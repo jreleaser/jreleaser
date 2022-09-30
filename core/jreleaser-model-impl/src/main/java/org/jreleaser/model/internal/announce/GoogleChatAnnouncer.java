@@ -43,12 +43,17 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Anyul Rivas
  * @since 0.5.0
  */
-public final class GoogleChatAnnouncer extends AbstractAnnouncer<GoogleChatAnnouncer> {
+public final class GoogleChatAnnouncer extends AbstractAnnouncer<GoogleChatAnnouncer, org.jreleaser.model.api.announce.GoogleChatAnnouncer> {
     private String webhook;
     private String message;
     private String messageTemplate;
 
     private final org.jreleaser.model.api.announce.GoogleChatAnnouncer immutable = new org.jreleaser.model.api.announce.GoogleChatAnnouncer() {
+        @Override
+        public String getType() {
+            return org.jreleaser.model.api.announce.GoogleChatAnnouncer.TYPE;
+        }
+
         @Override
         public String getWebhook() {
             return webhook;
@@ -114,6 +119,7 @@ public final class GoogleChatAnnouncer extends AbstractAnnouncer<GoogleChatAnnou
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.announce.GoogleChatAnnouncer asImmutable() {
         return immutable;
     }

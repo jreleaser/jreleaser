@@ -59,7 +59,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 1.4.0
  */
-public abstract class AbstractMavenDeployer<D extends org.jreleaser.model.internal.deploy.maven.MavenDeployer> implements MavenDeployer<D> {
+public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.deploy.maven.MavenDeployer,
+    D extends org.jreleaser.model.internal.deploy.maven.MavenDeployer<A>> implements MavenDeployer<A, D> {
     private static final Algorithm[] ALGORITHMS = {
         Algorithm.MD5,
         Algorithm.SHA_1,

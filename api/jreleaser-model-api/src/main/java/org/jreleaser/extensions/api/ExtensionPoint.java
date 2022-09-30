@@ -17,6 +17,8 @@
  */
 package org.jreleaser.extensions.api;
 
+import org.jreleaser.model.api.JReleaserContext;
+
 import java.util.Map;
 
 /**
@@ -29,9 +31,10 @@ public interface ExtensionPoint {
     /**
      * Initializes the extension point with values defined in the configuration DSL.
      *
+     * @param context the current execution context.
      * @param properties a {@code Map} of key/value pairs.
      */
-    default void init(Map<String, Object> properties) {
+    default void init(JReleaserContext context, Map<String, Object> properties) {
         // noop
     }
 }

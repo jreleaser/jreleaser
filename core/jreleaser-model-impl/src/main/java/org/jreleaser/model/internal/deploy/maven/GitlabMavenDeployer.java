@@ -31,10 +31,15 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
  * @author Andres Almiray
  * @since 1.3.0
  */
-public final class GitlabMavenDeployer extends AbstractMavenDeployer<GitlabMavenDeployer> {
+public final class GitlabMavenDeployer extends AbstractMavenDeployer<GitlabMavenDeployer, org.jreleaser.model.api.deploy.maven.GitlabMavenDeployer> {
     private String projectIdentifier;
 
     private final org.jreleaser.model.api.deploy.maven.GitlabMavenDeployer immutable = new org.jreleaser.model.api.deploy.maven.GitlabMavenDeployer() {
+        @Override
+        public String getGroup() {
+            return org.jreleaser.model.api.deploy.maven.MavenDeployer.GROUP;
+        }
+
         @Override
         public String getProjectIdentifier() {
             return GitlabMavenDeployer.this.getProjectIdentifier();
@@ -130,6 +135,7 @@ public final class GitlabMavenDeployer extends AbstractMavenDeployer<GitlabMaven
         super(org.jreleaser.model.api.deploy.maven.GitlabMavenDeployer.TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.deploy.maven.GitlabMavenDeployer asImmutable() {
         return immutable;
     }

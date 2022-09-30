@@ -24,7 +24,7 @@ import org.jreleaser.model.internal.assemble.Assembler;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public interface AssemblerProcessorFactory<A extends Assembler, AP extends AssemblerProcessor<A>> {
+public interface AssemblerProcessorFactory<A extends org.jreleaser.model.api.assemble.Assembler, S extends Assembler<A>, AP extends AssemblerProcessor<A, S>> {
     String getName();
 
     AP getAssemblerProcessor(JReleaserContext context);

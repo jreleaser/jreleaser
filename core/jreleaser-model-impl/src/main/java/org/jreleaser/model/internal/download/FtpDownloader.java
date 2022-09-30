@@ -36,7 +36,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public final class FtpDownloader extends AbstractDownloader<FtpDownloader> implements Ftp {
+public final class FtpDownloader extends AbstractDownloader<org.jreleaser.model.api.download.FtpDownloader, FtpDownloader> implements Ftp {
     private String username;
     private String password;
     private String host;
@@ -125,6 +125,7 @@ public final class FtpDownloader extends AbstractDownloader<FtpDownloader> imple
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.download.FtpDownloader asImmutable() {
         return immutable;
     }

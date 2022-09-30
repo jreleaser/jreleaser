@@ -27,7 +27,9 @@ import static java.util.Collections.unmodifiableMap;
  * @author Andres Almiray
  * @since 0.4.0
  */
-public final class CodebergReleaser extends GiteaReleaser implements Releaser {
+public class CodebergReleaser extends BaseReleaser<org.jreleaser.model.api.release.CodebergReleaser, CodebergReleaser> {
+    private Boolean draft;
+
     private final org.jreleaser.model.api.release.CodebergReleaser immutable = new org.jreleaser.model.api.release.CodebergReleaser() {
         @Override
         public boolean isPrerelease() {
@@ -251,12 +253,55 @@ public final class CodebergReleaser extends GiteaReleaser implements Releaser {
     };
 
     public CodebergReleaser() {
-        super(org.jreleaser.model.api.release.CodebergReleaser.TYPE);
-        setHost("codeberg.org");
-        setApiEndpoint("https://codeberg.org");
+        this(org.jreleaser.model.api.release.CodebergReleaser.TYPE);
     }
 
+    CodebergReleaser(String name) {
+        super(name, true);
+        setHost("codeberg.org");
+        setApiEndpoint("https://codeberg.org");
+        setRepoUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}");
+        setRepoCloneUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}.git");
+        setCommitUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/commits");
+        setSrcUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/src/{{repoBranch}}");
+        setDownloadUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/download/{{tagName}}/{{artifactFile}}");
+        setReleaseNotesUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/tag/{{tagName}}");
+        setLatestReleaseUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/releases/latest");
+        setIssueTrackerUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/issues");
+    }
+
+    @Override
     public org.jreleaser.model.api.release.CodebergReleaser asImmutable() {
         return immutable;
+    }
+
+    @Override
+    public void merge(CodebergReleaser source) {
+        super.merge(source);
+        this.draft = merge(this.draft, source.draft);
+    }
+
+    public boolean isDraft() {
+        return draft != null && draft;
+    }
+
+    public void setDraft(Boolean draft) {
+        this.draft = draft;
+    }
+
+    public boolean isDraftSet() {
+        return draft != null;
+    }
+
+    @Override
+    public String getReverseRepoHost() {
+        return null;
+    }
+
+    @Override
+    public Map<String, Object> asMap(boolean full) {
+        Map<String, Object> map = super.asMap(full);
+        map.put("draft", isDraft());
+        return map;
     }
 }

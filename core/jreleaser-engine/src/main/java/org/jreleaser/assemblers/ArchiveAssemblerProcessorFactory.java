@@ -27,7 +27,7 @@ import org.kordamp.jipsy.annotations.ServiceProviderFor;
  * @since 0.8.0
  */
 @ServiceProviderFor(AssemblerProcessorFactory.class)
-public class ArchiveAssemblerProcessorFactory implements AssemblerProcessorFactory<ArchiveAssembler, ArchiveAssemblerProcessor> {
+public class ArchiveAssemblerProcessorFactory implements AssemblerProcessorFactory<org.jreleaser.model.api.assemble.ArchiveAssembler, ArchiveAssembler, ArchiveAssemblerProcessor> {
     @Override
     public String getName() {
         return org.jreleaser.model.api.assemble.ArchiveAssembler.TYPE;

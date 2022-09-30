@@ -33,7 +33,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.4.0
  */
-public final class HttpUploader extends AbstractWebUploader<HttpUploader> {
+public final class HttpUploader extends AbstractWebUploader<org.jreleaser.model.api.upload.HttpUploader, HttpUploader> {
     private final Map<String, String> headers = new LinkedHashMap<>();
     private String username;
     private String password;
@@ -151,6 +151,7 @@ public final class HttpUploader extends AbstractWebUploader<HttpUploader> {
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.upload.HttpUploader asImmutable() {
         return immutable;
     }

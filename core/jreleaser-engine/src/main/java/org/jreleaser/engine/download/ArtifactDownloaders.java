@@ -34,13 +34,13 @@ import java.util.stream.StreamSupport;
  * @since 1.1.0
  */
 public class ArtifactDownloaders {
-    public static <D extends Downloader> ArtifactDownloader<D> findDownloader(JReleaserContext context, D downloader) {
-        Map<String, ArtifactDownloader> downloaders = StreamSupport.stream(ServiceLoader.load(ArtifactDownloaderFactory.class,
+    public static <A extends org.jreleaser.model.api.download.Downloader, D extends Downloader<A>> ArtifactDownloader<A, D> findDownloader(JReleaserContext context, D downloader) {
+        Map<String, ArtifactDownloader<?, ?>> downloaders = StreamSupport.stream(ServiceLoader.load(ArtifactDownloaderFactory.class,
                 ArtifactDownloaders.class.getClassLoader()).spliterator(), false)
             .collect(Collectors.toMap(ArtifactDownloaderFactory::getName, factory -> factory.getArtifactDownloader(context)));
 
         if (downloaders.containsKey(downloader.getType())) {
-            ArtifactDownloader<D> artifactDownloader = downloaders.get(downloader.getType());
+            ArtifactDownloader artifactDownloader = downloaders.get(downloader.getType());
             artifactDownloader.setDownloader(downloader);
             return artifactDownloader;
         }

@@ -35,11 +35,19 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class DiscussionsAnnouncer implements Announcer {
+@org.jreleaser.infra.nativeimage.annotations.NativeImage
+public class DiscussionsAnnouncer implements Announcer<org.jreleaser.model.api.announce.DiscussionsAnnouncer> {
     private final JReleaserContext context;
+    private final org.jreleaser.model.internal.announce.DiscussionsAnnouncer discussions;
 
-    DiscussionsAnnouncer(JReleaserContext context) {
+    public DiscussionsAnnouncer(JReleaserContext context) {
         this.context = context;
+        this.discussions = context.getModel().getAnnounce().getDiscussions();
+    }
+
+    @Override
+    public org.jreleaser.model.api.announce.DiscussionsAnnouncer getAnnouncer() {
+        return discussions.asImmutable();
     }
 
     @Override
@@ -49,13 +57,12 @@ public class DiscussionsAnnouncer implements Announcer {
 
     @Override
     public boolean isEnabled() {
-        return context.getModel().getAnnounce().getDiscussions().isEnabled();
+        return discussions.isEnabled();
     }
 
     @Override
     public void announce() throws AnnounceException {
         GithubReleaser github = context.getModel().getRelease().getGithub();
-        org.jreleaser.model.internal.announce.DiscussionsAnnouncer discussions = context.getModel().getAnnounce().getDiscussions();
 
         String message = "";
         if (isNotBlank(discussions.getMessage())) {

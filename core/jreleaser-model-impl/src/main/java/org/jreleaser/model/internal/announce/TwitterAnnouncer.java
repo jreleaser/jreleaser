@@ -49,7 +49,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public final class TwitterAnnouncer extends AbstractAnnouncer<TwitterAnnouncer> {
+public final class TwitterAnnouncer extends AbstractAnnouncer<TwitterAnnouncer, org.jreleaser.model.api.announce.TwitterAnnouncer> {
     private final List<String> statuses = new ArrayList<>();
     private String consumerKey;
     private String consumerSecret;
@@ -59,6 +59,11 @@ public final class TwitterAnnouncer extends AbstractAnnouncer<TwitterAnnouncer> 
     private String statusTemplate;
 
     private final org.jreleaser.model.api.announce.TwitterAnnouncer immutable = new org.jreleaser.model.api.announce.TwitterAnnouncer() {
+        @Override
+        public String getType() {
+            return org.jreleaser.model.api.announce.TwitterAnnouncer.TYPE;
+        }
+
         @Override
         public String getConsumerKey() {
             return consumerKey;
@@ -144,6 +149,7 @@ public final class TwitterAnnouncer extends AbstractAnnouncer<TwitterAnnouncer> 
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.announce.TwitterAnnouncer asImmutable() {
         return immutable;
     }

@@ -30,8 +30,13 @@ import static java.util.Collections.unmodifiableMap;
  * @author Andres Almiray
  * @since 1.3.0
  */
-public final class GiteaMavenDeployer extends AbstractMavenDeployer<GiteaMavenDeployer> {
+public final class GiteaMavenDeployer extends AbstractMavenDeployer<GiteaMavenDeployer, org.jreleaser.model.api.deploy.maven.GiteaMavenDeployer> {
     private final org.jreleaser.model.api.deploy.maven.GiteaMavenDeployer immutable = new org.jreleaser.model.api.deploy.maven.GiteaMavenDeployer() {
+        @Override
+        public String getGroup() {
+            return org.jreleaser.model.api.deploy.maven.MavenDeployer.GROUP;
+        }
+
         @Override
         public String getUrl() {
             return url;
@@ -122,6 +127,7 @@ public final class GiteaMavenDeployer extends AbstractMavenDeployer<GiteaMavenDe
         super(org.jreleaser.model.api.deploy.maven.GiteaMavenDeployer.TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.deploy.maven.GiteaMavenDeployer asImmutable() {
         return immutable;
     }

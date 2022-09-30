@@ -126,7 +126,7 @@ public final class Release extends AbstractModelObject<Release> implements Domai
         this.generic = generic;
     }
 
-    public BaseReleaser getReleaser() {
+    public BaseReleaser<?, ?> getReleaser() {
         if (null != github) return github;
         if (null != gitlab) return gitlab;
         if (null != gitea) return gitea;

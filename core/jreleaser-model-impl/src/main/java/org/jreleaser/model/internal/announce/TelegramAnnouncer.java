@@ -44,13 +44,18 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.8.0
  */
-public final class TelegramAnnouncer extends AbstractAnnouncer<TelegramAnnouncer> {
+public final class TelegramAnnouncer extends AbstractAnnouncer<TelegramAnnouncer, org.jreleaser.model.api.announce.TelegramAnnouncer> {
     private String token;
     private String chatId;
     private String message;
     private String messageTemplate;
 
     private final org.jreleaser.model.api.announce.TelegramAnnouncer immutable = new org.jreleaser.model.api.announce.TelegramAnnouncer() {
+        @Override
+        public String getType() {
+            return org.jreleaser.model.api.announce.TelegramAnnouncer.TYPE;
+        }
+
         @Override
         public String getToken() {
             return token;
@@ -121,6 +126,7 @@ public final class TelegramAnnouncer extends AbstractAnnouncer<TelegramAnnouncer
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.announce.TelegramAnnouncer asImmutable() {
         return immutable;
     }

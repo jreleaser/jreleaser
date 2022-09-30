@@ -21,10 +21,12 @@ package org.jreleaser.model.spi.announce;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface Announcer {
+public interface Announcer<A extends org.jreleaser.model.api.announce.Announcer> {
     String getName();
 
     boolean isEnabled();
 
     void announce() throws AnnounceException;
+
+    A getAnnouncer();
 }

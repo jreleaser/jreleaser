@@ -41,7 +41,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 1.3.0
  */
-public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S>> extends AbstractModelObject<S> implements MavenDeployer, ExtraProperties {
+public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A>, A extends org.jreleaser.model.api.deploy.maven.MavenDeployer> extends AbstractModelObject<S> implements MavenDeployer<A>, ExtraProperties {
     @JsonIgnore
     protected final String type;
     protected final Map<String, Object> extraProperties = new LinkedHashMap<>();

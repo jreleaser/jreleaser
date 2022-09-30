@@ -18,7 +18,10 @@
 package org.jreleaser.engine.deploy.maven;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.extensions.api.workflow.WorkflowListenerException;
 import org.jreleaser.model.JReleaserException;
+import org.jreleaser.model.api.JReleaserCommand;
+import org.jreleaser.model.api.hooks.ExecutionEvent;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.deploy.maven.Maven;
 import org.jreleaser.model.internal.deploy.maven.MavenDeployer;
@@ -50,7 +53,7 @@ public class MavenDeployers {
                     continue;
                 }
 
-                Map<String, MavenDeployer> deployers = maven.findMavenDeployersByType(deployerType);
+                Map<String, MavenDeployer<?>> deployers = maven.findMavenDeployersByType(deployerType);
 
                 if (deployers.isEmpty()) {
                     context.getLogger().debug(RB.$("deployers.no.match"), deployerType);
@@ -64,7 +67,7 @@ public class MavenDeployers {
                             continue;
                         }
 
-                        MavenDeployer deployer = deployers.get(deployerName);
+                        MavenDeployer<?> deployer = deployers.get(deployerName);
                         if (!deployer.isEnabled()) {
                             context.getLogger().info(RB.$("deployers.deployer.disabled"), deployerType, deployerName);
                             continue;
@@ -82,7 +85,7 @@ public class MavenDeployers {
             }
         } else if (!context.getIncludedDeployerNames().isEmpty()) {
             for (String deployerName : context.getIncludedDeployerNames()) {
-                List<MavenDeployer> filteredDeployers = maven.findAllActiveMavenDeployers().stream()
+                List<MavenDeployer<?>> filteredDeployers = maven.findAllActiveMavenDeployers().stream()
                     .filter(a -> deployerName.equals(a.getName()))
                     .collect(toList());
 
@@ -95,7 +98,7 @@ public class MavenDeployers {
             }
         } else {
             context.getLogger().info(RB.$("deployers.deploy.all.artifacts"));
-            for (MavenDeployer deployer : maven.findAllActiveMavenDeployers()) {
+            for (MavenDeployer<?> deployer : maven.findAllActiveMavenDeployers()) {
                 String deployerType = deployer.getType();
                 String deployerName = deployer.getName();
 
@@ -110,24 +113,48 @@ public class MavenDeployers {
         }
     }
 
-    private static void deploy(JReleaserContext context, MavenDeployer deployer) {
+    private static void deploy(JReleaserContext context, MavenDeployer<?> deployer) {
         try {
             context.getLogger().increaseIndent();
             context.getLogger().setPrefix(deployer.getType());
+
+            fireDeployEvent(ExecutionEvent.before(JReleaserCommand.DEPLOY.toStep()), context, deployer);
+
             ProjectMavenDeployer projectDeployer = createProjectDeployer(context, deployer);
             projectDeployer.deploy();
+            fireDeployEvent(ExecutionEvent.success(JReleaserCommand.DEPLOY.toStep()), context, deployer);
+        } catch (DeployException e) {
+            fireDeployEvent(ExecutionEvent.failure(JReleaserCommand.DEPLOY.toStep(), e), context, deployer);
+            throw new JReleaserException(RB.$("ERROR_unexpected_error"), e);
+        } finally {
             context.getLogger().restorePrefix();
             context.getLogger().decreaseIndent();
-        } catch (DeployException e) {
-            throw new JReleaserException(RB.$("ERROR_unexpected_error"), e);
         }
     }
 
     private static ProjectMavenDeployer createProjectDeployer(JReleaserContext context,
-                                                              MavenDeployer deployer) {
+                                                              MavenDeployer<?> deployer) {
         return ProjectMavenDeployer.builder()
             .context(context)
             .deployer(deployer)
             .build();
+    }
+
+    private static void fireDeployEvent(ExecutionEvent event, JReleaserContext context, MavenDeployer<?> deployer) {
+        if (!deployer.isEnabled()) return;
+
+        try {
+            context.fireDeployStepEvent(event, deployer.asImmutable());
+        } catch (WorkflowListenerException e) {
+            context.getLogger().error(RB.$("listener.failure", e.getListener().getClass().getName()));
+            context.getLogger().trace(e);
+            if (event.getType() != ExecutionEvent.Type.FAILURE && !e.getListener().isContinueOnError()) {
+                if (e.getCause() instanceof RuntimeException) {
+                    throw (RuntimeException) e.getCause();
+                } else {
+                    throw new JReleaserException(RB.$("ERROR_unexpected_error"), e.getCause());
+                }
+            }
+        }
     }
 }

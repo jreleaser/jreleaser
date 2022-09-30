@@ -27,7 +27,7 @@ import org.kordamp.jipsy.annotations.ServiceProviderFor;
  * @since 0.2.0
  */
 @ServiceProviderFor(AssemblerProcessorFactory.class)
-public class NativeImageAssemblerProcessorFactory implements AssemblerProcessorFactory<NativeImageAssembler, NativeImageAssemblerProcessor> {
+public class NativeImageAssemblerProcessorFactory implements AssemblerProcessorFactory<org.jreleaser.model.api.assemble.NativeImageAssembler, NativeImageAssembler, NativeImageAssemblerProcessor> {
     @Override
     public String getName() {
         return org.jreleaser.model.api.assemble.NativeImageAssembler.TYPE;

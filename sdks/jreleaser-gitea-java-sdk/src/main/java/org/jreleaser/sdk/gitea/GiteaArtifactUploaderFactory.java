@@ -27,7 +27,8 @@ import org.kordamp.jipsy.annotations.ServiceProviderFor;
  * @since 1.2.0
  */
 @ServiceProviderFor(ArtifactUploaderFactory.class)
-public class GiteaArtifactUploaderFactory implements ArtifactUploaderFactory<GiteaUploader, GiteaArtifactUploader> {
+public class GiteaArtifactUploaderFactory implements ArtifactUploaderFactory<org.jreleaser.model.api.upload.GiteaUploader,
+    GiteaUploader, GiteaArtifactUploader> {
     @Override
     public String getName() {
         return org.jreleaser.model.api.upload.GiteaUploader.TYPE;

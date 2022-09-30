@@ -70,7 +70,7 @@ public class JbangPackagerProcessor extends AbstractRepositoryPackagerProcessor<
 
     @Override
     protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) throws PackagerProcessingException {
-        BaseReleaser releaser = context.getModel().getRelease().getReleaser();
+        BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
 
         props.put(KEY_JBANG_CATALOG_REPO_URL,
             releaser.getResolvedRepoUrl(context.getModel(), packager.getCatalog().getOwner(), packager.getCatalog().getResolvedName()));

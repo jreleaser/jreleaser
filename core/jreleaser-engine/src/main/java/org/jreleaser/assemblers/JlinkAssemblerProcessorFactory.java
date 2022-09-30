@@ -27,7 +27,7 @@ import org.kordamp.jipsy.annotations.ServiceProviderFor;
  * @since 0.2.0
  */
 @ServiceProviderFor(AssemblerProcessorFactory.class)
-public class JlinkAssemblerProcessorFactory implements AssemblerProcessorFactory<JlinkAssembler, JlinkAssemblerProcessor> {
+public class JlinkAssemblerProcessorFactory implements AssemblerProcessorFactory<org.jreleaser.model.api.assemble.JlinkAssembler, JlinkAssembler, JlinkAssemblerProcessor> {
     @Override
     public String getName() {
         return org.jreleaser.model.api.assemble.JlinkAssembler.TYPE;

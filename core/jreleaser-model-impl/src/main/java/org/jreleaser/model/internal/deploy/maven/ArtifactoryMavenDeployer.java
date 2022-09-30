@@ -30,8 +30,13 @@ import static java.util.Collections.unmodifiableMap;
  * @author Andres Almiray
  * @since 1.3.0
  */
-public final class ArtifactoryMavenDeployer extends AbstractMavenDeployer<ArtifactoryMavenDeployer> {
+public final class ArtifactoryMavenDeployer extends AbstractMavenDeployer<ArtifactoryMavenDeployer, org.jreleaser.model.api.deploy.maven.ArtifactoryMavenDeployer> {
     private final org.jreleaser.model.api.deploy.maven.ArtifactoryMavenDeployer immutable = new org.jreleaser.model.api.deploy.maven.ArtifactoryMavenDeployer() {
+        @Override
+        public String getGroup() {
+            return org.jreleaser.model.api.deploy.maven.MavenDeployer.GROUP;
+        }
+
         @Override
         public String getUrl() {
             return url;
@@ -122,6 +127,7 @@ public final class ArtifactoryMavenDeployer extends AbstractMavenDeployer<Artifa
         super(org.jreleaser.model.api.deploy.maven.ArtifactoryMavenDeployer.TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.deploy.maven.ArtifactoryMavenDeployer asImmutable() {
         return immutable;
     }

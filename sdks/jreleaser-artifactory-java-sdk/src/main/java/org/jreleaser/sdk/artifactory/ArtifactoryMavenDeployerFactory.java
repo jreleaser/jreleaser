@@ -26,7 +26,8 @@ import org.kordamp.jipsy.annotations.ServiceProviderFor;
  * @since 1.3.0
  */
 @ServiceProviderFor(MavenDeployerFactory.class)
-public class ArtifactoryMavenDeployerFactory implements MavenDeployerFactory<org.jreleaser.model.internal.deploy.maven.ArtifactoryMavenDeployer, ArtifactoryMavenDeployer> {
+public class ArtifactoryMavenDeployerFactory implements MavenDeployerFactory<org.jreleaser.model.api.deploy.maven.ArtifactoryMavenDeployer,
+    org.jreleaser.model.internal.deploy.maven.ArtifactoryMavenDeployer, ArtifactoryMavenDeployer> {
     @Override
     public String getName() {
         return org.jreleaser.model.api.deploy.maven.ArtifactoryMavenDeployer.TYPE;

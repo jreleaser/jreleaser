@@ -26,11 +26,18 @@ import org.jreleaser.model.spi.announce.Announcer;
  * @since 0.4.0
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
-public class MastodonAnnouncer implements Announcer {
+public class MastodonAnnouncer implements Announcer<org.jreleaser.model.api.announce.MastodonAnnouncer> {
     private final JReleaserContext context;
+    private final org.jreleaser.model.internal.announce.MastodonAnnouncer mastodon;
 
-    MastodonAnnouncer(JReleaserContext context) {
+    public MastodonAnnouncer(JReleaserContext context) {
         this.context = context;
+        this.mastodon = context.getModel().getAnnounce().getMastodon();
+    }
+
+    @Override
+    public org.jreleaser.model.api.announce.MastodonAnnouncer getAnnouncer() {
+        return mastodon.asImmutable();
     }
 
     @Override
@@ -40,13 +47,11 @@ public class MastodonAnnouncer implements Announcer {
 
     @Override
     public boolean isEnabled() {
-        return context.getModel().getAnnounce().getMastodon().isEnabled();
+        return mastodon.isEnabled();
     }
 
     @Override
     public void announce() throws AnnounceException {
-        org.jreleaser.model.internal.announce.MastodonAnnouncer mastodon = context.getModel().getAnnounce().getMastodon();
-
         String status = mastodon.getResolvedStatus(context);
 
         context.getLogger().debug("status: {}", status);

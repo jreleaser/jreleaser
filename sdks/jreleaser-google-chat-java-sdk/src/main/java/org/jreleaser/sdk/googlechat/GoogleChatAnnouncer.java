@@ -34,11 +34,18 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.5.0
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
-public class GoogleChatAnnouncer implements Announcer {
+public class GoogleChatAnnouncer implements Announcer<org.jreleaser.model.api.announce.GoogleChatAnnouncer> {
     private final JReleaserContext context;
+    private final org.jreleaser.model.internal.announce.GoogleChatAnnouncer googleChat;
 
     GoogleChatAnnouncer(JReleaserContext context) {
         this.context = context;
+        this.googleChat = context.getModel().getAnnounce().getGoogleChat();
+    }
+
+    @Override
+    public org.jreleaser.model.api.announce.GoogleChatAnnouncer getAnnouncer() {
+        return googleChat.asImmutable();
     }
 
     @Override
@@ -48,13 +55,11 @@ public class GoogleChatAnnouncer implements Announcer {
 
     @Override
     public boolean isEnabled() {
-        return context.getModel().getAnnounce().getGoogleChat().isEnabled();
+        return googleChat.isEnabled();
     }
 
     @Override
     public void announce() throws AnnounceException {
-        org.jreleaser.model.internal.announce.GoogleChatAnnouncer googleChat = context.getModel().getAnnounce().getGoogleChat();
-
         String message;
         if (isNotBlank(googleChat.getMessage())) {
             message = googleChat.getResolvedMessage(context);

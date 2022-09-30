@@ -20,7 +20,10 @@ package org.jreleaser.sdk.webhooks;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jreleaser.bundle.RB;
+import org.jreleaser.extensions.api.workflow.WorkflowListenerException;
 import org.jreleaser.model.Constants;
+import org.jreleaser.model.api.JReleaserCommand;
+import org.jreleaser.model.api.hooks.ExecutionEvent;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.announce.WebhookAnnouncer;
 import org.jreleaser.model.spi.announce.AnnounceException;
@@ -39,11 +42,18 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.5.0
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
-public class WebhooksAnnouncer implements Announcer {
+public class WebhooksAnnouncer implements Announcer<org.jreleaser.model.api.announce.WebhooksAnnouncer> {
     private final JReleaserContext context;
+    private final org.jreleaser.model.internal.announce.WebhooksAnnouncer webhooks;
 
-    WebhooksAnnouncer(JReleaserContext context) {
+    public WebhooksAnnouncer(JReleaserContext context) {
         this.context = context;
+        this.webhooks = context.getModel().getAnnounce().getConfiguredWebhooks();
+    }
+
+    @Override
+    public org.jreleaser.model.api.announce.WebhooksAnnouncer getAnnouncer() {
+        return webhooks.asImmutable();
     }
 
     @Override
@@ -53,12 +63,12 @@ public class WebhooksAnnouncer implements Announcer {
 
     @Override
     public boolean isEnabled() {
-        return context.getModel().getAnnounce().getConfiguredWebhooks().isEnabled();
+        return webhooks.isEnabled();
     }
 
     @Override
     public void announce() throws AnnounceException {
-        Map<String, WebhookAnnouncer> webhooks = context.getModel().getAnnounce().getWebhooks();
+        Map<String, WebhookAnnouncer> webhooks = this.webhooks.getWebhooks();
 
         for (Map.Entry<String, WebhookAnnouncer> e : webhooks.entrySet()) {
             if (e.getValue().isEnabled()) {
@@ -95,11 +105,30 @@ public class WebhooksAnnouncer implements Announcer {
         context.getLogger().info("message: {}", message);
 
         if (!context.isDryrun()) {
-            ClientUtils.webhook(context.getLogger(),
-                webhook.getResolvedWebhook(),
-                webhook.getConnectTimeout(),
-                webhook.getReadTimeout(),
-                message);
+            fireAnnouncerEvent(ExecutionEvent.before(JReleaserCommand.ANNOUNCE.toStep()), webhook);
+
+            try {
+                ClientUtils.webhook(context.getLogger(),
+                    webhook.getResolvedWebhook(),
+                    webhook.getConnectTimeout(),
+                    webhook.getReadTimeout(),
+                    message);
+
+                fireAnnouncerEvent(ExecutionEvent.success(JReleaserCommand.ANNOUNCE.toStep()), webhook);
+            } catch (RuntimeException e) {
+                fireAnnouncerEvent(ExecutionEvent.failure(JReleaserCommand.ANNOUNCE.toStep(), e), webhook);
+
+                throw e;
+            }
+        }
+    }
+
+    private void fireAnnouncerEvent(ExecutionEvent event, WebhookAnnouncer webhook) {
+        try {
+            context.fireAnnounceStepEvent(event, webhook.asImmutable());
+        } catch (WorkflowListenerException e) {
+            context.getLogger().error(RB.$("listener.failure", e.getListener().getClass().getName()));
+            context.getLogger().trace(e);
         }
     }
 }

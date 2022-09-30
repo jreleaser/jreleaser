@@ -41,13 +41,18 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.5.0
  */
-public final class WebhookAnnouncer extends AbstractAnnouncer<WebhookAnnouncer> {
+public final class WebhookAnnouncer extends AbstractAnnouncer<WebhookAnnouncer, org.jreleaser.model.api.announce.WebhookAnnouncer> {
     private String webhook;
     private String message;
     private String messageProperty;
     private String messageTemplate;
 
     private final org.jreleaser.model.api.announce.WebhookAnnouncer immutable = new org.jreleaser.model.api.announce.WebhookAnnouncer() {
+        @Override
+        public String getType() {
+            return org.jreleaser.model.api.announce.WebhooksAnnouncer.TYPE;
+        }
+
         @Override
         public String getWebhook() {
             return webhook;
@@ -118,6 +123,7 @@ public final class WebhookAnnouncer extends AbstractAnnouncer<WebhookAnnouncer> 
         super("");
     }
 
+    @Override
     public org.jreleaser.model.api.announce.WebhookAnnouncer asImmutable() {
         return immutable;
     }

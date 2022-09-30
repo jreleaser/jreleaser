@@ -15,24 +15,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.internal.upload;
-
-import org.jreleaser.model.internal.JReleaserContext;
-import org.jreleaser.model.internal.common.Artifact;
-import org.jreleaser.model.internal.common.Ssh;
+package org.jreleaser.extensions.api.workflow;
 
 /**
  * @author Andres Almiray
- * @since 1.1.0
+ * @since 1.3.0
  */
-public interface SshUploader<A extends org.jreleaser.model.api.upload.SshUploader> extends Uploader<A>, Ssh {
-    String getPath();
+public class WorkflowListenerException extends Exception {
+    private final WorkflowListener listener;
 
-    void setPath(String path);
+    public WorkflowListenerException(WorkflowListener listener, RuntimeException cause) {
+        super(cause);
+        this.listener = listener;
+    }
 
-    String getDownloadUrl();
-
-    void setDownloadUrl(String downloadUrl);
-
-    String getResolvedPath(JReleaserContext context, Artifact artifact);
+    public WorkflowListener getListener() {
+        return listener;
+    }
 }

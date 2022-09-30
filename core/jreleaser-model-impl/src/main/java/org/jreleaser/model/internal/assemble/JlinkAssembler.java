@@ -48,7 +48,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler> {
+public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, org.jreleaser.model.api.assemble.JlinkAssembler> {
     private final Set<Artifact> targetJdks = new LinkedHashSet<>();
     private final Set<String> moduleNames = new LinkedHashSet<>();
     private final Set<String> additionalModuleNames = new LinkedHashSet<>();
@@ -232,6 +232,7 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler> 
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.assemble.JlinkAssembler asImmutable() {
         return immutable;
     }

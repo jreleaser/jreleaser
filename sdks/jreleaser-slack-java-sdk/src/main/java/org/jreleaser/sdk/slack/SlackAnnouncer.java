@@ -37,11 +37,18 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
-public class SlackAnnouncer implements Announcer {
+public class SlackAnnouncer implements Announcer<org.jreleaser.model.api.announce.SlackAnnouncer> {
     private final JReleaserContext context;
+    private final org.jreleaser.model.internal.announce.SlackAnnouncer slack;
 
-    SlackAnnouncer(JReleaserContext context) {
+    public SlackAnnouncer(JReleaserContext context) {
         this.context = context;
+        this.slack = context.getModel().getAnnounce().getSlack();
+    }
+
+    @Override
+    public org.jreleaser.model.api.announce.SlackAnnouncer getAnnouncer() {
+        return slack.asImmutable();
     }
 
     @Override
@@ -51,13 +58,11 @@ public class SlackAnnouncer implements Announcer {
 
     @Override
     public boolean isEnabled() {
-        return context.getModel().getAnnounce().getSlack().isEnabled();
+        return slack.isEnabled();
     }
 
     @Override
     public void announce() throws AnnounceException {
-        org.jreleaser.model.internal.announce.SlackAnnouncer slack = context.getModel().getAnnounce().getSlack();
-
         String message = "";
         if (isNotBlank(slack.getMessage())) {
             message = slack.getResolvedMessage(context);

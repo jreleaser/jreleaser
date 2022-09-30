@@ -27,7 +27,8 @@ import org.kordamp.jipsy.annotations.ServiceProviderFor;
  * @since 1.1.0
  */
 @ServiceProviderFor(ArtifactUploaderFactory.class)
-public class SftpArtifactUploaderFactory implements ArtifactUploaderFactory<SftpUploader, SftpArtifactUploader> {
+public class SftpArtifactUploaderFactory implements ArtifactUploaderFactory<org.jreleaser.model.api.upload.SftpUploader,
+    SftpUploader, SftpArtifactUploader> {
     @Override
     public String getName() {
         return org.jreleaser.model.api.upload.SftpUploader.TYPE;

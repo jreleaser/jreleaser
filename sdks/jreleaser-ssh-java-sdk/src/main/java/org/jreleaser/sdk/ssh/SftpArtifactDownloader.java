@@ -41,7 +41,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public class SftpArtifactDownloader extends AbstractArtifactDownloader<SftpDownloader> {
+public class SftpArtifactDownloader extends AbstractArtifactDownloader<org.jreleaser.model.api.download.SftpDownloader, SftpDownloader> {
     private SftpDownloader downloader;
 
     public SftpArtifactDownloader(JReleaserContext context) {

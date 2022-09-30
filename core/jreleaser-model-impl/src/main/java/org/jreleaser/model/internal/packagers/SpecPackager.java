@@ -55,7 +55,7 @@ import static org.jreleaser.util.StringUtils.isFalse;
  * @author Andres Almiray
  * @since 0.9.1
  */
-public final class SpecPackager extends AbstractRepositoryPackager<SpecPackager> {
+public final class SpecPackager extends AbstractRepositoryPackager<org.jreleaser.model.api.packagers.SpecPackager, SpecPackager> {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
 
     static {
@@ -192,6 +192,7 @@ public final class SpecPackager extends AbstractRepositoryPackager<SpecPackager>
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.packagers.SpecPackager asImmutable() {
         return immutable;
     }

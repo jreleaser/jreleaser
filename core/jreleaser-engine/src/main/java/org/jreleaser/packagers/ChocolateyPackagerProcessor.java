@@ -99,7 +99,7 @@ public class ChocolateyPackagerProcessor extends AbstractRepositoryPackagerProce
 
     @Override
     protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) throws PackagerProcessingException {
-        BaseReleaser releaser = context.getModel().getRelease().getReleaser();
+        BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
 
         if (!props.containsKey(KEY_PROJECT_LICENSE_URL) ||
             isBlank((String) props.get(KEY_PROJECT_LICENSE_URL))) {

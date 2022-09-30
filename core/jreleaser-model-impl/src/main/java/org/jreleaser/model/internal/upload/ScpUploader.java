@@ -28,7 +28,7 @@ import static org.jreleaser.model.api.upload.ScpUploader.TYPE;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public final class ScpUploader extends AbstractSshUploader<ScpUploader> {
+public final class ScpUploader extends AbstractSshUploader<org.jreleaser.model.api.upload.ScpUploader, ScpUploader> {
     private final org.jreleaser.model.api.upload.ScpUploader immutable = new org.jreleaser.model.api.upload.ScpUploader() {
         @Override
         public String getPath() {
@@ -160,6 +160,7 @@ public final class ScpUploader extends AbstractSshUploader<ScpUploader> {
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.upload.ScpUploader asImmutable() {
         return immutable;
     }

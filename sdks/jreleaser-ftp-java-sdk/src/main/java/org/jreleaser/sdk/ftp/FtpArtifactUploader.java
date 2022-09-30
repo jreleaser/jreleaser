@@ -36,7 +36,7 @@ import java.util.List;
  * @since 1.1.0
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
-public class FtpArtifactUploader extends AbstractArtifactUploader<FtpUploader> {
+public class FtpArtifactUploader extends AbstractArtifactUploader<org.jreleaser.model.api.upload.FtpUploader, FtpUploader> {
     private FtpUploader uploader;
 
     public FtpArtifactUploader(JReleaserContext context) {

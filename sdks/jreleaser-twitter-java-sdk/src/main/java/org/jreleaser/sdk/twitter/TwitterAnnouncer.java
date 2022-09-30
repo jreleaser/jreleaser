@@ -41,11 +41,18 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
-public class TwitterAnnouncer implements Announcer {
+public class TwitterAnnouncer implements Announcer<org.jreleaser.model.api.announce.TwitterAnnouncer> {
     private final JReleaserContext context;
+    private final org.jreleaser.model.internal.announce.TwitterAnnouncer twitter;
 
-    TwitterAnnouncer(JReleaserContext context) {
+    public TwitterAnnouncer(JReleaserContext context) {
         this.context = context;
+        this.twitter = context.getModel().getAnnounce().getTwitter();
+    }
+
+    @Override
+    public org.jreleaser.model.api.announce.TwitterAnnouncer getAnnouncer() {
+        return twitter.asImmutable();
     }
 
     @Override
@@ -55,12 +62,11 @@ public class TwitterAnnouncer implements Announcer {
 
     @Override
     public boolean isEnabled() {
-        return context.getModel().getAnnounce().getTwitter().isEnabled();
+        return twitter.isEnabled();
     }
 
     @Override
     public void announce() throws AnnounceException {
-        org.jreleaser.model.internal.announce.TwitterAnnouncer twitter = context.getModel().getAnnounce().getTwitter();
 
         List<String> statuses = new ArrayList<>();
 

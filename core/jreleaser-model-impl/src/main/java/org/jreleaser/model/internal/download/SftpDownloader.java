@@ -30,7 +30,7 @@ import static org.jreleaser.model.api.download.SftpDownloader.TYPE;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public final class SftpDownloader extends AbstractSshDownloader<SftpDownloader> {
+public final class SftpDownloader extends AbstractSshDownloader<org.jreleaser.model.api.download.SftpDownloader, SftpDownloader> {
     private final org.jreleaser.model.api.download.SftpDownloader immutable = new org.jreleaser.model.api.download.SftpDownloader() {
         private List<? extends org.jreleaser.model.api.download.Downloader.Asset> assets;
 
@@ -144,6 +144,7 @@ public final class SftpDownloader extends AbstractSshDownloader<SftpDownloader> 
         return "SFTP";
     }
 
+    @Override
     public org.jreleaser.model.api.download.SftpDownloader asImmutable() {
         return immutable;
     }

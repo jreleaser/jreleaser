@@ -51,7 +51,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcessor<NativeImageAssembler> {
+public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcessor<org.jreleaser.model.api.assemble.NativeImageAssembler, NativeImageAssembler> {
     private static final String KEY_GRAALVM_VERSION = "GRAALVM_VERSION";
 
     public NativeImageAssemblerProcessor(JReleaserContext context) {

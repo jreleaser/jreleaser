@@ -26,7 +26,8 @@ import org.kordamp.jipsy.annotations.ServiceProviderFor;
  * @since 1.3.0
  */
 @ServiceProviderFor(MavenDeployerFactory.class)
-public class GiteaMavenDeployerFactory implements MavenDeployerFactory<org.jreleaser.model.internal.deploy.maven.GiteaMavenDeployer, GiteaMavenDeployer> {
+public class GiteaMavenDeployerFactory implements MavenDeployerFactory<org.jreleaser.model.api.deploy.maven.GiteaMavenDeployer,
+    org.jreleaser.model.internal.deploy.maven.GiteaMavenDeployer, GiteaMavenDeployer> {
     @Override
     public String getName() {
         return org.jreleaser.model.api.deploy.maven.GiteaMavenDeployer.TYPE;

@@ -18,6 +18,9 @@
 package org.jreleaser.engine.announce;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.extensions.api.workflow.WorkflowListenerException;
+import org.jreleaser.model.api.JReleaserCommand;
+import org.jreleaser.model.api.hooks.ExecutionEvent;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.JReleaserModel;
 import org.jreleaser.model.spi.announce.AnnounceException;
@@ -45,7 +48,7 @@ public class Announcers {
             return;
         }
 
-        Map<String, Announcer> announcers = Announcers.findAnnouncers(context);
+        Map<String, Announcer<?>> announcers = Announcers.findAnnouncers(context);
         if (announcers.isEmpty()) {
             context.getLogger().info(RB.$("announcers.not.configured"));
             return;
@@ -59,7 +62,7 @@ public class Announcers {
                     continue;
                 }
 
-                Announcer announcer = announcers.get(announcerName);
+                Announcer<?> announcer = announcers.get(announcerName);
 
                 if (null == announcer) {
                     context.getLogger().warn(RB.$("announcers.announcer.not.found"), announcerName);
@@ -76,8 +79,8 @@ public class Announcers {
             return;
         }
 
-        for (Map.Entry<String, Announcer> entry : announcers.entrySet()) {
-            Announcer announcer = entry.getValue();
+        for (Map.Entry<String, Announcer<?>> entry : announcers.entrySet()) {
+            Announcer<?> announcer = entry.getValue();
 
             if (context.getExcludedAnnouncers().contains(announcer.getName())) {
                 context.getLogger().info(RB.$("announcers.announcer.excluded"), announcer.getName());
@@ -88,32 +91,47 @@ public class Announcers {
         }
     }
 
-    private static void announce(JReleaserContext context, Announcer announcer) {
-        context.getLogger().increaseIndent();
-        context.getLogger().setPrefix(announcer.getName());
+    private static void announce(JReleaserContext context, Announcer<?> announcer) {
+        try {
+            context.getLogger().increaseIndent();
+            context.getLogger().setPrefix(announcer.getName());
 
-        if (announcer.isEnabled()) {
-            try {
-                announcer.announce();
-            } catch (AnnounceException e) {
-                context.getLogger().warn(e.getMessage().trim());
+            if (announcer.isEnabled()) {
+                fireAnnounceEvent(ExecutionEvent.before(JReleaserCommand.ANNOUNCE.toStep()), context, announcer);
+
+                try {
+                    announcer.announce();
+                    fireAnnounceEvent(ExecutionEvent.success(JReleaserCommand.ANNOUNCE.toStep()), context, announcer);
+                } catch (AnnounceException e) {
+                    fireAnnounceEvent(ExecutionEvent.failure(JReleaserCommand.ANNOUNCE.toStep(), e), context, announcer);
+                    context.getLogger().warn(e.getMessage().trim());
+                }
+            } else {
+                context.getLogger().debug(RB.$("announcers.announcer.disabled"));
             }
-        } else {
-            context.getLogger().debug(RB.$("announcers.announcer.disabled"));
+        } finally {
+            context.getLogger().restorePrefix();
+            context.getLogger().decreaseIndent();
         }
-
-        context.getLogger().restorePrefix();
-        context.getLogger().decreaseIndent();
     }
 
-    private static Map<String, Announcer> findAnnouncers(JReleaserContext context) {
+    private static void fireAnnounceEvent(ExecutionEvent event, JReleaserContext context, Announcer<?> announcer) {
+        try {
+            context.fireAnnounceStepEvent(event, announcer.getAnnouncer());
+        } catch (WorkflowListenerException e) {
+            context.getLogger().error(RB.$("listener.failure", e.getListener().getClass().getName()));
+            context.getLogger().trace(e);
+        }
+    }
+
+    private static Map<String, Announcer<?>> findAnnouncers(JReleaserContext context) {
         JReleaserModel model = context.getModel();
 
-        Map<String, AnnouncerBuilder> builders = StreamSupport.stream(ServiceLoader.load(AnnouncerBuilderFactory.class,
+        Map<String, AnnouncerBuilder<?>> builders = StreamSupport.stream(ServiceLoader.load(AnnouncerBuilderFactory.class,
                 Announcers.class.getClassLoader()).spliterator(), false)
             .collect(Collectors.toMap(AnnouncerBuilderFactory::getName, AnnouncerBuilderFactory::getBuilder));
 
-        Map<String, Announcer> announcers = new TreeMap<>();
+        Map<String, Announcer<?>> announcers = new TreeMap<>();
         builders.forEach((name, builder) -> {
             if (null != model.getAnnounce().findAnnouncer(name) &&
                 !context.getExcludedAnnouncers().contains(name)) {

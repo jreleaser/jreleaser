@@ -25,7 +25,7 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class AbstractRepositoryPackager<S extends AbstractRepositoryPackager<S>> extends AbstractTemplatePackager<S> implements RepositoryPackager {
+public abstract class AbstractRepositoryPackager<A extends org.jreleaser.model.api.packagers.RepositoryPackager, S extends AbstractRepositoryPackager<A, S>> extends AbstractTemplatePackager<A, S> implements RepositoryPackager<A> {
     protected final CommitAuthor commitAuthor = new CommitAuthor();
 
     protected AbstractRepositoryPackager(String type) {

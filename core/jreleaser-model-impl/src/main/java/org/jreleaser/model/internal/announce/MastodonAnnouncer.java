@@ -36,12 +36,17 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.4.0
  */
-public final class MastodonAnnouncer extends AbstractAnnouncer<MastodonAnnouncer> {
+public final class MastodonAnnouncer extends AbstractAnnouncer<MastodonAnnouncer, org.jreleaser.model.api.announce.MastodonAnnouncer> {
     private String host;
     private String accessToken;
     private String status;
 
     private final org.jreleaser.model.api.announce.MastodonAnnouncer immutable = new org.jreleaser.model.api.announce.MastodonAnnouncer() {
+        @Override
+        public String getType() {
+            return org.jreleaser.model.api.announce.MastodonAnnouncer.TYPE;
+        }
+
         @Override
         public String getHost() {
             return host;
@@ -107,6 +112,7 @@ public final class MastodonAnnouncer extends AbstractAnnouncer<MastodonAnnouncer
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.announce.MastodonAnnouncer asImmutable() {
         return immutable;
     }

@@ -448,7 +448,7 @@ public final class Distribution extends Packagers<Distribution> implements Domai
 
     // --== PACKAGERS ==--
 
-    public <T extends Packager> T findPackager(String name) {
+    public <T extends Packager<?>> T findPackager(String name) {
         if (isBlank(name)) {
             throw new JReleaserException(RB.$("ERROR_packager_name_not_blank"));
         }
@@ -456,7 +456,7 @@ public final class Distribution extends Packagers<Distribution> implements Domai
         return resolvePackager(name);
     }
 
-    public <T extends Packager> T getPackager(String name) {
+    public <T extends Packager<?>> T getPackager(String name) {
         T packager = findPackager(name);
         if (null != packager) {
             return packager;
@@ -464,7 +464,7 @@ public final class Distribution extends Packagers<Distribution> implements Domai
         throw new JReleaserException(RB.$("ERROR_packager_not_configured", name));
     }
 
-    private <T extends Packager> T resolvePackager(String name) {
+    private <T extends Packager<?>> T resolvePackager(String name) {
         switch (name.toLowerCase(Locale.ENGLISH).trim()) {
             case org.jreleaser.model.api.packagers.AppImagePackager.TYPE:
                 return (T) getAppImage();

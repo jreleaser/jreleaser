@@ -39,7 +39,7 @@ import static org.jreleaser.sdk.ssh.SshUtils.disconnect;
  * @since 1.1.0
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
-public class ScpArtifactUploader extends AbstractArtifactUploader<ScpUploader> {
+public class ScpArtifactUploader extends AbstractArtifactUploader<org.jreleaser.model.api.upload.ScpUploader, ScpUploader> {
     private ScpUploader uploader;
 
     public ScpArtifactUploader(JReleaserContext context) {

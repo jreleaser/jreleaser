@@ -33,6 +33,11 @@ abstract class AbstractWorkflowItem implements WorkflowItem {
     }
 
     @Override
+    public JReleaserCommand getCommand() {
+        return command;
+    }
+
+    @Override
     public void invoke(JReleaserContext context) {
         CommandHookExecutor executor = new CommandHookExecutor(context);
         executor.execute(command.toStep(), () -> doInvoke(context));

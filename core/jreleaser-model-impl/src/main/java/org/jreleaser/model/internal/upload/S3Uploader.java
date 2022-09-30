@@ -38,7 +38,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.8.0
  */
-public final class S3Uploader extends AbstractUploader<S3Uploader> {
+public final class S3Uploader extends AbstractUploader<org.jreleaser.model.api.upload.S3Uploader, S3Uploader> {
     private final Map<String, String> headers = new LinkedHashMap<>();
 
     private String region;
@@ -171,6 +171,7 @@ public final class S3Uploader extends AbstractUploader<S3Uploader> {
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.upload.S3Uploader asImmutable() {
         return immutable;
     }

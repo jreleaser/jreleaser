@@ -34,11 +34,18 @@ import static org.jreleaser.mustache.MustacheUtils.passThrough;
  * @since 0.2.0
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
-public class TeamsAnnouncer implements Announcer {
+public class TeamsAnnouncer implements Announcer<org.jreleaser.model.api.announce.TeamsAnnouncer> {
     private final JReleaserContext context;
+    private final org.jreleaser.model.internal.announce.TeamsAnnouncer teams;
 
-    TeamsAnnouncer(JReleaserContext context) {
+    public TeamsAnnouncer(JReleaserContext context) {
         this.context = context;
+        this.teams = context.getModel().getAnnounce().getTeams();
+    }
+
+    @Override
+    public org.jreleaser.model.api.announce.TeamsAnnouncer getAnnouncer() {
+        return teams.asImmutable();
     }
 
     @Override
@@ -48,13 +55,11 @@ public class TeamsAnnouncer implements Announcer {
 
     @Override
     public boolean isEnabled() {
-        return context.getModel().getAnnounce().getTeams().isEnabled();
+        return teams.isEnabled();
     }
 
     @Override
     public void announce() throws AnnounceException {
-        org.jreleaser.model.internal.announce.TeamsAnnouncer teams = context.getModel().getAnnounce().getTeams();
-
         Map<String, Object> props = new LinkedHashMap<>();
         props.put(Constants.KEY_CHANGELOG, passThrough(convertLineEndings(context.getChangelog())));
         context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());

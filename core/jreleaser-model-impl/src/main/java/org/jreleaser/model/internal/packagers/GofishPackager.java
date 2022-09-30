@@ -52,7 +52,7 @@ import static org.jreleaser.util.StringUtils.isFalse;
  * @author Andres Almiray
  * @since 0.10.0
  */
-public final class GofishPackager extends AbstractRepositoryPackager<GofishPackager> {
+public final class GofishPackager extends AbstractRepositoryPackager<org.jreleaser.model.api.packagers.GofishPackager, GofishPackager> {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
 
     static {
@@ -168,6 +168,7 @@ public final class GofishPackager extends AbstractRepositoryPackager<GofishPacka
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.packagers.GofishPackager asImmutable() {
         return immutable;
     }

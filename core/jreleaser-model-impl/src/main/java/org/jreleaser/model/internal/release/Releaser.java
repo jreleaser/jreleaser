@@ -28,8 +28,10 @@ import org.jreleaser.model.internal.common.TimeoutAware;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface Releaser extends Domain, EnabledAware, CommitAuthorAware, OwnerAware, TimeoutAware, Active.Prereleaseable {
+public interface Releaser<A extends org.jreleaser.model.api.release.Releaser> extends Domain, EnabledAware, CommitAuthorAware, OwnerAware, TimeoutAware, Active.Prereleaseable {
     boolean isReleaseSupported();
 
     String getServiceName();
+
+    A asImmutable();
 }
