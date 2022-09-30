@@ -32,7 +32,7 @@ import static org.jreleaser.model.JReleaserOutput.nag;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public final class GitlabReleaser extends BaseReleaser<GitlabReleaser> {
+public final class GitlabReleaser extends BaseReleaser<org.jreleaser.model.api.release.GitlabReleaser, GitlabReleaser> {
     private final Map<String, String> uploadLinks = new LinkedHashMap<>();
     private String projectIdentifier;
 
@@ -281,6 +281,7 @@ public final class GitlabReleaser extends BaseReleaser<GitlabReleaser> {
         setIssueTrackerUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/-/issues");
     }
 
+    @Override
     public org.jreleaser.model.api.release.GitlabReleaser asImmutable() {
         return immutable;
     }

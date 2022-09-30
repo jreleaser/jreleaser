@@ -28,7 +28,7 @@ import static org.jreleaser.model.api.upload.SftpUploader.TYPE;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public final class SftpUploader extends AbstractSshUploader<SftpUploader> {
+public final class SftpUploader extends AbstractSshUploader<org.jreleaser.model.api.upload.SftpUploader, SftpUploader> {
     private final org.jreleaser.model.api.upload.SftpUploader immutable = new org.jreleaser.model.api.upload.SftpUploader() {
         @Override
         public String getPath() {
@@ -160,6 +160,7 @@ public final class SftpUploader extends AbstractSshUploader<SftpUploader> {
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.upload.SftpUploader asImmutable() {
         return immutable;
     }

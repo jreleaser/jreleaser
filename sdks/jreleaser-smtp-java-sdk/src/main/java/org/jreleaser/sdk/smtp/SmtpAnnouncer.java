@@ -33,11 +33,18 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
-public class SmtpAnnouncer implements Announcer {
+public class SmtpAnnouncer implements Announcer<org.jreleaser.model.api.announce.SmtpAnnouncer> {
     private final JReleaserContext context;
+    private final org.jreleaser.model.internal.announce.SmtpAnnouncer smtp;
 
-    SmtpAnnouncer(JReleaserContext context) {
+    public SmtpAnnouncer(JReleaserContext context) {
         this.context = context;
+        this.smtp = context.getModel().getAnnounce().getMail();
+    }
+
+    @Override
+    public org.jreleaser.model.api.announce.SmtpAnnouncer getAnnouncer() {
+        return smtp.asImmutable();
     }
 
     @Override
@@ -47,13 +54,11 @@ public class SmtpAnnouncer implements Announcer {
 
     @Override
     public boolean isEnabled() {
-        return context.getModel().getAnnounce().getMail().isEnabled();
+        return smtp.isEnabled();
     }
 
     @Override
     public void announce() throws AnnounceException {
-        org.jreleaser.model.internal.announce.SmtpAnnouncer smtp = context.getModel().getAnnounce().getMail();
-
         String message = "";
         if (isNotBlank(smtp.getMessage())) {
             message = smtp.getResolvedMessage(context);

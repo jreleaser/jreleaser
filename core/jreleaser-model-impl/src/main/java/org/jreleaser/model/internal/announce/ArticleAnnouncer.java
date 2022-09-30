@@ -36,7 +36,7 @@ import static org.jreleaser.model.api.announce.ArticleAnnouncer.TYPE;
  * @author Andres Almiray
  * @since 0.6.0
  */
-public final class ArticleAnnouncer extends AbstractAnnouncer<ArticleAnnouncer> implements Announcer, CommitAuthorAware {
+public final class ArticleAnnouncer extends AbstractAnnouncer<ArticleAnnouncer, org.jreleaser.model.api.announce.ArticleAnnouncer> implements CommitAuthorAware {
     private final Set<Artifact> files = new LinkedHashSet<>();
     private final CommitAuthor commitAuthor = new CommitAuthor();
     private final Repository repository = new Repository();
@@ -45,6 +45,11 @@ public final class ArticleAnnouncer extends AbstractAnnouncer<ArticleAnnouncer> 
 
     private final org.jreleaser.model.api.announce.ArticleAnnouncer immutable = new org.jreleaser.model.api.announce.ArticleAnnouncer() {
         private Set<? extends org.jreleaser.model.api.common.Artifact> files;
+
+        @Override
+        public String getType() {
+            return org.jreleaser.model.api.announce.ArticleAnnouncer.TYPE;
+        }
 
         @Override
         public Set<? extends org.jreleaser.model.api.common.Artifact> getFiles() {
@@ -121,6 +126,7 @@ public final class ArticleAnnouncer extends AbstractAnnouncer<ArticleAnnouncer> 
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.announce.ArticleAnnouncer asImmutable() {
         return immutable;
     }

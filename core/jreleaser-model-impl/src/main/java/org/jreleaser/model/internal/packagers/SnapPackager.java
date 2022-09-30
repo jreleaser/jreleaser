@@ -64,7 +64,7 @@ import static org.jreleaser.util.StringUtils.isFalse;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public final class SnapPackager extends AbstractRepositoryPackager<SnapPackager> {
+public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser.model.api.packagers.SnapPackager, SnapPackager> {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
 
     static {
@@ -269,6 +269,7 @@ public final class SnapPackager extends AbstractRepositoryPackager<SnapPackager>
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.packagers.SnapPackager asImmutable() {
         return immutable;
     }

@@ -34,7 +34,7 @@ import java.util.Set;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public interface Assembler extends Domain, Activatable, ExtraProperties {
+public interface Assembler<A extends org.jreleaser.model.api.assemble.Assembler> extends Domain, Activatable, ExtraProperties {
     Platform getPlatform();
 
     void setPlatform(Platform platform);
@@ -72,4 +72,6 @@ public interface Assembler extends Domain, Activatable, ExtraProperties {
     void addFileSets(List<FileSet> files);
 
     void addFileSet(FileSet file);
+
+    A asImmutable();
 }

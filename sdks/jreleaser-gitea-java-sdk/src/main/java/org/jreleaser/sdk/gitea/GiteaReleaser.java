@@ -58,9 +58,17 @@ import static org.jreleaser.util.StringUtils.uncapitalize;
  * @since 0.1.0
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
-public class GiteaReleaser extends AbstractReleaser {
+public class GiteaReleaser extends AbstractReleaser<org.jreleaser.model.api.release.GiteaReleaser> {
+    private final org.jreleaser.model.internal.release.GiteaReleaser gitea;
+
     public GiteaReleaser(JReleaserContext context, List<Asset> assets) {
         super(context, assets);
+        gitea = context.getModel().getRelease().getGitea();
+    }
+
+    @Override
+    public org.jreleaser.model.api.release.GiteaReleaser getReleaser() {
+        return gitea.asImmutable();
     }
 
     @Override
@@ -79,7 +87,6 @@ public class GiteaReleaser extends AbstractReleaser {
 
     @Override
     protected void createRelease() throws ReleaseException {
-        org.jreleaser.model.internal.release.GiteaReleaser gitea = resolveGiteaFromModel();
         context.getLogger().info(RB.$("git.releaser.releasing"), gitea.getResolvedRepoUrl(context.getModel()));
         String tagName = gitea.getEffectiveTagName(context.getModel());
 
@@ -157,17 +164,12 @@ public class GiteaReleaser extends AbstractReleaser {
         }
     }
 
-    protected org.jreleaser.model.internal.release.GiteaReleaser resolveGiteaFromModel() {
-        return context.getModel().getRelease().getGitea();
-    }
-
     protected Repository.Kind resolveRepositoryKind() {
         return Repository.Kind.OTHER;
     }
 
     @Override
     public Repository maybeCreateRepository(String owner, String repo, String password) throws IOException {
-        org.jreleaser.model.internal.release.GiteaReleaser gitea = resolveGiteaFromModel();
         context.getLogger().debug(RB.$("git.repository.lookup"), owner, repo);
 
         Gitea api = new Gitea(context.getLogger(),
@@ -190,8 +192,6 @@ public class GiteaReleaser extends AbstractReleaser {
 
     @Override
     public Optional<User> findUser(String email, String name) {
-        org.jreleaser.model.internal.release.GiteaReleaser gitea = resolveGiteaFromModel();
-
         try {
             String host = gitea.getHost();
             String endpoint = gitea.getApiEndpoint();
@@ -220,8 +220,6 @@ public class GiteaReleaser extends AbstractReleaser {
 
     @Override
     public List<Release> listReleases(String owner, String repo) throws IOException {
-        org.jreleaser.model.internal.release.GiteaReleaser gitea = resolveGiteaFromModel();
-
         Gitea api = new Gitea(context.getLogger(),
             gitea.getApiEndpoint(),
             gitea.getResolvedToken(),
@@ -242,8 +240,6 @@ public class GiteaReleaser extends AbstractReleaser {
     }
 
     private void createRelease(Gitea api, String tagName, String changelog, boolean deleteTags) throws IOException {
-        org.jreleaser.model.internal.release.GiteaReleaser gitea = resolveGiteaFromModel();
-
         if (context.isDryrun()) {
             for (Asset asset : assets) {
                 if (0 == Files.size(asset.getPath()) || !Files.exists(asset.getPath())) {
@@ -391,8 +387,6 @@ public class GiteaReleaser extends AbstractReleaser {
     }
 
     private void updateAssets(Gitea api, GtRelease release) throws IOException {
-        org.jreleaser.model.internal.release.GiteaReleaser gitea = resolveGiteaFromModel();
-
         List<Asset> assetsToBeUpdated = new ArrayList<>();
         List<Asset> assetsToBeUploaded = new ArrayList<>();
 

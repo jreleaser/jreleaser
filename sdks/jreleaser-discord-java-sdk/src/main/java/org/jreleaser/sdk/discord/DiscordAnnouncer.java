@@ -34,11 +34,18 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.2.0
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
-public class DiscordAnnouncer implements Announcer {
+public class DiscordAnnouncer implements Announcer<org.jreleaser.model.api.announce.DiscordAnnouncer> {
     private final JReleaserContext context;
+    private final org.jreleaser.model.internal.announce.DiscordAnnouncer discord;
 
-    DiscordAnnouncer(JReleaserContext context) {
+    public DiscordAnnouncer(JReleaserContext context) {
         this.context = context;
+        this.discord = context.getModel().getAnnounce().getDiscord();
+    }
+
+    @Override
+    public org.jreleaser.model.api.announce.DiscordAnnouncer getAnnouncer() {
+        return discord.asImmutable();
     }
 
     @Override
@@ -48,13 +55,11 @@ public class DiscordAnnouncer implements Announcer {
 
     @Override
     public boolean isEnabled() {
-        return context.getModel().getAnnounce().getDiscord().isEnabled();
+        return discord.isEnabled();
     }
 
     @Override
     public void announce() throws AnnounceException {
-        org.jreleaser.model.internal.announce.DiscordAnnouncer discord = context.getModel().getAnnounce().getDiscord();
-
         String message = "";
         if (isNotBlank(discord.getMessage())) {
             message = discord.getResolvedMessage(context);

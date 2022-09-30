@@ -71,15 +71,22 @@ import static org.jreleaser.util.StringUtils.uncapitalize;
  * @author Andres Almiray
  * @since 0.1.0
  */
-@org.jreleaser.infra.nativeimage.annotations.NativeImage
-public class GithubReleaser extends AbstractReleaser {
+public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.release.GithubReleaser> {
+
+    private final org.jreleaser.model.internal.release.GithubReleaser github;
+
     public GithubReleaser(JReleaserContext context, List<Asset> assets) {
         super(context, assets);
+        github = context.getModel().getRelease().getGithub();
+    }
+
+    @Override
+    public org.jreleaser.model.api.release.GithubReleaser getReleaser() {
+        return github.asImmutable();
     }
 
     @Override
     public String generateReleaseNotes() throws IOException {
-        org.jreleaser.model.internal.release.GithubReleaser github = context.getModel().getRelease().getGithub();
 
         if (github.getReleaseNotes().isEnabled()) {
             String content = generateReleaseNotesByAPI();

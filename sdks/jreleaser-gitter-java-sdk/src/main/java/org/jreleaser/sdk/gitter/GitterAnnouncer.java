@@ -34,11 +34,18 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.2.0
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
-public class GitterAnnouncer implements Announcer {
+public class GitterAnnouncer implements Announcer<org.jreleaser.model.api.announce.GitterAnnouncer> {
     private final JReleaserContext context;
+    private final org.jreleaser.model.internal.announce.GitterAnnouncer gitter;
 
-    GitterAnnouncer(JReleaserContext context) {
+    public GitterAnnouncer(JReleaserContext context) {
         this.context = context;
+        this.gitter = context.getModel().getAnnounce().getGitter();
+    }
+
+    @Override
+    public org.jreleaser.model.api.announce.GitterAnnouncer getAnnouncer() {
+        return gitter.asImmutable();
     }
 
     @Override
@@ -48,13 +55,11 @@ public class GitterAnnouncer implements Announcer {
 
     @Override
     public boolean isEnabled() {
-        return context.getModel().getAnnounce().getGitter().isEnabled();
+        return gitter.isEnabled();
     }
 
     @Override
     public void announce() throws AnnounceException {
-        org.jreleaser.model.internal.announce.GitterAnnouncer gitter = context.getModel().getAnnounce().getGitter();
-
         String message = "";
         if (isNotBlank(gitter.getMessage())) {
             message = gitter.getResolvedMessage(context);

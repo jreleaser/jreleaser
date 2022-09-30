@@ -23,6 +23,6 @@ import org.jreleaser.model.internal.common.CommitAuthorAware;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface RepositoryPackager extends TemplatePackager, CommitAuthorAware {
+public interface RepositoryPackager<A extends org.jreleaser.model.api.packagers.RepositoryPackager> extends TemplatePackager<A>, CommitAuthorAware {
     RepositoryTap getRepositoryTap();
 }

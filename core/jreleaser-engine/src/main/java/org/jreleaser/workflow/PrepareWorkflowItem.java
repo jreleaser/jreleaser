@@ -34,6 +34,9 @@ class PrepareWorkflowItem extends AbstractWorkflowItem {
 
     @Override
     protected void doInvoke(JReleaserContext context) {
-        Distributions.process(context, RB.$("distributions.action.preparing.capitalize"), DistributionProcessor::prepareDistribution);
+        Distributions.process(context, DistributionProcessor.PackagingAction.of(
+            RB.$("distributions.action.preparing.capitalize"),
+            DistributionProcessor.PackagingAction.Type.PREPARE,
+            DistributionProcessor::prepareDistribution));
     }
 }

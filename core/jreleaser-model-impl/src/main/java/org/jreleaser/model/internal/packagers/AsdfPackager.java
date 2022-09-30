@@ -52,7 +52,7 @@ import static org.jreleaser.util.StringUtils.isFalse;
  * @author Andres Almiray
  * @since 1.2.0
  */
-public final class AsdfPackager extends AbstractRepositoryPackager<AsdfPackager> {
+public final class AsdfPackager extends AbstractRepositoryPackager<org.jreleaser.model.api.packagers.AsdfPackager, AsdfPackager> {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
 
     static {
@@ -175,6 +175,7 @@ public final class AsdfPackager extends AbstractRepositoryPackager<AsdfPackager>
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.packagers.AsdfPackager asImmutable() {
         return immutable;
     }

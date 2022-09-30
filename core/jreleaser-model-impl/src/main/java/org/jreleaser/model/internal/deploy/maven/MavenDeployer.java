@@ -27,7 +27,7 @@ import java.util.List;
  * @author Andres Almiray
  * @since 1.3.0
  */
-public interface MavenDeployer extends Deployer, TimeoutAware {
+public interface MavenDeployer<A extends org.jreleaser.model.api.deploy.maven.MavenDeployer> extends Deployer<A>, TimeoutAware {
     String getUrl();
 
     void setUrl(String url);

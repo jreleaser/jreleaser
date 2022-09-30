@@ -29,7 +29,7 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
  * @author Andres Almiray
  * @since 0.8.0
  */
-public abstract class AbstractWebUploader<S extends AbstractWebUploader<S>> extends AbstractUploader<S> implements WebUploader {
+public abstract class AbstractWebUploader<A extends org.jreleaser.model.api.upload.WebUploader, S extends AbstractWebUploader<A, S>> extends AbstractUploader<A, S> implements WebUploader<A> {
     protected String uploadUrl;
     protected String downloadUrl;
 

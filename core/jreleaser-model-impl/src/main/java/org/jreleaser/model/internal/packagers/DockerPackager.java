@@ -63,7 +63,7 @@ import static org.jreleaser.util.StringUtils.isFalse;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public final class DockerPackager extends AbstractDockerConfiguration<DockerPackager> implements RepositoryPackager, CommitAuthorAware {
+public final class DockerPackager extends AbstractDockerConfiguration<DockerPackager> implements RepositoryPackager<org.jreleaser.model.api.packagers.DockerPackager>, CommitAuthorAware {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
 
     static {
@@ -234,6 +234,7 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
     @JsonIgnore
     private boolean failed;
 
+    @Override
     public org.jreleaser.model.api.packagers.DockerPackager asImmutable() {
         return immutable;
     }

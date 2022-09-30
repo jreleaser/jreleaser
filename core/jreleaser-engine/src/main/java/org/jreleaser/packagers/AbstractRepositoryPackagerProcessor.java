@@ -44,7 +44,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-abstract class AbstractRepositoryPackagerProcessor<T extends RepositoryPackager> extends AbstractTemplatePackagerProcessor<T> {
+abstract class AbstractRepositoryPackagerProcessor<T extends RepositoryPackager<?>> extends AbstractTemplatePackagerProcessor<T> {
     protected AbstractRepositoryPackagerProcessor(JReleaserContext context) {
         super(context);
     }
@@ -61,7 +61,7 @@ abstract class AbstractRepositoryPackagerProcessor<T extends RepositoryPackager>
             return;
         }
 
-        BaseReleaser releaser = context.getModel().getRelease().getReleaser();
+        BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
 
         try {
             // get the repository
@@ -162,12 +162,12 @@ abstract class AbstractRepositoryPackagerProcessor<T extends RepositoryPackager>
         }
     }
 
-    protected String resolveGitUsername(BaseReleaser releaser) {
+    protected String resolveGitUsername(BaseReleaser<?, ?> releaser) {
         String username = packager.getRepositoryTap().getResolvedUsername(releaser);
         return isNotBlank(username) ? username : releaser.getResolvedUsername();
     }
 
-    protected String resolveGitToken(BaseReleaser releaser) {
+    protected String resolveGitToken(BaseReleaser<?, ?> releaser) {
         String token = packager.getRepositoryTap().getResolvedToken(releaser);
         return isNotBlank(token) ? token : releaser.getResolvedToken();
     }

@@ -51,7 +51,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.6.0
  */
-public final class SdkmanPackager extends AbstractPackager<SdkmanPackager> implements TimeoutAware {
+public final class SdkmanPackager extends AbstractPackager<org.jreleaser.model.api.packagers.SdkmanPackager, SdkmanPackager> implements TimeoutAware {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
 
     static {
@@ -182,6 +182,7 @@ public final class SdkmanPackager extends AbstractPackager<SdkmanPackager> imple
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.packagers.SdkmanPackager asImmutable() {
         return immutable;
     }

@@ -34,11 +34,18 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.4.0
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
-public class MattermostAnnouncer implements Announcer {
+public class MattermostAnnouncer implements Announcer<org.jreleaser.model.api.announce.MattermostAnnouncer> {
     private final JReleaserContext context;
+    private final org.jreleaser.model.internal.announce.MattermostAnnouncer mattermost;
 
-    MattermostAnnouncer(JReleaserContext context) {
+    public MattermostAnnouncer(JReleaserContext context) {
         this.context = context;
+        this.mattermost = context.getModel().getAnnounce().getMattermost();
+    }
+
+    @Override
+    public org.jreleaser.model.api.announce.MattermostAnnouncer getAnnouncer() {
+        return mattermost.asImmutable();
     }
 
     @Override
@@ -48,13 +55,11 @@ public class MattermostAnnouncer implements Announcer {
 
     @Override
     public boolean isEnabled() {
-        return context.getModel().getAnnounce().getMattermost().isEnabled();
+        return mattermost.isEnabled();
     }
 
     @Override
     public void announce() throws AnnounceException {
-        org.jreleaser.model.internal.announce.MattermostAnnouncer mattermost = context.getModel().getAnnounce().getMattermost();
-
         String message = "";
         if (isNotBlank(mattermost.getMessage())) {
             message = mattermost.getResolvedMessage(context);

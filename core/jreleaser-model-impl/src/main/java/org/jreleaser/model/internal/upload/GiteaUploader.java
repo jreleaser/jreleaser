@@ -37,13 +37,14 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 1.2.0
  */
-public final class GiteaUploader extends AbstractUploader<GiteaUploader> {
+public final class GiteaUploader extends AbstractUploader<org.jreleaser.model.api.upload.GiteaUploader, GiteaUploader> {
     private static final String DOWNLOAD_URL = "https://{{host}}/api/packages/{{owner}}/generic/{{packageName}}/{{packageVersion}}/{{artifactFile}}";
     private String host;
     private String owner;
     private String token;
     private String packageName;
     private String packageVersion;
+
     private final org.jreleaser.model.api.upload.GiteaUploader immutable = new org.jreleaser.model.api.upload.GiteaUploader() {
         @Override
         public String getHost() {
@@ -145,6 +146,7 @@ public final class GiteaUploader extends AbstractUploader<GiteaUploader> {
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.upload.GiteaUploader asImmutable() {
         return immutable;
     }

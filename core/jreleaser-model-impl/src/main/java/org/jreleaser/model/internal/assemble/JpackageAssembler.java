@@ -52,7 +52,7 @@ import static org.jreleaser.util.CollectionUtils.setOf;
  * @author Andres Almiray
  * @since 0.10.0
  */
-public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssembler> {
+public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssembler, org.jreleaser.model.api.assemble.JpackageAssembler> {
     private final Set<Artifact> runtimeImages = new LinkedHashSet<>();
 
     private final ApplicationPackage applicationPackage = new ApplicationPackage();
@@ -255,6 +255,7 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.assemble.JpackageAssembler asImmutable() {
         return immutable;
     }

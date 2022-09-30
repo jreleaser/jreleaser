@@ -31,15 +31,15 @@ import static java.util.Objects.requireNonNull;
  */
 public class ProjectDownloader {
     private final JReleaserContext context;
-    private final Downloader downloader;
+    private final Downloader<?> downloader;
 
     private ProjectDownloader(JReleaserContext context,
-                              Downloader downloader) {
+                              Downloader<?> downloader) {
         this.context = context;
         this.downloader = downloader;
     }
 
-    public Downloader getDownloader() {
+    public Downloader<?> getDownloader() {
         return downloader;
     }
 
@@ -49,7 +49,7 @@ public class ProjectDownloader {
             return;
         }
 
-        ArtifactDownloader artifactDownloader = ArtifactDownloaders.findDownloader(context, downloader);
+        ArtifactDownloader<?, ?> artifactDownloader = ArtifactDownloaders.findDownloader(context, downloader);
 
         context.getLogger().info(RB.$("downloaders.download"), downloader.getName());
 
@@ -62,14 +62,14 @@ public class ProjectDownloader {
 
     public static class ProjectDownloaderBuilder {
         private JReleaserContext context;
-        private Downloader downloader;
+        private Downloader<?> downloader;
 
         public ProjectDownloaderBuilder context(JReleaserContext context) {
             this.context = requireNonNull(context, "'context' must not be null");
             return this;
         }
 
-        public ProjectDownloaderBuilder downloader(Downloader downloader) {
+        public ProjectDownloaderBuilder downloader(Downloader<?> downloader) {
             this.downloader = requireNonNull(downloader, "'downloader' must not be null");
             return this;
         }

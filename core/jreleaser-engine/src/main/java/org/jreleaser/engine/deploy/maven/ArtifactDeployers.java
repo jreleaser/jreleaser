@@ -33,13 +33,13 @@ import java.util.stream.StreamSupport;
  * @since 1.3.0
  */
 public class ArtifactDeployers {
-    public static <D extends org.jreleaser.model.internal.deploy.maven.MavenDeployer> MavenDeployer<D> findMavenDeployer(JReleaserContext context, D deployer) {
-        Map<String, MavenDeployer> deployers = StreamSupport.stream(ServiceLoader.load(MavenDeployerFactory.class,
+    public static <A extends org.jreleaser.model.api.deploy.maven.MavenDeployer, D extends org.jreleaser.model.internal.deploy.maven.MavenDeployer<A>> MavenDeployer<A, D> findMavenDeployer(JReleaserContext context, D deployer) {
+        Map<String, MavenDeployer<?, ?>> deployers = StreamSupport.stream(ServiceLoader.load(MavenDeployerFactory.class,
                 ArtifactDeployers.class.getClassLoader()).spliterator(), false)
             .collect(Collectors.toMap(MavenDeployerFactory::getName, factory -> factory.getMavenDeployer(context)));
 
         if (deployers.containsKey(deployer.getType())) {
-            MavenDeployer<D> artifactMavenDeployer = deployers.get(deployer.getType());
+            MavenDeployer artifactMavenDeployer = deployers.get(deployer.getType());
             artifactMavenDeployer.setDeployer(deployer);
             return artifactMavenDeployer;
         }

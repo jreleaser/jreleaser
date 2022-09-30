@@ -35,17 +35,17 @@ import static java.util.Objects.requireNonNull;
  */
 public class DistributionAssembler {
     private final JReleaserContext context;
-    private final Assembler assembler;
+    private final Assembler<?> assembler;
     private final Path outputDirectory;
 
     private DistributionAssembler(JReleaserContext context,
-                                  Assembler assembler) {
+                                  Assembler<?> assembler) {
         this.context = context;
         this.assembler = assembler;
         this.outputDirectory = context.getOutputDirectory();
     }
 
-    public Assembler getAssembler() {
+    public Assembler<?> getAssembler() {
         return assembler;
     }
 
@@ -55,7 +55,7 @@ public class DistributionAssembler {
             return;
         }
 
-        AssemblerProcessor<Assembler> assemblerProcessor = AssemblerProcessors.findProcessor(context, assembler);
+        AssemblerProcessor<?, ?> assemblerProcessor = AssemblerProcessors.findProcessor(context, assembler);
 
         context.getLogger().info(RB.$("assemblers.distribution.assemble"), assembler.getName());
 

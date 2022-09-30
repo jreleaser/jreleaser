@@ -28,7 +28,7 @@ import java.util.List;
  * @author Andres Almiray
  * @since 0.7.0
  */
-public abstract class AbstractReleaser implements Releaser {
+public abstract class AbstractReleaser<A extends org.jreleaser.model.api.release.Releaser> implements Releaser<A> {
     protected final JReleaserContext context;
     protected final List<Asset> assets = new ArrayList<>();
 
@@ -39,7 +39,7 @@ public abstract class AbstractReleaser implements Releaser {
 
     @Override
     public final void release() throws ReleaseException {
-        BaseReleaser service = context.getModel().getRelease().getReleaser();
+        BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
 
         if (service.isSkipRelease()) {
             if (service.isSkipTag()) {

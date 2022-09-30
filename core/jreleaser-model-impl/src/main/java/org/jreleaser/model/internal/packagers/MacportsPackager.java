@@ -53,7 +53,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.9.0
  */
-public final class MacportsPackager extends AbstractRepositoryPackager<MacportsPackager> {
+public final class MacportsPackager extends AbstractRepositoryPackager<org.jreleaser.model.api.packagers.MacportsPackager, MacportsPackager> {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
 
     static {
@@ -188,6 +188,7 @@ public final class MacportsPackager extends AbstractRepositoryPackager<MacportsP
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.packagers.MacportsPackager asImmutable() {
         return immutable;
     }

@@ -34,7 +34,7 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.8.0
  */
-public class ArchiveAssemblerProcessor extends AbstractAssemblerProcessor<ArchiveAssembler> {
+public class ArchiveAssemblerProcessor extends AbstractAssemblerProcessor<org.jreleaser.model.api.assemble.ArchiveAssembler, ArchiveAssembler> {
     public ArchiveAssemblerProcessor(JReleaserContext context) {
         super(context);
     }

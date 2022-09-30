@@ -36,7 +36,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public final class HttpDownloader extends AbstractDownloader<HttpDownloader> implements Http {
+public final class HttpDownloader extends AbstractDownloader<org.jreleaser.model.api.download.HttpDownloader, HttpDownloader> implements Http {
     private final Map<String, String> headers = new LinkedHashMap<>();
     private String username;
     private String password;
@@ -125,6 +125,7 @@ public final class HttpDownloader extends AbstractDownloader<HttpDownloader> imp
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.download.HttpDownloader asImmutable() {
         return immutable;
     }

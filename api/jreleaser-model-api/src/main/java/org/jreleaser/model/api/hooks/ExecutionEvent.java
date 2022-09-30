@@ -30,10 +30,16 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
 public class ExecutionEvent {
     private final Type type;
     private final String name;
+    private final Throwable failure;
 
     private ExecutionEvent(Type type, String name) {
+        this(type, name, null);
+    }
+
+    private ExecutionEvent(Type type, String name, Throwable failure) {
         this.type = requireNonNull(type, "'type' must not be null");
         this.name = requireNonBlank(name, "'name' must not be blank");
+        this.failure = failure;
     }
 
     public Type getType() {
@@ -44,6 +50,10 @@ public class ExecutionEvent {
         return name;
     }
 
+    public Throwable getFailure() {
+        return failure;
+    }
+
     public static ExecutionEvent before(String name) {
         return new ExecutionEvent(Type.BEFORE, name);
     }
@@ -52,8 +62,8 @@ public class ExecutionEvent {
         return new ExecutionEvent(Type.SUCCESS, name);
     }
 
-    public static ExecutionEvent failure(String name) {
-        return new ExecutionEvent(Type.FAILURE, name);
+    public static ExecutionEvent failure(String name, Throwable failure) {
+        return new ExecutionEvent(Type.FAILURE, name, failure);
     }
 
     public enum Type {

@@ -39,7 +39,7 @@ import java.util.Set;
  * @author Andres Almiray
  * @since 1.3.0
  */
-public class ArtifactoryMavenDeployer extends AbstractMavenDeployer<org.jreleaser.model.internal.deploy.maven.ArtifactoryMavenDeployer> {
+public class ArtifactoryMavenDeployer extends AbstractMavenDeployer<org.jreleaser.model.api.deploy.maven.ArtifactoryMavenDeployer, org.jreleaser.model.internal.deploy.maven.ArtifactoryMavenDeployer> {
     private org.jreleaser.model.internal.deploy.maven.ArtifactoryMavenDeployer deployer;
 
     public ArtifactoryMavenDeployer(JReleaserContext context) {

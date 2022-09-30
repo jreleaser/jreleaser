@@ -19,21 +19,29 @@ package org.jreleaser.model.internal;
 
 import org.bouncycastle.openpgp.PGPException;
 import org.jreleaser.bundle.RB;
+import org.jreleaser.extensions.api.workflow.WorkflowListener;
+import org.jreleaser.extensions.api.workflow.WorkflowListenerException;
 import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.Constants;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.model.Signing;
 import org.jreleaser.model.api.JReleaserCommand;
+import org.jreleaser.model.api.announce.Announcer;
+import org.jreleaser.model.api.assemble.Assembler;
+import org.jreleaser.model.api.deploy.Deployer;
+import org.jreleaser.model.api.distributions.Distribution;
+import org.jreleaser.model.api.download.Downloader;
+import org.jreleaser.model.api.hooks.ExecutionEvent;
+import org.jreleaser.model.api.packagers.Packager;
+import org.jreleaser.model.api.release.Releaser;
 import org.jreleaser.model.api.signing.Keyring;
 import org.jreleaser.model.api.signing.SigningException;
-import org.jreleaser.model.internal.assemble.Assembler;
+import org.jreleaser.model.api.upload.Uploader;
 import org.jreleaser.model.internal.assemble.JavaAssembler;
 import org.jreleaser.model.internal.common.Artifact;
-import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.internal.release.BaseReleaser;
-import org.jreleaser.model.spi.release.Releaser;
 import org.jreleaser.sdk.signing.FilesKeyring;
 import org.jreleaser.sdk.signing.InMemoryKeyring;
 import org.jreleaser.util.Errors;
@@ -45,6 +53,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -124,9 +133,10 @@ public class JReleaserContext {
     private final List<String> excludedDeployerNames = new ArrayList<>();
     private final List<String> excludedUploaderTypes = new ArrayList<>();
     private final List<String> excludedUploaderNames = new ArrayList<>();
+    private final List<WorkflowListener> workflowListeners = new ArrayList<>();
 
     private String changelog;
-    private Releaser releaser;
+    private org.jreleaser.model.spi.release.Releaser<?> releaser;
     private JReleaserCommand command;
 
     private final org.jreleaser.model.api.JReleaserContext immutable = new org.jreleaser.model.api.JReleaserContext() {
@@ -445,12 +455,12 @@ public class JReleaserContext {
         }
 
         // match distributions
-        for (Assembler assembler : model.getAssemble().findAllAssemblers()) {
+        for (org.jreleaser.model.internal.assemble.Assembler<?> assembler : model.getAssemble().findAllAssemblers()) {
             if (!assembler.isExported()) continue;
 
-            Distribution distribution = model.getDistributions().get(assembler.getName());
+            org.jreleaser.model.internal.distributions.Distribution distribution = model.getDistributions().get(assembler.getName());
             if (null == distribution) {
-                distribution = new Distribution();
+                distribution = new org.jreleaser.model.internal.distributions.Distribution();
                 distribution.setType(assembler.getDistributionType());
                 distribution.setStereotype(assembler.getStereotype());
                 distribution.setName(assembler.getName());
@@ -460,8 +470,8 @@ public class JReleaserContext {
             distribution.setType(assembler.getDistributionType());
             distribution.setActive(assembler.getActive());
             if (assembler instanceof JavaAssembler) {
-                distribution.getExecutable().setName(((JavaAssembler) assembler).getExecutable());
-                distribution.setJava(((JavaAssembler) assembler).getJava());
+                distribution.getExecutable().setName(((JavaAssembler<?>) assembler).getExecutable());
+                distribution.setJava(((JavaAssembler<?>) assembler).getJava());
             }
             mergeArtifacts(assembler, distribution);
 
@@ -471,7 +481,7 @@ public class JReleaserContext {
         }
     }
 
-    private void mergeArtifacts(Assembler assembler, Distribution distribution) {
+    private void mergeArtifacts(org.jreleaser.model.internal.assemble.Assembler<?> assembler, org.jreleaser.model.internal.distributions.Distribution distribution) {
         for (Artifact incoming : assembler.getOutputs()) {
             Optional<Artifact> artifact = distribution.getArtifacts().stream()
                 .filter(a -> {
@@ -571,11 +581,11 @@ public class JReleaserContext {
         this.changelog = changelog;
     }
 
-    public Releaser getReleaser() {
+    public org.jreleaser.model.spi.release.Releaser<?> getReleaser() {
         return releaser;
     }
 
-    public void setReleaser(Releaser releaser) {
+    public void setReleaser(org.jreleaser.model.spi.release.Releaser<?> releaser) {
         this.releaser = releaser;
     }
 
@@ -592,6 +602,15 @@ public class JReleaserContext {
         }
 
         return tmp;
+    }
+
+    public List<WorkflowListener> getWorkflowListeners() {
+        return workflowListeners;
+    }
+
+    public void setWorkflowListeners(Collection<WorkflowListener> workflowListeners) {
+        this.workflowListeners.clear();
+        this.workflowListeners.addAll(workflowListeners);
     }
 
     public List<String> getIncludedAnnouncers() {
@@ -888,7 +907,7 @@ public class JReleaserContext {
         }
     }
 
-    public boolean isDistributionIncluded(Distribution distribution) {
+    public boolean isDistributionIncluded(org.jreleaser.model.internal.distributions.Distribution distribution) {
         String distributionName = distribution.getName();
 
         if (!includedDistributions.isEmpty()) {
@@ -900,6 +919,146 @@ public class JReleaserContext {
         }
 
         return true;
+    }
+
+    public void fireSessionStartEvent() throws WorkflowListenerException {
+        for (WorkflowListener workflowListener : workflowListeners) {
+            try {
+                workflowListener.onSessionStart(this.asImmutable());
+            } catch (RuntimeException e) {
+                throw new WorkflowListenerException(workflowListener, e);
+            }
+        }
+    }
+
+    public void fireSessionEndEvent() throws WorkflowListenerException {
+        for (WorkflowListener workflowListener : workflowListeners) {
+            try {
+                workflowListener.onSessionEnd(this.asImmutable());
+            } catch (RuntimeException e) {
+                throw new WorkflowListenerException(workflowListener, e);
+            }
+        }
+    }
+
+    public void fireWorkflowEvent(ExecutionEvent event) throws WorkflowListenerException {
+        for (WorkflowListener workflowListener : workflowListeners) {
+            try {
+                workflowListener.onWorkflowStep(event, this.asImmutable());
+            } catch (RuntimeException e) {
+                throw new WorkflowListenerException(workflowListener, e);
+            }
+        }
+    }
+
+    public void fireAnnounceStepEvent(ExecutionEvent event, Announcer announcer) throws WorkflowListenerException {
+        for (WorkflowListener workflowListener : workflowListeners) {
+            try {
+                workflowListener.onAnnounceStep(event, this.asImmutable(), announcer);
+            } catch (RuntimeException e) {
+                throw new WorkflowListenerException(workflowListener, e);
+            }
+        }
+    }
+
+    public void fireAssembleStepEvent(ExecutionEvent event, Assembler assembler) throws WorkflowListenerException {
+        for (WorkflowListener workflowListener : workflowListeners) {
+            try {
+                workflowListener.onAssembleStep(event, this.asImmutable(), assembler);
+            } catch (RuntimeException e) {
+                throw new WorkflowListenerException(workflowListener, e);
+            }
+        }
+    }
+
+    public void fireDeployStepEvent(ExecutionEvent event, Deployer deployer) throws WorkflowListenerException {
+        for (WorkflowListener workflowListener : workflowListeners) {
+            try {
+                workflowListener.onDeployStep(event, this.asImmutable(), deployer);
+            } catch (RuntimeException e) {
+                throw new WorkflowListenerException(workflowListener, e);
+            }
+        }
+    }
+
+    public void fireDownloadStepEvent(ExecutionEvent event, Downloader downloader) throws WorkflowListenerException {
+        for (WorkflowListener workflowListener : workflowListeners) {
+            try {
+                workflowListener.onDownloadStep(event, this.asImmutable(), downloader);
+            } catch (RuntimeException e) {
+                throw new WorkflowListenerException(workflowListener, e);
+            }
+        }
+    }
+
+    public void fireUploadStepEvent(ExecutionEvent event, Uploader uploader) throws WorkflowListenerException {
+        for (WorkflowListener workflowListener : workflowListeners) {
+            try {
+                workflowListener.onUploadStep(event, this.asImmutable(), uploader);
+            } catch (RuntimeException e) {
+                throw new WorkflowListenerException(workflowListener, e);
+            }
+        }
+    }
+
+    public void fireReleaseStepEvent(ExecutionEvent event, Releaser releaser) throws WorkflowListenerException {
+        for (WorkflowListener workflowListener : workflowListeners) {
+            try {
+                workflowListener.onReleaseStep(event, this.asImmutable(), releaser);
+            } catch (RuntimeException e) {
+                throw new WorkflowListenerException(workflowListener, e);
+            }
+        }
+    }
+
+    public void fireDistributionStartEvent(Distribution distribution) throws WorkflowListenerException {
+        for (WorkflowListener workflowListener : workflowListeners) {
+            try {
+                workflowListener.onDistributionStart(this.asImmutable(), distribution);
+            } catch (RuntimeException e) {
+                throw new WorkflowListenerException(workflowListener, e);
+            }
+        }
+    }
+
+    public void fireDistributionEndEvent(Distribution distribution) throws WorkflowListenerException {
+        for (WorkflowListener workflowListener : workflowListeners) {
+            try {
+                workflowListener.onDistributionEnd(this.asImmutable(), distribution);
+            } catch (RuntimeException e) {
+                throw new WorkflowListenerException(workflowListener, e);
+            }
+        }
+    }
+
+    public void firePackagerPackageEvent(ExecutionEvent event, Distribution distribution, Packager packager) throws WorkflowListenerException {
+        for (WorkflowListener workflowListener : workflowListeners) {
+            try {
+                workflowListener.onPackagerPackageStep(event, this.asImmutable(), distribution, packager);
+            } catch (RuntimeException e) {
+                throw new WorkflowListenerException(workflowListener, e);
+            }
+        }
+    }
+
+    public void firePackagerPublishEvent(ExecutionEvent event, Distribution distribution, Packager packager) throws WorkflowListenerException {
+        for (WorkflowListener workflowListener : workflowListeners) {
+            try {
+                workflowListener.onPackagerPublishStep(event, this.asImmutable(), distribution, packager);
+            } catch (RuntimeException e) {
+                throw new WorkflowListenerException(workflowListener, e);
+            }
+        }
+    }
+
+    public void firePackagerPrepareEvent(ExecutionEvent event, Distribution distribution, Packager packager) throws WorkflowListenerException {
+        for (WorkflowListener workflowListener : workflowListeners) {
+            try {
+                workflowListener.onPackagerPrepareStep(event, this.asImmutable(), distribution, packager);
+            } catch (RuntimeException e) {
+                throw new WorkflowListenerException(workflowListener, e);
+            }
+        }
     }
 
     public enum Configurer {

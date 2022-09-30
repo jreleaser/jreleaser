@@ -38,7 +38,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public class ScpArtifactDownloader extends AbstractArtifactDownloader<ScpDownloader> {
+public class ScpArtifactDownloader extends AbstractArtifactDownloader<org.jreleaser.model.api.download.ScpDownloader, ScpDownloader> {
     private ScpDownloader downloader;
 
     public ScpArtifactDownloader(JReleaserContext context) {

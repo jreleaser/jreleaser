@@ -37,7 +37,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 1.2.0
  */
-public final class GitlabUploader extends AbstractUploader<GitlabUploader> {
+public final class GitlabUploader extends AbstractUploader<org.jreleaser.model.api.upload.GitlabUploader, GitlabUploader> {
     private static final String DOWNLOAD_URL = "https://{{host}}/api/v4/projects/{{projectIdentifier}}/packages/generic/{{packageName}}/{{packageVersion}}/{{artifactFile}}";
 
     private String host;
@@ -148,6 +148,7 @@ public final class GitlabUploader extends AbstractUploader<GitlabUploader> {
         setHost("gitlab.com");
     }
 
+    @Override
     public org.jreleaser.model.api.upload.GitlabUploader asImmutable() {
         return immutable;
     }

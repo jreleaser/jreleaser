@@ -34,13 +34,13 @@ import java.util.stream.StreamSupport;
  * @since 0.3.0
  */
 public class ArtifactUploaders {
-    public static <U extends Uploader> ArtifactUploader<U> findUploader(JReleaserContext context, U uploader) {
-        Map<String, ArtifactUploader> uploaders = StreamSupport.stream(ServiceLoader.load(ArtifactUploaderFactory.class,
+    public static <A extends org.jreleaser.model.api.upload.Uploader, U extends Uploader<A>> ArtifactUploader<A, U> findUploader(JReleaserContext context, U uploader) {
+        Map<String, ArtifactUploader<?, ?>> uploaders = StreamSupport.stream(ServiceLoader.load(ArtifactUploaderFactory.class,
                 ArtifactUploaders.class.getClassLoader()).spliterator(), false)
             .collect(Collectors.toMap(ArtifactUploaderFactory::getName, factory -> factory.getArtifactUploader(context)));
 
         if (uploaders.containsKey(uploader.getType())) {
-            ArtifactUploader<U> artifactUploader = uploaders.get(uploader.getType());
+            ArtifactUploader artifactUploader = uploaders.get(uploader.getType());
             artifactUploader.setUploader(uploader);
             return artifactUploader;
         }

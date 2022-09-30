@@ -42,7 +42,7 @@ import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSepar
  * @author Andres Almiray
  * @since 0.3.0
  */
-public abstract class AbstractUploader<S extends AbstractUploader<S>> extends AbstractModelObject<S> implements Uploader, ExtraProperties {
+public abstract class AbstractUploader<A extends org.jreleaser.model.api.upload.Uploader, S extends AbstractUploader<A, S>> extends AbstractModelObject<S> implements Uploader<A>, ExtraProperties {
     @JsonIgnore
     protected final String type;
     protected final Map<String, Object> extraProperties = new LinkedHashMap<>();

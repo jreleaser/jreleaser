@@ -36,7 +36,7 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 1.2.0
  */
-public class GitlabArtifactUploader extends AbstractArtifactUploader<GitlabUploader> {
+public class GitlabArtifactUploader extends AbstractArtifactUploader<org.jreleaser.model.api.upload.GitlabUploader, GitlabUploader> {
     private GitlabUploader uploader;
 
     public GitlabArtifactUploader(JReleaserContext context) {

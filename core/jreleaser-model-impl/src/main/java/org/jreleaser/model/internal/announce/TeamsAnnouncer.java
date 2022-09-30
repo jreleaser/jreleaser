@@ -42,11 +42,16 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public final class TeamsAnnouncer extends AbstractAnnouncer<TeamsAnnouncer> {
+public final class TeamsAnnouncer extends AbstractAnnouncer<TeamsAnnouncer, org.jreleaser.model.api.announce.TeamsAnnouncer> {
     private String webhook;
     private String messageTemplate;
 
     private final org.jreleaser.model.api.announce.TeamsAnnouncer immutable = new org.jreleaser.model.api.announce.TeamsAnnouncer() {
+        @Override
+        public String getType() {
+            return org.jreleaser.model.api.announce.TeamsAnnouncer.TYPE;
+        }
+
         @Override
         public String getWebhook() {
             return webhook;
@@ -107,6 +112,7 @@ public final class TeamsAnnouncer extends AbstractAnnouncer<TeamsAnnouncer> {
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.announce.TeamsAnnouncer asImmutable() {
         return immutable;
     }

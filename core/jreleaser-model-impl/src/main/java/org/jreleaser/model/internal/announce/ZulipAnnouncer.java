@@ -43,7 +43,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public final class ZulipAnnouncer extends AbstractAnnouncer<ZulipAnnouncer> {
+public final class ZulipAnnouncer extends AbstractAnnouncer<ZulipAnnouncer, org.jreleaser.model.api.announce.ZulipAnnouncer> {
     private String account;
     private String apiKey;
     private String apiHost;
@@ -53,6 +53,11 @@ public final class ZulipAnnouncer extends AbstractAnnouncer<ZulipAnnouncer> {
     private String messageTemplate;
 
     private final org.jreleaser.model.api.announce.ZulipAnnouncer immutable = new org.jreleaser.model.api.announce.ZulipAnnouncer() {
+        @Override
+        public String getType() {
+            return org.jreleaser.model.api.announce.ZulipAnnouncer.TYPE;
+        }
+
         @Override
         public String getAccount() {
             return account;
@@ -138,6 +143,7 @@ public final class ZulipAnnouncer extends AbstractAnnouncer<ZulipAnnouncer> {
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.announce.ZulipAnnouncer asImmutable() {
         return immutable;
     }

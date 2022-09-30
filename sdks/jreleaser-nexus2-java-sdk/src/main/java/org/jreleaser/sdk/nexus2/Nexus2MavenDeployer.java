@@ -28,7 +28,8 @@ import java.util.Set;
  * @author Andres Almiray
  * @since 1.3.0
  */
-public class Nexus2MavenDeployer extends AbstractMavenDeployer<org.jreleaser.model.internal.deploy.maven.Nexus2MavenDeployer> {
+public class Nexus2MavenDeployer extends AbstractMavenDeployer<org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer,
+    org.jreleaser.model.internal.deploy.maven.Nexus2MavenDeployer> {
     private org.jreleaser.model.internal.deploy.maven.Nexus2MavenDeployer deployer;
 
     public Nexus2MavenDeployer(JReleaserContext context) {

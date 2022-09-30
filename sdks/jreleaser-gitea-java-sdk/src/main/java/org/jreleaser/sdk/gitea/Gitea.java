@@ -68,14 +68,14 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-class Gitea {
+public class Gitea {
     private static final String API_V1 = "/api/v1";
     private final Tika tika = new Tika();
 
     private final JReleaserLogger logger;
     private final GiteaAPI api;
 
-    Gitea(JReleaserLogger logger,
+    public Gitea(JReleaserLogger logger,
           String endpoint,
           String token,
           int connectTimeout,
@@ -106,7 +106,7 @@ class Gitea {
             .target(GiteaAPI.class, endpoint);
     }
 
-    GtRepository findRepository(String owner, String repo) {
+    public GtRepository findRepository(String owner, String repo) {
         logger.debug(RB.$("git.repository.lookup"), owner, repo);
         try {
             return api.getRepository(owner, repo);
@@ -119,7 +119,7 @@ class Gitea {
         }
     }
 
-    List<Release> listReleases(String owner, String repoName) throws IOException {
+    public List<Release> listReleases(String owner, String repoName) throws IOException {
         logger.debug(RB.$("git.list.releases"), owner, repoName);
 
         List<Release> releases = new ArrayList<>();
@@ -152,7 +152,7 @@ class Gitea {
         return releases;
     }
 
-    List<String> listBranches(String owner, String repoName) throws IOException {
+    public List<String> listBranches(String owner, String repoName) throws IOException {
         logger.debug(RB.$("git.list.branches"), owner, repoName);
 
         List<String> branches = new ArrayList<>();
@@ -178,7 +178,7 @@ class Gitea {
         return branches;
     }
 
-    Map<String, GtAsset> listAssets(String owner, String repo, GtRelease release) throws IOException {
+    public Map<String, GtAsset> listAssets(String owner, String repo, GtRelease release) throws IOException {
         logger.debug(RB.$("git.list.assets.github"), owner, repo, release.getId());
 
         Map<String, GtAsset> assets = new LinkedHashMap<>();
@@ -189,7 +189,7 @@ class Gitea {
         return assets;
     }
 
-    Optional<GtMilestone> findMilestoneByName(String owner, String repo, String milestoneName) {
+    public Optional<GtMilestone> findMilestoneByName(String owner, String repo, String milestoneName) {
         logger.debug(RB.$("git.milestone.lookup"), milestoneName, owner, repo);
 
         try {
@@ -209,7 +209,7 @@ class Gitea {
         }
     }
 
-    Optional<GtMilestone> findClosedMilestoneByName(String owner, String repo, String milestoneName) {
+    public Optional<GtMilestone> findClosedMilestoneByName(String owner, String repo, String milestoneName) {
         logger.debug(RB.$("git.milestone.lookup.closed"), milestoneName, owner, repo);
 
         try {
@@ -229,14 +229,14 @@ class Gitea {
         }
     }
 
-    void closeMilestone(String owner, String repo, GtMilestone milestone) throws IOException {
+    public void closeMilestone(String owner, String repo, GtMilestone milestone) throws IOException {
         logger.debug(RB.$("git.milestone.close"), milestone.getTitle(), owner, repo);
 
         api.updateMilestone(CollectionUtils.<String, Object>map()
             .e("state", "closed"), owner, repo, milestone.getId());
     }
 
-    GtRepository createRepository(String owner, String repo) {
+    public GtRepository createRepository(String owner, String repo) {
         logger.debug(RB.$("git.repository.create"), owner, repo);
 
         Map<String, Object> params = CollectionUtils.<String, Object>map()
@@ -263,7 +263,7 @@ class Gitea {
         }
     }
 
-    GtRelease findReleaseByTag(String owner, String repo, String tagName) {
+    public GtRelease findReleaseByTag(String owner, String repo, String tagName) {
         logger.debug(RB.$("git.fetch.release.by.tag"), owner, repo, tagName);
 
         try {
@@ -277,7 +277,7 @@ class Gitea {
         }
     }
 
-    void deleteRelease(String owner, String repo, String tagName, Integer id) throws RestAPIException {
+    public void deleteRelease(String owner, String repo, String tagName, Integer id) throws RestAPIException {
         logger.debug(RB.$("git.delete.release.from.id"), tagName, owner, repo, id);
 
         try {
@@ -292,31 +292,31 @@ class Gitea {
         }
     }
 
-    void deleteTag(String owner, String repo, String tagName) throws RestAPIException {
+    public void deleteTag(String owner, String repo, String tagName) throws RestAPIException {
         logger.debug(RB.$("git.delete.tag.from"), tagName, owner, repo);
 
         api.deleteTag(owner, repo, tagName);
     }
 
-    void deletePackage(String owner, String type, String name, String version) throws RestAPIException {
+    public void deletePackage(String owner, String type, String name, String version) throws RestAPIException {
         logger.debug(RB.$("gitea.delete.package"), owner, type, name, version);
 
         api.deletePackage(owner, type, name, version);
     }
 
-    GtRelease createRelease(String owner, String repo, GtRelease release) throws RestAPIException {
+    public GtRelease createRelease(String owner, String repo, GtRelease release) throws RestAPIException {
         logger.debug(RB.$("git.create.release"), owner, repo, release.getTagName());
 
         return api.createRelease(release, owner, repo);
     }
 
-    void updateRelease(String owner, String repo, Integer id, GtRelease release) throws RestAPIException {
+    public void updateRelease(String owner, String repo, Integer id, GtRelease release) throws RestAPIException {
         logger.debug(RB.$("git.update.release"), owner, repo, release.getTagName());
 
         api.updateRelease(release, owner, repo, id);
     }
 
-    void uploadAssets(String owner, String repo, GtRelease release, List<Asset> assets) throws IOException {
+    public void uploadAssets(String owner, String repo, GtRelease release, List<Asset> assets) throws IOException {
         for (Asset asset : assets) {
             if (0 == Files.size(asset.getPath()) || !Files.exists(asset.getPath())) {
                 // do not upload empty or non existent files
@@ -333,7 +333,7 @@ class Gitea {
         }
     }
 
-    void updateAssets(String owner, String repo, GtRelease release, List<Asset> assets, Map<String, GtAsset> existingAssets) throws IOException {
+    public void updateAssets(String owner, String repo, GtRelease release, List<Asset> assets, Map<String, GtAsset> existingAssets) throws IOException {
         for (Asset asset : assets) {
             if (0 == Files.size(asset.getPath()) || !Files.exists(asset.getPath())) {
                 // do not upload empty or non existent files
@@ -358,7 +358,7 @@ class Gitea {
         }
     }
 
-    Optional<User> findUser(String email, String name, String host) throws RestAPIException {
+    public Optional<User> findUser(String email, String name, String host) throws RestAPIException {
         logger.debug(RB.$("git.user.lookup"), name, email);
 
         GtSearchUser search = api.searchUser(CollectionUtils.<String, String>mapOf("q", email));
@@ -370,7 +370,7 @@ class Gitea {
         return Optional.empty();
     }
 
-    GtLabel getOrCreateLabel(String owner, String name, String labelName, String labelColor, String description) throws IOException {
+    public GtLabel getOrCreateLabel(String owner, String name, String labelName, String labelColor, String description) throws IOException {
         logger.debug(RB.$("git.label.fetch", labelName));
 
         List<GtLabel> labels = listLabels(owner, name);
@@ -386,7 +386,7 @@ class Gitea {
         return api.createLabel(owner, name, labelName, labelColor, description);
     }
 
-    Optional<GtIssue> findIssue(String owner, String name, int issueNumber) throws IOException {
+    public Optional<GtIssue> findIssue(String owner, String name, int issueNumber) throws IOException {
         logger.debug(RB.$("git.issue.fetch", issueNumber));
         try {
             return Optional.of(api.findIssue(owner, name, issueNumber));
@@ -398,7 +398,7 @@ class Gitea {
         }
     }
 
-    void addLabelToIssue(String owner, String name, GtIssue issue, GtLabel label) {
+    public void addLabelToIssue(String owner, String name, GtIssue issue, GtLabel label) {
         logger.debug(RB.$("git.issue.label", label.getName(), issue.getNumber()));
 
         Map<String, List<Integer>> labels = new LinkedHashMap<>();
@@ -409,7 +409,7 @@ class Gitea {
         api.labelIssue(labels, owner, name, issue.getNumber());
     }
 
-    void commentOnIssue(String owner, String name, GtIssue issue, String comment) {
+    public void commentOnIssue(String owner, String name, GtIssue issue, String comment) {
         logger.debug(RB.$("git.issue.comment", issue.getNumber()));
 
         Map<String, String> params = new LinkedHashMap<>();
@@ -418,7 +418,7 @@ class Gitea {
         api.commentIssue(params, owner, name, issue.getNumber());
     }
 
-    void setMilestoneOnIssue(String owner, String name, GtIssue issue, GtMilestone milestone) {
+    public void setMilestoneOnIssue(String owner, String name, GtIssue issue, GtMilestone milestone) {
         Map<String, Object> params = new LinkedHashMap<>();
         params.put("milestone", milestone.getId());
 

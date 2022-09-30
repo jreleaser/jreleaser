@@ -30,11 +30,16 @@ import static java.util.Collections.unmodifiableMap;
  * @author Andres Almiray
  * @since 1.3.0
  */
-public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2MavenDeployer> {
+public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2MavenDeployer, org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer> {
     private Boolean closeRepository;
     private Boolean releaseRepository;
 
     private final org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer immutable = new org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer() {
+        @Override
+        public String getGroup() {
+            return org.jreleaser.model.api.deploy.maven.MavenDeployer.GROUP;
+        }
+
         @Override
         public String getUrl() {
             return url;
@@ -135,6 +140,7 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
         super(org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer asImmutable() {
         return immutable;
     }

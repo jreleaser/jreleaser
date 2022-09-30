@@ -55,7 +55,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.8.0
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
-public class S3ArtifactUploader extends AbstractArtifactUploader<S3Uploader> {
+public class S3ArtifactUploader extends AbstractArtifactUploader<org.jreleaser.model.api.upload.S3Uploader, S3Uploader> {
     private static final Tika TIKA = new Tika();
     private S3Uploader uploader;
 

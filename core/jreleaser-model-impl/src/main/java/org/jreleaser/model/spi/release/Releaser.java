@@ -25,7 +25,7 @@ import java.util.Optional;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface Releaser {
+public interface Releaser<A extends org.jreleaser.model.api.release.Releaser> {
     void release() throws ReleaseException;
 
     Repository maybeCreateRepository(String owner, String repo, String password) throws IOException;
@@ -35,4 +35,6 @@ public interface Releaser {
     String generateReleaseNotes() throws IOException;
 
     List<Release> listReleases(String owner, String repo) throws IOException;
+
+    A getReleaser();
 }

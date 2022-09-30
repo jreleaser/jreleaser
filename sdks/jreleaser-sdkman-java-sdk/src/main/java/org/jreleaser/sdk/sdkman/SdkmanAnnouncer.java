@@ -41,11 +41,18 @@ import static org.jreleaser.util.StringUtils.isTrue;
  * @since 0.1.0
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
-public class SdkmanAnnouncer implements Announcer {
+public class SdkmanAnnouncer implements Announcer<org.jreleaser.model.api.announce.SdkmanAnnouncer> {
     private final JReleaserContext context;
+    private final org.jreleaser.model.internal.announce.SdkmanAnnouncer sdkman;
 
-    SdkmanAnnouncer(JReleaserContext context) {
+    public SdkmanAnnouncer(JReleaserContext context) {
         this.context = context;
+        this.sdkman = context.getModel().getAnnounce().getSdkman();
+    }
+
+    @Override
+    public org.jreleaser.model.api.announce.SdkmanAnnouncer getAnnouncer() {
+        return sdkman.asImmutable();
     }
 
     @Override
@@ -55,7 +62,7 @@ public class SdkmanAnnouncer implements Announcer {
 
     @Override
     public boolean isEnabled() {
-        return context.getModel().getAnnounce().getSdkman().isEnabled();
+        return sdkman.isEnabled();
     }
 
     @Override
@@ -68,8 +75,8 @@ public class SdkmanAnnouncer implements Announcer {
                 return isNotBlank(sdkman.getCandidate()) ? sdkman.getCandidate().trim() : context.getModel().getProject().getName();
             }, distribution -> distribution));
 
-        Boolean set = (Boolean) context.getModel().getAnnounce().getSdkman().getExtraProperties().get(MAGIC_SET);
-        context.getModel().getAnnounce().getSdkman().getExtraProperties().remove(MAGIC_SET);
+        Boolean set = (Boolean) sdkman.getExtraProperties().get(MAGIC_SET);
+        sdkman.getExtraProperties().remove(MAGIC_SET);
 
         if (distributions.isEmpty()) {
             if (set == null || !set) {
@@ -116,8 +123,6 @@ public class SdkmanAnnouncer implements Announcer {
     }
 
     private void announceProject() throws AnnounceException {
-        org.jreleaser.model.internal.announce.SdkmanAnnouncer sdkman = context.getModel().getAnnounce().getSdkman();
-
         Map<String, String> platforms = new LinkedHashMap<>();
         // collect artifacts by supported SDKMAN! platform
         for (Distribution distribution : context.getModel().getActiveDistributions()) {

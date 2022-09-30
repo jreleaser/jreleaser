@@ -17,6 +17,7 @@
  */
 package org.jreleaser.workflow;
 
+import org.jreleaser.model.api.JReleaserCommand;
 import org.jreleaser.model.internal.JReleaserContext;
 
 /**
@@ -24,5 +25,7 @@ import org.jreleaser.model.internal.JReleaserContext;
  * @since 0.1.0
  */
 public interface WorkflowItem {
+    JReleaserCommand getCommand();
+
     void invoke(JReleaserContext context);
 }

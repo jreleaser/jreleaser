@@ -23,7 +23,8 @@ import org.jreleaser.model.spi.deploy.DeployException;
  * @author Andres Almiray
  * @since 1.3.0
  */
-public interface MavenDeployer<D extends org.jreleaser.model.internal.deploy.maven.MavenDeployer> {
+public interface MavenDeployer<A extends org.jreleaser.model.api.deploy.maven.MavenDeployer,
+    D extends org.jreleaser.model.internal.deploy.maven.MavenDeployer<A>> {
     D getDeployer();
 
     void setDeployer(D deployer);

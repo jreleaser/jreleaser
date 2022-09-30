@@ -51,21 +51,21 @@ import static org.jreleaser.util.StringUtils.quote;
  * @author Andres Almiray
  * @since 0.2.0
  */
-abstract class AbstractAssemblerProcessor<A extends Assembler> implements AssemblerProcessor<A> {
+abstract class AbstractAssemblerProcessor<A extends org.jreleaser.model.api.assemble.Assembler, S extends Assembler<A>> implements AssemblerProcessor<A, S> {
     protected final JReleaserContext context;
-    protected A assembler;
+    protected S assembler;
 
     protected AbstractAssemblerProcessor(JReleaserContext context) {
         this.context = context;
     }
 
     @Override
-    public A getAssembler() {
+    public S getAssembler() {
         return assembler;
     }
 
     @Override
-    public void setAssembler(A assembler) {
+    public void setAssembler(S assembler) {
         this.assembler = assembler;
     }
 

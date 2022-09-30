@@ -43,12 +43,17 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.4.0
  */
-public final class MattermostAnnouncer extends AbstractAnnouncer<MattermostAnnouncer> {
+public final class MattermostAnnouncer extends AbstractAnnouncer<MattermostAnnouncer, org.jreleaser.model.api.announce.MattermostAnnouncer> {
     private String webhook;
     private String message;
     private String messageTemplate;
 
     private final org.jreleaser.model.api.announce.MattermostAnnouncer immutable = new org.jreleaser.model.api.announce.MattermostAnnouncer() {
+        @Override
+        public String getType() {
+            return org.jreleaser.model.api.announce.MattermostAnnouncer.TYPE;
+        }
+
         @Override
         public String getWebhook() {
             return webhook;
@@ -114,6 +119,7 @@ public final class MattermostAnnouncer extends AbstractAnnouncer<MattermostAnnou
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.announce.MattermostAnnouncer asImmutable() {
         return immutable;
     }

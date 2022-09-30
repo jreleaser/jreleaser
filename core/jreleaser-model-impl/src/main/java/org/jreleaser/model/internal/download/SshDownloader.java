@@ -23,5 +23,5 @@ import org.jreleaser.model.internal.common.Ssh;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public interface SshDownloader extends Downloader, Ssh {
+public interface SshDownloader<A extends org.jreleaser.model.api.download.Downloader> extends Downloader<A>, Ssh {
 }

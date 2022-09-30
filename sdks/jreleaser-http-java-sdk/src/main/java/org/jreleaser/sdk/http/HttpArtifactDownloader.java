@@ -35,7 +35,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public class HttpArtifactDownloader extends AbstractArtifactDownloader<HttpDownloader> {
+public class HttpArtifactDownloader extends AbstractArtifactDownloader<org.jreleaser.model.api.download.HttpDownloader, HttpDownloader> {
     private HttpDownloader downloader;
 
     public HttpArtifactDownloader(JReleaserContext context) {

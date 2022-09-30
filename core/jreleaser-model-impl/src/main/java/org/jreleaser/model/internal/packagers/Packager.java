@@ -32,7 +32,7 @@ import java.util.Set;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface Packager extends Domain, ExtraProperties, Activatable {
+public interface Packager<A extends org.jreleaser.model.api.packagers.Packager> extends Domain, ExtraProperties, Activatable {
     String getType();
 
     String getDownloadUrl();
@@ -60,4 +60,6 @@ public interface Packager extends Domain, ExtraProperties, Activatable {
     boolean isFailed();
 
     void fail();
+
+    A asImmutable();
 }

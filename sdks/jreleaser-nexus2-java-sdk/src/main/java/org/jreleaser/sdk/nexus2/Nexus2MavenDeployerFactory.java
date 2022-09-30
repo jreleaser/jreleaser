@@ -26,7 +26,8 @@ import org.kordamp.jipsy.annotations.ServiceProviderFor;
  * @since 1.3.0
  */
 @ServiceProviderFor(MavenDeployerFactory.class)
-public class Nexus2MavenDeployerFactory implements MavenDeployerFactory<org.jreleaser.model.internal.deploy.maven.Nexus2MavenDeployer, Nexus2MavenDeployer> {
+public class Nexus2MavenDeployerFactory implements MavenDeployerFactory<org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer,
+    org.jreleaser.model.internal.deploy.maven.Nexus2MavenDeployer, Nexus2MavenDeployer> {
     @Override
     public String getName() {
         return org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.TYPE;

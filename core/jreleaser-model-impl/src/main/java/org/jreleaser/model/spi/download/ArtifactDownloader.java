@@ -23,7 +23,7 @@ import org.jreleaser.model.internal.download.Downloader;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public interface ArtifactDownloader<D extends Downloader> {
+public interface ArtifactDownloader<A extends org.jreleaser.model.api.download.Downloader, D extends Downloader<A>> {
     D getDownloader();
 
     void setDownloader(D downloader);

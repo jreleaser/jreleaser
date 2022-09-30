@@ -46,7 +46,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public final class SmtpAnnouncer extends AbstractAnnouncer<SmtpAnnouncer> {
+public final class SmtpAnnouncer extends AbstractAnnouncer<SmtpAnnouncer, org.jreleaser.model.api.announce.SmtpAnnouncer> {
     private final Map<String, String> properties = new LinkedHashMap<>();
 
     private Mail.Transport transport;
@@ -65,6 +65,11 @@ public final class SmtpAnnouncer extends AbstractAnnouncer<SmtpAnnouncer> {
     private Mail.MimeType mimeType;
 
     private final org.jreleaser.model.api.announce.SmtpAnnouncer immutable = new org.jreleaser.model.api.announce.SmtpAnnouncer() {
+        @Override
+        public String getType() {
+            return org.jreleaser.model.api.announce.SmtpAnnouncer.TYPE;
+        }
+
         @Override
         public Mail.Transport getTransport() {
             return transport;
@@ -190,6 +195,7 @@ public final class SmtpAnnouncer extends AbstractAnnouncer<SmtpAnnouncer> {
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.announce.SmtpAnnouncer asImmutable() {
         return immutable;
     }

@@ -25,7 +25,7 @@ import org.jreleaser.model.internal.common.Artifact;
  * @author Andres Almiray
  * @since 0.8.0
  */
-public interface WebUploader extends Uploader, Http {
+public interface WebUploader<A extends org.jreleaser.model.api.upload.WebUploader> extends Uploader<A>, Http {
     String getUploadUrl();
 
     void setUploadUrl(String uploadUrl);

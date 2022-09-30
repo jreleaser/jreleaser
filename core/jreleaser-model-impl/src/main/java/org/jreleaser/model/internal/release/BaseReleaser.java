@@ -50,7 +50,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class BaseReleaser<S extends BaseReleaser<S>> extends AbstractModelObject<S> implements Releaser {
+public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Releaser, S extends BaseReleaser<A, S>> extends AbstractModelObject<S> implements Releaser<A> {
     @JsonIgnore
     protected final String serviceName;
     protected final Changelog changelog = new Changelog();

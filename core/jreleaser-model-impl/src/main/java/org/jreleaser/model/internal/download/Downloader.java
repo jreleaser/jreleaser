@@ -40,7 +40,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public interface Downloader extends Domain, Activatable, TimeoutAware, ExtraProperties {
+public interface Downloader<A extends org.jreleaser.model.api.download.Downloader> extends Domain, Activatable, TimeoutAware, ExtraProperties {
     String getType();
 
     String getName();
@@ -52,6 +52,8 @@ public interface Downloader extends Domain, Activatable, TimeoutAware, ExtraProp
     void setAssets(List<Asset> assets);
 
     void addAsset(Asset asset);
+
+    A asImmutable();
 
     class Unpack extends AbstractModelObject<Unpack> implements Domain, EnabledAware {
         private Boolean enabled;

@@ -35,7 +35,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.8.0
  */
-public abstract class AbstractJavaAssembler<S extends AbstractJavaAssembler<S>> extends AbstractAssembler<S> implements JavaAssembler {
+public abstract class AbstractJavaAssembler<S extends AbstractJavaAssembler<S, A>, A extends org.jreleaser.model.api.assemble.Assembler> extends AbstractAssembler<S, A> implements JavaAssembler<A> {
     protected final Artifact mainJar = new Artifact();
     protected final List<Glob> jars = new ArrayList<>();
     protected final List<Glob> files = new ArrayList<>();

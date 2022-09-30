@@ -36,7 +36,7 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 1.2.0
  */
-public class GiteaArtifactUploader extends AbstractArtifactUploader<GiteaUploader> {
+public class GiteaArtifactUploader extends AbstractArtifactUploader<org.jreleaser.model.api.upload.GiteaUploader, GiteaUploader> {
     private GiteaUploader uploader;
 
     public GiteaArtifactUploader(JReleaserContext context) {

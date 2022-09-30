@@ -30,7 +30,7 @@ import static org.jreleaser.model.api.download.ScpDownloader.TYPE;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public final class ScpDownloader extends AbstractSshDownloader<ScpDownloader> {
+public final class ScpDownloader extends AbstractSshDownloader<org.jreleaser.model.api.download.ScpDownloader, ScpDownloader> {
     private final org.jreleaser.model.api.download.ScpDownloader immutable = new org.jreleaser.model.api.download.ScpDownloader() {
         private List<? extends org.jreleaser.model.api.download.Downloader.Asset> assets;
 
@@ -144,6 +144,7 @@ public final class ScpDownloader extends AbstractSshDownloader<ScpDownloader> {
         return "SCTP";
     }
 
+    @Override
     public org.jreleaser.model.api.download.ScpDownloader asImmutable() {
         return immutable;
     }

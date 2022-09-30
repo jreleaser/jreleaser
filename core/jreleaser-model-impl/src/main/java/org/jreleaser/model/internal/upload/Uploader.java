@@ -31,7 +31,7 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.3.0
  */
-public interface Uploader extends Domain, Activatable, TimeoutAware, ExtraProperties {
+public interface Uploader<A extends org.jreleaser.model.api.upload.Uploader> extends Domain, Activatable, TimeoutAware, ExtraProperties {
     String getType();
 
     String getName();
@@ -65,6 +65,8 @@ public interface Uploader extends Domain, Activatable, TimeoutAware, ExtraProper
     void setChecksums(Boolean checksums);
 
     List<String> resolveSkipKeys();
+
+    A asImmutable();
 
     Map<String, Object> artifactProps(JReleaserContext context, Artifact artifact);
 

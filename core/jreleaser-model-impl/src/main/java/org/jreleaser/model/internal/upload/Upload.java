@@ -551,7 +551,7 @@ public final class Upload extends AbstractModelObject<Upload> implements Domain,
         return map;
     }
 
-    public <A extends Uploader> Map<String, A> findUploadersByType(String uploaderType) {
+    public <A extends Uploader<?>> Map<String, A> findUploadersByType(String uploaderType) {
         switch (uploaderType) {
             case org.jreleaser.model.api.upload.ArtifactoryUploader.TYPE:
                 return (Map<String, A>) artifactory;
@@ -574,7 +574,7 @@ public final class Upload extends AbstractModelObject<Upload> implements Domain,
         return Collections.emptyMap();
     }
 
-    public <A extends Uploader> List<A> findAllActiveUploaders() {
+    public <A extends Uploader<?>> List<A> findAllActiveUploaders() {
         List<A> uploaders = new ArrayList<>();
         uploaders.addAll((List<A>) getActiveArtifactories());
         uploaders.addAll((List<A>) getActiveFtps());
@@ -590,8 +590,8 @@ public final class Upload extends AbstractModelObject<Upload> implements Domain,
     public Map<String, String> resolveDownloadUrls(JReleaserContext context, Distribution distribution, Artifact artifact, String prefix) {
         Map<String, String> urls = new LinkedHashMap<>();
 
-        List<Uploader> uploaders = findAllActiveUploaders();
-        for (Uploader uploader : uploaders) {
+        List<Uploader<?>> uploaders = findAllActiveUploaders();
+        for (Uploader<?> uploader : uploaders) {
             List<String> keys = uploader.resolveSkipKeys();
             if (isSkip(distribution, keys) ||
                 isSkip(artifact, keys)) continue;
@@ -615,7 +615,7 @@ public final class Upload extends AbstractModelObject<Upload> implements Domain,
         }
 
         if (uploaders.size() == 1) {
-            Uploader uploader = uploaders.get(0);
+            Uploader<?> uploader = uploaders.get(0);
             List<String> keys = uploader.resolveSkipKeys();
             if (!isSkip(distribution, keys) &&
                 !isSkip(artifact, keys)) {

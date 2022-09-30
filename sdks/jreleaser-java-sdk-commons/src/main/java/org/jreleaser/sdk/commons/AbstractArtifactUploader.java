@@ -45,7 +45,7 @@ import static org.jreleaser.util.StringUtils.isTrue;
  * @author Andres Almiray
  * @since 0.4.0
  */
-public abstract class AbstractArtifactUploader<U extends Uploader> implements ArtifactUploader<U> {
+public abstract class AbstractArtifactUploader<A extends org.jreleaser.model.api.upload.Uploader, U extends Uploader<A>> implements ArtifactUploader<A, U> {
     protected final JReleaserContext context;
 
     protected AbstractArtifactUploader(JReleaserContext context) {

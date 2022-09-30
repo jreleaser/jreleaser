@@ -19,13 +19,15 @@ package org.jreleaser.workflow;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.engine.context.ModelValidator;
+import org.jreleaser.extensions.api.workflow.WorkflowListenerException;
+import org.jreleaser.model.JReleaserException;
+import org.jreleaser.model.api.hooks.ExecutionEvent;
 import org.jreleaser.model.internal.JReleaserContext;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static org.jreleaser.util.TimeUtils.formatDuration;
 
@@ -44,7 +46,10 @@ class WorkflowImpl implements Workflow {
     }
 
     public void execute() {
-        AtomicReference<RuntimeException> exception = new AtomicReference<>();
+        RuntimeException stepException = null;
+        Throwable listenerException = null;
+        Throwable startSessionException = null;
+        Throwable endSessionException = null;
 
         Instant start = Instant.now();
         context.getLogger().info(RB.$("workflow.dryrun"), context.isDryrun());
@@ -69,27 +74,113 @@ class WorkflowImpl implements Workflow {
         logFilters("workflow.included.announcers", context.getIncludedAnnouncers());
         logFilters("workflow.excluded.announcers", context.getExcludedAnnouncers());
 
-        for (WorkflowItem item : items) {
-            try {
-                item.invoke(context);
-            } catch (RuntimeException e) {
-                // terminate
-                exception.compareAndSet(null, e);
-                break;
+        try {
+            context.fireSessionStartEvent();
+        } catch (WorkflowListenerException e) {
+            context.getLogger().error(RB.$("listener.failure", e.getListener().getClass().getName()));
+            context.getLogger().trace(e);
+            if (!e.getListener().isContinueOnError()) {
+                startSessionException = e.getCause();
             }
         }
+
+        if (null == startSessionException) {
+            boolean failure = false;
+            for (WorkflowItem item : items) {
+                try {
+                    context.fireWorkflowEvent(ExecutionEvent.before(item.getCommand().toStep()));
+                } catch (WorkflowListenerException beforeException) {
+                    context.getLogger().error(RB.$("listener.failure", beforeException.getListener().getClass().getName()));
+                    context.getLogger().trace(beforeException);
+                    if (!beforeException.getListener().isContinueOnError()) {
+                        listenerException = beforeException.getCause();
+                        break;
+                    }
+                }
+
+                try {
+                    item.invoke(context);
+                } catch (RuntimeException e) {
+                    // terminate
+                    failure = true;
+                    stepException = e;
+
+                    try {
+                        context.fireWorkflowEvent(ExecutionEvent.failure(item.getCommand().toStep(), e));
+                    } catch (WorkflowListenerException failureException) {
+                        context.getLogger().error(RB.$("listener.failure", failureException.getListener().getClass().getName()));
+                        context.getLogger().trace(failureException);
+                        if (!failureException.getListener().isContinueOnError()) {
+                            listenerException = failureException.getCause();
+                            break;
+                        }
+                    }
+                    break;
+                }
+
+                if (!failure) {
+                    try {
+                        context.fireWorkflowEvent(ExecutionEvent.success(item.getCommand().toStep()));
+                    } catch (WorkflowListenerException afterException) {
+                        context.getLogger().error(RB.$("listener.failure", afterException.getListener().getClass().getName()));
+                        context.getLogger().trace(afterException);
+                        if (!afterException.getListener().isContinueOnError()) {
+                            listenerException = afterException.getCause();
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        try {
+            context.fireSessionEndEvent();
+        } catch (WorkflowListenerException e) {
+            context.getLogger().error(RB.$("listener.failure", e.getListener().getClass().getName()));
+            context.getLogger().trace(e);
+            if (!e.getListener().isContinueOnError()) {
+                endSessionException = e.getCause();
+            }
+        }
+
         Instant end = Instant.now();
 
         double duration = Duration.between(start, end).toMillis() / 1000d;
 
         context.getLogger().reset();
         context.report();
-        if (null == exception.get()) {
-            context.getLogger().info(RB.$("workflow.success"), formatDuration(duration));
-        } else {
+
+        if (null != startSessionException) {
             context.getLogger().error(RB.$("workflow.failure"), formatDuration(duration));
-            context.getLogger().trace(exception.get());
-            throw exception.get();
+            context.getLogger().trace(startSessionException);
+            if (startSessionException instanceof RuntimeException) {
+                throw (RuntimeException) startSessionException;
+            } else {
+                throw new JReleaserException(RB.$("ERROR_unexpected_error"), startSessionException);
+            }
+        } else if (null != endSessionException) {
+            context.getLogger().error(RB.$("workflow.failure"), formatDuration(duration));
+            context.getLogger().trace(endSessionException);
+            if (endSessionException instanceof RuntimeException) {
+                throw (RuntimeException) endSessionException;
+            } else {
+                throw new JReleaserException(RB.$("ERROR_unexpected_error"), endSessionException);
+            }
+        } else {
+            if (null == stepException) {
+                if (null != listenerException) {
+                    if (listenerException instanceof RuntimeException) {
+                        throw (RuntimeException) listenerException;
+                    } else {
+                        throw new JReleaserException(RB.$("ERROR_unexpected_error"), listenerException);
+                    }
+                }
+                context.getLogger().info(RB.$("workflow.success"), formatDuration(duration));
+            } else {
+                context.getLogger().error(RB.$("workflow.failure"), formatDuration(duration));
+                context.getLogger().trace(stepException);
+                throw stepException;
+            }
         }
     }
 

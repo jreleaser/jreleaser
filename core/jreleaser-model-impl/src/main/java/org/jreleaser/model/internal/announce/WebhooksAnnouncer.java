@@ -34,11 +34,16 @@ import static org.jreleaser.model.api.announce.WebhooksAnnouncer.TYPE;
  * @author Andres Almiray
  * @since 0.5.0
  */
-public final class WebhooksAnnouncer extends AbstractAnnouncer<WebhooksAnnouncer> {
+public final class WebhooksAnnouncer extends AbstractAnnouncer<WebhooksAnnouncer, org.jreleaser.model.api.announce.WebhooksAnnouncer> {
     private final Map<String, WebhookAnnouncer> webhooks = new LinkedHashMap<>();
 
     private final org.jreleaser.model.api.announce.WebhooksAnnouncer immutable = new org.jreleaser.model.api.announce.WebhooksAnnouncer() {
         private Map<String, ? extends org.jreleaser.model.api.announce.WebhookAnnouncer> webhooks;
+
+        @Override
+        public String getType() {
+            return org.jreleaser.model.api.announce.WebhooksAnnouncer.TYPE;
+        }
 
         @Override
         public Map<String, ? extends org.jreleaser.model.api.announce.WebhookAnnouncer> getWebhooks() {
@@ -100,6 +105,7 @@ public final class WebhooksAnnouncer extends AbstractAnnouncer<WebhooksAnnouncer
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.announce.WebhooksAnnouncer asImmutable() {
         return immutable;
     }

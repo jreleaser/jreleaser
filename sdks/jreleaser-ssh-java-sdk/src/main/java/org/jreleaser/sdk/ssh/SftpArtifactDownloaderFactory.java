@@ -27,7 +27,8 @@ import org.kordamp.jipsy.annotations.ServiceProviderFor;
  * @since 1.1.0
  */
 @ServiceProviderFor(ArtifactDownloaderFactory.class)
-public class SftpArtifactDownloaderFactory implements ArtifactDownloaderFactory<SftpDownloader, SftpArtifactDownloader> {
+public class SftpArtifactDownloaderFactory implements ArtifactDownloaderFactory<org.jreleaser.model.api.download.SftpDownloader,
+    SftpDownloader, SftpArtifactDownloader> {
     @Override
     public String getName() {
         return org.jreleaser.model.api.download.SftpDownloader.TYPE;

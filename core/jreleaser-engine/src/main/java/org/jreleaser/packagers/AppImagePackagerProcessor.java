@@ -90,7 +90,7 @@ public class AppImagePackagerProcessor extends AbstractRepositoryPackagerProcess
     }
 
     private void setupPrepare(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
-        BaseReleaser releaser = context.getModel().getRelease().getReleaser();
+        BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
 
         try {
             props.put(KEY_APPIMAGE_RELEASES, Releasers.releaserFor(context)
@@ -145,7 +145,7 @@ public class AppImagePackagerProcessor extends AbstractRepositoryPackagerProcess
         props.put(KEY_APPIMAGE_REPO_OWNER, packager.getRepository().getOwner());
         props.put(KEY_APPIMAGE_REPO_NAME, packager.getRepository().getName());
 
-        BaseReleaser releaser = context.getModel().getRelease().getReleaser();
+        BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
         String str = (String) props.get(KEY_DISTRIBUTION_ARTIFACT_FILE);
         str = str.replace(context.getModel().getProject().getEffectiveVersion(), "${DISTRIBUTION_VERSION}");
         props.put(KEY_APPIMAGE_DISTRIBUTION_ARTIFACT_FILE, str);

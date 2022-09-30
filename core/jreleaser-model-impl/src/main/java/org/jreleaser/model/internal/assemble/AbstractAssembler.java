@@ -42,7 +42,7 @@ import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public abstract class AbstractAssembler<S extends AbstractAssembler<S>> extends AbstractModelObject<S> implements Assembler {
+public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A extends org.jreleaser.model.api.assemble.Assembler> extends AbstractModelObject<S> implements Assembler<A> {
     @JsonIgnore
     protected final Set<Artifact> outputs = new LinkedHashSet<>();
     protected final Map<String, Object> extraProperties = new LinkedHashMap<>();

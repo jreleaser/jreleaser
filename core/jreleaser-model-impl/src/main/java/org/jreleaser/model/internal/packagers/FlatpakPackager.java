@@ -58,7 +58,7 @@ import static org.jreleaser.util.StringUtils.isFalse;
  * @author Andres Almiray
  * @since 1.2.0
  */
-public final class FlatpakPackager extends AbstractRepositoryPackager<FlatpakPackager> {
+public final class FlatpakPackager extends AbstractRepositoryPackager<org.jreleaser.model.api.packagers.FlatpakPackager, FlatpakPackager> {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
 
     static {
@@ -247,6 +247,7 @@ public final class FlatpakPackager extends AbstractRepositoryPackager<FlatpakPac
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.packagers.FlatpakPackager asImmutable() {
         return immutable;
     }

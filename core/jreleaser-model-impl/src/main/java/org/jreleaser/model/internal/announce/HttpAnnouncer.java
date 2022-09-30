@@ -43,7 +43,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 1.3.0
  */
-public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer> implements Http {
+public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer, org.jreleaser.model.api.announce.HttpAnnouncer> implements Http {
     private final Map<String, String> headers = new LinkedHashMap<>();
     private String url;
     private String username;
@@ -55,6 +55,11 @@ public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer> implem
     private String bearerKeyword;
 
     private final org.jreleaser.model.api.announce.HttpAnnouncer immutable = new org.jreleaser.model.api.announce.HttpAnnouncer() {
+        @Override
+        public String getType() {
+            return org.jreleaser.model.api.announce.HttpAnnouncers.TYPE;
+        }
+
         @Override
         public Method getMethod() {
             return null;
@@ -150,6 +155,7 @@ public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer> implem
         super("");
     }
 
+    @Override
     public org.jreleaser.model.api.announce.HttpAnnouncer asImmutable() {
         return immutable;
     }

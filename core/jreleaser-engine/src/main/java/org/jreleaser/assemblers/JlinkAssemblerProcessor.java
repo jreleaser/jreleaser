@@ -57,7 +57,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<JlinkAssembler> {
+public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<org.jreleaser.model.api.assemble.JlinkAssembler, JlinkAssembler> {
     public JlinkAssemblerProcessor(JReleaserContext context) {
         super(context);
     }

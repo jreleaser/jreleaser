@@ -26,6 +26,8 @@ import org.jreleaser.model.api.common.ExtraProperties;
  * @since 1.3.0
  */
 public interface Deployer extends Domain, Activatable, ExtraProperties {
+    String getGroup();
+
     String getType();
 
     String getName();

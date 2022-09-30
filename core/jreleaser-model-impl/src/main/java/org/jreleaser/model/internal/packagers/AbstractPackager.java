@@ -42,7 +42,7 @@ import static java.util.stream.Collectors.toList;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class AbstractPackager<S extends AbstractPackager<S>> extends AbstractModelObject<S> implements Packager {
+public abstract class AbstractPackager<A extends org.jreleaser.model.api.packagers.Packager, S extends AbstractPackager<A, S>> extends AbstractModelObject<S> implements Packager<A> {
     @JsonIgnore
     protected final String type;
     protected final Map<String, Object> extraProperties = new LinkedHashMap<>();

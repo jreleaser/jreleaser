@@ -42,7 +42,7 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
  * @author Andres Almiray
  * @since 0.8.0
  */
-public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler> {
+public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, org.jreleaser.model.api.assemble.ArchiveAssembler> {
     private final Set<Archive.Format> formats = new LinkedHashSet<>();
 
     private String archiveName;
@@ -148,6 +148,7 @@ public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler> 
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.assemble.ArchiveAssembler asImmutable() {
         return immutable;
     }

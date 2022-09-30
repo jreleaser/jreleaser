@@ -22,8 +22,9 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.extensions.api.Extension;
 import org.jreleaser.extensions.api.ExtensionManager;
 import org.jreleaser.extensions.api.ExtensionPoint;
+import org.jreleaser.extensions.api.workflow.WorkflowListener;
 import org.jreleaser.model.JReleaserException;
-import org.jreleaser.model.api.JReleaserContext;
+import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.sdk.command.CommandException;
 import org.jreleaser.sdk.tool.Mvn;
 import org.jreleaser.sdk.tool.ToolException;
@@ -97,6 +98,8 @@ public final class DefaultExtensionManager implements ExtensionManager {
                 }
             });
         }
+
+        context.setWorkflowListeners(findExtensionPoints(WorkflowListener.class));
     }
 
     public <T extends ExtensionPoint> Set<T> findExtensionPoints(Class<T> extensionPointType) {
@@ -166,7 +169,7 @@ public final class DefaultExtensionManager implements ExtensionManager {
             .resolve(extensionDef.getName())
             .toAbsolutePath();
 
-        Mvn mvn = new Mvn(context, DefaultVersions.getInstance().getMvnVersion());
+        Mvn mvn = new Mvn(context.asImmutable(), DefaultVersions.getInstance().getMvnVersion());
 
         try {
             if (!mvn.setup()) {
@@ -241,8 +244,10 @@ public final class DefaultExtensionManager implements ExtensionManager {
         for (ExtensionPoint extensionPoint : extension.provides()) {
             String extensionPointTypeName = extensionPoint.getClass().getName();
             if (null != extensionDef && extensionDef.getExtensionPoints().containsKey(extensionPointTypeName)) {
-                extensionPoint.init(extensionDef.getExtensionPoints().get(extensionPointTypeName)
+                extensionPoint.init(context.asImmutable(), extensionDef.getExtensionPoints().get(extensionPointTypeName)
                     .getProperties());
+            } else {
+                extensionPoint.init(context.asImmutable(), Collections.emptyMap());
             }
             context.getLogger().debug(RB.$("extension.manager.add.extension.point", extensionPointTypeName, extensionName));
             allExtensionPoints.add(extensionPoint);

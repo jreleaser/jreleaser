@@ -51,7 +51,7 @@ import static org.jreleaser.util.StringUtils.isFalse;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public final class ScoopPackager extends AbstractRepositoryPackager<ScoopPackager> {
+public final class ScoopPackager extends AbstractRepositoryPackager<org.jreleaser.model.api.packagers.ScoopPackager, ScoopPackager> {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
 
     static {
@@ -180,6 +180,7 @@ public final class ScoopPackager extends AbstractRepositoryPackager<ScoopPackage
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.packagers.ScoopPackager asImmutable() {
         return immutable;
     }

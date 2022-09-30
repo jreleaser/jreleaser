@@ -32,7 +32,7 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public abstract class AbstractDownloader<S extends AbstractDownloader<S>> extends AbstractModelObject<S> implements Downloader {
+public abstract class AbstractDownloader<A extends org.jreleaser.model.api.download.Downloader, S extends AbstractDownloader<A, S>> extends AbstractModelObject<S> implements Downloader<A> {
     @JsonIgnore
     protected final String type;
     protected final Map<String, Object> extraProperties = new LinkedHashMap<>();

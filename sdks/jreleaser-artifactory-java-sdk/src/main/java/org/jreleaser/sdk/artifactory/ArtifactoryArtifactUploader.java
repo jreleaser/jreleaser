@@ -40,7 +40,7 @@ import java.util.Map;
  * @since 0.3.0
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
-public class ArtifactoryArtifactUploader extends AbstractArtifactUploader<ArtifactoryUploader> {
+public class ArtifactoryArtifactUploader extends AbstractArtifactUploader<org.jreleaser.model.api.upload.ArtifactoryUploader, ArtifactoryUploader> {
     private ArtifactoryUploader uploader;
 
     public ArtifactoryArtifactUploader(JReleaserContext context) {

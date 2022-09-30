@@ -27,7 +27,7 @@ import static java.util.Collections.unmodifiableMap;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class GiteaReleaser extends BaseReleaser<GiteaReleaser> {
+public class GiteaReleaser extends BaseReleaser<org.jreleaser.model.api.release.GiteaReleaser, GiteaReleaser> {
     private Boolean draft;
 
     private final org.jreleaser.model.api.release.GiteaReleaser immutable = new org.jreleaser.model.api.release.GiteaReleaser() {
@@ -268,6 +268,7 @@ public class GiteaReleaser extends BaseReleaser<GiteaReleaser> {
         setIssueTrackerUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/issues");
     }
 
+    @Override
     public org.jreleaser.model.api.release.GiteaReleaser asImmutable() {
         return immutable;
     }

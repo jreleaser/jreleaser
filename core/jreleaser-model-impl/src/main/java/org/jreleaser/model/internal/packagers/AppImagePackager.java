@@ -57,7 +57,7 @@ import static org.jreleaser.util.StringUtils.isFalse;
  * @author Andres Almiray
  * @since 1.2.0
  */
-public final class AppImagePackager extends AbstractRepositoryPackager<AppImagePackager> {
+public final class AppImagePackager extends AbstractRepositoryPackager<org.jreleaser.model.api.packagers.AppImagePackager, AppImagePackager> {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
 
     static {
@@ -228,6 +228,7 @@ public final class AppImagePackager extends AbstractRepositoryPackager<AppImageP
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.packagers.AppImagePackager asImmutable() {
         return immutable;
     }

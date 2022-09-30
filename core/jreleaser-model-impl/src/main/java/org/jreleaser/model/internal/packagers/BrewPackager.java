@@ -64,7 +64,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public final class BrewPackager extends AbstractRepositoryPackager<BrewPackager> {
+public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser.model.api.packagers.BrewPackager, BrewPackager> {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
 
     static {
@@ -202,6 +202,7 @@ public final class BrewPackager extends AbstractRepositoryPackager<BrewPackager>
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.packagers.BrewPackager asImmutable() {
         return immutable;
     }

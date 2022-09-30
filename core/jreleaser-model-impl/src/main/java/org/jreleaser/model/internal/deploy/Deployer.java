@@ -26,7 +26,7 @@ import org.jreleaser.model.internal.project.Project;
  * @author Andres Almiray
  * @since 1.3.0
  */
-public interface Deployer extends Domain, Activatable, ExtraProperties {
+public interface Deployer<A extends org.jreleaser.model.api.deploy.Deployer> extends Domain, Activatable, ExtraProperties {
     String getType();
 
     String getName();
@@ -34,4 +34,6 @@ public interface Deployer extends Domain, Activatable, ExtraProperties {
     void setName(String name);
 
     boolean resolveEnabled(Project project);
+
+    A asImmutable();
 }

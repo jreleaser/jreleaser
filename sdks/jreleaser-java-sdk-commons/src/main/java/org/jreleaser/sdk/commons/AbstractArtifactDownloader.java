@@ -33,7 +33,7 @@ import java.util.Optional;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public abstract class AbstractArtifactDownloader<D extends Downloader> implements ArtifactDownloader<D> {
+public abstract class AbstractArtifactDownloader<A extends org.jreleaser.model.api.download.Downloader, D extends Downloader<A>> implements ArtifactDownloader<A, D> {
     protected final JReleaserContext context;
 
     protected AbstractArtifactDownloader(JReleaserContext context) {

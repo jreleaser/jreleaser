@@ -28,6 +28,8 @@ import java.util.List;
  * @since 1.3.0
  */
 public interface MavenDeployer extends Deployer, TimeoutAware {
+    String GROUP = "maven";
+
     String getUrl();
 
     String getUsername();

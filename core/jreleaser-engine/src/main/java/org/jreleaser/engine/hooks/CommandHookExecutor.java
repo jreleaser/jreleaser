@@ -51,7 +51,7 @@ public final class CommandHookExecutor {
         try {
             runnable.run();
         } catch (RuntimeException e) {
-            executeHooks(ExecutionEvent.failure(step));
+            executeHooks(ExecutionEvent.failure(step, e));
             throw e;
         }
         executeHooks(ExecutionEvent.success(step));

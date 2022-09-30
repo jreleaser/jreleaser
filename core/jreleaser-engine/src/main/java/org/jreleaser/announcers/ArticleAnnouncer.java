@@ -50,12 +50,19 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.6.0
  */
-public class ArticleAnnouncer implements Announcer {
+@org.jreleaser.infra.nativeimage.annotations.NativeImage
+public class ArticleAnnouncer implements Announcer<org.jreleaser.model.api.announce.ArticleAnnouncer> {
     private final JReleaserContext context;
-    private org.jreleaser.model.internal.announce.ArticleAnnouncer article;
+    private final org.jreleaser.model.internal.announce.ArticleAnnouncer article;
 
-    ArticleAnnouncer(JReleaserContext context) {
+    public ArticleAnnouncer(JReleaserContext context) {
         this.context = context;
+        this.article = context.getModel().getAnnounce().getArticle();
+    }
+
+    @Override
+    public org.jreleaser.model.api.announce.ArticleAnnouncer getAnnouncer() {
+        return article.asImmutable();
     }
 
     @Override
@@ -65,13 +72,11 @@ public class ArticleAnnouncer implements Announcer {
 
     @Override
     public boolean isEnabled() {
-        return context.getModel().getAnnounce().getArticle().isEnabled();
+        return article.isEnabled();
     }
 
     @Override
     public void announce() throws AnnounceException {
-        article = context.getModel().getAnnounce().getArticle();
-
         Path prepareDirectory = context.getPrepareDirectory().resolve("article");
         prepareFiles(prepareDirectory);
         publishToRepository(prepareDirectory);
@@ -125,7 +130,7 @@ public class ArticleAnnouncer implements Announcer {
             return;
         }
 
-        BaseReleaser releaser = context.getModel().getRelease().getReleaser();
+        BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
 
         try {
             // get the repository
@@ -195,12 +200,12 @@ public class ArticleAnnouncer implements Announcer {
         }
     }
 
-    private String resolveGitUsername(BaseReleaser releaser) {
+    private String resolveGitUsername(BaseReleaser<?, ?> releaser) {
         String username = article.getRepository().getResolvedUsername(releaser);
         return isNotBlank(username) ? username : releaser.getResolvedUsername();
     }
 
-    private String resolveGitToken(BaseReleaser releaser) {
+    private String resolveGitToken(BaseReleaser<?, ?> releaser) {
         String token = article.getRepository().getResolvedToken(releaser);
         return isNotBlank(token) ? token : releaser.getResolvedToken();
     }

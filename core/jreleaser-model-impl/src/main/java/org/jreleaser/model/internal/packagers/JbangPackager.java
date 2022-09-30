@@ -40,7 +40,7 @@ import static org.jreleaser.model.api.packagers.JbangPackager.TYPE;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public final class JbangPackager extends AbstractRepositoryPackager<JbangPackager> {
+public final class JbangPackager extends AbstractRepositoryPackager<org.jreleaser.model.api.packagers.JbangPackager, JbangPackager> {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
 
     static {
@@ -153,6 +153,7 @@ public final class JbangPackager extends AbstractRepositoryPackager<JbangPackage
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.packagers.JbangPackager asImmutable() {
         return immutable;
     }

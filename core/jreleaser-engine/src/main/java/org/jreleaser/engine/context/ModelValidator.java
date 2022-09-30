@@ -119,6 +119,6 @@ public class ModelValidator {
             builder.build();
         }
 
-        extensionManager.load(context.asImmutable());
+        extensionManager.load(context);
     }
 }

@@ -147,7 +147,7 @@ public class FlatpakPackagerProcessor extends AbstractRepositoryPackagerProcesso
             throw new PackagerProcessingException("ERROR", e);
         }
 
-        BaseReleaser releaser = context.getModel().getRelease().getReleaser();
+        BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
 
         try {
             props.put(KEY_FLATPAK_RELEASES, Releasers.releaserFor(context)

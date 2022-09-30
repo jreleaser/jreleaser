@@ -110,7 +110,7 @@ public class BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<B
 
     @Override
     protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) throws PackagerProcessingException {
-        BaseReleaser releaser = context.getModel().getRelease().getReleaser();
+        BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
 
         props.put(KEY_BREW_FORMULA_NAME, packager.getResolvedFormulaName(props));
 

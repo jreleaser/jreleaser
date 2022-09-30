@@ -18,8 +18,13 @@
 package org.jreleaser.sdk.http;
 
 import feign.form.FormData;
+import org.jreleaser.bundle.RB;
+import org.jreleaser.extensions.api.workflow.WorkflowListenerException;
 import org.jreleaser.model.Constants;
 import org.jreleaser.model.Http;
+import org.jreleaser.model.api.JReleaserCommand;
+import org.jreleaser.model.api.announce.HttpAnnouncers;
+import org.jreleaser.model.api.hooks.ExecutionEvent;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.spi.announce.AnnounceException;
 import org.jreleaser.model.spi.announce.Announcer;
@@ -39,11 +44,19 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 1.3.0
  */
-public class HttpAnnouncer implements Announcer {
+@org.jreleaser.infra.nativeimage.annotations.NativeImage
+public class HttpAnnouncer implements Announcer<org.jreleaser.model.api.announce.HttpAnnouncers> {
     private final JReleaserContext context;
+    private final org.jreleaser.model.internal.announce.HttpAnnouncers https;
 
-    HttpAnnouncer(JReleaserContext context) {
+    public HttpAnnouncer(JReleaserContext context) {
         this.context = context;
+        this.https = context.getModel().getAnnounce().getConfiguredHttp();
+    }
+
+    @Override
+    public HttpAnnouncers getAnnouncer() {
+        return https.asImmutable();
     }
 
     @Override
@@ -53,12 +66,12 @@ public class HttpAnnouncer implements Announcer {
 
     @Override
     public boolean isEnabled() {
-        return context.getModel().getAnnounce().getConfiguredHttp().isEnabled();
+        return https.isEnabled();
     }
 
     @Override
     public void announce() throws AnnounceException {
-        Map<String, org.jreleaser.model.internal.announce.HttpAnnouncer> http = context.getModel().getAnnounce().getHttp();
+        Map<String, org.jreleaser.model.internal.announce.HttpAnnouncer> http = https.getHttpAnnouncers();
 
         for (Map.Entry<String, org.jreleaser.model.internal.announce.HttpAnnouncer> e : http.entrySet()) {
             if (e.getValue().isEnabled()) {
@@ -91,52 +104,56 @@ public class HttpAnnouncer implements Announcer {
 
         if (context.isDryrun()) return;
 
+        fireAnnouncerEvent(ExecutionEvent.before(JReleaserCommand.ANNOUNCE.toStep()), announcer);
+
         String username = announcer.getResolvedUsername();
         String password = announcer.getResolvedPassword();
 
-        if (!context.isDryrun()) {
-            try {
-                Map<String, String> headers = new LinkedHashMap<>();
-                switch (announcer.resolveAuthorization()) {
-                    case NONE:
-                        break;
-                    case BASIC:
-                        String auth = username + ":" + password;
-                        byte[] encodedAuth = Base64.getEncoder().encode(auth.getBytes());
-                        auth = new String(encodedAuth);
-                        headers.put("Authorization", "Basic " + auth);
-                        break;
-                    case BEARER:
-                        headers.put("Authorization", announcer.getBearerKeyword() + " " + password);
-                        break;
-                }
-
-                resolveHeaders(announcer, headers);
-
-                FormData data = ClientUtils.toFormData(
-                    "payload",
-                    headers.computeIfAbsent("Content-Type", k -> "text/plain"),
-                    payload);
-
-                if (announcer.getMethod() == Http.Method.POST) {
-                    ClientUtils.postFile(context.getLogger(),
-                        resolvedUrl,
-                        announcer.getConnectTimeout(),
-                        announcer.getReadTimeout(),
-                        data,
-                        headers);
-                } else {
-                    ClientUtils.putFile(context.getLogger(),
-                        resolvedUrl,
-                        announcer.getConnectTimeout(),
-                        announcer.getReadTimeout(),
-                        data,
-                        headers);
-                }
-            } catch (IOException | UploadException e) {
-                context.getLogger().trace(e);
-                throw new AnnounceException(e.getMessage(), e);
+        try {
+            Map<String, String> headers = new LinkedHashMap<>();
+            switch (announcer.resolveAuthorization()) {
+                case NONE:
+                    break;
+                case BASIC:
+                    String auth = username + ":" + password;
+                    byte[] encodedAuth = Base64.getEncoder().encode(auth.getBytes());
+                    auth = new String(encodedAuth);
+                    headers.put("Authorization", "Basic " + auth);
+                    break;
+                case BEARER:
+                    headers.put("Authorization", announcer.getBearerKeyword() + " " + password);
+                    break;
             }
+
+            resolveHeaders(announcer, headers);
+
+            FormData data = ClientUtils.toFormData(
+                "payload",
+                headers.computeIfAbsent("Content-Type", k -> "text/plain"),
+                payload);
+
+            if (announcer.getMethod() == Http.Method.POST) {
+                ClientUtils.postFile(context.getLogger(),
+                    resolvedUrl,
+                    announcer.getConnectTimeout(),
+                    announcer.getReadTimeout(),
+                    data,
+                    headers);
+            } else {
+                ClientUtils.putFile(context.getLogger(),
+                    resolvedUrl,
+                    announcer.getConnectTimeout(),
+                    announcer.getReadTimeout(),
+                    data,
+                    headers);
+            }
+
+            fireAnnouncerEvent(ExecutionEvent.success(JReleaserCommand.ANNOUNCE.toStep()), announcer);
+        } catch (IOException | UploadException e) {
+            fireAnnouncerEvent(ExecutionEvent.failure(JReleaserCommand.ANNOUNCE.toStep(), e), announcer);
+
+            context.getLogger().trace(e);
+            throw new AnnounceException(e.getMessage(), e);
         }
     }
 
@@ -146,5 +163,14 @@ public class HttpAnnouncer implements Announcer {
             String value = resolveTemplate(v, props);
             if (isNotBlank(value)) headers.put(k, value);
         });
+    }
+
+    private void fireAnnouncerEvent(ExecutionEvent event, org.jreleaser.model.internal.announce.HttpAnnouncer http) {
+        try {
+            context.fireAnnounceStepEvent(event, http.asImmutable());
+        } catch (WorkflowListenerException e) {
+            context.getLogger().error(RB.$("listener.failure", e.getListener().getClass().getName()));
+            context.getLogger().trace(e);
+        }
     }
 }

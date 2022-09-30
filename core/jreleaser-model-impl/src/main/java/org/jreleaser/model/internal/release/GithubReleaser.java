@@ -31,7 +31,7 @@ import static java.util.Collections.unmodifiableMap;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public final class GithubReleaser extends BaseReleaser<GithubReleaser> {
+public final class GithubReleaser extends BaseReleaser<org.jreleaser.model.api.release.GithubReleaser, GithubReleaser> {
     private final ReleaseNotes releaseNotes = new ReleaseNotes();
 
     private Boolean draft;
@@ -283,6 +283,7 @@ public final class GithubReleaser extends BaseReleaser<GithubReleaser> {
         setIssueTrackerUrl("https://{{repoHost}}/{{repoOwner}}/{{repoName}}/issues");
     }
 
+    @Override
     public org.jreleaser.model.api.release.GithubReleaser asImmutable() {
         return immutable;
     }

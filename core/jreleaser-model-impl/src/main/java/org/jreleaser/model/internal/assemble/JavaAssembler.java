@@ -27,7 +27,7 @@ import java.util.List;
  * @author Andres Almiray
  * @since 0.8.0
  */
-public interface JavaAssembler extends Assembler {
+public interface JavaAssembler<A extends org.jreleaser.model.api.assemble.Assembler> extends Assembler<A> {
     String getExecutable();
 
     void setExecutable(String executable);

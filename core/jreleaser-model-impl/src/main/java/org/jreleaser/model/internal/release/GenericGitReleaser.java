@@ -27,7 +27,7 @@ import static java.util.Collections.unmodifiableMap;
  * @author Andres Almiray
  * @since 0.4.0
  */
-public final class GenericGitReleaser extends BaseReleaser<GenericGitReleaser> {
+public final class GenericGitReleaser extends BaseReleaser<org.jreleaser.model.api.release.GenericGitReleaser, GenericGitReleaser> {
     private final org.jreleaser.model.api.release.GenericGitReleaser immutable = new org.jreleaser.model.api.release.GenericGitReleaser() {
         @Override
         public boolean isPrerelease() {
@@ -249,6 +249,7 @@ public final class GenericGitReleaser extends BaseReleaser<GenericGitReleaser> {
         super(org.jreleaser.model.api.release.GenericGitReleaser.TYPE, false);
     }
 
+    @Override
     public org.jreleaser.model.api.release.GenericGitReleaser asImmutable() {
         return immutable;
     }

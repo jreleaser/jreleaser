@@ -24,7 +24,7 @@ import org.jreleaser.model.internal.upload.Uploader;
  * @author Andres Almiray
  * @since 0.3.0
  */
-public interface ArtifactUploaderFactory<U extends Uploader, AU extends ArtifactUploader<U>> {
+public interface ArtifactUploaderFactory<A extends org.jreleaser.model.api.upload.Uploader, U extends Uploader<A>, AU extends ArtifactUploader<A, U>> {
     String getName();
 
     AU getArtifactUploader(JReleaserContext context);

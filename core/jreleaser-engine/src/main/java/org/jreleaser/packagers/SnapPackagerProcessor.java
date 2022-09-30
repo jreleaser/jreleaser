@@ -103,7 +103,7 @@ public class SnapPackagerProcessor extends AbstractRepositoryPackagerProcessor<S
 
     @Override
     protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) throws PackagerProcessingException {
-        BaseReleaser releaser = context.getModel().getRelease().getReleaser();
+        BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
 
         String desc = context.getModel().getProject().getLongDescription();
         desc = Arrays.stream(desc.split(System.lineSeparator()))

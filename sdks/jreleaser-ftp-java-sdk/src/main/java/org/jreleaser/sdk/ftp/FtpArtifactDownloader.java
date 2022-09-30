@@ -40,7 +40,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public class FtpArtifactDownloader extends AbstractArtifactDownloader<FtpDownloader> {
+public class FtpArtifactDownloader extends AbstractArtifactDownloader<org.jreleaser.model.api.download.FtpDownloader, FtpDownloader> {
     private FtpDownloader downloader;
 
     public FtpArtifactDownloader(JReleaserContext context) {

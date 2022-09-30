@@ -44,7 +44,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public final class SlackAnnouncer extends AbstractAnnouncer<SlackAnnouncer> {
+public final class SlackAnnouncer extends AbstractAnnouncer<SlackAnnouncer, org.jreleaser.model.api.announce.SlackAnnouncer> {
     private String token;
     private String webhook;
     private String channel;
@@ -52,6 +52,11 @@ public final class SlackAnnouncer extends AbstractAnnouncer<SlackAnnouncer> {
     private String messageTemplate;
 
     private final org.jreleaser.model.api.announce.SlackAnnouncer immutable = new org.jreleaser.model.api.announce.SlackAnnouncer() {
+        @Override
+        public String getType() {
+            return org.jreleaser.model.api.announce.SlackAnnouncer.TYPE;
+        }
+
         @Override
         public String getToken() {
             return token;
@@ -127,6 +132,7 @@ public final class SlackAnnouncer extends AbstractAnnouncer<SlackAnnouncer> {
         super(TYPE);
     }
 
+    @Override
     public org.jreleaser.model.api.announce.SlackAnnouncer asImmutable() {
         return immutable;
     }
