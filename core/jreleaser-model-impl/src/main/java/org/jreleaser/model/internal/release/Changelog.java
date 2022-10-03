@@ -940,7 +940,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
             if (isNotBlank(name)) {
                 String n = name.trim();
                 for (String contributor : contributors) {
-                    if (n.contains(contributor) || n.matches(toSafeRegexPattern(contributor))) {
+                    if (n.contains(contributor) || n.matches(contributor)) {
                         return true;
                     }
                 }
