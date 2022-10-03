@@ -52,7 +52,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -113,6 +115,27 @@ public class ChangelogGeneratorUnitTest {
 
         // then:
         verify(logCommand).add(headId);
+    }
+
+    @Test
+    @DisplayName("Should exclude bot commits from changelog")
+    public void excludeBots() throws IOException {
+        Changelog.Hide instance = new Changelog.Hide();
+        Set<String> contributors = new HashSet<>();
+        contributors.add("dependabot");
+        contributors.add("liquibot");
+        contributors.add("randombot");
+        contributors.add("aalmiray");
+        contributors.add("sironheart");
+        instance.addContributors(contributors);
+
+        if (instance.containsContributor("depend") ||
+                instance.containsContributor("bot") ||
+                instance.containsContributor("random") ||
+                instance.containsContributor("liqui")
+        ) {
+            throw new IOException("Should exclude bots");
+        }
     }
 
     @Test
