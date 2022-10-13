@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-34-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-35-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -54,11 +54,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center"><a href="https://www.reini.net"><img src="https://avatars.githubusercontent.com/u/4694567?v=4?s=100" width="100px;" alt="Patrick Reinhart"/><br /><sub><b>Patrick Reinhart</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=reinhapa" title="Code">💻</a> <a href="#translation-reinhapa" title="Translation">🌍</a></td>
       <td align="center"><a href="https://fihlon.swiss/"><img src="https://avatars.githubusercontent.com/u/1254039?v=4?s=100" width="100px;" alt="Marcus Fihlon"/><br /><sub><b>Marcus Fihlon</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=McPringle" title="Code">💻</a></td>
       <td align="center"><a href="https://github.com/Sironheart"><img src="https://avatars.githubusercontent.com/u/13799656?v=4?s=100" width="100px;" alt="Steffen Beisenherz"/><br /><sub><b>Steffen Beisenherz</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=Sironheart" title="Code">💻</a></td>
+      <td align="center"><a href="https://github.com/roulpriya"><img src="https://avatars.githubusercontent.com/u/75459506?v=4?s=100" width="100px;" alt="Priyambada Roul"/><br /><sub><b>Priyambada Roul</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=roulpriya" title="Code">💻</a></td>
     </tr>
   </tbody>
-  <tfoot>
-    
-  </tfoot>
 </table>
 
 <!-- markdownlint-restore -->
