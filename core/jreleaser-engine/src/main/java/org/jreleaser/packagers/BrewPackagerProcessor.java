@@ -65,6 +65,7 @@ import static org.jreleaser.util.FileType.ZIP;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.isTrue;
+import static org.jreleaser.util.StringUtils.getHyphenatedName;
 
 /**
  * @author Andres Almiray
@@ -235,7 +236,8 @@ public class BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<B
         } else {
             if (CASK_RB.equals(fileName) || FORMULA_MULTI_RB.equals(fileName)) return;
             Path outputFile = FORMULA_RB.equals(fileName) ?
-                outputDirectory.resolve(FORMULA).resolve(distribution.getExecutable().getName().concat(RB)) :
+                outputDirectory.resolve(FORMULA)
+                        .resolve(getHyphenatedName(packager.getFormulaName()).concat(RB)) :
                 outputDirectory.resolve(fileName);
             writeFile(content, outputFile);
         }
