@@ -23,7 +23,7 @@ jobs:
         shell: bash
         run: |
           version=$(cat VERSION)
-          echo ::set-output name=VERSION::$(echo "$version")
+          echo "VERSION=$(echo "$version")" >>$GITHUB_OUTPUT
 
   build:
     needs: [ precheck ]
