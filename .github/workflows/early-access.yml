@@ -33,7 +33,7 @@ jobs:
         id: vars
         shell: bash
         run: |
-          echo ::set-output name=VERSION::$(cat VERSION)
+          echo "VERSION=$(cat VERSION)" >>$GITHUB_OUTPUT
 
   jlink:
     needs: [precheck]

@@ -17,8 +17,8 @@ jobs:
       - name: Variables
         id: vars
         run: |
-          echo ::set-output name=version::$(cat VERSION)
-          echo ::set-output name=tag::${GITHUB_REF#refs/tags/}
+          echo "version=$(cat VERSION)" >>$GITHUB_OUTPUT
+          echo "tag=${GITHUB_REF#refs/tags/}" >>$GITHUB_OUTPUT
 
       - name: Create the AppImage
         run: sh create-appimage.sh
