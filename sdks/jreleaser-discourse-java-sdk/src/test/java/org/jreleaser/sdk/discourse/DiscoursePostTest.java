@@ -25,7 +25,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.jreleaser.sdk.discourse.ApiEndpoints.CATEGORIES_ENDPOINT;
 import static org.jreleaser.sdk.discourse.ApiEndpoints.POSTS_ENDPOINT;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * @author shblue21
