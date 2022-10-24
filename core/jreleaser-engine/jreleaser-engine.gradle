@@ -32,6 +32,7 @@ dependencies {
 
     // announce
     api project(':jreleaser-discord-java-sdk')
+    api project(':jreleaser-discourse-java-sdk')
     api project(':jreleaser-gitter-java-sdk')
     api project(':jreleaser-google-chat-java-sdk')
     api project(':jreleaser-smtp-java-sdk')
