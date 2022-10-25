@@ -19,7 +19,7 @@ package org.jreleaser.sdk.discourse.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author shblue21
@@ -61,8 +61,8 @@ public class Category{
     public int topics_year;
     public int topics_all_time;
     public boolean is_uncategorized;
-    public ArrayList<Object> subcategory_ids;
-    public ArrayList<Object> subcategory_list;
+    public List<Object> subcategory_ids;
+    public List<Object> subcategory_list;
     public String uploaded_logo;
     public String uploaded_background;
 

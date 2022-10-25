@@ -18,7 +18,7 @@
 package org.jreleaser.sdk.discourse.api;
 
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author shblue21
@@ -27,7 +27,7 @@ import java.util.ArrayList;
 public class CategoryList{
     public boolean can_create_category;
     public boolean can_create_topic;
-    public ArrayList<Category> categories;
+    public List<Category> categories;
 
     public boolean isCan_create_category() {
         return can_create_category;

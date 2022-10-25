@@ -77,7 +77,7 @@ public abstract class DiscourseAnnouncerValidator extends Validator {
         }
 
         if (isBlank(discourse.getMessage()) && isBlank(discourse.getMessageTemplate())) {
-            discourse.setMessageTemplate("src/jreleaser/templates/discussions.tpl");
+            discourse.setMessageTemplate(DEFAULT_DISCOURSE_TPL);
         }
 
 
