@@ -25,6 +25,7 @@ import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.assemble.NativeImageAssembler
 import org.jreleaser.gradle.plugin.dsl.common.Artifact
@@ -51,6 +52,7 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
     final Property<String> imageNameTransform
     final Property<Archive.Format> archiveFormat
     final ListProperty<String> args
+    final SetProperty<String> components
     final JavaImpl java
     final PlatformImpl platform
 
@@ -69,6 +71,7 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
         imageNameTransform = objects.property(String).convention(Providers.<String> notDefined())
         archiveFormat = objects.property(Archive.Format).convention(Archive.Format.ZIP)
         args = objects.listProperty(String).convention(Providers.<List<String>> notDefined())
+        components = objects.setProperty(String).convention(Providers.<Set<String>> notDefined())
         java = objects.newInstance(JavaImpl, objects)
         platform = objects.newInstance(PlatformImpl, objects)
         graal = objects.newInstance(ArtifactImpl, objects)
@@ -101,6 +104,7 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
             imageName.present ||
             imageNameTransform.present ||
             args.present ||
+            components.present ||
             java.isSet() ||
             graal.isSet() ||
             upx.isSet() ||
@@ -114,6 +118,13 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
     void arg(String arg) {
         if (isNotBlank(arg)) {
             args.add(arg.trim())
+        }
+    }
+
+    @Override
+    void component(String component) {
+        if (isNotBlank(component)) {
+            components.add(component.trim())
         }
     }
 
@@ -194,6 +205,7 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
         if (imageNameTransform.present) nativeImage.imageNameTransform = imageNameTransform.get()
         nativeImage.archiveFormat = archiveFormat.get()
         nativeImage.args = (List<String>) args.getOrElse([])
+        nativeImage.components = (Set<String>) components.getOrElse([] as Set)
         if (graal.isSet()) nativeImage.graal = graal.toModel()
         if (upx.isSet()) nativeImage.upx = upx.toModel()
         if (linux.isSet()) nativeImage.linux = linux.toModel()

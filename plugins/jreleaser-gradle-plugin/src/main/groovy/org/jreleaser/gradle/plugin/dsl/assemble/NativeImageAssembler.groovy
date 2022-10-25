@@ -21,6 +21,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 import org.jreleaser.gradle.plugin.dsl.common.Activatable
 import org.jreleaser.gradle.plugin.dsl.common.Artifact
 import org.jreleaser.model.Archive
@@ -38,11 +39,15 @@ interface NativeImageAssembler extends JavaAssembler {
 
     ListProperty<String> getArgs()
 
+    SetProperty<String> getComponents()
+
     Property<Archive.Format> getArchiveFormat()
 
     void setArchiveFormat(String str)
 
     void arg(String arg)
+
+    void component(String component)
 
     void graal(Action<? super Artifact> action)
 

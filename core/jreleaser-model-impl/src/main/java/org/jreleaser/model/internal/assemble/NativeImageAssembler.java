@@ -42,6 +42,7 @@ import java.util.Set;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
+import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.jreleaser.model.api.assemble.NativeImageAssembler.TYPE;
@@ -54,6 +55,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImageAssembler, org.jreleaser.model.api.assemble.NativeImageAssembler> {
     private final List<String> args = new ArrayList<>();
+    private final Set<String> components = new LinkedHashSet<>();
     private final Artifact graal = new Artifact();
     private final Set<Artifact> graalJdks = new LinkedHashSet<>();
     private final Upx upx = new Upx();
@@ -105,6 +107,11 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
         @Override
         public List<String> getArgs() {
             return unmodifiableList(args);
+        }
+
+        @Override
+        public Set<String> getComponents() {
+            return unmodifiableSet(components);
         }
 
         @Override
@@ -266,6 +273,7 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
         setGraal(source.graal);
         setGraalJdks(merge(this.graalJdks, source.graalJdks));
         setArgs(merge(this.args, source.args));
+        setComponents(merge(this.components, source.components));
         setUpx(source.upx);
         setLinux(source.linux);
         setWindows(source.windows);
@@ -359,6 +367,15 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
         this.args.addAll(args);
     }
 
+    public Set<String> getComponents() {
+        return components;
+    }
+
+    public void setComponents(Set<String> components) {
+        this.components.clear();
+        this.components.addAll(components);
+    }
+
     public Upx getUpx() {
         return upx;
     }
@@ -405,6 +422,7 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
         props.put("graal", graal.asMap(full));
         props.put("graalJdks", mappedJdks);
         props.put("args", args);
+        props.put("components", components);
         props.put("upx", upx.asMap(full));
         props.putAll(linux.asMap(full));
         props.putAll(osx.asMap(full));

@@ -80,6 +80,7 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
 
         // install native-image
         installNativeImage(graalPath);
+        installComponents(graalPath);
 
         // run native-image
         String imageName = assembler.getResolvedImageName(context);
@@ -107,6 +108,23 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
                 .arg("install")
                 .arg("-n")
                 .arg("native-image");
+            context.getLogger().debug(String.join(" ", cmd.getArgs()));
+            executeCommand(cmd);
+        }
+    }
+
+    private void installComponents(Path graalPath) throws AssemblerProcessingException {
+        Path guExecutable = graalPath
+            .resolve("bin")
+            .resolve(PlatformUtils.isWindows() ? "gu.cmd" : "gu")
+            .toAbsolutePath();
+
+        for (String component : assembler.getComponents()) {
+            context.getLogger().debug(RB.$("assembler.graal.install.component", component));
+            Command cmd = new Command(guExecutable.toString())
+                .arg("install")
+                .arg("-n")
+                .arg(component);
             context.getLogger().debug(String.join(" ", cmd.getArgs()));
             executeCommand(cmd);
         }
