@@ -338,19 +338,19 @@ public class Category{
         this.is_uncategorized = is_uncategorized;
     }
 
-    public ArrayList<Object> getSubcategory_ids() {
+    public List<Object> getSubcategory_ids() {
         return subcategory_ids;
     }
 
-    public void setSubcategory_ids(ArrayList<Object> subcategory_ids) {
+    public void setSubcategory_ids(List<Object> subcategory_ids) {
         this.subcategory_ids = subcategory_ids;
     }
 
-    public ArrayList<Object> getSubcategory_list() {
+    public List<Object> getSubcategory_list() {
         return subcategory_list;
     }
 
-    public void setSubcategory_list(ArrayList<Object> subcategory_list) {
+    public void setSubcategory_list(List<Object> subcategory_list) {
         this.subcategory_list = subcategory_list;
     }
 
