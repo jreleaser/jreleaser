@@ -60,6 +60,16 @@ projects {
 enforce {
     mergeStrategy = 'append'
 
+    rule(enforcer.rules.EnforceBytecodeVersion) { r ->
+        r.exclude("org.graalvm.sdk:graal-sdk:$graalVersion")
+        r.exclude("org.graalvm.nativeimage:svm:$graalVersion")
+        r.exclude("org.graalvm.nativeimage:pointsto:$graalVersion")
+        r.exclude("org.graalvm.nativeimage:native-image-base:$graalVersion")
+        r.exclude("org.graalvm.compiler:compiler:$graalVersion")
+        r.exclude("org.graalvm.truffle:truffle-api:$graalVersion")
+        r.exclude("org.graalvm.nativeimage:objectfile:$graalVersion")
+    }
+
     rule(enforcer.rules.ForceDependencies) { r ->
         r.dependencies.addAll "org.apache.maven:maven-artifact:$mavenVersion",
             "org.apache.maven.shared:maven-shared-utils:$mavenSharedVersion",
