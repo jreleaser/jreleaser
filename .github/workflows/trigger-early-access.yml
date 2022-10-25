@@ -3,6 +3,10 @@ name: "Trigger Early Access"
 on:
   workflow_dispatch:
 
+env:
+  JAVA_VERSION: '11'
+  JAVA_DISTRO: 'zulu'
+
 jobs:
   earlyaccess:
     name: "Trigger Early Access"
@@ -13,8 +17,8 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
-          java-version: 11
-          distribution: 'zulu'
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRO }}
 
       - uses: actions/cache@v3
         with:

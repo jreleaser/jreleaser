@@ -15,9 +15,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-dependencies {
-    api project(':jreleaser-command-java-sdk')
-    api project(':jreleaser-tool-java-sdk')
+package org.jreleaser.graalvm.sdk.signing;
 
-    api "org.bouncycastle:bcpg-jdk15on:$bouncyCastleVersion"
+import com.oracle.svm.core.annotate.AutomaticFeature;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.graalvm.nativeimage.hosted.Feature;
+import org.graalvm.nativeimage.hosted.RuntimeClassInitialization;
+
+import java.security.Security;
+
+/**
+ * @author Andres Almiray
+ * @since 1.0.0
+ */
+@AutomaticFeature
+public class BouncyCastleFeature implements Feature {
+    @Override
+    public void afterRegistration(AfterRegistrationAccess access) {
+        RuntimeClassInitialization.initializeAtBuildTime("org.bouncycastle");
+        Security.addProvider(new BouncyCastleProvider());
+    }
 }

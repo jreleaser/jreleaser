@@ -15,7 +15,7 @@ on:
         required: false
         type: string
       graal-version:
-        default: '22.2.0'
+        default: '22.3.0'
         required: false
         type: string
       graal-java-version:

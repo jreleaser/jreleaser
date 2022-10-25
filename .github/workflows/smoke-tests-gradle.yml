@@ -4,6 +4,10 @@ on:
   push:
     branches: [ main ]
 
+env:
+  JAVA_VERSION: '11'
+  JAVA_DISTRO: 'zulu'
+
 jobs:
   precheck:
     if: github.repository == 'jreleaser/jreleaser' && startsWith(github.event.head_commit.message, 'Releasing version') != true
@@ -49,8 +53,8 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
-          java-version: 11
-          distribution: 'zulu'
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRO }}
 
       - uses: actions/cache@v3
         with:

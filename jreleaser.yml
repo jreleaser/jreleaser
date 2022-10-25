@@ -2,7 +2,7 @@ environment:
   properties:
     jdkPathPrefix: 'plugins/jreleaser/build/jdks'
     jdkFilePrefix: 'zulu17.32.13-ca-jdk17.0.2'
-    graalFilePrefix: 'graalvm-ce-java17-22.2.0'
+    graalFilePrefix: 'graalvm-ce-java17-22.3.0'
     nativeImageDir: out/jreleaser/assemble/jreleaser-native/native-image
     jpackageDir: out/jreleaser/assemble/jreleaser-installer/jpackage
     skipJpackageResolver: true
