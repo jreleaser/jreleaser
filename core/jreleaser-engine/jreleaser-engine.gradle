@@ -16,13 +16,15 @@
  * limitations under the License.
  */
 dependencies {
-    api project(':jreleaser-extensions-impl')
     api project(':jreleaser-model-impl')
     api project(':jreleaser-templates')
     api project(':jreleaser-git-java-sdk')
     api project(':jreleaser-tool-java-sdk')
     api project(':jreleaser-signing-java-sdk')
     api project(':jreleaser-command-java-sdk')
+
+    api "org.apache.commons:commons-text:$commonsTextVersion"
+    api "org.commonmark:commonmark:$commonmarkVersion"
 
     // tools
     api "org.apache.commons:commons-lang3:${commonsLang3Version}"
