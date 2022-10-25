@@ -44,6 +44,8 @@ public interface NativeImageAssembler extends Assembler, JavaAssembler {
 
     List<String> getArgs();
 
+    Set<String> getComponents();
+
     Upx getUpx();
 
     Linux getLinux();

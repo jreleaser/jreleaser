@@ -169,6 +169,10 @@ public abstract class NativeImageAssemblerValidator extends Validator {
             }
         }
 
+        if (nativeImage.getComponents().contains("native-image")) {
+            nativeImage.getComponents().remove("native-image");
+        }
+
         NativeImageAssembler.Upx upx = nativeImage.getUpx();
         if (!upx.isActiveSet()) {
             upx.setActive(Active.NEVER);
