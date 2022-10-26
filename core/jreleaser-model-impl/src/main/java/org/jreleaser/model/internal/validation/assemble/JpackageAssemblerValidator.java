@@ -211,7 +211,7 @@ public abstract class JpackageAssemblerValidator extends Validator {
             if (isNotBlank(v.getBuild()) || isNotBlank(v.getTag())) {
                 errors.configuration(RB.$("validation_jpackage_invalid_appversion_t", appVersion));
             }
-            if (v.getMajor() <= 0) {
+            if (PlatformUtils.isMac() && v.getMajor() <= 0) {
                 errors.configuration(RB.$("validation_jpackage_invalid_appversion_n", appVersion));
             }
         } catch (IllegalArgumentException e) {
