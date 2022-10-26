@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.extensions.impl;
+package org.jreleaser.extensions.internal;
 
 import org.apache.commons.io.IOUtils;
 import org.jreleaser.bundle.RB;

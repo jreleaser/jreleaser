@@ -21,7 +21,7 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.engine.release.Releasers;
 import org.jreleaser.extensions.api.ExtensionManager;
 import org.jreleaser.extensions.api.ExtensionManagerHolder;
-import org.jreleaser.extensions.impl.DefaultExtensionManager;
+import org.jreleaser.extensions.internal.DefaultExtensionManager;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.JReleaserModelPrinter;
