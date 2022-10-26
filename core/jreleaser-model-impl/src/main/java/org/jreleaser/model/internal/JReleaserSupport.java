@@ -44,6 +44,7 @@ public final class JReleaserSupport {
         Set<String> set = new LinkedHashSet<>();
         set.add(org.jreleaser.model.api.announce.ArticleAnnouncer.TYPE);
         set.add(org.jreleaser.model.api.announce.DiscordAnnouncer.TYPE);
+        set.add(org.jreleaser.model.api.announce.DiscourseAnnouncer.TYPE);
         set.add(org.jreleaser.model.api.announce.DiscussionsAnnouncer.TYPE);
         set.add(org.jreleaser.model.api.announce.GitterAnnouncer.TYPE);
         set.add(org.jreleaser.model.api.announce.GoogleChatAnnouncer.TYPE);

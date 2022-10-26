@@ -31,6 +31,8 @@ public interface Announce extends Domain, Activatable {
 
     DiscordAnnouncer getDiscord();
 
+    DiscourseAnnouncer getDiscourse();
+
     DiscussionsAnnouncer getDiscussions();
 
     GitterAnnouncer getGitter();

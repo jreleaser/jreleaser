@@ -27,6 +27,7 @@ import org.jreleaser.util.Errors;
 import static org.jreleaser.model.internal.validation.announce.ArticleAnnouncerValidator.validateArticle;
 import static org.jreleaser.model.internal.validation.announce.DiscordAnnouncerValidator.validateDiscord;
 import static org.jreleaser.model.internal.validation.announce.DiscussionsAnnouncerValidator.validateDiscussions;
+import static org.jreleaser.model.internal.validation.announce.DiscourseAnnouncerValidator.validateDiscourse;
 import static org.jreleaser.model.internal.validation.announce.GitterAnnouncerValidator.validateGitter;
 import static org.jreleaser.model.internal.validation.announce.GoogleChatAnnouncerValidator.validateGoogleChat;
 import static org.jreleaser.model.internal.validation.announce.HttpAnnouncerValidator.validateHttpAnnouncers;
@@ -58,6 +59,7 @@ public abstract class AnnouncersValidator extends Validator {
         validateArticle(context, announce.getArticle(), errors);
         validateDiscussions(context, announce.getDiscussions(), errors);
         validateDiscord(context, announce.getDiscord(), errors);
+        validateDiscourse(context, announce.getDiscourse(), errors);
         validateGitter(context, announce.getGitter(), errors);
         validateGoogleChat(context, announce.getGoogleChat(), errors);
         validateHttpAnnouncers(context, mode, announce.getConfiguredHttp(), errors);
@@ -78,6 +80,7 @@ public abstract class AnnouncersValidator extends Validator {
         if (announce.isEnabled()) {
             boolean enabled = announce.getArticle().isEnabled() ||
                 announce.getDiscord().isEnabled() ||
+                announce.getDiscourse().isEnabled() ||
                 announce.getDiscussions().isEnabled() ||
                 announce.getGitter().isEnabled() ||
                 announce.getGoogleChat().isEnabled() ||

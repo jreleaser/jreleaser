@@ -42,6 +42,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
 public final class Announce extends AbstractModelObject<Announce> implements Domain, Activatable {
     private final ArticleAnnouncer article = new ArticleAnnouncer();
     private final DiscordAnnouncer discord = new DiscordAnnouncer();
+    private final DiscourseAnnouncer discourse = new DiscourseAnnouncer();
     private final DiscussionsAnnouncer discussions = new DiscussionsAnnouncer();
     private final GitterAnnouncer gitter = new GitterAnnouncer();
     private final GoogleChatAnnouncer googleChat = new GoogleChatAnnouncer();
@@ -70,6 +71,11 @@ public final class Announce extends AbstractModelObject<Announce> implements Dom
         @Override
         public org.jreleaser.model.api.announce.DiscordAnnouncer getDiscord() {
             return discord.asImmutable();
+        }
+
+        @Override
+        public org.jreleaser.model.api.announce.DiscourseAnnouncer getDiscourse() {
+            return discourse.asImmutable();
         }
 
         @Override
@@ -168,6 +174,7 @@ public final class Announce extends AbstractModelObject<Announce> implements Dom
         this.enabled = merge(this.enabled, source.enabled);
         setArticle(source.article);
         setDiscord(source.discord);
+        setDiscourse(source.discourse);
         setDiscussions(source.discussions);
         setGitter(source.gitter);
         setGoogleChat(source.googleChat);
@@ -240,6 +247,14 @@ public final class Announce extends AbstractModelObject<Announce> implements Dom
 
     public void setDiscord(DiscordAnnouncer discord) {
         this.discord.merge(discord);
+    }
+
+    public DiscourseAnnouncer getDiscourse() {
+        return discourse;
+    }
+
+    public void setDiscourse(DiscourseAnnouncer discourse) {
+        this.discourse.merge(discourse);
     }
 
     public DiscussionsAnnouncer getDiscussions() {
@@ -385,6 +400,7 @@ public final class Announce extends AbstractModelObject<Announce> implements Dom
         map.put("active", active);
         map.putAll(article.asMap(full));
         map.putAll(discord.asMap(full));
+        map.putAll(discourse.asMap(full));
         map.putAll(discussions.asMap(full));
         map.putAll(gitter.asMap(full));
         map.putAll(googleChat.asMap(full));
@@ -424,6 +440,8 @@ public final class Announce extends AbstractModelObject<Announce> implements Dom
                 return (A) getArticle();
             case org.jreleaser.model.api.announce.DiscordAnnouncer.TYPE:
                 return (A) getDiscord();
+            case org.jreleaser.model.api.announce.DiscourseAnnouncer.TYPE:
+                return (A) getDiscourse();
             case org.jreleaser.model.api.announce.DiscussionsAnnouncer.TYPE:
                 return (A) getDiscussions();
             case org.jreleaser.model.api.announce.GitterAnnouncer.TYPE:
