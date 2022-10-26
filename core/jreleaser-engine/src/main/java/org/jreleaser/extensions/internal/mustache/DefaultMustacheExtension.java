@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.extensions.impl.mustache;
+package org.jreleaser.extensions.internal.mustache;
 
 import org.jreleaser.extensions.api.Extension;
 import org.jreleaser.extensions.api.ExtensionPoint;
