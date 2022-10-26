@@ -80,7 +80,7 @@ public class DiscourseAnnouncer implements Announcer<org.jreleaser.model.api.ann
             DiscourseSdk sdk = DiscourseSdk.builder(context.getLogger())
                 .host(discourse.getHost())
                 .apiKey(discourse.getApiKey())
-                .userName(discourse.getUserName())
+                .userName(discourse.getUsername())
                 .connectTimeout(discourse.getConnectTimeout())
                 .readTimeout(discourse.getReadTimeout())
                 .dryrun(context.isDryrun())

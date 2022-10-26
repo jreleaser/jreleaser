@@ -47,7 +47,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public final class DiscourseAnnouncer extends AbstractAnnouncer<DiscourseAnnouncer, org.jreleaser.model.api.announce.DiscourseAnnouncer> {
     private String host;
     private String apiKey;
-    private String userName;
+    private String username;
 
     private String categoryName;
     private String title;
@@ -71,8 +71,8 @@ public final class DiscourseAnnouncer extends AbstractAnnouncer<DiscourseAnnounc
         }
 
         @Override
-        public String getUserName() {
-            return userName;
+        public String getUsername() {
+            return username;
         }
 
         @Override
@@ -94,6 +94,7 @@ public final class DiscourseAnnouncer extends AbstractAnnouncer<DiscourseAnnounc
         public String getMessageTemplate() {
             return messageTemplate;
         }
+
         @Override
         public String getName() {
             return name;
@@ -154,7 +155,7 @@ public final class DiscourseAnnouncer extends AbstractAnnouncer<DiscourseAnnounc
         super.merge(source);
         this.host = merge(this.host, source.host);
         this.apiKey = merge(this.apiKey, source.apiKey);
-        this.userName = merge(this.userName, source.userName);
+        this.username = merge(this.username, source.username);
         this.categoryName = merge(this.categoryName, source.categoryName);
         this.title = merge(this.title, source.title);
         this.message = merge(this.message, source.message);
@@ -195,7 +196,7 @@ public final class DiscourseAnnouncer extends AbstractAnnouncer<DiscourseAnnounc
     }
 
     public String getResolvedUserName() {
-        return Env.env(DISCOURSE_USERNAME, userName);
+        return Env.env(DISCOURSE_USERNAME, username);
     }
 
     public String getHost() {
@@ -214,12 +215,12 @@ public final class DiscourseAnnouncer extends AbstractAnnouncer<DiscourseAnnounc
         this.apiKey = apiKey;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getCategoryName() {
@@ -258,7 +259,7 @@ public final class DiscourseAnnouncer extends AbstractAnnouncer<DiscourseAnnounc
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("host", host);
         props.put("apiKey", isNotBlank(getResolvedApiKey()) ? HIDE : UNSET);
-        props.put("userName", isNotBlank(getResolvedUserName()) ? HIDE : UNSET);
+        props.put("username", isNotBlank(getResolvedUserName()) ? HIDE : UNSET);
         props.put("categoryName", categoryName);
         props.put("title", title);
         props.put("message", message);

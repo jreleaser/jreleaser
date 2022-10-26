@@ -33,6 +33,8 @@ interface Announce extends Activatable {
 
     DiscordAnnouncer getDiscord()
 
+    DiscourseAnnouncer getDiscourse()
+
     DiscussionsAnnouncer getDiscussions()
 
     GitterAnnouncer getGitter()
@@ -67,6 +69,8 @@ interface Announce extends Activatable {
 
     void discord(Action<? super DiscordAnnouncer> action)
 
+    void discourse(Action<? super DiscourseAnnouncer> action)
+
     void discussions(Action<? super DiscussionsAnnouncer> action)
 
     void gitter(Action<? super GitterAnnouncer> action)
@@ -100,6 +104,8 @@ interface Announce extends Activatable {
     void article(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArticleAnnouncer) Closure<Void> action)
 
     void discord(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DiscordAnnouncer) Closure<Void> action)
+
+    void discourse(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DiscourseAnnouncer) Closure<Void> action)
 
     void discussions(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DiscussionsAnnouncer) Closure<Void> action)
 

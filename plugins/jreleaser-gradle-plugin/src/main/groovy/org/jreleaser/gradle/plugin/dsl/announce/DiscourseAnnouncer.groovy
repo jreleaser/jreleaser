@@ -15,32 +15,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.api.announce;
+package org.jreleaser.gradle.plugin.dsl.announce
+
+import groovy.transform.CompileStatic
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.Property
 
 /**
- * @author shblue21
+ *
+ * @author Andres Almiray
  * @since 1.3.0
  */
-public interface DiscourseAnnouncer extends Announcer {
-    String TYPE = "discourse";
+@CompileStatic
+interface DiscourseAnnouncer extends Announcer {
+    Property<String> getHost()
 
-    String DISCOURSE_API_KEY = "DISCOURSE_API_KEY";
+    Property<String> getUsername()
 
-    String DISCOURSE_USERNAME = "DISCOURSE_USERNAME";
+    Property<String> getApiKey()
 
-    String DISCOURSE_CATEGORY_NAME = "DISCOURSE_CATEGORY_NAME";
+    Property<String> getCategoryName()
 
-    String getHost();
+    Property<String> getTitle()
 
-    String getUsername();
+    Property<String> getMessage()
 
-    String getApiKey();
-    
-    String getCategoryName();
+    RegularFileProperty getMessageTemplate()
 
-    String getTitle();
-
-    String getMessage();
-
-    String getMessageTemplate();
+    void setMessageTemplate(String messageTemplate)
 }

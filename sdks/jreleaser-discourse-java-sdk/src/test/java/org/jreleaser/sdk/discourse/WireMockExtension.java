@@ -44,6 +44,4 @@ class WireMockExtension extends WireMockServer implements BeforeEachCallback, Af
         this.stop();
         this.resetAll();
     }
-
-
 }

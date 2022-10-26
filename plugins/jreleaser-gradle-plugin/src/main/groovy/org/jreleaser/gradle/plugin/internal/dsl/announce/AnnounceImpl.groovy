@@ -27,6 +27,7 @@ import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.announce.Announce
 import org.jreleaser.gradle.plugin.dsl.announce.ArticleAnnouncer
 import org.jreleaser.gradle.plugin.dsl.announce.DiscordAnnouncer
+import org.jreleaser.gradle.plugin.dsl.announce.DiscourseAnnouncer
 import org.jreleaser.gradle.plugin.dsl.announce.DiscussionsAnnouncer
 import org.jreleaser.gradle.plugin.dsl.announce.GitterAnnouncer
 import org.jreleaser.gradle.plugin.dsl.announce.GoogleChatAnnouncer
@@ -58,6 +59,7 @@ class AnnounceImpl implements Announce {
     final Property<Active> active
     final ArticleAnnouncerImpl article
     final DiscordAnnouncerImpl discord
+    final DiscourseAnnouncerImpl discourse
     final DiscussionsAnnouncerImpl discussions
     final GitterAnnouncerImpl gitter
     final GoogleChatAnnouncerImpl googleChat
@@ -78,6 +80,7 @@ class AnnounceImpl implements Announce {
         active = objects.property(Active).convention(Providers.<Active> notDefined())
         article = objects.newInstance(ArticleAnnouncerImpl, objects)
         discord = objects.newInstance(DiscordAnnouncerImpl, objects)
+        discourse = objects.newInstance(DiscourseAnnouncerImpl, objects)
         discussions = objects.newInstance(DiscussionsAnnouncerImpl, objects)
         gitter = objects.newInstance(GitterAnnouncerImpl, objects)
         googleChat = objects.newInstance(GoogleChatAnnouncerImpl, objects)
@@ -130,6 +133,11 @@ class AnnounceImpl implements Announce {
     @Override
     void discord(Action<? super DiscordAnnouncer> action) {
         action.execute(discord)
+    }
+
+    @Override
+    void discourse(Action<? super DiscourseAnnouncer> action) {
+        action.execute(discourse)
     }
 
     @Override
@@ -218,6 +226,11 @@ class AnnounceImpl implements Announce {
     }
 
     @Override
+    void discourse(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DiscourseAnnouncer) Closure<Void> action) {
+        ConfigureUtil.configure(action, discourse)
+    }
+
+    @Override
     void discussions(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DiscussionsAnnouncer) Closure<Void> action) {
         ConfigureUtil.configure(action, discussions)
     }
@@ -297,6 +310,7 @@ class AnnounceImpl implements Announce {
         if (active.present) announce.active = active.get()
         if (article.isSet()) announce.article = article.toModel()
         if (discord.isSet()) announce.discord = discord.toModel()
+        if (discourse.isSet()) announce.discourse = discourse.toModel()
         if (discussions.isSet()) announce.discussions = discussions.toModel()
         if (gitter.isSet()) announce.gitter = gitter.toModel()
         if (googleChat.isSet()) announce.googleChat = googleChat.toModel()

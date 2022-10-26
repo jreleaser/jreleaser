@@ -47,11 +47,11 @@ public abstract class DiscourseAnnouncerValidator extends Validator {
             errors.configuration(RB.$("validation_must_not_be_blank", "discourse.host"));
         }
 
-        discourse.setUserName(
+        discourse.setUsername(
                 checkProperty(context,
                         DISCOURSE_USERNAME,
-                        "discourse.userName",
-                        discourse.getUserName(),
+                        "discourse.username",
+                        discourse.getUsername(),
                         errors,
                         context.isDryrun()));
 
