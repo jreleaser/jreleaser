@@ -70,7 +70,6 @@ public abstract class DiscourseAnnouncerValidator extends Validator {
                         discourse.getCategoryName(),
                         errors,
                         context.isDryrun()));
-        
 
         if (isBlank(discourse.getTitle())) {
             discourse.setTitle(RB.$("default.discussion.title"));
@@ -79,7 +78,6 @@ public abstract class DiscourseAnnouncerValidator extends Validator {
         if (isBlank(discourse.getMessage()) && isBlank(discourse.getMessageTemplate())) {
             discourse.setMessageTemplate(DEFAULT_DISCOURSE_TPL);
         }
-
 
         if (isBlank(discourse.getMessage()) && isBlank(discourse.getMessageTemplate())) {
             if (Files.exists(context.getBasedir().resolve(DEFAULT_DISCOURSE_TPL))) {

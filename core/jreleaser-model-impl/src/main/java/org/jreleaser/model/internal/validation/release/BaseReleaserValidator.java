@@ -221,7 +221,6 @@ public abstract class BaseReleaserValidator extends Validator {
 
             if (!generate) {
                 service.getChangelog().setEnabled(true);
-                service.getChangelog().setExternal(null);
                 service.getChangelog().setSort(org.jreleaser.model.Changelog.Sort.DESC);
             }
             if (service.isReleaseSupported()) {

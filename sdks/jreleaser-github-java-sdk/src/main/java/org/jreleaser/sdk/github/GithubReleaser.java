@@ -87,7 +87,6 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
 
     @Override
     public String generateReleaseNotes() throws IOException {
-
         if (github.getReleaseNotes().isEnabled()) {
             String content = generateReleaseNotesByAPI();
 
