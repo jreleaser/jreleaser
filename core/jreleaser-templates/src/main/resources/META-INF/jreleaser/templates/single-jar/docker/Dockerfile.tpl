@@ -11,17 +11,17 @@ LABEL {{.}}
 
 COPY assembly/ /
 
-RUN mkdir -p /{{distributionName}}/bin && \
-    mkdir -p /{{distributionName}}/lib && \
-    mv /{{distributionExecutableUnix}} /{{distributionName}}/bin && \
-    chmod +x /{{distributionName}}/bin/{{distributionExecutableUnix}} && \
-    mv /{{distributionArtifactFile}} /{{distributionName}}/lib
+RUN mkdir -p /{{distributionName}}-{{projectVersion}}/bin && \
+    mkdir -p /{{distributionName}}-{{projectVersion}}/lib && \
+    mv /{{distributionExecutableUnix}} /{{distributionName}}-{{projectVersion}}/bin && \
+    chmod +x /{{distributionName}}-{{projectVersion}}/bin/{{distributionExecutableUnix}} && \
+    mv /{{distributionArtifactFile}} /{{distributionName}}-{{projectVersion}}/lib
 
-ENV PATH="${PATH}:/{{distributionName}}/bin"
+ENV PATH="${PATH}:/{{distributionName}}-{{projectVersion}}/bin"
 
 {{#dockerPostCommands}}
 {{.}}
 {{/dockerPostCommands}}
 
-ENTRYPOINT ["/{{distributionName}}/bin/{{distributionExecutableUnix}}"]
+ENTRYPOINT ["/{{distributionName}}-{{projectVersion}}/bin/{{distributionExecutableUnix}}"]
 CMD ["{{distributionExecutableUnix}}"]
