@@ -184,6 +184,7 @@ jobs:
         with:
           repository: jreleaser/jreleaser.github.io
           ref: 'main'
+          fetch-depth: 0
           token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
       - name: Commit
