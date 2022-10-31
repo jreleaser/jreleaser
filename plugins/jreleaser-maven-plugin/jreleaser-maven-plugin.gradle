@@ -44,6 +44,7 @@ dependencies {
     api project(':jreleaser-config-toml')
     api project(':jreleaser-config-json')
     api "org.jsoup:jsoup:$jsoupVersion"
+    api "commons-io:commons-io:$commonsIoVersion"
 
     implementation "org.apache.maven:maven-plugin-api:$mavenVersion"
     implementation "org.apache.maven.shared:maven-shared-utils:$mavenSharedVersion"
