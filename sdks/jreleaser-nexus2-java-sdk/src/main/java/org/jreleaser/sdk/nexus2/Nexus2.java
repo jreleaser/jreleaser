@@ -32,6 +32,7 @@ import feign.codec.ErrorDecoder;
 import feign.form.FormData;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
+import org.apache.commons.io.IOUtils;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.JReleaserVersion;
@@ -46,6 +47,7 @@ import org.jreleaser.sdk.nexus2.api.StagingProfile;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.nio.file.Path;
@@ -58,6 +60,7 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.requireNonNull;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 import static org.jreleaser.util.StringUtils.uncapitalize;
@@ -102,7 +105,7 @@ public class Nexus2 {
             .requestInterceptor(template -> {
                 template.header("User-Agent", "JReleaser/" + JReleaserVersion.getPlainVersion());
             })
-            .errorDecoder(new NexusErrorDecoder())
+            .errorDecoder(new NexusErrorDecoder(logger))
             .options(new Request.Options(connectTimeout, TimeUnit.SECONDS, readTimeout, TimeUnit.SECONDS, true))
             .target(NexusAPI.class, apiHost);
     }
@@ -302,6 +305,11 @@ public class Nexus2 {
 
     static class NexusErrorDecoder implements ErrorDecoder {
         private final ErrorDecoder defaultErrorDecoder = new Default();
+        private final JReleaserLogger logger;
+
+        public NexusErrorDecoder(JReleaserLogger logger) {
+            this.logger = logger;
+        }
 
         @Override
         public Exception decode(String methodKey, Response response) {
@@ -312,6 +320,16 @@ public class Nexus2 {
             }
 
             if (response.status() >= 500) {
+                logger.trace(response.request().httpMethod() + " " + response.request().url());
+                logger.trace(response.status() + " " + response.reason());
+                if (null != response.body() && response.body().length() > 0) {
+                    try (Reader reader = new InputStreamReader(response.body().asInputStream(), UTF_8)) {
+                        logger.trace(IOUtils.toString(reader));
+                    } catch (IOException e) {
+                        logger.trace(e);
+                    }
+                }
+
                 return new RetryableException(
                     response.status(),
                     response.reason(),
