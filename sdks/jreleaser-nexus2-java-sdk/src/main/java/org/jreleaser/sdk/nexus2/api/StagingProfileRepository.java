@@ -19,6 +19,10 @@ package org.jreleaser.sdk.nexus2.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.util.Locale;
+
+import static org.jreleaser.util.StringUtils.isBlank;
+
 /**
  * @author Andres Almiray
  * @since 1.3.0
@@ -69,5 +73,41 @@ public class StagingProfileRepository {
 
     public void setTransitioning(boolean transitioning) {
         this.transitioning = transitioning;
+    }
+
+    public State getState() {
+        return State.of(type);
+    }
+
+    @Override
+    public String toString() {
+        return "StagingProfileRepository{" +
+            "profileId='" + profileId + '\'' +
+            ", profileName='" + profileName + '\'' +
+            ", repositoryId='" + repositoryId + '\'' +
+            ", type='" + type + '\'' +
+            ", transitioning=" + transitioning +
+            '}';
+    }
+
+    public static StagingProfileRepository notFound(String repositoryId) {
+        StagingProfileRepository repository = new StagingProfileRepository();
+        repository.repositoryId = repositoryId;
+        repository.type = "not_found";
+        return repository;
+    }
+
+    public enum State {
+        OPEN,
+        CLOSED,
+        RELEASED,
+        NOT_FOUND;
+
+        public static State of(String str) {
+            if (isBlank(str)) return null;
+            return State.valueOf(str.toUpperCase(Locale.ENGLISH).trim()
+                .replace("-", "_")
+                .replace(" ", "_"));
+        }
     }
 }

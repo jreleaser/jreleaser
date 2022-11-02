@@ -32,6 +32,9 @@ import feign.codec.ErrorDecoder;
 import feign.form.FormData;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
+import net.jodah.failsafe.Failsafe;
+import net.jodah.failsafe.RetryPolicy;
+import net.jodah.failsafe.function.CheckedSupplier;
 import org.apache.commons.io.IOUtils;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.logging.JReleaserLogger;
@@ -44,6 +47,7 @@ import org.jreleaser.sdk.nexus2.api.NexusAPIException;
 import org.jreleaser.sdk.nexus2.api.PromoteRequest;
 import org.jreleaser.sdk.nexus2.api.StagedRepository;
 import org.jreleaser.sdk.nexus2.api.StagingProfile;
+import org.jreleaser.sdk.nexus2.api.StagingProfileRepository;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -51,6 +55,8 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.Comparator;
@@ -59,6 +65,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.requireNonNull;
@@ -78,6 +85,7 @@ public class Nexus2 {
     private final String password;
     private final int connectTimeout;
     private final int readTimeout;
+    private final Retrier retrier;
 
     public Nexus2(JReleaserLogger logger,
                   String apiHost,
@@ -85,7 +93,9 @@ public class Nexus2 {
                   String password,
                   int connectTimeout,
                   int readTimeout,
-                  boolean dryrun) {
+                  boolean dryrun,
+                  int transitionDelay,
+                  int transitionMaxRetries) {
         requireNonNull(logger, "'logger' must not be blank");
         requireNonBlank(apiHost, "'apiHost' must not be blank");
         requireNonBlank(username, "'username' must not be blank");
@@ -98,6 +108,7 @@ public class Nexus2 {
         this.password = password;
         this.connectTimeout = connectTimeout;
         this.readTimeout = readTimeout;
+        this.retrier = new Retrier(logger, transitionDelay, transitionMaxRetries);
         this.api = Feign.builder()
             .encoder(new JacksonEncoder())
             .decoder(new ContentNegotiationDecoder())
@@ -111,8 +122,6 @@ public class Nexus2 {
     }
 
     public String findStagingProfileId(String groupId) throws Nexus2Exception {
-        logger.debug(uncapitalize(RB.$("nexus.lookup.staging.profile")), groupId);
-
         return wrap(() -> {
             Data<List<StagingProfile>> data = api.getStagingProfiles();
             if (null == data || null == data.getData() || data.getData().isEmpty()) {
@@ -145,23 +154,59 @@ public class Nexus2 {
 
     public void dropStagingRepository(String profileId, String stagingRepositoryId, String groupId) throws Nexus2Exception {
         logger.debug(uncapitalize(RB.$("nexus.drop.repository", stagingRepositoryId)));
-        wrap(() -> api.dropStagingRepository(
-            new Data<>(PromoteRequest.of(stagingRepositoryId, "Staging repository for " + groupId)),
-            profileId));
+        wrap(() -> {
+            api.dropStagingRepository(
+                new Data<>(PromoteRequest.of(stagingRepositoryId, "Staging repository for " + groupId)),
+                profileId);
+            waitForState(stagingRepositoryId, StagingProfileRepository.State.NOT_FOUND);
+        });
     }
 
     public void releaseStagingRepository(String profileId, String stagingRepositoryId, String groupId) throws Nexus2Exception {
-        logger.debug(uncapitalize(RB.$("nexus.release.repository", stagingRepositoryId)));
-        wrap(() -> api.releaseStagingRepository(
-            new Data<>(PromoteRequest.of(stagingRepositoryId, "Staging repository for " + groupId)),
-            profileId));
+        wrap(() -> {
+            api.releaseStagingRepository(
+                new Data<>(PromoteRequest.of(stagingRepositoryId, "Staging repository for " + groupId)),
+                profileId);
+            waitForState(stagingRepositoryId, StagingProfileRepository.State.RELEASED, StagingProfileRepository.State.NOT_FOUND);
+        });
     }
 
     public void closeStagingRepository(String profileId, String stagingRepositoryId, String groupId) throws Nexus2Exception {
-        logger.debug(uncapitalize(RB.$("nexus.close.repository", stagingRepositoryId)));
-        wrap(() -> api.closeStagingRepository(
-            new Data<>(PromoteRequest.of(stagingRepositoryId, "Staging repository for " + groupId)),
-            profileId));
+        wrap(() -> {
+            api.closeStagingRepository(
+                new Data<>(PromoteRequest.of(stagingRepositoryId, "Staging repository for " + groupId)),
+                profileId);
+            waitForState(stagingRepositoryId, StagingProfileRepository.State.CLOSED);
+        });
+    }
+
+    private void waitForState(String stagingRepositoryId, StagingProfileRepository.State... states) {
+        logger.debug(RB.$("nexus.wait.repository.state", stagingRepositoryId, Arrays.asList(states)));
+
+        StagingProfileRepository repository = retrier.retry(StagingProfileRepository::isTransitioning,
+            () -> getStagingRepository(stagingRepositoryId));
+
+        if (repository.isTransitioning()) {
+            throw new IllegalStateException(RB.$("nexus.wait.repository.transitioning", stagingRepositoryId));
+        }
+
+        if (Arrays.binarySearch(states, repository.getState()) < 0) {
+            throw new IllegalStateException(RB.$("nexus.wait.repository.invalid.state", stagingRepositoryId, Arrays.asList(states), repository.getState()));
+        }
+    }
+
+    private StagingProfileRepository getStagingRepository(String stagingRepositoryId) {
+        logger.debug(RB.$("nexus.get.staging.repository", stagingRepositoryId));
+
+        try {
+            return api.getStagingRepository(stagingRepositoryId);
+        } catch (NexusAPIException apiException) {
+            if (apiException.isNotFound()) {
+                return StagingProfileRepository.notFound(stagingRepositoryId);
+            } else {
+                throw apiException;
+            }
+        }
     }
 
     public void deploy(String stagingRepositoryId, String path, Path file) throws Nexus2Exception {
@@ -209,12 +254,12 @@ public class Nexus2 {
     private void wrap(NexusOperation operation) throws Nexus2Exception {
         try {
             if (!dryrun) operation.execute();
-        } catch (NexusAPIException e) {
-            logger.trace(e);
-            throw new Nexus2Exception(RB.$("ERROR_unexpected_error"), e);
         } catch (Nexus2Exception e) {
             logger.trace(e);
             throw e;
+        } catch (RuntimeException e) {
+            logger.trace(e);
+            throw new Nexus2Exception(RB.$("ERROR_unexpected_error"), e);
         }
     }
 
@@ -235,6 +280,30 @@ public class Nexus2 {
 
     interface NexusOperation {
         void execute() throws Nexus2Exception;
+    }
+
+    public static class Retrier {
+        private final JReleaserLogger logger;
+        private final int delay;
+        private final int maxRetries;
+
+        public Retrier(JReleaserLogger logger, int delay, int maxRetries) {
+            this.logger = logger;
+            this.delay = delay;
+            this.maxRetries = maxRetries;
+        }
+
+        public <R> R retry(Predicate<R> stopFunction, CheckedSupplier<R> retriableOperation) {
+            final int maxAttempts = maxRetries + 1;
+
+            RetryPolicy<R> policy = new RetryPolicy<R>()
+                .handle(IllegalStateException.class, NexusAPIException.class)
+                .handleResultIf(stopFunction)
+                .withDelay(Duration.ofSeconds(delay))
+                .withMaxRetries(maxRetries)
+                .onFailedAttempt(event -> logger.debug(RB.$("nexus.retry.failed.attempt"), event.getAttemptCount(), maxAttempts, event.getLastResult()));
+            return Failsafe.with(policy).get(retriableOperation);
+        }
     }
 
     static class ContentNegotiationDecoder implements Decoder {

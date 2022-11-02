@@ -52,6 +52,13 @@ public abstract class Nexus2MavenDeployerValidator extends Validator {
             mavenDeployer.setApplyMavenCentralRules(true);
         }
 
+        if (mavenDeployer.getTransitionDelay() <= 0) {
+            mavenDeployer.setTransitionDelay(10);
+        }
+        if (mavenDeployer.getTransitionMaxRetries() <= 0) {
+            mavenDeployer.setTransitionMaxRetries(60);
+        }
+
         validateMavenDeployer(context, mode, mavenDeployer, errors);
     }
 }

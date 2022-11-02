@@ -22,4 +22,5 @@ dependencies {
     api project(':jreleaser-java-sdk-commons')
 
     api "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion"
+    api "net.jodah:failsafe:$failsafeVersion"
 }

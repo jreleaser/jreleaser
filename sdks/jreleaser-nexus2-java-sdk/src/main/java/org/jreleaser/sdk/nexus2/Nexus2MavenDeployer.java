@@ -64,7 +64,8 @@ public class Nexus2MavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
         Nexus2 nexus = null;
         if (!context.isDryrun()) {
             nexus = new Nexus2(context.getLogger(), baseUrl, username, password,
-                deployer.getConnectTimeout(), deployer.getReadTimeout(), context.isDryrun());
+                deployer.getConnectTimeout(), deployer.getReadTimeout(), context.isDryrun(),
+                deployer.getTransitionDelay(), deployer.getTransitionMaxRetries());
         }
 
         String groupId = context.getModel().getProject().getJava().getGroupId();
@@ -115,6 +116,7 @@ public class Nexus2MavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
                 }
             }
         }
+
         if (deployer.isReleaseRepository()) {
             if (!context.isDryrun()) {
                 try {

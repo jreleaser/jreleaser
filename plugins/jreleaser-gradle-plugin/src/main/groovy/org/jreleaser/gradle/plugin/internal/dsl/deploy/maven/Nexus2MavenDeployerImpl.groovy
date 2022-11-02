@@ -35,19 +35,25 @@ import javax.inject.Inject
 class Nexus2MavenDeployerImpl extends AbstractMavenDeployer implements Nexus2MavenDeployer {
     final Property<Boolean> closeRepository
     final Property<Boolean> releaseRepository
+    final Property<Integer> transitionDelay
+    final Property<Integer> transitionMaxRetries
 
     @Inject
     Nexus2MavenDeployerImpl(ObjectFactory objects) {
         super(objects)
         closeRepository = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         releaseRepository = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+        transitionDelay = objects.property(Integer).convention(Providers.<Integer> notDefined())
+        transitionMaxRetries = objects.property(Integer).convention(Providers.<Integer> notDefined())
     }
 
     @Internal
     boolean isSet() {
         super.isSet() ||
             closeRepository.present ||
-            releaseRepository.present
+            closeRepository.present ||
+            transitionDelay.present ||
+            transitionMaxRetries.present
     }
 
     org.jreleaser.model.internal.deploy.maven.Nexus2MavenDeployer toModel() {
@@ -55,6 +61,8 @@ class Nexus2MavenDeployerImpl extends AbstractMavenDeployer implements Nexus2Mav
         fillProperties(deployer)
         if (closeRepository.present) deployer.closeRepository = closeRepository.get()
         if (releaseRepository.present) deployer.releaseRepository = releaseRepository.get()
+        if (transitionDelay.present) deployer.transitionDelay = transitionDelay.get()
+        if (transitionMaxRetries.present) deployer.transitionMaxRetries = transitionMaxRetries.get()
         deployer
     }
 }

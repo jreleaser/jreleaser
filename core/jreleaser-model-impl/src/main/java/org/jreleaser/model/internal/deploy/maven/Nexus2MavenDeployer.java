@@ -33,6 +33,8 @@ import static java.util.Collections.unmodifiableMap;
 public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2MavenDeployer, org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer> {
     private Boolean closeRepository;
     private Boolean releaseRepository;
+    private int transitionDelay;
+    private int transitionMaxRetries;
 
     private final org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer immutable = new org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer() {
         @Override
@@ -134,6 +136,16 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
         public Integer getReadTimeout() {
             return readTimeout;
         }
+
+        @Override
+        public Integer getTransitionDelay() {
+            return transitionDelay;
+        }
+
+        @Override
+        public Integer getTransitionMaxRetries() {
+            return transitionMaxRetries;
+        }
     };
 
     public Nexus2MavenDeployer() {
@@ -143,6 +155,15 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
     @Override
     public org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer asImmutable() {
         return immutable;
+    }
+
+    @Override
+    public void merge(Nexus2MavenDeployer source) {
+        super.merge(source);
+        this.closeRepository = merge(this.closeRepository, source.closeRepository);
+        this.releaseRepository = merge(this.releaseRepository, source.releaseRepository);
+        this.transitionDelay = merge(this.transitionDelay, source.transitionDelay);
+        this.transitionMaxRetries = merge(this.transitionMaxRetries, source.transitionMaxRetries);
     }
 
     public boolean isCloseRepository() {
@@ -169,9 +190,27 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
         return releaseRepository != null;
     }
 
+    public Integer getTransitionDelay() {
+        return transitionDelay;
+    }
+
+    public void setTransitionDelay(Integer transitionDelay) {
+        this.transitionDelay = transitionDelay;
+    }
+
+    public Integer getTransitionMaxRetries() {
+        return transitionMaxRetries;
+    }
+
+    public void setTransitionMaxRetries(Integer transitionMaxRetries) {
+        this.transitionMaxRetries = transitionMaxRetries;
+    }
+
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("closeRepository", isCloseRepository());
         props.put("releaseRepository", isReleaseRepository());
+        props.put("transitionDelay", transitionDelay);
+        props.put("transitionMaxRetries", transitionMaxRetries);
     }
 }

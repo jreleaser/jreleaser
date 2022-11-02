@@ -30,4 +30,8 @@ interface Nexus2MavenDeployer extends MavenDeployer {
     Property<Boolean> getCloseRepository()
 
     Property<Boolean> getReleaseRepository()
+
+    Property<Integer> getTransitionDelay()
+
+    Property<Integer> getTransitionMaxRetries()
 }

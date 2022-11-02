@@ -27,4 +27,8 @@ public interface Nexus2MavenDeployer extends MavenDeployer {
     boolean isCloseRepository();
 
     boolean isReleaseRepository();
+
+    Integer getTransitionDelay();
+
+    Integer getTransitionMaxRetries();
 }
