@@ -135,7 +135,7 @@ java -jar jreleaser-cli.jar <command> [<args>]
 *Dagger*
 
 Head to the documentation page of the
-link:https://github.com/dagger/dagger/tree/main/pkg/universe.dagger.io/alpha/jreleaser[universe.dagger.io/alpha/jreleaser]
+link:https://github.com/dagger/dagger/tree/v0.2.36/pkg/universe.dagger.io/alpha/jreleaser[universe.dagger.io/alpha/jreleaser]
 package to find out how to configure JReleaser in your Dagger powered CI/CD pipeline.
 
 *manually*:
