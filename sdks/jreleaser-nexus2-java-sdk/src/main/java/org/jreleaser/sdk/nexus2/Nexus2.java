@@ -19,12 +19,7 @@ package org.jreleaser.sdk.nexus2;
 
 import com.fasterxml.jackson.databind.RuntimeJsonMappingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import feign.Feign;
-import feign.FeignException;
-import feign.Request;
-import feign.Response;
-import feign.RetryableException;
-import feign.Util;
+import feign.*;
 import feign.auth.BasicAuthRequestInterceptor;
 import feign.codec.DecodeException;
 import feign.codec.Decoder;
@@ -38,12 +33,7 @@ import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.model.spi.upload.UploadException;
 import org.jreleaser.sdk.commons.ClientUtils;
-import org.jreleaser.sdk.nexus2.api.Data;
-import org.jreleaser.sdk.nexus2.api.NexusAPI;
-import org.jreleaser.sdk.nexus2.api.NexusAPIException;
-import org.jreleaser.sdk.nexus2.api.PromoteRequest;
-import org.jreleaser.sdk.nexus2.api.StagedRepository;
-import org.jreleaser.sdk.nexus2.api.StagingProfile;
+import org.jreleaser.sdk.nexus2.api.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -142,7 +132,37 @@ public class Nexus2 {
             return data.getData().getStagedRepositoryId();
         });
     }
-
+    public void verifyTransition(String stagingRepositoryId, String previousStatus, String newStatus) throws Nexus2Exception {
+        Boolean transitioned = false;
+        int retryCount = 24;    // 24 * 5000 = 120 seconds for transition
+        for (int i = 0; i < retryCount; i++) {
+            logger.debug(uncapitalize(RB.$("nexus.staging.repository.transition", previousStatus, newStatus, stagingRepositoryId)));
+            transitioned = isTransitionComplete(stagingRepositoryId, previousStatus, newStatus);
+            if(Boolean.FALSE.equals(transitioned) && i < (retryCount - 1)){
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                break;
+            }
+        }
+        if(!transitioned) throw fail(RB.$("ERROR_nexus_operation_repository", previousStatus, newStatus, stagingRepositoryId));
+    }
+    public Boolean isTransitionComplete(String stagingRepositoryId, String previousStatus, String newStatus) throws Nexus2Exception {
+        logger.debug(uncapitalize(RB.$("nexus.get.staging.repository", stagingRepositoryId)));
+        return wrap(() -> {
+            StagingProfileRepository stagingRepository = api.getStagingRepository(stagingRepositoryId);
+            if (stagingRepository == null) {
+                throw fail(RB.$("ERROR_nexus_fetch_staging_repository", stagingRepositoryId));
+            }
+            if(!stagingRepository.isTransitioning() && !newStatus.equalsIgnoreCase(stagingRepository.getType())) {
+                throw fail(RB.$("ERROR_nexus_operation_repository", previousStatus, newStatus, stagingRepositoryId));
+            }
+            return !stagingRepository.isTransitioning();
+        });
+    }
     public void dropStagingRepository(String profileId, String stagingRepositoryId, String groupId) throws Nexus2Exception {
         logger.debug(uncapitalize(RB.$("nexus.drop.repository", stagingRepositoryId)));
         wrap(() -> api.dropStagingRepository(
@@ -162,6 +182,7 @@ public class Nexus2 {
         wrap(() -> api.closeStagingRepository(
             new Data<>(PromoteRequest.of(stagingRepositoryId, "Staging repository for " + groupId)),
             profileId));
+        verifyTransition(stagingRepositoryId, "open", "closed");
     }
 
     public void deploy(String stagingRepositoryId, String path, Path file) throws Nexus2Exception {
