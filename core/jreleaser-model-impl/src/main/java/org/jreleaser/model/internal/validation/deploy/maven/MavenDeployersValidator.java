@@ -88,7 +88,7 @@ public abstract class MavenDeployersValidator extends Validator {
         mavenDeployer.setUrl(
             checkProperty(context,
                 baseEnvKey + "_" + Env.toVar(mavenDeployer.getName()) + "_URL",
-                mavenDeployer.getType() + ".url",
+                mavenDeployer.getType() + "." + mavenDeployer.getName()+ ".url",
                 mavenDeployer.getUrl(),
                 errors));
 
@@ -105,7 +105,7 @@ public abstract class MavenDeployersValidator extends Validator {
                             baseEnvKey + "_" + Env.toVar(mavenDeployer.getName()) + "_TOKEN",
                             baseEnvKey + "_PASSWORD",
                             baseEnvKey + "_TOKEN"),
-                        mavenDeployer.getType() + ".password",
+                        mavenDeployer.getType() + "." + mavenDeployer.getName() + ".password",
                         mavenDeployer.getPassword(),
                         errors,
                         context.isDryrun()));
@@ -116,7 +116,7 @@ public abstract class MavenDeployersValidator extends Validator {
                         listOf(
                             baseEnvKey + "_" + Env.toVar(mavenDeployer.getName()) + "_USERNAME",
                             baseEnvKey + "_USERNAME"),
-                        mavenDeployer.getType() + ".username",
+                        mavenDeployer.getType() + "." + mavenDeployer.getName() + ".username",
                         mavenDeployer.getUsername(),
                         errors,
                         context.isDryrun()));
@@ -128,7 +128,7 @@ public abstract class MavenDeployersValidator extends Validator {
                             baseEnvKey + "_" + Env.toVar(mavenDeployer.getName()) + "_TOKEN",
                             baseEnvKey + "_PASSWORD",
                             baseEnvKey + "_TOKEN"),
-                        mavenDeployer.getType() + ".password",
+                        mavenDeployer.getType() + "." + mavenDeployer.getName() + ".password",
                         mavenDeployer.getPassword(),
                         errors,
                         context.isDryrun()));

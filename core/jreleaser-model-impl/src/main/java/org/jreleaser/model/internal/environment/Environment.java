@@ -174,6 +174,10 @@ public final class Environment extends AbstractModelObject<Environment> implemen
     }
 
     private void loadVariables(JReleaserContext context, Path file) {
+        System.getenv().forEach((k, v) -> {
+            if (k.startsWith("JRELEASER_")) vars.put(k, v);
+        });
+
         propertiesFile = file;
         context.getLogger().info(RB.$("environment.load.variables"), file.toAbsolutePath());
         if (Files.exists(file)) {

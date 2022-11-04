@@ -51,7 +51,7 @@ class Nexus2MavenDeployerImpl extends AbstractMavenDeployer implements Nexus2Mav
     boolean isSet() {
         super.isSet() ||
             closeRepository.present ||
-            closeRepository.present ||
+            releaseRepository.present ||
             transitionDelay.present ||
             transitionMaxRetries.present
     }
