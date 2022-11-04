@@ -109,6 +109,7 @@ public class Nexus2MavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
             if (!context.isDryrun()) {
                 try {
                     context.getLogger().info(RB.$("nexus.close.repository", stagingRepositoryId));
+                    context.getLogger().info(RB.$("nexus.wait.operation"));
                     nexus.closeStagingRepository(stagingProfileId, stagingRepositoryId, groupId);
                 } catch (Nexus2Exception e) {
                     context.getLogger().trace(e);
@@ -121,6 +122,7 @@ public class Nexus2MavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
             if (!context.isDryrun()) {
                 try {
                     context.getLogger().info(RB.$("nexus.release.repository", stagingRepositoryId));
+                    context.getLogger().info(RB.$("nexus.wait.operation"));
                     nexus.releaseStagingRepository(stagingProfileId, stagingRepositoryId, groupId);
                 } catch (Nexus2Exception e) {
                     context.getLogger().trace(e);

@@ -301,7 +301,10 @@ public class Nexus2 {
                 .handleResultIf(stopFunction)
                 .withDelay(Duration.ofSeconds(delay))
                 .withMaxRetries(maxRetries)
-                .onFailedAttempt(event -> logger.debug(RB.$("nexus.retry.failed.attempt"), event.getAttemptCount(), maxAttempts, event.getLastResult()));
+                .onFailedAttempt(event -> {
+                    logger.info(RB.$("nexus.retry.attempt"), event.getAttemptCount(), maxAttempts);
+                    logger.debug(RB.$("nexus.retry.failed.attempt"), event.getAttemptCount(), maxAttempts, event.getLastResult());
+                });
             return Failsafe.with(policy).get(retriableOperation);
         }
     }
