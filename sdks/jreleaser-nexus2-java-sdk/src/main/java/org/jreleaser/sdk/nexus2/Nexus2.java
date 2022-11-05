@@ -69,6 +69,7 @@ import java.util.function.Predicate;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.requireNonNull;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 import static org.jreleaser.util.StringUtils.uncapitalize;
 
@@ -223,16 +224,17 @@ public class Nexus2 {
             auth = new String(encodedAuth);
             headers.put("Authorization", "Basic " + auth);
 
-            String url = new StringBuilder(apiHost)
-                .append("/staging/deployByRepositoryId/")
-                .append(stagingRepositoryId)
-                .append(path)
+            StringBuilder url = new StringBuilder(apiHost);
+            if (isNotBlank(stagingRepositoryId)) {
+                url = url.append("/staging/deployByRepositoryId/")
+                    .append(stagingRepositoryId);
+            }
+            url = url.append(path)
                 .append("/")
-                .append(filename)
-                .toString();
+                .append(filename);
 
             ClientUtils.putFile(logger,
-                url,
+                url.toString(),
                 connectTimeout,
                 readTimeout,
                 data,

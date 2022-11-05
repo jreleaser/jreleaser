@@ -69,4 +69,6 @@ public interface MavenDeployer<A extends org.jreleaser.model.api.deploy.maven.Ma
     void setStagingRepositories(List<String> stagingRepositories);
 
     Http.Authorization resolveAuthorization();
+
+    boolean isSnapshotAllowed();
 }

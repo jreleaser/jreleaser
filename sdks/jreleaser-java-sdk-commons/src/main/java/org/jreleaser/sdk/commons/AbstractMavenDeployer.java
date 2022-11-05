@@ -174,6 +174,10 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
             List<String> args = new ArrayList<>();
             args.add("check-maven-central");
             args.add("--quiet");
+            if (context.getModel().getProject().isSnapshot() &&
+                getDeployer().isSnapshotAllowed()) {
+                args.add("--no-release");
+            }
             args.add("--file");
             args.add(deployable.getLocalPath().toAbsolutePath().toString());
             try {

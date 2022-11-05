@@ -24,6 +24,8 @@ package org.jreleaser.model.api.deploy.maven;
 public interface Nexus2MavenDeployer extends MavenDeployer {
     String TYPE = "nexus2";
 
+    String getSnapshotUrl();
+
     boolean isCloseRepository();
 
     boolean isReleaseRepository();

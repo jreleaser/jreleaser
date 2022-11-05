@@ -27,6 +27,8 @@ import org.gradle.api.provider.Property
  */
 @CompileStatic
 interface Nexus2MavenDeployer extends MavenDeployer {
+    Property<String> getSnapshotUrl()
+
     Property<Boolean> getCloseRepository()
 
     Property<Boolean> getReleaseRepository()

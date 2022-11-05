@@ -25,12 +25,14 @@ import java.util.Map;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
+import static org.jreleaser.mustache.Templates.resolveTemplate;
 
 /**
  * @author Andres Almiray
  * @since 1.3.0
  */
 public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2MavenDeployer, org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer> {
+    private String snapshotUrl;
     private Boolean closeRepository;
     private Boolean releaseRepository;
     private int transitionDelay;
@@ -40,6 +42,11 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
         @Override
         public String getGroup() {
             return org.jreleaser.model.api.deploy.maven.MavenDeployer.GROUP;
+        }
+
+        @Override
+        public String getSnapshotUrl() {
+            return snapshotUrl;
         }
 
         @Override
@@ -160,10 +167,19 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
     @Override
     public void merge(Nexus2MavenDeployer source) {
         super.merge(source);
+        this.snapshotUrl = merge(this.snapshotUrl, source.snapshotUrl);
         this.closeRepository = merge(this.closeRepository, source.closeRepository);
         this.releaseRepository = merge(this.releaseRepository, source.releaseRepository);
         this.transitionDelay = merge(this.transitionDelay, source.transitionDelay);
         this.transitionMaxRetries = merge(this.transitionMaxRetries, source.transitionMaxRetries);
+    }
+
+    public String getSnapshotUrl() {
+        return snapshotUrl;
+    }
+
+    public void setSnapshotUrl(String snapshotUrl) {
+        this.snapshotUrl = snapshotUrl;
     }
 
     public boolean isCloseRepository() {
@@ -207,7 +223,20 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
     }
 
     @Override
+    public boolean isSnapshotAllowed() {
+        return true;
+    }
+
+    public String getResolvedSnapshotUrl(Map<String, Object> props) {
+        props.put("username", getResolvedUsername());
+        props.put("owner", getResolvedUsername());
+        props.putAll(getExtraProperties());
+        return resolveTemplate(snapshotUrl, props);
+    }
+
+    @Override
     protected void asMap(boolean full, Map<String, Object> props) {
+        props.put("snapshotUrl", snapshotUrl);
         props.put("closeRepository", isCloseRepository());
         props.put("releaseRepository", isReleaseRepository());
         props.put("transitionDelay", transitionDelay);

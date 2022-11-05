@@ -104,10 +104,15 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
             active = Active.NEVER;
         }
         enabled = active.check(project);
-        if (project.isSnapshot()) {
+        if (project.isSnapshot() && !isSnapshotAllowed()) {
             enabled = false;
         }
         return enabled;
+    }
+
+    @Override
+    public boolean isSnapshotAllowed() {
+        return false;
     }
 
     @Override

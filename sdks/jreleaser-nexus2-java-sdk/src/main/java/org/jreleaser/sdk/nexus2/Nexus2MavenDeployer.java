@@ -57,7 +57,11 @@ public class Nexus2MavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
             context.getLogger().info(RB.$("artifacts.no.match"));
         }
 
+        boolean isSnapshot = context.getModel().getProject().isSnapshot();
         String baseUrl = deployer.getResolvedUrl(context.fullProps());
+        if (isSnapshot) {
+            baseUrl = deployer.getResolvedSnapshotUrl(context.fullProps());
+        }
         String username = deployer.getResolvedUsername();
         String password = deployer.getResolvedPassword();
 
@@ -73,7 +77,7 @@ public class Nexus2MavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
         String stagingProfileId = null;
         String stagingRepositoryId = null;
 
-        if (!context.isDryrun()) {
+        if (!isSnapshot && !context.isDryrun()) {
             try {
                 context.getLogger().info(RB.$("nexus.lookup.staging.profile", groupId));
                 stagingProfileId = nexus.findStagingProfileId(groupId);
@@ -96,6 +100,7 @@ public class Nexus2MavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
 
             if (!context.isDryrun()) {
                 try {
+                    // if project is snapshot then stagingRepositoryId will be null, and this is expected
                     nexus.deploy(stagingRepositoryId, deployable.getPath(), deployable.getLocalPath());
                 } catch (Nexus2Exception e) {
                     context.getLogger().trace(e);
@@ -105,29 +110,25 @@ public class Nexus2MavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
             }
         }
 
-        if (deployer.isCloseRepository()) {
-            if (!context.isDryrun()) {
-                try {
-                    context.getLogger().info(RB.$("nexus.close.repository", stagingRepositoryId));
-                    context.getLogger().info(RB.$("nexus.wait.operation"));
-                    nexus.closeStagingRepository(stagingProfileId, stagingRepositoryId, groupId);
-                } catch (Nexus2Exception e) {
-                    context.getLogger().trace(e);
-                    throw new DeployException(RB.$("ERROR_nexus_close_repository", stagingRepositoryId), e);
-                }
+        if (!isSnapshot && !context.isDryrun() && deployer.isCloseRepository()) {
+            try {
+                context.getLogger().info(RB.$("nexus.close.repository", stagingRepositoryId));
+                context.getLogger().info(RB.$("nexus.wait.operation"));
+                nexus.closeStagingRepository(stagingProfileId, stagingRepositoryId, groupId);
+            } catch (Nexus2Exception e) {
+                context.getLogger().trace(e);
+                throw new DeployException(RB.$("ERROR_nexus_close_repository", stagingRepositoryId), e);
             }
         }
 
-        if (deployer.isReleaseRepository()) {
-            if (!context.isDryrun()) {
-                try {
-                    context.getLogger().info(RB.$("nexus.release.repository", stagingRepositoryId));
-                    context.getLogger().info(RB.$("nexus.wait.operation"));
-                    nexus.releaseStagingRepository(stagingProfileId, stagingRepositoryId, groupId);
-                } catch (Nexus2Exception e) {
-                    context.getLogger().trace(e);
-                    throw new DeployException(RB.$("ERROR_nexus_release_repository", stagingRepositoryId), e);
-                }
+        if (!isSnapshot && !context.isDryrun() && deployer.isReleaseRepository()) {
+            try {
+                context.getLogger().info(RB.$("nexus.release.repository", stagingRepositoryId));
+                context.getLogger().info(RB.$("nexus.wait.operation"));
+                nexus.releaseStagingRepository(stagingProfileId, stagingRepositoryId, groupId);
+            } catch (Nexus2Exception e) {
+                context.getLogger().trace(e);
+                throw new DeployException(RB.$("ERROR_nexus_release_repository", stagingRepositoryId), e);
             }
         }
     }

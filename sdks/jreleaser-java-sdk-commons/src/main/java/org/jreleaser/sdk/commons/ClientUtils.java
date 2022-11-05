@@ -262,6 +262,8 @@ public final class ClientUtils {
                     b.append(" reason: ")
                         .append(reason);
                 }
+                logger.trace(RB.$("webhook.server.reply", status, reason));
+
                 try (Reader reader = new InputStreamReader(connection.getErrorStream(), UTF_8)) {
                     String message = IOUtils.toString(reader);
                     if (isNotBlank(message)) {
