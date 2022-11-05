@@ -189,7 +189,7 @@ jobs:
 
       - name: Commit
         run: |
-          git merge development
+          git merge origin/development
           sed -i -e "s/^\version\:\ early-access.*/version: latest/g" docs/antora.yml
           sed -i -e "s/jreleaser-version\:\ .*/jreleaser-version: ${{ needs.precheck.outputs.VERSION }}/g" docs/antora.yml
           VERSION=${{ needs.precheck.outputs.VERSION }}
