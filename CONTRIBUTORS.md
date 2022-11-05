@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-38-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-39-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -60,6 +60,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center"><a href="https://github.com/himanshukandpal-28"><img src="https://avatars.githubusercontent.com/u/110757485?v=4?s=100" width="100px;" alt="Himanshu Kandpal"/><br /><sub><b>Himanshu Kandpal</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=himanshukandpal-28" title="Code">💻</a></td>
       <td align="center"><a href="https://github.com/s-petit"><img src="https://avatars.githubusercontent.com/u/6479783?v=4?s=100" width="100px;" alt="Stéphane Petit"/><br /><sub><b>Stéphane Petit</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=s-petit" title="Code">💻</a></td>
       <td align="center"><a href="https://github.com/Genos15"><img src="https://avatars.githubusercontent.com/u/47024769?v=4?s=100" width="100px;" alt="Genos15"/><br /><sub><b>Genos15</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=Genos15" title="Code">💻</a></td>
+      <td align="center"><a href="https://github.com/Martin-Labenne-Jolimoi"><img src="https://avatars.githubusercontent.com/u/113339619?v=4?s=100" width="100px;" alt="Martin-Labenne-Jolimoi"/><br /><sub><b>Martin-Labenne-Jolimoi</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=Martin-Labenne-Jolimoi" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
