@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-36-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-37-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -58,6 +58,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     </tr>
     <tr>
       <td align="center"><a href="https://github.com/himanshukandpal-28"><img src="https://avatars.githubusercontent.com/u/110757485?v=4?s=100" width="100px;" alt="Himanshu Kandpal"/><br /><sub><b>Himanshu Kandpal</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=himanshukandpal-28" title="Code">💻</a></td>
+      <td align="center"><a href="https://github.com/s-petit"><img src="https://avatars.githubusercontent.com/u/6479783?v=4?s=100" width="100px;" alt="Stéphane Petit"/><br /><sub><b>Stéphane Petit</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=s-petit" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
