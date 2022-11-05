@@ -166,7 +166,14 @@ public class GitSdk {
 
         RevWalk walk = new RevWalk(git.getRepository());
         ObjectId head = git.getRepository().resolve(Constants.HEAD);
-        RevCommit commit = walk.parseCommit(head);
+        RevCommit commit = null;
+
+        try {
+            commit = walk.parseCommit(head);
+        } catch(NullPointerException e) {
+            throw new IllegalStateException(RB.$("ERROR_head_commit_not_found"));
+        }
+
         Ref ref = git.getRepository().findRef(Constants.HEAD);
 
         return new Commit(
