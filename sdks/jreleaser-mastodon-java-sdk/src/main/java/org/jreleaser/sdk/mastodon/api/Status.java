@@ -24,7 +24,11 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @since 0.4.0
  */
 public class Status {
+    private String id;
+
     private String status;
+
+    private String in_reply_to_id;
 
     public String getStatus() {
         return status;
@@ -36,13 +40,33 @@ public class Status {
 
     @Override
     public String toString() {
-        return "Status[status='" + status + '\'' +
+        return "Status[" +
+                   "id='" + id + "'," +
+                   "in_reply_to_id='" + in_reply_to_id + "'," +
+                   "status='" + status + '\'' +
             ']';
     }
 
-    public static Status of(String status) {
+    public static Status of(String status, String inReplyToId) {
         Status o = new Status();
         o.status = requireNonBlank(status, "'status' must not be blank").trim();
+        o.in_reply_to_id = inReplyToId;
         return o;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getIn_reply_to_id() {
+        return in_reply_to_id;
+    }
+
+    public void setIn_reply_to_id(String in_reply_to_id) {
+        this.in_reply_to_id = in_reply_to_id;
     }
 }

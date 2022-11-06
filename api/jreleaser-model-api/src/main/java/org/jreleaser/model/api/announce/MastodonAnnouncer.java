@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model.api.announce;
 
+import java.util.List;
+
 /**
  * @author Andres Almiray
  * @since 0.4.0
@@ -29,5 +31,5 @@ public interface MastodonAnnouncer extends Announcer {
 
     String getAccessToken();
 
-    String getStatus();
+    List<String> getStatuses();
 }

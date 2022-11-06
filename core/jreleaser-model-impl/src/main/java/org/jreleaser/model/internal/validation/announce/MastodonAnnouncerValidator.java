@@ -23,8 +23,11 @@ import org.jreleaser.model.internal.announce.MastodonAnnouncer;
 import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 
+import java.nio.file.Files;
+
 import static org.jreleaser.model.api.announce.MastodonAnnouncer.MASTODON_ACCESS_TOKEN;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -50,8 +53,13 @@ public abstract class MastodonAnnouncerValidator extends Validator {
                 errors,
                 context.isDryrun()));
 
-        if (isBlank(mastodon.getStatus())) {
+        if (isBlank(mastodon.getStatus()) && isBlank(mastodon.getStatusTemplate()) && mastodon.getStatuses().isEmpty()) {
             mastodon.setStatus(RB.$("default.release.message"));
+        }
+
+        if (isNotBlank(mastodon.getStatusTemplate()) &&
+                !Files.exists(context.getBasedir().resolve(mastodon.getStatusTemplate().trim()))) {
+            errors.configuration(RB.$("validation_directory_not_exist", "mastodon.statusTemplate", mastodon.getStatusTemplate()));
         }
 
         validateTimeout(mastodon);

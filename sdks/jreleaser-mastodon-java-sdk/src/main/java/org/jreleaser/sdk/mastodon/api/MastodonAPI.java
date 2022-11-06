@@ -29,5 +29,5 @@ import org.jreleaser.infra.nativeimage.annotations.ProxyConfig;
 public interface MastodonAPI {
     @RequestLine("POST /statuses")
     @Headers("Content-Type: application/json")
-    void status(Status status);
+    Status status(Status status);
 }
