@@ -22,9 +22,12 @@ import org.jreleaser.config.JReleaserConfigParser;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.templates.TemplateResource;
 import org.jreleaser.templates.TemplateUtils;
+import org.jreleaser.templates.VersionDecoratingWriter;
 import picocli.CommandLine;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -87,8 +90,9 @@ public class Init extends AbstractLoggingCommand {
 
             logger.info($("jreleaser.init.TEXT_writing_file"), outputFile.toAbsolutePath());
 
-            try {
-                Files.write(outputFile, content.getBytes(), overwrite ? CREATE : CREATE_NEW, WRITE, TRUNCATE_EXISTING);
+            try (Writer fileWriter = Files.newBufferedWriter(outputFile, overwrite ? CREATE : CREATE_NEW, WRITE, TRUNCATE_EXISTING);
+                 BufferedWriter decoratedWriter = new VersionDecoratingWriter(fileWriter)) {
+                decoratedWriter.write(content);
             } catch (FileAlreadyExistsException e) {
                 logger.error($("jreleaser.init.ERROR_file_exists"), outputFile.toAbsolutePath());
                 return;
