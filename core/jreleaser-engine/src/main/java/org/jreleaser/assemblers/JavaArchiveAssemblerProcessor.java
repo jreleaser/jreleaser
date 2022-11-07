@@ -39,6 +39,7 @@ import java.util.Set;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplate;
 import static org.jreleaser.templates.TemplateUtils.resolveAndMergeTemplates;
+import static org.jreleaser.templates.TemplateUtils.resolveTemplates;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -61,12 +62,21 @@ public class JavaArchiveAssemblerProcessor extends AbstractAssemblerProcessor<or
         Path archiveDirectory = workDirectory.resolve(archiveName);
 
         try {
+            FileUtils.deleteFiles(inputsDirectory);
+            FileUtils.deleteFiles(workDirectory);
+            Files.createDirectories(archiveDirectory);
+        } catch (IOException e) {
+            throw new AssemblerProcessingException(RB.$("ERROR_assembler_delete_archive", archiveName), e);
+        }
+
+        try {
             context.getLogger().debug(RB.$("packager.resolve.templates"), assembler.getType(), assembler.getName());
             Map<String, TemplateResource> templates = resolveAndMergeTemplates(context.getLogger(),
                 assembler.getType(),
                 assembler.getType(),
                 context.getModel().getProject().isSnapshot(),
                 context.getBasedir().resolve(getAssembler().getTemplateDirectory()));
+            templates.putAll(resolveTemplates(context.getBasedir().resolve(getAssembler().getTemplateDirectory())));
 
             for (Map.Entry<String, TemplateResource> entry : templates.entrySet()) {
                 String key = entry.getKey();
@@ -84,13 +94,6 @@ public class JavaArchiveAssemblerProcessor extends AbstractAssemblerProcessor<or
             }
         } catch (IllegalArgumentException | IOException e) {
             throw new AssemblerProcessingException(e);
-        }
-
-        try {
-            FileUtils.deleteFiles(workDirectory);
-            Files.createDirectories(archiveDirectory);
-        } catch (IOException e) {
-            throw new AssemblerProcessingException(RB.$("ERROR_assembler_delete_archive", archiveName), e);
         }
 
         // copy files
@@ -119,7 +122,6 @@ public class JavaArchiveAssemblerProcessor extends AbstractAssemblerProcessor<or
 
             FileUtils.grantExecutableAccess(launcher);
         } catch (IOException e) {
-            e.printStackTrace();
             throw new AssemblerProcessingException(RB.$("ERROR_assembler_copy_launcher",
                 context.relativizeToBasedir(binDirectory)), e);
         }
