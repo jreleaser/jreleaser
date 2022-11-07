@@ -17,11 +17,14 @@
  */
 package org.jreleaser.ant.tasks;
 
+import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.workflow.Workflows;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.jreleaser.model.api.JReleaserContext.Mode.DEPLOY;
 
 /**
  * @author Andres Almiray
@@ -80,5 +83,10 @@ public class JReleaserDeployTask extends AbstractPlatformAwareJReleaserTask {
         context.setIncludedDeployerNames(deployerNames);
         context.setExcludedDeployerNames(excludedDeployerNames);
         Workflows.deploy(context).execute();
+    }
+
+    @Override
+    protected Mode getMode() {
+        return DEPLOY;
     }
 }

@@ -116,6 +116,7 @@ public interface JReleaserContext {
         CONFIG,
         DOWNLOAD,
         ASSEMBLE,
+        DEPLOY,
         FULL,
         CHANGELOG,
         ANNOUNCE;

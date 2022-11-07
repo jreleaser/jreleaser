@@ -48,6 +48,7 @@ public class ModelConfigurer {
                 head.getRefName()));
         } catch (Exception e) {
             if (context.getMode() == Mode.ASSEMBLE ||
+                context.getMode() == Mode.DEPLOY ||
                 context.getMode() == Mode.DOWNLOAD) return;
             context.getLogger().trace(e);
             throw new JReleaserException(RB.$("ERROR_context_configurer_fail_git_head"), e);
