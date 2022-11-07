@@ -27,6 +27,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.assemble.ArchiveAssembler
 import org.jreleaser.gradle.plugin.dsl.assemble.Assemble
+import org.jreleaser.gradle.plugin.dsl.assemble.JavaArchiveAssembler
 import org.jreleaser.gradle.plugin.dsl.assemble.JlinkAssembler
 import org.jreleaser.gradle.plugin.dsl.assemble.JpackageAssembler
 import org.jreleaser.gradle.plugin.dsl.assemble.NativeImageAssembler
@@ -46,6 +47,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 class AssembleImpl implements Assemble {
     final Property<Active> active
     final NamedDomainObjectContainer<ArchiveAssembler> archive
+    final NamedDomainObjectContainer<JavaArchiveAssembler> javaArchive
     final NamedDomainObjectContainer<JlinkAssembler> jlink
     final NamedDomainObjectContainer<JpackageAssembler> jpackage
     final NamedDomainObjectContainer<NativeImageAssembler> nativeImage
@@ -58,6 +60,15 @@ class AssembleImpl implements Assemble {
             @Override
             ArchiveAssembler create(String name) {
                 ArchiveAssemblerImpl archive = objects.newInstance(ArchiveAssemblerImpl, objects)
+                archive.name = name
+                archive
+            }
+        })
+
+        javaArchive = objects.domainObjectContainer(JavaArchiveAssembler, new NamedDomainObjectFactory<JavaArchiveAssembler>() {
+            @Override
+            JavaArchiveAssembler create(String name) {
+                JavaArchiveAssemblerImpl archive = objects.newInstance(JavaArchiveAssemblerImpl, objects)
                 archive.name = name
                 archive
             }
@@ -104,6 +115,11 @@ class AssembleImpl implements Assemble {
     }
 
     @Override
+    void javaArchive(Action<? super NamedDomainObjectContainer<JavaArchiveAssembler>> action) {
+        action.execute(javaArchive)
+    }
+
+    @Override
     void jlink(Action<? super NamedDomainObjectContainer<JlinkAssembler>> action) {
         action.execute(jlink)
     }
@@ -121,6 +137,11 @@ class AssembleImpl implements Assemble {
     @Override
     void archive(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, archive)
+    }
+
+    @Override
+    void javaArchive(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
+        ConfigureUtil.configure(action, javaArchive)
     }
 
     @Override
@@ -144,6 +165,7 @@ class AssembleImpl implements Assemble {
         if (active.present) assemble.active = active.get()
 
         archive.each { assemble.addArchive(((ArchiveAssemblerImpl) it).toModel()) }
+        javaArchive.each { assemble.addJavaArchive(((JavaArchiveAssemblerImpl) it).toModel()) }
         jlink.each { assemble.addJlink(((JlinkAssemblerImpl) it).toModel()) }
         jpackage.each { assemble.addJpackage(((JpackageAssemblerImpl) it).toModel()) }
         nativeImage.each { assemble.addNativeImage(((NativeImageAssemblerImpl) it).toModel()) }

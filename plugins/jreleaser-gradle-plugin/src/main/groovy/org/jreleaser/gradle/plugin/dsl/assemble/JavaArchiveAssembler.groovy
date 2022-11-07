@@ -15,60 +15,65 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.gradle.plugin.dsl.distributions
+package org.jreleaser.gradle.plugin.dsl.assemble
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.jreleaser.gradle.plugin.dsl.common.Activatable
+import org.gradle.api.provider.SetProperty
 import org.jreleaser.gradle.plugin.dsl.common.Artifact
 import org.jreleaser.gradle.plugin.dsl.common.Executable
-import org.jreleaser.gradle.plugin.dsl.common.ExtraProperties
-import org.jreleaser.gradle.plugin.dsl.common.Java
-import org.jreleaser.gradle.plugin.dsl.packagers.Packagers
-import org.jreleaser.gradle.plugin.dsl.platform.Platform
-import org.jreleaser.model.Distribution.DistributionType
-import org.jreleaser.model.Stereotype
+import org.jreleaser.gradle.plugin.dsl.common.Glob
+import org.jreleaser.model.Archive.Format
 
 /**
  *
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 1.4.0
  */
 @CompileStatic
-interface Distribution extends Activatable, ExtraProperties, Packagers {
-    Property<DistributionType> getDistributionType()
+interface JavaArchiveAssembler extends Assembler {
+    Property<String> getArchiveName()
 
-    Property<Stereotype> getStereotype()
+    DirectoryProperty getTemplateDirectory()
 
-    ListProperty<String> getTags()
+    void setTemplateDirectory(String templateDirectory)
 
-    void setDistributionType(String str)
+    SetProperty<Format> getFormats()
 
-    void tag(String tag)
+    void format(String format)
 
     Java getJava()
 
-    Platform getPlatform()
-
     Executable getExecutable()
-
-    void setStereotype(String str)
-
-    void artifact(Action<? super Artifact> action)
 
     void java(Action<? super Java> action)
 
-    void platform(Action<? super Platform> action)
+    void mainJar(Action<? super Artifact> action)
 
     void executable(Action<? super Executable> action)
 
-    void artifact(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
+    void jars(Action<? super Glob> action)
+
+    void files(Action<? super Glob> action)
 
     void java(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Java) Closure<Void> action)
 
-    void platform(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Platform) Closure<Void> action)
+    void mainJar(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
 
     void executable(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Executable) Closure<Void> action)
+
+    void jars(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Glob) Closure<Void> action)
+
+    void files(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Glob) Closure<Void> action)
+
+    interface Java {
+        Property<String> getMainModule()
+
+        Property<String> getMainClass()
+
+        ListProperty<String> getOptions()
+    }
 }

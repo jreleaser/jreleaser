@@ -38,6 +38,7 @@ import org.jreleaser.model.api.release.Releaser;
 import org.jreleaser.model.api.signing.Keyring;
 import org.jreleaser.model.api.signing.SigningException;
 import org.jreleaser.model.api.upload.Uploader;
+import org.jreleaser.model.internal.assemble.JavaArchiveAssembler;
 import org.jreleaser.model.internal.assemble.JavaAssembler;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.project.Project;
@@ -472,6 +473,13 @@ public class JReleaserContext {
             if (assembler instanceof JavaAssembler) {
                 distribution.getExecutable().setName(((JavaAssembler<?>) assembler).getExecutable());
                 distribution.setJava(((JavaAssembler<?>) assembler).getJava());
+            } else if (assembler instanceof JavaArchiveAssembler) {
+                JavaArchiveAssembler javaArchiveAssembler = (JavaArchiveAssembler) assembler;
+                distribution.getExecutable().setName(javaArchiveAssembler.getExecutable().getName());
+                distribution.getExecutable().setUnixExtension(javaArchiveAssembler.getExecutable().getUnixExtension());
+                distribution.getExecutable().setWindowsExtension(javaArchiveAssembler.getExecutable().getWindowsExtension());
+                distribution.getJava().setMainClass(javaArchiveAssembler.getJava().getMainClass());
+                distribution.getJava().setMainModule(javaArchiveAssembler.getJava().getMainModule());
             }
             mergeArtifacts(assembler, distribution);
 

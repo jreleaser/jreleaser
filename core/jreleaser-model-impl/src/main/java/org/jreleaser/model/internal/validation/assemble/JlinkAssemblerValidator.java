@@ -167,6 +167,11 @@ public abstract class JlinkAssemblerValidator extends Validator {
             "jlink." + jlink.getName() + ".jars",
             errors);
 
+        validateGlobs(context,
+            jlink.getFiles(),
+            "jlink." + jlink.getName() + ".files",
+            errors);
+
         if (mode == Mode.ASSEMBLE) {
             validateTemplate(context, jlink, errors);
         }

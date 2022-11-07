@@ -46,6 +46,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public final class Assemble extends AbstractModelObject<Assemble> implements Domain, Activatable {
     private final Map<String, ArchiveAssembler> archive = new LinkedHashMap<>();
+    private final Map<String, JavaArchiveAssembler> javaArchive = new LinkedHashMap<>();
     private final Map<String, JlinkAssembler> jlink = new LinkedHashMap<>();
     private final Map<String, JpackageAssembler> jpackage = new LinkedHashMap<>();
     private final Map<String, NativeImageAssembler> nativeImage = new LinkedHashMap<>();
@@ -56,6 +57,7 @@ public final class Assemble extends AbstractModelObject<Assemble> implements Dom
 
     private final org.jreleaser.model.api.assemble.Assemble immutable = new org.jreleaser.model.api.assemble.Assemble() {
         private Map<String, ? extends org.jreleaser.model.api.assemble.ArchiveAssembler> archive;
+        private Map<String, ? extends org.jreleaser.model.api.assemble.JavaArchiveAssembler> javaArchive;
         private Map<String, ? extends org.jreleaser.model.api.assemble.JlinkAssembler> jlink;
         private Map<String, ? extends org.jreleaser.model.api.assemble.JpackageAssembler> jpackage;
         private Map<String, ? extends org.jreleaser.model.api.assemble.NativeImageAssembler> nativeImage;
@@ -68,6 +70,16 @@ public final class Assemble extends AbstractModelObject<Assemble> implements Dom
                     .collect(toMap(org.jreleaser.model.api.assemble.Assembler::getName, identity()));
             }
             return archive;
+        }
+
+        @Override
+        public Map<String, ? extends org.jreleaser.model.api.assemble.JavaArchiveAssembler> getJavaArchive() {
+            if (null == javaArchive) {
+                javaArchive = Assemble.this.javaArchive.values().stream()
+                    .map(JavaArchiveAssembler::asImmutable)
+                    .collect(toMap(org.jreleaser.model.api.assemble.Assembler::getName, identity()));
+            }
+            return javaArchive;
         }
 
         @Override
@@ -125,6 +137,7 @@ public final class Assemble extends AbstractModelObject<Assemble> implements Dom
         this.active = merge(this.active, source.active);
         this.enabled = merge(this.enabled, source.enabled);
         setArchive(mergeModel(this.archive, source.archive));
+        setJavaArchive(mergeModel(this.javaArchive, source.javaArchive));
         setJlink(mergeModel(this.jlink, source.jlink));
         setJpackage(mergeModel(this.jpackage, source.jpackage));
         setNativeImage(mergeModel(this.nativeImage, source.nativeImage));
@@ -193,6 +206,25 @@ public final class Assemble extends AbstractModelObject<Assemble> implements Dom
 
     public void addArchive(ArchiveAssembler archive) {
         this.archive.put(archive.getName(), archive);
+    }
+
+    public List<JavaArchiveAssembler> getActiveJavaArchives() {
+        return javaArchive.values().stream()
+            .filter(JavaArchiveAssembler::isEnabled)
+            .collect(toList());
+    }
+
+    public Map<String, JavaArchiveAssembler> getJavaArchive() {
+        return javaArchive;
+    }
+
+    public void setJavaArchive(Map<String, JavaArchiveAssembler> javaArchive) {
+        this.javaArchive.clear();
+        this.javaArchive.putAll(javaArchive);
+    }
+
+    public void addJavaArchive(JavaArchiveAssembler javaArchive) {
+        this.javaArchive.put(javaArchive.getName(), javaArchive);
     }
 
     public List<JlinkAssembler> getActiveJlinks() {
@@ -277,6 +309,13 @@ public final class Assemble extends AbstractModelObject<Assemble> implements Dom
             .collect(toList());
         if (!archive.isEmpty()) map.put("archive", archive);
 
+        List<Map<String, Object>> javaArchive = this.javaArchive.values()
+            .stream()
+            .filter(d -> full || d.isEnabled())
+            .map(d -> d.asMap(full))
+            .collect(toList());
+        if (!javaArchive.isEmpty()) map.put("javaArchive", javaArchive);
+
         List<Map<String, Object>> jlink = this.jlink.values()
             .stream()
             .filter(d -> full || d.isEnabled())
@@ -305,6 +344,8 @@ public final class Assemble extends AbstractModelObject<Assemble> implements Dom
         switch (assemblerName) {
             case org.jreleaser.model.api.assemble.ArchiveAssembler.TYPE:
                 return (Map<String, A>) archive;
+            case org.jreleaser.model.api.assemble.JavaArchiveAssembler.TYPE:
+                return (Map<String, A>) javaArchive;
             case org.jreleaser.model.api.assemble.JlinkAssembler.TYPE:
                 return (Map<String, A>) jlink;
             case org.jreleaser.model.api.assemble.JpackageAssembler.TYPE:
@@ -319,6 +360,7 @@ public final class Assemble extends AbstractModelObject<Assemble> implements Dom
     public <A extends Assembler> Collection<A> findAllAssemblers() {
         List<A> assemblers = new ArrayList<>();
         assemblers.addAll((List<A>) getActiveArchives());
+        assemblers.addAll((List<A>) getActiveJavaArchives());
         assemblers.addAll((List<A>) getActiveJlinks());
         assemblers.addAll((List<A>) getActiveJpackages());
         assemblers.addAll((List<A>) getActiveNativeImages());

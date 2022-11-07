@@ -17,23 +17,43 @@
  */
 package org.jreleaser.model.api.assemble;
 
-import org.jreleaser.model.api.common.Activatable;
+import org.jreleaser.model.Archive;
+import org.jreleaser.model.api.common.Artifact;
 import org.jreleaser.model.api.common.Domain;
+import org.jreleaser.model.api.common.Executable;
+import org.jreleaser.model.api.common.Glob;
 
-import java.util.Map;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Andres Almiray
- * @since 0.2.0
+ * @since 1.4.0
  */
-public interface Assemble extends Domain, Activatable {
-    Map<String, ? extends ArchiveAssembler> getArchive();
+public interface JavaArchiveAssembler extends Assembler {
+    String TYPE = "java-archive";
 
-    Map<String, ? extends JavaArchiveAssembler> getJavaArchive();
+    String getArchiveName();
 
-    Map<String, ? extends JlinkAssembler> getJlink();
+    Set<Archive.Format> getFormats();
 
-    Map<String, ? extends JpackageAssembler> getJpackage();
+    String getTemplateDirectory();
 
-    Map<String, ? extends NativeImageAssembler> getNativeImage();
+    Artifact getMainJar();
+
+    Java getJava();
+
+    Executable getExecutable();
+
+    List<? extends Glob> getJars();
+
+    List<? extends Glob> getFiles();
+
+    interface Java extends Domain {
+        String getMainClass();
+
+        String getMainModule();
+
+        List<String> getOptions();
+    }
 }

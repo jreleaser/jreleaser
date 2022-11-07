@@ -22,6 +22,7 @@ import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.ArchiveAssembler;
 import org.jreleaser.model.internal.assemble.Assemble;
+import org.jreleaser.model.internal.assemble.JavaArchiveAssembler;
 import org.jreleaser.model.internal.assemble.JlinkAssembler;
 import org.jreleaser.model.internal.assemble.JpackageAssembler;
 import org.jreleaser.model.internal.assemble.NativeImageAssembler;
@@ -34,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jreleaser.model.internal.validation.assemble.ArchiveAssemblerValidator.validateArchive;
+import static org.jreleaser.model.internal.validation.assemble.JavaArchiveAssemblerValidator.validateJavaArchive;
 import static org.jreleaser.model.internal.validation.assemble.JlinkAssemblerValidator.validateJlink;
 import static org.jreleaser.model.internal.validation.assemble.JpackageAssemblerValidator.postValidateJpackage;
 import static org.jreleaser.model.internal.validation.assemble.JpackageAssemblerValidator.validateJpackage;
@@ -49,6 +51,7 @@ public abstract class AssemblersValidator extends Validator {
         context.getLogger().debug("assemble");
 
         validateArchive(context, mode, errors);
+        validateJavaArchive(context, mode, errors);
         validateJlink(context, mode, errors);
         validateJpackage(context, mode, errors);
         validateNativeImage(context, mode, errors);
@@ -61,6 +64,10 @@ public abstract class AssemblersValidator extends Validator {
         // validate unique distribution names between exported assemblers
         Map<String, List<String>> byDistributionName = new LinkedHashMap<>();
         for (ArchiveAssembler archive : assemble.getActiveArchives()) {
+            List<String> types = byDistributionName.computeIfAbsent(archive.getName(), k -> new ArrayList<>());
+            types.add(archive.getType());
+        }
+        for (JavaArchiveAssembler archive : assemble.getActiveJavaArchives()) {
             List<String> types = byDistributionName.computeIfAbsent(archive.getName(), k -> new ArrayList<>());
             types.add(archive.getType());
         }
@@ -89,6 +96,7 @@ public abstract class AssemblersValidator extends Validator {
 
         if (assemble.isEnabled()) {
             boolean enabled = !assemble.getActiveArchives().isEmpty() ||
+                !assemble.getActiveJavaArchives().isEmpty() ||
                 !assemble.getActiveJlinks().isEmpty() ||
                 !assemble.getActiveJpackages().isEmpty() ||
                 !assemble.getActiveNativeImages().isEmpty();

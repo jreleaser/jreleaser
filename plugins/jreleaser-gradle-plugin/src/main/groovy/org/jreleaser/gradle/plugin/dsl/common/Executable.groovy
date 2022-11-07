@@ -15,25 +15,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.api.assemble;
+package org.jreleaser.gradle.plugin.dsl.common
 
-import org.jreleaser.model.api.common.Activatable;
-import org.jreleaser.model.api.common.Domain;
-
-import java.util.Map;
+import groovy.transform.CompileStatic
+import org.gradle.api.provider.Property
 
 /**
+ *
  * @author Andres Almiray
- * @since 0.2.0
+ * @since 0.1.0
  */
-public interface Assemble extends Domain, Activatable {
-    Map<String, ? extends ArchiveAssembler> getArchive();
+@CompileStatic
+interface Executable {
+    Property<String> getName()
 
-    Map<String, ? extends JavaArchiveAssembler> getJavaArchive();
+    Property<String> getUnixExtension()
 
-    Map<String, ? extends JlinkAssembler> getJlink();
-
-    Map<String, ? extends JpackageAssembler> getJpackage();
-
-    Map<String, ? extends NativeImageAssembler> getNativeImage();
+    Property<String> getWindowsExtension()
 }

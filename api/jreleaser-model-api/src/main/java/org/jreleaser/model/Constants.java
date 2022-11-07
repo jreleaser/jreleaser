@@ -155,7 +155,10 @@ public interface Constants {
     String KEY_DISTRIBUTION_JAVA_VERSION_BUILD = "distributionJavaVersionBuild";
     String KEY_DISTRIBUTION_JAVA_GROUP_ID = "distributionJavaGroupId";
     String KEY_DISTRIBUTION_JAVA_ARTIFACT_ID = "distributionJavaArtifactId";
+    String KEY_DISTRIBUTION_JAVA_MAIN_JAR = "distributionJavaMainJar";
     String KEY_DISTRIBUTION_JAVA_MAIN_CLASS = "distributionJavaMainClass";
+    String KEY_DISTRIBUTION_JAVA_MAIN_MODULE = "distributionJavaMainModule";
+    String KEY_DISTRIBUTION_JAVA_OPTIONS = "distributionJavaOptions";
 
     // Artifact
     String KEY_ARTIFACT_PLATFORM = "artifactPlatform";

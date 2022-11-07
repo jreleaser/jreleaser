@@ -23,6 +23,7 @@ import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.internal.validation.assemble.ArchiveAssemblerResolver.resolveArchiveOutputs;
+import static org.jreleaser.model.internal.validation.assemble.JavaArchiveAssemblerResolver.resolveJavaArchiveOutputs;
 import static org.jreleaser.model.internal.validation.assemble.JlinkAssemblerResolver.resolveJlinkOutputs;
 import static org.jreleaser.model.internal.validation.assemble.JpackageAssemblerResolver.resolveJpackageOutputs;
 import static org.jreleaser.model.internal.validation.assemble.NativeImageAssemblerResolver.resolveNativeImageOutputs;
@@ -39,6 +40,9 @@ public abstract class AssemblersResolver extends Validator {
         context.getLogger().debug("assemble");
         if (!environment.getBooleanProperty("skipArchiveResolver")) {
             resolveArchiveOutputs(context, errors);
+        }
+        if (!environment.getBooleanProperty("skipJavaArchiveResolver")) {
+            resolveJavaArchiveOutputs(context, errors);
         }
         if (!environment.getBooleanProperty("skipJlinkResolver")) {
             resolveJlinkOutputs(context, errors);

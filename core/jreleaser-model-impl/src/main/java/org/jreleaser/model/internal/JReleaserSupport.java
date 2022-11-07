@@ -34,6 +34,7 @@ public final class JReleaserSupport {
     public static Set<String> supportedAssemblers() {
         Set<String> set = new LinkedHashSet<>();
         set.add(org.jreleaser.model.api.assemble.ArchiveAssembler.TYPE);
+        set.add(org.jreleaser.model.api.assemble.JavaArchiveAssembler.TYPE);
         set.add(org.jreleaser.model.api.assemble.JlinkAssembler.TYPE);
         set.add(org.jreleaser.model.api.assemble.JpackageAssembler.TYPE);
         set.add(org.jreleaser.model.api.assemble.NativeImageAssembler.TYPE);
