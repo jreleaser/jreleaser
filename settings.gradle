@@ -17,9 +17,9 @@
  */
 buildscript {
     repositories {
-        gradlePluginPortal()
-        mavenCentral()
         mavenLocal()
+        mavenCentral()
+        gradlePluginPortal()
     }
     dependencies {
         classpath "com.github.jengelman.gradle.plugins:shadow:$shadowPluginVersion"
