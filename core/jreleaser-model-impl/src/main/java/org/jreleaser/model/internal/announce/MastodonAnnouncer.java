@@ -19,14 +19,12 @@ package org.jreleaser.model.internal.announce;
 
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.JReleaserContext;
-import org.jreleaser.util.Env;
 
 import java.util.Map;
 
 import static java.util.Collections.unmodifiableMap;
 import static org.jreleaser.model.Constants.HIDE;
 import static org.jreleaser.model.Constants.UNSET;
-import static org.jreleaser.model.api.announce.MastodonAnnouncer.MASTODON_ACCESS_TOKEN;
 import static org.jreleaser.model.api.announce.MastodonAnnouncer.TYPE;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
@@ -132,10 +130,6 @@ public final class MastodonAnnouncer extends AbstractAnnouncer<MastodonAnnouncer
         return resolveTemplate(status, props);
     }
 
-    public String getResolvedAccessToken() {
-        return Env.env(MASTODON_ACCESS_TOKEN, accessToken);
-    }
-
     public String getHost() {
         return host;
     }
@@ -163,7 +157,7 @@ public final class MastodonAnnouncer extends AbstractAnnouncer<MastodonAnnouncer
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("host", host);
-        props.put("accessToken", isNotBlank(getResolvedAccessToken()) ? HIDE : UNSET);
+        props.put("accessToken", isNotBlank(accessToken) ? HIDE : UNSET);
         props.put("status", status);
     }
 }

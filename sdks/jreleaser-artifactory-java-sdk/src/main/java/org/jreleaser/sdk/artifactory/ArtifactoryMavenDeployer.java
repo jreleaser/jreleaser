@@ -67,8 +67,8 @@ public class ArtifactoryMavenDeployer extends AbstractMavenDeployer<org.jrelease
         }
 
         String baseUrl = deployer.getResolvedUrl(context.fullProps());
-        String username = deployer.getResolvedUsername();
-        String password = deployer.getResolvedPassword();
+        String username = deployer.getUsername();
+        String password = deployer.getPassword();
 
         for (Deployable deployable : deployables) {
             if (!deployable.getFilename().endsWith(".jar") &&

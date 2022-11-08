@@ -123,7 +123,7 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
             params.setTargetCommitish(github.getBranch());
             GhReleaseNotes releaseNotes = new XGithub(context.getLogger(),
                 github.getApiEndpoint(),
-                github.getResolvedToken(),
+                github.getToken(),
                 github.getConnectTimeout(),
                 github.getReadTimeout())
                 .generateReleaseNotes(github.getOwner(), github.getName(), params);
@@ -139,7 +139,7 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
         try {
             Github api = new Github(context.getLogger(),
                 github.getApiEndpoint(),
-                github.getResolvedToken(),
+                github.getToken(),
                 github.getConnectTimeout(),
                 github.getReadTimeout());
             GHRepository repository = api.findRepository(github.getOwner(), github.getName());
@@ -172,7 +172,7 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
         try {
             Github api = new Github(context.getLogger(),
                 github.getApiEndpoint(),
-                github.getResolvedToken(),
+                github.getToken(),
                 github.getConnectTimeout(),
                 github.getReadTimeout());
 
@@ -273,7 +273,7 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
         try {
             return new XGithub(context.getLogger(),
                 github.getApiEndpoint(),
-                github.getResolvedToken(),
+                github.getToken(),
                 github.getConnectTimeout(),
                 github.getReadTimeout())
                 .findUser(email, name);
@@ -291,7 +291,7 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
 
         Github api = new Github(context.getLogger(),
             github.getApiEndpoint(),
-            github.getResolvedToken(),
+            github.getToken(),
             github.getConnectTimeout(),
             github.getReadTimeout());
 
@@ -510,7 +510,7 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
         try {
             XGithub xapi = new XGithub(context.getLogger(),
                 github.getApiEndpoint(),
-                github.getResolvedToken(),
+                github.getToken(),
                 github.getConnectTimeout(),
                 github.getReadTimeout());
 

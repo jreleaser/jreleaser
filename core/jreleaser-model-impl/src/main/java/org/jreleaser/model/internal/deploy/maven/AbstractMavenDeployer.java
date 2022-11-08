@@ -23,13 +23,11 @@ import org.jreleaser.model.Http;
 import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.common.ExtraProperties;
 import org.jreleaser.model.internal.project.Project;
-import org.jreleaser.util.Env;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import static org.jreleaser.model.Constants.HIDE;
@@ -298,8 +296,8 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
         props.put("readTimeout", readTimeout);
         props.put("authorization", authorization);
         props.put("url", url);
-        props.put("username", isNotBlank(getResolvedUsername()) ? HIDE : UNSET);
-        props.put("password", isNotBlank(getResolvedPassword()) ? HIDE : UNSET);
+        props.put("username", isNotBlank(username) ? HIDE : UNSET);
+        props.put("password", isNotBlank(password) ? HIDE : UNSET);
         props.put("sign", isSign());
         props.put("verifyPom", isVerifyPom());
         props.put("applyMavenCentralRules", isApplyMavenCentralRules());
@@ -315,18 +313,10 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
     protected abstract void asMap(boolean full, Map<String, Object> props);
 
     public String getResolvedUrl(Map<String, Object> props) {
-        props.put("username", getResolvedUsername());
-        props.put("owner", getResolvedUsername());
+        props.put("username", username);
+        props.put("owner", username);
         props.putAll(getExtraProperties());
         return resolveTemplate(url, props);
-    }
-
-    public String getResolvedUsername() {
-        return Env.env(getType().toUpperCase(Locale.ENGLISH) + "_" + Env.toVar(name) + "_USERNAME", username);
-    }
-
-    public String getResolvedPassword() {
-        return Env.env(getType().toUpperCase(Locale.ENGLISH) + "_" + Env.toVar(name) + "_PASSWORD", password);
     }
 
     @Override

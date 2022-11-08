@@ -67,7 +67,7 @@ public class GiteaMavenDeployer extends AbstractMavenDeployer<org.jreleaser.mode
         }
 
         String baseUrl = deployer.getResolvedUrl(context.fullProps());
-        String token = deployer.getResolvedPassword();
+        String token = deployer.getPassword();
 
         // delete existing packages (if any)
         for (Deployable deployable : deployables) {

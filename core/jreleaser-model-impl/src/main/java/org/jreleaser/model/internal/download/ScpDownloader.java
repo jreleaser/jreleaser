@@ -140,11 +140,6 @@ public final class ScpDownloader extends AbstractSshDownloader<org.jreleaser.mod
     }
 
     @Override
-    protected String getEnvPrefix() {
-        return "SCTP";
-    }
-
-    @Override
     public org.jreleaser.model.api.download.ScpDownloader asImmutable() {
         return immutable;
     }

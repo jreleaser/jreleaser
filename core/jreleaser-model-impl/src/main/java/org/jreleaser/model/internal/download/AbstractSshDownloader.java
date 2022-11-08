@@ -17,14 +17,10 @@
  */
 package org.jreleaser.model.internal.download;
 
-import org.jreleaser.util.Env;
-
 import java.util.Map;
 
 import static org.jreleaser.model.Constants.HIDE;
 import static org.jreleaser.model.Constants.UNSET;
-import static org.jreleaser.util.CollectionUtils.listOf;
-import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -60,81 +56,6 @@ public abstract class AbstractSshDownloader<A extends org.jreleaser.model.api.do
         this.fingerprint = merge(this.fingerprint, source.fingerprint);
     }
 
-    protected abstract String getEnvPrefix();
-
-    public String getResolvedUsername() {
-        return Env.env(listOf(
-                getEnvPrefix() + "_" + Env.toVar(name) + "_USERNAME",
-                "SSH_" + Env.toVar(name) + "_USERNAME",
-                getEnvPrefix() + "_USERNAME",
-                "SSH_USERNAME"),
-            username);
-    }
-
-    public String getResolvedPassword() {
-        return Env.env(listOf(
-                getEnvPrefix() + "_" + Env.toVar(name) + "_PASSWORD",
-                "SSH_" + Env.toVar(name) + "_PASSWORD",
-                getEnvPrefix() + "_PASSWORD",
-                "SSH_PASSWORD"),
-            password);
-    }
-
-    public String getResolvedHost() {
-        return Env.env(listOf(
-                getEnvPrefix() + "_" + Env.toVar(name) + "_HOST",
-                "SSH_" + Env.toVar(name) + "_HOST",
-                getEnvPrefix() + "_HOST",
-                "SSH_HOST"),
-            host);
-    }
-
-    public Integer getResolvedPort() {
-        String value = Env.env(listOf(
-                getEnvPrefix() + "_" + Env.toVar(name) + "_PORT",
-                "SSH_" + Env.toVar(name) + "_PORT",
-                getEnvPrefix() + "_PORT",
-                "SSH_PORT"),
-            null == port ? "" : String.valueOf(port));
-        return isBlank(value) ? 22 : Integer.parseInt(value);
-    }
-
-    public String getResolvedPublicKey() {
-        return Env.env(listOf(
-                getEnvPrefix() + "_" + Env.toVar(name) + "_PUBLIC_KEY",
-                "SSH_" + Env.toVar(name) + "_PUBLIC_KEY",
-                getEnvPrefix() + "_PUBLIC_KEY",
-                "SSH_PUBLIC_KEY"),
-            publicKey);
-    }
-
-    public String getResolvedPrivateKey() {
-        return Env.env(listOf(
-                getEnvPrefix() + "_" + Env.toVar(name) + "_PRIVATE_KEY",
-                "SSH_" + Env.toVar(name) + "_PRIVATE_KEY",
-                getEnvPrefix() + "_PRIVATE_KEY",
-                "SSH_PRIVATE_KEY"),
-            privateKey);
-    }
-
-    public String getResolvedPassphrase() {
-        return Env.env(listOf(
-                getEnvPrefix() + "_" + Env.toVar(name) + "_PASSPHRASE",
-                "SSH_" + Env.toVar(name) + "_PASSPHRASE",
-                getEnvPrefix() + "_PASSPHRASE",
-                "SSH_PASSPHRASE"),
-            passphrase);
-    }
-
-    public String getResolvedFingerprint() {
-        return Env.env(listOf(
-                getEnvPrefix() + "_" + Env.toVar(name) + "_FINGERPRINT",
-                "SSH_" + Env.toVar(name) + "_FINGERPRINT",
-                getEnvPrefix() + "_FINGERPRINT",
-                "SSH_FINGERPRINT"),
-            fingerprint);
-    }
-
     @Override
     public String getUsername() {
         return username;
@@ -164,7 +85,7 @@ public abstract class AbstractSshDownloader<A extends org.jreleaser.model.api.do
 
     @Override
     public Integer getPort() {
-        return port;
+        return null != port ? port : 22;
     }
 
     public void setPort(Integer port) {
@@ -218,14 +139,14 @@ public abstract class AbstractSshDownloader<A extends org.jreleaser.model.api.do
 
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
-        props.put("host", isNotBlank(getResolvedHost()) ? HIDE : UNSET);
-        props.put("port", getResolvedPort());
-        props.put("username", isNotBlank(getResolvedUsername()) ? HIDE : UNSET);
-        props.put("password", isNotBlank(getResolvedPassword()) ? HIDE : UNSET);
+        props.put("host", isNotBlank(host) ? HIDE : UNSET);
+        props.put("port", getPort());
+        props.put("username", isNotBlank(username) ? HIDE : UNSET);
+        props.put("password", isNotBlank(password) ? HIDE : UNSET);
         props.put("knownHostsFile", knownHostsFile);
-        props.put("publicKey", isNotBlank(getResolvedPublicKey()) ? HIDE : UNSET);
-        props.put("privateKey", isNotBlank(getResolvedPrivateKey()) ? HIDE : UNSET);
-        props.put("passphrase", isNotBlank(getResolvedPassphrase()) ? HIDE : UNSET);
-        props.put("fingerprint", isNotBlank(getResolvedFingerprint()) ? HIDE : UNSET);
+        props.put("publicKey", isNotBlank(publicKey) ? HIDE : UNSET);
+        props.put("privateKey", isNotBlank(privateKey) ? HIDE : UNSET);
+        props.put("passphrase", isNotBlank(passphrase) ? HIDE : UNSET);
+        props.put("fingerprint", isNotBlank(fingerprint) ? HIDE : UNSET);
     }
 }

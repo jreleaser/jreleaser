@@ -20,7 +20,6 @@ package org.jreleaser.model.internal.upload;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Artifact;
-import org.jreleaser.util.Env;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -30,7 +29,6 @@ import static org.jreleaser.model.Constants.HIDE;
 import static org.jreleaser.model.Constants.UNSET;
 import static org.jreleaser.model.api.upload.GitlabUploader.TYPE;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
-import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -206,7 +204,7 @@ public final class GitlabUploader extends AbstractUploader<org.jreleaser.model.a
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("host", host);
-        props.put("token", isNotBlank(getResolvedToken()) ? HIDE : UNSET);
+        props.put("token", isNotBlank(token) ? HIDE : UNSET);
         props.put("packageName", packageName);
         props.put("packageVersion", packageVersion);
         props.put("projectIdentifier", projectIdentifier);
@@ -226,13 +224,6 @@ public final class GitlabUploader extends AbstractUploader<org.jreleaser.model.a
         p.put("packageVersion", packageVersion);
         p.put("projectIdentifier", projectIdentifier);
         return resolveTemplate(DOWNLOAD_URL, p);
-    }
-
-    public String getResolvedToken() {
-        return Env.env(listOf(
-                "GITLAB_" + Env.toVar(name) + "_TOKEN",
-                "GITLAB_TOKEN"),
-            token);
     }
 
     public String getResolvedUploadUrl(JReleaserContext context, Artifact artifact) {

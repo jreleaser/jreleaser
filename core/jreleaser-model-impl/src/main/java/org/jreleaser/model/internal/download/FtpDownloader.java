@@ -19,7 +19,6 @@ package org.jreleaser.model.internal.download;
 
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.common.Ftp;
-import org.jreleaser.util.Env;
 
 import java.util.List;
 import java.util.Map;
@@ -29,7 +28,6 @@ import static java.util.stream.Collectors.toList;
 import static org.jreleaser.model.Constants.HIDE;
 import static org.jreleaser.model.Constants.UNSET;
 import static org.jreleaser.model.api.download.FtpDownloader.TYPE;
-import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -164,7 +162,7 @@ public final class FtpDownloader extends AbstractDownloader<org.jreleaser.model.
     }
 
     public Integer getPort() {
-        return port;
+        return null != port ? port : 21;
     }
 
     public void setPort(Integer port) {
@@ -173,26 +171,9 @@ public final class FtpDownloader extends AbstractDownloader<org.jreleaser.model.
 
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
-        props.put("host", getResolvedHost());
-        props.put("port", getResolvedPort());
-        props.put("username", isNotBlank(getResolvedUsername()) ? HIDE : UNSET);
-        props.put("password", isNotBlank(getResolvedPassword()) ? HIDE : UNSET);
-    }
-
-    public String getResolvedUsername() {
-        return Env.env("FTP_" + Env.toVar(name) + "_USERNAME", username);
-    }
-
-    public String getResolvedPassword() {
-        return Env.env("FTP_" + Env.toVar(name) + "_PASSWORD", password);
-    }
-
-    public String getResolvedHost() {
-        return Env.env("FTP_" + Env.toVar(name) + "_HOST", host);
-    }
-
-    public Integer getResolvedPort() {
-        String value = Env.env("FTP_" + Env.toVar(name) + "_PORT", null == port ? "" : String.valueOf(port));
-        return isBlank(value) ? 21 : Integer.parseInt(value);
+        props.put("host", host);
+        props.put("port", getPort());
+        props.put("username", isNotBlank(username) ? HIDE : UNSET);
+        props.put("password", isNotBlank(password) ? HIDE : UNSET);
     }
 }

@@ -20,7 +20,6 @@ package org.jreleaser.model.internal.upload;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Artifact;
-import org.jreleaser.util.Env;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -197,16 +196,16 @@ public final class S3Uploader extends AbstractUploader<org.jreleaser.model.api.u
 
     @Override
     public String getResolvedDownloadUrl(Map<String, Object> props, Artifact artifact) {
-        if (isNotBlank(getResolvedDownloadUrl())) {
+        if (isNotBlank(getDownloadUrl())) {
             Map<String, Object> p = new LinkedHashMap<>(artifactProps(props, artifact));
             p.putAll(getResolvedExtraProperties());
             p.put("bucket", bucket);
             p.put("region", region);
-            return resolveTemplate(getResolvedDownloadUrl(), p);
+            return resolveTemplate(getDownloadUrl(), p);
         }
 
-        if (isBlank(getResolvedEndpoint())) {
-            String url = "https://{{bucket}}.s3.{{region}}.amazonaws.com/" + getResolvedPath();
+        if (isBlank(getEndpoint())) {
+            String url = "https://{{bucket}}.s3.{{region}}.amazonaws.com/" + path;
             Map<String, Object> p = new LinkedHashMap<>(artifactProps(props, artifact));
             p.putAll(getResolvedExtraProperties());
             p.put("bucket", bucket);
@@ -291,20 +290,20 @@ public final class S3Uploader extends AbstractUploader<org.jreleaser.model.api.u
 
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
-        props.put("region", getResolvedRegion());
-        props.put("bucket", getResolvedBucket());
-        props.put("accessKeyId", isNotBlank(getResolvedAccessKeyId()) ? HIDE : UNSET);
-        props.put("secretKey", isNotBlank(getResolvedSecretKey()) ? HIDE : UNSET);
-        props.put("sessionToken", isNotBlank(getResolvedSessionToken()) ? HIDE : UNSET);
-        props.put("path", getResolvedPath());
-        props.put("downloadUrl", getResolvedDownloadUrl());
-        props.put("endpoint", getResolvedEndpoint());
+        props.put("region", region);
+        props.put("bucket", bucket);
+        props.put("accessKeyId", isNotBlank(accessKeyId) ? HIDE : UNSET);
+        props.put("secretKey", isNotBlank(secretKey) ? HIDE : UNSET);
+        props.put("sessionToken", isNotBlank(sessionToken) ? HIDE : UNSET);
+        props.put("path", path);
+        props.put("downloadUrl", downloadUrl);
+        props.put("endpoint", endpoint);
         props.put("headers", headers);
     }
 
 
     public String getResolvedPath(JReleaserContext context, Artifact artifact) {
-        String artifactPath = getResolvedPath();
+        String artifactPath = path;
 
         String customPathKey = "s3" + capitalize(getName()) + "Path";
         if (artifact.getExtraProperties().containsKey(customPathKey)) {
@@ -314,37 +313,5 @@ public final class S3Uploader extends AbstractUploader<org.jreleaser.model.api.u
         Map<String, Object> p = new LinkedHashMap<>(artifactProps(context, artifact));
         p.putAll(getResolvedExtraProperties());
         return resolveTemplate(artifactPath, p);
-    }
-
-    public String getResolvedRegion() {
-        return Env.env("S3_" + Env.toVar(name) + "_REGION", region);
-    }
-
-    public String getResolvedBucket() {
-        return Env.env("S3_" + Env.toVar(name) + "_BUCKET", bucket);
-    }
-
-    public String getResolvedAccessKeyId() {
-        return Env.env("S3_" + Env.toVar(name) + "_ACCESS_KEY_ID", accessKeyId);
-    }
-
-    public String getResolvedSecretKey() {
-        return Env.env("S3_" + Env.toVar(name) + "_SECRET_KEY", secretKey);
-    }
-
-    public String getResolvedSessionToken() {
-        return Env.env("S3_" + Env.toVar(name) + "_SESSION_TOKEN", sessionToken);
-    }
-
-    public String getResolvedPath() {
-        return Env.env("S3_" + Env.toVar(name) + "_PATH", path);
-    }
-
-    public String getResolvedDownloadUrl() {
-        return Env.env("S3_" + Env.toVar(name) + "_DOWNLOAD_URL", downloadUrl);
-    }
-
-    public String getResolvedEndpoint() {
-        return Env.env("S3_" + Env.toVar(name) + "_ENDPOINT", endpoint);
     }
 }

@@ -69,7 +69,7 @@ public class TeamsAnnouncer implements Announcer<org.jreleaser.model.api.announc
 
         if (!context.isDryrun()) {
             ClientUtils.webhook(context.getLogger(),
-                teams.getResolvedWebhook(),
+                teams.getWebhook(),
                 teams.getConnectTimeout(),
                 teams.getReadTimeout(),
                 message);

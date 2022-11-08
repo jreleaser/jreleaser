@@ -21,7 +21,6 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.internal.JReleaserContext;
-import org.jreleaser.util.Env;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -161,10 +160,6 @@ public final class WebhookAnnouncer extends AbstractAnnouncer<WebhookAnnouncer, 
         }
     }
 
-    public String getResolvedWebhook() {
-        return Env.env(Env.toVar(name) + "_WEBHOOK", webhook);
-    }
-
     @Override
     public String getPrefix() {
         return "webhook";
@@ -208,7 +203,7 @@ public final class WebhookAnnouncer extends AbstractAnnouncer<WebhookAnnouncer, 
 
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
-        props.put("webhook", isNotBlank(getResolvedWebhook()) ? HIDE : UNSET);
+        props.put("webhook", isNotBlank(webhook) ? HIDE : UNSET);
         props.put("message", message);
         props.put("messageProperty", messageProperty);
         props.put("messageTemplate", messageTemplate);

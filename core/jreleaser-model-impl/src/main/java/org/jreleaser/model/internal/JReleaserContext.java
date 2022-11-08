@@ -901,14 +901,14 @@ public class JReleaserContext {
         try {
             if (model.getSigning().getMode() == Signing.Mode.FILE) {
                 return new FilesKeyring(
-                    basedir.resolve(model.getSigning().getResolvedPublicKey()),
-                    basedir.resolve(model.getSigning().getResolvedSecretKey())
+                    basedir.resolve(model.getSigning().getPublicKey()),
+                    basedir.resolve(model.getSigning().getSecretKey())
                 ).initialize(model.getSigning().isArmored());
             }
 
             return new InMemoryKeyring(
-                model.getSigning().getResolvedPublicKey().getBytes(),
-                model.getSigning().getResolvedSecretKey().getBytes()
+                model.getSigning().getPublicKey().getBytes(),
+                model.getSigning().getSecretKey().getBytes()
             ).initialize(model.getSigning().isArmored());
         } catch (IOException | PGPException e) {
             throw new SigningException(RB.$("ERROR_signing_init_keyring"), e);

@@ -22,7 +22,6 @@ import org.jreleaser.model.Active;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.Mail;
 import org.jreleaser.model.internal.JReleaserContext;
-import org.jreleaser.util.Env;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -35,7 +34,6 @@ import static java.util.Collections.unmodifiableMap;
 import static org.jreleaser.model.Constants.HIDE;
 import static org.jreleaser.model.Constants.KEY_TAG_NAME;
 import static org.jreleaser.model.Constants.UNSET;
-import static org.jreleaser.model.api.announce.SmtpAnnouncer.MAIL_PASSWORD;
 import static org.jreleaser.model.api.announce.SmtpAnnouncer.TYPE;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplate;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
@@ -251,10 +249,6 @@ public final class SmtpAnnouncer extends AbstractAnnouncer<SmtpAnnouncer, org.jr
         }
     }
 
-    public String getResolvedPassword() {
-        return Env.env(MAIL_PASSWORD, password);
-    }
-
     public Mail.Transport getTransport() {
         return transport;
     }
@@ -398,7 +392,7 @@ public final class SmtpAnnouncer extends AbstractAnnouncer<SmtpAnnouncer, org.jr
         props.put("port", port);
         props.put("auth", isAuth());
         props.put("username", username);
-        props.put("password", isNotBlank(getResolvedPassword()) ? HIDE : UNSET);
+        props.put("password", isNotBlank(password) ? HIDE : UNSET);
         props.put("from", from);
         props.put("to", to);
         props.put("cc", cc);

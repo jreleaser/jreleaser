@@ -74,7 +74,7 @@ public class GitterAnnouncer implements Announcer<org.jreleaser.model.api.announ
 
         if (!context.isDryrun()) {
             ClientUtils.webhook(context.getLogger(),
-                gitter.getResolvedWebhook(),
+                gitter.getWebhook(),
                 gitter.getConnectTimeout(),
                 gitter.getReadTimeout(),
                 Message.of(message));

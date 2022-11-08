@@ -68,19 +68,19 @@ public class FtpUtils {
 
         client.addProtocolCommandListener(new FtpCommandListener(context));
 
-        client.connect(ftp.getResolvedHost(), ftp.getResolvedPort());
+        client.connect(ftp.getHost(), ftp.getPort());
         int reply = client.getReplyCode();
         if (!FTPReply.isPositiveCompletion(reply)) {
             client.disconnect();
             throw new IOException(RB.$("ERROR_unexpected_error"));
         }
 
-        String username = ftp.getResolvedUsername();
+        String username = ftp.getUsername();
         if (isBlank(username)) {
             username = "anonymous";
         }
 
-        client.login(username, ftp.getResolvedPassword());
+        client.login(username, ftp.getPassword());
         reply = client.getReplyCode();
         if (!FTPReply.isPositiveCompletion(reply)) {
             client.disconnect();

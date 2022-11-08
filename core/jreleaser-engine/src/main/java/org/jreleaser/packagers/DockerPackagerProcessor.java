@@ -299,11 +299,11 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
             cmd.arg(registry.getServer());
         }
         cmd.arg("-u");
-        cmd.arg(registry.getResolvedUsername());
+        cmd.arg(registry.getUsername());
         cmd.arg("-p");
-        cmd.arg(registry.getResolvedPassword());
+        cmd.arg(registry.getPassword());
 
-        ByteArrayInputStream in = new ByteArrayInputStream((registry.getResolvedPassword() + System.lineSeparator()).getBytes());
+        ByteArrayInputStream in = new ByteArrayInputStream((registry.getPassword() + System.lineSeparator()).getBytes());
 
         context.getLogger().debug(RB.$("docker.login"),
             registry.getServerName(),

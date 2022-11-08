@@ -61,8 +61,8 @@ public abstract class SlackAnnouncerValidator extends Validator {
                 ignored,
                 context.isDryrun()));
 
-        String token = slack.getResolvedToken();
-        String webhook = slack.getResolvedWebhook();
+        String token = slack.getToken();
+        String webhook = slack.getWebhook();
 
         if (!context.isDryrun() && isBlank(token) && isBlank(webhook)) {
             errors.configuration(RB.$("validation_slack_token"));

@@ -318,7 +318,7 @@ public abstract class DockerPackagerValidator extends Validator {
                     "DOCKER_" + Env.toVar(serverName) + "_USERNAME",
                     "registry." + Env.toVar(serverName) + ".username",
                     registry.getUsername(),
-                    service.getResolvedUsername()));
+                    service.getUsername()));
 
             if (isBlank(registry.getRepositoryName())) {
                 registry.setRepositoryName(service.getOwner());

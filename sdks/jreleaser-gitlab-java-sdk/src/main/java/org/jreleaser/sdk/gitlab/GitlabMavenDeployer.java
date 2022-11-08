@@ -71,7 +71,7 @@ public class GitlabMavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
         }
 
         String baseUrl = deployer.getResolvedUrl(context.fullProps());
-        String token = deployer.getResolvedPassword();
+        String token = deployer.getPassword();
 
         Gitlab api = createApi(baseUrl, token);
         List<GlPackage> glPackages = new ArrayList<>();

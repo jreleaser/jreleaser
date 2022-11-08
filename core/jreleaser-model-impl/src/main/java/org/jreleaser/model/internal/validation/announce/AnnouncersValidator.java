@@ -26,8 +26,8 @@ import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.internal.validation.announce.ArticleAnnouncerValidator.validateArticle;
 import static org.jreleaser.model.internal.validation.announce.DiscordAnnouncerValidator.validateDiscord;
-import static org.jreleaser.model.internal.validation.announce.DiscussionsAnnouncerValidator.validateDiscussions;
 import static org.jreleaser.model.internal.validation.announce.DiscourseAnnouncerValidator.validateDiscourse;
+import static org.jreleaser.model.internal.validation.announce.DiscussionsAnnouncerValidator.validateDiscussions;
 import static org.jreleaser.model.internal.validation.announce.GitterAnnouncerValidator.validateGitter;
 import static org.jreleaser.model.internal.validation.announce.GoogleChatAnnouncerValidator.validateGoogleChat;
 import static org.jreleaser.model.internal.validation.announce.HttpAnnouncerValidator.validateHttpAnnouncers;

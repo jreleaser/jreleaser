@@ -21,7 +21,6 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.internal.JReleaserContext;
-import org.jreleaser.util.Env;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -154,10 +153,6 @@ public final class DiscordAnnouncer extends AbstractAnnouncer<DiscordAnnouncer, 
         }
     }
 
-    public String getResolvedWebhook() {
-        return Env.env(org.jreleaser.model.api.announce.DiscordAnnouncer.DISCORD_WEBHOOK, webhook);
-    }
-
     public String getWebhook() {
         return webhook;
     }
@@ -184,7 +179,7 @@ public final class DiscordAnnouncer extends AbstractAnnouncer<DiscordAnnouncer, 
 
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
-        props.put("webhook", isNotBlank(getResolvedWebhook()) ? HIDE : UNSET);
+        props.put("webhook", isNotBlank(webhook) ? HIDE : UNSET);
         props.put("message", message);
         props.put("messageTemplate", messageTemplate);
     }

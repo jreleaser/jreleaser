@@ -74,7 +74,7 @@ public class GoogleChatAnnouncer implements Announcer<org.jreleaser.model.api.an
 
         if (!context.isDryrun()) {
             ClientUtils.webhook(context.getLogger(),
-                googleChat.getResolvedWebhook(),
+                googleChat.getWebhook(),
                 googleChat.getConnectTimeout(),
                 googleChat.getReadTimeout(),
                 Message.of(message));

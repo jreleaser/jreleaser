@@ -228,8 +228,8 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
     }
 
     public String getResolvedSnapshotUrl(Map<String, Object> props) {
-        props.put("username", getResolvedUsername());
-        props.put("owner", getResolvedUsername());
+        props.put("username", username);
+        props.put("owner", username);
         props.putAll(getExtraProperties());
         return resolveTemplate(snapshotUrl, props);
     }

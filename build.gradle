@@ -123,3 +123,14 @@ projects {
         }
     }
 }
+
+// Delete Gradle artifacts not suitable for publication to Maven Central
+tasks.register('cleanupStagedRepository') {
+    doLast {
+        def repoDir = project.layout.buildDirectory.dir('repos/local/release/org/jreleaser').get()
+        repoDir.dir('jdks').asFile.deleteDir()
+        repoDir.dir('jdks-gradle-plugin').asFile.deleteDir()
+        repoDir.dir('jreleaser-gradle-plugin').asFile.deleteDir()
+        repoDir.dir('org.jreleaser.gradle.plugin').asFile.deleteDir()
+    }
+}

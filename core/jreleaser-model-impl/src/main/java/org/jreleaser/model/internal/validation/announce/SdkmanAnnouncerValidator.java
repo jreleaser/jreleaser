@@ -52,7 +52,6 @@ public abstract class SdkmanAnnouncerValidator extends Validator {
             return;
         }
 
-
         sdkman.setConsumerKey(
             checkProperty(context,
                 SDKMAN_CONSUMER_KEY,

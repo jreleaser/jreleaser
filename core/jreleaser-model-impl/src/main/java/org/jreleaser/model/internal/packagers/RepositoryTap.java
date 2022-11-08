@@ -20,7 +20,6 @@ package org.jreleaser.model.internal.packagers;
 import org.jreleaser.model.internal.common.Activatable;
 import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.common.OwnerAware;
-import org.jreleaser.model.internal.release.BaseReleaser;
 
 import java.util.Map;
 
@@ -62,8 +61,4 @@ public interface RepositoryTap extends Domain, OwnerAware, Activatable {
     String getResolvedCommitMessage(Map<String, Object> props);
 
     String getResolvedTagName(Map<String, Object> props);
-
-    String getResolvedUsername(BaseReleaser service);
-
-    String getResolvedToken(BaseReleaser service);
 }

@@ -118,12 +118,12 @@ public class Signer {
             throw new SigningException(e.getMessage(), e);
         }
 
-        String privateKey = signing.getCosign().getResolvedPrivateKeyFile();
-        String publicKey = signing.getCosign().getResolvedPublicKeyFile();
+        String privateKey = signing.getCosign().getPrivateKeyFile();
+        String publicKey = signing.getCosign().getPublicKeyFile();
 
         Path privateKeyFile = isNotBlank(privateKey) ? context.getBasedir().resolve(privateKey) : null;
         Path publicKeyFile = isNotBlank(publicKey) ? context.getBasedir().resolve(publicKey) : null;
-        byte[] password = (signing.getResolvedCosignPassword() + System.lineSeparator()).getBytes();
+        byte[] password = (signing.getPassphrase() + System.lineSeparator()).getBytes();
 
         boolean forceSign = false;
         if (null == privateKeyFile) {

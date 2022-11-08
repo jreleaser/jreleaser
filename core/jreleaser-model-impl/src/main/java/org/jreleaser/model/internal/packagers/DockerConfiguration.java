@@ -21,7 +21,6 @@ import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.common.Activatable;
 import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.common.ExtraProperties;
-import org.jreleaser.util.Env;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -163,14 +162,6 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
             this.password = merge(this.password, source.password);
         }
 
-        public String getResolvedPassword() {
-            return Env.env("DOCKER_" + Env.toVar(serverName) + "_PASSWORD", password);
-        }
-
-        public String getResolvedUsername() {
-            return Env.env("DOCKER_" + Env.toVar(serverName) + "_USERNAME", username);
-        }
-
         public String getServer() {
             return server;
         }
@@ -217,7 +208,7 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
             map.put("server", server);
             map.put("serverName", serverName);
             map.put("repositoryName", repositoryName);
-            map.put("username", getResolvedUsername());
+            map.put("username", username);
             map.put("password", isNotBlank(password) ? HIDE : UNSET);
             return map;
         }

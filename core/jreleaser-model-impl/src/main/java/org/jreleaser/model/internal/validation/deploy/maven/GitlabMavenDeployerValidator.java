@@ -62,7 +62,7 @@ public abstract class GitlabMavenDeployerValidator extends Validator {
                 true));
 
         if (isBlank(mavenDeployer.getUsername())) {
-            mavenDeployer.setUsername(context.getModel().getRelease().getReleaser().getResolvedUsername());
+            mavenDeployer.setUsername(context.getModel().getRelease().getReleaser().getUsername());
         }
 
         if (isBlank(mavenDeployer.getProjectIdentifier())) {

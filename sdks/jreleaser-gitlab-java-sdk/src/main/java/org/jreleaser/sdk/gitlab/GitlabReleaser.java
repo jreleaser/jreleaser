@@ -102,7 +102,7 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
         try {
             Gitlab api = new Gitlab(context.getLogger(),
                 gitlab.getApiEndpoint(),
-                gitlab.getResolvedToken(),
+                gitlab.getToken(),
                 gitlab.getConnectTimeout(),
                 gitlab.getReadTimeout());
 
@@ -222,7 +222,7 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
         try {
             return new Gitlab(context.getLogger(),
                 gitlab.getApiEndpoint(),
-                gitlab.getResolvedToken(),
+                gitlab.getToken(),
                 gitlab.getConnectTimeout(),
                 gitlab.getReadTimeout())
                 .findUser(email, name);
@@ -240,7 +240,7 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
 
         Gitlab api = new Gitlab(context.getLogger(),
             gitlab.getApiEndpoint(),
-            gitlab.getResolvedToken(),
+            gitlab.getToken(),
             gitlab.getConnectTimeout(),
             gitlab.getReadTimeout());
 

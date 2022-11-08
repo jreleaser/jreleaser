@@ -25,7 +25,9 @@ import org.jreleaser.util.Errors;
 
 import java.nio.file.Files;
 
-import static org.jreleaser.model.api.announce.DiscourseAnnouncer.*;
+import static org.jreleaser.model.api.announce.DiscourseAnnouncer.DISCOURSE_API_KEY;
+import static org.jreleaser.model.api.announce.DiscourseAnnouncer.DISCOURSE_CATEGORY_NAME;
+import static org.jreleaser.model.api.announce.DiscourseAnnouncer.DISCOURSE_USERNAME;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -48,28 +50,28 @@ public abstract class DiscourseAnnouncerValidator extends Validator {
         }
 
         discourse.setUsername(
-                checkProperty(context,
-                        DISCOURSE_USERNAME,
-                        "discourse.username",
-                        discourse.getUsername(),
-                        errors,
-                        context.isDryrun()));
+            checkProperty(context,
+                DISCOURSE_USERNAME,
+                "discourse.username",
+                discourse.getUsername(),
+                errors,
+                context.isDryrun()));
 
         discourse.setApiKey(
-                checkProperty(context,
-                        DISCOURSE_API_KEY,
-                        "discourse.apiKey",
-                        discourse.getApiKey(),
-                        errors,
-                        context.isDryrun()));
+            checkProperty(context,
+                DISCOURSE_API_KEY,
+                "discourse.apiKey",
+                discourse.getApiKey(),
+                errors,
+                context.isDryrun()));
 
         discourse.setCategoryName(
-                checkProperty(context,
-                        DISCOURSE_CATEGORY_NAME,
-                        "discourse.category",
-                        discourse.getCategoryName(),
-                        errors,
-                        context.isDryrun()));
+            checkProperty(context,
+                DISCOURSE_CATEGORY_NAME,
+                "discourse.category",
+                discourse.getCategoryName(),
+                errors,
+                context.isDryrun()));
 
         if (isBlank(discourse.getTitle())) {
             discourse.setTitle(RB.$("default.discussion.title"));
@@ -88,7 +90,7 @@ public abstract class DiscourseAnnouncerValidator extends Validator {
         }
 
         if (isNotBlank(discourse.getMessageTemplate()) &&
-                !Files.exists(context.getBasedir().resolve(discourse.getMessageTemplate().trim()))) {
+            !Files.exists(context.getBasedir().resolve(discourse.getMessageTemplate().trim()))) {
             errors.configuration(RB.$("validation_directory_not_exist", "discourse.messageTemplate", discourse.getMessageTemplate()));
         }
 

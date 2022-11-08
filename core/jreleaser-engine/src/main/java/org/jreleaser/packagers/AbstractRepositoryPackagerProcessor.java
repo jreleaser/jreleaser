@@ -163,12 +163,12 @@ abstract class AbstractRepositoryPackagerProcessor<T extends RepositoryPackager<
     }
 
     protected String resolveGitUsername(BaseReleaser<?, ?> releaser) {
-        String username = packager.getRepositoryTap().getResolvedUsername(releaser);
-        return isNotBlank(username) ? username : releaser.getResolvedUsername();
+        String username = packager.getRepositoryTap().getUsername();
+        return isNotBlank(username) ? username : releaser.getUsername();
     }
 
     protected String resolveGitToken(BaseReleaser<?, ?> releaser) {
-        String token = packager.getRepositoryTap().getResolvedToken(releaser);
-        return isNotBlank(token) ? token : releaser.getResolvedToken();
+        String token = packager.getRepositoryTap().getToken();
+        return isNotBlank(token) ? token : releaser.getToken();
     }
 }

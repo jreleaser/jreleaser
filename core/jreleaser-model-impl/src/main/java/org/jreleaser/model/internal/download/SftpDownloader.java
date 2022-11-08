@@ -140,11 +140,6 @@ public final class SftpDownloader extends AbstractSshDownloader<org.jreleaser.mo
     }
 
     @Override
-    protected String getEnvPrefix() {
-        return "SFTP";
-    }
-
-    @Override
     public org.jreleaser.model.api.download.SftpDownloader asImmutable() {
         return immutable;
     }

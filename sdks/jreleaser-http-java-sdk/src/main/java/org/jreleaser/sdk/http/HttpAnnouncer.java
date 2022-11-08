@@ -106,8 +106,8 @@ public class HttpAnnouncer implements Announcer<org.jreleaser.model.api.announce
 
         fireAnnouncerEvent(ExecutionEvent.before(JReleaserCommand.ANNOUNCE.toStep()), announcer);
 
-        String username = announcer.getResolvedUsername();
-        String password = announcer.getResolvedPassword();
+        String username = announcer.getUsername();
+        String password = announcer.getPassword();
 
         try {
             Map<String, String> headers = new LinkedHashMap<>();

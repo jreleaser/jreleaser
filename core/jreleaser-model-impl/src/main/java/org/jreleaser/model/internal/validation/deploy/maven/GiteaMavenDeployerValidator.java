@@ -61,7 +61,7 @@ public abstract class GiteaMavenDeployerValidator extends Validator {
                 true));
 
         if (isBlank(mavenDeployer.getUsername())) {
-            mavenDeployer.setUsername(context.getModel().getRelease().getReleaser().getResolvedUsername());
+            mavenDeployer.setUsername(context.getModel().getRelease().getReleaser().getUsername());
         }
     }
 }

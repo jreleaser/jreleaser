@@ -19,7 +19,6 @@ package org.jreleaser.model.internal.download;
 
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Http;
-import org.jreleaser.util.Env;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -186,17 +185,9 @@ public final class HttpDownloader extends AbstractDownloader<org.jreleaser.model
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("authorization", authorization);
-        props.put("username", isNotBlank(getResolvedUsername()) ? HIDE : UNSET);
-        props.put("password", isNotBlank(getResolvedPassword()) ? HIDE : UNSET);
+        props.put("username", isNotBlank(username) ? HIDE : UNSET);
+        props.put("password", isNotBlank(password) ? HIDE : UNSET);
         props.put("headers", headers);
-    }
-
-    public String getResolvedUsername() {
-        return Env.env("HTTP_" + Env.toVar(name) + "_USERNAME", username);
-    }
-
-    public String getResolvedPassword() {
-        return Env.env("HTTP_" + Env.toVar(name) + "_PASSWORD", password);
     }
 
     public Http.Authorization resolveAuthorization() {

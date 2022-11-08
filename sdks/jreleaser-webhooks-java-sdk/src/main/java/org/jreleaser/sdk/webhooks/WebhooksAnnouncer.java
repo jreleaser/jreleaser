@@ -109,7 +109,7 @@ public class WebhooksAnnouncer implements Announcer<org.jreleaser.model.api.anno
 
             try {
                 ClientUtils.webhook(context.getLogger(),
-                    webhook.getResolvedWebhook(),
+                    webhook.getWebhook(),
                     webhook.getConnectTimeout(),
                     webhook.getReadTimeout(),
                     message);

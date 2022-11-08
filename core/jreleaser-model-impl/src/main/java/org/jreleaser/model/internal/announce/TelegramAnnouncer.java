@@ -21,7 +21,6 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.internal.JReleaserContext;
-import org.jreleaser.util.Env;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -32,8 +31,6 @@ import static java.util.Collections.unmodifiableMap;
 import static org.jreleaser.model.Constants.HIDE;
 import static org.jreleaser.model.Constants.KEY_TAG_NAME;
 import static org.jreleaser.model.Constants.UNSET;
-import static org.jreleaser.model.api.announce.TelegramAnnouncer.TELEGRAM_CHAT_ID;
-import static org.jreleaser.model.api.announce.TelegramAnnouncer.TELEGRAM_TOKEN;
 import static org.jreleaser.model.api.announce.TelegramAnnouncer.TYPE;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplate;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
@@ -163,14 +160,6 @@ public final class TelegramAnnouncer extends AbstractAnnouncer<TelegramAnnouncer
         }
     }
 
-    public String getResolvedToken() {
-        return Env.env(TELEGRAM_TOKEN, token);
-    }
-
-    public String getResolvedChatId() {
-        return Env.env(TELEGRAM_CHAT_ID, chatId);
-    }
-
     public String getToken() {
         return token;
     }
@@ -204,8 +193,8 @@ public final class TelegramAnnouncer extends AbstractAnnouncer<TelegramAnnouncer
     }
 
     protected void asMap(boolean full, Map<String, Object> props) {
-        props.put("token", isNotBlank(getResolvedToken()) ? HIDE : UNSET);
-        props.put("chatId", isNotBlank(getResolvedChatId()) ? HIDE : UNSET);
+        props.put("token", isNotBlank(token) ? HIDE : UNSET);
+        props.put("chatId", isNotBlank(chatId) ? HIDE : UNSET);
         props.put("message", message);
         props.put("messageTemplate", messageTemplate);
     }

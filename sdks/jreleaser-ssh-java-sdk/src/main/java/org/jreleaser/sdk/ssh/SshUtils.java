@@ -98,10 +98,10 @@ public class SshUtils {
             client.loadKnownHosts();
         }
 
-        String publicKey = ssh.getResolvedPublicKey();
-        String privateKey = ssh.getResolvedPrivateKey();
-        String passphrase = ssh.getResolvedPassphrase();
-        String fingerprint = ssh.getResolvedFingerprint();
+        String publicKey = ssh.getPublicKey();
+        String privateKey = ssh.getPrivateKey();
+        String passphrase = ssh.getPassphrase();
+        String fingerprint = ssh.getFingerprint();
 
         if (isNotBlank(publicKey) && isNotBlank(privateKey)) {
             PasswordFinder passwordFinder = null;
@@ -120,8 +120,8 @@ public class SshUtils {
             client.addHostKeyVerifier(new PromiscuousVerifier());
         }
 
-        client.connect(ssh.getResolvedHost(), ssh.getResolvedPort());
-        client.authPassword(ssh.getResolvedUsername(), ssh.getResolvedPassword());
+        client.connect(ssh.getHost(), ssh.getPort());
+        client.authPassword(ssh.getUsername(), ssh.getPassword());
         return client;
     }
 
