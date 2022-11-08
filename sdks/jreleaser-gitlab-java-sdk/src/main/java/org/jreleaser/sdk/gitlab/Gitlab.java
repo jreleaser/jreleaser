@@ -33,6 +33,7 @@ import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.spi.release.Asset;
 import org.jreleaser.model.spi.release.Release;
 import org.jreleaser.model.spi.release.User;
+import org.jreleaser.model.spi.upload.UploadException;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.gitlab.api.GitlabAPI;
@@ -40,6 +41,7 @@ import org.jreleaser.sdk.gitlab.api.GlBranch;
 import org.jreleaser.sdk.gitlab.api.GlFileUpload;
 import org.jreleaser.sdk.gitlab.api.GlIssue;
 import org.jreleaser.sdk.gitlab.api.GlLabel;
+import org.jreleaser.sdk.gitlab.api.GlLink;
 import org.jreleaser.sdk.gitlab.api.GlLinkRequest;
 import org.jreleaser.sdk.gitlab.api.GlMilestone;
 import org.jreleaser.sdk.gitlab.api.GlPackage;
@@ -62,8 +64,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNull;
+import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.sdk.gitlab.internal.UrlEncoder.urlEncode;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
@@ -75,11 +82,19 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
 class Gitlab {
     static final String ENDPOINT = "https://gitlab.com/api/v4";
     private static final String API_V4 = "/api/v4";
-    private final Tika tika = new Tika();
+    private static final String GRAPQL_DELETE_PAYLOAD = "{\n" +
+        "  \"query\": \"mutation {uploadDelete(input: { secret: \\\"{{secret}}\\\", filename: \\\"{{filename}}\\\", projectPath: \\\"{{projectPath}}\\\"}) { upload { id size path } errors }}\",\n" +
+        "  \"variables\": null\n" +
+        "}\n";
+    private static final Pattern UPLOADS_PATTERN = Pattern.compile("(.*?)/uploads/(.*?)");
 
+    private final Tika tika = new Tika();
     private final JReleaserLogger logger;
     private final GitlabAPI api;
     private final String apiHost;
+    private final String graphQlEndpoint;
+    private final int connectTimeout;
+    private final int readTimeout;
 
     private GlUser user;
     private GlProject project;
@@ -103,7 +118,10 @@ class Gitlab {
             endpoint += API_V4;
         }
 
-        apiHost = endpoint.substring(0, endpoint.length() - API_V4.length());
+        this.apiHost = endpoint.substring(0, endpoint.length() - API_V4.length());
+        this.graphQlEndpoint = endpoint.replace("v4", "graphql");
+        this.connectTimeout = connectTimeout;
+        this.readTimeout = readTimeout;
 
         ObjectMapper objectMapper = new ObjectMapper()
             .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
@@ -213,13 +231,11 @@ class Gitlab {
         }
     }
 
-    Optional<GlMilestone> findMilestoneByName(String owner, String repo, String projectIdentifier, String milestoneName) throws IOException {
+    Optional<GlMilestone> findMilestoneByName(String owner, String repo, Integer projectIdentifier, String milestoneName) throws IOException {
         logger.debug(RB.$("git.milestone.lookup"), milestoneName, owner, repo);
 
-        GlProject project = getProject(repo, projectIdentifier);
-
         try {
-            List<GlMilestone> milestones = api.findMilestoneByTitle(project.getId(), CollectionUtils.<String, Object>map()
+            List<GlMilestone> milestones = api.findMilestoneByTitle(projectIdentifier, CollectionUtils.<String, Object>map()
                 .e("title", milestoneName));
 
             if (milestones == null || milestones.isEmpty()) {
@@ -237,13 +253,11 @@ class Gitlab {
         }
     }
 
-    Optional<GlMilestone> findClosedMilestoneByName(String owner, String repo, String projectIdentifier, String milestoneName) throws IOException {
+    Optional<GlMilestone> findClosedMilestoneByName(String owner, String repo, Integer projectIdentifier, String milestoneName) throws IOException {
         logger.debug(RB.$("git.milestone.lookup.closed"), milestoneName, owner, repo);
 
-        GlProject project = getProject(repo, projectIdentifier);
-
         try {
-            List<GlMilestone> milestones = api.findMilestoneByTitle(project.getId(), CollectionUtils.<String, Object>map()
+            List<GlMilestone> milestones = api.findMilestoneByTitle(projectIdentifier, CollectionUtils.<String, Object>map()
                 .e("title", milestoneName));
 
             if (milestones == null || milestones.isEmpty()) {
@@ -261,14 +275,12 @@ class Gitlab {
         }
     }
 
-    void closeMilestone(String owner, String repo, String projectIdentifier, GlMilestone milestone) throws IOException {
+    void closeMilestone(String owner, String repo, Integer projectIdentifier, GlMilestone milestone) throws IOException {
         logger.debug(RB.$("git.milestone.close"), milestone.getTitle(), owner, repo);
-
-        GlProject project = getProject(repo, projectIdentifier);
 
         api.updateMilestone(CollectionUtils.<String, Object>map()
                 .e("state_event", "close"),
-            project.getId(), milestone.getId());
+            projectIdentifier, milestone.getId());
     }
 
     GlProject createProject(String owner, String repo) throws IOException {
@@ -327,12 +339,10 @@ class Gitlab {
         }
     }
 
-    void deleteTag(String owner, String repoName, String projectIdentifier, String tagName) throws RestAPIException {
+    void deleteTag(String owner, String repoName, Integer projectIdentifier, String tagName) throws RestAPIException {
         logger.debug(RB.$("git.delete.tag.from"), tagName, owner, repoName);
 
-        GlProject project = getProject(repoName, projectIdentifier);
-
-        api.deleteTag(project.getId(), urlEncode(tagName));
+        api.deleteTag(projectIdentifier, urlEncode(tagName));
     }
 
     void deletePackage(Integer projectIdentifier, Integer packageId) throws RestAPIException {
@@ -349,12 +359,10 @@ class Gitlab {
         api.deleteRelease(project.getId(), urlEncode(tagName));
     }
 
-    void createRelease(String owner, String repoName, String projectIdentifier, GlRelease release) throws RestAPIException {
+    void createRelease(String owner, String repoName, Integer projectIdentifier, GlRelease release) throws RestAPIException {
         logger.debug(RB.$("git.create.release"), owner, repoName, release.getTagName());
 
-        GlProject project = getProject(repoName, projectIdentifier);
-
-        api.createRelease(release, project.getId());
+        api.createRelease(release, projectIdentifier);
     }
 
     void updateRelease(String owner, String repoName, String projectIdentifier, GlRelease release) throws RestAPIException {
@@ -365,12 +373,10 @@ class Gitlab {
         api.updateRelease(release, project.getId());
     }
 
-    Collection<GlFileUpload> uploadAssets(String owner, String repoName, String projectIdentifier, List<Asset> assets) throws IOException, RestAPIException {
+    Collection<GlFileUpload> uploadAssets(String owner, String repoName, Integer projectIdentifier, List<Asset> assets) throws IOException, RestAPIException {
         logger.debug(RB.$("git.upload.assets"), owner, repoName);
 
         List<GlFileUpload> uploads = new ArrayList<>();
-
-        GlProject project = getProject(repoName, projectIdentifier);
 
         for (Asset asset : assets) {
             if (0 == Files.size(asset.getPath()) || !Files.exists(asset.getPath())) {
@@ -380,7 +386,7 @@ class Gitlab {
 
             logger.info(" " + RB.$("git.upload.asset"), asset.getFilename());
             try {
-                GlFileUpload upload = api.uploadFile(project.getId(), toFormData(asset.getPath()));
+                GlFileUpload upload = api.uploadFile(projectIdentifier, toFormData(asset.getPath()));
                 upload.setName(asset.getFilename());
                 uploads.add(upload);
             } catch (IOException | RestAPIException e) {
@@ -392,15 +398,13 @@ class Gitlab {
         return uploads;
     }
 
-    void linkReleaseAssets(String owner, String repoName, GlRelease release, String projectIdentifier, Collection<GlFileUpload> uploads) throws IOException, RestAPIException {
-        logger.debug(RB.$("git.upload.asset.links"), owner, repoName, release.getTagName());
-
-        GlProject project = getProject(repoName, projectIdentifier);
+    void linkReleaseAssets(String owner, String repoName, GlRelease release, Integer projectIdentifier, Collection<GlFileUpload> uploads) throws IOException, RestAPIException {
+        logger.info(RB.$("git.upload.asset.links"), owner, repoName, release.getTagName());
 
         for (GlFileUpload upload : uploads) {
-            logger.debug(" " + RB.$("git.upload.asset.link"), upload.getName());
+            logger.info(" " + RB.$("git.upload.asset.link"), upload.getName());
             try {
-                api.linkAsset(upload.toLinkRequest(apiHost), project.getId(), release.getTagName());
+                api.linkAsset(upload.toLinkRequest(apiHost), projectIdentifier, release.getTagName());
             } catch (RestAPIException e) {
                 logger.error(" " + RB.$("git.upload.asset.link.failure"), upload.getName());
                 throw e;
@@ -408,15 +412,13 @@ class Gitlab {
         }
     }
 
-    void linkAssets(String owner, String repoName, GlRelease release, String projectIdentifier, Collection<GlLinkRequest> links) throws IOException, RestAPIException {
-        logger.debug(RB.$("git.upload.asset.links"), owner, repoName, release.getTagName());
-
-        GlProject project = getProject(repoName, projectIdentifier);
+    void linkAssets(String owner, String repoName, GlRelease release, Integer projectIdentifier, Collection<GlLinkRequest> links) throws IOException, RestAPIException {
+        logger.info(RB.$("git.upload.asset.links"), owner, repoName, release.getTagName());
 
         for (GlLinkRequest link : links) {
             logger.info(" " + RB.$("git.upload.asset.link"), link.getName());
             try {
-                api.linkAsset(link, project.getId(), release.getTagName());
+                api.linkAsset(link, projectIdentifier, release.getTagName());
             } catch (RestAPIException e) {
                 logger.error(" " + RB.$("git.upload.asset.link.failure"), link.getName());
                 throw e;
@@ -578,6 +580,80 @@ class Gitlab {
         if (page.hasLinks() && page.getLinks().hasNext()) {
             collectPackages(page, packages);
         }
+    }
+
+    Map<String, GlLink> listLinks(Integer projectIdentifier, String tagName) throws IOException {
+        logger.debug(RB.$("gitlab.list.links"), tagName, projectIdentifier);
+
+        List<GlLink> links = new ArrayList<>();
+        Page<List<GlLink>> page = api.listLinks0(projectIdentifier, tagName);
+        links.addAll(page.getContent());
+
+        if (page.hasLinks() && page.getLinks().hasNext()) {
+            try {
+                collectLinks(page, links);
+            } catch (URISyntaxException e) {
+                throw new IOException(e);
+            }
+        }
+
+        return links.stream()
+            .collect(Collectors.toMap(GlLink::getName, Function.identity()));
+    }
+
+    private void collectLinks(Page<List<GlLink>> page, List<GlLink> links) throws URISyntaxException {
+        URI next = new URI(page.getLinks().next());
+        logger.debug(next.toString());
+
+        page = api.listLinks1(next);
+        links.addAll(page.getContent());
+
+        if (page.hasLinks() && page.getLinks().hasNext()) {
+            collectLinks(page, links);
+        }
+    }
+
+    void deleteLinkedAsset(String token, Integer projectIdentifier, String tagName, GlLink link) throws IOException {
+        logger.info(" " + RB.$("git.delete.asset"), link.getName());
+
+        Map<String, String> headers = new LinkedHashMap<>();
+        headers.put("Authorization", "Bearer " + token);
+
+        logger.debug(RB.$("gitlab.delete.file", link.getName()));
+        try {
+            Map<String, Object> props = new LinkedHashMap<>();
+            props.put("filename", link.getName());
+
+            String url = link.getUrl().substring(apiHost.length() + 1);
+            url = url.substring(0, url.length() - link.getName().length() - 1);
+            Matcher matcher = UPLOADS_PATTERN.matcher(url);
+            if (matcher.matches()) {
+                props.put("projectPath", matcher.group(1));
+                props.put("secret", matcher.group(2));
+            } else {
+                throw new IOException(RB.$("ERROR_gitlab_invalid_upload_link", link.getUrl()));
+            }
+
+            String payload = resolveTemplate(GRAPQL_DELETE_PAYLOAD, props);
+
+            FormData data = ClientUtils.toFormData(
+                "payload",
+                headers.computeIfAbsent("Content-Type", k -> "text/plain"),
+                payload);
+
+            ClientUtils.postFile(logger,
+                graphQlEndpoint,
+                connectTimeout,
+                readTimeout,
+                data,
+                headers);
+        } catch (UploadException e) {
+            if (e.getCause() instanceof IOException) throw (IOException) e.getCause();
+            throw new IOException(e);
+        }
+
+        logger.debug(RB.$("gitlab.delete.link", link.getId(), link.getName()));
+        api.deleteLink(projectIdentifier, tagName, link.getId());
     }
 
     private FormData toFormData(Path asset) throws IOException {

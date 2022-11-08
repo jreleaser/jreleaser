@@ -139,4 +139,15 @@ public interface GitlabAPI {
 
     @RequestLine("DELETE /projects/{projectId}/packages/{packageId}")
     void deletePackage(@Param("projectId") Integer projectId, @Param("packageId") Integer packageId);
+
+    @RequestLine("GET /projects/{projectId}/releases/{tagName}/assets/links")
+    @Headers("Content-Type: application/json")
+    Page<List<GlLink>> listLinks0(@Param("projectId") Integer projectId, @Param("tagName") String tagName);
+
+    @RequestLine("GET")
+    @Headers("Content-Type: application/json")
+    Page<List<GlLink>> listLinks1(URI uri);
+
+    @RequestLine("DELETE /projects/{projectId}/releases/{tagName}/assets/links/{linkId}")
+    void deleteLink(@Param("projectId") Integer projectId, @Param("tagName") String tagName, @Param("linkId") Integer linkId);
 }

@@ -41,6 +41,7 @@ import org.jreleaser.sdk.git.ReleaseUtils;
 import org.jreleaser.sdk.gitlab.api.GlFileUpload;
 import org.jreleaser.sdk.gitlab.api.GlIssue;
 import org.jreleaser.sdk.gitlab.api.GlLabel;
+import org.jreleaser.sdk.gitlab.api.GlLink;
 import org.jreleaser.sdk.gitlab.api.GlLinkRequest;
 import org.jreleaser.sdk.gitlab.api.GlMilestone;
 import org.jreleaser.sdk.gitlab.api.GlProject;
@@ -51,6 +52,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -147,14 +149,7 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
                         }
 
                         if (gitlab.getUpdate().getSections().contains(UpdateSection.ASSETS)) {
-                            if (!assets.isEmpty()) {
-                                Collection<GlFileUpload> uploads = api.uploadAssets(gitlab.getOwner(), gitlab.getName(), gitlab.getProjectIdentifier(), assets);
-                                api.linkReleaseAssets(gitlab.getOwner(), gitlab.getName(), release, gitlab.getProjectIdentifier(), uploads);
-                            }
-                            if (!gitlab.getUploadLinks().isEmpty()) {
-                                Collection<GlLinkRequest> links = collectUploadLinks(gitlab);
-                                api.linkAssets(gitlab.getOwner(), gitlab.getName(), release, gitlab.getProjectIdentifier(), links);
-                            }
+                            updateAssets(api, release);
                         }
                         updateIssues(gitlab, api);
                     }
@@ -283,8 +278,10 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
             return;
         }
 
+        Integer projectIdentifier = api.findProject(gitlab.getName(), gitlab.getProjectIdentifier()).getId();
+
         if (deleteTags) {
-            deleteTags(api, gitlab.getOwner(), gitlab.getName(), gitlab.getProjectIdentifier(), tagName);
+            deleteTags(api, gitlab.getOwner(), gitlab.getName(), projectIdentifier, tagName);
         }
 
         // local tag
@@ -300,30 +297,80 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
         release.setDescription(changelog);
 
         // remote tag/release
-        api.createRelease(gitlab.getOwner(), gitlab.getName(), gitlab.getProjectIdentifier(), release);
+        api.createRelease(gitlab.getOwner(), gitlab.getName(), projectIdentifier, release);
 
         if (!assets.isEmpty()) {
-            Collection<GlFileUpload> uploads = api.uploadAssets(gitlab.getOwner(), gitlab.getName(), gitlab.getProjectIdentifier(), assets);
-            api.linkReleaseAssets(gitlab.getOwner(), gitlab.getName(), release, gitlab.getProjectIdentifier(), uploads);
+            Collection<GlFileUpload> uploads = api.uploadAssets(gitlab.getOwner(), gitlab.getName(), projectIdentifier, assets);
+            api.linkReleaseAssets(gitlab.getOwner(), gitlab.getName(), release, projectIdentifier, uploads);
         }
         if (!links.isEmpty()) {
-            api.linkAssets(gitlab.getOwner(), gitlab.getName(), release, gitlab.getProjectIdentifier(), links);
+            api.linkAssets(gitlab.getOwner(), gitlab.getName(), release, projectIdentifier, links);
         }
 
         if (gitlab.getMilestone().isClose() && !context.getModel().getProject().isSnapshot()) {
             Optional<GlMilestone> milestone = api.findMilestoneByName(
                 gitlab.getOwner(),
                 gitlab.getName(),
-                gitlab.getProjectIdentifier(),
+                projectIdentifier,
                 gitlab.getMilestone().getEffectiveName());
             if (milestone.isPresent()) {
                 api.closeMilestone(gitlab.getOwner(),
                     gitlab.getName(),
-                    gitlab.getProjectIdentifier(),
+                    projectIdentifier,
                     milestone.get());
             }
         }
         updateIssues(gitlab, api);
+    }
+
+    private void updateAssets(Gitlab api, GlRelease release) throws IOException {
+        List<Asset> assetsToBeUpdated = new ArrayList<>();
+        List<Asset> assetsToBeUploaded = new ArrayList<>();
+
+        Integer projectIdentifier = api.findProject(gitlab.getName(), gitlab.getProjectIdentifier()).getId();
+        String tagName = gitlab.getEffectiveTagName(context.getModel());
+        Map<String, GlLink> existingAssets = api.listLinks(projectIdentifier, tagName);
+
+        Map<String, Asset> assetsToBePublished = new LinkedHashMap<>();
+        assets.forEach(asset -> assetsToBePublished.put(asset.getFilename(), asset));
+
+        assetsToBePublished.keySet().forEach(name -> {
+            if (existingAssets.containsKey(name)) {
+                assetsToBeUpdated.add(assetsToBePublished.get(name));
+            } else {
+                assetsToBeUploaded.add(assetsToBePublished.get(name));
+            }
+        });
+
+        updateAssets(api, release, assetsToBeUpdated, projectIdentifier, tagName, existingAssets);
+        uploadAssets(api, release, assetsToBeUploaded, projectIdentifier);
+        if (!gitlab.getUploadLinks().isEmpty()) {
+            Collection<GlLinkRequest> links = collectUploadLinks(gitlab);
+            api.linkAssets(gitlab.getOwner(), gitlab.getName(), release, projectIdentifier, links);
+        }
+    }
+
+    private void updateAssets(Gitlab api, GlRelease release, List<Asset> assetsToBeUpdated, Integer projectIdentifier, String tagName, Map<String, GlLink> existingLinks) throws IOException {
+       try {
+           if (!assetsToBeUpdated.isEmpty()) {
+               for (Asset asset : assetsToBeUpdated) {
+                   GlLink existingLink = existingLinks.get(asset.getFilename());
+                   api.deleteLinkedAsset(gitlab.getToken(), projectIdentifier, tagName, existingLink);
+               }
+
+               Collection<GlFileUpload> uploads = api.uploadAssets(gitlab.getOwner(), gitlab.getName(), projectIdentifier, assetsToBeUpdated);
+               api.linkReleaseAssets(gitlab.getOwner(), gitlab.getName(), release, projectIdentifier, uploads);
+           }
+       }catch(Exception e) {
+           e.printStackTrace();
+       }
+    }
+
+    private void uploadAssets(Gitlab api, GlRelease release, List<Asset> assetsToBeUploaded, Integer projectIdentifier) throws IOException {
+        if (!assetsToBeUploaded.isEmpty()) {
+            Collection<GlFileUpload> uploads = api.uploadAssets(gitlab.getOwner(), gitlab.getName(), projectIdentifier, assetsToBeUploaded);
+            api.linkReleaseAssets(gitlab.getOwner(), gitlab.getName(), release, projectIdentifier, uploads);
+        }
     }
 
     private void updateIssues(org.jreleaser.model.internal.release.GitlabReleaser gitlab, Gitlab api) throws IOException {
@@ -377,14 +424,14 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
             milestone = api.findMilestoneByName(
                 gitlab.getOwner(),
                 gitlab.getName(),
-                gitlab.getProjectIdentifier(),
+                projectIdentifier,
                 gitlab.getMilestone().getEffectiveName());
 
             if (!milestone.isPresent()) {
                 milestone = api.findClosedMilestoneByName(
                     gitlab.getOwner(),
                     gitlab.getName(),
-                    gitlab.getProjectIdentifier(),
+                    projectIdentifier,
                     gitlab.getMilestone().getEffectiveName());
             }
         }
@@ -514,7 +561,7 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
         return false;
     }
 
-    private void deleteTags(Gitlab api, String owner, String repo, String projectIdentifier, String tagName) {
+    private void deleteTags(Gitlab api, String owner, String repo, Integer projectIdentifier, String tagName) {
         // delete remote tag
         try {
             api.deleteTag(owner, repo, projectIdentifier, tagName);
