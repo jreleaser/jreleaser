@@ -142,7 +142,7 @@ public interface JReleaserContext {
         }
 
         public boolean validateConfig() {
-            return this == CONFIG || this == FULL;
+            return this == CONFIG || this == FULL || this == DEPLOY;
         }
 
         public boolean validatePaths() {

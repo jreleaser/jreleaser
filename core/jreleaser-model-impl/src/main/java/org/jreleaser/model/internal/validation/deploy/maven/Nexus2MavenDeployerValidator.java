@@ -36,10 +36,10 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public abstract class Nexus2MavenDeployerValidator extends Validator {
     public static void validateNexus2MavenDeployer(JReleaserContext context, Mode mode, Errors errors) {
-        Map<String, Nexus2MavenDeployer> artifactory = context.getModel().getDeploy().getMaven().getNexus2();
-        if (!artifactory.isEmpty()) context.getLogger().debug("deploy.maven.artifactory");
+        Map<String, Nexus2MavenDeployer> nexus2 = context.getModel().getDeploy().getMaven().getNexus2();
+        if (!nexus2.isEmpty()) context.getLogger().debug("deploy.maven.nexus2");
 
-        for (Map.Entry<String, Nexus2MavenDeployer> e : artifactory.entrySet()) {
+        for (Map.Entry<String, Nexus2MavenDeployer> e : nexus2.entrySet()) {
             e.getValue().setName(e.getKey());
             if (mode.validateConfig()) {
                 validateNexus2MavenDeployer(context, mode, e.getValue(), errors);

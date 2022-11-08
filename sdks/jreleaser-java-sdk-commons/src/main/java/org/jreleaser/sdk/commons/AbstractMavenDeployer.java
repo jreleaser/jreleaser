@@ -30,7 +30,14 @@ import org.jreleaser.util.Algorithm;
 import org.jreleaser.util.ChecksumUtils;
 import org.jreleaser.util.DefaultVersions;
 import org.jreleaser.util.Errors;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -67,6 +74,10 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
         Algorithm.SHA_256,
         Algorithm.SHA_512
     };
+
+    private static final String PACKAGING_JAR = "jar";
+    private static final String PACKAGING_POM = "pom";
+    private static final String PACKAGING_MAVEN_ARCHETYPE = "maven-archetype";
 
     protected final JReleaserContext context;
 
@@ -127,23 +138,34 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
             return;
         }
 
-        // 1st check sources & javadoc
+        // 1st check jar, sources, javadoc if applicable
         for (Deployable deployable : deployablesMap.values()) {
-            if (!deployable.getFilename().endsWith(".pom")) {
+            if (!deployable.getFilename().endsWith("." + PACKAGING_POM)) {
                 continue;
             }
 
             String base = deployable.getFilename();
             base = base.substring(0, base.length() - 4);
 
-            Deployable derived = deployable.deriveByFilename(base + "-sources.jar");
-            if (!deployablesMap.containsKey(derived.getFilename())) {
-                errors.configuration(RB.$("validation_is_missing", derived.getFilename()));
+            if (deployable.requiresJar()) {
+                Deployable derived = deployable.deriveByFilename(PACKAGING_JAR, base + ".jar");
+                if (!deployablesMap.containsKey(derived.getFilename())) {
+                    errors.configuration(RB.$("validation_is_missing", derived.getFilename()));
+                }
             }
 
-            derived = deployable.deriveByFilename(base + "-javadoc.jar");
-            if (!deployablesMap.containsKey(derived.getFilename())) {
-                errors.configuration(RB.$("validation_is_missing", derived.getFilename()));
+            if (deployable.requiresSourcesJar()) {
+                Deployable derived = deployable.deriveByFilename(PACKAGING_JAR, base + "-sources.jar");
+                if (!deployablesMap.containsKey(derived.getFilename())) {
+                    errors.configuration(RB.$("validation_is_missing", derived.getFilename()));
+                }
+            }
+
+            if (deployable.requiresJavadocJar()) {
+                Deployable derived = deployable.deriveByFilename(PACKAGING_JAR, base + "-javadoc.jar");
+                if (!deployablesMap.containsKey(derived.getFilename())) {
+                    errors.configuration(RB.$("validation_is_missing", derived.getFilename()));
+                }
             }
         }
 
@@ -164,7 +186,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
 
         // 2nd check pom
         for (Deployable deployable : deployablesMap.values()) {
-            if (!deployable.getFilename().endsWith(".pom")) {
+            if (!deployable.getFilename().endsWith("." + PACKAGING_POM)) {
                 continue;
             }
 
@@ -272,11 +294,17 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
         private final String groupId;
         private final String artifactId;
         private final String version;
+        private final String packaging;
 
         public Deployable(String stagingRepository, String path, String filename) {
+            this(stagingRepository, path, PACKAGING_JAR, filename);
+        }
+
+        public Deployable(String stagingRepository, String path, String packaging, String filename) {
             this.stagingRepository = stagingRepository;
             this.path = path;
             this.filename = filename;
+            this.packaging = packaging;
 
             Path p = Paths.get(path);
             this.version = p.getFileName().toString();
@@ -290,6 +318,18 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
                 gid = gid.substring(1);
             }
             this.groupId = gid;
+        }
+
+        public boolean requiresJar() {
+            return !PACKAGING_POM.equals(packaging);
+        }
+
+        public boolean requiresSourcesJar() {
+            return !PACKAGING_POM.equals(packaging);
+        }
+
+        public boolean requiresJavadocJar() {
+            return !PACKAGING_POM.equals(packaging) && !PACKAGING_MAVEN_ARCHETYPE.equals(packaging);
         }
 
         public String getGav() {
@@ -325,7 +365,11 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
         }
 
         public Deployable deriveByFilename(String filename) {
-            return new Deployable(stagingRepository, path, filename);
+            return new Deployable(stagingRepository, path, packaging, filename);
+        }
+
+        public Deployable deriveByFilename(String packaging, String filename) {
+            return new Deployable(stagingRepository, path, packaging, filename);
         }
 
         @Override
@@ -378,8 +422,28 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
                 deployables.add(new Deployable(
                     stagingRepository,
                     stagingPath.substring(stagingRepository.length()),
+                    resolvePackaging(path),
                     path.getFileName().toString()
                 ));
+            }
+        }
+
+        private String resolvePackaging(Path artifactPath) {
+            // only inspect if artifactPath ends with .pom
+            if (!artifactPath.getFileName().toString().endsWith("." + PACKAGING_POM)) return PACKAGING_JAR;
+
+            try {
+                Document document = DocumentBuilderFactory.newInstance()
+                    .newDocumentBuilder()
+                    .parse(artifactPath.toFile());
+                String query = "/project/packaging";
+                String packaging = (String) XPathFactory.newInstance()
+                    .newXPath()
+                    .compile(query)
+                    .evaluate(document, XPathConstants.STRING);
+                return isNotBlank(packaging) ? packaging.trim() : PACKAGING_JAR;
+            } catch (ParserConfigurationException | IOException | SAXException | XPathExpressionException e) {
+                throw new IllegalStateException(e);
             }
         }
 
