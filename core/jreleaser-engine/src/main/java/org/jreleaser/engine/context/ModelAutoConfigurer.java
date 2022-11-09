@@ -63,6 +63,7 @@ public class ModelAutoConfigurer {
     private Path outputDirectory;
     private boolean dryrun;
     private boolean gitRootSearch;
+    private boolean strict;
     private String projectName;
     private String projectVersion;
     private String projectVersionPattern;
@@ -115,6 +116,11 @@ public class ModelAutoConfigurer {
 
     public ModelAutoConfigurer gitRootSearch(boolean gitRootSearch) {
         this.gitRootSearch = gitRootSearch;
+        return this;
+    }
+
+    public ModelAutoConfigurer strict(boolean strict) {
+        this.strict = strict;
         return this;
     }
 
@@ -367,6 +373,7 @@ public class ModelAutoConfigurer {
             outputDirectory,
             dryrun,
             gitRootSearch,
+            strict,
             selectedPlatforms);
     }
 

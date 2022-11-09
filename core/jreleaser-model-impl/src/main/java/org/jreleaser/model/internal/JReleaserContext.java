@@ -108,6 +108,7 @@ public class JReleaserContext {
     private final Path basedir;
     private final Path outputDirectory;
     private final boolean dryrun;
+    private final boolean strict;
     private final boolean gitRootSearch;
     private final org.jreleaser.model.api.JReleaserContext.Mode mode;
     private final Configurer configurer;
@@ -214,6 +215,11 @@ public class JReleaserContext {
         @Override
         public boolean isDryrun() {
             return JReleaserContext.this.isDryrun();
+        }
+
+        @Override
+        public boolean isStrict() {
+            return JReleaserContext.this.isStrict();
         }
 
         @Override
@@ -355,6 +361,7 @@ public class JReleaserContext {
                             Path outputDirectory,
                             boolean dryrun,
                             boolean gitRootSearch,
+                            boolean strict,
                             List<String> selectedPlatforms) {
         this.logger = logger;
         this.configurer = configurer;
@@ -364,6 +371,7 @@ public class JReleaserContext {
         this.outputDirectory = outputDirectory;
         this.dryrun = dryrun;
         this.gitRootSearch = gitRootSearch;
+        this.strict = strict;
         this.selectedPlatforms.addAll(selectedPlatforms.stream()
             .filter(PlatformUtils::isSupported)
             .collect(Collectors.toList()));
@@ -579,6 +587,10 @@ public class JReleaserContext {
 
     public boolean isGitRootSearch() {
         return gitRootSearch;
+    }
+
+    public boolean isStrict() {
+        return strict;
     }
 
     public String getChangelog() {
@@ -837,6 +849,7 @@ public class JReleaserContext {
             ", outputDirectory=" + outputDirectory.toAbsolutePath() +
             ", dryrun=" + dryrun +
             ", gitRootSearch=" + gitRootSearch +
+            ", strict=" + strict +
             ", mode=" + mode +
             "]";
     }

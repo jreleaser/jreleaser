@@ -59,6 +59,7 @@ public abstract class SftpUploaderValidator extends Validator {
         }
 
         if (!sftp.isArtifacts() && !sftp.isFiles() && !sftp.isSignatures()) {
+            errors.warning(RB.$("WARNING.validation.uploader.no.artifacts", sftp.getType(), sftp.getName()));
             context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
             sftp.disable();
             return;

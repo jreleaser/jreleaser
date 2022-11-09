@@ -80,6 +80,12 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
     @Parameter(property = "jreleaser.git.root.search")
     protected boolean gitRootSearch;
 
+    /**
+     * Enable strict mode.
+     */
+    @Parameter(property = "jreleaser.strict")
+    protected boolean strict;
+
     @Parameter(defaultValue = "${session}", required = true)
     private MavenSession session;
 
@@ -146,6 +152,7 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
                 outputDirectory.toPath(),
                 dryrun,
                 gitRootSearch,
+                strict,
                 collectSelectedPlatforms());
         } catch (JReleaserException e) {
             throw new MojoExecutionException("JReleaser for project " + project.getArtifactId() + " has not been properly configured.", e);

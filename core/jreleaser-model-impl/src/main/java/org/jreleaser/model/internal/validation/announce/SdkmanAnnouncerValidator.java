@@ -81,7 +81,7 @@ public abstract class SdkmanAnnouncerValidator extends Validator {
         }
 
         if (context.getModel().getActiveDistributions().isEmpty()) {
-            context.getLogger().warn(RB.$("validation_skdman_disable"));
+            errors.warning(RB.$("validation_skdman_disable"));
             sdkman.disable();
         }
 

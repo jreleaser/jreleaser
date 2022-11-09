@@ -60,6 +60,7 @@ public abstract class S3UploaderValidator extends Validator {
         }
 
         if (!s3.isArtifacts() && !s3.isFiles() && !s3.isSignatures()) {
+            errors.warning(RB.$("WARNING.validation.uploader.no.artifacts", s3.getType(), s3.getName()));
             context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
             s3.disable();
             return;

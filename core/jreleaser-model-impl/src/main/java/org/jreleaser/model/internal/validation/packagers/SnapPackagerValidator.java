@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
 import static org.jreleaser.model.internal.validation.common.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.internal.validation.common.TemplateValidator.validateTemplate;
 import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.validateArtifactPlatforms;
@@ -70,11 +71,17 @@ public abstract class SnapPackagerValidator extends Validator {
         if (candidateArtifacts.size() == 0) {
             packager.setActive(Active.NEVER);
             context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
+            errors.warning(RB.$("WARNING.validation.packager.no.artifacts", distribution.getName(),
+                packager.getType(), packager.getSupportedFileExtensions(distribution.getType())));
             packager.disable();
             return;
         } else if (candidateArtifacts.size() > 1) {
             errors.configuration(RB.$("validation_packager_multiple_artifacts", "distribution." + distribution.getName() + ".snap"));
             context.getLogger().debug(RB.$("validation.disabled.multiple.artifacts"));
+            errors.warning(RB.$("WARNING.validation.packager.multiple.artifacts", distribution.getName(),
+                packager.getType(), candidateArtifacts.stream()
+                    .map(Artifact::getPath)
+                    .collect(toList())));
             packager.disable();
             return;
         }

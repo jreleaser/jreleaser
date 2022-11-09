@@ -60,6 +60,7 @@ abstract class AbstractJReleaserTask extends Task {
     protected File configFile;
     protected boolean dryrun;
     protected boolean gitRootSearch;
+    protected boolean strict;
     protected boolean skip;
     protected Path outputDir;
 
@@ -81,6 +82,10 @@ abstract class AbstractJReleaserTask extends Task {
 
     public void setGitRootSearch(boolean gitRootSearch) {
         this.gitRootSearch = gitRootSearch;
+    }
+
+    public void setStrict(boolean strict) {
+        this.strict = strict;
     }
 
     public void setSkip(boolean skip) {
@@ -169,6 +174,7 @@ abstract class AbstractJReleaserTask extends Task {
             getOutputDirectory(),
             dryrun,
             gitRootSearch,
+            strict,
             collectSelectedPlatforms());
     }
 

@@ -103,6 +103,7 @@ public abstract class DistributionsValidator extends Validator {
         if (!selectArtifactsByPlatform(context, distribution)) {
             distribution.setActive(Active.NEVER);
             context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
+            errors.warning(RB.$("WARNING.validation.distribution.no.artifacts", distribution.getName()));
             distribution.disable();
             return;
         }
@@ -318,8 +319,8 @@ public abstract class DistributionsValidator extends Validator {
 
             if (byPlatform.keySet().stream()
                 .noneMatch(packager::supportsPlatform) && !universal.get()) {
-                context.getLogger().warn(RB.$("validation_distributions_disable",
-                    distribution.getName(), packager.getType()));
+                errors.warning(RB.$("WARNING.validation.packager.no.artifacts", distribution.getName(),
+                    packager.getType(), packager.getSupportedFileExtensions(distribution.getType())));
                 packager.disable();
             }
         }

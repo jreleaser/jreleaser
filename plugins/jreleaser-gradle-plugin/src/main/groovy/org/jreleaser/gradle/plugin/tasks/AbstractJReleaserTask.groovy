@@ -48,8 +48,12 @@ import static org.jreleaser.model.internal.JReleaserContext.Configurer
 abstract class AbstractJReleaserTask extends DefaultTask {
     @Input
     final Property<Boolean> dryrun
+
     @Input
     final Property<Boolean> gitRootSearch
+
+    @Input
+    final Property<Boolean> strict
 
     @Input
     final DirectoryProperty outputDirectory
@@ -70,6 +74,7 @@ abstract class AbstractJReleaserTask extends DefaultTask {
         mode = FULL
         dryrun = objects.property(Boolean).convention(false)
         gitRootSearch = objects.property(Boolean).convention(false)
+        strict = objects.property(Boolean).convention(false)
         outputDirectory = objects.directoryProperty()
     }
 
@@ -81,6 +86,11 @@ abstract class AbstractJReleaserTask extends DefaultTask {
     @Option(option = 'git-root-search', description = 'Searches for the Git root (OPTIONAL).')
     void setGitRootSearch(boolean gitRootSearch) {
         this.gitRootSearch.set(gitRootSearch)
+    }
+
+    @Option(option = 'strict', description = 'Enable strict mode (OPTIONAL).')
+    void setStrict(boolean strict) {
+        this.strict.set(strict)
     }
 
     protected JReleaserContext createContext() {
@@ -102,6 +112,7 @@ abstract class AbstractJReleaserTask extends DefaultTask {
             outputDirectory.get().asFile.toPath(),
             dryrun.get(),
             gitRootSearch.get(),
+            strict.get(),
             collectSelectedPlatforms())
     }
 

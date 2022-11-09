@@ -62,6 +62,8 @@ public interface JReleaserContext {
 
     boolean isGitRootSearch();
 
+    boolean isStrict();
+
     List<String> getIncludedAnnouncers();
 
     List<String> getIncludedAssemblers();

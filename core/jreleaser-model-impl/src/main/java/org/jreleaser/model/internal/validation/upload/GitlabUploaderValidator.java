@@ -60,6 +60,7 @@ public abstract class GitlabUploaderValidator extends Validator {
         }
 
         if (!gitlab.isArtifacts() && !gitlab.isFiles() && !gitlab.isSignatures()) {
+            errors.warning(RB.$("WARNING.validation.uploader.no.artifacts", gitlab.getType(), gitlab.getName()));
             context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
             gitlab.disable();
             return;

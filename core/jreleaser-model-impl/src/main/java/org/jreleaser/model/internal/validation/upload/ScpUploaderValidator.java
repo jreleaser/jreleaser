@@ -59,6 +59,7 @@ public abstract class ScpUploaderValidator extends Validator {
         }
 
         if (!scp.isArtifacts() && !scp.isFiles() && !scp.isSignatures()) {
+            errors.warning(RB.$("WARNING.validation.uploader.no.artifacts", scp.getType(), scp.getName()));
             context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
             scp.disable();
             return;

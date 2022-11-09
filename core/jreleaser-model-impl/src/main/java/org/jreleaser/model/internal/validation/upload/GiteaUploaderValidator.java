@@ -60,6 +60,7 @@ public abstract class GiteaUploaderValidator extends Validator {
         }
 
         if (!gitea.isArtifacts() && !gitea.isFiles() && !gitea.isSignatures()) {
+            errors.warning(RB.$("WARNING.validation.uploader.no.artifacts", gitea.getType(), gitea.getName()));
             context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
             gitea.disable();
             return;

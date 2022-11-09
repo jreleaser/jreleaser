@@ -86,6 +86,12 @@ public class Errors {
         return writer.toString();
     }
 
+    public String warningsAsString() {
+        StringWriter writer = new StringWriter();
+        logWarnings(new PrintWriter(writer));
+        return writer.toString();
+    }
+
     public enum Kind {
         ASSEMBLY,
         CONFIGURATION,

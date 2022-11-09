@@ -53,6 +53,9 @@ public abstract class AbstractModelCommand extends AbstractLoggingCommand {
     @CommandLine.Option(names = {"-grs", "--git-root-search"})
     boolean gitRootSearch;
 
+    @CommandLine.Option(names = {"--strict"})
+    boolean strict;
+
     @CommandLine.Option(names = {"-P", "--set-property"},
         paramLabel = "<key=value>")
     String[] properties;
@@ -147,6 +150,7 @@ public abstract class AbstractModelCommand extends AbstractLoggingCommand {
             getOutputDirectory(),
             dryrun(),
             gitRootSearch,
+            strict(),
             collectSelectedPlatforms());
     }
 
@@ -170,6 +174,10 @@ public abstract class AbstractModelCommand extends AbstractLoggingCommand {
 
     protected boolean dryrun() {
         return false;
+    }
+
+    protected boolean strict() {
+        return strict;
     }
 
     private Set<String> getSupportedConfigFormats() {

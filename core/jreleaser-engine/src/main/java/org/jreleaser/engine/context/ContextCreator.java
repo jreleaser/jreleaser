@@ -43,6 +43,7 @@ public class ContextCreator {
                                           Path outputDirectory,
                                           boolean dryrun,
                                           boolean gitRootSearch,
+                                          boolean strict,
                                           List<String> selectedPlatforms) {
         return create(logger,
             configurer,
@@ -52,6 +53,7 @@ public class ContextCreator {
             outputDirectory,
             dryrun,
             gitRootSearch,
+            strict,
             selectedPlatforms);
     }
 
@@ -63,6 +65,7 @@ public class ContextCreator {
                                           Path outputDirectory,
                                           boolean dryrun,
                                           boolean gitRootSearch,
+                                          boolean strict,
                                           List<String> selectedPlatforms) {
         JReleaserContext context = new JReleaserContext(
             logger,
@@ -73,6 +76,7 @@ public class ContextCreator {
             outputDirectory,
             dryrun,
             gitRootSearch,
+            strict,
             selectedPlatforms);
 
         PlatformUtils.resolveCurrentPlatform(logger);

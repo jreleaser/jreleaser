@@ -57,6 +57,7 @@ public abstract class ArtifactoryUploaderValidator extends Validator {
         }
 
         if (!artifactory.isArtifacts() && !artifactory.isFiles() && !artifactory.isSignatures()) {
+            errors.warning(RB.$("WARNING.validation.uploader.no.artifacts", artifactory.getType(), artifactory.getName()));
             context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
             artifactory.disable();
             return;
