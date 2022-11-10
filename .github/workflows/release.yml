@@ -67,6 +67,10 @@ jobs:
     name: Release
     needs: [precheck, jlink, jpackage, native-image]
     runs-on: ubuntu-latest
+    outputs:
+      JAR_SIZE: ${{ steps.bach.outputs.JAR_SIZE }}
+      JAR_CSUM: ${{ steps.bach.outputs.JAR_CSUM }}
+      DOC_SIZE: ${{ steps.bach.outputs.DOC_SIZE }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -165,6 +169,18 @@ jobs:
           NOTICEABLE_AUTHOR_EMAIL: ${{ secrets.NOTICEABLE_AUTHOR_EMAIL }}
           NOTICEABLE_PROJECTID: ${{ secrets.NOTICEABLE_PROJECTID }}
 
+      - name: Grab bach-info
+        id: bach
+        shell: bash
+        run: |
+          VERSION=${{ needs.precheck.outputs.VERSION }}
+          JAR_SIZE=$(ls -l plugins/jreleaser-tool-provider/build/libs/jreleaser-tool-provider-$VERSION.jar | awk '{print $5}')
+          JAR_CSUM=$(shasum -a 256 plugins/jreleaser-tool-provider/build/libs/jreleaser-tool-provider-$VERSION.jar | awk '{print $1}')
+          DOC_SIZE=$(ls -l README.adoc | awk '{print $5}')
+          echo "JAR_SIZE=$(echo $JAR_SIZE)" >>$GITHUB_OUTPUT
+          echo "JAR_CSUM=$(echo $JAR_CSUM)" >>$GITHUB_OUTPUT
+          echo "DOC_SIZE=$(echo $DOC_SIZE)" >>$GITHUB_OUTPUT
+
       - name: JReleaser release output
         if: always()
         uses: actions/upload-artifact@v3
@@ -174,10 +190,11 @@ jobs:
             out/jreleaser/trace.log
             out/jreleaser/output.properties
 
-  update:
-    name: Update
+  update-website:
+    name: Update website
     needs: [precheck, release]
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -198,4 +215,40 @@ jobs:
           git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --global user.name "GitHub Action"
           git commit -a -m "Releasing version ${{ needs.precheck.outputs.VERSION }}"
+          git push origin main
+
+  update-bach-info:
+    name: Update bach-info
+    needs: [precheck, release]
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          repository: jreleaser/bach-info
+          ref: 'main'
+          fetch-depth: 0
+          token: ${{ secrets.GIT_ACCESS_TOKEN }}
+
+      - name: Commit
+        run: |
+          VERSION=${{ needs.precheck.outputs.VERSION }}
+          JAR_SIZE=${{ needs.release.outputs.JAR_SIZE }}
+          JAR_CSUM=${{ needs.release.outputs.JAR_CSUM }}
+          DOC_SIZE=${{ needs.release.outputs.DOC_SIZE }}
+          TARGET_FILE=".bach/external-tools/jreleaser@$VERSION.tool-directory.properties"
+          echo "@description JReleaser $VERSION" > $TARGET_FILE
+          echo " " >> $TARGET_FILE
+          echo "jreleaser-tool-provider-$VERSION.jar=\\" >> $TARGET_FILE
+          echo "  https://github.com/jreleaser/jreleaser/releases/download/v$VERSION/jreleaser-tool-provider-$VERSION.jar\\" >> $TARGET_FILE
+          echo "  #SIZE=${JAR_SIZE}&SHA-256=${JAR_CSUM}" >> $TARGET_FILE
+          echo "README.adoc=\\" >> $TARGET_FILE
+          echo "  https://github.com/jreleaser/jreleaser/raw/v$VERSION/README.adoc\\" >> $TARGET_FILE
+          echo "  #SIZE=${DOC_SIZE}" >> $TARGET_FILE
+          echo "" >> $TARGET_FILE
+          git add $TARGET_FILE
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "GitHub Action"
+          git commit -a -m "Releasing version $VERSION"
           git push origin main
