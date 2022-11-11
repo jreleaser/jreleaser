@@ -66,6 +66,10 @@ jobs:
     name: Release
     needs: [precheck, jlink, jpackage, native-image]
     runs-on: ubuntu-latest
+    outputs:
+      JAR_SIZE: ${{ steps.bach.outputs.JAR_SIZE }}
+      JAR_CSUM: ${{ steps.bach.outputs.JAR_CSUM }}
+      DOC_SIZE: ${{ steps.bach.outputs.DOC_SIZE }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -109,6 +113,17 @@ jobs:
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
           JRELEASER_DOCKER_DEFAULT_PASSWORD: ${{ secrets.JRELEASER_DOCKER_PASSWORD }}
 
+      - name: Grab bach-info
+        id: bach
+        shell: bash
+        run: |
+          JAR_SIZE=$(ls -l out/jreleaser/artifacts/jreleaser-tool-provider/jreleaser-tool-provider-early-access.jar | awk '{print $5}')
+          JAR_CSUM=$(shasum -a 256 out/jreleaser/artifacts/jreleaser-tool-provider/jreleaser-tool-provider-early-access.jar | awk '{print $1}')
+          DOC_SIZE=$(ls -l README.adoc | awk '{print $5}')
+          echo "JAR_SIZE=$(echo $JAR_SIZE)" >>$GITHUB_OUTPUT
+          echo "JAR_CSUM=$(echo $JAR_CSUM)" >>$GITHUB_OUTPUT
+          echo "DOC_SIZE=$(echo $DOC_SIZE)" >>$GITHUB_OUTPUT
+
       - name: JReleaser release output
         if: always()
         uses: actions/upload-artifact@v3
@@ -117,3 +132,40 @@ jobs:
           path: |
             out/jreleaser/trace.log
             out/jreleaser/output.properties
+
+  update-bach-info:
+    name: Update bach-info
+    needs: [precheck, release]
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          repository: jreleaser/bach-info
+          ref: 'main'
+          fetch-depth: 0
+          token: ${{ secrets.GIT_ACCESS_TOKEN }}
+
+      - name: Commit
+        run: |
+          TAG="early-access"
+          VERSION=${{ needs.precheck.outputs.VERSION }}
+          JAR_SIZE=${{ needs.release.outputs.JAR_SIZE }}
+          JAR_CSUM=${{ needs.release.outputs.JAR_CSUM }}
+          DOC_SIZE=${{ needs.release.outputs.DOC_SIZE }}
+          TARGET_FILE=".bach/external-tools/jreleaser@$TAG.tool-directory.properties"
+          echo "@description JReleaser $TAG ($VERSION)" > $TARGET_FILE
+          echo " " >> $TARGET_FILE
+          echo "jreleaser-tool-provider-$TAG.jar=\\" >> $TARGET_FILE
+          echo "  https://github.com/jreleaser/jreleaser/releases/download/$TAG/jreleaser-tool-provider-$TAG.jar\\" >> $TARGET_FILE
+          echo "  #SIZE=${JAR_SIZE}&SHA-256=${JAR_CSUM}" >> $TARGET_FILE
+          echo "README.adoc=\\" >> $TARGET_FILE
+          echo "  https://github.com/jreleaser/jreleaser/raw/$TAG/README.adoc\\" >> $TARGET_FILE
+          echo "  #SIZE=${DOC_SIZE}" >> $TARGET_FILE
+          echo "" >> $TARGET_FILE
+          git add $TARGET_FILE
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "GitHub Action"
+          git commit -a -m "Releasing $TAG ($VERSION)"
+          git push origin main
