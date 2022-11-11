@@ -34,6 +34,7 @@ import org.jreleaser.model.internal.release.GitlabReleaser;
 import org.jreleaser.model.internal.util.Artifacts;
 import org.jreleaser.model.spi.release.Repository;
 import org.jreleaser.sdk.git.GitSdk;
+import org.jreleaser.util.Env;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -61,9 +62,9 @@ public class ModelAutoConfigurer {
     private JReleaserLogger logger;
     private Path basedir;
     private Path outputDirectory;
-    private boolean dryrun;
-    private boolean gitRootSearch;
-    private boolean strict;
+    private Boolean dryrun;
+    private Boolean gitRootSearch;
+    private Boolean strict;
     private String projectName;
     private String projectVersion;
     private String projectVersionPattern;
@@ -109,17 +110,17 @@ public class ModelAutoConfigurer {
         return this;
     }
 
-    public ModelAutoConfigurer dryrun(boolean dryrun) {
+    public ModelAutoConfigurer dryrun(Boolean dryrun) {
         this.dryrun = dryrun;
         return this;
     }
 
-    public ModelAutoConfigurer gitRootSearch(boolean gitRootSearch) {
+    public ModelAutoConfigurer gitRootSearch(Boolean gitRootSearch) {
         this.gitRootSearch = gitRootSearch;
         return this;
     }
 
-    public ModelAutoConfigurer strict(boolean strict) {
+    public ModelAutoConfigurer strict(Boolean strict) {
         this.strict = strict;
         return this;
     }
@@ -371,10 +372,16 @@ public class ModelAutoConfigurer {
             autoConfiguredModel(basedir),
             basedir,
             outputDirectory,
-            dryrun,
-            gitRootSearch,
-            strict,
+            resolveBoolean("DRY_RUN", dryrun),
+            resolveBoolean("GIT_ROOT_SEARCH", gitRootSearch),
+            resolveBoolean("STRICT", strict),
             selectedPlatforms);
+    }
+
+    protected boolean resolveBoolean(String key, Boolean value) {
+        if (null != value) return value;
+        String resolvedValue = Env.resolve(key, "");
+        return isNotBlank(resolvedValue) && Boolean.parseBoolean(resolvedValue);
     }
 
     private void dumpAutoConfig() {

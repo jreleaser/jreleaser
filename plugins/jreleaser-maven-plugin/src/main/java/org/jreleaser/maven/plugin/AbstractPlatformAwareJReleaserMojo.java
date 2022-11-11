@@ -33,7 +33,7 @@ abstract class AbstractPlatformAwareJReleaserMojo extends AbstractJReleaserMojo 
      * Activates paths matching the current platform.
      */
     @Parameter(property = "jreleaser.select.current.platform")
-    private boolean selectCurrentPlatform;
+    private Boolean selectCurrentPlatform;
 
     /**
      * Activates paths matching the given platform.
@@ -43,12 +43,13 @@ abstract class AbstractPlatformAwareJReleaserMojo extends AbstractJReleaserMojo 
 
     @Override
     protected List<String> collectSelectedPlatforms() {
-        if (selectCurrentPlatform) return Collections.singletonList(PlatformUtils.getCurrentFull());
+        boolean resolvedSelectCurrentPlatform = resolveBoolean("SELECT_CURRENT_PLATFORM", selectCurrentPlatform);
+        if (resolvedSelectCurrentPlatform) return Collections.singletonList(PlatformUtils.getCurrentFull());
 
         List<String> list = new ArrayList<>();
         if (selectPlatforms != null && selectPlatforms.length > 0) {
             Collections.addAll(list, selectPlatforms);
         }
-        return list;
+        return resolveCollection("SELECT_PLATFORM", list);
     }
 }

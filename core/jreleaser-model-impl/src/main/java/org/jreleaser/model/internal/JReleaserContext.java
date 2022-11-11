@@ -427,6 +427,7 @@ public class JReleaserContext {
         this.model.getEnvironment().initProps(this);
 
         logger.info(RB.$("context.configuration.validation"));
+        logger.info(RB.$("context.configuration.strict", strict));
 
         if (mode.validateConfig()) {
             adjustDistributions();

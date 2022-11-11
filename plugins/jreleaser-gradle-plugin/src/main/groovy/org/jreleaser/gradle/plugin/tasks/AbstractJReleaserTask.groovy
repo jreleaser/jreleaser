@@ -31,13 +31,17 @@ import org.jreleaser.logging.JReleaserLogger
 import org.jreleaser.model.JReleaserVersion
 import org.jreleaser.model.internal.JReleaserContext
 import org.jreleaser.model.internal.JReleaserModel
+import org.jreleaser.util.Env
 import org.jreleaser.util.PlatformUtils
 import org.jreleaser.util.StringUtils
 
 import javax.inject.Inject
 
+import static java.util.stream.Collectors.toList
 import static org.jreleaser.model.api.JReleaserContext.Mode.FULL
 import static org.jreleaser.model.internal.JReleaserContext.Configurer
+import static org.jreleaser.util.StringUtils.isBlank
+import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
  *
@@ -72,9 +76,9 @@ abstract class AbstractJReleaserTask extends DefaultTask {
         model = objects.property(JReleaserModel)
         jlogger = objects.property(JReleaserLogger)
         mode = FULL
-        dryrun = objects.property(Boolean).convention(false)
-        gitRootSearch = objects.property(Boolean).convention(false)
-        strict = objects.property(Boolean).convention(false)
+        dryrun = objects.property(Boolean)
+        gitRootSearch = objects.property(Boolean)
+        strict = objects.property(Boolean)
         outputDirectory = objects.directoryProperty()
     }
 
@@ -110,10 +114,26 @@ abstract class AbstractJReleaserTask extends DefaultTask {
             model.get(),
             project.projectDir.toPath(),
             outputDirectory.get().asFile.toPath(),
-            dryrun.get(),
-            gitRootSearch.get(),
-            strict.get(),
+            resolveBoolean("DRY_RUN", dryrun.getOrElse(false)),
+            resolveBoolean("GIT_ROOT_SEARCH", gitRootSearch.getOrElse(false)),
+            resolveBoolean("STRICT", strict.getOrElse(false)),
             collectSelectedPlatforms())
+    }
+
+    protected boolean resolveBoolean(String key, Boolean value) {
+        if (null != value) return value
+        String resolvedValue = Env.resolve(key, '')
+        return isNotBlank(resolvedValue) && Boolean.parseBoolean(resolvedValue)
+    }
+
+    protected List<String> resolveCollection(String key, List<String> values) {
+        if (!values.isEmpty()) return values;
+        String resolvedValue = Env.resolve(key, '')
+        if (isBlank(resolvedValue)) return Collections.emptyList()
+        return Arrays.stream(resolvedValue.trim().split(','))
+            .map({ s -> s.trim() })
+            .filter({ s -> isNotBlank(s) })
+            .collect(toList())
     }
 
     protected List<String> collectSelectedPlatforms() {

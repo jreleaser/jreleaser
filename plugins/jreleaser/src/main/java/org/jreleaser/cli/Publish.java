@@ -28,7 +28,7 @@ import picocli.CommandLine;
 @CommandLine.Command(name = "publish")
 public class Publish extends AbstractPlatformAwareModelCommand {
     @CommandLine.Option(names = {"--dry-run"})
-    boolean dryrun;
+    Boolean dryrun;
 
     @CommandLine.ArgGroup
     Composite composite;
@@ -91,7 +91,7 @@ public class Publish extends AbstractPlatformAwareModelCommand {
     }
 
     @Override
-    protected boolean dryrun() {
+    protected Boolean dryrun() {
         return dryrun;
     }
 }

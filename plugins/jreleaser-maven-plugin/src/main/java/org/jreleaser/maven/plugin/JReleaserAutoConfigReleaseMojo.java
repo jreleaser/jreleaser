@@ -29,7 +29,9 @@ import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.maven.plugin.internal.JReleaserLoggerAdapter;
 import org.jreleaser.model.UpdateSection;
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.util.Env;
 import org.jreleaser.util.PlatformUtils;
+import org.jreleaser.util.StringUtils;
 import org.jreleaser.workflow.Workflows;
 
 import java.io.File;
@@ -37,10 +39,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import static java.util.stream.Collectors.toList;
+import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * Create or update a release with auto-config enabled.
@@ -51,29 +58,34 @@ import java.util.Set;
 @Mojo(name = "auto-config-release")
 public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
     /**
+     * Calculate full changelog since last non-snapshot release.
+     */
+    @Parameter(property = "jreleaser.project.snapshot.full.changelog")
+    boolean projectSnapshotFullChangelog;
+    /**
      * The project whose model will be checked.
      */
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     private MavenProject project;
-
     @Parameter(defaultValue = "${session}", required = true)
     private MavenSession session;
-
     @Parameter(property = "jreleaser.output.directory", defaultValue = "${project.build.directory}/jreleaser")
     private File outputDirectory;
-
     /**
      * Skips remote operations.
      */
     @Parameter(property = "jreleaser.dry.run")
-    private boolean dryrun;
-
+    private Boolean dryrun;
     /**
      * Searches for the Git root.
      */
     @Parameter(property = "jreleaser.git.root.search")
-    private boolean gitRootSearch;
-
+    private Boolean gitRootSearch;
+    /**
+     * Enable strict mode.
+     */
+    @Parameter(property = "jreleaser.strict")
+    private Boolean strict;
     /**
      * The project name.
      */
@@ -99,11 +111,6 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
      */
     @Parameter(property = "jreleaser.project.snapshot.label")
     private String projectSnapshotLabel;
-    /**
-     * Calculate full changelog since last non-snapshot release.
-     */
-    @Parameter(property = "jreleaser.project.snapshot.full.changelog")
-    boolean projectSnapshotFullChangelog;
     /**
      * The project copyright.
      */
@@ -260,6 +267,7 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
             .outputDirectory(outputDirectory.toPath())
             .dryrun(dryrun)
             .gitRootSearch(gitRootSearch)
+            .strict(strict)
             .projectName(projectName)
             .projectVersion(projectVersion)
             .projectVersionPattern(projectVersionPattern)
@@ -348,12 +356,29 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
     }
 
     protected List<String> collectSelectedPlatforms() {
-        if (selectCurrentPlatform) return Collections.singletonList(PlatformUtils.getCurrentFull());
+        boolean resolvedSelectCurrentPlatform = resolveBoolean("SELECT_CURRENT_PLATFORM", selectCurrentPlatform);
+        if (resolvedSelectCurrentPlatform) return Collections.singletonList(PlatformUtils.getCurrentFull());
 
         List<String> list = new ArrayList<>();
         if (selectPlatforms != null && selectPlatforms.length > 0) {
             Collections.addAll(list, selectPlatforms);
         }
-        return list;
+        return resolveCollection("SELECT_PLATFORM", list);
+    }
+
+    protected boolean resolveBoolean(String key, Boolean value) {
+        if (null != value) return value;
+        String resolvedValue = Env.resolve(key, "");
+        return isNotBlank(resolvedValue) && Boolean.parseBoolean(resolvedValue);
+    }
+
+    protected List<String> resolveCollection(String key, List<String> values) {
+        if (!values.isEmpty()) return values;
+        String resolvedValue = Env.resolve(key, "");
+        if (isBlank(resolvedValue)) return Collections.emptyList();
+        return Arrays.stream(resolvedValue.trim().split(","))
+            .map(String::trim)
+            .filter(StringUtils::isNotBlank)
+            .collect(toList());
     }
 }

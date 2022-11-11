@@ -60,7 +60,8 @@ abstract class AbstractPlatformAwareJReleaserTask extends AbstractJReleaserTask 
 
     @Override
     protected List<String> collectSelectedPlatforms() {
-        if (selectCurrentPlatform.getOrElse(false)) return Collections.singletonList(PlatformUtils.getCurrentFull())
-        return selectPlatforms.get()
+        boolean resolvedSelectCurrentPlatform = resolveBoolean('SELECT_CURRENT_PLATFORM', selectCurrentPlatform.getOrElse(false))
+        if (resolvedSelectCurrentPlatform) return Collections.singletonList(PlatformUtils.getCurrentFull())
+        return resolveCollection('SELECT_PLATFORM', selectPlatforms.get() as List<String>)
     }
 }

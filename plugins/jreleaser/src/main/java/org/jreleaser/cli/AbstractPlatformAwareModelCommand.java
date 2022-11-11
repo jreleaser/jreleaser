@@ -31,7 +31,7 @@ import java.util.List;
 @CommandLine.Command
 public abstract class AbstractPlatformAwareModelCommand extends AbstractModelCommand {
     @CommandLine.Option(names = {"-scp", "--select-current-platform"})
-    boolean selectCurrentPlatform;
+    Boolean selectCurrentPlatform;
 
     @CommandLine.Option(names = {"-sp", "--select-platform"},
         paramLabel = "<platform>")
@@ -39,12 +39,13 @@ public abstract class AbstractPlatformAwareModelCommand extends AbstractModelCom
 
     @Override
     protected List<String> collectSelectedPlatforms() {
-        if (selectCurrentPlatform) return Collections.singletonList(PlatformUtils.getCurrentFull());
+        boolean resolvedSelectCurrentPlatform = resolveBoolean("SELECT_CURRENT_PLATFORM", selectCurrentPlatform);
+        if (resolvedSelectCurrentPlatform) return Collections.singletonList(PlatformUtils.getCurrentFull());
 
         List<String> list = new ArrayList<>();
         if (selectPlatforms != null && selectPlatforms.length > 0) {
             Collections.addAll(list, selectPlatforms);
         }
-        return list;
+        return resolveCollection("SELECT_PLATFORM", list);
     }
 }

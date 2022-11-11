@@ -26,6 +26,7 @@ import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.util.Env;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.StringUtils;
 
@@ -58,9 +59,9 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 abstract class AbstractJReleaserTask extends Task {
     protected File basedir;
     protected File configFile;
-    protected boolean dryrun;
-    protected boolean gitRootSearch;
-    protected boolean strict;
+    protected Boolean dryrun;
+    protected Boolean gitRootSearch;
+    protected Boolean strict;
     protected boolean skip;
     protected Path outputDir;
 
@@ -76,15 +77,15 @@ abstract class AbstractJReleaserTask extends Task {
         this.configFile = configFile;
     }
 
-    public void setDryrun(boolean dryrun) {
+    public void setDryrun(Boolean dryrun) {
         this.dryrun = dryrun;
     }
 
-    public void setGitRootSearch(boolean gitRootSearch) {
+    public void setGitRootSearch(Boolean gitRootSearch) {
         this.gitRootSearch = gitRootSearch;
     }
 
-    public void setStrict(boolean strict) {
+    public void setStrict(Boolean strict) {
         this.strict = strict;
     }
 
@@ -137,7 +138,8 @@ abstract class AbstractJReleaserTask extends Task {
     }
 
     private void resolveBasedir() {
-        actualBasedir = (null != basedir ? basedir.toPath() : actualConfigFile.toAbsolutePath().getParent()).normalize();
+        String resolvedBasedir = Env.resolve("basedir", null != basedir ? basedir.getPath() : "");
+        actualBasedir = (isNotBlank(resolvedBasedir) ? Paths.get(resolvedBasedir) : actualConfigFile.toAbsolutePath().getParent()).normalize();
     }
 
     protected abstract void doExecute(JReleaserContext context);
@@ -172,10 +174,26 @@ abstract class AbstractJReleaserTask extends Task {
             actualConfigFile,
             actualBasedir,
             getOutputDirectory(),
-            dryrun,
-            gitRootSearch,
-            strict,
+            resolveBoolean("DRY_RUN", dryrun),
+            resolveBoolean("GIT_ROOT_SEARCH", gitRootSearch),
+            resolveBoolean("STRICT", strict),
             collectSelectedPlatforms());
+    }
+
+    protected boolean resolveBoolean(String key, Boolean value) {
+        if (null != value) return value;
+        String resolvedValue = Env.resolve(key, "");
+        return isNotBlank(resolvedValue) && Boolean.parseBoolean(resolvedValue);
+    }
+
+    protected List<String> resolveCollection(String key, List<String> values) {
+        if (!values.isEmpty()) return values;
+        String resolvedValue = Env.resolve(key, "");
+        if (isBlank(resolvedValue)) return Collections.emptyList();
+        return Arrays.stream(resolvedValue.trim().split(","))
+            .map(String::trim)
+            .filter(StringUtils::isNotBlank)
+            .collect(toList());
     }
 
     protected JReleaserContext.Configurer resolveConfigurer(Path configFile) {

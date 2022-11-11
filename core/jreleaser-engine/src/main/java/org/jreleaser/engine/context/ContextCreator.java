@@ -80,6 +80,7 @@ public class ContextCreator {
             selectedPlatforms);
 
         PlatformUtils.resolveCurrentPlatform(logger);
+        logger.info(RB.$("context.creator.git_root_search", context.isGitRootSearch()));
         ModelConfigurer.configure(context);
 
         return context;

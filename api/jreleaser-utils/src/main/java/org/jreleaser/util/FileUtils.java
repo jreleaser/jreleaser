@@ -140,7 +140,7 @@ public final class FileUtils {
     }
 
     public static Path resolveOutputDirectory(Path basedir, Path outputdir, String baseOutput) {
-        String od = Env.env("OUTPUT_DIRECTORY", "");
+        String od = Env.resolve("OUTPUT_DIRECTORY", "");
         if (isNotBlank(od)) {
             return basedir.resolve(od).resolve("jreleaser").normalize();
         }

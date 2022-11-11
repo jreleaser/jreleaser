@@ -29,7 +29,7 @@ import picocli.CommandLine;
 @CommandLine.Command(name = "download")
 public class Download extends AbstractModelCommand {
     @CommandLine.Option(names = {"--dry-run"})
-    boolean dryrun;
+    Boolean dryrun;
 
     @CommandLine.ArgGroup
     Composite composite;
@@ -92,7 +92,7 @@ public class Download extends AbstractModelCommand {
     }
 
     @Override
-    protected boolean dryrun() {
+    protected Boolean dryrun() {
         return dryrun;
     }
 
