@@ -376,6 +376,16 @@
         "code",
         "translation"
       ]
+    },
+    {
+      "login": "ebullient",
+      "name": "Erin Schnabel",
+      "avatar_url": "https://avatars.githubusercontent.com/u/808713?v=4",
+      "profile": "https://www.ebullient.dev",
+      "contributions": [
+        "ideas",
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
