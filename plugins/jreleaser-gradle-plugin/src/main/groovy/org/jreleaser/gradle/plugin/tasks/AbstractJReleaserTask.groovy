@@ -114,9 +114,9 @@ abstract class AbstractJReleaserTask extends DefaultTask {
             model.get(),
             project.projectDir.toPath(),
             outputDirectory.get().asFile.toPath(),
-            resolveBoolean("DRY_RUN", dryrun.getOrElse(false)),
-            resolveBoolean("GIT_ROOT_SEARCH", gitRootSearch.getOrElse(false)),
-            resolveBoolean("STRICT", strict.getOrElse(false)),
+            dryrun.getOrElse(false),
+            gitRootSearch.getOrElse(false),
+            strict.getOrElse(false),
             collectSelectedPlatforms())
     }
 

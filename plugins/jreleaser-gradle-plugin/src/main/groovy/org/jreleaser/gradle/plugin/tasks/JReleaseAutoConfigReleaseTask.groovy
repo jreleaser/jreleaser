@@ -348,7 +348,7 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
 
     @Option(option = 'select-current-platform', description = 'Activates paths matching the current platform (OPTIONAL).')
     void setSelectCurrentPlatform(boolean selectCurrentPlatform) {
-        this.dryrun.set(selectCurrentPlatform)
+        this.selectCurrentPlatform.set(selectCurrentPlatform)
     }
 
     @Option(option = 'select-platform', description = 'Activates paths matching the given platform (OPTIONAL).')
@@ -358,9 +358,9 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
 
     @Inject
     JReleaseAutoConfigReleaseTask(ObjectFactory objects) {
-        dryrun = objects.property(Boolean).convention(false)
-        gitRootSearch = objects.property(Boolean).convention(false)
-        strict = objects.property(Boolean).convention(false)
+        dryrun = objects.property(Boolean)
+        gitRootSearch = objects.property(Boolean)
+        strict = objects.property(Boolean)
         outputDirectory = objects.directoryProperty()
 
         projectName = objects.property(String).convention(project.name)
@@ -410,9 +410,9 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
             .logger(new JReleaserLoggerAdapter(project, tracer))
             .basedir(project.projectDir.toPath())
             .outputDirectory(outputDirectoryPath)
-            .dryrun(dryrun.get())
-            .gitRootSearch(gitRootSearch.get())
-            .strict(strict.get())
+            .dryrun(dryrun.getOrElse(false))
+            .gitRootSearch(gitRootSearch.getOrElse(false))
+            .strict(strict.getOrElse(false))
             .projectName(projectName.get())
             .projectVersion(projectVersion.get())
             .projectVersionPattern(projectVersionPattern.orNull)

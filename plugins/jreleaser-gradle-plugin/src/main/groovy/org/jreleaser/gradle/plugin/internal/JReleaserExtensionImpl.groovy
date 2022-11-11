@@ -63,6 +63,7 @@ import org.jreleaser.gradle.plugin.internal.dsl.signing.SigningImpl
 import org.jreleaser.gradle.plugin.internal.dsl.upload.UploadImpl
 import org.jreleaser.logging.JReleaserLogger
 import org.jreleaser.model.internal.JReleaserModel
+import org.jreleaser.util.Env
 import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
@@ -81,6 +82,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     final Property<Boolean> enabled
     final Property<Boolean> dryrun
     final Property<Boolean> gitRootSearch
+    final Property<Boolean> strict
     final EnvironmentImpl environment
     final HooksImpl hooks
     final ProjectImpl project
@@ -109,8 +111,9 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         this.layout = layout
         configFile = objects.fileProperty()
         enabled = objects.property(Boolean).convention(true)
-        dryrun = objects.property(Boolean).convention(false)
-        gitRootSearch = objects.property(Boolean).convention(false)
+        dryrun = objects.property(Boolean).convention(resolveBoolean('DRY_RUN'))
+        strict = objects.property(Boolean).convention(resolveBoolean('STRICT'))
+        gitRootSearch = objects.property(Boolean).convention(resolveBoolean('GIT_ROOT_SEARCH'))
         environment = objects.newInstance(EnvironmentImpl, objects)
         hooks = objects.newInstance(HooksImpl, objects)
         project = objects.newInstance(ProjectImpl, objects, nameProvider, descriptionProvider, versionProvider)
@@ -364,5 +367,10 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         }
 
         outputs
+    }
+
+    private boolean resolveBoolean(String key) {
+        String resolvedValue = Env.resolve(key, '')
+        return isNotBlank(resolvedValue) && Boolean.parseBoolean(resolvedValue)
     }
 }
