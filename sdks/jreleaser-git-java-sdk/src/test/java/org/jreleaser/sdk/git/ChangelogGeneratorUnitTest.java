@@ -21,9 +21,11 @@ import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListTagCommand;
 import org.eclipse.jgit.api.LogCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.lib.AbbreviatedObjectId;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectIdRef;
+import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.jreleaser.model.internal.JReleaserContext;
@@ -32,6 +34,7 @@ import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.internal.release.BaseReleaser;
 import org.jreleaser.model.internal.release.Changelog;
 import org.jreleaser.model.internal.release.Release;
+import org.jreleaser.sdk.git.ChangelogGenerator.Commit;
 import org.jreleaser.version.SemanticVersion;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -57,6 +60,7 @@ import java.util.List;
 import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.any;
@@ -225,6 +229,47 @@ public class ChangelogGeneratorUnitTest {
         verify(changelogGenerator, times(1)).formatCommit(any(), any(), any(), any());
 
         cleanUpStaticMocks();
+    }
+
+    @Test
+    @DisplayName("When commit contains body contains CR/LF and LF")
+    public void dependabotCommitMultipleLineEndings() {
+
+        String commitBody = "Bump actions/setup-java from 2 to 3.5.1 (#123)\n" +
+                "\n" +
+                "Bumps [actions/setup-java](https://github.com/actions/setup-java) from 2 to 3.5.1.\r\n" +
+                "- [Release notes](https://github.com/actions/setup-java/releases)\r\n" +
+                "- [Commits](https://github.com/actions/setup-java/compare/v2...v3.5.1)\r\n";
+
+        RevCommit revCommit = mock(RevCommit.class);
+        ObjectId objectId = mock(ObjectId.class);
+        AbbreviatedObjectId abbreviatedObjectId = mock(AbbreviatedObjectId.class);
+        PersonIdent committer = mock(PersonIdent.class);
+        PersonIdent author = mock(PersonIdent.class);
+        int time = 123456;
+
+        when(revCommit.getId()).thenReturn(objectId);
+        when(objectId.name()).thenReturn("full-hash");
+        when(objectId.abbreviate(7)).thenReturn(abbreviatedObjectId);
+        when(abbreviatedObjectId.name()).thenReturn("short-hash");
+        when(revCommit.getFullMessage()).thenReturn(commitBody);
+        when(revCommit.getCommitterIdent()).thenReturn(committer);
+        when(committer.getName()).thenReturn("committer-name");
+        when(committer.getEmailAddress()).thenReturn("committer@example.com");
+        when(revCommit.getAuthorIdent()).thenReturn(author);
+        when(author.getName()).thenReturn("author-name");
+        when(author.getEmailAddress()).thenReturn("author@example.com");
+        when(revCommit.getCommitTime()).thenReturn(time);
+
+        Commit result = Commit.of(revCommit);
+        assertThat(result)
+                .hasFieldOrPropertyWithValue("fullHash", "full-hash")
+                .hasFieldOrPropertyWithValue("shortHash", "short-hash")
+                .hasFieldOrPropertyWithValue("title", "Bump actions/setup-java from 2 to 3.5.1 (#123)")
+                .hasFieldOrPropertyWithValue("body", commitBody)
+                .hasFieldOrPropertyWithValue("author.name", "author-name")
+                .hasFieldOrPropertyWithValue("author.email", "author@example.com")
+                .hasFieldOrPropertyWithValue("time", time);
     }
 
     private RevCommit getMockRevCommit(boolean skipMergeCommits, boolean formatted) throws GitAPIException, IOException {
