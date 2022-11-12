@@ -636,13 +636,8 @@ public class ChangelogGenerator {
         }
 
         private static String[] split(String str) {
-            // try Windows first
-            String sep = "\r\n";
-            if (str.contains(sep)) {
-                return str.split(sep);
-            }
-
-            return str.split("\n");
+            // Any Unicode linebreak sequence
+            return str.split("\\R");
         }
     }
 
