@@ -154,10 +154,11 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
                 null == configFile ? convertModel() : readModel(logger),
                 basedir,
                 outputDirectory.toPath(),
-                resolveBoolean("DRY_RUN", dryrun),
-                resolveBoolean("GIT_ROOT_SEARCH", gitRootSearch),
-                resolveBoolean("STRICT", strict),
-                collectSelectedPlatforms());
+                resolveBoolean(org.jreleaser.model.api.JReleaserContext.DRY_RUN, dryrun),
+                resolveBoolean(org.jreleaser.model.api.JReleaserContext.GIT_ROOT_SEARCH, gitRootSearch),
+                resolveBoolean(org.jreleaser.model.api.JReleaserContext.STRICT, strict),
+                collectSelectedPlatforms(),
+                collectRejectedPlatforms());
         } catch (JReleaserException e) {
             throw new MojoExecutionException("JReleaser for project " + project.getArtifactId() + " has not been properly configured.", e);
         }
@@ -200,7 +201,7 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
     }
 
     private Path resolveBasedir() {
-        String resolvedBasedir = Env.resolve("basedir", "");
+        String resolvedBasedir = Env.resolve(org.jreleaser.model.api.JReleaserContext.BASEDIR, "");
         if (isNotBlank(resolvedBasedir)) {
             return Paths.get(resolvedBasedir.trim());
         } else if (isNotBlank(multiModuleProjectDirectory)) {
@@ -212,6 +213,10 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
     }
 
     protected List<String> collectSelectedPlatforms() {
+        return Collections.emptyList();
+    }
+
+    protected List<String> collectRejectedPlatforms() {
         return Collections.emptyList();
     }
 

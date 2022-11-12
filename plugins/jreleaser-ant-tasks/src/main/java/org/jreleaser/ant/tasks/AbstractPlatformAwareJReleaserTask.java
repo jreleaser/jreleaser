@@ -29,6 +29,7 @@ import java.util.List;
  */
 abstract class AbstractPlatformAwareJReleaserTask extends AbstractJReleaserTask {
     protected final List<String> selectPlatforms = new ArrayList<>();
+    protected final List<String> rejectPlatforms = new ArrayList<>();
     protected boolean selectCurrentPlatform;
 
     public void setSelectCurrentPlatform(boolean selectCurrentPlatform) {
@@ -45,10 +46,25 @@ abstract class AbstractPlatformAwareJReleaserTask extends AbstractJReleaserTask 
         }
     }
 
+    public void setRejectPlatforms(String rejectPlatforms) {
+        this.rejectPlatforms.addAll(expandAndCollect(rejectPlatforms));
+    }
+
+    public void setRejectPlatforms(List<String> rejectPlatforms) {
+        if (null != rejectPlatforms) {
+            this.rejectPlatforms.addAll(rejectPlatforms);
+        }
+    }
+
     @Override
     protected List<String> collectSelectedPlatforms() {
-        boolean resolvedSelectCurrentPlatform = resolveBoolean("SELECT_CURRENT_PLATFORM", selectCurrentPlatform);
+        boolean resolvedSelectCurrentPlatform = resolveBoolean(org.jreleaser.model.api.JReleaserContext.SELECT_CURRENT_PLATFORM, selectCurrentPlatform);
         if (resolvedSelectCurrentPlatform) return Collections.singletonList(PlatformUtils.getCurrentFull());
-        return resolveCollection("SELECT_PLATFORM", selectPlatforms);
+        return resolveCollection(org.jreleaser.model.api.JReleaserContext.SELECT_PLATFORMS, selectPlatforms);
+    }
+
+    @Override
+    protected List<String> collectRejectedPlatforms() {
+        return resolveCollection(org.jreleaser.model.api.JReleaserContext.REJECT_PLATFORMS, rejectPlatforms);
     }
 }

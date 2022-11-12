@@ -318,6 +318,7 @@ public class Release extends AbstractPlatformAwareModelCommand {
             .files(collectEntries(composite.autoConfig.files))
             .globs(collectEntries(composite.autoConfig.globs))
             .selectedPlatforms(collectSelectedPlatforms())
+            .rejectedPlatforms(collectRejectedPlatforms())
             .autoConfigure();
 
         doExecute(context);

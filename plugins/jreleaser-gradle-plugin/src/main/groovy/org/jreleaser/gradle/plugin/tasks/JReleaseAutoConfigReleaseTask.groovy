@@ -164,6 +164,9 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
     @Input
     @Optional
     final ListProperty<String> selectPlatforms
+    @Input
+    @Optional
+    final ListProperty<String> rejectPlatforms
 
     @Option(option = 'project-name', description = 'The project name (OPTIONAL).')
     void setProjectName(String projectName) {
@@ -356,6 +359,11 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
         this.selectPlatforms.addAll(selectPlatforms)
     }
 
+    @Option(option = 'reject-platform', description = 'Activates paths not matching the given platform (OPTIONAL).')
+    void setRejectPlatform(List<String> rejectPlatforms) {
+        this.rejectPlatforms.addAll(rejectPlatforms)
+    }
+
     @Inject
     JReleaseAutoConfigReleaseTask(ObjectFactory objects) {
         dryrun = objects.property(Boolean)
@@ -397,6 +405,7 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
         globs = objects.listProperty(String).convention([])
         selectCurrentPlatform = objects.property(Boolean).convention(false)
         selectPlatforms = objects.listProperty(String).convention([])
+        rejectPlatforms = objects.listProperty(String).convention([])
     }
 
     @TaskAction
@@ -446,15 +455,20 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
             .files((List<String>) files.getOrElse([] as List<String>))
             .globs((List<String>) globs.getOrElse([] as List<String>))
             .selectedPlatforms(collectSelectedPlatforms())
+            .rejectedPlatforms(collectRejectedPlatforms())
             .autoConfigure()
 
         Workflows.release(context).execute()
     }
 
     protected List<String> collectSelectedPlatforms() {
-        boolean resolvedSelectCurrentPlatform = resolveBoolean('SELECT_CURRENT_PLATFORM', selectCurrentPlatform.getOrElse(false))
+        boolean resolvedSelectCurrentPlatform = resolveBoolean(org.jreleaser.model.api.JReleaserContext.SELECT_CURRENT_PLATFORM, selectCurrentPlatform.getOrElse(false))
         if (resolvedSelectCurrentPlatform) return Collections.singletonList(PlatformUtils.getCurrentFull())
-        return resolveCollection('SELECT_PLATFORM', selectPlatforms.get() as List<String>)
+        return resolveCollection(org.jreleaser.model.api.JReleaserContext.SELECT_PLATFORMS, selectPlatforms.get() as List<String>)
+    }
+
+    protected List<String> collectRejectedPlatforms() {
+        return resolveCollection(org.jreleaser.model.api.JReleaserContext.REJECT_PLATFORMS, rejectPlatforms.get() as List<String>)
     }
 
     protected boolean resolveBoolean(String key, Boolean value) {

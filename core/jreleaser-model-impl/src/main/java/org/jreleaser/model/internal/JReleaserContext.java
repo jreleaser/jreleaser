@@ -115,6 +115,7 @@ public class JReleaserContext {
     private final Errors errors = new Errors();
 
     private final List<String> selectedPlatforms = new ArrayList<>();
+    private final List<String> rejectedPlatforms = new ArrayList<>();
     private final List<String> includedAnnouncers = new ArrayList<>();
     private final List<String> includedAssemblers = new ArrayList<>();
     private final List<String> includedDistributions = new ArrayList<>();
@@ -362,7 +363,8 @@ public class JReleaserContext {
                             boolean dryrun,
                             boolean gitRootSearch,
                             boolean strict,
-                            List<String> selectedPlatforms) {
+                            List<String> selectedPlatforms,
+                            List<String> rejectedPlatforms) {
         this.logger = logger;
         this.configurer = configurer;
         this.mode = mode;
@@ -406,6 +408,12 @@ public class JReleaserContext {
         if (!this.selectedPlatforms.isEmpty()) {
             logger.warn(RB.$("context.platform.selection.active"));
             logger.warn(RB.$("context.platform.selection.artifacts"), this.selectedPlatforms);
+        }
+
+        this.rejectedPlatforms.addAll(rejectedPlatforms);
+        if (!this.rejectedPlatforms.isEmpty()) {
+            logger.warn(RB.$("context.platform.selection.active"));
+            logger.warn(RB.$("context.platform.rejection.artifacts"), this.rejectedPlatforms);
         }
     }
 
@@ -525,9 +533,19 @@ public class JReleaserContext {
     }
 
     public boolean isPlatformSelected(String platform) {
-        if (isBlank(platform) || selectedPlatforms.isEmpty()) return true;
-        return selectedPlatforms.stream()
-            .anyMatch(selected -> PlatformUtils.isCompatible(selected, platform));
+        if (isBlank(platform)) return true;
+
+        if (!selectedPlatforms.isEmpty()) {
+            return selectedPlatforms.stream()
+                .anyMatch(selected -> PlatformUtils.isCompatible(selected, platform));
+        }
+
+        if (!rejectedPlatforms.isEmpty()) {
+            return rejectedPlatforms.stream()
+                .noneMatch(selected -> PlatformUtils.isCompatible(selected, platform));
+        }
+
+        return true;
     }
 
     public JReleaserLogger getLogger() {

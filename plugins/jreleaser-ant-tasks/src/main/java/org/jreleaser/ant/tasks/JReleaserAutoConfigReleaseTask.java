@@ -57,6 +57,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class JReleaserAutoConfigReleaseTask extends Task {
     private final List<String> authors = new ArrayList<>();
     private final List<String> selectPlatforms = new ArrayList<>();
+    private final List<String> rejectPlatforms = new ArrayList<>();
     private final List<String> globs = new ArrayList<>();
     private final List<String> updateSections = new ArrayList<>();
     private Path outputDir;
@@ -266,6 +267,12 @@ public class JReleaserAutoConfigReleaseTask extends Task {
         }
     }
 
+    public void setRejectPlatforms(List<String> rejectPlatforms) {
+        if (null != rejectPlatforms) {
+            this.rejectPlatforms.addAll(rejectPlatforms);
+        }
+    }
+
     @Override
     public void execute() throws BuildException {
         Banner.display(new PrintWriter(System.out, true));
@@ -314,6 +321,7 @@ public class JReleaserAutoConfigReleaseTask extends Task {
             .files(fileSet.stream().map(Resource::getName).collect(toList()))
             .globs(globs)
             .selectedPlatforms(collectSelectedPlatforms())
+            .rejectedPlatforms(collectRejectedPlatforms())
             .autoConfigure();
 
         Workflows.release(context).execute();
@@ -328,7 +336,7 @@ public class JReleaserAutoConfigReleaseTask extends Task {
     }
 
     private void basedir() {
-        String resolvedBasedir = Env.resolve("basedir", null != basedir ? basedir.getPath() : "");
+        String resolvedBasedir = Env.resolve(org.jreleaser.model.api.JReleaserContext.BASEDIR, null != basedir ? basedir.getPath() : "");
         actualBasedir = (isNotBlank(resolvedBasedir) ? Paths.get(resolvedBasedir) : Paths.get(".")).normalize();
         if (!Files.exists(actualBasedir)) {
             throw new IllegalStateException("Missing required option: 'basedir'");
@@ -357,9 +365,13 @@ public class JReleaserAutoConfigReleaseTask extends Task {
     }
 
     protected List<String> collectSelectedPlatforms() {
-        boolean resolvedSelectCurrentPlatform = resolveBoolean("SELECT_CURRENT_PLATFORM", selectCurrentPlatform);
+        boolean resolvedSelectCurrentPlatform = resolveBoolean(org.jreleaser.model.api.JReleaserContext.SELECT_CURRENT_PLATFORM, selectCurrentPlatform);
         if (resolvedSelectCurrentPlatform) return Collections.singletonList(PlatformUtils.getCurrentFull());
-        return resolveCollection("SELECT_PLATFORM", selectPlatforms);
+        return resolveCollection(org.jreleaser.model.api.JReleaserContext.SELECT_PLATFORMS, selectPlatforms);
+    }
+
+    protected List<String> collectRejectedPlatforms() {
+        return resolveCollection(org.jreleaser.model.api.JReleaserContext.REJECT_PLATFORMS, rejectPlatforms);
     }
 
     protected boolean resolveBoolean(String key, Boolean value) {

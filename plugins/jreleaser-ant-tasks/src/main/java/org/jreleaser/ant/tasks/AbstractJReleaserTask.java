@@ -138,7 +138,7 @@ abstract class AbstractJReleaserTask extends Task {
     }
 
     private void resolveBasedir() {
-        String resolvedBasedir = Env.resolve("basedir", null != basedir ? basedir.getPath() : "");
+        String resolvedBasedir = Env.resolve(org.jreleaser.model.api.JReleaserContext.BASEDIR, null != basedir ? basedir.getPath() : "");
         actualBasedir = (isNotBlank(resolvedBasedir) ? Paths.get(resolvedBasedir) : actualConfigFile.toAbsolutePath().getParent()).normalize();
     }
 
@@ -174,10 +174,11 @@ abstract class AbstractJReleaserTask extends Task {
             actualConfigFile,
             actualBasedir,
             getOutputDirectory(),
-            resolveBoolean("DRY_RUN", dryrun),
-            resolveBoolean("GIT_ROOT_SEARCH", gitRootSearch),
-            resolveBoolean("STRICT", strict),
-            collectSelectedPlatforms());
+            resolveBoolean(org.jreleaser.model.api.JReleaserContext.DRY_RUN, dryrun),
+            resolveBoolean(org.jreleaser.model.api.JReleaserContext.GIT_ROOT_SEARCH, gitRootSearch),
+            resolveBoolean(org.jreleaser.model.api.JReleaserContext.STRICT, strict),
+            collectSelectedPlatforms(),
+            collectRejectedPlatforms());
     }
 
     protected boolean resolveBoolean(String key, Boolean value) {
@@ -228,6 +229,10 @@ abstract class AbstractJReleaserTask extends Task {
     }
 
     protected List<String> collectSelectedPlatforms() {
+        return Collections.emptyList();
+    }
+
+    protected List<String> collectRejectedPlatforms() {
         return Collections.emptyList();
     }
 

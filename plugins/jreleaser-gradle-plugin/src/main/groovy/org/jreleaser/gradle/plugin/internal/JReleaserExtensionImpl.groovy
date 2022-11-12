@@ -111,9 +111,9 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         this.layout = layout
         configFile = objects.fileProperty()
         enabled = objects.property(Boolean).convention(true)
-        dryrun = objects.property(Boolean).convention(resolveBoolean('DRY_RUN'))
-        strict = objects.property(Boolean).convention(resolveBoolean('STRICT'))
-        gitRootSearch = objects.property(Boolean).convention(resolveBoolean('GIT_ROOT_SEARCH'))
+        dryrun = objects.property(Boolean).convention(resolveBoolean(org.jreleaser.model.api.JReleaserContext.DRY_RUN))
+        strict = objects.property(Boolean).convention(resolveBoolean(org.jreleaser.model.api.JReleaserContext.STRICT))
+        gitRootSearch = objects.property(Boolean).convention(resolveBoolean(org.jreleaser.model.api.JReleaserContext.GIT_ROOT_SEARCH))
         environment = objects.newInstance(EnvironmentImpl, objects)
         hooks = objects.newInstance(HooksImpl, objects)
         project = objects.newInstance(ProjectImpl, objects, nameProvider, descriptionProvider, versionProvider)

@@ -129,7 +129,7 @@ public abstract class AbstractModelCommand extends AbstractLoggingCommand {
     }
 
     private void resolveBasedir() {
-        String resolvedBasedir = Env.resolve("basedir", null != basedir ? basedir.toString() : "");
+        String resolvedBasedir = Env.resolve(org.jreleaser.model.api.JReleaserContext.BASEDIR, null != basedir ? basedir.toString() : "");
         actualBasedir = (isNotBlank(resolvedBasedir) ? Paths.get(resolvedBasedir) : actualConfigFile.toAbsolutePath().getParent()).normalize();
         if (!Files.exists(actualBasedir)) {
             spec.commandLine().getErr()
@@ -154,10 +154,11 @@ public abstract class AbstractModelCommand extends AbstractLoggingCommand {
             model,
             actualBasedir,
             getOutputDirectory(),
-            resolveBoolean("DRY_RUN", dryrun()),
-            resolveBoolean("GIT_ROOT_SEARCH", gitRootSearch()),
-            resolveBoolean("STRICT", strict()),
-            collectSelectedPlatforms());
+            resolveBoolean(org.jreleaser.model.api.JReleaserContext.DRY_RUN, dryrun()),
+            resolveBoolean(org.jreleaser.model.api.JReleaserContext.GIT_ROOT_SEARCH, gitRootSearch()),
+            resolveBoolean(org.jreleaser.model.api.JReleaserContext.STRICT, strict()),
+            collectSelectedPlatforms(),
+            collectRejectedPlatforms());
     }
 
     protected boolean resolveBoolean(String key, Boolean value) {
@@ -224,6 +225,10 @@ public abstract class AbstractModelCommand extends AbstractLoggingCommand {
     }
 
     protected List<String> collectSelectedPlatforms() {
+        return Collections.emptyList();
+    }
+
+    protected List<String> collectRejectedPlatforms() {
         return Collections.emptyList();
     }
 

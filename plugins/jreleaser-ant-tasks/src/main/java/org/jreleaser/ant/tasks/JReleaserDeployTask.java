@@ -30,7 +30,7 @@ import static org.jreleaser.model.api.JReleaserContext.Mode.DEPLOY;
  * @author Andres Almiray
  * @since 1.3.0
  */
-public class JReleaserDeployTask extends AbstractPlatformAwareJReleaserTask {
+public class JReleaserDeployTask extends AbstractJReleaserTask {
     private final List<String> deployerTypes = new ArrayList<>();
     private final List<String> excludedDeployerTypes = new ArrayList<>();
     private final List<String> deployerNames = new ArrayList<>();

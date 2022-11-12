@@ -117,7 +117,8 @@ abstract class AbstractJReleaserTask extends DefaultTask {
             dryrun.getOrElse(false),
             gitRootSearch.getOrElse(false),
             strict.getOrElse(false),
-            collectSelectedPlatforms())
+            collectSelectedPlatforms(),
+            collectRejectedPlatforms())
     }
 
     protected boolean resolveBoolean(String key, Boolean value) {
@@ -137,6 +138,10 @@ abstract class AbstractJReleaserTask extends DefaultTask {
     }
 
     protected List<String> collectSelectedPlatforms() {
+        []
+    }
+
+    protected List<String> collectRejectedPlatforms() {
         []
     }
 

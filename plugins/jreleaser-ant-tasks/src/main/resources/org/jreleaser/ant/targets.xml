@@ -255,7 +255,6 @@
 
     <target name="jreleaser-deploy">
         <jreleaser:deploy dryrun="${jreleaser.dry.run}"
-                          selectCurrentPlatform="${jreleaser.select.current.platform}"
                           gitRootSearch="${jreleaser.git.root.search}"
                           strict="${jreleaser.strict}"
                           skip="${jreleaser.skip}"

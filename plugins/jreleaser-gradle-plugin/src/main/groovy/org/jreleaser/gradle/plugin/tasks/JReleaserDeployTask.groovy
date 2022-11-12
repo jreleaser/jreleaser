@@ -37,7 +37,7 @@ import static org.jreleaser.model.api.JReleaserContext.Mode.DEPLOY
  * @since 1.3.0
  */
 @CompileStatic
-abstract class JReleaserDeployTask extends AbstractPlatformAwareJReleaserTask {
+abstract class JReleaserDeployTask extends AbstractJReleaserTask {
     @Input
     @Optional
     final ListProperty<String> deployerTypes

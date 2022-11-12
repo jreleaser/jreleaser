@@ -254,8 +254,13 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
     /**
      * Activates paths matching the given platform.
      */
-    @Parameter(property = "jreleaser.select.platform")
+    @Parameter(property = "jreleaser.select.platforms")
     private String[] selectPlatforms;
+    /**
+     * Activates paths not matching the given platform.
+     */
+    @Parameter(property = "jreleaser.reject.platforms")
+    private String[] rejectedPlatforms;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -302,6 +307,7 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
             .files(collectFiles())
             .globs(collectGlobs())
             .selectedPlatforms(collectSelectedPlatforms())
+            .rejectedPlatforms(collectRejectedPlatforms())
             .autoConfigure();
 
         Workflows.release(context).execute();
@@ -356,14 +362,22 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
     }
 
     protected List<String> collectSelectedPlatforms() {
-        boolean resolvedSelectCurrentPlatform = resolveBoolean("SELECT_CURRENT_PLATFORM", selectCurrentPlatform);
+        boolean resolvedSelectCurrentPlatform = resolveBoolean(org.jreleaser.model.api.JReleaserContext.SELECT_CURRENT_PLATFORM, selectCurrentPlatform);
         if (resolvedSelectCurrentPlatform) return Collections.singletonList(PlatformUtils.getCurrentFull());
 
         List<String> list = new ArrayList<>();
         if (selectPlatforms != null && selectPlatforms.length > 0) {
             Collections.addAll(list, selectPlatforms);
         }
-        return resolveCollection("SELECT_PLATFORM", list);
+        return resolveCollection(org.jreleaser.model.api.JReleaserContext.SELECT_PLATFORMS, list);
+    }
+
+    protected List<String> collectRejectedPlatforms() {
+        List<String> list = new ArrayList<>();
+        if (rejectedPlatforms != null && rejectedPlatforms.length > 0) {
+            Collections.addAll(list, rejectedPlatforms);
+        }
+        return resolveCollection(org.jreleaser.model.api.JReleaserContext.REJECT_PLATFORMS, list);
     }
 
     protected boolean resolveBoolean(String key, Boolean value) {

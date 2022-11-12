@@ -58,6 +58,7 @@ public class ModelAutoConfigurer {
     private final List<String> files = new ArrayList<>();
     private final List<String> globs = new ArrayList<>();
     private final List<String> selectedPlatforms = new ArrayList<>();
+    private final List<String> rejectedPlatforms = new ArrayList<>();
     private final Set<UpdateSection> updateSections = new LinkedHashSet<>();
     private JReleaserLogger logger;
     private Path basedir;
@@ -349,6 +350,21 @@ public class ModelAutoConfigurer {
         return this;
     }
 
+    public ModelAutoConfigurer rejectedPlatforms(List<String> platforms) {
+        this.rejectedPlatforms.clear();
+        if (null != platforms && !platforms.isEmpty()) {
+            platforms.forEach(this::rejectedPlatform);
+        }
+        return this;
+    }
+
+    public ModelAutoConfigurer rejectedPlatform(String platform) {
+        if (isNotBlank(platform)) {
+            this.rejectedPlatforms.add(platform.trim());
+        }
+        return this;
+    }
+
     public JReleaserContext autoConfigure() {
         requireNonNull(logger, "Argument 'logger' ust not be null");
         requireNonNull(basedir, "Argument 'basedir' ust not be null");
@@ -375,7 +391,8 @@ public class ModelAutoConfigurer {
             resolveBoolean("DRY_RUN", dryrun),
             resolveBoolean("GIT_ROOT_SEARCH", gitRootSearch),
             resolveBoolean("STRICT", strict),
-            selectedPlatforms);
+            selectedPlatforms,
+            rejectedPlatforms);
     }
 
     protected boolean resolveBoolean(String key, Boolean value) {
@@ -433,6 +450,11 @@ public class ModelAutoConfigurer {
         if (!selectedPlatforms.isEmpty()) {
             for (String platform : selectedPlatforms) {
                 logger.info("- platform: {}", platform);
+            }
+        }
+        if (!rejectedPlatforms.isEmpty()) {
+            for (String platform : rejectedPlatforms) {
+                logger.info("- !platform: {}", platform);
             }
         }
     }

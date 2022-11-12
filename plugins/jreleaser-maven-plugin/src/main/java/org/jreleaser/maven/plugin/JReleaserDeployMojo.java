@@ -34,7 +34,7 @@ import static org.jreleaser.model.api.JReleaserContext.Mode.DEPLOY;
  * @since 1.3.0
  */
 @Mojo(name = "deploy")
-public class JReleaserDeployMojo extends AbstractPlatformAwareJReleaserMojo {
+public class JReleaserDeployMojo extends AbstractJReleaserMojo {
     /**
      * Include a deployer by type.
      */
