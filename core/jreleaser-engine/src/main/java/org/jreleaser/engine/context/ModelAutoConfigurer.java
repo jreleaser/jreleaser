@@ -388,9 +388,9 @@ public class ModelAutoConfigurer {
             autoConfiguredModel(basedir),
             basedir,
             outputDirectory,
-            resolveBoolean("DRY_RUN", dryrun),
-            resolveBoolean("GIT_ROOT_SEARCH", gitRootSearch),
-            resolveBoolean("STRICT", strict),
+            resolveBoolean(org.jreleaser.model.api.JReleaserContext.DRY_RUN, dryrun),
+            resolveBoolean(org.jreleaser.model.api.JReleaserContext.GIT_ROOT_SEARCH, gitRootSearch),
+            resolveBoolean(org.jreleaser.model.api.JReleaserContext.STRICT, strict),
             selectedPlatforms,
             rejectedPlatforms);
     }
@@ -474,7 +474,8 @@ public class ModelAutoConfigurer {
         model.getProject().getSnapshot().setFullChangelog(projectSnapshotFullChangelog);
 
         try {
-            Repository repository = GitSdk.of(basedir, gitRootSearch).getRemote();
+            boolean grs = resolveBoolean(org.jreleaser.model.api.JReleaserContext.GIT_ROOT_SEARCH, gitRootSearch);
+            Repository repository = GitSdk.of(basedir, grs).getRemote();
             BaseReleaser service = null;
             switch (repository.getKind()) {
                 case GITHUB:
