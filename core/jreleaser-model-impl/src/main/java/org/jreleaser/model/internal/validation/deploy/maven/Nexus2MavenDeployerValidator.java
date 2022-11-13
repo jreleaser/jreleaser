@@ -41,7 +41,7 @@ public abstract class Nexus2MavenDeployerValidator extends Validator {
 
         for (Map.Entry<String, Nexus2MavenDeployer> e : nexus2.entrySet()) {
             e.getValue().setName(e.getKey());
-            if (mode.validateConfig()) {
+            if (mode.validateDeploy() || mode.validateConfig()) {
                 validateNexus2MavenDeployer(context, mode, e.getValue(), errors);
             }
         }

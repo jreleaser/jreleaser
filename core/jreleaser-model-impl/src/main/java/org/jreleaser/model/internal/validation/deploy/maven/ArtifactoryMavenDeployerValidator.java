@@ -38,7 +38,7 @@ public abstract class ArtifactoryMavenDeployerValidator extends Validator {
 
         for (Map.Entry<String, ArtifactoryMavenDeployer> e : artifactory.entrySet()) {
             e.getValue().setName(e.getKey());
-            if (mode.validateConfig()) {
+            if (mode.validateDeploy() || mode.validateConfig()) {
                 validateMavenDeployer(context, mode, e.getValue(), errors);
             }
         }

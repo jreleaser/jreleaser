@@ -37,7 +37,7 @@ public abstract class DeployValidator extends Validator {
         Deploy deploy = context.getModel().getDeploy();
         validateMavenDeployers(context, mode, errors);
 
-        if (mode.validateConfig()) {
+        if (mode.validateDeploy() || mode.validateConfig()) {
             boolean activeSet = deploy.isActiveSet();
             deploy.resolveEnabled(context.getModel().getProject());
 

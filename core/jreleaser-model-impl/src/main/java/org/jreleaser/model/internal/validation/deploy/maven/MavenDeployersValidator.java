@@ -52,7 +52,7 @@ public abstract class MavenDeployersValidator extends Validator {
         validateGitlabMavenDeployer(context, mode, errors);
         validateNexus2MavenDeployer(context, mode, errors);
 
-        if (mode.validateConfig()) {
+        if (mode.validateDeploy() || mode.validateConfig()) {
             boolean activeSet = maven.isActiveSet();
             maven.resolveEnabled(context.getModel().getProject());
 

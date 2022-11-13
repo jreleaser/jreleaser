@@ -139,6 +139,10 @@ public interface JReleaserContext {
             return this == ANNOUNCE;
         }
 
+        public boolean validateDeploy() {
+            return this == DEPLOY;
+        }
+
         public boolean validateDownload() {
             return this == DOWNLOAD;
         }
@@ -152,7 +156,7 @@ public interface JReleaserContext {
         }
 
         public boolean validateConfig() {
-            return this == CONFIG || this == FULL || this == DEPLOY;
+            return this == CONFIG || this == FULL;
         }
 
         public boolean validatePaths() {
