@@ -301,15 +301,19 @@ public abstract class DockerPackagerValidator extends Validator {
     private static void validateRegistries(JReleaserContext context, DockerConfiguration self, DockerConfiguration other, Errors errors, String element) {
         JReleaserModel model = context.getModel();
 
+        if (self.getRegistries().isEmpty()) {
+            String username = model.getRelease().getReleaser().getUsername();
+            context.getLogger().info(RB.$("validation_docker_no_registries", element, username));
+            DockerConfiguration.Registry registry = new DockerConfiguration.Registry();
+            registry.setServerName(DockerConfiguration.Registry.DEFAULT_NAME);
+            registry.setUsername(username);
+            self.addRegistry(registry);
+        }
+
         Set<AbstractDockerConfiguration.Registry> registries = new LinkedHashSet<>();
         registries.addAll(self.getRegistries());
         registries.addAll(other.getRegistries());
         self.setRegistries(registries);
-
-        if (registries.isEmpty()) {
-            context.getLogger().warn(RB.$("validation_docker_no_registries", element));
-            return;
-        }
 
         for (AbstractDockerConfiguration.Registry registry : registries) {
             BaseReleaser service = model.getRelease().getReleaser();
