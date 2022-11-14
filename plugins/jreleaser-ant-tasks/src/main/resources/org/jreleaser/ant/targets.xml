@@ -82,7 +82,6 @@
 
     <target name="jreleaser-announce">
         <jreleaser:announce dryrun="${jreleaser.dry.run}"
-                            selectCurrentPlatform="${jreleaser.select.current.platform}"
                             gitRootSearch="${jreleaser.git.root.search}"
                             strict="${jreleaser.strict}"
                             skip="${jreleaser.skip}"

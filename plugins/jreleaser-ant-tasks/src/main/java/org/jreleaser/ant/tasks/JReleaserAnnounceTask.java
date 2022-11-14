@@ -28,7 +28,7 @@ import java.util.List;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class JReleaserAnnounceTask extends AbstractPlatformAwareJReleaserTask {
+public class JReleaserAnnounceTask extends AbstractJReleaserTask {
     private final List<String> announcers = new ArrayList<>();
     private final List<String> excludedAnnouncers = new ArrayList<>();
 
