@@ -50,13 +50,13 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
     protected final List<String> postCommands = new ArrayList<>();
     protected final Set<Registry> registries = new LinkedHashSet<>();
     protected final List<String> skipTemplates = new ArrayList<>();
+    protected final Buildx buildx = new Buildx();
 
     @JsonIgnore
     protected boolean enabled;
     protected Active active;
     protected String templateDirectory;
     protected Boolean useLocalArtifact;
-
     protected String baseImage;
 
     @Override
@@ -74,6 +74,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
         setPostCommands(merge(this.postCommands, source.postCommands));
         setLabels(merge(this.labels, source.labels));
         setRegistries(merge(this.registries, source.registries));
+        setBuildx(source.buildx);
     }
 
     @Override
@@ -291,6 +292,16 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
     }
 
     @Override
+    public Buildx getBuildx() {
+        return buildx;
+    }
+
+    @Override
+    public void setBuildx(Buildx buildx) {
+        this.buildx.merge(buildx);
+    }
+
+    @Override
     public Map<String, Object> asMap(boolean full) {
         if (!full && !isEnabled()) return Collections.emptyMap();
 
@@ -306,6 +317,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
         props.put("labels", labels);
         props.put("preCommands", preCommands);
         props.put("postCommands", postCommands);
+        if (buildx.isEnabled() || full) props.put("buildx", buildx.asMap(full));
         asMap(full, props);
 
         List<Map<String, Object>> repos = this.registries

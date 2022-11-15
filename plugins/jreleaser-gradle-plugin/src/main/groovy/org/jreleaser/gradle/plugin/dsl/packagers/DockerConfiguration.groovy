@@ -71,5 +71,33 @@ interface DockerConfiguration extends Activatable, ExtraProperties {
 
     void registries(Action<? super NamedDomainObjectContainer<? extends Registry>> action)
 
+    void buildx(Action<? super Buildx> action)
+
     void registries(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
+
+    void buildx(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Buildx) Closure<Void> action)
+
+    @CompileStatic
+    interface Registry {
+        Property<String> getServer()
+
+        Property<String> getRepositoryName()
+
+        Property<String> getUsername()
+
+        Property<String> getPassword()
+    }
+
+    @CompileStatic
+    interface Buildx {
+        Property<Boolean> getEnabled()
+
+        ListProperty<String> getCreateBuilderFlags()
+
+        ListProperty<String> getPlatforms()
+
+        void createBuilderFlag(String createBuilderFlag)
+
+        void platform(String platform)
+    }
 }

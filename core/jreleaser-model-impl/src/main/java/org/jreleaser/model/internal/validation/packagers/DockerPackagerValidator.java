@@ -52,6 +52,7 @@ import static org.jreleaser.model.internal.packagers.DockerPackager.LABEL_OCI_IM
 import static org.jreleaser.model.internal.validation.common.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.internal.validation.common.TemplateValidator.validateTemplate;
 import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.validateArtifactPlatforms;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -157,12 +158,39 @@ public abstract class DockerPackagerValidator extends Validator {
             packager.setUseLocalArtifact(true);
         }
 
+        validateBuildx(context, distribution, packager, packager.getBuildx(), parentPackager.getBuildx(), errors);
+
         for (Map.Entry<String, DockerSpec> e : packager.getSpecs().entrySet()) {
             DockerSpec spec = e.getValue();
             if (isBlank(spec.getName())) {
                 spec.setName(e.getKey());
             }
             validateDockerSpec(context, distribution, spec, packager, errors);
+        }
+    }
+
+    private static void validateBuildx(JReleaserContext context, Distribution distribution, DockerPackager packager, DockerConfiguration.Buildx buildx, DockerConfiguration.Buildx parentBuildx, Errors errors) {
+        if (!buildx.isEnabledSet()) {
+            buildx.setEnabled(parentBuildx.isEnabled());
+        }
+
+        if (buildx.getPlatforms().isEmpty()) {
+            buildx.setPlatforms(parentBuildx.getPlatforms());
+        }
+
+        if (buildx.isEnabled() && buildx.getPlatforms().isEmpty()) {
+            packager.setActive(Active.NEVER);
+            context.getLogger().debug(RB.$("validation.disabled.no.platforms"));
+            errors.warning(RB.$("WARNING.validation.docker.buildx.no.platforms", distribution.getName()));
+            packager.disable();
+        }
+
+        if (buildx.getCreateBuilderFlags().isEmpty()) {
+            buildx.setCreateBuilderFlags(parentBuildx.getCreateBuilderFlags());
+        }
+
+        if (buildx.getCreateBuilderFlags().isEmpty()) {
+            buildx.getCreateBuilderFlags().addAll(listOf("--name", "jreleaser", "--driver", "docker-container", "--bootstrap", "--use"));
         }
     }
 
@@ -216,6 +244,8 @@ public abstract class DockerPackagerValidator extends Validator {
         if (distribution.getType() == org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR) {
             spec.setUseLocalArtifact(true);
         }
+
+        validateBuildx(context, distribution, docker, spec.getBuildx(), docker.getBuildx(), errors);
     }
 
     private static void validateBaseImage(Distribution distribution, DockerConfiguration docker) {

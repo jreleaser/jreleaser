@@ -22,12 +22,15 @@ import org.jreleaser.model.internal.common.Activatable;
 import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.common.ExtraProperties;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static org.jreleaser.model.Constants.HIDE;
 import static org.jreleaser.model.Constants.UNSET;
@@ -101,6 +104,10 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
     void setUseLocalArtifact(Boolean useLocalArtifact);
 
     boolean isUseLocalArtifactSet();
+
+    Buildx getBuildx();
+
+    void setBuildx(Buildx buildx);
 
     final class Registry extends AbstractModelObject<Registry> implements Domain, Comparable<Registry> {
         public static final String DEFAULT_NAME = "DEFAULT";
@@ -230,6 +237,86 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
         public int compareTo(Registry o) {
             if (null == o) return -1;
             return serverName.compareTo(o.getServerName());
+        }
+    }
+
+    final class Buildx extends AbstractModelObject<Buildx> implements Domain {
+        private final List<String> createBuilderFlags = new ArrayList<>();
+        private final List<String> platforms = new ArrayList<>();
+        private Boolean enabled;
+
+        private final org.jreleaser.model.api.packagers.DockerConfiguration.Buildx immutable = new org.jreleaser.model.api.packagers.DockerConfiguration.Buildx() {
+            @Override
+            public boolean isEnabled() {
+                return Buildx.this.isEnabled();
+            }
+
+            @Override
+            public List<String> getCreateBuilderFlags() {
+                return unmodifiableList(Buildx.this.createBuilderFlags);
+            }
+
+            @Override
+            public List<String> getPlatforms() {
+                return unmodifiableList(Buildx.this.platforms);
+            }
+
+            @Override
+            public Map<String, Object> asMap(boolean full) {
+                return unmodifiableMap(DockerConfiguration.Buildx.this.asMap(full));
+            }
+        };
+
+        public org.jreleaser.model.api.packagers.DockerConfiguration.Buildx asImmutable() {
+            return immutable;
+        }
+
+        @Override
+        public void merge(DockerConfiguration.Buildx source) {
+            this.enabled = merge(this.enabled, source.enabled);
+            setCreateBuilderFlags(merge(this.createBuilderFlags, source.createBuilderFlags));
+            setPlatforms(merge(this.platforms, source.platforms));
+        }
+
+        public List<String> getCreateBuilderFlags() {
+            return createBuilderFlags;
+        }
+
+        public void setCreateBuilderFlags(List<String> createBuilderFlags) {
+            this.createBuilderFlags.clear();
+            this.createBuilderFlags.addAll(createBuilderFlags);
+        }
+
+        public List<String> getPlatforms() {
+            return platforms;
+        }
+
+        public void setPlatforms(List<String> platforms) {
+            this.platforms.clear();
+            this.platforms.addAll(platforms);
+        }
+
+        public boolean isEnabled() {
+            return enabled != null && enabled;
+        }
+
+        public void setEnabled(Boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public boolean isEnabledSet() {
+            return enabled != null;
+        }
+
+        @Override
+        public Map<String, Object> asMap(boolean full) {
+            if (!full && !isEnabled()) return Collections.emptyMap();
+
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("enabled", isEnabled());
+            map.put("createBuilderFlags", createBuilderFlags);
+            map.put("platforms", platforms);
+            return map;
         }
     }
 }

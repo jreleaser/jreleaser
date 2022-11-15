@@ -58,6 +58,8 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
 
     boolean isUseLocalArtifact();
 
+    Buildx getBuildx();
+
     interface Registry extends Domain, Comparable<Registry> {
         String getServer();
 
@@ -68,5 +70,13 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
         String getUsername();
 
         String getPassword();
+    }
+
+    interface Buildx extends Domain {
+        boolean isEnabled();
+
+        List<String> getCreateBuilderFlags();
+
+        List<String> getPlatforms();
     }
 }

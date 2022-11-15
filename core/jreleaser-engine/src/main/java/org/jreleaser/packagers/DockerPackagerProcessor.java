@@ -32,6 +32,7 @@ import org.jreleaser.util.FileUtils;
 import org.jreleaser.util.PlatformUtils;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -192,25 +193,60 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
 
             tags.forEach(tag -> context.getLogger().info(" - {}", tag));
 
-            // command line
-            Command cmd = createBuildCommand(props, docker);
-            if (!cmd.hasArg("-q") && !cmd.hasArg("--quiet")) {
-                cmd.arg("--quiet");
-            }
-            cmd.arg("--file");
-            cmd.arg(workingDirectory.resolve("Dockerfile").toAbsolutePath().toString());
-            tags.forEach(tag -> {
-                cmd.arg("--tag");
-                cmd.arg(tag);
-            });
-            cmd.arg(workingDirectory.toAbsolutePath().toString());
-            context.getLogger().debug(String.join(" ", cmd.getArgs()));
+            if (docker.getBuildx().isEnabled()) {
+                // create builder if needed
+                createBuildxBuilder(props, docker);
 
-            // execute
-            executeCommand(cmd);
+                // command line
+                Command cmd = buildxBuildCommand(props, docker);
+                if (!cmd.hasArg("-q") && !cmd.hasArg("--quiet")) {
+                    cmd.arg("--quiet");
+                }
+                cmd.arg("--file");
+                cmd.arg(workingDirectory.resolve("Dockerfile").toAbsolutePath().toString());
+                for (String tag : tags) {
+                    cmd.arg("--tag");
+                    cmd.arg(tag);
+                }
+                cmd.arg(workingDirectory.toAbsolutePath().toString());
+                context.getLogger().debug(String.join(" ", cmd.getArgs()));
+
+                // execute
+                executeCommand(cmd);
+            } else {
+                // command line
+                Command cmd = buildCommand(props, docker);
+                if (!cmd.hasArg("-q") && !cmd.hasArg("--quiet")) {
+                    cmd.arg("--quiet");
+                }
+                cmd.arg("--file");
+                cmd.arg(workingDirectory.resolve("Dockerfile").toAbsolutePath().toString());
+                for (String tag : tags) {
+                    cmd.arg("--tag");
+                    cmd.arg(tag);
+                }
+                cmd.arg(workingDirectory.toAbsolutePath().toString());
+                context.getLogger().debug(String.join(" ", cmd.getArgs()));
+
+                // execute
+                executeCommand(cmd);
+            }
         } catch (IOException e) {
             throw new PackagerProcessingException(e);
         }
+    }
+
+    private void createBuildxBuilder(Map<String, Object> props, DockerConfiguration docker) throws PackagerProcessingException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Command cmd = new Command("docker" + (PlatformUtils.isWindows() ? ".exe" : ""))
+            .arg("buildx")
+            .arg("ls");
+        executeCommandCapturing(cmd, baos);
+        if (baos.toString().contains("jreleaser")) return;
+
+        cmd = buildxCreateCommand(props, docker);
+        context.getLogger().debug(String.join(" ", cmd.getArgs()));
+        executeCommandCapturing(cmd, new ByteArrayOutputStream());
     }
 
     private Path prepareAssembly(Distribution distribution,
@@ -238,14 +274,55 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         return packageDirectory;
     }
 
-    private Command createBuildCommand(Map<String, Object> props, DockerConfiguration docker) {
+    private Command buildCommand(Map<String, Object> props, DockerConfiguration docker) {
         Command cmd = createCommand("build");
         for (int i = 0; i < docker.getBuildArgs().size(); i++) {
             String arg = docker.getBuildArgs().get(i);
             if (arg.contains("{{")) {
-                cmd.arg(resolveTemplate(arg, props));
+                cmd.arg(resolveTemplate(arg, props).trim());
             } else {
-                cmd.arg(arg);
+                cmd.arg(arg.trim());
+            }
+        }
+        return cmd;
+    }
+
+    private Command buildxBuildCommand(Map<String, Object> props, DockerConfiguration docker) {
+        Command cmd = createCommand("buildx");
+        cmd.arg("build");
+
+        List<String> platforms = new ArrayList<>();
+        for (int i = 0; i < docker.getBuildx().getPlatforms().size(); i++) {
+            String arg = docker.getBuildx().getPlatforms().get(i);
+            if (arg.contains("{{")) {
+                platforms.add(resolveTemplate(arg, props).trim());
+            } else {
+                platforms.add(arg.trim());
+            }
+        }
+        cmd.arg("--platform")
+            .arg(String.join(",", platforms));
+
+        for (int i = 0; i < docker.getBuildArgs().size(); i++) {
+            String arg = docker.getBuildArgs().get(i);
+            if (arg.contains("{{")) {
+                cmd.arg(resolveTemplate(arg, props).trim());
+            } else {
+                cmd.arg(arg.trim());
+            }
+        }
+        return cmd;
+    }
+
+    private Command buildxCreateCommand(Map<String, Object> props, DockerConfiguration docker) {
+        Command cmd = createCommand("buildx");
+        cmd.arg("create");
+        for (int i = 0; i < docker.getBuildx().getCreateBuilderFlags().size(); i++) {
+            String arg = docker.getBuildx().getCreateBuilderFlags().get(i);
+            if (arg.contains("{{")) {
+                cmd.arg(resolveTemplate(arg, props).trim());
+            } else {
+                cmd.arg(arg.trim());
             }
         }
         return cmd;
@@ -292,17 +369,53 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
             login(registry);
         }
 
-        for (Map.Entry<String, List<String>> e : tagNames.entrySet()) {
-            Set<String> uniqueImageNames = e.getValue().stream()
-                .map(tag -> tag.split(":")[0])
-                .collect(toSet());
-            for (String imageName : uniqueImageNames) {
-                push(e.getKey(), imageName);
+        if (docker.getBuildx().isEnabled()) {
+            Path workingDirectory = (Path) props.get(KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
+            List<String> tags = tagNames.values().stream()
+                .flatMap(List::stream)
+                .collect(toList());
+
+            // command line
+            Command cmd = buildxBuildCommand(props, docker);
+            if (!cmd.hasArg("-q") && !cmd.hasArg("--quiet")) {
+                cmd.arg("--quiet");
+            }
+            cmd.arg("--file");
+            cmd.arg(workingDirectory.resolve("Dockerfile").toAbsolutePath().toString());
+            for (String tag : tags) {
+                cmd.arg("--tag");
+                cmd.arg(tag);
+            }
+            cmd.arg("--push");
+            cmd.arg(workingDirectory.toAbsolutePath().toString());
+            context.getLogger().debug(String.join(" ", cmd.getArgs()));
+
+            // execute
+            executeCommand(cmd);
+        } else {
+            for (Map.Entry<String, List<String>> e : tagNames.entrySet()) {
+                Set<String> uniqueImageNames = e.getValue().stream()
+                    .map(tag -> tag.split(":")[0])
+                    .collect(toSet());
+                for (String imageName : uniqueImageNames) {
+                    push(e.getKey(), imageName);
+                }
             }
         }
 
         for (AbstractDockerConfiguration.Registry registry : docker.getRegistries()) {
             logout(registry);
+        }
+
+        // cleanup builder
+        if (docker.getBuildx().isEnabled()) {
+            int i = docker.getBuildx().getCreateBuilderFlags().indexOf("--name");
+            String builderName = docker.getBuildx().getCreateBuilderFlags().get(i + 1);
+            Command cmd = createCommand("buildx")
+                .arg("rm")
+                .arg(resolveTemplate(builderName, props).trim());
+
+            executeCommand(cmd);
         }
     }
 
@@ -377,6 +490,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
 
         context.getLogger().info(" - {}", imageName);
         context.getLogger().debug(RB.$("docker.push", imageName, server));
+        context.getLogger().debug(String.join(" ", cmd.getArgs()));
         if (!context.isDryrun()) executeCommand(cmd);
     }
 
