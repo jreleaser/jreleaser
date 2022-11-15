@@ -44,6 +44,7 @@ import org.jreleaser.gradle.plugin.tasks.JReleaserTemplateTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserUploadTask
 import org.jreleaser.logging.JReleaserLogger
 import org.jreleaser.model.internal.JReleaserModel
+import org.jreleaser.version.SemanticVersion
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -374,15 +375,14 @@ class JReleaserProjectConfigurer {
         if (isBlank(model.project.java.mainClass)) {
             JavaApplication application = (JavaApplication) project.extensions.findByType(JavaApplication)
             if (application) {
-                List<Integer> version = GradleVersion.current().getVersion().split('\\.')
-                    .collect { Integer.parseInt(it) }
-                if (version[0] <= 6 && version[1] < 4) {
+                SemanticVersion gradleVersion = SemanticVersion.of(GradleVersion.current().getVersion())
+                if (gradleVersion.major <= 6 && gradleVersion.minor < 4) {
                     model.project.java.mainClass = application.mainClassName
                 } else {
                     model.project.java.mainClass = application.mainClass.orNull
                 }
 
-                if (version[0] <= 6 && version[1] < 4) {
+                if (gradleVersion.major <= 6 && gradleVersion.minor < 4) {
                     model.project.java.mainModule = ''
                 } else {
                     model.project.java.mainModule = application.mainModule.orNull
