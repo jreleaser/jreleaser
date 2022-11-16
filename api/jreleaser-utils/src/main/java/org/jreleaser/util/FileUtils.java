@@ -163,12 +163,6 @@ public final class FileUtils {
             TreeSet<Path> paths = new TreeSet<>();
             Files.walkFileTree(src, new SimpleFileVisitor<Path>() {
                 @Override
-                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                    paths.add(dir);
-                    return super.preVisitDirectory(dir, attrs);
-                }
-
-                @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     paths.add(file);
                     return super.visitFile(file, attrs);
@@ -246,12 +240,6 @@ public final class FileUtils {
 
         TreeSet<Path> paths = new TreeSet<>();
         Files.walkFileTree(src, new SimpleFileVisitor<Path>() {
-            @Override
-            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                paths.add(dir);
-                return super.preVisitDirectory(dir, attrs);
-            }
-
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                 paths.add(file);
