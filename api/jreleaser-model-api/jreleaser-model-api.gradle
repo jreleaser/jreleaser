@@ -22,7 +22,6 @@ dependencies {
     api project(':jreleaser-utils')
 }
 
-
 project.rootProject.gradle.addBuildListener(new BuildAdapter() {
     @Override
     void projectsEvaluated(Gradle gradle) {
@@ -33,8 +32,6 @@ project.rootProject.gradle.addBuildListener(new BuildAdapter() {
                 filesMatching(['**/JReleaserVersion.properties']) {
                     expand(
                         'jreleaser_version': gradle.rootProject.version,
-                        'built_by': gradle.rootProject.config.buildInfo.buildBy,
-                        'created_by': gradle.rootProject.config.buildInfo.buildCreatedBy,
                         'build_date': gradle.rootProject.config.buildInfo.buildDate,
                         'build_time': gradle.rootProject.config.buildInfo.buildTime,
                         'build_revision': gradle.rootProject.config.buildInfo.buildRevision
