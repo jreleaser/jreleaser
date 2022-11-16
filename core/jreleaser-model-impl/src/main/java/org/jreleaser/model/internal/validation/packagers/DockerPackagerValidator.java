@@ -185,6 +185,20 @@ public abstract class DockerPackagerValidator extends Validator {
             packager.disable();
         }
 
+        if (buildx.isEnabled() && distribution.getType() != org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY &&
+            distribution.getType() != org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR) {
+            packager.setActive(Active.NEVER);
+            context.getLogger().debug(RB.$("validation.disabled.distributions", listOf(
+                org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY,
+                org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR
+            )));
+            errors.warning(RB.$("WARNING.validation.docker.buildx.distributions", distribution.getName(), listOf(
+                org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY,
+                org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR
+            )));
+            packager.disable();
+        }
+
         if (buildx.getCreateBuilderFlags().isEmpty()) {
             buildx.setCreateBuilderFlags(parentBuildx.getCreateBuilderFlags());
         }
