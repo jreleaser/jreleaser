@@ -388,13 +388,14 @@ public class ChangelogGenerator {
         BaseReleaser releaser = context.getModel().getRelease().getReleaser();
         String commitsUrl = releaser.getResolvedCommitUrl(context.getModel());
 
+        Map<String, Object> props = context.fullProps();
         StringBuilder changes = new StringBuilder();
         for (Changelog.Category category : changelog.getCategories()) {
             String categoryKey = category.getKey();
             if (!categories.containsKey(categoryKey) || changelog.getHide().containsCategory(categoryKey)) continue;
 
-            changes.append("## ")
-                .append(category.getTitle())
+            props.put("categoryTitle", category.getTitle());
+            changes.append(applyTemplate(changelog.getCategoryTitleFormat(), props))
                 .append(lineSeparator);
 
             final String categoryFormat = resolveCommitFormat(changelog, category);
@@ -421,7 +422,7 @@ public class ChangelogGenerator {
 
         StringBuilder formattedContributors = new StringBuilder();
         if (changelog.getContributors().isEnabled() && !contributors.isEmpty()) {
-            formattedContributors.append("## Contributors")
+            formattedContributors.append(applyTemplate(changelog.getContributorsTitleFormat(), props))
                 .append(lineSeparator)
                 .append("We'd like to thank the following people for their contributions:")
                 .append(lineSeparator)
@@ -429,7 +430,6 @@ public class ChangelogGenerator {
                 .append(lineSeparator);
         }
 
-        Map<String, Object> props = context.fullProps();
         props.put(KEY_CHANGELOG_CHANGES, passThrough(changes.toString()));
         props.put(KEY_CHANGELOG_CONTRIBUTORS, passThrough(formattedContributors.toString()));
 

@@ -52,6 +52,10 @@ public interface Changelog extends Domain, EnabledAware {
 
     String getFormat();
 
+    String getCategoryTitleFormat();
+
+    String getContributorsTitleFormat();
+
     String getContent();
 
     String getContentTemplate();
@@ -61,6 +65,20 @@ public interface Changelog extends Domain, EnabledAware {
     Hide getHide();
 
     Contributors getContributors();
+
+    Append getAppend();
+
+    interface Append extends Domain {
+        boolean isEnabled();
+
+        String getTitle();
+
+        String getTarget();
+
+        String getContent();
+
+        String getContentTemplate();
+    }
 
     interface Category extends Domain {
         Comparator<Category> ORDER = (o1, o2) -> {

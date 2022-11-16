@@ -49,6 +49,10 @@ interface Changelog {
 
     Property<String> getFormat()
 
+    Property<String> getCategoryTitleFormat()
+
+    Property<String> getContributorsTitleFormat()
+
     Property<String> getContent()
 
     Property<String> getPreset()
@@ -83,13 +87,35 @@ interface Changelog {
 
     Contributors getContributors()
 
+    Append getAppend()
+
     void hide(Action<? super Hide> action)
 
     void contributors(Action<? super Contributors> action)
 
+    void append(Action<? super Append> action)
+
     void hide(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Hide) Closure<Void> action)
 
     void contributors(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Contributors) Closure<Void> action)
+
+    void append(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Append) Closure<Void> action)
+
+    interface Append {
+        Property<Boolean> getEnabled()
+
+        Property<String> getTitle()
+
+        RegularFileProperty getTarget()
+
+        Property<String> getContent()
+
+        RegularFileProperty getContentTemplate()
+
+        void setTarget(String target)
+
+        void setContentTemplate(String contentTemplate)
+    }
 
     interface Category {
         Property<String> getKey()

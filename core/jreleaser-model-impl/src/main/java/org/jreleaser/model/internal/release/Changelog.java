@@ -62,6 +62,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
     private final Set<Labeler> labelers = new TreeSet<>(Labeler.ORDER);
     private final Hide hide = new Hide();
     private final Contributors contributors = new Contributors();
+    private final Append append = new Append();
 
     private Boolean enabled;
     private Boolean links;
@@ -70,6 +71,8 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
     private String external;
     private Active formatted;
     private String format;
+    private String categoryTitleFormat;
+    private String contributorsTitleFormat;
     private String content;
     private String contentTemplate;
     private String preset;
@@ -150,6 +153,16 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
         }
 
         @Override
+        public String getCategoryTitleFormat() {
+            return categoryTitleFormat;
+        }
+
+        @Override
+        public String getContributorsTitleFormat() {
+            return contributorsTitleFormat;
+        }
+
+        @Override
         public String getContent() {
             return content;
         }
@@ -175,6 +188,11 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
         }
 
         @Override
+        public Append getAppend() {
+            return append.asImmutable();
+        }
+
+        @Override
         public Map<String, Object> asMap(boolean full) {
             return unmodifiableMap(Changelog.this.asMap(full));
         }
@@ -197,12 +215,15 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
             !labelers.isEmpty() ||
             hide.isSet() ||
             contributors.isSet() ||
+            append.isSet() ||
             null != links ||
             null != skipMergeCommits ||
             null != sort ||
             null != formatted ||
             isNotBlank(external) ||
             isNotBlank(format) ||
+            isNotBlank(categoryTitleFormat) ||
+            isNotBlank(contributorsTitleFormat) ||
             isNotBlank(content) ||
             isNotBlank(contentTemplate) ||
             isNotBlank(preset);
@@ -217,6 +238,8 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
         this.external = merge(this.external, source.external);
         this.formatted = merge(this.formatted, source.formatted);
         this.format = merge(this.format, source.format);
+        this.categoryTitleFormat = merge(this.categoryTitleFormat, source.categoryTitleFormat);
+        this.contributorsTitleFormat = merge(this.contributorsTitleFormat, source.contributorsTitleFormat);
         this.content = merge(this.content, source.content);
         this.contentTemplate = merge(this.contentTemplate, source.contentTemplate);
         this.preset = merge(this.preset, source.preset);
@@ -227,6 +250,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
         setLabelers(merge(this.labelers, source.labelers));
         setHide(source.hide);
         setContributors(source.contributors);
+        setAppend(source.append);
     }
 
     public boolean resolveFormatted(Project project) {
@@ -372,6 +396,22 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
         this.format = format;
     }
 
+    public String getCategoryTitleFormat() {
+        return categoryTitleFormat;
+    }
+
+    public void setCategoryTitleFormat(String categoryTitleFormat) {
+        this.categoryTitleFormat = categoryTitleFormat;
+    }
+
+    public String getContributorsTitleFormat() {
+        return contributorsTitleFormat;
+    }
+
+    public void setContributorsTitleFormat(String contributorsTitleFormat) {
+        this.contributorsTitleFormat = contributorsTitleFormat;
+    }
+
     public String getContent() {
         return content;
     }
@@ -412,6 +452,14 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
         this.contributors.merge(contributors);
     }
 
+    public Append getAppend() {
+        return append;
+    }
+
+    public void setAppend(Append append) {
+        this.append.merge(append);
+    }
+
     @Override
     public Map<String, Object> asMap(boolean full) {
         if (!full && !isEnabled()) return Collections.emptyMap();
@@ -419,12 +467,15 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
         map.put("external", external);
+        map.put("append", append.asMap(full));
         map.put("links", isLinks());
         map.put("skipMergeCommits", isSkipMergeCommits());
         map.put("sort", sort);
         map.put("formatted", formatted);
         map.put("preset", preset);
         map.put("format", format);
+        map.put("categoryTitleFormat", categoryTitleFormat);
+        map.put("contributorsTitleFormat", contributorsTitleFormat);
         map.put("content", content);
         map.put("contentTemplate", contentTemplate);
         map.put("includeLabels", includeLabels);
@@ -454,6 +505,131 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
         map.put("replacers", m);
 
         return map;
+    }
+
+    public static final class Append extends AbstractModelObject<Append> implements Domain {
+        private Boolean enabled;
+        private String title;
+        private String target;
+        private String content;
+        private String contentTemplate;
+
+        private final org.jreleaser.model.api.release.Changelog.Append immutable = new org.jreleaser.model.api.release.Changelog.Append() {
+            @Override
+            public boolean isEnabled() {
+                return Append.this.isEnabled();
+            }
+
+            @Override
+            public String getTitle() {
+                return title;
+            }
+
+            @Override
+            public String getTarget() {
+                return target;
+            }
+
+            @Override
+            public String getContent() {
+                return content;
+            }
+
+            @Override
+            public String getContentTemplate() {
+                return contentTemplate;
+            }
+
+            @Override
+            public Map<String, Object> asMap(boolean full) {
+                return unmodifiableMap(Append.this.asMap(full));
+            }
+        };
+
+        public org.jreleaser.model.api.release.Changelog.Append asImmutable() {
+            return immutable;
+        }
+
+        @Override
+        public void merge(Append source) {
+            this.enabled = merge(this.enabled, source.enabled);
+            this.title = merge(this.title, source.title);
+            this.target = merge(this.target, source.target);
+            this.content = merge(this.content, source.content);
+            this.contentTemplate = merge(this.contentTemplate, source.contentTemplate);
+        }
+
+        public boolean isEnabled() {
+            return enabled != null && enabled;
+        }
+
+        public void setEnabled(Boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getTarget() {
+            return target;
+        }
+
+        public void setTarget(String target) {
+            this.target = target;
+        }
+
+        public String getContent() {
+            return content;
+        }
+
+        public void setContent(String content) {
+            this.content = content;
+        }
+
+        public String getContentTemplate() {
+            return contentTemplate;
+        }
+
+        public void setContentTemplate(String contentTemplate) {
+            this.contentTemplate = contentTemplate;
+        }
+
+        public Map<String, Object> asMap(boolean full) {
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("enabled", isEnabled());
+            map.put("title", title);
+            map.put("target", target);
+            map.put("content", content);
+            map.put("contentTemplate", contentTemplate);
+            return map;
+        }
+
+        public boolean isSet() {
+            return isNotBlank(title) ||
+                isNotBlank(target) ||
+                isNotBlank(content) ||
+                isNotBlank(contentTemplate) ||
+                null != enabled;
+        }
+
+        public Reader getResolvedContentTemplate(JReleaserContext context) {
+            if (isNotBlank(content)) {
+                return new StringReader(content);
+            }
+
+            Path templatePath = context.getBasedir().resolve(contentTemplate);
+            try {
+                return java.nio.file.Files.newBufferedReader(templatePath);
+            } catch (IOException e) {
+                throw new JReleaserException(RB.$("ERROR_unexpected_error_reading_template",
+                    context.relativizeToBasedir(templatePath)));
+            }
+        }
     }
 
     public static final class Category extends AbstractModelObject<Category> implements Domain {

@@ -53,6 +53,7 @@ import org.jreleaser.version.SemanticVersion;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -426,6 +427,14 @@ public class JReleaserContext {
     }
 
     public Path relativizeToBasedir(Path other) {
+        return relativize(basedir, other);
+    }
+
+    public Path relativize(Path basedir, String other) {
+        return relativize(basedir, Paths.get(other));
+    }
+
+    public Path relativizeToBasedir(String other) {
         return relativize(basedir, other);
     }
 

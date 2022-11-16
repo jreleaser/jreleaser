@@ -48,6 +48,8 @@ class ChangelogImpl implements Changelog {
     final RegularFileProperty external
     final Property<Active> formatted
     final Property<String> format
+    final Property<String> categoryTitleFormat
+    final Property<String> contributorsTitleFormat
     final Property<String> preset
     final Property<String> content
     final RegularFileProperty contentTemplate
@@ -55,6 +57,7 @@ class ChangelogImpl implements Changelog {
     final SetProperty<String> excludeLabels
     final HideImpl hide
     final ContributorsImpl contributors
+    final AppendImpl append
 
     private final List<CategoryImpl> categories = []
     private final List<LabelerImpl> labelers = []
@@ -72,6 +75,8 @@ class ChangelogImpl implements Changelog {
         external = objects.fileProperty().convention(Providers.notDefined())
         formatted = objects.property(Active).convention(Providers.<Active> notDefined())
         format = objects.property(String).convention(Providers.<String> notDefined())
+        categoryTitleFormat = objects.property(String).convention(Providers.<String> notDefined())
+        contributorsTitleFormat = objects.property(String).convention(Providers.<String> notDefined())
         preset = objects.property(String).convention(Providers.<String> notDefined())
         content = objects.property(String).convention(Providers.<String> notDefined())
         contentTemplate = objects.fileProperty().convention(Providers.notDefined())
@@ -79,6 +84,7 @@ class ChangelogImpl implements Changelog {
         excludeLabels = objects.setProperty(String).convention(Providers.<Set<String>> notDefined())
         hide = objects.newInstance(HideImpl, objects)
         contributors = objects.newInstance(ContributorsImpl, objects)
+        append = objects.newInstance(AppendImpl, objects)
     }
 
     @Override
@@ -107,6 +113,8 @@ class ChangelogImpl implements Changelog {
             sort.present ||
             formatted.present ||
             format.present ||
+            categoryTitleFormat.present ||
+            contributorsTitleFormat.present ||
             preset.present ||
             content.present ||
             contentTemplate.present ||
@@ -116,7 +124,8 @@ class ChangelogImpl implements Changelog {
             !labelers.isEmpty() ||
             !replacers.isEmpty() ||
             contributors.isSet() ||
-            hide.isSet()
+            hide.isSet() ||
+            append.isSet()
     }
 
     @Override
@@ -170,6 +179,11 @@ class ChangelogImpl implements Changelog {
     }
 
     @Override
+    void append(Action<? super Append> action) {
+        action.execute(append)
+    }
+
+    @Override
     void category(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Category) Closure<Void> action) {
         CategoryImpl category = objects.newInstance(CategoryImpl, objects)
         ConfigureUtil.configure(action, category)
@@ -200,6 +214,11 @@ class ChangelogImpl implements Changelog {
         ConfigureUtil.configure(action, contributors)
     }
 
+    @Override
+    void append(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Append) Closure<Void> action) {
+        ConfigureUtil.configure(action, append)
+    }
+
     org.jreleaser.model.internal.release.Changelog toModel() {
         org.jreleaser.model.internal.release.Changelog changelog = new org.jreleaser.model.internal.release.Changelog()
         if (enabled.present) {
@@ -217,6 +236,8 @@ class ChangelogImpl implements Changelog {
         if (external.present) changelog.external = external.getAsFile().get().toPath()
         if (formatted.present) changelog.formatted = formatted.get()
         if (format.present) changelog.format = format.get()
+        if (categoryTitleFormat.present) changelog.categoryTitleFormat = categoryTitleFormat.get()
+        if (contributorsTitleFormat.present) changelog.contributorsTitleFormat = contributorsTitleFormat.get()
         if (preset.present) changelog.preset = preset.get()
         if (content.present) changelog.content = content.get()
         if (contentTemplate.present) {
@@ -235,7 +256,59 @@ class ChangelogImpl implements Changelog {
         } as List<org.jreleaser.model.internal.release.Changelog.Replacer>)
         changelog.hide = hide.toModel()
         changelog.contributors = contributors.toModel()
+        changelog.append = append.toModel()
         changelog
+    }
+
+    @CompileStatic
+    static class AppendImpl implements Append {
+        final Property<Boolean> enabled
+        final Property<String> title
+        final RegularFileProperty target
+        final Property<String> content
+        final RegularFileProperty contentTemplate
+
+        @Inject
+        AppendImpl(ObjectFactory objects) {
+            enabled = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+            title = objects.property(String).convention(Providers.<String> notDefined())
+            contentTemplate = objects.fileProperty().convention(Providers.notDefined())
+            content = objects.property(String).convention(Providers.<String> notDefined())
+            target = objects.fileProperty().convention(Providers.notDefined())
+        }
+
+        @Internal
+        boolean isSet() {
+            enabled.present ||
+                title.present ||
+                target.present ||
+                content.present ||
+                contentTemplate.present
+        }
+
+        @Override
+        void setTarget(String target) {
+            this.target.set(new File(target))
+        }
+
+        @Override
+        void setContentTemplate(String contentTemplate) {
+            this.contentTemplate.set(new File(contentTemplate))
+        }
+
+        org.jreleaser.model.internal.release.Changelog.Append toModel() {
+            org.jreleaser.model.internal.release.Changelog.Append append = new org.jreleaser.model.internal.release.Changelog.Append()
+            append.enabled = enabled.orNull
+            append.title = title.orNull
+            if (target.present) {
+                append.target = target.asFile.get().absolutePath
+            }
+            append.content = content.orNull
+            if (contentTemplate.present) {
+                append.contentTemplate = contentTemplate.asFile.get().absolutePath
+            }
+            append
+        }
     }
 
     @CompileStatic
