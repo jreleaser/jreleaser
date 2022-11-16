@@ -57,6 +57,7 @@ import java.nio.file.attribute.FileTime;
 import java.nio.file.attribute.PosixFileAttributeView;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -66,6 +67,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -151,86 +153,131 @@ public final class FileUtils {
     }
 
     public static void zip(Path src, Path dest) throws IOException {
+        zip(src, dest, null);
+    }
+
+    public static void zip(Path src, Path dest, ZonedDateTime timestamp) throws IOException {
         try (ZipArchiveOutputStream out = new ZipArchiveOutputStream(dest.toFile())) {
             out.setMethod(ZipOutputStream.DEFLATED);
 
+            TreeSet<Path> paths = new TreeSet<>();
             Files.walkFileTree(src, new SimpleFileVisitor<Path>() {
                 @Override
-                public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
-                    String entryName = src.relativize(file).toString();
-                    File inputFile = file.toFile();
-                    ZipArchiveEntry archiveEntry = new ZipArchiveEntry(inputFile, entryName);
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                    paths.add(dir);
+                    return super.preVisitDirectory(dir, attrs);
+                }
 
-                    archiveEntry.setMethod(ZipOutputStream.DEFLATED);
-                    if (inputFile.isFile() && Files.isExecutable(file)) {
-                        archiveEntry.setUnixMode(0100755);
-                    }
-
-                    out.putArchiveEntry(archiveEntry);
-
-                    if (inputFile.isFile()) {
-                        out.write(Files.readAllBytes(file));
-                    }
-                    out.closeArchiveEntry();
-
-                    return FileVisitResult.CONTINUE;
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    paths.add(file);
+                    return super.visitFile(file, attrs);
                 }
             });
-        }
-    }
 
-    public static void tar(Path src, Path dest) throws IOException {
-        try (TarArchiveOutputStream out = new TarArchiveOutputStream(
-            Files.newOutputStream(dest, CREATE, TRUNCATE_EXISTING))) {
-            tar(src, out);
-        }
-    }
+            FileTime fileTime = null != timestamp ? FileTime.from(timestamp.toInstant()) : null;
+            for (Path path : paths) {
+                String entryName = src.relativize(path).toString();
+                File inputFile = path.toFile();
+                ZipArchiveEntry archiveEntry = new ZipArchiveEntry(inputFile, entryName);
+                if (null != fileTime) archiveEntry.setTime(fileTime);
 
-    public static void tgz(Path src, Path dest) throws IOException {
-        try (TarArchiveOutputStream out = new TarArchiveOutputStream(
-            new GzipCompressorOutputStream(Files.newOutputStream(dest, CREATE, TRUNCATE_EXISTING)))) {
-            tar(src, out);
-        }
-    }
-
-    public static void bz2(Path src, Path dest) throws IOException {
-        try (TarArchiveOutputStream out = new TarArchiveOutputStream(
-            new BZip2CompressorOutputStream(Files.newOutputStream(dest, CREATE, TRUNCATE_EXISTING)))) {
-            tar(src, out);
-        }
-    }
-
-    public static void xz(Path src, Path dest) throws IOException {
-        try (TarArchiveOutputStream out = new TarArchiveOutputStream(
-            new XZCompressorOutputStream(Files.newOutputStream(dest, CREATE, TRUNCATE_EXISTING)))) {
-            tar(src, out);
-        }
-    }
-
-    private static void tar(Path src, TarArchiveOutputStream out) throws IOException {
-        out.setLongFileMode(TarArchiveOutputStream.LONGFILE_POSIX);
-        Files.walkFileTree(src, new SimpleFileVisitor<Path>() {
-            @Override
-            public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs) throws IOException {
-                String entryName = src.relativize(file).toString();
-                File inputFile = file.toFile();
-                TarArchiveEntry archiveEntry = (TarArchiveEntry) out.createArchiveEntry(inputFile, entryName);
-
-                if (inputFile.isFile() && Files.isExecutable(file)) {
-                    archiveEntry.setMode(0100755);
+                archiveEntry.setMethod(ZipOutputStream.DEFLATED);
+                if (inputFile.isFile() && Files.isExecutable(path)) {
+                    archiveEntry.setUnixMode(0100755);
                 }
 
                 out.putArchiveEntry(archiveEntry);
 
                 if (inputFile.isFile()) {
-                    out.write(Files.readAllBytes(file));
+                    out.write(Files.readAllBytes(path));
                 }
-
                 out.closeArchiveEntry();
+            }
+        }
+    }
 
-                return FileVisitResult.CONTINUE;
+    public static void tar(Path src, Path dest) throws IOException {
+        tar(src, dest, null);
+    }
+
+    public static void tar(Path src, Path dest, ZonedDateTime timestamp) throws IOException {
+        try (TarArchiveOutputStream out = new TarArchiveOutputStream(
+            Files.newOutputStream(dest, CREATE, TRUNCATE_EXISTING))) {
+            tar(src, out, timestamp);
+        }
+    }
+
+    public static void tgz(Path src, Path dest) throws IOException {
+        tgz(src, dest, null);
+    }
+
+    public static void tgz(Path src, Path dest, ZonedDateTime timestamp) throws IOException {
+        try (TarArchiveOutputStream out = new TarArchiveOutputStream(
+            new GzipCompressorOutputStream(Files.newOutputStream(dest, CREATE, TRUNCATE_EXISTING)))) {
+            tar(src, out, timestamp);
+        }
+    }
+
+    public static void bz2(Path src, Path dest) throws IOException {
+        bz2(src, dest, null);
+    }
+
+    public static void bz2(Path src, Path dest, ZonedDateTime timestamp) throws IOException {
+        try (TarArchiveOutputStream out = new TarArchiveOutputStream(
+            new BZip2CompressorOutputStream(Files.newOutputStream(dest, CREATE, TRUNCATE_EXISTING)))) {
+            tar(src, out, timestamp);
+        }
+    }
+
+    public static void xz(Path src, Path dest) throws IOException {
+        xz(src, dest, null);
+    }
+
+    public static void xz(Path src, Path dest, ZonedDateTime timestamp) throws IOException {
+        try (TarArchiveOutputStream out = new TarArchiveOutputStream(
+            new XZCompressorOutputStream(Files.newOutputStream(dest, CREATE, TRUNCATE_EXISTING)))) {
+            tar(src, out, timestamp);
+        }
+    }
+
+    private static void tar(Path src, TarArchiveOutputStream out, ZonedDateTime timestamp) throws IOException {
+        out.setLongFileMode(TarArchiveOutputStream.LONGFILE_POSIX);
+
+        TreeSet<Path> paths = new TreeSet<>();
+        Files.walkFileTree(src, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                paths.add(dir);
+                return super.preVisitDirectory(dir, attrs);
+            }
+
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                paths.add(file);
+                return super.visitFile(file, attrs);
             }
         });
+
+        FileTime fileTime = null != timestamp ? FileTime.from(timestamp.toInstant()) : null;
+        for (Path path : paths) {
+            String entryName = src.relativize(path).toString();
+            File inputFile = path.toFile();
+            TarArchiveEntry archiveEntry = (TarArchiveEntry) out.createArchiveEntry(inputFile, entryName);
+            if (null != fileTime) archiveEntry.setModTime(fileTime);
+
+            if (inputFile.isFile() && Files.isExecutable(path)) {
+                archiveEntry.setMode(0100755);
+            }
+
+            out.putArchiveEntry(archiveEntry);
+
+            if (inputFile.isFile()) {
+                out.write(Files.readAllBytes(path));
+            }
+
+            out.closeArchiveEntry();
+        }
     }
 
     public static void unpackArchive(Path src, Path dest) throws IOException {

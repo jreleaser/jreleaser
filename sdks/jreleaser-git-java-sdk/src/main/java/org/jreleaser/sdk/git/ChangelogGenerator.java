@@ -18,7 +18,6 @@
 package org.jreleaser.sdk.git;
 
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.api.errors.EmptyCommitException;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
@@ -38,7 +37,6 @@ import org.jreleaser.version.Version;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -163,8 +161,8 @@ public class ChangelogGenerator {
     }
 
     public Tags resolveTags(Git git, JReleaserContext context) throws GitAPIException {
-        GitSdk shallowTest = GitSdk.of(context);
-        if (shallowTest.isShallow()) {
+        GitSdk gitSdk = GitSdk.of(context);
+        if (gitSdk.isShallow()) {
             context.getLogger().warn(RB.$("changelog.shallow.warning"));
         }
 
@@ -234,8 +232,8 @@ public class ChangelogGenerator {
 
 
                     if (previousTag.isPresent()) {
-                        RevCommit earlyAccessCommit = resolveSingleCommit(git, tag.get());
-                        RevCommit previousTagCommit = resolveSingleCommit(git, previousTag.get());
+                        RevCommit earlyAccessCommit = gitSdk.resolveSingleCommit(git, tag.get());
+                        RevCommit previousTagCommit = gitSdk.resolveSingleCommit(git, previousTag.get());
 
                         if (previousTagCommit.getCommitTime() > earlyAccessCommit.getCommitTime()) {
                             tag = previousTag;
@@ -292,24 +290,6 @@ public class ChangelogGenerator {
         }
 
         return Tags.current(tag.get());
-    }
-
-    private RevCommit resolveSingleCommit(Git git, Ref tag) throws GitAPIException {
-        try {
-            Iterable<RevCommit> commits = git.log().add(getObjectId(git, tag))
-                .setMaxCount(1)
-                .call();
-            if (commits == null) {
-                throw new EmptyCommitException(RB.$("ERROR_git_commit_not_found", tag.getName()));
-            }
-            Iterator<RevCommit> iterator = commits.iterator();
-            if (iterator.hasNext()) {
-                return iterator.next();
-            }
-            throw new EmptyCommitException(RB.$("ERROR_git_commit_not_found", tag.getName()));
-        } catch (IOException e) {
-            throw new EmptyCommitException(RB.$("ERROR_git_commit_not_found", tag.getName()), e);
-        }
     }
 
     protected Iterable<RevCommit> resolveCommits(Git git, JReleaserContext context) throws GitAPIException, IOException {

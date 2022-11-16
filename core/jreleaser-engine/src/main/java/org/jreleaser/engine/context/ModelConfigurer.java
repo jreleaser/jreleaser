@@ -45,7 +45,9 @@ public class ModelConfigurer {
             Commit head = GitSdk.of(context).head();
             context.getModel().setCommit(new JReleaserModel.Commit(head.getShortHash(),
                 head.getFullHash(),
-                head.getRefName()));
+                head.getRefName(),
+                head.getCommitTime(),
+                head.getTimestamp()));
         } catch (Exception e) {
             if (context.getMode() == Mode.ASSEMBLE ||
                 context.getMode() == Mode.DEPLOY ||

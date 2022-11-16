@@ -85,11 +85,15 @@ public interface JReleaserModel extends Domain {
         private final String shortHash;
         private final String fullHash;
         private final String refName;
+        private final int commitTime;
+        private final ZonedDateTime timestamp;
 
-        public Commit(String shortHash, String fullHash, String refName) {
+        public Commit(String shortHash, String fullHash, String refName, int commitTime, ZonedDateTime timestamp) {
             this.shortHash = shortHash;
             this.fullHash = fullHash;
             this.refName = refName;
+            this.commitTime = commitTime;
+            this.timestamp = timestamp;
         }
 
         public String getShortHash() {
@@ -102,6 +106,14 @@ public interface JReleaserModel extends Domain {
 
         public String getRefName() {
             return refName;
+        }
+
+        public int getCommitTime() {
+            return commitTime;
+        }
+
+        public ZonedDateTime getTimestamp() {
+            return timestamp;
         }
     }
 }
