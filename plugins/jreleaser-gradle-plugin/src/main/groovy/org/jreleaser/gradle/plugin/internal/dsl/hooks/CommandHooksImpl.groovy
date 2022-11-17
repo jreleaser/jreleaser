@@ -125,9 +125,9 @@ class CommandHooksImpl implements CommandHooks {
         org.jreleaser.model.internal.hooks.CommandHooks commandHooks = new org.jreleaser.model.internal.hooks.CommandHooks()
         if (active.present) commandHooks.active = active.get()
 
-        before.forEach { hook -> commandHooks.addBefore(hook.toModel()) }
-        success.forEach { hook -> commandHooks.addSuccess(hook.toModel()) }
-        failure.forEach { hook -> commandHooks.addFailure(hook.toModel()) }
+        before.forEach { CommandHookImpl hook -> commandHooks.addBefore(hook.toModel()) }
+        success.forEach { CommandHookImpl hook -> commandHooks.addSuccess(hook.toModel()) }
+        failure.forEach { CommandHookImpl hook -> commandHooks.addFailure(hook.toModel()) }
 
         commandHooks
     }

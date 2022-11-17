@@ -42,12 +42,6 @@ config {
         }
     }
 
-    buildInfo {
-        skipBuildBy = true
-        skipBuildJdk = true
-        skipBuildOs = true
-    }
-
     docs {
         javadoc {
             autoLinks {
@@ -76,7 +70,6 @@ config {
 allprojects {
     repositories {
         mavenLocal()
-        mavenCentral()
         gradlePluginPortal()
     }
 
@@ -116,11 +109,6 @@ subprojects {
 
     test {
         useJUnitPlatform()
-    }
-
-    tasks.withType(AbstractArchiveTask).configureEach {
-        preserveFileTimestamps = false
-        reproducibleFileOrder = true
     }
 }
 

@@ -35,8 +35,9 @@ abstract class ListJdksTask extends DefaultTask {
     NamedDomainObjectContainer<JdkImpl> jdkContainer
 
     @TaskAction
+
     void displayConfig() {
-        jdkContainer.forEach({ jdk ->
+        jdkContainer.forEach({ JdkImpl jdk ->
             println "== JDK ${jdk.name} =="
             println "url: ${jdk.url.get()}"
             println "checksum: ${jdk.checksum.get()}"

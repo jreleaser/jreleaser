@@ -34,7 +34,6 @@ buildscript {
         classpath "org.ow2.asm:asm-commons:$asmVersion"
         classpath "org.ow2.asm:asm-analysis:$asmVersion"
         classpath "org.ow2.asm:asm-tree:$asmVersion"
-        classpath 'org.ajoberstar.grgit:grgit-core:4.1.1'
     }
 }
 apply plugin: 'org.kordamp.gradle.kordamp-parentbuild'
@@ -69,6 +68,8 @@ enforce {
         r.exclude("org.graalvm.compiler:compiler:$graalVersion")
         r.exclude("org.graalvm.truffle:truffle-api:$graalVersion")
         r.exclude("org.graalvm.nativeimage:objectfile:$graalVersion")
+        r.exclude("org.kordamp.gradle:base-gradle-plugin:$kordampPluginVersion")
+        r.exclude("com.puppycrawl.tools:checkstyle:10.4")
     }
 
     rule(enforcer.rules.ForceDependencies) { r ->

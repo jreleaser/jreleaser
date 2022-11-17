@@ -15,30 +15,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import org.apache.tools.ant.DirectoryScanner
 
 dependencies {
     api project(':jreleaser-model-impl')
     api "commons-io:commons-io:$commonsIoVersion"
     api "com.github.spullara.mustache.java:compiler:$mustacheVersion"
-}
-
-processResources {
-    doFirst {
-        DirectoryScanner.removeDefaultExclude('**/.gitignore')
-    }
-
-    doLast {
-        DirectoryScanner.resetDefaultExcludes()
-    }
-}
-
-jar {
-    doFirst {
-        DirectoryScanner.removeDefaultExclude('**/.gitignore')
-    }
-
-    doLast {
-        DirectoryScanner.resetDefaultExcludes()
-    }
 }

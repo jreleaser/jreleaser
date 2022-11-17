@@ -178,10 +178,10 @@ public class Validator {
     }
 
     public static void validateTimeout(TimeoutAware self) {
-        if (null == self.getConnectTimeout() || (self.getConnectTimeout() <= 0 || self.getConnectTimeout() > 300)) {
+        if (null == self.getConnectTimeout() || self.getConnectTimeout() <= 0 || self.getConnectTimeout() > 300) {
             self.setConnectTimeout(20);
         }
-        if (null == self.getReadTimeout() || (self.getReadTimeout() <= 0 || self.getReadTimeout() > 300)) {
+        if (null == self.getReadTimeout() || self.getReadTimeout() <= 0 || self.getReadTimeout() > 300) {
             self.setReadTimeout(60);
         }
     }

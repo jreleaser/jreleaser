@@ -53,3 +53,15 @@ processResources {
         )
     }
 }
+
+def scompat = project.findProperty('sourceCompatibility')
+def tcompat = project.findProperty('targetCompatibility')
+
+tasks.withType(JavaCompile) { JavaCompile c ->
+    if (scompat) c.sourceCompatibility = scompat
+    if (tcompat) c.targetCompatibility = tcompat
+}
+tasks.withType(GroovyCompile) { GroovyCompile c ->
+    if (scompat) c.sourceCompatibility = scompat
+    if (tcompat) c.targetCompatibility = tcompat
+}
