@@ -17,15 +17,24 @@
  */
 package org.jreleaser.model.internal.announce;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
+import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.internal.JReleaserContext;
 
+import java.io.IOException;
+import java.io.Reader;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.unmodifiableMap;
 import static org.jreleaser.model.Constants.HIDE;
+import static org.jreleaser.model.Constants.KEY_TAG_NAME;
 import static org.jreleaser.model.Constants.UNSET;
 import static org.jreleaser.model.api.announce.MastodonAnnouncer.TYPE;
+import static org.jreleaser.mustache.MustacheUtils.applyTemplate;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -37,7 +46,12 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public final class MastodonAnnouncer extends AbstractAnnouncer<MastodonAnnouncer, org.jreleaser.model.api.announce.MastodonAnnouncer> {
     private String host;
     private String accessToken;
+
     private String status;
+
+    private final List<String> statuses = new ArrayList<>();
+
+    private String statusTemplate;
 
     private final org.jreleaser.model.api.announce.MastodonAnnouncer immutable = new org.jreleaser.model.api.announce.MastodonAnnouncer() {
         @Override
@@ -58,6 +72,11 @@ public final class MastodonAnnouncer extends AbstractAnnouncer<MastodonAnnouncer
         @Override
         public String getStatus() {
             return status;
+        }
+
+        @Override
+        public List<String> getStatuses() {
+            return statuses;
         }
 
         @Override
@@ -120,7 +139,8 @@ public final class MastodonAnnouncer extends AbstractAnnouncer<MastodonAnnouncer
         super.merge(source);
         this.host = merge(this.host, source.host);
         this.accessToken = merge(this.accessToken, source.accessToken);
-        this.status = merge(this.status, source.status);
+        setStatuses(merge(this.statuses, source.statuses));
+        this.statusTemplate = merge(this.statusTemplate, source.statusTemplate);
     }
 
     public String getResolvedStatus(JReleaserContext context) {
@@ -128,6 +148,22 @@ public final class MastodonAnnouncer extends AbstractAnnouncer<MastodonAnnouncer
         applyTemplates(props, getResolvedExtraProperties());
         context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
         return resolveTemplate(status, props);
+    }
+
+    public String getResolvedStatusTemplate(JReleaserContext context, Map<String, Object> extraProps) {
+        Map<String, Object> props = context.fullProps();
+        applyTemplates(props, getResolvedExtraProperties());
+        props.put(KEY_TAG_NAME, context.getModel().getRelease().getReleaser().getEffectiveTagName(context.getModel()));
+        props.putAll(extraProps);
+
+        Path templatePath = context.getBasedir().resolve(statusTemplate);
+        try {
+            Reader reader = java.nio.file.Files.newBufferedReader(templatePath);
+            return applyTemplate(reader, props);
+        } catch (IOException e) {
+            throw new JReleaserException(RB.$("ERROR_unexpected_error_reading_template",
+                context.relativizeToBasedir(templatePath)));
+        }
     }
 
     public String getHost() {
@@ -146,12 +182,13 @@ public final class MastodonAnnouncer extends AbstractAnnouncer<MastodonAnnouncer
         this.accessToken = accessToken;
     }
 
-    public String getStatus() {
-        return status;
+    public List<String> getStatuses() {
+        return statuses;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setStatuses(List<String> statuses) {
+        this.statuses.clear();
+        this.statuses.addAll(statuses);
     }
 
     @Override
@@ -159,5 +196,23 @@ public final class MastodonAnnouncer extends AbstractAnnouncer<MastodonAnnouncer
         props.put("host", host);
         props.put("accessToken", isNotBlank(accessToken) ? HIDE : UNSET);
         props.put("status", status);
+        props.put("statuses", statuses);
+        props.put("statusTemplate", statusTemplate);
+    }
+
+    public String getStatusTemplate() {
+        return statusTemplate;
+    }
+
+    public void setStatusTemplate(String statusTemplate) {
+        this.statusTemplate = statusTemplate;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

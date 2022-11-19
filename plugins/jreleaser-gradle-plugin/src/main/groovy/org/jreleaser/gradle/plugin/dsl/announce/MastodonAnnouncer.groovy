@@ -18,6 +18,7 @@
 package org.jreleaser.gradle.plugin.dsl.announce
 
 import groovy.transform.CompileStatic
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 
 /**
@@ -32,4 +33,8 @@ interface MastodonAnnouncer extends Announcer {
     Property<String> getAccessToken()
 
     Property<String> getStatus()
+
+    ListProperty<String> getStatuses()
+
+    Property<String> statusTemplate
 }

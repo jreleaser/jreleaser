@@ -26,6 +26,8 @@ import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.mastodon.api.MastodonAPI;
 import org.jreleaser.sdk.mastodon.api.Status;
 
+import java.util.List;
+
 import static java.util.Objects.requireNonNull;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 
@@ -66,10 +68,16 @@ public class MastodonSdk {
         this.logger.debug(RB.$("workflow.dryrun"), dryrun);
     }
 
-    public void status(String status) throws MastodonException {
-        Status payload = Status.of(status);
-        logger.debug("mastodon.status: " + payload);
-        wrap(() -> api.status(payload));
+    public void status(List<String> statuses) throws MastodonException {
+        wrap(() -> {
+            Status payload = Status.of(statuses.get(0), null);
+            Status status = api.status(payload);
+
+            for (int i = 1; i < statuses.size(); i++) {
+                payload = Status.of(statuses.get(i), status.getId());
+                api.status(payload);
+            }
+        });
     }
 
     private void wrap(Runnable runnable) throws MastodonException {
