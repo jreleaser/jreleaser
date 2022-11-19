@@ -31,20 +31,34 @@ import java.util.List;
 @CommandLine.Command
 public abstract class AbstractPlatformAwareModelCommand extends AbstractModelCommand {
     @CommandLine.Option(names = {"-scp", "--select-current-platform"})
-    boolean selectCurrentPlatform;
+    Boolean selectCurrentPlatform;
 
     @CommandLine.Option(names = {"-sp", "--select-platform"},
         paramLabel = "<platform>")
     String[] selectPlatforms;
 
+    @CommandLine.Option(names = {"-rp", "--reject-platform"},
+        paramLabel = "<platform>")
+    String[] rejectedPlatforms;
+
     @Override
     protected List<String> collectSelectedPlatforms() {
-        if (selectCurrentPlatform) return Collections.singletonList(PlatformUtils.getCurrentFull());
+        boolean resolvedSelectCurrentPlatform = resolveBoolean(org.jreleaser.model.api.JReleaserContext.SELECT_CURRENT_PLATFORM, selectCurrentPlatform);
+        if (resolvedSelectCurrentPlatform) return Collections.singletonList(PlatformUtils.getCurrentFull());
 
         List<String> list = new ArrayList<>();
         if (selectPlatforms != null && selectPlatforms.length > 0) {
             Collections.addAll(list, selectPlatforms);
         }
-        return list;
+        return resolveCollection(org.jreleaser.model.api.JReleaserContext.SELECT_PLATFORMS, list);
+    }
+
+    @Override
+    protected List<String> collectRejectedPlatforms() {
+        List<String> list = new ArrayList<>();
+        if (rejectedPlatforms != null && rejectedPlatforms.length > 0) {
+            Collections.addAll(list, rejectedPlatforms);
+        }
+        return resolveCollection(org.jreleaser.model.api.JReleaserContext.REJECT_PLATFORMS, list);
     }
 }

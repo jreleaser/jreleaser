@@ -23,6 +23,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.common.Activatable
 import org.jreleaser.gradle.plugin.dsl.common.Artifact
+import org.jreleaser.gradle.plugin.dsl.common.Executable
 import org.jreleaser.gradle.plugin.dsl.common.ExtraProperties
 import org.jreleaser.gradle.plugin.dsl.common.Java
 import org.jreleaser.gradle.plugin.dsl.packagers.Packagers
@@ -70,12 +71,4 @@ interface Distribution extends Activatable, ExtraProperties, Packagers {
     void platform(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Platform) Closure<Void> action)
 
     void executable(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Executable) Closure<Void> action)
-
-    interface Executable {
-        Property<String> getName()
-
-        Property<String> getUnixExtension()
-
-        Property<String> getWindowsExtension()
-    }
 }

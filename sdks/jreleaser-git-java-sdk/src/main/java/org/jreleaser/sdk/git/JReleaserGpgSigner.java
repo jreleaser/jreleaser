@@ -142,7 +142,7 @@ public class JReleaserGpgSigner extends GpgSigner implements GpgObjectSigner {
                 Signing signing = context.getModel().getSigning();
                 GpgCommandSigner cmd = new GpgCommandSigner(context.getLogger());
                 cmd.setExecutable(signing.getCommand().getExecutable());
-                cmd.setPassphrase(signing.getResolvedPassphrase());
+                cmd.setPassphrase(signing.getPassphrase());
                 cmd.setHomeDir(signing.getCommand().getHomeDir());
                 cmd.setKeyName(signing.getCommand().getKeyName());
                 cmd.setPublicKeyring(signing.getCommand().getPublicKeyring());
@@ -177,7 +177,7 @@ public class JReleaserGpgSigner extends GpgSigner implements GpgObjectSigner {
                 PGPPrivateKey privateKey = secretKey.extractPrivateKey(
                     new JcePBESecretKeyDecryptorBuilder()
                         .setProvider(BouncyCastleProvider.PROVIDER_NAME)
-                        .build(signing.getResolvedPassphrase().toCharArray()));
+                        .build(signing.getPassphrase().toCharArray()));
 
                 PGPSignatureGenerator signatureGenerator = new PGPSignatureGenerator(
                     new JcaPGPContentSignerBuilder(secretKey.getPublicKey().getAlgorithm(), PGPUtil.SHA256)

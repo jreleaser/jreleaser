@@ -201,13 +201,13 @@ public class ArticleAnnouncer implements Announcer<org.jreleaser.model.api.annou
     }
 
     private String resolveGitUsername(BaseReleaser<?, ?> releaser) {
-        String username = article.getRepository().getResolvedUsername(releaser);
-        return isNotBlank(username) ? username : releaser.getResolvedUsername();
+        String username = article.getRepository().getUsername();
+        return isNotBlank(username) ? username : releaser.getUsername();
     }
 
     private String resolveGitToken(BaseReleaser<?, ?> releaser) {
-        String token = article.getRepository().getResolvedToken(releaser);
-        return isNotBlank(token) ? token : releaser.getResolvedToken();
+        String token = article.getRepository().getToken();
+        return isNotBlank(token) ? token : releaser.getToken();
     }
 
     private void writeFile(String content, Path outputFile) throws AnnounceException {

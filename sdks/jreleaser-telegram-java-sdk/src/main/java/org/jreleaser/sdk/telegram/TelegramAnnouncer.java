@@ -69,12 +69,12 @@ public class TelegramAnnouncer implements Announcer<org.jreleaser.model.api.anno
             message = telegram.getResolvedMessageTemplate(context, props);
         }
 
-        String chatId = telegram.getResolvedChatId();
+        String chatId = telegram.getChatId();
         context.getLogger().info("message: {}", message);
 
         try {
             TelegramSdk sdk = TelegramSdk.builder(context.getLogger())
-                .token(telegram.getResolvedToken())
+                .token(telegram.getToken())
                 .connectTimeout(telegram.getConnectTimeout())
                 .readTimeout(telegram.getReadTimeout())
                 .dryrun(context.isDryrun())

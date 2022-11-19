@@ -31,13 +31,17 @@ import org.jreleaser.logging.JReleaserLogger
 import org.jreleaser.model.JReleaserVersion
 import org.jreleaser.model.internal.JReleaserContext
 import org.jreleaser.model.internal.JReleaserModel
+import org.jreleaser.util.Env
 import org.jreleaser.util.PlatformUtils
 import org.jreleaser.util.StringUtils
 
 import javax.inject.Inject
 
+import static java.util.stream.Collectors.toList
 import static org.jreleaser.model.api.JReleaserContext.Mode.FULL
 import static org.jreleaser.model.internal.JReleaserContext.Configurer
+import static org.jreleaser.util.StringUtils.isBlank
+import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
  *
@@ -48,8 +52,12 @@ import static org.jreleaser.model.internal.JReleaserContext.Configurer
 abstract class AbstractJReleaserTask extends DefaultTask {
     @Input
     final Property<Boolean> dryrun
+
     @Input
     final Property<Boolean> gitRootSearch
+
+    @Input
+    final Property<Boolean> strict
 
     @Input
     final DirectoryProperty outputDirectory
@@ -68,8 +76,9 @@ abstract class AbstractJReleaserTask extends DefaultTask {
         model = objects.property(JReleaserModel)
         jlogger = objects.property(JReleaserLogger)
         mode = FULL
-        dryrun = objects.property(Boolean).convention(false)
-        gitRootSearch = objects.property(Boolean).convention(false)
+        dryrun = objects.property(Boolean)
+        gitRootSearch = objects.property(Boolean)
+        strict = objects.property(Boolean)
         outputDirectory = objects.directoryProperty()
     }
 
@@ -81,6 +90,11 @@ abstract class AbstractJReleaserTask extends DefaultTask {
     @Option(option = 'git-root-search', description = 'Searches for the Git root (OPTIONAL).')
     void setGitRootSearch(boolean gitRootSearch) {
         this.gitRootSearch.set(gitRootSearch)
+    }
+
+    @Option(option = 'strict', description = 'Enable strict mode (OPTIONAL).')
+    void setStrict(boolean strict) {
+        this.strict.set(strict)
     }
 
     protected JReleaserContext createContext() {
@@ -100,12 +114,34 @@ abstract class AbstractJReleaserTask extends DefaultTask {
             model.get(),
             project.projectDir.toPath(),
             outputDirectory.get().asFile.toPath(),
-            dryrun.get(),
-            gitRootSearch.get(),
-            collectSelectedPlatforms())
+            dryrun.getOrElse(false),
+            gitRootSearch.getOrElse(false),
+            strict.getOrElse(false),
+            collectSelectedPlatforms(),
+            collectRejectedPlatforms())
+    }
+
+    protected boolean resolveBoolean(String key, Boolean value) {
+        if (null != value) return value
+        String resolvedValue = Env.resolve(key, '')
+        return isNotBlank(resolvedValue) && Boolean.parseBoolean(resolvedValue)
+    }
+
+    protected List<String> resolveCollection(String key, List<String> values) {
+        if (!values.isEmpty()) return values;
+        String resolvedValue = Env.resolve(key, '')
+        if (isBlank(resolvedValue)) return Collections.emptyList()
+        return Arrays.stream(resolvedValue.trim().split(','))
+            .map({ s -> s.trim() })
+            .filter({ s -> isNotBlank(s) })
+            .collect(toList())
     }
 
     protected List<String> collectSelectedPlatforms() {
+        []
+    }
+
+    protected List<String> collectRejectedPlatforms() {
         []
     }
 

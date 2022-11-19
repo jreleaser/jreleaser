@@ -29,13 +29,15 @@ import org.jreleaser.workflow.Workflows
 
 import javax.inject.Inject
 
+import static org.jreleaser.model.api.JReleaserContext.Mode.DEPLOY
+
 /**
  *
  * @author Andres Almiray
  * @since 1.3.0
  */
 @CompileStatic
-abstract class JReleaserDeployTask extends AbstractPlatformAwareJReleaserTask {
+abstract class JReleaserDeployTask extends AbstractJReleaserTask {
     @Input
     @Optional
     final ListProperty<String> deployerTypes
@@ -83,6 +85,7 @@ abstract class JReleaserDeployTask extends AbstractPlatformAwareJReleaserTask {
 
     @TaskAction
     void performAction() {
+        mode = DEPLOY
         JReleaserContext ctx = createContext()
         ctx.includedDeployerTypes = deployerTypes.orNull
         ctx.excludedDeployerTypes = excludedDeployerTypes.orNull

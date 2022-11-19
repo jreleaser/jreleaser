@@ -60,14 +60,14 @@ public abstract class ArticleAnnouncerValidator extends Validator {
                 Env.toVar(repository.getBasename() + "_" + service.getServiceName()) + "_USERNAME",
                 "announce.article.repository.username",
                 repository.getUsername(),
-                service.getResolvedUsername()));
+                service.getUsername()));
 
         repository.setToken(
             checkProperty(context,
                 Env.toVar(repository.getBasename() + "_" + service.getServiceName()) + "_TOKEN",
                 "announce.article.repository.token",
                 repository.getToken(),
-                service.getResolvedToken()));
+                service.getToken()));
 
         repository.setBranch(
             checkProperty(context,

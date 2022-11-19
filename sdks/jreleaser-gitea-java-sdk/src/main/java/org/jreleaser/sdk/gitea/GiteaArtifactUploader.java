@@ -65,7 +65,7 @@ public class GiteaArtifactUploader extends AbstractArtifactUploader<org.jrelease
             context.getLogger().info(RB.$("artifacts.no.match"));
         }
 
-        String token = uploader.getResolvedToken();
+        String token = uploader.getToken();
 
         for (Artifact artifact : artifacts) {
             Path path = artifact.getEffectivePath(context);

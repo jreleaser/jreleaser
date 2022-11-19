@@ -41,7 +41,7 @@ public abstract class GiteaMavenDeployerValidator extends Validator {
 
         for (Map.Entry<String, GiteaMavenDeployer> e : gitea.entrySet()) {
             e.getValue().setName(e.getKey());
-            if (mode.validateConfig()) {
+            if (mode.validateDeploy() || mode.validateConfig()) {
                 validateGiteaMavenDeployer(context, mode, e.getValue(), errors);
             }
         }
@@ -61,7 +61,7 @@ public abstract class GiteaMavenDeployerValidator extends Validator {
                 true));
 
         if (isBlank(mavenDeployer.getUsername())) {
-            mavenDeployer.setUsername(context.getModel().getRelease().getReleaser().getResolvedUsername());
+            mavenDeployer.setUsername(context.getModel().getRelease().getReleaser().getUsername());
         }
     }
 }

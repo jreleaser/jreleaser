@@ -37,6 +37,7 @@ import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
 import static java.util.Objects.requireNonNull;
 import static org.jreleaser.model.internal.JReleaserSupport.supportedAnnouncers;
+import static org.jreleaser.model.internal.JReleaserSupport.supportedAssemblers;
 import static org.jreleaser.model.internal.JReleaserSupport.supportedPackagers;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -52,6 +53,8 @@ public class TemplateGenerator {
     private final org.jreleaser.model.Distribution.DistributionType distributionType;
     private final String packagerName;
     private final String announcerName;
+    private final String assemblerType;
+    private final String assemblerName;
     private final Path outputDirectory;
     private final boolean overwrite;
     private final boolean snapshot;
@@ -59,6 +62,8 @@ public class TemplateGenerator {
     private TemplateGenerator(JReleaserLogger logger,
                               String distributionName,
                               org.jreleaser.model.Distribution.DistributionType distributionType,
+                              String assemblerType,
+                              String assemblerName,
                               String packagerName,
                               String announcerName,
                               Path outputDirectory,
@@ -67,9 +72,14 @@ public class TemplateGenerator {
         this.logger = logger;
         this.distributionName = distributionName;
         this.distributionType = distributionType;
+        this.assemblerType = assemblerType;
+        this.assemblerName = assemblerName;
         this.packagerName = packagerName;
         this.announcerName = announcerName;
-        this.outputDirectory = outputDirectory.resolve(isNotBlank(announcerName) ? "templates" : "distributions");
+        String directory = "distributions";
+        if (isNotBlank(announcerName)) directory = "templates";
+        if (isNotBlank(assemblerType)) directory = "assemblers";
+        this.outputDirectory = outputDirectory.resolve(directory);
         this.overwrite = overwrite;
         this.snapshot = snapshot;
     }
@@ -77,6 +87,8 @@ public class TemplateGenerator {
     public Path generate() throws TemplateGenerationException {
         if (isNotBlank(announcerName)) {
             return generateAnnouncer();
+        } else if (isNotBlank(assemblerName) && isNotBlank(assemblerType)) {
+            return generateAssembler();
         }
         return generatePackager();
     }
@@ -110,6 +122,60 @@ public class TemplateGenerator {
         }
 
         return outputFile;
+    }
+
+    private Path generateAssembler() throws TemplateGenerationException {
+        if (!supportedAssemblers().contains(assemblerType)) {
+            logger.error(RB.$("templates.assembler.not.supported"), assemblerType);
+            return null;
+        }
+
+        Path output = outputDirectory.resolve(assemblerName)
+            .resolve(assemblerType).normalize();
+
+        logger.info(RB.$("templates.create.directory"), output.toAbsolutePath());
+        try {
+            Files.createDirectories(output);
+        } catch (IOException e) {
+            throw fail(e);
+        }
+
+        Map<String, TemplateResource> templates = TemplateUtils.resolveTemplates(logger, assemblerType, assemblerType, false);
+        for (Map.Entry<String, TemplateResource> template : templates.entrySet()) {
+            Path outputFile = output.resolve(template.getKey());
+            logger.info(RB.$("templates.writing.file"), outputFile.toAbsolutePath());
+
+            try {
+                Files.createDirectories(outputFile.getParent());
+            } catch (IOException e) {
+                throw fail(e);
+            }
+
+            TemplateResource value = template.getValue();
+
+            if (value.isReader()) {
+                try (Writer fileWriter = Files.newBufferedWriter(outputFile, overwrite ? CREATE : CREATE_NEW, WRITE, TRUNCATE_EXISTING);
+                     BufferedWriter decoratedWriter = new VersionDecoratingWriter(fileWriter)) {
+                    IOUtils.copy(value.getReader(), decoratedWriter);
+                } catch (FileAlreadyExistsException e) {
+                    logger.error(RB.$("templates.file_exists.error"), outputFile.toAbsolutePath());
+                    return null;
+                } catch (Exception e) {
+                    throw fail(e);
+                }
+            } else {
+                try (OutputStream outputStream = new FileOutputStream(outputFile.toFile())) {
+                    IOUtils.copy(value.getInputStream(), outputStream);
+                } catch (FileAlreadyExistsException e) {
+                    logger.error(RB.$("templates.file_exists.error"), outputFile.toAbsolutePath());
+                    return null;
+                } catch (Exception e) {
+                    throw fail(e);
+                }
+            }
+        }
+
+        return output;
     }
 
     private Path generatePackager() throws TemplateGenerationException {
@@ -181,6 +247,8 @@ public class TemplateGenerator {
         private org.jreleaser.model.Distribution.DistributionType distributionType = org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
         private String packagerName;
         private String announcerName;
+        private String assemblerName;
+        private String assemblerType;
         private Path outputDirectory;
         private boolean overwrite;
         private boolean snapshot;
@@ -210,6 +278,16 @@ public class TemplateGenerator {
             return this;
         }
 
+        public TemplateGeneratorBuilder assemblerName(String assemblerName) {
+            this.assemblerName = assemblerName;
+            return this;
+        }
+
+        public TemplateGeneratorBuilder assemblerType(String assemblerType) {
+            this.assemblerType = assemblerType;
+            return this;
+        }
+
         public TemplateGeneratorBuilder outputDirectory(Path outputDirectory) {
             this.outputDirectory = requireNonNull(outputDirectory, "'outputDirectory' must not be null");
             return this;
@@ -228,12 +306,20 @@ public class TemplateGenerator {
         public TemplateGenerator build() {
             requireNonNull(logger, "'logger' must not be null");
             if (isBlank(announcerName)) {
-                requireNonBlank(distributionName, "'distributionName' must not be blank");
-                requireNonNull(distributionType, "'distributionType' must not be null");
-                requireNonBlank(packagerName, "'packagerName' must not be blank");
+                if (isNotBlank(assemblerType)) {
+                    requireNonBlank(assemblerName, "'assemblerName' must not be blank");
+                } else if (isNotBlank(assemblerName)) {
+                    requireNonBlank(assemblerType, "'assemblerType' must not be blank");
+                } else {
+                    requireNonBlank(distributionName, "'distributionName' must not be blank");
+                    requireNonNull(distributionType, "'distributionType' must not be null");
+                    requireNonBlank(packagerName, "'packagerName' must not be blank");
+                }
             }
             requireNonNull(outputDirectory, "'outputDirectory' must not be null");
-            return new TemplateGenerator(logger, distributionName, distributionType, packagerName, announcerName, outputDirectory, overwrite, snapshot);
+            return new TemplateGenerator(logger, distributionName, distributionType,
+                assemblerType, assemblerName, packagerName, announcerName,
+                outputDirectory, overwrite, snapshot);
         }
     }
 }

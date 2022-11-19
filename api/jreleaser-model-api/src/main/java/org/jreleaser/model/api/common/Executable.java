@@ -15,23 +15,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.gradle.plugin.dsl.packagers
-
-import groovy.transform.CompileStatic
-import org.gradle.api.provider.Property
+package org.jreleaser.model.api.common;
 
 /**
- *
  * @author Andres Almiray
  * @since 0.1.0
  */
-@CompileStatic
-interface Registry {
-    Property<String> getServer()
+public interface Executable extends Domain {
+    String getName();
 
-    Property<String> getRepositoryName()
+    String getUnixExtension();
 
-    Property<String> getUsername()
-
-    Property<String> getPassword()
+    String getWindowsExtension();
 }

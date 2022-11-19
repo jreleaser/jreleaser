@@ -29,6 +29,8 @@ import java.util.Map;
 public interface Assemble extends Domain, Activatable {
     Map<String, ? extends ArchiveAssembler> getArchive();
 
+    Map<String, ? extends JavaArchiveAssembler> getJavaArchive();
+
     Map<String, ? extends JlinkAssembler> getJlink();
 
     Map<String, ? extends JpackageAssembler> getJpackage();

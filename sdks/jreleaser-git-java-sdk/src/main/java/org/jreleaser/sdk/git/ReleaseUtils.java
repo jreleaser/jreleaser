@@ -77,8 +77,8 @@ public final class ReleaseUtils {
             context.getLogger().debug(RB.$("git.push.tag"), context.isDryrun());
 
             UsernamePasswordCredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider(
-                context.getModel().getRelease().getReleaser().getResolvedUsername(),
-                context.getModel().getRelease().getReleaser().getResolvedToken());
+                context.getModel().getRelease().getReleaser().getUsername(),
+                context.getModel().getRelease().getReleaser().getToken());
 
             gitSdk.open().push()
                 .setDryRun(context.isDryrun())

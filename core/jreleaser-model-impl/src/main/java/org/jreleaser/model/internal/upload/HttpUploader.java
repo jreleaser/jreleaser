@@ -18,7 +18,6 @@
 package org.jreleaser.model.internal.upload;
 
 import org.jreleaser.model.Active;
-import org.jreleaser.util.Env;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -218,8 +217,8 @@ public final class HttpUploader extends AbstractWebUploader<org.jreleaser.model.
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("authorization", authorization);
         props.put("method", method);
-        props.put("username", isNotBlank(getResolvedUsername()) ? HIDE : UNSET);
-        props.put("password", isNotBlank(getResolvedPassword()) ? HIDE : UNSET);
+        props.put("username", isNotBlank(username) ? HIDE : UNSET);
+        props.put("password", isNotBlank(password) ? HIDE : UNSET);
         props.put("headers", headers);
     }
 
@@ -229,13 +228,5 @@ public final class HttpUploader extends AbstractWebUploader<org.jreleaser.model.
         }
 
         return authorization;
-    }
-
-    public String getResolvedUsername() {
-        return Env.env("HTTP_" + Env.toVar(name) + "_USERNAME", username);
-    }
-
-    public String getResolvedPassword() {
-        return Env.env("HTTP_" + Env.toVar(name) + "_PASSWORD", password);
     }
 }

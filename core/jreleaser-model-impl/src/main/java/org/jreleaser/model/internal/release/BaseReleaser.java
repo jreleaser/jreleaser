@@ -398,14 +398,6 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
         this.issueTrackerUrl = issueTrackerUrl;
     }
 
-    public String getResolvedToken() {
-        return Env.env(Env.toVar(getServiceName()) + "_TOKEN", token);
-    }
-
-    public String getResolvedUsername() {
-        return Env.env(Env.toVar(getServiceName()) + "_USERNAME", username);
-    }
-
     public String getUsername() {
         return username;
     }
@@ -646,7 +638,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
         props.put("owner", owner);
         props.put("name", name);
         props.put("username", username);
-        props.put("token", isNotBlank(getResolvedToken()) ? Constants.HIDE : Constants.UNSET);
+        props.put("token", isNotBlank(token) ? Constants.HIDE : Constants.UNSET);
         if (releaseSupported) {
             props.put("uploadAssets", uploadAssets);
             props.put("artifacts", isArtifacts());

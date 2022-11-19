@@ -22,14 +22,6 @@ package org.jreleaser.model.internal.common;
  * @since 1.1.0
  */
 public interface Ftp {
-    String getResolvedUsername();
-
-    String getResolvedPassword();
-
-    String getResolvedHost();
-
-    Integer getResolvedPort();
-
     String getUsername();
 
     void setUsername(String username);

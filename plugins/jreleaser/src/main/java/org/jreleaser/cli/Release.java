@@ -35,7 +35,7 @@ import java.util.Set;
 @CommandLine.Command(name = "release")
 public class Release extends AbstractPlatformAwareModelCommand {
     @CommandLine.Option(names = {"--dry-run"})
-    boolean dryrun;
+    Boolean dryrun;
 
     @CommandLine.ArgGroup
     Composite composite;
@@ -282,7 +282,8 @@ public class Release extends AbstractPlatformAwareModelCommand {
             .basedir(actualBasedir)
             .outputDirectory(getOutputDirectory())
             .dryrun(dryrun())
-            .gitRootSearch(gitRootSearch)
+            .gitRootSearch(gitRootSearch())
+            .strict(strict())
             .projectName(composite.autoConfig.projectName)
             .projectVersion(composite.autoConfig.projectVersion)
             .projectVersionPattern(composite.autoConfig.projectVersionPattern)
@@ -317,6 +318,7 @@ public class Release extends AbstractPlatformAwareModelCommand {
             .files(collectEntries(composite.autoConfig.files))
             .globs(collectEntries(composite.autoConfig.globs))
             .selectedPlatforms(collectSelectedPlatforms())
+            .rejectedPlatforms(collectRejectedPlatforms())
             .autoConfigure();
 
         doExecute(context);
@@ -345,7 +347,7 @@ public class Release extends AbstractPlatformAwareModelCommand {
     }
 
     @Override
-    protected boolean dryrun() {
+    protected Boolean dryrun() {
         return dryrun;
     }
 

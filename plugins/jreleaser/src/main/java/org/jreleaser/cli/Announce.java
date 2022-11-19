@@ -27,9 +27,9 @@ import picocli.CommandLine;
  * @since 0.1.0
  */
 @CommandLine.Command(name = "announce")
-public class Announce extends AbstractPlatformAwareModelCommand {
+public class Announce extends AbstractModelCommand {
     @CommandLine.Option(names = {"--dry-run"})
-    boolean dryrun;
+    Boolean dryrun;
 
     @CommandLine.ArgGroup
     Composite composite;
@@ -74,7 +74,7 @@ public class Announce extends AbstractPlatformAwareModelCommand {
     }
 
     @Override
-    protected boolean dryrun() {
+    protected Boolean dryrun() {
         return dryrun;
     }
 

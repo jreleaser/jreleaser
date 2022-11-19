@@ -21,8 +21,11 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.workflow.Workflows;
+
+import static org.jreleaser.model.api.JReleaserContext.Mode.DEPLOY;
 
 /**
  * Deploys all artifacts.
@@ -31,7 +34,7 @@ import org.jreleaser.workflow.Workflows;
  * @since 1.3.0
  */
 @Mojo(name = "deploy")
-public class JReleaserDeployMojo extends AbstractPlatformAwareJReleaserMojo {
+public class JReleaserDeployMojo extends AbstractJReleaserMojo {
     /**
      * Include a deployer by type.
      */
@@ -76,5 +79,10 @@ public class JReleaserDeployMojo extends AbstractPlatformAwareJReleaserMojo {
         context.setExcludedDeployerTypes(collectEntries(excludedDeployers, true));
         context.setExcludedDeployerNames(collectEntries(excludedDeployerNames));
         Workflows.deploy(context).execute();
+    }
+
+    @Override
+    protected Mode getMode() {
+        return DEPLOY;
     }
 }

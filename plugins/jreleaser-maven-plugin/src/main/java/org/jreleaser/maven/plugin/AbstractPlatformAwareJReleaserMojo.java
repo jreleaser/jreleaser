@@ -33,22 +33,38 @@ abstract class AbstractPlatformAwareJReleaserMojo extends AbstractJReleaserMojo 
      * Activates paths matching the current platform.
      */
     @Parameter(property = "jreleaser.select.current.platform")
-    private boolean selectCurrentPlatform;
+    private Boolean selectCurrentPlatform;
 
     /**
      * Activates paths matching the given platform.
      */
-    @Parameter(property = "jreleaser.select.platform")
+    @Parameter(property = "jreleaser.select.platforms")
     private String[] selectPlatforms;
+
+    /**
+     * Activates paths not matching the given platform.
+     */
+    @Parameter(property = "jreleaser.reject.platforms")
+    private String[] rejectedPlatforms;
 
     @Override
     protected List<String> collectSelectedPlatforms() {
-        if (selectCurrentPlatform) return Collections.singletonList(PlatformUtils.getCurrentFull());
+        boolean resolvedSelectCurrentPlatform = resolveBoolean(org.jreleaser.model.api.JReleaserContext.SELECT_CURRENT_PLATFORM, selectCurrentPlatform);
+        if (resolvedSelectCurrentPlatform) return Collections.singletonList(PlatformUtils.getCurrentFull());
 
         List<String> list = new ArrayList<>();
         if (selectPlatforms != null && selectPlatforms.length > 0) {
             Collections.addAll(list, selectPlatforms);
         }
-        return list;
+        return resolveCollection(org.jreleaser.model.api.JReleaserContext.SELECT_PLATFORMS, list);
+    }
+
+    @Override
+    protected List<String> collectRejectedPlatforms() {
+        List<String> list = new ArrayList<>();
+        if (rejectedPlatforms != null && rejectedPlatforms.length > 0) {
+            Collections.addAll(list, rejectedPlatforms);
+        }
+        return resolveCollection(org.jreleaser.model.api.JReleaserContext.REJECT_PLATFORMS, list);
     }
 }

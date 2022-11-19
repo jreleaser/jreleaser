@@ -74,7 +74,7 @@ public class MattermostAnnouncer implements Announcer<org.jreleaser.model.api.an
 
         if (!context.isDryrun()) {
             ClientUtils.webhook(context.getLogger(),
-                mattermost.getResolvedWebhook(),
+                mattermost.getWebhook(),
                 mattermost.getConnectTimeout(),
                 mattermost.getReadTimeout(),
                 Message.of(message));

@@ -40,12 +40,16 @@ abstract class AbstractPlatformAwareJReleaserTask extends AbstractJReleaserTask 
     @Input
     @Optional
     final ListProperty<String> selectPlatforms
+    @Input
+    @Optional
+    final ListProperty<String> rejectPlatforms
 
     @Inject
     AbstractPlatformAwareJReleaserTask(ObjectFactory objects) {
         super(objects)
         selectCurrentPlatform = objects.property(Boolean).convention(false)
         selectPlatforms = objects.listProperty(String).convention([])
+        rejectPlatforms = objects.listProperty(String).convention([])
     }
 
     @Option(option = 'select-current-platform', description = 'Activates paths matching the current platform (OPTIONAL).')
@@ -58,9 +62,20 @@ abstract class AbstractPlatformAwareJReleaserTask extends AbstractJReleaserTask 
         this.selectPlatforms.addAll(selectPlatforms)
     }
 
+    @Option(option = 'reject-platform', description = 'Activates paths not matching the given platform (OPTIONAL).')
+    void setRejectPlatform(List<String> rejectPlatforms) {
+        this.rejectPlatforms.addAll(rejectPlatforms)
+    }
+
     @Override
     protected List<String> collectSelectedPlatforms() {
-        if (selectCurrentPlatform.getOrElse(false)) return Collections.singletonList(PlatformUtils.getCurrentFull())
-        return selectPlatforms.get()
+        boolean resolvedSelectCurrentPlatform = resolveBoolean(org.jreleaser.model.api.JReleaserContext.SELECT_CURRENT_PLATFORM, selectCurrentPlatform.getOrElse(false))
+        if (resolvedSelectCurrentPlatform) return Collections.singletonList(PlatformUtils.getCurrentFull())
+        return resolveCollection(org.jreleaser.model.api.JReleaserContext.SELECT_PLATFORMS, selectPlatforms.get() as List<String>)
+    }
+
+    @Override
+    protected List<String> collectRejectedPlatforms() {
+        return resolveCollection(org.jreleaser.model.api.JReleaserContext.REJECT_PLATFORMS, rejectPlatforms.get() as List<String>)
     }
 }

@@ -57,20 +57,4 @@ public interface Ssh {
     String getFingerprint();
 
     void setFingerprint(String fingerprint);
-
-    String getResolvedUsername();
-
-    String getResolvedPassword();
-
-    String getResolvedHost();
-
-    Integer getResolvedPort();
-
-    String getResolvedPublicKey();
-
-    String getResolvedPrivateKey();
-
-    String getResolvedPassphrase();
-
-    String getResolvedFingerprint();
 }

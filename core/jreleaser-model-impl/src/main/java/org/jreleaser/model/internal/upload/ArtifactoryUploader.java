@@ -26,7 +26,6 @@ import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.mustache.Templates;
-import org.jreleaser.util.Env;
 import org.jreleaser.util.FileType;
 
 import java.util.ArrayList;
@@ -233,9 +232,9 @@ public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.mo
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("authorization", authorization);
-        props.put("host", getResolvedHost());
-        props.put("username", isNotBlank(getResolvedUsername()) ? HIDE : UNSET);
-        props.put("password", isNotBlank(getResolvedPassword()) ? HIDE : UNSET);
+        props.put("host", host);
+        props.put("username", isNotBlank(username) ? HIDE : UNSET);
+        props.put("password", isNotBlank(password) ? HIDE : UNSET);
         List<Map<String, Object>> repositories = this.repositories.stream()
             .filter(d -> full || d.isEnabled())
             .map(d -> d.asMap(full))
@@ -249,18 +248,6 @@ public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.mo
         }
 
         return authorization;
-    }
-
-    public String getResolvedHost() {
-        return Env.env("ARTIFACTORY_" + Env.toVar(name) + "_HOST", host);
-    }
-
-    public String getResolvedUsername() {
-        return Env.env("ARTIFACTORY_" + Env.toVar(name) + "_USERNAME", username);
-    }
-
-    public String getResolvedPassword() {
-        return Env.env("ARTIFACTORY_" + Env.toVar(name) + "_PASSWORD", password);
     }
 
     @Override

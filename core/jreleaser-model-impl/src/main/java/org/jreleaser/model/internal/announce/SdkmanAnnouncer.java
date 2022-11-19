@@ -19,8 +19,6 @@ package org.jreleaser.model.internal.announce;
 
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Sdkman;
-import org.jreleaser.model.api.packagers.SdkmanPackager;
-import org.jreleaser.util.Env;
 
 import java.util.Map;
 
@@ -154,14 +152,6 @@ public final class SdkmanAnnouncer extends AbstractAnnouncer<SdkmanAnnouncer, or
         return false;
     }
 
-    public String getResolvedConsumerKey() {
-        return Env.env(SdkmanPackager.SDKMAN_CONSUMER_KEY, consumerKey);
-    }
-
-    public String getResolvedConsumerToken() {
-        return Env.env(SdkmanPackager.SDKMAN_CONSUMER_TOKEN, consumerToken);
-    }
-
     public String getConsumerKey() {
         return consumerKey;
     }
@@ -222,11 +212,10 @@ public final class SdkmanAnnouncer extends AbstractAnnouncer<SdkmanAnnouncer, or
         return command == Sdkman.Command.MAJOR;
     }
 
-
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
-        props.put("consumerKey", isNotBlank(getResolvedConsumerKey()) ? HIDE : UNSET);
-        props.put("consumerToken", isNotBlank(getResolvedConsumerToken()) ? HIDE : UNSET);
+        props.put("consumerKey", isNotBlank(consumerKey) ? HIDE : UNSET);
+        props.put("consumerToken", isNotBlank(consumerToken) ? HIDE : UNSET);
         props.put("candidate", candidate);
         props.put("releaseNotesUrl", releaseNotesUrl);
         props.put("downloadUrl", downloadUrl);

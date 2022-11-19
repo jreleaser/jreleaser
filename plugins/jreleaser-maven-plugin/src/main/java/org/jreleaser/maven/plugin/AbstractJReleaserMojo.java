@@ -31,6 +31,7 @@ import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.JReleaserModel;
+import org.jreleaser.util.Env;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.StringUtils;
 
@@ -41,11 +42,14 @@ import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import static java.util.stream.Collectors.toList;
 import static org.jreleaser.model.JReleaserOutput.JRELEASER_QUIET;
+import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -72,13 +76,19 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
      * Skips remote operations.
      */
     @Parameter(property = "jreleaser.dry.run")
-    protected boolean dryrun;
+    protected Boolean dryrun;
 
     /**
      * Searches for the Git root.
      */
     @Parameter(property = "jreleaser.git.root.search")
-    protected boolean gitRootSearch;
+    protected Boolean gitRootSearch;
+
+    /**
+     * Enable strict mode.
+     */
+    @Parameter(property = "jreleaser.strict")
+    protected Boolean strict;
 
     @Parameter(defaultValue = "${session}", required = true)
     private MavenSession session;
@@ -144,12 +154,30 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
                 null == configFile ? convertModel() : readModel(logger),
                 basedir,
                 outputDirectory.toPath(),
-                dryrun,
-                gitRootSearch,
-                collectSelectedPlatforms());
+                resolveBoolean(org.jreleaser.model.api.JReleaserContext.DRY_RUN, dryrun),
+                resolveBoolean(org.jreleaser.model.api.JReleaserContext.GIT_ROOT_SEARCH, gitRootSearch),
+                resolveBoolean(org.jreleaser.model.api.JReleaserContext.STRICT, strict),
+                collectSelectedPlatforms(),
+                collectRejectedPlatforms());
         } catch (JReleaserException e) {
             throw new MojoExecutionException("JReleaser for project " + project.getArtifactId() + " has not been properly configured.", e);
         }
+    }
+
+    protected boolean resolveBoolean(String key, Boolean value) {
+        if (null != value) return value;
+        String resolvedValue = Env.resolve(key, "");
+        return isNotBlank(resolvedValue) && Boolean.parseBoolean(resolvedValue);
+    }
+
+    protected List<String> resolveCollection(String key, List<String> values) {
+        if (!values.isEmpty()) return values;
+        String resolvedValue = Env.resolve(key, "");
+        if (isBlank(resolvedValue)) return Collections.emptyList();
+        return Arrays.stream(resolvedValue.trim().split(","))
+            .map(String::trim)
+            .filter(StringUtils::isNotBlank)
+            .collect(toList());
     }
 
     protected JReleaserContext.Configurer resolveConfigurer(File configFile) {
@@ -173,7 +201,10 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
     }
 
     private Path resolveBasedir() {
-        if (isNotBlank(multiModuleProjectDirectory)) {
+        String resolvedBasedir = Env.resolve(org.jreleaser.model.api.JReleaserContext.BASEDIR, "");
+        if (isNotBlank(resolvedBasedir)) {
+            return Paths.get(resolvedBasedir.trim());
+        } else if (isNotBlank(multiModuleProjectDirectory)) {
             return Paths.get(multiModuleProjectDirectory.trim());
         } else if (isNotBlank(session.getExecutionRootDirectory())) {
             return Paths.get(session.getExecutionRootDirectory().trim());
@@ -182,6 +213,10 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
     }
 
     protected List<String> collectSelectedPlatforms() {
+        return Collections.emptyList();
+    }
+
+    protected List<String> collectRejectedPlatforms() {
         return Collections.emptyList();
     }
 

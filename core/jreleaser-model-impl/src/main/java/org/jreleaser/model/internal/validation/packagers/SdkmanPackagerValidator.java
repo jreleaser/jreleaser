@@ -73,6 +73,8 @@ public abstract class SdkmanPackagerValidator extends Validator {
         if (candidateArtifacts.size() == 0) {
             packager.setActive(Active.NEVER);
             context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
+            errors.warning(RB.$("WARNING.validation.packager.no.artifacts", distribution.getName(),
+                packager.getType(), packager.getSupportedFileExtensions(distribution.getType())));
             packager.disable();
             return;
         }

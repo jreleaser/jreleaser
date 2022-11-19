@@ -22,17 +22,16 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.Stereotype;
-import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.common.Activatable;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.Domain;
+import org.jreleaser.model.internal.common.Executable;
 import org.jreleaser.model.internal.common.ExtraProperties;
 import org.jreleaser.model.internal.common.Java;
 import org.jreleaser.model.internal.packagers.Packager;
 import org.jreleaser.model.internal.packagers.Packagers;
 import org.jreleaser.model.internal.platform.Platform;
 import org.jreleaser.model.internal.project.Project;
-import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.version.SemanticVersion;
 
 import java.util.ArrayList;
@@ -114,7 +113,7 @@ public final class Distribution extends Packagers<Distribution> implements Domai
         }
 
         @Override
-        public Executable getExecutable() {
+        public org.jreleaser.model.api.common.Executable getExecutable() {
             return executable.asImmutable();
         }
 
@@ -526,93 +525,5 @@ public final class Distribution extends Packagers<Distribution> implements Domai
         Map<String, Object> map = new LinkedHashMap<>();
         map.put(name, props);
         return map;
-    }
-
-    public static class Executable extends AbstractModelObject<Executable> implements Domain {
-        private String name;
-        private String unixExtension;
-        private String windowsExtension = "bat";
-
-        private final org.jreleaser.model.api.distributions.Distribution.Executable immutable = new org.jreleaser.model.api.distributions.Distribution.Executable() {
-            @Override
-            public String getName() {
-                return name;
-            }
-
-            @Override
-            public String getUnixExtension() {
-                return unixExtension;
-            }
-
-            @Override
-            public String getWindowsExtension() {
-                return windowsExtension;
-            }
-
-            @Override
-            public Map<String, Object> asMap(boolean full) {
-                return unmodifiableMap(Executable.this.asMap(full));
-            }
-        };
-
-        public org.jreleaser.model.api.distributions.Distribution.Executable asImmutable() {
-            return immutable;
-        }
-
-        @Override
-        public void merge(Executable source) {
-            this.name = this.merge(this.name, source.name);
-            this.unixExtension = this.merge(this.unixExtension, source.unixExtension);
-            this.windowsExtension = this.merge(this.windowsExtension, source.windowsExtension);
-        }
-
-        public String resolveExecutable(String platform) {
-            if (PlatformUtils.isWindows(platform)) {
-                return name + resolveWindowsExtension();
-            }
-
-            return name + resolveUnixExtension();
-        }
-
-        public String resolveUnixExtension() {
-            return isNotBlank(unixExtension) ? "." + unixExtension : "";
-        }
-
-        public String resolveWindowsExtension() {
-            return "." + windowsExtension;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getUnixExtension() {
-            return unixExtension;
-        }
-
-        public void setUnixExtension(String unixExtension) {
-            this.unixExtension = unixExtension;
-        }
-
-        public String getWindowsExtension() {
-            return windowsExtension;
-        }
-
-        public void setWindowsExtension(String windowsExtension) {
-            this.windowsExtension = windowsExtension;
-        }
-
-        @Override
-        public Map<String, Object> asMap(boolean full) {
-            Map<String, Object> map = new LinkedHashMap<>();
-            map.put("name", name);
-            map.put("unixExtension", unixExtension);
-            map.put("windowsExtension", windowsExtension);
-            return map;
-        }
     }
 }

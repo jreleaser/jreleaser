@@ -60,6 +60,10 @@ abstract class JReleaserTemplateTask extends DefaultTask {
     @Optional
     final Property<String> announcerName
 
+    @Input
+    @Optional
+    final Property<String> assemblerType
+
     @OutputDirectory
     final DirectoryProperty outputDirectory
 
@@ -79,6 +83,7 @@ abstract class JReleaserTemplateTask extends DefaultTask {
         distributionName = objects.property(String)
         packagerName = objects.property(String)
         announcerName = objects.property(String).convention(Providers.<String> notDefined())
+        assemblerType = objects.property(String).convention(Providers.<String> notDefined())
         overwrite = objects.property(Boolean).convention(false)
         snapshot = objects.property(Boolean).convention(false)
 
@@ -110,6 +115,11 @@ abstract class JReleaserTemplateTask extends DefaultTask {
         this.announcerName.set(announcerName)
     }
 
+    @Option(option = 'assembler-type', description = 'The type of the assembler (OPTIONAL).')
+    void setAssemblerType(String assemblerType) {
+        this.assemblerType.set(assemblerType)
+    }
+
     @Option(option = 'distribution-type', description = 'The type of the distribution (OPTIONAL).')
     void setAction(Distribution.DistributionType distributionType) {
         this.distributionType.set(distributionType)
@@ -128,6 +138,8 @@ abstract class JReleaserTemplateTask extends DefaultTask {
             .distributionType(distributionType.orNull)
             .packagerName(packagerName.orNull)
             .announcerName(announcerName.orNull)
+            .assemblerType(assemblerType.orNull)
+            .assemblerName(distributionName.orNull)
             .outputDirectory(outputDirectory.get().asFile.toPath())
             .overwrite(overwrite.get())
             .snapshot(snapshot.get())

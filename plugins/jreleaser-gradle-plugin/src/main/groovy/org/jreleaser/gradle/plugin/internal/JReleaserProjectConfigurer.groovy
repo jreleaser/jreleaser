@@ -44,6 +44,7 @@ import org.jreleaser.gradle.plugin.tasks.JReleaserTemplateTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserUploadTask
 import org.jreleaser.logging.JReleaserLogger
 import org.jreleaser.model.internal.JReleaserModel
+import org.jreleaser.version.SemanticVersion
 
 import java.nio.file.Files
 import java.nio.file.Path
@@ -80,6 +81,7 @@ class JReleaserProjectConfigurer {
                     t.description = 'Outputs current JReleaser configuration'
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
+                    t.strict.set(extension.strict)
                     t.model.set(model)
                     t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
@@ -110,6 +112,7 @@ class JReleaserProjectConfigurer {
                     t.description = 'Downloads all artifacts'
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
+                    t.strict.set(extension.strict)
                     t.model.set(model)
                     t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
@@ -124,6 +127,7 @@ class JReleaserProjectConfigurer {
                     t.description = 'Assemble all distributions'
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
+                    t.strict.set(extension.strict)
                     t.model.set(model)
                     t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
@@ -138,6 +142,7 @@ class JReleaserProjectConfigurer {
                     t.description = 'Calculate changelogs'
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
+                    t.strict.set(extension.strict)
                     t.model.set(model)
                     t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
@@ -152,6 +157,7 @@ class JReleaserProjectConfigurer {
                     t.description = 'Calculate checksums'
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
+                    t.strict.set(extension.strict)
                     t.model.set(model)
                     t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
@@ -169,6 +175,7 @@ class JReleaserProjectConfigurer {
                     t.description = 'Signs a release'
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
+                    t.strict.set(extension.strict)
                     t.model.set(model)
                     t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
@@ -186,6 +193,7 @@ class JReleaserProjectConfigurer {
                     t.description = 'Deploys all artifacts'
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
+                    t.strict.set(extension.strict)
                     t.model.set(model)
                     t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
@@ -200,6 +208,7 @@ class JReleaserProjectConfigurer {
                     t.description = 'Uploads all artifacts'
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
+                    t.strict.set(extension.strict)
                     t.model.set(model)
                     t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
@@ -217,6 +226,7 @@ class JReleaserProjectConfigurer {
                     t.description = 'Creates or updates a release'
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
+                    t.strict.set(extension.strict)
                     t.model.set(model)
                     t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
@@ -234,6 +244,7 @@ class JReleaserProjectConfigurer {
                     t.description = 'Creates or updates a release with auto-config enabled'
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
+                    t.strict.set(extension.strict)
                     t.outputDirectory.set(outputDirectory)
                 }
             })
@@ -246,6 +257,7 @@ class JReleaserProjectConfigurer {
                     t.description = 'Prepares all distributions'
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
+                    t.strict.set(extension.strict)
                     t.model.set(model)
                     t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
@@ -263,6 +275,7 @@ class JReleaserProjectConfigurer {
                     t.description = 'Packages all distributions'
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
+                    t.strict.set(extension.strict)
                     t.model.set(model)
                     t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
@@ -280,6 +293,7 @@ class JReleaserProjectConfigurer {
                     t.description = 'Publishes all distributions'
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
+                    t.strict.set(extension.strict)
                     t.model.set(model)
                     t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
@@ -297,6 +311,7 @@ class JReleaserProjectConfigurer {
                     t.description = 'Announces a release'
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
+                    t.strict.set(extension.strict)
                     t.model.set(model)
                     t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
@@ -314,6 +329,7 @@ class JReleaserProjectConfigurer {
                     t.description = 'Invokes release, publish, and announce'
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
+                    t.strict.set(extension.strict)
                     t.model.set(model)
                     t.jlogger.set(logger)
                     t.outputDirectory.set(outputDirectory)
@@ -359,15 +375,14 @@ class JReleaserProjectConfigurer {
         if (isBlank(model.project.java.mainClass)) {
             JavaApplication application = (JavaApplication) project.extensions.findByType(JavaApplication)
             if (application) {
-                List<Integer> version = GradleVersion.current().getVersion().split('\\.')
-                    .collect { Integer.parseInt(it) }
-                if (version[0] <= 6 && version[1] < 4) {
+                SemanticVersion gradleVersion = SemanticVersion.of(GradleVersion.current().getVersion())
+                if (gradleVersion.major <= 6 && gradleVersion.minor < 4) {
                     model.project.java.mainClass = application.mainClassName
                 } else {
                     model.project.java.mainClass = application.mainClass.orNull
                 }
 
-                if (version[0] <= 6 && version[1] < 4) {
+                if (gradleVersion.major <= 6 && gradleVersion.minor < 4) {
                     model.project.java.mainModule = ''
                 } else {
                     model.project.java.mainModule = application.mainModule.orNull

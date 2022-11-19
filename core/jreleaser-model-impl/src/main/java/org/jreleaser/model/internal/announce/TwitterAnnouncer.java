@@ -21,7 +21,6 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.internal.JReleaserContext;
-import org.jreleaser.util.Env;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -35,10 +34,6 @@ import static java.util.Collections.unmodifiableMap;
 import static org.jreleaser.model.Constants.HIDE;
 import static org.jreleaser.model.Constants.KEY_TAG_NAME;
 import static org.jreleaser.model.Constants.UNSET;
-import static org.jreleaser.model.api.announce.TwitterAnnouncer.TWITTER_ACCESS_TOKEN;
-import static org.jreleaser.model.api.announce.TwitterAnnouncer.TWITTER_ACCESS_TOKEN_SECRET;
-import static org.jreleaser.model.api.announce.TwitterAnnouncer.TWITTER_CONSUMER_KEY;
-import static org.jreleaser.model.api.announce.TwitterAnnouncer.TWITTER_CONSUMER_SECRET;
 import static org.jreleaser.model.api.announce.TwitterAnnouncer.TYPE;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplate;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
@@ -190,22 +185,6 @@ public final class TwitterAnnouncer extends AbstractAnnouncer<TwitterAnnouncer, 
         }
     }
 
-    public String getResolvedConsumerKey() {
-        return Env.env(TWITTER_CONSUMER_KEY, consumerKey);
-    }
-
-    public String getResolvedConsumerSecret() {
-        return Env.env(TWITTER_CONSUMER_SECRET, consumerSecret);
-    }
-
-    public String getResolvedAccessToken() {
-        return Env.env(TWITTER_ACCESS_TOKEN, accessToken);
-    }
-
-    public String getResolvedAccessTokenSecret() {
-        return Env.env(TWITTER_ACCESS_TOKEN_SECRET, accessTokenSecret);
-    }
-
     public String getConsumerKey() {
         return consumerKey;
     }
@@ -265,10 +244,10 @@ public final class TwitterAnnouncer extends AbstractAnnouncer<TwitterAnnouncer, 
 
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
-        props.put("consumerKey", isNotBlank(getResolvedConsumerKey()) ? HIDE : UNSET);
-        props.put("consumerSecret", isNotBlank(getResolvedConsumerSecret()) ? HIDE : UNSET);
-        props.put("accessToken", isNotBlank(getResolvedAccessToken()) ? HIDE : UNSET);
-        props.put("accessTokenSecret", isNotBlank(getResolvedAccessTokenSecret()) ? HIDE : UNSET);
+        props.put("consumerKey", isNotBlank(consumerKey) ? HIDE : UNSET);
+        props.put("consumerSecret", isNotBlank(consumerSecret) ? HIDE : UNSET);
+        props.put("accessToken", isNotBlank(accessToken) ? HIDE : UNSET);
+        props.put("accessTokenSecret", isNotBlank(accessTokenSecret) ? HIDE : UNSET);
         props.put("status", status);
         props.put("statuses", statuses);
         props.put("statusTemplate", statusTemplate);

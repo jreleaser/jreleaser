@@ -61,6 +61,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public abstract class BaseReleaserValidator extends Validator {
     private static final String DEFAULT_CHANGELOG_TPL = "src/jreleaser/templates/changelog.tpl";
+    private static final String DEFAULT_APPEND_CHANGELOG_TPL = "src/jreleaser/templates/append-changelog.tpl";
 
     public static void validateGitService(JReleaserContext context, Mode mode, BaseReleaser service, Errors errors) {
         JReleaserModel model = context.getModel();
@@ -296,6 +297,14 @@ public abstract class BaseReleaserValidator extends Validator {
             changelog.setFormat("- {{commitShortHash}} {{commitTitle}} ({{commitAuthor}})");
         }
 
+        if (isBlank(changelog.getCategoryTitleFormat())) {
+            changelog.setCategoryTitleFormat("## {{categoryTitle}}");
+        }
+
+        if (isBlank(changelog.getContributorsTitleFormat())) {
+            changelog.setContributorsTitleFormat("## Contributors");
+        }
+
         if (isBlank(changelog.getContent()) && isBlank(changelog.getContentTemplate())) {
             if (Files.exists(context.getBasedir().resolve(DEFAULT_CHANGELOG_TPL))) {
                 changelog.setContentTemplate(DEFAULT_CHANGELOG_TPL);
@@ -371,6 +380,35 @@ public abstract class BaseReleaserValidator extends Validator {
 
         if (!changelog.getContributors().isEnabledSet()) {
             changelog.getContributors().setEnabled(true);
+        }
+
+        // append changelog
+        if (!changelog.getAppend().isEnabled()) return;
+
+        if (isBlank(changelog.getAppend().getTitle())) {
+            changelog.getAppend().setTitle("## [{{tagName}}]");
+        }
+
+        if (isBlank(changelog.getAppend().getTarget())) {
+            changelog.getAppend().setTarget("CHANGELOG.md");
+        }
+
+        if (isBlank(changelog.getAppend().getTarget())) {
+            errors.configuration(RB.$("validation_is_missing", service.getServiceName() + ".changelog.append.target"));
+        }
+
+        if (isBlank(changelog.getAppend().getContent()) && isBlank(changelog.getAppend().getContentTemplate())) {
+            if (Files.exists(context.getBasedir().resolve(DEFAULT_APPEND_CHANGELOG_TPL))) {
+                changelog.getAppend().setContentTemplate(DEFAULT_APPEND_CHANGELOG_TPL);
+            } else {
+                changelog.getAppend().setContent(lineSeparator() + "{{changelogTitle}}" +
+                    lineSeparator() + lineSeparator() + "{{changelogContent}}");
+            }
+        }
+
+        if (isNotBlank(changelog.getAppend().getContentTemplate()) &&
+            !Files.exists(context.getBasedir().resolve(changelog.getAppend().getContentTemplate().trim()))) {
+            errors.configuration(RB.$("validation_directory_not_exist", "changelog.append.contentTemplate", changelog.getAppend().getContentTemplate()));
         }
     }
 

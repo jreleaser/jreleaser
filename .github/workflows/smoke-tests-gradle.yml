@@ -56,19 +56,19 @@ jobs:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: ${{ env.JAVA_DISTRO }}
 
-      - uses: actions/cache@v3
+      - name: Cache Gradle
+        uses: actions/cache@v3
         with:
           path: ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}-${{ hashFiles('**/gradle.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+          restore-keys: ${{ runner.os }}-gradle-
 
-      - uses: actions/cache@v3
+      - name: Cache Gradle wrapper
+        uses: actions/cache@v3
         with:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-gradlew-${{ hashFiles('**/gradlew') }}
-          restore-keys: |
-            ${{ runner.os }}-gradlew-
+          restore-keys: ${{ runner.os }}-gradlew-
 
       - name: Build
         run: ./gradlew -Prelease=true clean build publishToMavenLocal -S

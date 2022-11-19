@@ -21,7 +21,6 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.internal.JReleaserContext;
-import org.jreleaser.util.Env;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -33,7 +32,6 @@ import static org.jreleaser.model.Constants.HIDE;
 import static org.jreleaser.model.Constants.KEY_TAG_NAME;
 import static org.jreleaser.model.Constants.UNSET;
 import static org.jreleaser.model.api.announce.ZulipAnnouncer.TYPE;
-import static org.jreleaser.model.api.announce.ZulipAnnouncer.ZULIP_API_KEY;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplate;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
@@ -189,10 +187,6 @@ public final class ZulipAnnouncer extends AbstractAnnouncer<ZulipAnnouncer, org.
         }
     }
 
-    public String getResolvedApiKey() {
-        return Env.env(ZULIP_API_KEY, apiKey);
-    }
-
     public String getAccount() {
         return account;
     }
@@ -252,7 +246,7 @@ public final class ZulipAnnouncer extends AbstractAnnouncer<ZulipAnnouncer, org.
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("account", account);
-        props.put("apiKey", isNotBlank(getResolvedApiKey()) ? HIDE : UNSET);
+        props.put("apiKey", isNotBlank(apiKey) ? HIDE : UNSET);
         props.put("apiHost", apiHost);
         props.put("channel", channel);
         props.put("subject", subject);

@@ -60,6 +60,7 @@ public abstract class S3UploaderValidator extends Validator {
         }
 
         if (!s3.isArtifacts() && !s3.isFiles() && !s3.isSignatures()) {
+            errors.warning(RB.$("WARNING.validation.uploader.no.artifacts", s3.getType(), s3.getName()));
             context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
             s3.disable();
             return;
@@ -84,21 +85,21 @@ public abstract class S3UploaderValidator extends Validator {
                 Env.toVar("S3_" + s3.getName()) + "_ACCESS_KEY_ID",
                 "s3." + s3.getName() + ".accessKeyId",
                 s3.getAccessKeyId(),
-                s3.getResolvedAccessKeyId()));
+                s3.getAccessKeyId()));
 
         s3.setSecretKey(
             checkProperty(context,
                 Env.toVar("S3_" + s3.getName()) + "_SECRET_KEY",
                 "s3." + s3.getName() + ".secretKey",
                 s3.getSecretKey(),
-                s3.getResolvedSecretKey()));
+                s3.getSecretKey()));
 
         s3.setSessionToken(
             checkProperty(context,
                 Env.toVar("S3_" + s3.getName()) + "_SESSION_TOKEN",
                 "s3." + s3.getName() + ".sessionToken",
                 s3.getSessionToken(),
-                s3.getResolvedSessionToken()));
+                s3.getSessionToken()));
 
         s3.setPath(
             checkProperty(context,
@@ -112,7 +113,7 @@ public abstract class S3UploaderValidator extends Validator {
                 Env.toVar("S3_" + s3.getName()) + "_DOWNLOAD_URL",
                 "s3." + s3.getName() + ".downloadUrl",
                 s3.getDownloadUrl(),
-                s3.getResolvedDownloadUrl()));
+                s3.getDownloadUrl()));
 
         s3.setEndpoint(
             checkProperty(context,
@@ -121,7 +122,7 @@ public abstract class S3UploaderValidator extends Validator {
                 s3.getEndpoint(),
                 ""));
 
-        if (isNotBlank(s3.getResolvedEndpoint()) && isBlank(s3.getResolvedDownloadUrl())) {
+        if (isNotBlank(s3.getEndpoint()) && isBlank(s3.getDownloadUrl())) {
             errors.configuration(RB.$("validation_s3_missing_download_url", "s3." + s3.getName()));
         }
 

@@ -81,7 +81,7 @@ public class SmtpAnnouncer implements Announcer<org.jreleaser.model.api.announce
                 .port(smtp.getPort())
                 .auth(smtp.isAuth())
                 .username(smtp.getUsername())
-                .password(context.isDryrun() ? "**UNDEFINED**" : smtp.getResolvedPassword())
+                .password(context.isDryrun() ? "**UNDEFINED**" : smtp.getPassword())
                 .from(smtp.getFrom())
                 .to(smtp.getTo())
                 .cc(smtp.getCc())

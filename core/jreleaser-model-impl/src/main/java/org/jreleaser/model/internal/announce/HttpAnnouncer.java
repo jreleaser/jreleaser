@@ -22,7 +22,6 @@ import org.jreleaser.model.Active;
 import org.jreleaser.model.Http;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.internal.JReleaserContext;
-import org.jreleaser.util.Env;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -187,14 +186,6 @@ public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer, org.jr
         return authorization;
     }
 
-    public String getResolvedUsername() {
-        return Env.env("HTTP_" + Env.toVar(name) + "_USERNAME", username);
-    }
-
-    public String getResolvedPassword() {
-        return Env.env("HTTP_" + Env.toVar(name) + "_PASSWORD", password);
-    }
-
     public String getResolvedUrl(JReleaserContext context) {
         Map<String, Object> props = context.fullProps();
         applyTemplates(props, getResolvedExtraProperties());
@@ -318,8 +309,8 @@ public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer, org.jr
         props.put("authorization", authorization);
         props.put("bearerKeyword", bearerKeyword);
         props.put("method", method);
-        props.put("username", isNotBlank(getResolvedUsername()) ? HIDE : UNSET);
-        props.put("password", isNotBlank(getResolvedPassword()) ? HIDE : UNSET);
+        props.put("username", isNotBlank(username) ? HIDE : UNSET);
+        props.put("password", isNotBlank(password) ? HIDE : UNSET);
         props.put("headers", headers);
         props.put("payload", payload);
         props.put("payloadTemplate", payloadTemplate);

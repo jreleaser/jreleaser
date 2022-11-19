@@ -164,9 +164,4 @@ public final class ScpUploader extends AbstractSshUploader<org.jreleaser.model.a
     public org.jreleaser.model.api.upload.ScpUploader asImmutable() {
         return immutable;
     }
-
-    @Override
-    protected String getEnvPrefix() {
-        return "SCP";
-    }
 }

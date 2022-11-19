@@ -33,6 +33,7 @@ import org.jreleaser.engine.context.ModelAutoConfigurer
 import org.jreleaser.gradle.plugin.internal.JReleaserLoggerAdapter
 import org.jreleaser.model.UpdateSection
 import org.jreleaser.model.internal.JReleaserContext
+import org.jreleaser.util.Env
 import org.jreleaser.util.PlatformUtils
 import org.jreleaser.workflow.Workflows
 
@@ -40,6 +41,8 @@ import javax.inject.Inject
 import java.nio.file.Files
 import java.nio.file.Path
 
+import static java.util.stream.Collectors.toList
+import static org.jreleaser.util.StringUtils.isBlank
 import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
@@ -57,6 +60,9 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
     @Input
     @Optional
     final Property<Boolean> gitRootSearch
+    @Input
+    @Optional
+    final Property<Boolean> strict
     @Input
     @Optional
     final Property<String> projectName
@@ -158,6 +164,9 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
     @Input
     @Optional
     final ListProperty<String> selectPlatforms
+    @Input
+    @Optional
+    final ListProperty<String> rejectPlatforms
 
     @Option(option = 'project-name', description = 'The project name (OPTIONAL).')
     void setProjectName(String projectName) {
@@ -264,6 +273,11 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
         this.gitRootSearch.set(gitRootSearch)
     }
 
+    @Option(option = 'strict', description = 'Enable strict mode (OPTIONAL).')
+    void setStrict(boolean strict) {
+        this.strict.set(strict)
+    }
+
     @Option(option = 'prerelease', description = 'If the release is a prerelease (OPTIONAL).')
     void setPrerelease(boolean prerelease) {
         this.prerelease.set(prerelease)
@@ -337,7 +351,7 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
 
     @Option(option = 'select-current-platform', description = 'Activates paths matching the current platform (OPTIONAL).')
     void setSelectCurrentPlatform(boolean selectCurrentPlatform) {
-        this.dryrun.set(selectCurrentPlatform)
+        this.selectCurrentPlatform.set(selectCurrentPlatform)
     }
 
     @Option(option = 'select-platform', description = 'Activates paths matching the given platform (OPTIONAL).')
@@ -345,10 +359,16 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
         this.selectPlatforms.addAll(selectPlatforms)
     }
 
+    @Option(option = 'reject-platform', description = 'Activates paths not matching the given platform (OPTIONAL).')
+    void setRejectPlatform(List<String> rejectPlatforms) {
+        this.rejectPlatforms.addAll(rejectPlatforms)
+    }
+
     @Inject
     JReleaseAutoConfigReleaseTask(ObjectFactory objects) {
-        dryrun = objects.property(Boolean).convention(false)
-        gitRootSearch = objects.property(Boolean).convention(false)
+        dryrun = objects.property(Boolean)
+        gitRootSearch = objects.property(Boolean)
+        strict = objects.property(Boolean)
         outputDirectory = objects.directoryProperty()
 
         projectName = objects.property(String).convention(project.name)
@@ -385,6 +405,7 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
         globs = objects.listProperty(String).convention([])
         selectCurrentPlatform = objects.property(Boolean).convention(false)
         selectPlatforms = objects.listProperty(String).convention([])
+        rejectPlatforms = objects.listProperty(String).convention([])
     }
 
     @TaskAction
@@ -398,8 +419,9 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
             .logger(new JReleaserLoggerAdapter(project, tracer))
             .basedir(project.projectDir.toPath())
             .outputDirectory(outputDirectoryPath)
-            .dryrun(dryrun.get())
-            .gitRootSearch(gitRootSearch.get())
+            .dryrun(dryrun.getOrElse(false))
+            .gitRootSearch(gitRootSearch.getOrElse(false))
+            .strict(strict.getOrElse(false))
             .projectName(projectName.get())
             .projectVersion(projectVersion.get())
             .projectVersionPattern(projectVersionPattern.orNull)
@@ -433,13 +455,35 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
             .files((List<String>) files.getOrElse([] as List<String>))
             .globs((List<String>) globs.getOrElse([] as List<String>))
             .selectedPlatforms(collectSelectedPlatforms())
+            .rejectedPlatforms(collectRejectedPlatforms())
             .autoConfigure()
 
         Workflows.release(context).execute()
     }
 
     protected List<String> collectSelectedPlatforms() {
-        if (selectCurrentPlatform.present) return Collections.singletonList(PlatformUtils.getCurrentFull())
-        return selectPlatforms.get()
+        boolean resolvedSelectCurrentPlatform = resolveBoolean(org.jreleaser.model.api.JReleaserContext.SELECT_CURRENT_PLATFORM, selectCurrentPlatform.getOrElse(false))
+        if (resolvedSelectCurrentPlatform) return Collections.singletonList(PlatformUtils.getCurrentFull())
+        return resolveCollection(org.jreleaser.model.api.JReleaserContext.SELECT_PLATFORMS, selectPlatforms.get() as List<String>)
+    }
+
+    protected List<String> collectRejectedPlatforms() {
+        return resolveCollection(org.jreleaser.model.api.JReleaserContext.REJECT_PLATFORMS, rejectPlatforms.get() as List<String>)
+    }
+
+    protected boolean resolveBoolean(String key, Boolean value) {
+        if (null != value) return value
+        String resolvedValue = Env.resolve(key, '')
+        return isNotBlank(resolvedValue) && Boolean.parseBoolean(resolvedValue)
+    }
+
+    protected List<String> resolveCollection(String key, List<String> values) {
+        if (!values.isEmpty()) return values;
+        String resolvedValue = Env.resolve(key, '')
+        if (isBlank(resolvedValue)) return Collections.emptyList()
+        return Arrays.stream(resolvedValue.trim().split(','))
+            .map({ s -> s.trim() })
+            .filter({ s -> isNotBlank(s) })
+            .collect(toList())
     }
 }

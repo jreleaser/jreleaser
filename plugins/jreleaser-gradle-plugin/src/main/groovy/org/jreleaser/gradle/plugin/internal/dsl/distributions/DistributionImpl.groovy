@@ -26,8 +26,8 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.common.Artifact
+import org.jreleaser.gradle.plugin.dsl.common.Executable
 import org.jreleaser.gradle.plugin.dsl.common.Java
 import org.jreleaser.gradle.plugin.dsl.distributions.Distribution
 import org.jreleaser.gradle.plugin.dsl.packagers.AppImagePackager
@@ -45,6 +45,7 @@ import org.jreleaser.gradle.plugin.dsl.packagers.SnapPackager
 import org.jreleaser.gradle.plugin.dsl.packagers.SpecPackager
 import org.jreleaser.gradle.plugin.dsl.platform.Platform
 import org.jreleaser.gradle.plugin.internal.dsl.common.ArtifactImpl
+import org.jreleaser.gradle.plugin.internal.dsl.common.ExecutableImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.JavaImpl
 import org.jreleaser.gradle.plugin.internal.dsl.packagers.AppImagePackagerImpl
 import org.jreleaser.gradle.plugin.internal.dsl.packagers.AsdfPackagerImpl
@@ -369,32 +370,4 @@ class DistributionImpl implements Distribution {
         distribution
     }
 
-    @CompileStatic
-    static class ExecutableImpl implements Executable {
-        final Property<String> name
-        final Property<String> unixExtension
-        final Property<String> windowsExtension
-
-        @Inject
-        ExecutableImpl(ObjectFactory objects) {
-            name = objects.property(String).convention(Providers.<String> notDefined())
-            unixExtension = objects.property(String).convention(Providers.<String> notDefined())
-            windowsExtension = objects.property(String).convention(Providers.<String> notDefined())
-        }
-
-        @Internal
-        boolean isSet() {
-            name.present ||
-                unixExtension.present ||
-                windowsExtension.present
-        }
-
-        org.jreleaser.model.internal.distributions.Distribution.Executable toModel() {
-            org.jreleaser.model.internal.distributions.Distribution.Executable executable = new org.jreleaser.model.internal.distributions.Distribution.Executable()
-            if (name.present) executable.name = name.get()
-            if (unixExtension.present) executable.unixExtension = unixExtension.get()
-            if (windowsExtension.present) executable.windowsExtension = windowsExtension.get()
-            executable
-        }
-    }
 }

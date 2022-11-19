@@ -81,7 +81,7 @@ public class DiscussionsAnnouncer implements Announcer<org.jreleaser.model.api.a
         try {
             Github api = new Github(context.getLogger(),
                 github.getApiEndpoint(),
-                github.getResolvedToken(),
+                github.getToken(),
                 discussions.getConnectTimeout(),
                 discussions.getReadTimeout());
 

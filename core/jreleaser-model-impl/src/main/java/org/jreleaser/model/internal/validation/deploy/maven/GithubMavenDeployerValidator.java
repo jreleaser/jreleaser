@@ -41,7 +41,7 @@ public abstract class GithubMavenDeployerValidator extends Validator {
 
         for (Map.Entry<String, GithubMavenDeployer> e : github.entrySet()) {
             e.getValue().setName(e.getKey());
-            if (mode.validateConfig()) {
+            if (mode.validateDeploy() || mode.validateConfig()) {
                 validateGithubMavenDeployer(context, mode, e.getValue(), errors);
             }
         }
@@ -65,7 +65,7 @@ public abstract class GithubMavenDeployerValidator extends Validator {
                 true));
 
         if (isBlank(mavenDeployer.getUsername())) {
-            mavenDeployer.setUsername(context.getModel().getRelease().getReleaser().getResolvedUsername());
+            mavenDeployer.setUsername(context.getModel().getRelease().getReleaser().getUsername());
         }
 
         if (isBlank(mavenDeployer.getRepository())) {

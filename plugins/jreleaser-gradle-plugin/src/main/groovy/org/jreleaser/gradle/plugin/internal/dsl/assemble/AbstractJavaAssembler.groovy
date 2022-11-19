@@ -87,6 +87,7 @@ abstract class AbstractJavaAssembler extends AbstractAssembler implements JavaAs
         super.isSet() ||
             executable.present ||
             mainJar.isSet() ||
+            templateDirectory.present ||
             !jars.isEmpty() ||
             !files.isEmpty()
     }

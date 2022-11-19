@@ -21,8 +21,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.project.Project;
-import org.jreleaser.model.internal.release.BaseReleaser;
-import org.jreleaser.util.Env;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -136,16 +134,6 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
 
     public String getResolvedTagName(Map<String, Object> props) {
         return resolveTemplate(tagName, props);
-    }
-
-    public String getResolvedUsername(BaseReleaser service) {
-        return Env.env(Env.toVar(basename + "_"
-            + service.getServiceName()) + "_USERNAME", username);
-    }
-
-    public String getResolvedToken(BaseReleaser service) {
-        return Env.env(Env.toVar(basename + "_"
-            + service.getServiceName()) + "_TOKEN", token);
     }
 
     @Override

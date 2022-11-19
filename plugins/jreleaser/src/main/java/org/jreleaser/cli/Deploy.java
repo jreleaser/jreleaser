@@ -17,18 +17,21 @@
  */
 package org.jreleaser.cli;
 
+import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.workflow.Workflows;
 import picocli.CommandLine;
+
+import static org.jreleaser.model.api.JReleaserContext.Mode.DEPLOY;
 
 /**
  * @author Andres Almiray
  * @since 1.3.0
  */
 @CommandLine.Command(name = "deploy")
-public class Deploy extends AbstractPlatformAwareModelCommand {
+public class Deploy extends AbstractModelCommand {
     @CommandLine.Option(names = {"--dry-run"})
-    boolean dryrun;
+    Boolean dryrun;
 
     @CommandLine.ArgGroup
     Composite composite;
@@ -91,7 +94,12 @@ public class Deploy extends AbstractPlatformAwareModelCommand {
     }
 
     @Override
-    protected boolean dryrun() {
+    protected Boolean dryrun() {
         return dryrun;
+    }
+
+    @Override
+    protected Mode getMode() {
+        return DEPLOY;
     }
 }

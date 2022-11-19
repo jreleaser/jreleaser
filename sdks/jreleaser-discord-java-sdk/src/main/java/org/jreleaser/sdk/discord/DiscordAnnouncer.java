@@ -74,7 +74,7 @@ public class DiscordAnnouncer implements Announcer<org.jreleaser.model.api.annou
 
         if (!context.isDryrun()) {
             ClientUtils.webhook(context.getLogger(),
-                discord.getResolvedWebhook(),
+                discord.getWebhook(),
                 discord.getConnectTimeout(),
                 discord.getReadTimeout(),
                 Message.of(message));

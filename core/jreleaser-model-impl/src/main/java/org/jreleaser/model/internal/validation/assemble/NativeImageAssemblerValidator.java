@@ -158,6 +158,11 @@ public abstract class NativeImageAssemblerValidator extends Validator {
             "nativeImage." + nativeImage.getName() + ".jars",
             errors);
 
+        validateGlobs(context,
+            nativeImage.getFiles(),
+            "nativeImage." + nativeImage.getName() + ".files",
+            errors);
+
         if (mode == Mode.ASSEMBLE) {
             validateTemplate(context, nativeImage, errors);
         }

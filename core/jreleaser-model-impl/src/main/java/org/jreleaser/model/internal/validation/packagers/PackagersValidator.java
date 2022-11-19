@@ -195,14 +195,14 @@ public abstract class PackagersValidator extends Validator {
                 Env.toVar(tap.getBasename() + "_" + service.getServiceName()) + "_USERNAME",
                 "<empty>",
                 tap.getUsername(),
-                service.getResolvedUsername()));
+                service.getUsername()));
 
         tap.setToken(
             checkProperty(context,
                 Env.toVar(tap.getBasename() + "_" + service.getServiceName()) + "_TOKEN",
                 "<empty>",
                 tap.getToken(),
-                service.getResolvedToken()));
+                service.getToken()));
 
         if (isBlank(tap.getTagName())) {
             tap.setTagName(service.getTagName());

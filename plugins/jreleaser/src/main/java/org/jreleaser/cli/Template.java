@@ -39,12 +39,24 @@ public class Template extends AbstractLoggingCommand {
             headingKey = "announcer.header")
         Announcers announcers;
 
+        @CommandLine.ArgGroup(exclusive = false, order = 1,
+            headingKey = "assembler.header")
+        Assemblers assemblers;
+
         @CommandLine.ArgGroup(exclusive = false, order = 2,
             headingKey = "packager.header")
         Packagers packagers;
 
         String announcerName() {
             return announcers != null ? announcers.announcerName : null;
+        }
+
+        String assemblerType() {
+            return assemblers != null ? assemblers.assemblerType : null;
+        }
+
+        String assemblerName() {
+            return assemblers != null ? assemblers.assemblerName : null;
         }
 
         String packagerName() {
@@ -66,6 +78,20 @@ public class Template extends AbstractLoggingCommand {
             descriptionKey = "announcer.name",
             required = true)
         String announcerName;
+    }
+
+    static class Assemblers {
+        @CommandLine.Option(names = {"-st", "--assembler-type"},
+            paramLabel = "<assembler-type>",
+            descriptionKey = "assembler.type",
+            required = true)
+        String assemblerType;
+
+        @CommandLine.Option(names = {"-s", "--assembler-name"},
+            paramLabel = "<assembler-name>",
+            descriptionKey = "assembler.name",
+            required = true)
+        String assemblerName;
     }
 
     static class Packagers {
@@ -116,6 +142,8 @@ public class Template extends AbstractLoggingCommand {
                 .distributionType(composite.distributionType())
                 .packagerName(composite.packagerName())
                 .announcerName(composite.announcerName())
+                .assemblerType(composite.assemblerType())
+                .assemblerName(composite.assemblerName())
                 .outputDirectory(outputDirectory)
                 .overwrite(overwrite)
                 .snapshot(snapshot)

@@ -21,7 +21,6 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.internal.JReleaserContext;
-import org.jreleaser.util.Env;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -32,7 +31,6 @@ import static java.util.Collections.unmodifiableMap;
 import static org.jreleaser.model.Constants.HIDE;
 import static org.jreleaser.model.Constants.KEY_TAG_NAME;
 import static org.jreleaser.model.Constants.UNSET;
-import static org.jreleaser.model.api.announce.TeamsAnnouncer.TEAMS_WEBHOOK;
 import static org.jreleaser.model.api.announce.TeamsAnnouncer.TYPE;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplate;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
@@ -141,10 +139,6 @@ public final class TeamsAnnouncer extends AbstractAnnouncer<TeamsAnnouncer, org.
         }
     }
 
-    public String getResolvedWebhook() {
-        return Env.env(TEAMS_WEBHOOK, webhook);
-    }
-
     public String getWebhook() {
         return webhook;
     }
@@ -163,7 +157,7 @@ public final class TeamsAnnouncer extends AbstractAnnouncer<TeamsAnnouncer, org.
 
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
-        props.put("webhook", isNotBlank(getResolvedWebhook()) ? HIDE : UNSET);
+        props.put("webhook", isNotBlank(webhook) ? HIDE : UNSET);
         props.put("messageTemplate", messageTemplate);
     }
 }

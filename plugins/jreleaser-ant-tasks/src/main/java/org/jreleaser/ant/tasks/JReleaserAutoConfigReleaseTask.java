@@ -26,7 +26,9 @@ import org.jreleaser.engine.context.ModelAutoConfigurer;
 import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.UpdateSection;
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.util.Env;
 import org.jreleaser.util.PlatformUtils;
+import org.jreleaser.util.StringUtils;
 import org.jreleaser.workflow.Workflows;
 
 import java.io.File;
@@ -37,6 +39,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -44,6 +47,8 @@ import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 import static org.jreleaser.util.FileUtils.resolveOutputDirectory;
+import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -52,6 +57,7 @@ import static org.jreleaser.util.FileUtils.resolveOutputDirectory;
 public class JReleaserAutoConfigReleaseTask extends Task {
     private final List<String> authors = new ArrayList<>();
     private final List<String> selectPlatforms = new ArrayList<>();
+    private final List<String> rejectPlatforms = new ArrayList<>();
     private final List<String> globs = new ArrayList<>();
     private final List<String> updateSections = new ArrayList<>();
     private Path outputDir;
@@ -59,8 +65,9 @@ public class JReleaserAutoConfigReleaseTask extends Task {
     private JReleaserLogger logger;
     private Path actualBasedir;
     private File basedir;
-    private boolean dryrun;
-    private boolean gitRootSearch;
+    private Boolean dryrun;
+    private Boolean gitRootSearch;
+    private Boolean strict;
     private String projectName;
     private String projectVersion;
     private String projectVersionPattern;
@@ -92,12 +99,16 @@ public class JReleaserAutoConfigReleaseTask extends Task {
     private boolean armored;
     private FileSet fileSet;
 
-    public void setDryrun(boolean dryrun) {
+    public void setDryrun(Boolean dryrun) {
         this.dryrun = dryrun;
     }
 
-    public void setGitRootSearch(boolean gitRootSearch) {
+    public void setGitRootSearch(Boolean gitRootSearch) {
         this.gitRootSearch = gitRootSearch;
+    }
+
+    public void setStrict(Boolean strict) {
+        this.strict = strict;
     }
 
     public void setBasedir(File basedir) {
@@ -256,6 +267,12 @@ public class JReleaserAutoConfigReleaseTask extends Task {
         }
     }
 
+    public void setRejectPlatforms(List<String> rejectPlatforms) {
+        if (null != rejectPlatforms) {
+            this.rejectPlatforms.addAll(rejectPlatforms);
+        }
+    }
+
     @Override
     public void execute() throws BuildException {
         Banner.display(new PrintWriter(System.out, true));
@@ -269,6 +286,7 @@ public class JReleaserAutoConfigReleaseTask extends Task {
             .outputDirectory(getOutputDirectory())
             .dryrun(dryrun)
             .gitRootSearch(gitRootSearch)
+            .strict(strict)
             .projectName(projectName)
             .projectVersion(projectVersion)
             .projectVersionPattern(projectVersionPattern)
@@ -303,6 +321,7 @@ public class JReleaserAutoConfigReleaseTask extends Task {
             .files(fileSet.stream().map(Resource::getName).collect(toList()))
             .globs(globs)
             .selectedPlatforms(collectSelectedPlatforms())
+            .rejectedPlatforms(collectRejectedPlatforms())
             .autoConfigure();
 
         Workflows.release(context).execute();
@@ -317,7 +336,8 @@ public class JReleaserAutoConfigReleaseTask extends Task {
     }
 
     private void basedir() {
-        actualBasedir = null != basedir ? basedir.toPath() : Paths.get(".").normalize();
+        String resolvedBasedir = Env.resolve(org.jreleaser.model.api.JReleaserContext.BASEDIR, null != basedir ? basedir.getPath() : "");
+        actualBasedir = (isNotBlank(resolvedBasedir) ? Paths.get(resolvedBasedir) : Paths.get(".")).normalize();
         if (!Files.exists(actualBasedir)) {
             throw new IllegalStateException("Missing required option: 'basedir'");
         }
@@ -345,7 +365,28 @@ public class JReleaserAutoConfigReleaseTask extends Task {
     }
 
     protected List<String> collectSelectedPlatforms() {
-        if (selectCurrentPlatform) return Collections.singletonList(PlatformUtils.getCurrentFull());
-        return selectPlatforms;
+        boolean resolvedSelectCurrentPlatform = resolveBoolean(org.jreleaser.model.api.JReleaserContext.SELECT_CURRENT_PLATFORM, selectCurrentPlatform);
+        if (resolvedSelectCurrentPlatform) return Collections.singletonList(PlatformUtils.getCurrentFull());
+        return resolveCollection(org.jreleaser.model.api.JReleaserContext.SELECT_PLATFORMS, selectPlatforms);
+    }
+
+    protected List<String> collectRejectedPlatforms() {
+        return resolveCollection(org.jreleaser.model.api.JReleaserContext.REJECT_PLATFORMS, rejectPlatforms);
+    }
+
+    protected boolean resolveBoolean(String key, Boolean value) {
+        if (null != value) return value;
+        String resolvedValue = Env.resolve(key, "");
+        return isNotBlank(resolvedValue) && Boolean.parseBoolean(resolvedValue);
+    }
+
+    protected List<String> resolveCollection(String key, List<String> values) {
+        if (!values.isEmpty()) return values;
+        String resolvedValue = Env.resolve(key, "");
+        if (isBlank(resolvedValue)) return Collections.emptyList();
+        return Arrays.stream(resolvedValue.trim().split(","))
+            .map(String::trim)
+            .filter(StringUtils::isNotBlank)
+            .collect(toList());
     }
 }

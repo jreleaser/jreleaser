@@ -376,6 +376,25 @@
         "code",
         "translation"
       ]
+    },
+    {
+      "login": "ebullient",
+      "name": "Erin Schnabel",
+      "avatar_url": "https://avatars.githubusercontent.com/u/808713?v=4",
+      "profile": "https://www.ebullient.dev",
+      "contributions": [
+        "ideas",
+        "bug"
+      ]
+    },
+    {
+      "login": "bdemers",
+      "name": "Brian Demers",
+      "avatar_url": "https://avatars.githubusercontent.com/u/99954?v=4",
+      "profile": "https://blog.bdemers.io",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,

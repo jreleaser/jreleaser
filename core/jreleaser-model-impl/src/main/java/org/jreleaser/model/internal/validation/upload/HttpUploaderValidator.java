@@ -60,6 +60,7 @@ public abstract class HttpUploaderValidator extends Validator {
         }
 
         if (!http.isArtifacts() && !http.isFiles() && !http.isSignatures()) {
+            errors.warning(RB.$("WARNING.validation.uploader.no.artifacts", http.getType(), http.getName()));
             context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
             http.disable();
             return;

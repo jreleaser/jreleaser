@@ -21,7 +21,6 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.internal.JReleaserContext;
-import org.jreleaser.util.Env;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -32,8 +31,6 @@ import static java.util.Collections.unmodifiableMap;
 import static org.jreleaser.model.Constants.HIDE;
 import static org.jreleaser.model.Constants.KEY_TAG_NAME;
 import static org.jreleaser.model.Constants.UNSET;
-import static org.jreleaser.model.api.announce.SlackAnnouncer.SLACK_TOKEN;
-import static org.jreleaser.model.api.announce.SlackAnnouncer.SLACK_WEBHOOK;
 import static org.jreleaser.model.api.announce.SlackAnnouncer.TYPE;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplate;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
@@ -170,20 +167,12 @@ public final class SlackAnnouncer extends AbstractAnnouncer<SlackAnnouncer, org.
         }
     }
 
-    public String getResolvedToken() {
-        return Env.env(SLACK_TOKEN, token);
-    }
-
     public String getToken() {
         return token;
     }
 
     public void setToken(String token) {
         this.token = token;
-    }
-
-    public String getResolvedWebhook() {
-        return Env.env(SLACK_WEBHOOK, webhook);
     }
 
     public String getWebhook() {
@@ -220,8 +209,8 @@ public final class SlackAnnouncer extends AbstractAnnouncer<SlackAnnouncer, org.
 
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
-        props.put("webhook", isNotBlank(getResolvedWebhook()) ? HIDE : UNSET);
-        props.put("token", isNotBlank(getResolvedToken()) ? HIDE : UNSET);
+        props.put("webhook", isNotBlank(webhook) ? HIDE : UNSET);
+        props.put("token", isNotBlank(token) ? HIDE : UNSET);
         props.put("channel", channel);
         props.put("message", message);
         props.put("messageTemplate", messageTemplate);

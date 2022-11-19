@@ -42,7 +42,7 @@ public abstract class GitlabMavenDeployerValidator extends Validator {
 
         for (Map.Entry<String, GitlabMavenDeployer> e : gitlab.entrySet()) {
             e.getValue().setName(e.getKey());
-            if (mode.validateConfig()) {
+            if (mode.validateDeploy() || mode.validateConfig()) {
                 validateGitlabMavenDeployer(context, mode, e.getValue(), errors);
             }
         }
@@ -62,7 +62,7 @@ public abstract class GitlabMavenDeployerValidator extends Validator {
                 true));
 
         if (isBlank(mavenDeployer.getUsername())) {
-            mavenDeployer.setUsername(context.getModel().getRelease().getReleaser().getResolvedUsername());
+            mavenDeployer.setUsername(context.getModel().getRelease().getReleaser().getUsername());
         }
 
         if (isBlank(mavenDeployer.getProjectIdentifier())) {

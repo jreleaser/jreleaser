@@ -70,8 +70,8 @@ public class HttpArtifactUploader extends AbstractArtifactUploader<org.jreleaser
             context.getLogger().info(RB.$("artifacts.no.match"));
         }
 
-        String username = uploader.getResolvedUsername();
-        String password = uploader.getResolvedPassword();
+        String username = uploader.getUsername();
+        String password = uploader.getPassword();
 
         for (Artifact artifact : artifacts) {
             Path path = artifact.getEffectivePath(context);

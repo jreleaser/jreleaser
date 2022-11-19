@@ -398,6 +398,11 @@ public class JReleaserModel {
         this.extensions.put(extension.getName(), extension);
     }
 
+    public ZonedDateTime resolveArchiveTimestamp() {
+        if (null != commit) return commit.getTimestamp();
+        return now;
+    }
+
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
 

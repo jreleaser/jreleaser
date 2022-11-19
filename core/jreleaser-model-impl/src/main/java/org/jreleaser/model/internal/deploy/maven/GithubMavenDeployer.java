@@ -161,8 +161,8 @@ public final class GithubMavenDeployer extends AbstractMavenDeployer<GithubMaven
 
     @Override
     public String getResolvedUrl(Map<String, Object> props) {
-        props.put("username", getResolvedUsername());
-        props.put("owner", getResolvedUsername());
+        props.put("username", username);
+        props.put("owner", username);
         props.put("repository", repository);
         props.putAll(getExtraProperties());
         return resolveTemplate(url, props);

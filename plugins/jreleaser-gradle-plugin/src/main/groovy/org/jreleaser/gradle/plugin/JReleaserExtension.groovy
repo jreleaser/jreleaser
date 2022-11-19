@@ -56,6 +56,8 @@ interface JReleaserExtension {
 
     Property<Boolean> getGitRootSearch()
 
+    Property<Boolean> getStrict()
+
     Environment getEnvironment()
 
     Hooks getHooks()

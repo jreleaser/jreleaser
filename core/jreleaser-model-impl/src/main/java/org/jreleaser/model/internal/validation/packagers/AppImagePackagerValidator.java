@@ -33,6 +33,7 @@ import org.jreleaser.util.Errors;
 
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
 import static org.jreleaser.model.api.packagers.AppImagePackager.SKIP_APPIMAGE;
 import static org.jreleaser.model.internal.validation.common.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.internal.validation.common.TemplateValidator.validateTemplate;
@@ -70,6 +71,8 @@ public abstract class AppImagePackagerValidator extends Validator {
         if (candidateArtifacts.size() == 0) {
             packager.setActive(Active.NEVER);
             context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
+            errors.warning(RB.$("WARNING.validation.packager.no.artifacts", distribution.getName(),
+                packager.getType(), packager.getSupportedFileExtensions(distribution.getType())));
             packager.disable();
             return;
         } else if (candidateArtifacts.stream()
@@ -77,6 +80,11 @@ public abstract class AppImagePackagerValidator extends Validator {
             .count() > 1) {
             errors.configuration(RB.$("validation_packager_multiple_artifacts", "distribution." + distribution.getName() + ".appImage"));
             context.getLogger().debug(RB.$("validation.disabled.multiple.artifacts"));
+            errors.warning(RB.$("WARNING.validation.packager.multiple.artifacts", distribution.getName(),
+                packager.getType(), candidateArtifacts.stream()
+                    .filter(artifact -> isBlank(artifact.getPlatform()))
+                    .map(Artifact::getPath)
+                    .collect(toList())));
             packager.disable();
             return;
         }

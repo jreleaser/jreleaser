@@ -43,7 +43,9 @@ public class ContextCreator {
                                           Path outputDirectory,
                                           boolean dryrun,
                                           boolean gitRootSearch,
-                                          List<String> selectedPlatforms) {
+                                          boolean strict,
+                                          List<String> selectedPlatforms,
+                                          List<String> rejectedPlatforms) {
         return create(logger,
             configurer,
             mode,
@@ -52,7 +54,9 @@ public class ContextCreator {
             outputDirectory,
             dryrun,
             gitRootSearch,
-            selectedPlatforms);
+            strict,
+            selectedPlatforms,
+            rejectedPlatforms);
     }
 
     public static JReleaserContext create(JReleaserLogger logger,
@@ -63,7 +67,9 @@ public class ContextCreator {
                                           Path outputDirectory,
                                           boolean dryrun,
                                           boolean gitRootSearch,
-                                          List<String> selectedPlatforms) {
+                                          boolean strict,
+                                          List<String> selectedPlatforms,
+                                          List<String> rejectedPlatforms) {
         JReleaserContext context = new JReleaserContext(
             logger,
             configurer,
@@ -73,9 +79,12 @@ public class ContextCreator {
             outputDirectory,
             dryrun,
             gitRootSearch,
-            selectedPlatforms);
+            strict,
+            selectedPlatforms,
+            rejectedPlatforms);
 
         PlatformUtils.resolveCurrentPlatform(logger);
+        logger.info(RB.$("context.creator.git_root_search", context.isGitRootSearch()));
         ModelConfigurer.configure(context);
 
         return context;

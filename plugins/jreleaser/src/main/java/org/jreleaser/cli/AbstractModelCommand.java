@@ -24,6 +24,7 @@ import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.JReleaserModel;
 import org.jreleaser.model.internal.environment.Environment;
+import org.jreleaser.util.Env;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.StringUtils;
 import picocli.CommandLine;
@@ -31,6 +32,7 @@ import picocli.CommandLine;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -39,7 +41,10 @@ import java.util.Properties;
 import java.util.ServiceLoader;
 import java.util.Set;
 
+import static java.util.stream.Collectors.toList;
 import static org.jreleaser.util.FileUtils.resolveOutputDirectory;
+import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -51,7 +56,10 @@ public abstract class AbstractModelCommand extends AbstractLoggingCommand {
     Path configFile;
 
     @CommandLine.Option(names = {"-grs", "--git-root-search"})
-    boolean gitRootSearch;
+    Boolean gitRootSearch;
+
+    @CommandLine.Option(names = {"--strict"})
+    Boolean strict;
 
     @CommandLine.Option(names = {"-P", "--set-property"},
         paramLabel = "<key=value>")
@@ -121,7 +129,8 @@ public abstract class AbstractModelCommand extends AbstractLoggingCommand {
     }
 
     private void resolveBasedir() {
-        actualBasedir = (null != basedir ? basedir : actualConfigFile.toAbsolutePath().getParent()).normalize();
+        String resolvedBasedir = Env.resolve(org.jreleaser.model.api.JReleaserContext.BASEDIR, null != basedir ? basedir.toString() : "");
+        actualBasedir = (isNotBlank(resolvedBasedir) ? Paths.get(resolvedBasedir) : actualConfigFile.toAbsolutePath().getParent()).normalize();
         if (!Files.exists(actualBasedir)) {
             spec.commandLine().getErr()
                 .println(spec.commandLine().getColorScheme().errorText(
@@ -145,9 +154,27 @@ public abstract class AbstractModelCommand extends AbstractLoggingCommand {
             model,
             actualBasedir,
             getOutputDirectory(),
-            dryrun(),
-            gitRootSearch,
-            collectSelectedPlatforms());
+            resolveBoolean(org.jreleaser.model.api.JReleaserContext.DRY_RUN, dryrun()),
+            resolveBoolean(org.jreleaser.model.api.JReleaserContext.GIT_ROOT_SEARCH, gitRootSearch()),
+            resolveBoolean(org.jreleaser.model.api.JReleaserContext.STRICT, strict()),
+            collectSelectedPlatforms(),
+            collectRejectedPlatforms());
+    }
+
+    protected boolean resolveBoolean(String key, Boolean value) {
+        if (null != value) return value;
+        String resolvedValue = Env.resolve(key, "");
+        return isNotBlank(resolvedValue) && Boolean.parseBoolean(resolvedValue);
+    }
+
+    protected List<String> resolveCollection(String key, List<String> values) {
+        if (!values.isEmpty()) return values;
+        String resolvedValue = Env.resolve(key, "");
+        if (isBlank(resolvedValue)) return Collections.emptyList();
+        return Arrays.stream(resolvedValue.trim().split(","))
+            .map(String::trim)
+            .filter(StringUtils::isNotBlank)
+            .collect(toList());
     }
 
     protected JReleaserContext.Configurer resolveConfigurer(Path configFile) {
@@ -168,8 +195,16 @@ public abstract class AbstractModelCommand extends AbstractLoggingCommand {
         return resolveOutputDirectory(actualBasedir, outputdir, "out");
     }
 
-    protected boolean dryrun() {
+    protected Boolean dryrun() {
         return false;
+    }
+
+    protected Boolean strict() {
+        return strict;
+    }
+
+    protected Boolean gitRootSearch() {
+        return gitRootSearch;
     }
 
     private Set<String> getSupportedConfigFormats() {
@@ -190,6 +225,10 @@ public abstract class AbstractModelCommand extends AbstractLoggingCommand {
     }
 
     protected List<String> collectSelectedPlatforms() {
+        return Collections.emptyList();
+    }
+
+    protected List<String> collectRejectedPlatforms() {
         return Collections.emptyList();
     }
 

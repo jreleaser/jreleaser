@@ -21,7 +21,6 @@ import org.jreleaser.model.Active;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Stereotype;
 import org.jreleaser.model.internal.common.Artifact;
-import org.jreleaser.util.Env;
 import org.jreleaser.util.PlatformUtils;
 
 import java.util.LinkedHashMap;
@@ -40,7 +39,6 @@ import static org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JLINK;
 import static org.jreleaser.model.Distribution.DistributionType.NATIVE_IMAGE;
 import static org.jreleaser.model.Distribution.DistributionType.NATIVE_PACKAGE;
-import static org.jreleaser.model.api.packagers.ChocolateyPackager.CHOCOLATEY_API_KEY;
 import static org.jreleaser.model.api.packagers.ChocolateyPackager.SKIP_CHOCOLATEY;
 import static org.jreleaser.model.api.packagers.ChocolateyPackager.TYPE;
 import static org.jreleaser.util.CollectionUtils.setOf;
@@ -232,10 +230,6 @@ public final class ChocolateyPackager extends AbstractRepositoryPackager<org.jre
         setBucket(source.repository);
     }
 
-    public String getResolvedApiKey() {
-        return Env.env(CHOCOLATEY_API_KEY, apiKey);
-    }
-
     public String getPackageName() {
         return packageName;
     }
@@ -318,7 +312,7 @@ public final class ChocolateyPackager extends AbstractRepositoryPackager<org.jre
         props.put("packageName", packageName);
         props.put("packageVersion", packageVersion);
         props.put("username", username);
-        props.put("apiKey", isNotBlank(getResolvedApiKey()) ? HIDE : UNSET);
+        props.put("apiKey", isNotBlank(apiKey) ? HIDE : UNSET);
         props.put("remoteBuild", isRemoteBuild());
         props.put("title", title);
         props.put("iconUrl", iconUrl);

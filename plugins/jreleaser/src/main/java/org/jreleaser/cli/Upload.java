@@ -28,7 +28,7 @@ import picocli.CommandLine;
 @CommandLine.Command(name = "upload")
 public class Upload extends AbstractPlatformAwareModelCommand {
     @CommandLine.Option(names = {"--dry-run"})
-    boolean dryrun;
+    Boolean dryrun;
 
     @CommandLine.ArgGroup
     Composite composite;
@@ -109,7 +109,7 @@ public class Upload extends AbstractPlatformAwareModelCommand {
     }
 
     @Override
-    protected boolean dryrun() {
+    protected Boolean dryrun() {
         return dryrun;
     }
 }

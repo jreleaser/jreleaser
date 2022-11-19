@@ -59,6 +59,7 @@ public abstract class FtpUploaderValidator extends Validator {
         }
 
         if (!ftp.isArtifacts() && !ftp.isFiles() && !ftp.isSignatures()) {
+            errors.warning(RB.$("WARNING.validation.uploader.no.artifacts", ftp.getType(), ftp.getName()));
             context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
             ftp.disable();
             return;

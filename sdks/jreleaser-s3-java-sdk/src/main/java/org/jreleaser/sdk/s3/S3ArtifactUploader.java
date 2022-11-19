@@ -85,7 +85,7 @@ public class S3ArtifactUploader extends AbstractArtifactUploader<org.jreleaser.m
             context.getLogger().info(RB.$("artifacts.no.match"));
         }
 
-        String bucketName = uploader.getResolvedBucket();
+        String bucketName = uploader.getBucket();
 
         AmazonS3 s3 = createS3Client();
 
@@ -136,18 +136,18 @@ public class S3ArtifactUploader extends AbstractArtifactUploader<org.jreleaser.m
     private AmazonS3 createS3Client() throws UploadException {
         try {
             AmazonS3ClientBuilder s3Builder = AmazonS3ClientBuilder.standard();
-            if (isNotBlank(uploader.getResolvedAccessKeyId()) &&
-                isNotBlank(uploader.getResolvedSecretKey()) &&
-                isNotBlank(uploader.getResolvedSessionToken())) {
+            if (isNotBlank(uploader.getAccessKeyId()) &&
+                isNotBlank(uploader.getSecretKey()) &&
+                isNotBlank(uploader.getSessionToken())) {
                 s3Builder.withCredentials(new AWSStaticCredentialsProvider(
-                    new BasicSessionCredentials(uploader.getResolvedAccessKeyId(),
-                        uploader.getResolvedSecretKey(),
-                        uploader.getResolvedSessionToken())));
-            } else if (isNotBlank(uploader.getResolvedAccessKeyId()) &&
-                isNotBlank(uploader.getResolvedSecretKey())) {
+                    new BasicSessionCredentials(uploader.getAccessKeyId(),
+                        uploader.getSecretKey(),
+                        uploader.getSessionToken())));
+            } else if (isNotBlank(uploader.getAccessKeyId()) &&
+                isNotBlank(uploader.getSecretKey())) {
                 s3Builder.withCredentials(new AWSStaticCredentialsProvider(
-                    new BasicAWSCredentials(uploader.getResolvedAccessKeyId(),
-                        uploader.getResolvedSecretKey())));
+                    new BasicAWSCredentials(uploader.getAccessKeyId(),
+                        uploader.getSecretKey())));
             }
 
             Map<String, String> headers = uploader.getHeaders();
@@ -161,12 +161,12 @@ public class S3ArtifactUploader extends AbstractArtifactUploader<org.jreleaser.m
                 s3Builder.setClientConfiguration(clientConfiguration);
             }
 
-            if (isBlank(uploader.getResolvedEndpoint())) {
-                s3Builder.withRegion(uploader.getResolvedRegion());
+            if (isBlank(uploader.getEndpoint())) {
+                s3Builder.withRegion(uploader.getRegion());
             } else {
                 s3Builder.withEndpointConfiguration(
-                    new AwsClientBuilder.EndpointConfiguration(uploader.getResolvedEndpoint(),
-                        uploader.getResolvedRegion()));
+                    new AwsClientBuilder.EndpointConfiguration(uploader.getEndpoint(),
+                        uploader.getRegion()));
             }
 
             s3Builder.getClientConfiguration()

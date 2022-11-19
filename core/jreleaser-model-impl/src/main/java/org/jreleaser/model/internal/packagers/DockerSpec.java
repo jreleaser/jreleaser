@@ -135,6 +135,11 @@ public final class DockerSpec extends AbstractDockerConfiguration<DockerSpec> im
         }
 
         @Override
+        public Buildx getBuildx() {
+            return DockerSpec.this.getBuildx().asImmutable();
+        }
+
+        @Override
         public Map<String, Object> getExtraProperties() {
             return unmodifiableMap(extraProperties);
         }

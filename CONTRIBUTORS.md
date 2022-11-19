@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-39-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-41-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -61,6 +61,8 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center"><a href="https://github.com/s-petit"><img src="https://avatars.githubusercontent.com/u/6479783?v=4?s=100" width="100px;" alt="Stéphane Petit"/><br /><sub><b>Stéphane Petit</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=s-petit" title="Code">💻</a> <a href="#translation-s-petit" title="Translation">🌍</a></td>
       <td align="center"><a href="https://github.com/Genos15"><img src="https://avatars.githubusercontent.com/u/47024769?v=4?s=100" width="100px;" alt="Genos15"/><br /><sub><b>Genos15</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=Genos15" title="Code">💻</a> <a href="#translation-Genos15" title="Translation">🌍</a></td>
       <td align="center"><a href="https://github.com/Martin-Labenne-Jolimoi"><img src="https://avatars.githubusercontent.com/u/113339619?v=4?s=100" width="100px;" alt="Martin-Labenne-Jolimoi"/><br /><sub><b>Martin-Labenne-Jolimoi</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=Martin-Labenne-Jolimoi" title="Code">💻</a> <a href="#translation-Martin-Labenne-Jolimoi" title="Translation">🌍</a></td>
+      <td align="center"><a href="https://www.ebullient.dev"><img src="https://avatars.githubusercontent.com/u/808713?v=4?s=100" width="100px;" alt="Erin Schnabel"/><br /><sub><b>Erin Schnabel</b></sub></a><br /><a href="#ideas-ebullient" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/jreleaser/jreleaser/issues?q=author%3Aebullient" title="Bug reports">🐛</a></td>
+      <td align="center"><a href="https://blog.bdemers.io"><img src="https://avatars.githubusercontent.com/u/99954?v=4?s=100" width="100px;" alt="Brian Demers"/><br /><sub><b>Brian Demers</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=bdemers" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

@@ -76,13 +76,13 @@ public class SlackAnnouncer implements Announcer<org.jreleaser.model.api.announc
         context.getLogger().debug("message: {}", message);
 
         List<String> errors = new ArrayList<>();
-        if (isNotBlank(slack.getResolvedToken())) {
+        if (isNotBlank(slack.getToken())) {
             context.getLogger().info("channel: {}", slack.getChannel());
             try {
                 SlackSdk sdk = SlackSdk.builder(context.getLogger())
                     .connectTimeout(slack.getConnectTimeout())
                     .readTimeout(slack.getReadTimeout())
-                    .token(context.isDryrun() ? "**UNDEFINED**" : slack.getResolvedToken())
+                    .token(context.isDryrun() ? "**UNDEFINED**" : slack.getToken())
                     .dryrun(context.isDryrun())
                     .build();
 
@@ -93,10 +93,10 @@ public class SlackAnnouncer implements Announcer<org.jreleaser.model.api.announc
             }
         }
 
-        if (isNotBlank(slack.getResolvedWebhook()) && !context.isDryrun()) {
+        if (isNotBlank(slack.getWebhook()) && !context.isDryrun()) {
             try {
                 ClientUtils.webhook(context.getLogger(),
-                    slack.getResolvedWebhook(),
+                    slack.getWebhook(),
                     slack.getConnectTimeout(),
                     slack.getReadTimeout(),
                     Message.of(message));

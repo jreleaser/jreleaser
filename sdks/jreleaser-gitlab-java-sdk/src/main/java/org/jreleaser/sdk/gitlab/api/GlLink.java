@@ -70,4 +70,15 @@ public class GlLink {
     public void setLinkType(String linkType) {
         this.linkType = linkType;
     }
+
+    @Override
+    public String toString() {
+        return "GlLink{" +
+            "id=" + id +
+            ", name='" + name + '\'' +
+            ", url='" + url + '\'' +
+            ", external=" + external +
+            ", linkType='" + linkType + '\'' +
+            '}';
+    }
 }

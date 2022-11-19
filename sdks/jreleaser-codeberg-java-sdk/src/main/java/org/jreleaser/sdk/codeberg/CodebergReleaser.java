@@ -94,7 +94,7 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
         try {
             Gitea api = new Gitea(context.getLogger(),
                 codeberg.getApiEndpoint(),
-                codeberg.getResolvedToken(),
+                codeberg.getToken(),
                 codeberg.getConnectTimeout(),
                 codeberg.getReadTimeout());
 
@@ -207,7 +207,7 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
 
             return new Gitea(context.getLogger(),
                 codeberg.getApiEndpoint(),
-                codeberg.getResolvedToken(),
+                codeberg.getToken(),
                 codeberg.getConnectTimeout(),
                 codeberg.getReadTimeout())
                 .findUser(email, name, host);
@@ -223,7 +223,7 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
     public List<Release> listReleases(String owner, String repo) throws IOException {
         Gitea api = new Gitea(context.getLogger(),
             codeberg.getApiEndpoint(),
-            codeberg.getResolvedToken(),
+            codeberg.getToken(),
             codeberg.getConnectTimeout(),
             codeberg.getReadTimeout());
 

@@ -37,7 +37,7 @@ import static org.jreleaser.model.api.JReleaserContext.Mode.ANNOUNCE
  * @since 0.1.0
  */
 @CompileStatic
-abstract class JReleaserAnnounceTask extends AbstractPlatformAwareJReleaserTask {
+abstract class JReleaserAnnounceTask extends AbstractJReleaserTask {
     @Input
     @Optional
     final ListProperty<String> announcers

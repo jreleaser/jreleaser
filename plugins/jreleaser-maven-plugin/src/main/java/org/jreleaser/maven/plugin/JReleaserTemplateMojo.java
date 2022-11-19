@@ -80,6 +80,12 @@ public class JReleaserTemplateMojo extends AbstractMojo {
     private String announcerName;
 
     /**
+     * The type of the assembler.
+     */
+    @Parameter(property = "jreleaser.assembler.type")
+    private String assemblerType;
+
+    /**
      * Overwrite existing files.
      */
     @Parameter(property = "jreleaser.template.overwrite")
@@ -113,6 +119,8 @@ public class JReleaserTemplateMojo extends AbstractMojo {
                 .distributionType(distributionType)
                 .packagerName(packagerName)
                 .announcerName(announcerName)
+                .assemblerType(assemblerType)
+                .assemblerName(distributionName)
                 .outputDirectory(outputDirectory)
                 .overwrite(overwrite)
                 .snapshot(snapshot)

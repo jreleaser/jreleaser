@@ -38,12 +38,6 @@ import java.util.Map;
 import static java.util.Collections.unmodifiableList;
 import static org.jreleaser.model.Constants.HIDE;
 import static org.jreleaser.model.Constants.UNSET;
-import static org.jreleaser.model.api.signing.Signing.COSIGN_PASSWORD;
-import static org.jreleaser.model.api.signing.Signing.COSIGN_PRIVATE_KEY;
-import static org.jreleaser.model.api.signing.Signing.COSIGN_PUBLIC_KEY;
-import static org.jreleaser.model.api.signing.Signing.GPG_PASSPHRASE;
-import static org.jreleaser.model.api.signing.Signing.GPG_PUBLIC_KEY;
-import static org.jreleaser.model.api.signing.Signing.GPG_SECRET_KEY;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -197,22 +191,6 @@ public final class Signing extends AbstractModelObject<Signing> implements Domai
     @Override
     public boolean isActiveSet() {
         return active != null;
-    }
-
-    public String getResolvedPublicKey() {
-        return Env.env(GPG_PUBLIC_KEY, publicKey);
-    }
-
-    public String getResolvedSecretKey() {
-        return Env.env(GPG_SECRET_KEY, secretKey);
-    }
-
-    public String getResolvedPassphrase() {
-        return Env.env(GPG_PASSPHRASE, passphrase);
-    }
-
-    public String getResolvedCosignPassword() {
-        return Env.env(COSIGN_PASSWORD, passphrase);
     }
 
     public boolean isArmored() {
@@ -516,14 +494,6 @@ public final class Signing extends AbstractModelObject<Signing> implements Domai
             this.publicKeyFile = merge(this.publicKeyFile, source.publicKeyFile);
         }
 
-        public String getResolvedPrivateKeyFile() {
-            return Env.env(COSIGN_PRIVATE_KEY, privateKeyFile);
-        }
-
-        public String getResolvedPublicKeyFile() {
-            return Env.env(COSIGN_PUBLIC_KEY, publicKeyFile);
-        }
-
         public String getVersion() {
             return version;
         }
@@ -560,7 +530,7 @@ public final class Signing extends AbstractModelObject<Signing> implements Domai
         }
 
         public Path getResolvedPrivateKeyFilePath(JReleaserContext context) {
-            String privateKey = getResolvedPrivateKeyFile();
+            String privateKey = getPrivateKeyFile();
 
             if (isNotBlank(privateKey)) {
                 return context.getBasedir().resolve(privateKey);
@@ -570,7 +540,7 @@ public final class Signing extends AbstractModelObject<Signing> implements Domai
         }
 
         public Path getResolvedPublicKeyFilePath(JReleaserContext context) {
-            String publicKey = getResolvedPublicKeyFile();
+            String publicKey = getPublicKeyFile();
 
             if (isNotBlank(publicKey)) {
                 return context.getBasedir().resolve(publicKey);

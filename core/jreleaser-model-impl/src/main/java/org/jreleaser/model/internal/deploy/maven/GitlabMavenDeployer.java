@@ -161,8 +161,8 @@ public final class GitlabMavenDeployer extends AbstractMavenDeployer<GitlabMaven
 
     @Override
     public String getResolvedUrl(Map<String, Object> props) {
-        props.put("username", getResolvedUsername());
-        props.put("owner", getResolvedUsername());
+        props.put("username", username);
+        props.put("owner", username);
         props.put("projectIdentifier", projectIdentifier);
         props.putAll(getExtraProperties());
         return resolveTemplate(url, props);

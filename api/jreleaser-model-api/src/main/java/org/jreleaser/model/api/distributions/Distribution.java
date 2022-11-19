@@ -20,7 +20,7 @@ package org.jreleaser.model.api.distributions;
 import org.jreleaser.model.Stereotype;
 import org.jreleaser.model.api.common.Activatable;
 import org.jreleaser.model.api.common.Artifact;
-import org.jreleaser.model.api.common.Domain;
+import org.jreleaser.model.api.common.Executable;
 import org.jreleaser.model.api.common.ExtraProperties;
 import org.jreleaser.model.api.common.Java;
 import org.jreleaser.model.api.packagers.Packagers;
@@ -55,12 +55,4 @@ public interface Distribution extends Packagers, ExtraProperties, Activatable {
     List<String> getTags();
 
     Java getJava();
-
-    interface Executable extends Domain {
-        String getName();
-
-        String getUnixExtension();
-
-        String getWindowsExtension();
-    }
 }

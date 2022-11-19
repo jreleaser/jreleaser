@@ -45,9 +45,12 @@ public class ModelConfigurer {
             Commit head = GitSdk.of(context).head();
             context.getModel().setCommit(new JReleaserModel.Commit(head.getShortHash(),
                 head.getFullHash(),
-                head.getRefName()));
+                head.getRefName(),
+                head.getCommitTime(),
+                head.getTimestamp()));
         } catch (Exception e) {
             if (context.getMode() == Mode.ASSEMBLE ||
+                context.getMode() == Mode.DEPLOY ||
                 context.getMode() == Mode.DOWNLOAD) return;
             context.getLogger().trace(e);
             throw new JReleaserException(RB.$("ERROR_context_configurer_fail_git_head"), e);

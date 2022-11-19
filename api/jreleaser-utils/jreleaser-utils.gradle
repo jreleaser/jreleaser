@@ -19,7 +19,7 @@ dependencies {
     api project(':jreleaser-logger-api')
     api project(':jreleaser-resource-bundle')
 
-    api('kr.motd.maven:os-maven-plugin:1.7.0') { transitive = false }
+    api("kr.motd.maven:os-maven-plugin:$osMvnPluginVersion") { transitive = false }
     api "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
     api "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
     // checksum

@@ -93,7 +93,7 @@ public class GiteaReleaser extends AbstractReleaser<org.jreleaser.model.api.rele
         try {
             Gitea api = new Gitea(context.getLogger(),
                 gitea.getApiEndpoint(),
-                gitea.getResolvedToken(),
+                gitea.getToken(),
                 gitea.getConnectTimeout(),
                 gitea.getReadTimeout());
 
@@ -206,7 +206,7 @@ public class GiteaReleaser extends AbstractReleaser<org.jreleaser.model.api.rele
 
             return new Gitea(context.getLogger(),
                 gitea.getApiEndpoint(),
-                gitea.getResolvedToken(),
+                gitea.getToken(),
                 gitea.getConnectTimeout(),
                 gitea.getReadTimeout())
                 .findUser(email, name, host);
@@ -222,7 +222,7 @@ public class GiteaReleaser extends AbstractReleaser<org.jreleaser.model.api.rele
     public List<Release> listReleases(String owner, String repo) throws IOException {
         Gitea api = new Gitea(context.getLogger(),
             gitea.getApiEndpoint(),
-            gitea.getResolvedToken(),
+            gitea.getToken(),
             gitea.getConnectTimeout(),
             gitea.getReadTimeout());
 

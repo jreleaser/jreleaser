@@ -38,6 +38,7 @@ import org.jreleaser.model.api.release.Releaser;
 import org.jreleaser.model.api.signing.Keyring;
 import org.jreleaser.model.api.signing.SigningException;
 import org.jreleaser.model.api.upload.Uploader;
+import org.jreleaser.model.internal.assemble.JavaArchiveAssembler;
 import org.jreleaser.model.internal.assemble.JavaAssembler;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.project.Project;
@@ -52,6 +53,7 @@ import org.jreleaser.version.SemanticVersion;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -107,12 +109,14 @@ public class JReleaserContext {
     private final Path basedir;
     private final Path outputDirectory;
     private final boolean dryrun;
+    private final boolean strict;
     private final boolean gitRootSearch;
     private final org.jreleaser.model.api.JReleaserContext.Mode mode;
     private final Configurer configurer;
     private final Errors errors = new Errors();
 
     private final List<String> selectedPlatforms = new ArrayList<>();
+    private final List<String> rejectedPlatforms = new ArrayList<>();
     private final List<String> includedAnnouncers = new ArrayList<>();
     private final List<String> includedAssemblers = new ArrayList<>();
     private final List<String> includedDistributions = new ArrayList<>();
@@ -213,6 +217,11 @@ public class JReleaserContext {
         @Override
         public boolean isDryrun() {
             return JReleaserContext.this.isDryrun();
+        }
+
+        @Override
+        public boolean isStrict() {
+            return JReleaserContext.this.isStrict();
         }
 
         @Override
@@ -354,7 +363,9 @@ public class JReleaserContext {
                             Path outputDirectory,
                             boolean dryrun,
                             boolean gitRootSearch,
-                            List<String> selectedPlatforms) {
+                            boolean strict,
+                            List<String> selectedPlatforms,
+                            List<String> rejectedPlatforms) {
         this.logger = logger;
         this.configurer = configurer;
         this.mode = mode;
@@ -363,6 +374,7 @@ public class JReleaserContext {
         this.outputDirectory = outputDirectory;
         this.dryrun = dryrun;
         this.gitRootSearch = gitRootSearch;
+        this.strict = strict;
         this.selectedPlatforms.addAll(selectedPlatforms.stream()
             .filter(PlatformUtils::isSupported)
             .collect(Collectors.toList()));
@@ -398,6 +410,12 @@ public class JReleaserContext {
             logger.warn(RB.$("context.platform.selection.active"));
             logger.warn(RB.$("context.platform.selection.artifacts"), this.selectedPlatforms);
         }
+
+        this.rejectedPlatforms.addAll(rejectedPlatforms);
+        if (!this.rejectedPlatforms.isEmpty()) {
+            logger.warn(RB.$("context.platform.selection.active"));
+            logger.warn(RB.$("context.platform.rejection.artifacts"), this.rejectedPlatforms);
+        }
     }
 
     public org.jreleaser.model.api.JReleaserContext asImmutable() {
@@ -412,12 +430,21 @@ public class JReleaserContext {
         return relativize(basedir, other);
     }
 
+    public Path relativize(Path basedir, String other) {
+        return relativize(basedir, Paths.get(other));
+    }
+
+    public Path relativizeToBasedir(String other) {
+        return relativize(basedir, other);
+    }
+
     public Errors validateModel() {
         if (errors.hasErrors()) return errors;
 
         this.model.getEnvironment().initProps(this);
 
         logger.info(RB.$("context.configuration.validation"));
+        logger.info(RB.$("context.configuration.strict", strict));
 
         if (mode.validateConfig()) {
             adjustDistributions();
@@ -472,6 +499,13 @@ public class JReleaserContext {
             if (assembler instanceof JavaAssembler) {
                 distribution.getExecutable().setName(((JavaAssembler<?>) assembler).getExecutable());
                 distribution.setJava(((JavaAssembler<?>) assembler).getJava());
+            } else if (assembler instanceof JavaArchiveAssembler) {
+                JavaArchiveAssembler javaArchiveAssembler = (JavaArchiveAssembler) assembler;
+                distribution.getExecutable().setName(javaArchiveAssembler.getExecutable().getName());
+                distribution.getExecutable().setUnixExtension(javaArchiveAssembler.getExecutable().getUnixExtension());
+                distribution.getExecutable().setWindowsExtension(javaArchiveAssembler.getExecutable().getWindowsExtension());
+                distribution.getJava().setMainClass(javaArchiveAssembler.getJava().getMainClass());
+                distribution.getJava().setMainModule(javaArchiveAssembler.getJava().getMainModule());
             }
             mergeArtifacts(assembler, distribution);
 
@@ -508,9 +542,19 @@ public class JReleaserContext {
     }
 
     public boolean isPlatformSelected(String platform) {
-        if (isBlank(platform) || selectedPlatforms.isEmpty()) return true;
-        return selectedPlatforms.stream()
-            .anyMatch(selected -> PlatformUtils.isCompatible(selected, platform));
+        if (isBlank(platform)) return true;
+
+        if (!selectedPlatforms.isEmpty()) {
+            return selectedPlatforms.stream()
+                .anyMatch(selected -> PlatformUtils.isCompatible(selected, platform));
+        }
+
+        if (!rejectedPlatforms.isEmpty()) {
+            return rejectedPlatforms.stream()
+                .noneMatch(selected -> PlatformUtils.isCompatible(selected, platform));
+        }
+
+        return true;
     }
 
     public JReleaserLogger getLogger() {
@@ -571,6 +615,10 @@ public class JReleaserContext {
 
     public boolean isGitRootSearch() {
         return gitRootSearch;
+    }
+
+    public boolean isStrict() {
+        return strict;
     }
 
     public String getChangelog() {
@@ -829,6 +877,7 @@ public class JReleaserContext {
             ", outputDirectory=" + outputDirectory.toAbsolutePath() +
             ", dryrun=" + dryrun +
             ", gitRootSearch=" + gitRootSearch +
+            ", strict=" + strict +
             ", mode=" + mode +
             "]";
     }
@@ -893,14 +942,14 @@ public class JReleaserContext {
         try {
             if (model.getSigning().getMode() == Signing.Mode.FILE) {
                 return new FilesKeyring(
-                    basedir.resolve(model.getSigning().getResolvedPublicKey()),
-                    basedir.resolve(model.getSigning().getResolvedSecretKey())
+                    basedir.resolve(model.getSigning().getPublicKey()),
+                    basedir.resolve(model.getSigning().getSecretKey())
                 ).initialize(model.getSigning().isArmored());
             }
 
             return new InMemoryKeyring(
-                model.getSigning().getResolvedPublicKey().getBytes(),
-                model.getSigning().getResolvedSecretKey().getBytes()
+                model.getSigning().getPublicKey().getBytes(),
+                model.getSigning().getSecretKey().getBytes()
             ).initialize(model.getSigning().isArmored());
         } catch (IOException | PGPException e) {
             throw new SigningException(RB.$("ERROR_signing_init_keyring"), e);

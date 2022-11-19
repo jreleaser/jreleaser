@@ -219,14 +219,14 @@ public class Validator {
                 Env.toVar(tap.getBasename() + "_" + service.getServiceName()) + "_USERNAME",
                 "distribution." + distribution.getName() + "." + property + ".username",
                 tap.getUsername(),
-                service.getResolvedUsername()));
+                service.getUsername()));
 
         tap.setToken(
             checkProperty(context,
                 Env.toVar(tap.getBasename() + "_" + service.getServiceName()) + "_TOKEN",
                 "distribution." + distribution.getName() + "." + property + ".token",
                 tap.getToken(),
-                service.getResolvedToken()));
+                service.getToken()));
 
         tap.setBranch(
             checkProperty(context,

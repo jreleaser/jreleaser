@@ -164,9 +164,4 @@ public final class SftpUploader extends AbstractSshUploader<org.jreleaser.model.
     public org.jreleaser.model.api.upload.SftpUploader asImmutable() {
         return immutable;
     }
-
-    @Override
-    protected String getEnvPrefix() {
-        return "SFTP";
-    }
 }

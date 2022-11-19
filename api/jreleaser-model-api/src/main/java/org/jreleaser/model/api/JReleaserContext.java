@@ -30,6 +30,14 @@ import java.util.Map;
  * @since 0.1.0
  */
 public interface JReleaserContext {
+    String BASEDIR = "BASEDIR";
+    String DRY_RUN = "DRY_RUN";
+    String GIT_ROOT_SEARCH = "GIT_ROOT_SEARCH";
+    String STRICT = "STRICT";
+    String SELECT_CURRENT_PLATFORM = "SELECT_CURRENT_PLATFORM";
+    String SELECT_PLATFORMS = "SELECT_PLATFORMS";
+    String REJECT_PLATFORMS = "REJECT_PLATFORMS";
+
     Path relativize(Path basedir, Path other);
 
     Path relativizeToBasedir(Path other);
@@ -61,6 +69,8 @@ public interface JReleaserContext {
     boolean isDryrun();
 
     boolean isGitRootSearch();
+
+    boolean isStrict();
 
     List<String> getIncludedAnnouncers();
 
@@ -116,6 +126,7 @@ public interface JReleaserContext {
         CONFIG,
         DOWNLOAD,
         ASSEMBLE,
+        DEPLOY,
         FULL,
         CHANGELOG,
         ANNOUNCE;
@@ -126,6 +137,10 @@ public interface JReleaserContext {
 
         public boolean validateAnnounce() {
             return this == ANNOUNCE;
+        }
+
+        public boolean validateDeploy() {
+            return this == DEPLOY;
         }
 
         public boolean validateDownload() {

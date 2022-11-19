@@ -164,7 +164,7 @@ public class ChocolateyPackagerProcessor extends AbstractRepositoryPackagerProce
         Command cmd = new Command("choco")
             .arg("apikey")
             .arg("-k")
-            .arg(packager.getResolvedApiKey())
+            .arg(packager.getApiKey())
             .arg("-source")
             .arg(packager.getSource());
         executeCommand(execDirectory, cmd);

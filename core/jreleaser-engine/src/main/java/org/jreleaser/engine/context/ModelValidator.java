@@ -45,11 +45,17 @@ public class ModelValidator {
             new JReleaserModelPrinter.Plain(context.getLogger().getTracer())
                 .print(context.getModel().asMap(true));
 
+            if (context.isStrict() && errors.hasWarnings()) {
+                throw new JReleaserException(RB.$("ERROR_context_configurer_jreleaser_misconfigured") +
+                    System.lineSeparator() + errors.warningsAsString());
+            }
+
             switch (context.getMode()) {
                 case ANNOUNCE:
                 case CHANGELOG:
                 case DOWNLOAD:
                 case ASSEMBLE:
+                case DEPLOY:
                     if (errors.hasConfigurationErrors()) {
                         throw new JReleaserException(RB.$("ERROR_context_configurer_jreleaser_misconfigured") +
                             System.lineSeparator() + errors.asString());

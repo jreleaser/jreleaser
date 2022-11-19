@@ -102,7 +102,7 @@ public class MastodonAnnouncer implements Announcer<org.jreleaser.model.api.anno
         try {
             MastodonSdk sdk = MastodonSdk.builder(context.getLogger())
                 .host(mastodon.getHost())
-                .accessToken(mastodon.getResolvedAccessToken())
+                .accessToken(mastodon.getAccessToken())
                 .connectTimeout(mastodon.getConnectTimeout())
                 .readTimeout(mastodon.getReadTimeout())
                 .dryrun(context.isDryrun())

@@ -34,6 +34,7 @@ import org.jreleaser.model.internal.release.GitlabReleaser;
 import org.jreleaser.model.internal.util.Artifacts;
 import org.jreleaser.model.spi.release.Repository;
 import org.jreleaser.sdk.git.GitSdk;
+import org.jreleaser.util.Env;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -57,12 +58,14 @@ public class ModelAutoConfigurer {
     private final List<String> files = new ArrayList<>();
     private final List<String> globs = new ArrayList<>();
     private final List<String> selectedPlatforms = new ArrayList<>();
+    private final List<String> rejectedPlatforms = new ArrayList<>();
     private final Set<UpdateSection> updateSections = new LinkedHashSet<>();
     private JReleaserLogger logger;
     private Path basedir;
     private Path outputDirectory;
-    private boolean dryrun;
-    private boolean gitRootSearch;
+    private Boolean dryrun;
+    private Boolean gitRootSearch;
+    private Boolean strict;
     private String projectName;
     private String projectVersion;
     private String projectVersionPattern;
@@ -108,13 +111,18 @@ public class ModelAutoConfigurer {
         return this;
     }
 
-    public ModelAutoConfigurer dryrun(boolean dryrun) {
+    public ModelAutoConfigurer dryrun(Boolean dryrun) {
         this.dryrun = dryrun;
         return this;
     }
 
-    public ModelAutoConfigurer gitRootSearch(boolean gitRootSearch) {
+    public ModelAutoConfigurer gitRootSearch(Boolean gitRootSearch) {
         this.gitRootSearch = gitRootSearch;
+        return this;
+    }
+
+    public ModelAutoConfigurer strict(Boolean strict) {
+        this.strict = strict;
         return this;
     }
 
@@ -342,6 +350,21 @@ public class ModelAutoConfigurer {
         return this;
     }
 
+    public ModelAutoConfigurer rejectedPlatforms(List<String> platforms) {
+        this.rejectedPlatforms.clear();
+        if (null != platforms && !platforms.isEmpty()) {
+            platforms.forEach(this::rejectedPlatform);
+        }
+        return this;
+    }
+
+    public ModelAutoConfigurer rejectedPlatform(String platform) {
+        if (isNotBlank(platform)) {
+            this.rejectedPlatforms.add(platform.trim());
+        }
+        return this;
+    }
+
     public JReleaserContext autoConfigure() {
         requireNonNull(logger, "Argument 'logger' ust not be null");
         requireNonNull(basedir, "Argument 'basedir' ust not be null");
@@ -365,9 +388,17 @@ public class ModelAutoConfigurer {
             autoConfiguredModel(basedir),
             basedir,
             outputDirectory,
-            dryrun,
-            gitRootSearch,
-            selectedPlatforms);
+            resolveBoolean(org.jreleaser.model.api.JReleaserContext.DRY_RUN, dryrun),
+            resolveBoolean(org.jreleaser.model.api.JReleaserContext.GIT_ROOT_SEARCH, gitRootSearch),
+            resolveBoolean(org.jreleaser.model.api.JReleaserContext.STRICT, strict),
+            selectedPlatforms,
+            rejectedPlatforms);
+    }
+
+    protected boolean resolveBoolean(String key, Boolean value) {
+        if (null != value) return value;
+        String resolvedValue = Env.resolve(key, "");
+        return isNotBlank(resolvedValue) && Boolean.parseBoolean(resolvedValue);
     }
 
     private void dumpAutoConfig() {
@@ -421,6 +452,11 @@ public class ModelAutoConfigurer {
                 logger.info("- platform: {}", platform);
             }
         }
+        if (!rejectedPlatforms.isEmpty()) {
+            for (String platform : rejectedPlatforms) {
+                logger.info("- !platform: {}", platform);
+            }
+        }
     }
 
     private JReleaserModel autoConfiguredModel(Path basedir) {
@@ -438,7 +474,8 @@ public class ModelAutoConfigurer {
         model.getProject().getSnapshot().setFullChangelog(projectSnapshotFullChangelog);
 
         try {
-            Repository repository = GitSdk.of(basedir, gitRootSearch).getRemote();
+            boolean grs = resolveBoolean(org.jreleaser.model.api.JReleaserContext.GIT_ROOT_SEARCH, gitRootSearch);
+            Repository repository = GitSdk.of(basedir, grs).getRemote();
             BaseReleaser service = null;
             switch (repository.getKind()) {
                 case GITHUB:

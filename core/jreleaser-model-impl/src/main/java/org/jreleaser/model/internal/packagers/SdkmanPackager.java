@@ -24,7 +24,6 @@ import org.jreleaser.model.Sdkman;
 import org.jreleaser.model.Stereotype;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.TimeoutAware;
-import org.jreleaser.util.Env;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -38,8 +37,6 @@ import static org.jreleaser.model.Constants.UNSET;
 import static org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JLINK;
 import static org.jreleaser.model.Distribution.DistributionType.NATIVE_IMAGE;
-import static org.jreleaser.model.api.packagers.SdkmanPackager.SDKMAN_CONSUMER_KEY;
-import static org.jreleaser.model.api.packagers.SdkmanPackager.SDKMAN_CONSUMER_TOKEN;
 import static org.jreleaser.model.api.packagers.SdkmanPackager.SKIP_SDKMAN;
 import static org.jreleaser.model.api.packagers.SdkmanPackager.TYPE;
 import static org.jreleaser.util.CollectionUtils.setOf;
@@ -200,14 +197,6 @@ public final class SdkmanPackager extends AbstractPackager<org.jreleaser.model.a
         this.published = merge(this.published, source.published);
     }
 
-    public String getResolvedConsumerKey() {
-        return Env.env(SDKMAN_CONSUMER_KEY, consumerKey);
-    }
-
-    public String getResolvedConsumerToken() {
-        return Env.env(SDKMAN_CONSUMER_TOKEN, consumerToken);
-    }
-
     public String getCandidate() {
         return candidate;
     }
@@ -291,8 +280,8 @@ public final class SdkmanPackager extends AbstractPackager<org.jreleaser.model.a
         props.put("releaseNotesUrl", releaseNotesUrl);
         props.put("connectTimeout", connectTimeout);
         props.put("readTimeout", readTimeout);
-        props.put("consumerKey", isNotBlank(getResolvedConsumerKey()) ? HIDE : UNSET);
-        props.put("consumerToken", isNotBlank(getResolvedConsumerToken()) ? HIDE : UNSET);
+        props.put("consumerKey", isNotBlank(consumerKey) ? HIDE : UNSET);
+        props.put("consumerToken", isNotBlank(consumerToken) ? HIDE : UNSET);
     }
 
     @Override
