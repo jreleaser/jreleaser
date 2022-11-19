@@ -67,7 +67,6 @@ public class TwitterAnnouncer implements Announcer<org.jreleaser.model.api.annou
 
     @Override
     public void announce() throws AnnounceException {
-
         List<String> statuses = new ArrayList<>();
 
         if (isNotBlank(twitter.getStatusTemplate())) {

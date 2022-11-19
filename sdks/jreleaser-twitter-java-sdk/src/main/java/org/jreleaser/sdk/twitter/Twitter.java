@@ -73,8 +73,7 @@ public class Twitter {
 
     public void updateStatus(List<String> statuses) throws TwitterException {
         wrap(() -> {
-            String message = statuses.get(0);
-            Status status = twitter.updateStatus(message);
+            Status status = twitter.updateStatus(statuses.get(0));
             for (int i = 1; i < statuses.size(); i++) {
                 status = twitter.updateStatus(new StatusUpdate(statuses.get(i))
                     .inReplyToStatusId(status.getId()));

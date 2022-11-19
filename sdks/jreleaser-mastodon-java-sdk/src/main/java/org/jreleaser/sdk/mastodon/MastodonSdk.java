@@ -68,14 +68,11 @@ public class MastodonSdk {
         this.logger.debug(RB.$("workflow.dryrun"), dryrun);
     }
 
-    public void status(List<String> statuses) throws MastodonException {
+    public void toot(List<String> statuses) throws MastodonException {
         wrap(() -> {
-            Status payload = Status.of(statuses.get(0), null);
-            Status status = api.status(payload);
-
+            Status status = api.status(Status.of(statuses.get(0)));
             for (int i = 1; i < statuses.size(); i++) {
-                payload = Status.of(statuses.get(i), status.getId());
-                api.status(payload);
+                status = api.status(Status.of(statuses.get(i), status.getId()));
             }
         });
     }

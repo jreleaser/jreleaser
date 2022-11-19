@@ -25,9 +25,7 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  */
 public class Status {
     private String id;
-
     private String status;
-
     private String in_reply_to_id;
 
     public String getStatus() {
@@ -45,6 +43,10 @@ public class Status {
                    "in_reply_to_id='" + in_reply_to_id + "'," +
                    "status='" + status + '\'' +
             ']';
+    }
+
+    public static Status of(String status) {
+        return of(status, null);
     }
 
     public static Status of(String status, String inReplyToId) {

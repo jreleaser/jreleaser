@@ -97,8 +97,6 @@ public class MastodonAnnouncer implements Announcer<org.jreleaser.model.api.anno
             statuses.set(i, status);
         }
 
-        context.getLogger().debug("statuses: {}", statuses);
-
         try {
             MastodonSdk sdk = MastodonSdk.builder(context.getLogger())
                 .host(mastodon.getHost())
@@ -107,7 +105,7 @@ public class MastodonAnnouncer implements Announcer<org.jreleaser.model.api.anno
                 .readTimeout(mastodon.getReadTimeout())
                 .dryrun(context.isDryrun())
                 .build();
-            sdk.status(statuses);
+            sdk.toot(statuses);
         } catch (MastodonException e) {
             throw new AnnounceException(e);
         }

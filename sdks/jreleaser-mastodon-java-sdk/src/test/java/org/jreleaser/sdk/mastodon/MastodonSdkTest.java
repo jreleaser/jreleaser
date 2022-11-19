@@ -53,7 +53,7 @@ public class MastodonSdkTest {
                                          .build();
 
         // when:
-        command.status(Collections.singletonList("success"));
+        command.toot(Collections.singletonList("success"));
 
         // then:
         RequestPatternBuilder builder = postRequestedFor(urlEqualTo(API_V_1_STATUSES));
@@ -71,7 +71,7 @@ public class MastodonSdkTest {
                                          .build();
 
         // when:
-        command.status(Arrays.asList("success1", "success2"));
+        command.toot(Arrays.asList("success1", "success2"));
 
         // then:
         RequestPatternBuilder builder = postRequestedFor(urlEqualTo(API_V_1_STATUSES));

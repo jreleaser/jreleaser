@@ -44,13 +44,10 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.4.0
  */
 public final class MastodonAnnouncer extends AbstractAnnouncer<MastodonAnnouncer, org.jreleaser.model.api.announce.MastodonAnnouncer> {
+    private final List<String> statuses = new ArrayList<>();
     private String host;
     private String accessToken;
-
     private String status;
-
-    private final List<String> statuses = new ArrayList<>();
-
     private String statusTemplate;
 
     private final org.jreleaser.model.api.announce.MastodonAnnouncer immutable = new org.jreleaser.model.api.announce.MastodonAnnouncer() {
@@ -191,15 +188,6 @@ public final class MastodonAnnouncer extends AbstractAnnouncer<MastodonAnnouncer
         this.statuses.addAll(statuses);
     }
 
-    @Override
-    protected void asMap(boolean full, Map<String, Object> props) {
-        props.put("host", host);
-        props.put("accessToken", isNotBlank(accessToken) ? HIDE : UNSET);
-        props.put("status", status);
-        props.put("statuses", statuses);
-        props.put("statusTemplate", statusTemplate);
-    }
-
     public String getStatusTemplate() {
         return statusTemplate;
     }
@@ -214,5 +202,14 @@ public final class MastodonAnnouncer extends AbstractAnnouncer<MastodonAnnouncer
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    @Override
+    protected void asMap(boolean full, Map<String, Object> props) {
+        props.put("host", host);
+        props.put("accessToken", isNotBlank(accessToken) ? HIDE : UNSET);
+        props.put("status", status);
+        props.put("statuses", statuses);
+        props.put("statusTemplate", statusTemplate);
     }
 }
