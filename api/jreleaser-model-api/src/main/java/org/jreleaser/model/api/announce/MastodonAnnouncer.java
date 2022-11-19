@@ -31,5 +31,7 @@ public interface MastodonAnnouncer extends Announcer {
 
     String getAccessToken();
 
+    String getStatus();
+
     List<String> getStatuses();
 }

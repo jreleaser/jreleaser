@@ -53,13 +53,13 @@ public abstract class MastodonAnnouncerValidator extends Validator {
                 errors,
                 context.isDryrun()));
 
-        if (isBlank(mastodon.getStatus()) && isBlank(mastodon.getStatusTemplate()) && mastodon.getStatuses().isEmpty()) {
-            mastodon.setStatus(RB.$("default.release.message"));
-        }
-
         if (isNotBlank(mastodon.getStatusTemplate()) &&
                 !Files.exists(context.getBasedir().resolve(mastodon.getStatusTemplate().trim()))) {
             errors.configuration(RB.$("validation_directory_not_exist", "mastodon.statusTemplate", mastodon.getStatusTemplate()));
+        }
+
+        if (isBlank(mastodon.getStatus()) && isBlank(mastodon.getStatusTemplate()) && mastodon.getStatuses().isEmpty()) {
+            mastodon.setStatus(RB.$("default.release.message"));
         }
 
         validateTimeout(mastodon);

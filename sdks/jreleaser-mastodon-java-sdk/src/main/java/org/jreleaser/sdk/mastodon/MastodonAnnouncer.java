@@ -92,8 +92,8 @@ public class MastodonAnnouncer implements Announcer<org.jreleaser.model.api.anno
 
         for (int i = 0; i < statuses.size(); i++) {
             String status = getResolvedMessage(context, statuses.get(i));
-            context.getLogger().info(RB.$("twitter.tweet"), status);
-            context.getLogger().debug(RB.$("twitter.tweet.size"), status.length());
+            context.getLogger().info(RB.$("mastodon.toot"), status);
+            context.getLogger().debug(RB.$("mastodon.toot.size"), status.length());
             statuses.set(i, status);
         }
 

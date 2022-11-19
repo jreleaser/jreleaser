@@ -36,6 +36,7 @@ import javax.inject.Inject
 class MastodonAnnouncerImpl extends AbstractAnnouncer implements MastodonAnnouncer {
     final Property<String> host
     final Property<String> accessToken
+    final Property<String> status
     final Property<String> statusTemplate
     final ListProperty<String> statuses
 
@@ -44,6 +45,7 @@ class MastodonAnnouncerImpl extends AbstractAnnouncer implements MastodonAnnounc
         super(objects)
         host = objects.property(String).convention(Providers.<String> notDefined())
         accessToken = objects.property(String).convention(Providers.<String> notDefined())
+        status = objects.property(String).convention(Providers.<String> notDefined())
         statuses = objects.listProperty(String).convention(Providers.<List<String>> notDefined())
         statusTemplate = objects.property(String).convention(Providers.<String> notDefined())
     }
@@ -54,6 +56,7 @@ class MastodonAnnouncerImpl extends AbstractAnnouncer implements MastodonAnnounc
         super.isSet() ||
                 host.present ||
                 accessToken.present ||
+                status.present ||
                 statusTemplate.present ||
                 statuses.present
     }
@@ -63,6 +66,7 @@ class MastodonAnnouncerImpl extends AbstractAnnouncer implements MastodonAnnounc
         fillProperties(mastodon)
         if (host.present) mastodon.host = host.get()
         if (accessToken.present) mastodon.accessToken = accessToken.get()
+        if (status.present) mastodon.status = status.get()
         if (statuses.present) mastodon.statuses = (List<String>) statuses.getOrElse([])
         if (statusTemplate.present) mastodon.statusTemplate = statusTemplate.get()
         mastodon
