@@ -119,6 +119,10 @@ announce:
   twitter:
     active: release
     statusTemplate: src/jreleaser/twitter.tpl
+  mastodon:
+    active: release
+    host: https://fosstodon.org
+    statusTemplate: src/jreleaser/mastodon.tpl
   http:
     noticeable:
       active: release

@@ -1,7 +1,16 @@
-JReleaser {{projectVersion}} is now available! This is a point fix release mostly related to Maven concerns.
+JReleaser {{projectVersion}} is now available! This release brings plenty of features and bug fixes
 
-**Deploy:** Fix a timing issue with the Nexus2 Maven deployer that hindered publication to Maven Central. JReleaser now queries the state of a transitioning repository before marking the operation as completed.
+**Deploy:** Adjustments to Nexus2 support now let you deploy snapshot artifacts to Nexus2 servers and Maven Central.
 
-**Maven:** The Maven plugin required an explicit dependency on `commons-io` causing a classloading issue it that wasn't the case.
+**Mastodon:** Message threads can now be posted to Mastodon. You may set a list of messages or a path to a file that
+contains the messages.
+
+**Docker*:** Multi-platform support is now available via buildx. For the time being only JAVA_BINARY and SINGLE_JAR
+distributions are supported.
+
+**Assemble:** The new `java-archive` assembler may be used to create JAVA_BINARY distrirbutions instead of using Maven's
+appassembler/assembly plugins or Gradle's application/distribution plugins.
+
+**GitLab:** Update existing assets when posting an updated release. This aligns GitLab support with GitHub/Gitea.
 
 [🚀Changelog](https://github.com/jreleaser/jreleaser/releases/tag/{{tagName}})
