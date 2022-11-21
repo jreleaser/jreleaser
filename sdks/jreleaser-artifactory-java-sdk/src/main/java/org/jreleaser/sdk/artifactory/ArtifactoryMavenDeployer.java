@@ -104,7 +104,7 @@ public class ArtifactoryMavenDeployer extends AbstractMavenDeployer<org.jrelease
                     headers.put("X-Checksum-Sha256", ChecksumUtils.checksum(Algorithm.SHA_256, data.getData()));
                     headers.put("X-Checksum", ChecksumUtils.checksum(Algorithm.MD5, data.getData()));
 
-                    String url = baseUrl + deployable.getPath() + "/" + deployable.getFilename();
+                    String url = baseUrl + deployable.getDeployPath() + "/" + deployable.getFilename();
                     ClientUtils.putFile(context.getLogger(),
                         url,
                         deployer.getConnectTimeout(),

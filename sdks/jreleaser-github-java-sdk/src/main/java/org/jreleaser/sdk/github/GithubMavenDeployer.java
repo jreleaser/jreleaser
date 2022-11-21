@@ -87,7 +87,7 @@ public class GithubMavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
                     headers.put("Authorization", "token " + token);
                     FormData data = ClientUtils.toFormData(localPath);
 
-                    String url = baseUrl + deployable.getPath() + "/" + deployable.getFilename();
+                    String url = baseUrl + deployable.getDeployPath() + "/" + deployable.getFilename();
                     ClientUtils.putFile(context.getLogger(),
                         url,
                         deployer.getConnectTimeout(),

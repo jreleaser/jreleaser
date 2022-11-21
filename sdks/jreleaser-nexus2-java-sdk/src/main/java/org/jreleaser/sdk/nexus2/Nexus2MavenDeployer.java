@@ -101,7 +101,7 @@ public class Nexus2MavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
             if (!context.isDryrun()) {
                 try {
                     // if project is snapshot then stagingRepositoryId will be null, and this is expected
-                    nexus.deploy(stagingRepositoryId, deployable.getPath(), deployable.getLocalPath());
+                    nexus.deploy(stagingRepositoryId, deployable.getDeployPath(), deployable.getLocalPath());
                 } catch (Nexus2Exception e) {
                     context.getLogger().trace(e);
                     throw new DeployException(RB.$("ERROR_unexpected_deploy",

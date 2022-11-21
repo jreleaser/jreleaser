@@ -344,6 +344,10 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
             return path;
         }
 
+        public String getDeployPath() {
+            return path.replace("\\", "/");
+        }
+
         public String getFilename() {
             return filename;
         }
