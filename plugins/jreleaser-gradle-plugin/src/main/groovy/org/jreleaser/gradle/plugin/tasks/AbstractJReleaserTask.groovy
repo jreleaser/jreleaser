@@ -82,7 +82,7 @@ abstract class AbstractJReleaserTask extends DefaultTask {
         outputDirectory = objects.directoryProperty()
     }
 
-    @Option(option = 'dry-run', description = 'Skip remote operations (OPTIONAL).')
+    @Option(option = 'dryrun', description = 'Skip remote operations (OPTIONAL).')
     void setDryrun(boolean dryrun) {
         this.dryrun.set(dryrun)
     }
