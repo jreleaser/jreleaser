@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-42-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-43-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -64,6 +64,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center"><a href="https://www.ebullient.dev"><img src="https://avatars.githubusercontent.com/u/808713?v=4?s=100" width="100px;" alt="Erin Schnabel"/><br /><sub><b>Erin Schnabel</b></sub></a><br /><a href="#ideas-ebullient" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/jreleaser/jreleaser/issues?q=author%3Aebullient" title="Bug reports">🐛</a></td>
       <td align="center"><a href="https://blog.bdemers.io"><img src="https://avatars.githubusercontent.com/u/99954?v=4?s=100" width="100px;" alt="Brian Demers"/><br /><sub><b>Brian Demers</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=bdemers" title="Code">💻</a></td>
       <td align="center"><a href="https://github.com/gema1405"><img src="https://avatars.githubusercontent.com/u/6089609?v=4?s=100" width="100px;" alt="gema1405"/><br /><sub><b>gema1405</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=gema1405" title="Code">💻</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href="https://github.com/nestabur"><img src="https://avatars.githubusercontent.com/u/6052881?v=4?s=100" width="100px;" alt="nestabur"/><br /><sub><b>nestabur</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=nestabur" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
