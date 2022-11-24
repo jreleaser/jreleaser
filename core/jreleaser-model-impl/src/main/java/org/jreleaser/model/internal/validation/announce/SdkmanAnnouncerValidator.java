@@ -25,6 +25,7 @@ import org.jreleaser.model.internal.packagers.SdkmanPackager;
 import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 
+import static org.jreleaser.model.Constants.MAGIC_SET;
 import static org.jreleaser.model.api.packagers.SdkmanPackager.SDKMAN_CONSUMER_KEY;
 import static org.jreleaser.model.api.packagers.SdkmanPackager.SDKMAN_CONSUMER_TOKEN;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -48,6 +49,13 @@ public abstract class SdkmanAnnouncerValidator extends Validator {
         }
         if (!context.getModel().getRelease().getReleaser().isReleaseSupported()) {
             context.getLogger().debug(RB.$("validation.disabled.release"));
+            sdkman.disable();
+            return;
+        }
+
+        Boolean set = (Boolean) sdkman.getExtraProperties().get(MAGIC_SET);
+        if (set != null && set) {
+            context.getLogger().debug(RB.$("validation.disabled"));
             sdkman.disable();
             return;
         }
