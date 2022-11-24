@@ -78,6 +78,8 @@ public class DiscussionsAnnouncer implements Announcer<org.jreleaser.model.api.a
         context.getLogger().info("title: {}", title);
         context.getLogger().debug("message: {}", message);
 
+        if (context.isDryrun()) return;
+
         try {
             Github api = new Github(context.getLogger(),
                 github.getApiEndpoint(),
