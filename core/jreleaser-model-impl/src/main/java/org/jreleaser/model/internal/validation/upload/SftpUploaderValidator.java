@@ -65,7 +65,7 @@ public abstract class SftpUploaderValidator extends Validator {
             return;
         }
 
-        validateSsh(context, sftp, sftp.getName(), "SFTP", sftp.getType(), errors);
+        validateSsh(context, sftp, sftp.getName(), "SFTP", "upload." + sftp.getType() + "." + sftp.getName(), errors);
         if (isBlank(sftp.getPath())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "sftp." + sftp.getName() + ".path"));
         }

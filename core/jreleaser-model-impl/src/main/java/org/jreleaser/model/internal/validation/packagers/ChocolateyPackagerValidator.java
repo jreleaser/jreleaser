@@ -150,7 +150,7 @@ public abstract class ChocolateyPackagerValidator extends Validator {
             packager.setApiKey(
                 checkProperty(context,
                     CHOCOLATEY_API_KEY,
-                    "chocolatey.internal.mutableKey",
+                    "distributions." + distribution.getName() + ".chocolatey.internal.mutableKey",
                     packager.getApiKey(),
                     errors,
                     context.isDryrun()));

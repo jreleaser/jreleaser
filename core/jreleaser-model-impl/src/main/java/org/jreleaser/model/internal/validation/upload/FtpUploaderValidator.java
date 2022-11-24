@@ -65,10 +65,11 @@ public abstract class FtpUploaderValidator extends Validator {
             return;
         }
 
+        String baseKey = "upload.ftp." + ftp.getName() + ".";
         ftp.setUsername(
             checkProperty(context,
                 "FTP_" + Env.toVar(ftp.getName()) + "_USERNAME",
-                "ftp.username",
+                baseKey + "username",
                 ftp.getUsername(),
                 errors,
                 context.isDryrun()));
@@ -76,7 +77,7 @@ public abstract class FtpUploaderValidator extends Validator {
         ftp.setPassword(
             checkProperty(context,
                 "FTP_" + Env.toVar(ftp.getName()) + "_PASSWORD",
-                "ftp.password",
+                baseKey + "password",
                 ftp.getPassword(),
                 errors,
                 context.isDryrun()));
@@ -84,7 +85,7 @@ public abstract class FtpUploaderValidator extends Validator {
         ftp.setHost(
             checkProperty(context,
                 "FTP_" + Env.toVar(ftp.getName()) + "_HOST",
-                "ftp.host",
+                baseKey + "host",
                 ftp.getHost(),
                 errors,
                 context.isDryrun()));
@@ -92,7 +93,7 @@ public abstract class FtpUploaderValidator extends Validator {
         ftp.setPort(
             checkProperty(context,
                 "FTP_" + Env.toVar(ftp.getName()) + "_PORT",
-                "ftp.port",
+                baseKey + "port",
                 ftp.getPort(),
                 errors,
                 context.isDryrun()));

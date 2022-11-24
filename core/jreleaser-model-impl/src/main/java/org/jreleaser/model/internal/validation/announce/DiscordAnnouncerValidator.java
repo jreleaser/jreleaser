@@ -46,7 +46,7 @@ public abstract class DiscordAnnouncerValidator extends Validator {
         discord.setWebhook(
             checkProperty(context,
                 DISCORD_WEBHOOK,
-                "discord.webhook",
+                "announce.discord.webhook",
                 discord.getWebhook(),
                 errors,
                 context.isDryrun()));

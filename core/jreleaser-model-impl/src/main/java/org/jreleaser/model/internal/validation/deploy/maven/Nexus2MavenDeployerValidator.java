@@ -69,7 +69,7 @@ public abstract class Nexus2MavenDeployerValidator extends Validator {
             mavenDeployer.setSnapshotUrl(
                 checkProperty(context,
                     baseEnvKey + "_" + Env.toVar(mavenDeployer.getName()) + "_SNAPSHOT_URL",
-                    mavenDeployer.getType() + "." + mavenDeployer.getName() + ".snapshotUrl",
+                    "maven.deploy." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".snapshotUrl",
                     mavenDeployer.getSnapshotUrl(),
                     errors));
 

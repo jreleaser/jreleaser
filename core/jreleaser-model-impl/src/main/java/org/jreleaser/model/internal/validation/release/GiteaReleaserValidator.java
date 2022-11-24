@@ -58,7 +58,7 @@ public abstract class GiteaReleaserValidator extends BaseReleaserValidator {
             gitea.setDraft(
                 checkProperty(context,
                     DRAFT,
-                    "gitea.draft",
+                    "release.gitea.draft",
                     null,
                     false));
         }

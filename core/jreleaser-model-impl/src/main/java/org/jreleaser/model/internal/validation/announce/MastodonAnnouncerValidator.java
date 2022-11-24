@@ -48,7 +48,7 @@ public abstract class MastodonAnnouncerValidator extends Validator {
         mastodon.setAccessToken(
             checkProperty(context,
                 MASTODON_ACCESS_TOKEN,
-                "mastodon.accessToken",
+                "announce.mastodon.accessToken",
                 mastodon.getAccessToken(),
                 errors,
                 context.isDryrun()));

@@ -46,7 +46,7 @@ public abstract class MattermostAnnouncerValidator extends Validator {
         mattermost.setWebhook(
             checkProperty(context,
                 MATTERMOST_WEBHOOK,
-                "mattermost.webhook",
+                "announce.mattermost.webhook",
                 mattermost.getWebhook(),
                 errors,
                 context.isDryrun()));

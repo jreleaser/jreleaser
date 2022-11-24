@@ -113,10 +113,11 @@ public abstract class SdkmanPackagerValidator extends Validator {
             packager.setConsumerToken(parentPackager.getConsumerToken());
         }
 
+        String baseKey = "distributions." + distribution.getName() + ".";
         packager.setConsumerKey(
             checkProperty(context,
                 SDKMAN_CONSUMER_KEY,
-                "sdkman.consumerKey",
+                baseKey + "sdkman.consumerKey",
                 packager.getConsumerKey(),
                 errors,
                 context.isDryrun()));
@@ -124,7 +125,7 @@ public abstract class SdkmanPackagerValidator extends Validator {
         packager.setConsumerToken(
             checkProperty(context,
                 SDKMAN_CONSUMER_TOKEN,
-                "sdkman.consumerToken",
+                baseKey + "sdkman.consumerToken",
                 packager.getConsumerToken(),
                 errors,
                 context.isDryrun()));

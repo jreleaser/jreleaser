@@ -53,7 +53,7 @@ public abstract class GithubReleaserValidator extends BaseReleaserValidator {
             github.setDraft(
                 checkProperty(context,
                     DRAFT,
-                    "github.draft",
+                    "release.github.draft",
                     null,
                     false));
         }

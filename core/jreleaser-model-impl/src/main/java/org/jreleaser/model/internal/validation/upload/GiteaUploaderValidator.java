@@ -66,12 +66,13 @@ public abstract class GiteaUploaderValidator extends Validator {
             return;
         }
 
+        String baseKey = "upload.gitea" + gitea.getName() + ".";
         gitea.setToken(
             checkProperty(context,
                 listOf(
                     "GITEA_" + Env.toVar(gitea.getName()) + "_TOKEN",
                     "GITEA_TOKEN"),
-                "gitea.token",
+                baseKey + "token",
                 gitea.getToken(),
                 errors,
                 context.isDryrun()));
@@ -79,7 +80,7 @@ public abstract class GiteaUploaderValidator extends Validator {
         gitea.setHost(
             checkProperty(context,
                 "GITEA_" + Env.toVar(gitea.getName()) + "_HOST",
-                "gitea.host",
+                baseKey + "host",
                 gitea.getHost(),
                 errors,
                 context.isDryrun()));

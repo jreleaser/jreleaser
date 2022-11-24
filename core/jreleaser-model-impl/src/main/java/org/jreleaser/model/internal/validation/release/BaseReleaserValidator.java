@@ -86,24 +86,25 @@ public abstract class BaseReleaserValidator extends Validator {
             service.setName(project.getName());
         }
 
+        String baseKey = "release." + service.getServiceName() + ".";
         service.setUsername(
             checkProperty(context,
                 service.getServiceName().toUpperCase(Locale.ENGLISH) + "_USERNAME",
-                service.getServiceName() + ".username",
+                baseKey + "username",
                 service.getUsername(),
                 service.getOwner()));
 
         service.setToken(
             checkProperty(context,
                 service.getServiceName().toUpperCase(Locale.ENGLISH) + "_TOKEN",
-                service.getServiceName() + ".token",
+                baseKey + "token",
                 service.getToken(),
                 !mode.validateStandalone() ? errors : new Errors()));
 
         service.setTagName(
             checkProperty(context,
                 TAG_NAME,
-                service.getServiceName() + ".tagName",
+                baseKey + "tagName",
                 service.getTagName(),
                 "v{{projectVersion}}"));
 
@@ -111,7 +112,7 @@ public abstract class BaseReleaserValidator extends Validator {
             service.setReleaseName(
                 checkProperty(context,
                     RELEASE_NAME,
-                    service.getServiceName() + ".releaseName",
+                    baseKey + "releaseName",
                     service.getReleaseName(),
                     "Release {{tagName}}"));
         }
@@ -119,7 +120,7 @@ public abstract class BaseReleaserValidator extends Validator {
         service.setBranch(
             checkProperty(context,
                 BRANCH,
-                service.getServiceName() + ".branch",
+                baseKey + "branch",
                 service.getBranch(),
                 "main"));
 
@@ -127,7 +128,7 @@ public abstract class BaseReleaserValidator extends Validator {
             service.setOverwrite(
                 checkProperty(context,
                     OVERWRITE,
-                    service.getServiceName() + ".overwrite",
+                    baseKey + "overwrite",
                     null,
                     false));
         }
@@ -137,7 +138,7 @@ public abstract class BaseReleaserValidator extends Validator {
                 service.getUpdate().setEnabled(
                     checkProperty(context,
                         UPDATE,
-                        service.getServiceName() + ".update",
+                        baseKey + "update",
                         null,
                         false));
             }
@@ -151,7 +152,7 @@ public abstract class BaseReleaserValidator extends Validator {
             service.setSkipTag(
                 checkProperty(context,
                     SKIP_TAG,
-                    service.getServiceName() + ".skipTag",
+                    baseKey + "skipTag",
                     null,
                     false));
         }
@@ -160,7 +161,7 @@ public abstract class BaseReleaserValidator extends Validator {
             service.setSkipRelease(
                 checkProperty(context,
                     SKIP_RELEASE,
-                    service.getServiceName() + ".skipRelease",
+                    baseKey + "skipRelease",
                     null,
                     false));
         }
@@ -177,7 +178,7 @@ public abstract class BaseReleaserValidator extends Validator {
             service.getMilestone().setName(
                 checkProperty(context,
                     MILESTONE_NAME,
-                    service.getServiceName() + ".milestone.name",
+                    baseKey + "milestone.name",
                     service.getMilestone().getName(),
                     "{{tagName}}"));
 

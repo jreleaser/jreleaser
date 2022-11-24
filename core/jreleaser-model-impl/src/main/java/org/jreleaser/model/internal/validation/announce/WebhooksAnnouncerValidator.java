@@ -81,7 +81,7 @@ public abstract class WebhooksAnnouncerValidator extends Validator {
         webhook.setWebhook(
             checkProperty(context,
                 Env.toVar(webhook.getName()) + "_WEBHOOK",
-                "webhook." + webhook.getName() + ".webhook",
+                "announce.webhooks." + webhook.getName() + ".webhook",
                 webhook.getWebhook(),
                 errors,
                 context.isDryrun()));

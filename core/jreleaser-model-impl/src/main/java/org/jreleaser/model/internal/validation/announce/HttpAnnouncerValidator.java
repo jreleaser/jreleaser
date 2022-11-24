@@ -87,12 +87,13 @@ public abstract class HttpAnnouncerValidator extends Validator {
             announcer.setMethod(Http.Method.PUT);
         }
 
+        String baseKey = "announce.http." + announcer.getName() + ".";
         switch (announcer.resolveAuthorization()) {
             case BEARER:
                 announcer.setPassword(
                     checkProperty(context,
                         "HTTP_" + Env.toVar(announcer.getName()) + "_PASSWORD",
-                        "http.password",
+                        baseKey + "http.password",
                         announcer.getPassword(),
                         errors,
                         context.isDryrun()));
@@ -105,7 +106,7 @@ public abstract class HttpAnnouncerValidator extends Validator {
                 announcer.setUsername(
                     checkProperty(context,
                         "HTTP_" + Env.toVar(announcer.getName()) + "_USERNAME",
-                        "http.username",
+                        baseKey + "http.username",
                         announcer.getUsername(),
                         errors,
                         context.isDryrun()));
@@ -113,7 +114,7 @@ public abstract class HttpAnnouncerValidator extends Validator {
                 announcer.setPassword(
                     checkProperty(context,
                         "HTTP_" + Env.toVar(announcer.getName()) + "_PASSWORD",
-                        "http.password",
+                        baseKey + "http.password",
                         announcer.getPassword(),
                         errors,
                         context.isDryrun()));

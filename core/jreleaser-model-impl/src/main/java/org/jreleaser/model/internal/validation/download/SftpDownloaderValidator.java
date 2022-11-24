@@ -59,7 +59,7 @@ public abstract class SftpDownloaderValidator extends Validator {
             return;
         }
 
-        validateSsh(context, sftp, sftp.getName(), "SFTP", sftp.getType(), errors);
+        validateSsh(context, sftp, sftp.getName(), "SFTP", "download." + sftp.getType() + "." + sftp.getName(), errors);
         validateTimeout(sftp);
 
         if (sftp.getAssets().isEmpty()) {

@@ -77,12 +77,13 @@ public abstract class HttpUploaderValidator extends Validator {
             http.setMethod(Http.Method.PUT);
         }
 
+        String baseKey = "upload.http." + http.getName() + ".";
         switch (http.resolveAuthorization()) {
             case BEARER:
                 http.setPassword(
                     checkProperty(context,
                         "HTTP_" + Env.toVar(http.getName()) + "_PASSWORD",
-                        "http.password",
+                        baseKey + "password",
                         http.getPassword(),
                         errors,
                         context.isDryrun()));
@@ -91,7 +92,7 @@ public abstract class HttpUploaderValidator extends Validator {
                 http.setUsername(
                     checkProperty(context,
                         "HTTP_" + Env.toVar(http.getName()) + "_USERNAME",
-                        "http.username",
+                        baseKey + "username",
                         http.getUsername(),
                         errors,
                         context.isDryrun()));
@@ -99,7 +100,7 @@ public abstract class HttpUploaderValidator extends Validator {
                 http.setPassword(
                     checkProperty(context,
                         "HTTP_" + Env.toVar(http.getName()) + "_PASSWORD",
-                        "http.password",
+                        baseKey + "password",
                         http.getPassword(),
                         errors,
                         context.isDryrun()));

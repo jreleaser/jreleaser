@@ -44,7 +44,7 @@ public abstract class CodebergReleaserValidator extends BaseReleaserValidator {
         codeberg.getPrerelease().setPattern(
             checkProperty(context,
                 PRERELEASE_PATTERN,
-                "codeberg.github.prerelease.pattern",
+                "release.codeberg.prerelease.pattern",
                 codeberg.getPrerelease().getPattern(),
                 ""));
         codeberg.getPrerelease().isPrerelease(context.getModel().getProject().getResolvedVersion());
@@ -53,7 +53,7 @@ public abstract class CodebergReleaserValidator extends BaseReleaserValidator {
             codeberg.setDraft(
                 checkProperty(context,
                     DRAFT,
-                    "codeberg.draft",
+                    "release.codeberg.draft",
                     null,
                     false));
         }

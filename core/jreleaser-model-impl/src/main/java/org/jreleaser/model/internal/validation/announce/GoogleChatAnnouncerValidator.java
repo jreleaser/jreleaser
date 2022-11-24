@@ -46,7 +46,7 @@ public abstract class GoogleChatAnnouncerValidator extends Validator {
         googleChat.setWebhook(
             checkProperty(context,
                 GOOGLE_CHAT_WEBHOOK,
-                "googleChat.webhook",
+                "announce.googleChat.webhook",
                 googleChat.getWebhook(),
                 errors,
                 context.isDryrun()));

@@ -47,7 +47,7 @@ public abstract class TelegramAnnouncerValidator extends Validator {
         telegram.setToken(
             checkProperty(context,
                 TELEGRAM_TOKEN,
-                "telegram.token",
+                "announce.telegram.token",
                 telegram.getToken(),
                 errors,
                 context.isDryrun()));
@@ -55,7 +55,7 @@ public abstract class TelegramAnnouncerValidator extends Validator {
         telegram.setChatId(
             checkProperty(context,
                 TELEGRAM_CHAT_ID,
-                "telegram.chatId",
+                "announce.telegram.chatId",
                 telegram.getChatId(),
                 errors,
                 context.isDryrun()));

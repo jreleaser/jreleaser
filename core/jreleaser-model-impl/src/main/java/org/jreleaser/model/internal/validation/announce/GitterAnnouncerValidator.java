@@ -46,7 +46,7 @@ public abstract class GitterAnnouncerValidator extends Validator {
         gitter.setWebhook(
             checkProperty(context,
                 GITTER_WEBHOOK,
-                "gitter.webhook",
+                "announce.gitter.webhook",
                 gitter.getWebhook(),
                 errors,
                 context.isDryrun()));

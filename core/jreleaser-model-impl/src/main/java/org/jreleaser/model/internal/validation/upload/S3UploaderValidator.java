@@ -66,45 +66,46 @@ public abstract class S3UploaderValidator extends Validator {
             return;
         }
 
+        String baseKey = "upload.s3." + s3.getName() + ".";
         s3.setRegion(
             checkProperty(context,
                 Env.toVar("S3_" + s3.getName()) + "_REGION",
-                "s3." + s3.getName() + ".region",
+                baseKey + "region",
                 s3.getRegion(),
                 errors));
 
         s3.setBucket(
             checkProperty(context,
                 Env.toVar("S3_" + s3.getName()) + "_BUCKET",
-                "s3." + s3.getName() + ".bucket",
+                baseKey + "bucket",
                 s3.getBucket(),
                 errors));
 
         s3.setAccessKeyId(
             checkProperty(context,
                 Env.toVar("S3_" + s3.getName()) + "_ACCESS_KEY_ID",
-                "s3." + s3.getName() + ".accessKeyId",
+                baseKey + "accessKeyId",
                 s3.getAccessKeyId(),
                 s3.getAccessKeyId()));
 
         s3.setSecretKey(
             checkProperty(context,
                 Env.toVar("S3_" + s3.getName()) + "_SECRET_KEY",
-                "s3." + s3.getName() + ".secretKey",
+                baseKey + "secretKey",
                 s3.getSecretKey(),
                 s3.getSecretKey()));
 
         s3.setSessionToken(
             checkProperty(context,
                 Env.toVar("S3_" + s3.getName()) + "_SESSION_TOKEN",
-                "s3." + s3.getName() + ".sessionToken",
+                baseKey + "sessionToken",
                 s3.getSessionToken(),
                 s3.getSessionToken()));
 
         s3.setPath(
             checkProperty(context,
                 Env.toVar("S3_" + s3.getName()) + "_PATH",
-                "s3." + s3.getName() + ".path",
+                baseKey + "path",
                 s3.getPath(),
                 "{{projectName}}/{{tagName}}/{{artifactFile}}"));
 
@@ -118,7 +119,7 @@ public abstract class S3UploaderValidator extends Validator {
         s3.setEndpoint(
             checkProperty(context,
                 Env.toVar("S3_" + s3.getName()) + "_ENDPOINT",
-                "s3." + s3.getName() + ".endpoint",
+                baseKey + "endpoint",
                 s3.getEndpoint(),
                 ""));
 

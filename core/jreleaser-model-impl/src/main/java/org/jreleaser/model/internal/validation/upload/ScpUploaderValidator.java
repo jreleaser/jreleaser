@@ -65,7 +65,7 @@ public abstract class ScpUploaderValidator extends Validator {
             return;
         }
 
-        validateSsh(context, scp, scp.getName(), "SCP", scp.getType(), errors);
+        validateSsh(context, scp, scp.getName(), "SCP", "upload." + scp.getType() + "." + scp.getName(), errors);
         if (isBlank(scp.getPath())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "scp." + scp.getName() + ".path"));
         }

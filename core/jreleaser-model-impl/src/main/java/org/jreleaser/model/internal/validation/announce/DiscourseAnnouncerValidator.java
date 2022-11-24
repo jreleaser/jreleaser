@@ -52,7 +52,7 @@ public abstract class DiscourseAnnouncerValidator extends Validator {
         discourse.setUsername(
             checkProperty(context,
                 DISCOURSE_USERNAME,
-                "discourse.username",
+                "announce.discourse.username",
                 discourse.getUsername(),
                 errors,
                 context.isDryrun()));
@@ -60,7 +60,7 @@ public abstract class DiscourseAnnouncerValidator extends Validator {
         discourse.setApiKey(
             checkProperty(context,
                 DISCOURSE_API_KEY,
-                "discourse.apiKey",
+                "announce.discourse.apiKey",
                 discourse.getApiKey(),
                 errors,
                 context.isDryrun()));
@@ -68,7 +68,7 @@ public abstract class DiscourseAnnouncerValidator extends Validator {
         discourse.setCategoryName(
             checkProperty(context,
                 DISCOURSE_CATEGORY_NAME,
-                "discourse.category",
+                "announce.discourse.category",
                 discourse.getCategoryName(),
                 errors,
                 context.isDryrun()));

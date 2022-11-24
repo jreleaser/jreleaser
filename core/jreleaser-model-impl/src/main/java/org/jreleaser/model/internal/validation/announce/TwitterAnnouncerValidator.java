@@ -47,7 +47,7 @@ public abstract class TwitterAnnouncerValidator extends Validator {
         twitter.setConsumerKey(
             checkProperty(context,
                 TWITTER_CONSUMER_KEY,
-                "twitter.consumerKey",
+                "announce.twitter.consumerKey",
                 twitter.getConsumerKey(),
                 errors,
                 context.isDryrun()));
@@ -55,7 +55,7 @@ public abstract class TwitterAnnouncerValidator extends Validator {
         twitter.setConsumerSecret(
             checkProperty(context,
                 TWITTER_CONSUMER_SECRET,
-                "twitter.consumerSecret",
+                "announce.twitter.consumerSecret",
                 twitter.getConsumerSecret(),
                 errors,
                 context.isDryrun()));
@@ -63,7 +63,7 @@ public abstract class TwitterAnnouncerValidator extends Validator {
         twitter.setAccessToken(
             checkProperty(context,
                 TWITTER_ACCESS_TOKEN,
-                "twitter.accessToken",
+                "announce.twitter.accessToken",
                 twitter.getAccessToken(),
                 errors,
                 context.isDryrun()));
@@ -71,7 +71,7 @@ public abstract class TwitterAnnouncerValidator extends Validator {
         twitter.setAccessTokenSecret(
             checkProperty(context,
                 TWITTER_ACCESS_TOKEN_SECRET,
-                "twitter.accessTokenSecret",
+                "announce.twitter.accessTokenSecret",
                 twitter.getAccessTokenSecret(),
                 errors,
                 context.isDryrun()));

@@ -48,7 +48,7 @@ public abstract class SlackAnnouncerValidator extends Validator {
         slack.setToken(
             checkProperty(context,
                 SLACK_TOKEN,
-                "slack.token",
+                "announce.slack.token",
                 slack.getToken(),
                 ignored,
                 context.isDryrun()));
@@ -56,7 +56,7 @@ public abstract class SlackAnnouncerValidator extends Validator {
         slack.setWebhook(
             checkProperty(context,
                 SLACK_WEBHOOK,
-                "slack.webhook",
+                "announce.slack.webhook",
                 slack.getWebhook(),
                 ignored,
                 context.isDryrun()));

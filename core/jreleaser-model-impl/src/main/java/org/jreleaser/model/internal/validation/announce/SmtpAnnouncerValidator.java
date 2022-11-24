@@ -64,7 +64,7 @@ public abstract class SmtpAnnouncerValidator extends Validator {
         smtp.setPassword(
             checkProperty(context,
                 MAIL_PASSWORD,
-                "mail.password",
+                "announce.mail.password",
                 smtp.getPassword(),
                 errors,
                 context.isDryrun()));

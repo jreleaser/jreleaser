@@ -66,12 +66,13 @@ public abstract class GitlabUploaderValidator extends Validator {
             return;
         }
 
+        String baseKey = "upload.gitlab" + gitlab.getName() + ".";
         gitlab.setToken(
             checkProperty(context,
                 listOf(
                     "GITLAB_" + Env.toVar(gitlab.getName()) + "_TOKEN",
                     "GITLAB_TOKEN"),
-                "gitlab.token",
+                baseKey + "token",
                 gitlab.getToken(),
                 errors,
                 context.isDryrun()));
@@ -79,7 +80,7 @@ public abstract class GitlabUploaderValidator extends Validator {
         gitlab.setHost(
             checkProperty(context,
                 "GITLAB_" + Env.toVar(gitlab.getName()) + "_HOST",
-                "gitlab.host",
+                baseKey + "host",
                 gitlab.getHost(),
                 errors,
                 context.isDryrun()));

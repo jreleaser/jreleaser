@@ -217,21 +217,21 @@ public class Validator {
         tap.setUsername(
             checkProperty(context,
                 Env.toVar(tap.getBasename() + "_" + service.getServiceName()) + "_USERNAME",
-                "distribution." + distribution.getName() + "." + property + ".username",
+                "distributions." + distribution.getName() + "." + property + ".username",
                 tap.getUsername(),
                 service.getUsername()));
 
         tap.setToken(
             checkProperty(context,
                 Env.toVar(tap.getBasename() + "_" + service.getServiceName()) + "_TOKEN",
-                "distribution." + distribution.getName() + "." + property + ".token",
+                "distributions." + distribution.getName() + "." + property + ".token",
                 tap.getToken(),
                 service.getToken()));
 
         tap.setBranch(
             checkProperty(context,
                 Env.toVar(tap.getBasename() + "_" + service.getServiceName()) + "_BRANCH",
-                "distribution." + distribution.getName() + "." + property + ".branch",
+                "distributions." + distribution.getName() + "." + property + ".branch",
                 tap.getBranch(),
                 "HEAD"));
     }

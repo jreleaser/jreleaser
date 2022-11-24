@@ -70,10 +70,11 @@ public abstract class ArtifactoryUploaderValidator extends Validator {
             return;
         }
 
+        String baseKey = "upload.artifactory" + artifactory.getName() + ".";
         artifactory.setHost(
             checkProperty(context,
                 "ARTIFACTORY_" + Env.toVar(artifactory.getName()) + "_HOST",
-                "artifactory.host",
+                baseKey + "host",
                 artifactory.getHost(),
                 errors));
 
@@ -82,7 +83,7 @@ public abstract class ArtifactoryUploaderValidator extends Validator {
                 artifactory.setPassword(
                     checkProperty(context,
                         "ARTIFACTORY_" + Env.toVar(artifactory.getName()) + "_PASSWORD",
-                        "artifactory.password",
+                        baseKey + "password",
                         artifactory.getPassword(),
                         errors,
                         context.isDryrun()));
@@ -91,7 +92,7 @@ public abstract class ArtifactoryUploaderValidator extends Validator {
                 artifactory.setUsername(
                     checkProperty(context,
                         "ARTIFACTORY_" + Env.toVar(artifactory.getName()) + "_USERNAME",
-                        "artifactory.username",
+                        baseKey + "username",
                         artifactory.getUsername(),
                         errors,
                         context.isDryrun()));
@@ -99,7 +100,7 @@ public abstract class ArtifactoryUploaderValidator extends Validator {
                 artifactory.setPassword(
                     checkProperty(context,
                         "ARTIFACTORY_" + Env.toVar(artifactory.getName()) + "_PASSWORD",
-                        "artifactory.password",
+                        baseKey + "password",
                         artifactory.getPassword(),
                         errors,
                         context.isDryrun()));

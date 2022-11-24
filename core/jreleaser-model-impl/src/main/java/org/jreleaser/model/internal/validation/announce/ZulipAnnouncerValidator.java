@@ -50,7 +50,7 @@ public abstract class ZulipAnnouncerValidator extends Validator {
         zulip.setApiKey(
             checkProperty(context,
                 ZULIP_API_KEY,
-                "zulip.internal.mutableKey",
+                "announce.zulip.apiKey",
                 zulip.getApiKey(),
                 errors,
                 context.isDryrun()));

@@ -59,7 +59,7 @@ public abstract class ScpDownloaderValidator extends Validator {
             return;
         }
 
-        validateSsh(context, scp, scp.getName(), "SCP", scp.getType(), errors);
+        validateSsh(context, scp, scp.getName(), "SCP", "download." + scp.getType() + "." + scp.getName(), errors);
         validateTimeout(scp);
 
         if (scp.getAssets().isEmpty()) {

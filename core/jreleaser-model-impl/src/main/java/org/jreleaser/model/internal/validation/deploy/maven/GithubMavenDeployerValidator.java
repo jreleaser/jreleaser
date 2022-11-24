@@ -59,7 +59,7 @@ public abstract class GithubMavenDeployerValidator extends Validator {
         mavenDeployer.setUsername(
             checkProperty(context,
                 baseEnvKey + "_" + Env.toVar(mavenDeployer.getName()) + "_USERNAME",
-                mavenDeployer.getType() + ".username",
+                "maven.deploy." + mavenDeployer.getType() + ".username",
                 mavenDeployer.getUsername(),
                 errors,
                 true));

@@ -46,7 +46,7 @@ public abstract class TeamsAnnouncerValidator extends Validator {
         teams.setWebhook(
             checkProperty(context,
                 TEAMS_WEBHOOK,
-                "teams.webhook",
+                "announce.teams.webhook",
                 teams.getWebhook(),
                 errors,
                 context.isDryrun()));
