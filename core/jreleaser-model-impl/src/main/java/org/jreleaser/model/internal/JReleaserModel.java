@@ -505,14 +505,17 @@ public class JReleaserModel {
             props.putAll(project.getJava().getResolvedExtraProperties());
             props.put(Constants.KEY_PROJECT_JAVA_GROUP_ID, project.getJava().getGroupId());
             props.put(Constants.KEY_PROJECT_JAVA_ARTIFACT_ID, project.getJava().getArtifactId());
-            props.put(Constants.KEY_PROJECT_JAVA_VERSION, project.getJava().getVersion());
+            String javaVersion = project.getJava().getVersion();
+            props.put(Constants.KEY_PROJECT_JAVA_VERSION, javaVersion);
             props.put(Constants.KEY_PROJECT_JAVA_MAIN_CLASS, project.getJava().getMainClass());
-            SemanticVersion jv = SemanticVersion.of(project.getJava().getVersion());
-            props.put(Constants.KEY_PROJECT_JAVA_VERSION_MAJOR, jv.getMajor());
-            if (jv.hasMinor()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_MINOR, jv.getMinor());
-            if (jv.hasPatch()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_PATCH, jv.getPatch());
-            if (jv.hasTag()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_TAG, jv.getTag());
-            if (jv.hasBuild()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_BUILD, jv.getBuild());
+            if (isNotBlank(javaVersion)) {
+                SemanticVersion jv = SemanticVersion.of(javaVersion);
+                props.put(Constants.KEY_PROJECT_JAVA_VERSION_MAJOR, jv.getMajor());
+                if (jv.hasMinor()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_MINOR, jv.getMinor());
+                if (jv.hasPatch()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_PATCH, jv.getPatch());
+                if (jv.hasTag()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_TAG, jv.getTag());
+                if (jv.hasBuild()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_BUILD, jv.getBuild());
+            }
         }
 
         project.parseVersion();
