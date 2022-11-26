@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.validation.deploy.maven;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.deploy.maven.Nexus2MavenDeployer;
@@ -28,6 +29,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import static org.jreleaser.model.internal.validation.deploy.maven.MavenDeployersValidator.validateMavenDeployer;
+import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -74,6 +76,10 @@ public abstract class Nexus2MavenDeployerValidator extends Validator {
                     mavenDeployer.getSnapshotUrl(),
                     errors));
 
+        }
+
+        if (isBlank(context.getModel().getProject().getJava().getGroupId())) {
+            errors.configuration(RB.$("validation_must_not_be_blank", "project.java.groupId"));
         }
     }
 }
