@@ -53,8 +53,9 @@ public abstract class GithubMavenDeployerValidator extends Validator {
         }
 
         validateMavenDeployer(context, mode, mavenDeployer, errors);
+        if (!mavenDeployer.isEnabled()) return;
 
-        String baseEnvKey = mavenDeployer.getType().toLowerCase(Locale.ENGLISH);
+        String baseEnvKey = mavenDeployer.getType().toUpperCase(Locale.ENGLISH);
 
         mavenDeployer.setUsername(
             checkProperty(context,

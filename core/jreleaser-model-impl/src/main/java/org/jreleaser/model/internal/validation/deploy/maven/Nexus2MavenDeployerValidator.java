@@ -62,8 +62,9 @@ public abstract class Nexus2MavenDeployerValidator extends Validator {
         }
 
         validateMavenDeployer(context, mode, mavenDeployer, errors);
+        if (!mavenDeployer.isEnabled()) return;
 
-        String baseEnvKey = mavenDeployer.getType().toLowerCase(Locale.ENGLISH);
+        String baseEnvKey = mavenDeployer.getType().toUpperCase(Locale.ENGLISH);
 
         if (context.getModel().getProject().isSnapshot()) {
             mavenDeployer.setSnapshotUrl(
