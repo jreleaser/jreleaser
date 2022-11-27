@@ -117,5 +117,4 @@ public class MastodonAnnouncer implements Announcer<org.jreleaser.model.api.anno
         props.put(KEY_TAG_NAME, context.getModel().getRelease().getReleaser().getEffectiveTagName(context.getModel()));
         return resolveTemplate(message, props);
     }
-
 }

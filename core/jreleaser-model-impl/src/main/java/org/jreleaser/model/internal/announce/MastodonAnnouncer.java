@@ -36,7 +36,6 @@ import static org.jreleaser.model.Constants.UNSET;
 import static org.jreleaser.model.api.announce.MastodonAnnouncer.TYPE;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplate;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
-import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -74,6 +73,11 @@ public final class MastodonAnnouncer extends AbstractAnnouncer<MastodonAnnouncer
         @Override
         public List<String> getStatuses() {
             return statuses;
+        }
+
+        @Override
+        public String getStatusTemplate() {
+            return statusTemplate;
         }
 
         @Override
@@ -136,15 +140,9 @@ public final class MastodonAnnouncer extends AbstractAnnouncer<MastodonAnnouncer
         super.merge(source);
         this.host = merge(this.host, source.host);
         this.accessToken = merge(this.accessToken, source.accessToken);
+        this.status = merge(this.status, source.status);
         setStatuses(merge(this.statuses, source.statuses));
         this.statusTemplate = merge(this.statusTemplate, source.statusTemplate);
-    }
-
-    public String getResolvedStatus(JReleaserContext context) {
-        Map<String, Object> props = context.fullProps();
-        applyTemplates(props, getResolvedExtraProperties());
-        context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
-        return resolveTemplate(status, props);
     }
 
     public String getResolvedStatusTemplate(JReleaserContext context, Map<String, Object> extraProps) {
@@ -179,6 +177,14 @@ public final class MastodonAnnouncer extends AbstractAnnouncer<MastodonAnnouncer
         this.accessToken = accessToken;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public List<String> getStatuses() {
         return statuses;
     }
@@ -194,14 +200,6 @@ public final class MastodonAnnouncer extends AbstractAnnouncer<MastodonAnnouncer
 
     public void setStatusTemplate(String statusTemplate) {
         this.statusTemplate = statusTemplate;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     @Override

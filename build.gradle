@@ -84,6 +84,10 @@ allprojects {
         enabled = false
     }
 
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+
     tasks.withType(JavaCompiler) {
         options.compilerArgs += ['-Duser.language=en', '-Duser.country=US']
     }

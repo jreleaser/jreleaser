@@ -34,4 +34,6 @@ public interface MastodonAnnouncer extends Announcer {
     String getStatus();
 
     List<String> getStatuses();
+
+    String getStatusTemplate();
 }

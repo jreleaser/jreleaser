@@ -34,7 +34,9 @@ interface MastodonAnnouncer extends Announcer {
 
     Property<String> getStatus()
 
+    Property<String> getStatusTemplate()
+
     ListProperty<String> getStatuses()
 
-    Property<String> statusTemplate
+    void status(String message)
 }

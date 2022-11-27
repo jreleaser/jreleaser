@@ -27,6 +27,8 @@ import org.jreleaser.gradle.plugin.dsl.announce.MastodonAnnouncer
 
 import javax.inject.Inject
 
+import static org.jreleaser.util.StringUtils.isNotBlank
+
 /**
  *
  * @author Andres Almiray
@@ -46,19 +48,26 @@ class MastodonAnnouncerImpl extends AbstractAnnouncer implements MastodonAnnounc
         host = objects.property(String).convention(Providers.<String> notDefined())
         accessToken = objects.property(String).convention(Providers.<String> notDefined())
         status = objects.property(String).convention(Providers.<String> notDefined())
-        statuses = objects.listProperty(String).convention(Providers.<List<String>> notDefined())
         statusTemplate = objects.property(String).convention(Providers.<String> notDefined())
+        statuses = objects.listProperty(String).convention(Providers.<List<String>> notDefined())
     }
 
     @Override
     @Internal
     boolean isSet() {
         super.isSet() ||
-                host.present ||
-                accessToken.present ||
-                status.present ||
-                statusTemplate.present ||
-                statuses.present
+            host.present ||
+            accessToken.present ||
+            status.present ||
+            statusTemplate.present ||
+            statuses.present
+    }
+
+    @Override
+    void status(String message) {
+        if (isNotBlank(message)) {
+            statuses.add(message.trim())
+        }
     }
 
     org.jreleaser.model.internal.announce.MastodonAnnouncer toModel() {
@@ -67,8 +76,8 @@ class MastodonAnnouncerImpl extends AbstractAnnouncer implements MastodonAnnounc
         if (host.present) mastodon.host = host.get()
         if (accessToken.present) mastodon.accessToken = accessToken.get()
         if (status.present) mastodon.status = status.get()
-        if (statuses.present) mastodon.statuses = (List<String>) statuses.getOrElse([])
         if (statusTemplate.present) mastodon.statusTemplate = statusTemplate.get()
+        mastodon.statuses = (List<String>) statuses.getOrElse([])
         mastodon
     }
 }
