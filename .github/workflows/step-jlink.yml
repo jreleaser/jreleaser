@@ -16,13 +16,17 @@ on:
         type: string
     secrets:
       compartment-id:
-        type: string
+        required: true
+      gpg-passphrase:
+        required: true
 
 jobs:
   jlink:
     name: Jlink
     runs-on: ubuntu-latest
     env:
+      CI: true
+      GPG_PASSPHRASE: ${{ secrets.gpg-passphrase }}
       JRELEASER_OCI_COMPARTMENTID: ${{ secrets.compartment-id }}
     steps:
       - name: Checkout

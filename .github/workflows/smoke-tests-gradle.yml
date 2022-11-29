@@ -45,6 +45,8 @@ jobs:
           - { os: windows-latest, sign: cosign,  args: '--exclude-packager docker' }
     runs-on: ${{ matrix.job.os }}
     env:
+      CI: true
+      GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
       JRELEASER_OCI_COMPARTMENTID: ${{ secrets.JRELEASER_OCI_COMPARTMENTID }}
     steps:
       - name: Checkout

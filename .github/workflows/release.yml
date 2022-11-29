@@ -12,6 +12,7 @@ env:
   JAVA_DISTRO: 'zulu'
   GRAAL_VERSION: '22.3.0'
   GRAAL_JAVA_VERSION: '17'
+  GITHUB_BOT_EMAIL: '41898282+github-actions[bot]@users.noreply.github.com'
 
 jobs:
   precheck:
@@ -23,7 +24,6 @@ jobs:
       JAVA_DISTRO: ${{ env.JAVA_DISTRO }}
       GRAAL_VERSION: ${{ env.GRAAL_VERSION }}
       GRAAL_JAVA_VERSION: ${{ env.GRAAL_JAVA_VERSION }}
-      JRELEASER_OCI_COMPARTMENTID: ${{ secrets.JRELEASER_OCI_COMPARTMENTID }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -45,7 +45,9 @@ jobs:
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
       project-version: ${{ needs.precheck.outputs.VERSION }}
-      compartment-id: ${{ needs.precheck.outputs.JRELEASER_OCI_COMPARTMENTID }}
+    secrets:
+      compartment-id: ${{ secrets.JRELEASER_OCI_COMPARTMENTID }}
+      gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
   jpackage:
     needs: [precheck, jlink]
@@ -54,7 +56,9 @@ jobs:
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
       project-version: ${{ needs.precheck.outputs.VERSION }}
-      compartment-id: ${{ needs.precheck.outputs.JRELEASER_OCI_COMPARTMENTID }}
+    secrets:
+      compartment-id: ${{ secrets.JRELEASER_OCI_COMPARTMENTID }}
+      gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
   native-image:
     needs: [precheck, jlink]
@@ -65,14 +69,18 @@ jobs:
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
       project-version: ${{ needs.precheck.outputs.VERSION }}
-      compartment-id: ${{ needs.precheck.outputs.JRELEASER_OCI_COMPARTMENTID }}
+    secrets:
+      compartment-id: ${{ secrets.JRELEASER_OCI_COMPARTMENTID }}
+      gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
   release:
     name: Release
     needs: [precheck, jlink, jpackage, native-image]
     runs-on: ubuntu-latest
     env:
-      JRELEASER_OCI_COMPARTMENTID: ${{ needs.precheck.outputs.JRELEASER_OCI_COMPARTMENTID }}
+      CI: true
+      GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+      JRELEASER_OCI_COMPARTMENTID: ${{ secrets.JRELEASER_OCI_COMPARTMENTID }}
     outputs:
       JAR_SIZE: ${{ steps.bach.outputs.JAR_SIZE }}
       JAR_CSUM: ${{ steps.bach.outputs.JAR_CSUM }}
@@ -139,7 +147,7 @@ jobs:
         run: |
           git add VERSION
           sed -i -e "s/^\:project-version\:\ .*/:project-version: ${{ needs.precheck.outputs.VERSION }}/g" README.adoc
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.email "${{ env.GITHUB_BOT_EMAIL }}"
           git config --global user.name "GitHub Action"
           git commit -a -m "Releasing version ${{ needs.precheck.outputs.VERSION }}"
           git push origin main
@@ -220,7 +228,7 @@ jobs:
           VERSION=${{ needs.precheck.outputs.VERSION }}
           echo ${{ needs.precheck.outputs.VERSION }} > VERSION
           git add VERSION
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.email "${{ env.GITHUB_BOT_EMAIL }}"
           git config --global user.name "GitHub Action"
           git commit -a -m "Releasing version ${{ needs.precheck.outputs.VERSION }}"
           git push origin main
@@ -256,7 +264,7 @@ jobs:
           echo "  #SIZE=${DOC_SIZE}" >> $TARGET_FILE
           echo "" >> $TARGET_FILE
           git add $TARGET_FILE
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --global user.email "${{ env.GITHUB_BOT_EMAIL }}"
           git config --global user.name "GitHub Action"
           git commit -a -m "Releasing v$VERSION"
           git push origin main
