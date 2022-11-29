@@ -7,9 +7,6 @@
 
 image::src/media/banner.png[JReleaser]
 
-image:https://img.shields.io/github/workflow/status/{project-owner}/{project-name}/EarlyAccess?logo=github["Build Status", link="https://github.com/{project-owner}/{project-name}/actions"]
-image:https://bestpractices.coreinfrastructure.org/projects/6393/badge["OpenSSF Best Practices", link="https://bestpractices.coreinfrastructure.org/projects/6393"]
-
 ---
 
 Release Java and non-Java projects quickly and easily with link:https://jreleaser.org[JReleaser]!
@@ -19,203 +16,34 @@ publishing artifacts to multiple package managers while providing customizable o
 
 For questions, support and general discussion, please use link:https://github.com/jreleaser/jreleaser/discussions[GitHub Discussions].
 
-image:https://img.shields.io/github/downloads/{project-owner}/{project-name}/total[GitHub all releases]
-image:https://img.shields.io/docker/pulls/{project-owner}/{project-owner}-slim?label={project-owner}-slim&logo=docker&logoColor=white[Docker Pulls {project-owner}-slim]
-image:https://img.shields.io/docker/pulls/{project-owner}/{project-owner}-alpine?label={project-owner}-alpine&logo=docker&logoColor=white[Docker Pulls {project-owner}-alpine]
 
 == Install
 
-There are multiple choices depending on your preference.
+ * On a link:https://jreleaser.org/guide/latest/install.html[development environment].
+ * On link:https://jreleaser.org/guide/latest/continuous-integration/index.html[CI/CD systems].
 
-=== CLI
-The CLI can be installed in the following ways:
+== Documentation
 
-*Homebrew*:
+ * link:https://jreleaser.org/guide/latest/index.html[https://jreleaser.org/guide/latest] (`v{project-version}`).
+ * link:https://jreleaser.org/guide/early-access/index.html[https://jreleaser.org/guide/early-access] (snapshot).
 
-[source]
-----
-brew install jreleaser/tap/jreleaser
-----
+== Community
 
-*Scoop*:
+ * Ask questions on our link:https://github.com/jreleaser/jreleaser/discussions[Discussions] page.
+ * image:https://img.shields.io/twitter/follow/jreleaser?style=social[Twitter Follow]
+ * image:https://img.shields.io/mastodon/follow/109318759441003625?domain=https%3A%2F%2Ffosstodon.org&style=social[Mastodon Follow]
 
-Requires Java 8
-[source]
-----
-scoop bucket add jreleaser https://github.com/jreleaser/scoop-jreleaser.git
-scoop install jreleaser
-----
+== Code of Conduct
 
-*Sdkman*:
-
-Requires Java 8
-[source]
-----
-sdk install jreleaser
-----
-
-*JBang*
-
-[source]
-.stable
-----
-// Download, cache, and run
-jbang jreleaser@jreleaser <command> [<args>]
-----
-[source]
-.early-access
-----
-// Download, cache, and run
-jbang jreleaser-snapshot@jreleaser <command> [<args>]
-----
-
-*Fedora COPR*
-
-[source]
-----
-dnf install dnf-plugins-core
-dnf copr enable aalmiray/jreleaser
-dnf install jreleaser
-----
-
-*Macports*
-
-Requires Java 8
-[source]
-----
-port install jreleaser
-----
-
-*Chocolatey*
-
-Requires Java 8
-[source]
-----
-choco install jreleaser
-----
-
-*Flatpak*
-[source]
-----
-flatpak install --user flathub org.jreleaser.cli
-flatpak run org.jreleaser.cli
-----
-
-*Snap*
-[source]
-----
-snap install jreleaser
-----
-
-*AppImage*
-[source]
-[subs="attributes"]
-----
-curl https://github.com/jreleaser/jreleaser-appimage/releases/download/v{project-version}/jreleaser-{project-version}-x86_64.AppImage --output jreleaser
-chmod +x jreleaser
-----
-
-*Curl*
-
-Requires Java 11
-[source]
-----
-// Get the jreleaser downloader
-curl -sL https://git.io/get-jreleaser > get_jreleaser.java
-
-// Download JReleaser with version = <version>
-// Change <version> to a tagged JReleaser release
-// or leave it out to pull `latest`.
-java get_jreleaser.java <version>
-
-// Execute a JReleaser
-java -jar jreleaser-cli.jar <command> [<args>]
-----
-
-*Dagger*
-
-Head to the documentation page of the
-link:https://github.com/dagger/dagger/tree/v0.2.36/pkg/universe.dagger.io/alpha/jreleaser[universe.dagger.io/alpha/jreleaser]
-package to find out how to configure JReleaser in your Dagger powered CI/CD pipeline.
-
-*manually*:
-
-Download the pre-compiled binary from the link:https://github.com/jreleaser/jreleaser/releases[releases page],
-uncompress and copy to the desired location.
-
-Be mindful that `jreleaser-{project-version}.zip` requires Java 8 to be installed while
-`jreleaser-standalone-{project-version}-[linux|osx|windows].zip` can be used without a previous installation of Java as
-it includes its own Java Runtime.
-
-=== Docker
-You can run JReleaser as a docker image, skipping the need to have a pre-installed Java runtime. You must mount the
-working directory at the `/workspace` volume, for example assuming the current directory is the starting point:
-
-[source]
-----
-docker run -it --rm -v `(pwd)`:/workspace \
-  jreleaser/<image>:<tag> <command> [<args>]
-----
-
-Where image may be `jreleaser-slim`, `jreleaser-alpine`.
-
-NOTE: The `jreleaser` command will be automatically executed inside `/workspace`.
-
-You may also need to map environment variables to the container, such as `JRELEASER_PROJECT_VERSION`,
-`JRELEASER_GITHUB_TOKEN`, or others depending on your setup. Refer to the
-link:https://jreleaser.org/guide/latest/configuration/environment.html[configuration] pages.
-
-You can find the tag listing link:hub.docker.com/r/jreleaser/jreleaser-slim/tags[here].
-
-=== Maven
-Configure the jreleaser-maven-plugin in your POM file
-
-[source,xml]
-[subs="verbatim,attributes"]
-.pom.xml
-----
-<plugin>
-  <groupId>org.jreleaser</groupId>
-  <artifactId>jreleaser-maven-plugin</artifactId>
-  <version>{project-version}</version>
-</plugin>
-----
-
-=== Gradle
-Configure the jreleaser-gradle-plugin in your `build.gradle` or `settings.gradle` file
-
-[source,groovy]
-[subs="attributes"]
-.build.gradle
-----
-plugins {
-    id 'org.jreleaser' version '{project-version}'
-}
-----
-
-=== Ant
-Download the jreleaser-ant-tasks ZIP bundle from the
-link:https://github.com/jreleaser/jreleaser/releases[releases page] and unzip it in your project. Place all JARs inside
-the `lib` folder. Create this folder if there is none. Add the following elements to your `build.xml` file
-
-[source,xml]
-[subs="verbatim,attributes"]
-.build.xml
-----
-<path id="jreleaser.classpath">
-    <fileset dir="lib">
-        <include name="jreleaser-ant-tasks-{project-version}/*.jar"/>
-    </fileset>
-</path>
-
-<import>
-  <javaresource name="org/jreleaser/ant/targets.xml"
-                classpathref="jreleaser.classpath"/>
-</import>
-----
+This project adheres to a link:https://github.com/jreleaser/jreleaser/blob/main/CODE_OF_CONDUCT.md[code of conduct].
+By participating, you are expected to uphold this code. We appreciate your contribution. Please refer to our
+link:https://github.com/jreleaser/jreleaser/blob/main/CONTRIBUTING.adoc[contributing guidelines] for further information.
 
 == Badges
 
-image:https://img.shields.io/lgtm/alerts/g/{project-owner}/{project-owner}.svg?logo=lgtm&logoWidth=18[link="https://lgtm.com/projects/g/{project-owner}/{project-owner}/alerts"]
-image:https://img.shields.io/lgtm/grade/java/g/{project-owner}/{project-owner}.svg?logo=lgtm&logoWidth=18[link="https://lgtm.com/projects/g/{project-owner}/{project-owner}/context:java"]
+image:https://img.shields.io/github/workflow/status/{project-owner}/{project-name}/EarlyAccess?logo=github["Build Status", link="https://github.com/{project-owner}/{project-name}/actions"]
+image:https://bestpractices.coreinfrastructure.org/projects/6393/badge["OpenSSF Best Practices", link="https://bestpractices.coreinfrastructure.org/projects/6393"]
 
+image:https://img.shields.io/github/downloads/{project-owner}/{project-name}/total[GitHub all releases]
+image:https://img.shields.io/docker/pulls/{project-owner}/{project-owner}-slim?label={project-owner}-slim&logo=docker&logoColor=white[Docker Pulls {project-owner}-slim]
+image:https://img.shields.io/docker/pulls/{project-owner}/{project-owner}-alpine?label={project-owner}-alpine&logo=docker&logoColor=white[Docker Pulls {project-owner}-alpine]
