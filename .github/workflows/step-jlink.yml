@@ -14,14 +14,23 @@ on:
         default: 'zulu'
         required: false
         type: string
+    secrets:
+      compartment-id:
+        type: string
 
 jobs:
   jlink:
     name: Jlink
     runs-on: ubuntu-latest
+    env:
+      JRELEASER_OCI_COMPARTMENTID: ${{ secrets.compartment-id }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Decrypt secrets
+        shell: bash
+        run: sh .github/scripts/decrypt-secrets.sh
 
       - name: Setup Java
         uses: actions/setup-java@v3
@@ -49,7 +58,7 @@ jobs:
           echo ${{ inputs.project-version }} > VERSION
 
       - name: Build
-        run: ./gradlew -Prelease=true build -S
+        run: ./gradlew -Prelease=true -PreproducibleBuild=true build -S
 
       - name: Jlink
         uses: jreleaser/release-action@v1

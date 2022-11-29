@@ -34,9 +34,12 @@ buildscript {
         classpath "org.ow2.asm:asm-commons:$asmVersion"
         classpath "org.ow2.asm:asm-analysis:$asmVersion"
         classpath "org.ow2.asm:asm-tree:$asmVersion"
+        classpath "org.kordamp.gradle:oci-gradle-build-cache-plugin:$ociBuildCacheVersion"
     }
 }
+
 apply plugin: 'org.kordamp.gradle.kordamp-parentbuild'
+apply plugin: 'org.kordamp.gradle.oci-build-cache'
 
 rootProject.name = 'jreleaser'
 
@@ -109,5 +112,18 @@ enforce {
             "org.apache.httpcomponents:httpclient:$httpclientVersion",
             "com.sun.mail:jakarta.mail:$mailApiVersion",
             "net.bytebuddy:byte-buddy:$bytebuddyVersion"
+    }
+}
+
+ext.isCiServer = System.getenv().containsKey('CI')
+
+buildCache {
+    local {
+        enabled = !isCiServer
+    }
+    remote(org.kordamp.gradle.plugin.buildcache.OCIBuildCache) {
+        compartmentId = System.getenv()['JRELEASER_OCI_COMPARTMENTID']
+        failOnError = false
+        push = isCiServer
     }
 }

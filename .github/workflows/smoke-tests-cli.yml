@@ -27,7 +27,7 @@ jobs:
         shell: bash
         run: |
           version=$(cat VERSION)
-          echo "VERSION=$(echo "$version")" >>$GITHUB_OUTPUT
+          echo "VERSION=$(echo "$version")" >> $GITHUB_OUTPUT
 
   build:
     needs: [ precheck ]
@@ -44,11 +44,17 @@ jobs:
           - { os: windows-latest, sign: gpg   , args: '-xp docker' }
           - { os: windows-latest, sign: cosign, args: '-xp docker' }
     runs-on: ${{ matrix.job.os }}
+    env:
+      JRELEASER_OCI_COMPARTMENTID: ${{ secrets.JRELEASER_OCI_COMPARTMENTID }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
+      - name: Decrypt secrets
+        shell: bash
+        run: sh .github/scripts/decrypt-secrets.sh
 
       - name: Setup Java
         uses: actions/setup-java@v3
@@ -71,7 +77,7 @@ jobs:
           restore-keys: ${{ runner.os }}-gradlew-
 
       - name: Build
-        run: ./gradlew -Prelease=true build -S
+        run: ./gradlew -Prelease=true -PreproducibleBuild=true build -S
 
       - name: Prepare
         shell: bash

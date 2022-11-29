@@ -108,24 +108,35 @@ release:
         - search: 'deps: '
 
 signing:
-  active: always
+  active: ALWAYS
   armored: true
   files: false
 
 checksum:
   files: false
 
+deploy:
+  maven:
+    nexus2:
+      maven-central:
+        active: RELEASE
+        url: https://s01.oss.sonatype.org/service/local
+        closeRepository: true
+        releaseRepository: true
+        stagingRepositories:
+          - build/repos/local/release
+
 announce:
   twitter:
-    active: release
+    active: RELEASE
     statusTemplate: src/jreleaser/twitter.tpl
   mastodon:
-    active: release
+    active: RELEASE
     host: https://fosstodon.org
     statusTemplate: src/jreleaser/mastodon.tpl
   http:
     noticeable:
-      active: release
+      active: RELEASE
       url: https://api.noticeable.io/graphql
       authorization: bearer
       bearerKeyword: Apikey
@@ -137,7 +148,7 @@ announce:
 assemble:
   jlink:
     jreleaser-standalone:
-      active: always
+      active: ALWAYS
       java:
         version: 11
         mainClass: org.jreleaser.cli.Main
@@ -179,7 +190,7 @@ assemble:
 
   jpackage:
     jreleaser-installer:
-      active: always
+      active: ALWAYS
       jlink: jreleaser-standalone
       attachPlatform: true
       applicationPackage:
@@ -206,7 +217,7 @@ assemble:
 
   nativeImage:
     jreleaser-native:
-      active: always
+      active: ALWAYS
       java:
         version: 17
         mainClass: org.jreleaser.cli.Main
@@ -226,7 +237,7 @@ assemble:
         - path: '{{jdkPathPrefix}}/graal17Windows/{{graalFilePrefix}}'
           platform: 'windows-x86_64'
       upx:
-        active: always
+        active: ALWAYS
         version: '3.96'
       args:
         - '-Duser.language=en'
@@ -240,7 +251,7 @@ distributions:
       mainClass: org.jreleaser.cli.Main
     flatpak:
       continueOnError: true
-      active: always
+      active: ALWAYS
       componentId: org.jreleaser.cli
       developerName: JReleaser
       runtime: freedesktop
@@ -251,36 +262,36 @@ distributions:
       categories:
         - Developer Tools
       repository:
-        active: release
+        active: RELEASE
         owner: flathub
         name: org.jreleaser.cli
     chocolatey:
-      active: always
+      active: ALWAYS
       remoteBuild: true
       title: JReleaser
       iconUrl: 'https://rawcdn.githack.com/jreleaser/jreleaser/0934fa1fa3f0bd09c0c8c39fbdeb5df2ce507457/src/media/icon_128x128.png'
       bucket:
-        active: release
+        active: RELEASE
     jbang:
-      active: always
+      active: ALWAYS
     macports:
-      active: always
+      active: ALWAYS
       categories:
         - devel
         - java
       maintainers:
         - '@aalmiray'
       repository:
-        active: release
+        active: RELEASE
         name: jreleaser-macports
     scoop:
-      active: always
+      active: ALWAYS
       bucket:
-        active: release
+        active: RELEASE
     sdkman:
-      active: release
+      active: RELEASE
     snap:
-      active: always
+      active: ALWAYS
       remoteBuild: true
       base: core18
       architectures:
@@ -300,9 +311,9 @@ distributions:
         - home
         - dot-config-files
     spec:
-      active: always
+      active: ALWAYS
       repository:
-        active: release
+        active: RELEASE
         name: jreleaser-copr
     artifacts:
       - path: plugins/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.zip
@@ -328,26 +339,26 @@ distributions:
   jreleaser-standalone:
     appImage:
       continueOnError: true
-      active: always
+      active: ALWAYS
       componentId: org.jreleaser.cli
       developerName: JReleaser
       categories:
         - Development
       repository:
-        active: release
+        active: RELEASE
         name: jreleaser-appimage
         commitMessage: 'jreleaser {{tagName}}'
     brew:
-      active: always
+      active: ALWAYS
       formulaName: jreleaser
       multiPlatform: true
       tap:
-        active: release
+        active: RELEASE
         commitMessage: 'jreleaser {{tagName}}'
     docker:
-      active: always
+      active: ALWAYS
       repository:
-        active: always
+        active: ALWAYS
         commitMessage: 'jreleaser {{tagName}}'
       registries:
         - serverName: DEFAULT

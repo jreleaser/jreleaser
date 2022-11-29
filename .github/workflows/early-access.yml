@@ -21,6 +21,7 @@ jobs:
       JAVA_DISTRO: ${{ env.JAVA_DISTRO }}
       GRAAL_VERSION: ${{ env.GRAAL_VERSION }}
       GRAAL_JAVA_VERSION: ${{ env.GRAAL_JAVA_VERSION }}
+      JRELEASER_OCI_COMPARTMENTID: ${{ secrets.JRELEASER_OCI_COMPARTMENTID }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -34,7 +35,7 @@ jobs:
         id: vars
         shell: bash
         run: |
-          echo "VERSION=$(cat VERSION)" >>$GITHUB_OUTPUT
+          echo "VERSION=$(cat VERSION)" >> $GITHUB_OUTPUT
 
   jlink:
     needs: [precheck]
@@ -44,6 +45,7 @@ jobs:
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
       project-version: ${{ needs.precheck.outputs.VERSION }}
+      compartment-id: ${{ needs.precheck.outputs.JRELEASER_OCI_COMPARTMENTID }}
 
   jpackage:
     needs: [precheck, jlink]
@@ -52,6 +54,7 @@ jobs:
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
       project-version: ${{ needs.precheck.outputs.VERSION }}
+      compartment-id: ${{ needs.precheck.outputs.JRELEASER_OCI_COMPARTMENTID }}
 
   native-image:
     needs: [precheck, jlink]
@@ -62,6 +65,7 @@ jobs:
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
       project-version: ${{ needs.precheck.outputs.VERSION }}
+      compartment-id: ${{ needs.precheck.outputs.JRELEASER_OCI_COMPARTMENTID }}
 
   release:
     name: Release
@@ -121,9 +125,9 @@ jobs:
           JAR_SIZE=$(ls -l out/jreleaser/artifacts/jreleaser-tool-provider/jreleaser-tool-provider-early-access.jar | awk '{print $5}')
           JAR_CSUM=$(shasum -a 256 out/jreleaser/artifacts/jreleaser-tool-provider/jreleaser-tool-provider-early-access.jar | awk '{print $1}')
           DOC_SIZE=$(ls -l README.adoc | awk '{print $5}')
-          echo "JAR_SIZE=$(echo $JAR_SIZE)" >>$GITHUB_OUTPUT
-          echo "JAR_CSUM=$(echo $JAR_CSUM)" >>$GITHUB_OUTPUT
-          echo "DOC_SIZE=$(echo $DOC_SIZE)" >>$GITHUB_OUTPUT
+          echo "JAR_SIZE=$(echo $JAR_SIZE)" >> $GITHUB_OUTPUT
+          echo "JAR_CSUM=$(echo $JAR_CSUM)" >> $GITHUB_OUTPUT
+          echo "DOC_SIZE=$(echo $DOC_SIZE)" >> $GITHUB_OUTPUT
 
       - name: JReleaser release output
         if: always()
