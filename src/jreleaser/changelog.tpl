@@ -40,3 +40,10 @@ These binaries provide their own Java runtime.
 * {{#f_release_download_url}}jreleaser-native-{{projectEffectiveVersion}}-linux-x86_64.zip{{/f_release_download_url}}
 * {{#f_release_download_url}}jreleaser-native-{{projectEffectiveVersion}}-windows-x86_64.zip{{/f_release_download_url}}
 
+---
+
+![JReleaser Banner](https://raw.githubusercontent.com/jreleaser/jreleaser/main/src/media/banner_2100x500.png)
+
+Examples and reference may be found at [https://jreleaser.org](https://jreleaser.org).
+Would you like to help? You can [sponsor](https://jreleaser.org/guide/early-access/sponsors.html) or [contribute](https://jreleaser.org/guide/early-access/contributing.html).
+You can reach us at [Twitter](https://twitter.com/jreleaser) and [Mastodon](https://fosstodon.org/@jreleaser).
