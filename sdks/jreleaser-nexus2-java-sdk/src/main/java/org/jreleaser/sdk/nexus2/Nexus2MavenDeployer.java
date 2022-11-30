@@ -21,6 +21,7 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.spi.deploy.DeployException;
 import org.jreleaser.sdk.commons.AbstractMavenDeployer;
+import org.jreleaser.sdk.nexus2.api.NexusAPIException;
 
 import java.util.Set;
 
@@ -83,6 +84,12 @@ public class Nexus2MavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
                 stagingProfileId = nexus.findStagingProfileId(groupId);
             } catch (Nexus2Exception e) {
                 context.getLogger().trace(e);
+                if (e.getCause() instanceof NexusAPIException) {
+                    NexusAPIException ne = (NexusAPIException) e.getCause();
+                    if (ne.isUnauthorized() || ne.isForbidden()) {
+                        throw new DeployException(RB.$("ERROR_nexus_forbidden"), e);
+                    }
+                }
                 throw new DeployException(RB.$("ERROR_nexus_find_staging_profile", groupId), e);
             }
 

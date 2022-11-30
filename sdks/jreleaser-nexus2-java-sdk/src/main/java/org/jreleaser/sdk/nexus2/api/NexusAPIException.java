@@ -35,6 +35,7 @@ public class NexusAPIException extends RuntimeException {
     }
 
     public NexusAPIException(int status, String reason, Map<String, Collection<String>> headers) {
+        super(status + ": " + reason);
         this.status = status;
         this.reason = reason;
         this.headers = headers;
@@ -58,5 +59,9 @@ public class NexusAPIException extends RuntimeException {
 
     public boolean isForbidden() {
         return 403 == status;
+    }
+
+    public boolean isUnauthorized() {
+        return 401 == status;
     }
 }
