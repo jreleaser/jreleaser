@@ -46,6 +46,14 @@ class WorkflowImpl implements Workflow {
     }
 
     public void execute() {
+        try {
+            doExecute();
+        } finally {
+            context.getLogger().close();
+        }
+    }
+
+    private void doExecute() {
         RuntimeException stepException = null;
         Throwable listenerException = null;
         Throwable startSessionException = null;

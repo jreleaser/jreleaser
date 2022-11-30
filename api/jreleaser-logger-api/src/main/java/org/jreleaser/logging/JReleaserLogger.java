@@ -27,6 +27,8 @@ import java.io.PrintWriter;
 public interface JReleaserLogger {
     PrintWriter getTracer();
 
+    void close();
+
     void reset();
 
     void increaseIndent();
