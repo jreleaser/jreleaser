@@ -899,6 +899,7 @@ public class JReleaserContext {
         if (model.getCommit() != null) {
             BaseReleaser releaser = model.getRelease().getReleaser();
             props.put(KEY_TAG_NAME, releaser.getEffectiveTagName(model));
+            props.put("releaseBranch", releaser.getBranch());
             if (releaser.isReleaseSupported()) {
                 props.put(KEY_RELEASE_NAME, releaser.getEffectiveReleaseName());
                 props.put(KEY_MILESTONE_NAME, releaser.getMilestone().getEffectiveName());
