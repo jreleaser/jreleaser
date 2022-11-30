@@ -136,3 +136,20 @@ jobs:
             build/jreleaser/output.properties
             build/jreleaser/release/CHANGELOG.md
             build/jreleaser/prepare
+
+      - name: Clean
+        shell: bash
+        run: |
+          ./gradlew clean
+        env:
+          JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
+          JRELEASER_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
+          JRELEASER_GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
+          JRELEASER_COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+          JRELEASER_DOCKER_DEFAULT_PASSWORD: ${{ secrets.JRELEASER_DOCKER_PASSWORD }}
+          JRELEASER_S3_JRELEASER_REGION: ${{ secrets.S3_REGION }}
+          JRELEASER_S3_JRELEASER_BUCKET: ${{ secrets.S3_BUCKET }}
+          JRELEASER_S3_JRELEASER_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY_ID }}
+          JRELEASER_S3_JRELEASER_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}

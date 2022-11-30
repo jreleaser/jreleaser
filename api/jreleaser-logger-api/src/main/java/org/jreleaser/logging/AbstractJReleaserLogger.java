@@ -17,6 +17,8 @@
  */
 package org.jreleaser.logging;
 
+import jdk.internal.org.jline.utils.ShutdownHooks;
+
 import java.io.PrintWriter;
 import java.util.Stack;
 
@@ -31,6 +33,12 @@ public abstract class AbstractJReleaserLogger implements JReleaserLogger {
 
     protected AbstractJReleaserLogger(PrintWriter tracer) {
         this.tracer = tracer;
+
+        ShutdownHooks.add(() -> {
+            if (null == tracer) return;
+            tracer.flush();
+            tracer.close();
+        });
     }
 
     protected boolean isIndented() {
