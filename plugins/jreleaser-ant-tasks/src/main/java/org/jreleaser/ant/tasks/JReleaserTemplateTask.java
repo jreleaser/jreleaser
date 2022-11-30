@@ -115,6 +115,8 @@ public class JReleaserTemplateTask extends Task {
         } catch (TemplateGenerationException e) {
             logger.trace(e);
             throw new JReleaserException("Unexpected error", e);
+        } finally {
+            if (logger != null) logger.close();
         }
     }
 

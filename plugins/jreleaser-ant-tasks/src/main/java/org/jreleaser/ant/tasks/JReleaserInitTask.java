@@ -89,6 +89,8 @@ public class JReleaserInitTask extends Task {
         } catch (IllegalStateException | IOException e) {
             logger.trace(e);
             throw new JReleaserException("Unexpected error", e);
+        } finally {
+            if (logger != null) logger.close();
         }
     }
 

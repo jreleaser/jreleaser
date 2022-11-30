@@ -132,6 +132,8 @@ public class JReleaserTemplateMojo extends AbstractMojo {
             }
         } catch (TemplateGenerationException e) {
             throw new MojoExecutionException("Unexpected error", e);
+        } finally {
+            getLogger().close();
         }
     }
 

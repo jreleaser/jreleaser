@@ -132,22 +132,26 @@ abstract class JReleaserTemplateTask extends DefaultTask {
 
     @TaskAction
     void generateTemplate() {
-        Path output = TemplateGenerator.builder()
-            .logger(jlogger.get())
-            .distributionName(distributionName.orNull)
-            .distributionType(distributionType.orNull)
-            .packagerName(packagerName.orNull)
-            .announcerName(announcerName.orNull)
-            .assemblerType(assemblerType.orNull)
-            .assemblerName(distributionName.orNull)
-            .outputDirectory(outputDirectory.get().asFile.toPath())
-            .overwrite(overwrite.get())
-            .snapshot(snapshot.get())
-            .build()
-            .generate()
+        try {
+            Path output = TemplateGenerator.builder()
+                .logger(jlogger.get())
+                .distributionName(distributionName.orNull)
+                .distributionType(distributionType.orNull)
+                .packagerName(packagerName.orNull)
+                .announcerName(announcerName.orNull)
+                .assemblerType(assemblerType.orNull)
+                .assemblerName(distributionName.orNull)
+                .outputDirectory(outputDirectory.get().asFile.toPath())
+                .overwrite(overwrite.get())
+                .snapshot(snapshot.get())
+                .build()
+                .generate()
 
-        if (output) {
-            logger.info('Template generated at {}', output.toAbsolutePath())
+            if (output) {
+                logger.info('Template generated at {}', output.toAbsolutePath())
+            }
+        } finally {
+            jlogger.get().close()
         }
     }
 }

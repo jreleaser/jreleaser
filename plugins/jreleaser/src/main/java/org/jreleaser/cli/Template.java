@@ -155,6 +155,8 @@ public class Template extends AbstractLoggingCommand {
             }
         } catch (TemplateGenerationException e) {
             throw new JReleaserException($("ERROR_unexpected_error"), e);
+        } finally {
+            if (logger != null) logger.close();
         }
     }
 

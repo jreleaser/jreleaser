@@ -103,6 +103,8 @@ public class Init extends AbstractLoggingCommand {
             }
         } catch (IllegalStateException | IOException e) {
             throw new JReleaserException($("ERROR_unexpected_error"), e);
+        } finally {
+            if (logger != null) logger.close();
         }
     }
 
