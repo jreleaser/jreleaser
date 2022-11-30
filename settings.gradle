@@ -117,11 +117,15 @@ enforce {
 
 ext.isCiServer = System.getenv().containsKey('CI')
 
+println "Running on CI: ${isCiServer? 'YES' : 'NO'}"
+println "OCI compartmentId is ${System.getenv().containsKey('JRELEASER_OCI_COMPARTMENTID')? '': 'NOT '}set"
+
 buildCache {
     local {
         enabled = !isCiServer
     }
     remote(org.kordamp.gradle.plugin.buildcache.OCIBuildCache) {
+        configFile    = '.oci/config'
         compartmentId = System.getenv()['JRELEASER_OCI_COMPARTMENTID']
         failOnError = false
         push = isCiServer
