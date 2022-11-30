@@ -108,13 +108,14 @@ public class JReleaserTemplateMojo extends AbstractMojo {
             return;
         }
 
+        JReleaserLogger logger = getLogger();
         try {
             Path outputDirectory = Paths.get(project.getBasedir().getAbsolutePath())
                 .resolve("src")
                 .resolve("jreleaser");
 
             Path output = TemplateGenerator.builder()
-                .logger(getLogger())
+                .logger(logger)
                 .distributionName(distributionName)
                 .distributionType(distributionType)
                 .packagerName(packagerName)
@@ -128,12 +129,12 @@ public class JReleaserTemplateMojo extends AbstractMojo {
                 .generate();
 
             if (null != output) {
-                getLogger().info("Template generated at {}", output.toAbsolutePath());
+                logger.info("Template generated at {}", output.toAbsolutePath());
             }
         } catch (TemplateGenerationException e) {
             throw new MojoExecutionException("Unexpected error", e);
         } finally {
-            getLogger().close();
+            logger.close();
         }
     }
 

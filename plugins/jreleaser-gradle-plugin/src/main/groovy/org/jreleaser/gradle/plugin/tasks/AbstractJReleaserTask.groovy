@@ -27,6 +27,7 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.options.Option
 import org.jreleaser.engine.context.ContextCreator
 import org.jreleaser.gradle.plugin.JReleaserExtension
+import org.jreleaser.gradle.plugin.internal.JReleaserLoggerService
 import org.jreleaser.logging.JReleaserLogger
 import org.jreleaser.model.JReleaserVersion
 import org.jreleaser.model.internal.JReleaserContext
@@ -66,7 +67,7 @@ abstract class AbstractJReleaserTask extends DefaultTask {
     final Property<JReleaserModel> model
 
     @Internal
-    final Property<JReleaserLogger> jlogger
+    final Property<JReleaserLoggerService> jlogger
 
     @Internal
     org.jreleaser.model.api.JReleaserContext.Mode mode
@@ -74,7 +75,7 @@ abstract class AbstractJReleaserTask extends DefaultTask {
     @Inject
     AbstractJReleaserTask(ObjectFactory objects) {
         model = objects.property(JReleaserModel)
-        jlogger = objects.property(JReleaserLogger)
+        jlogger = objects.property(JReleaserLoggerService)
         mode = FULL
         dryrun = objects.property(Boolean)
         gitRootSearch = objects.property(Boolean)
@@ -98,7 +99,7 @@ abstract class AbstractJReleaserTask extends DefaultTask {
     }
 
     protected JReleaserContext createContext() {
-        JReleaserLogger logger = jlogger.get()
+        JReleaserLogger logger = jlogger.get().logger
         PlatformUtils.resolveCurrentPlatform(logger)
 
         logger.info('JReleaser {}', JReleaserVersion.getPlainVersion())

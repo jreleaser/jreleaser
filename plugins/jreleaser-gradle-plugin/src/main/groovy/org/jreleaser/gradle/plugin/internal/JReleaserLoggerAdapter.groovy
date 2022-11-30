@@ -18,10 +18,8 @@
 package org.jreleaser.gradle.plugin.internal
 
 import groovy.transform.CompileStatic
-import org.gradle.api.Project
 import org.gradle.api.logging.LogLevel
 import org.jreleaser.logging.AbstractJReleaserLogger
-import org.kordamp.gradle.util.AnsiConsole
 import org.slf4j.helpers.MessageFormatter
 
 /**
@@ -34,15 +32,15 @@ class JReleaserLoggerAdapter extends AbstractJReleaserLogger {
     private final Level level
     private final AnsiConsole console
 
-    JReleaserLoggerAdapter(Project project, PrintWriter tracer) {
-        this(project, tracer, new PrintWriter(System.out, true))
+    JReleaserLoggerAdapter(AnsiConsole console, LogLevel logLevel, PrintWriter tracer) {
+        this(console, logLevel, tracer, new PrintWriter(System.out, true))
     }
 
-    JReleaserLoggerAdapter(Project project, PrintWriter tracer, PrintWriter out) {
+    JReleaserLoggerAdapter(AnsiConsole console, LogLevel logLevel, PrintWriter tracer, PrintWriter out) {
         super(tracer)
         this.out = out
-        this.level = resolveLogLevel(project.gradle.startParameter.logLevel)
-        this.console = new AnsiConsole(project)
+        this.level = resolveLogLevel(logLevel)
+        this.console = console
     }
 
     @Override

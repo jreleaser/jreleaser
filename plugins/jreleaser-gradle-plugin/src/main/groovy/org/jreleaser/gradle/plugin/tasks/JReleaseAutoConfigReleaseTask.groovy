@@ -26,11 +26,12 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.jreleaser.engine.context.ModelAutoConfigurer
-import org.jreleaser.gradle.plugin.internal.JReleaserLoggerAdapter
+import org.jreleaser.gradle.plugin.internal.JReleaserLoggerService
 import org.jreleaser.model.UpdateSection
 import org.jreleaser.model.internal.JReleaserContext
 import org.jreleaser.util.Env
@@ -167,6 +168,8 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
     @Input
     @Optional
     final ListProperty<String> rejectPlatforms
+    @Internal
+    final Property<JReleaserLoggerService> jlogger
 
     @Option(option = 'project-name', description = 'The project name (OPTIONAL).')
     void setProjectName(String projectName) {
@@ -370,6 +373,7 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
         gitRootSearch = objects.property(Boolean)
         strict = objects.property(Boolean)
         outputDirectory = objects.directoryProperty()
+        jlogger = objects.property(JReleaserLoggerService)
 
         projectName = objects.property(String).convention(project.name)
         projectVersion = objects.property(String).convention(String.valueOf(project.version))
@@ -412,11 +416,9 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
     void performAction() {
         Path outputDirectoryPath = outputDirectory.get().asFile.toPath()
         Files.createDirectories(outputDirectoryPath)
-        PrintWriter tracer = new PrintWriter(new FileOutputStream(outputDirectoryPath
-            .resolve('trace.log').toFile()))
 
         JReleaserContext context = ModelAutoConfigurer.builder()
-            .logger(new JReleaserLoggerAdapter(project, tracer))
+            .logger(jlogger.get().logger)
             .basedir(project.projectDir.toPath())
             .outputDirectory(outputDirectoryPath)
             .dryrun(dryrun.getOrElse(false))

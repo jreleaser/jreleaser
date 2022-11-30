@@ -30,6 +30,7 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.gradle.api.tasks.options.OptionValues
+import org.jreleaser.gradle.plugin.internal.JReleaserLoggerService
 import org.jreleaser.logging.JReleaserLogger
 import org.jreleaser.model.Distribution
 import org.jreleaser.templates.TemplateGenerator
@@ -74,11 +75,11 @@ abstract class JReleaserTemplateTask extends DefaultTask {
     final Property<Boolean> snapshot
 
     @Internal
-    final Property<JReleaserLogger> jlogger
+    final Property<JReleaserLoggerService> jlogger
 
     @Inject
     JReleaserTemplateTask(ObjectFactory objects) {
-        jlogger = objects.property(JReleaserLogger)
+        jlogger = objects.property(JReleaserLoggerService)
         distributionType = objects.property(Distribution.DistributionType).convention(Distribution.DistributionType.JAVA_BINARY)
         distributionName = objects.property(String)
         packagerName = objects.property(String)
@@ -132,9 +133,10 @@ abstract class JReleaserTemplateTask extends DefaultTask {
 
     @TaskAction
     void generateTemplate() {
+        JReleaserLogger logger = jlogger.get().logger
         try {
             Path output = TemplateGenerator.builder()
-                .logger(jlogger.get())
+                .logger(logger)
                 .distributionName(distributionName.orNull)
                 .distributionType(distributionType.orNull)
                 .packagerName(packagerName.orNull)
@@ -151,7 +153,7 @@ abstract class JReleaserTemplateTask extends DefaultTask {
                 logger.info('Template generated at {}', output.toAbsolutePath())
             }
         } finally {
-            jlogger.get().close()
+            logger.close()
         }
     }
 }

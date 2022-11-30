@@ -24,6 +24,7 @@ import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.plugins.JavaApplication
 import org.gradle.api.provider.Provider
+import org.gradle.api.services.BuildServiceSpec
 import org.gradle.util.GradleVersion
 import org.jreleaser.gradle.plugin.JReleaserExtension
 import org.jreleaser.gradle.plugin.tasks.JReleaseAutoConfigReleaseTask
@@ -42,12 +43,8 @@ import org.jreleaser.gradle.plugin.tasks.JReleaserReleaseTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserSignTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserTemplateTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserUploadTask
-import org.jreleaser.logging.JReleaserLogger
 import org.jreleaser.model.internal.JReleaserModel
 import org.jreleaser.version.SemanticVersion
-
-import java.nio.file.Files
-import java.nio.file.Path
 
 import static org.kordamp.gradle.util.StringUtils.isBlank
 
@@ -68,9 +65,14 @@ class JReleaserProjectConfigurer {
         Provider<Directory> outputDirectory = project.layout.buildDirectory
             .dir('jreleaser')
 
-        JReleaserLogger logger = createLogger(project, outputDirectory)
+        Provider<JReleaserLoggerService> loggerProvider = project.gradle.sharedServices
+            .registerIfAbsent('jreleaserLogger', JReleaserLoggerService.class) { BuildServiceSpec<JReleaserLoggerService.Params> spec ->
+                spec.parameters.console.set(new AnsiConsole(project))
+                spec.parameters.logLevel.set(project.gradle.startParameter.logLevel)
+                spec.parameters.outputDirectory.set(outputDirectory)
+            }
 
-        JReleaserModel model = extension.toModel(project, logger)
+        JReleaserModel model = extension.toModel(project, loggerProvider.get().logger)
         configureModel(project, model)
 
         project.tasks.register('jreleaserConfig', JReleaserConfigTask,
@@ -83,7 +85,8 @@ class JReleaserProjectConfigurer {
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
                     t.model.set(model)
-                    t.jlogger.set(logger)
+                    t.jlogger.set(loggerProvider)
+                    t.usesService(loggerProvider)
                     t.outputDirectory.set(outputDirectory)
                     if (hasDistributionPlugin) {
                         t.dependsOn('assembleDist')
@@ -97,7 +100,8 @@ class JReleaserProjectConfigurer {
                 void execute(JReleaserTemplateTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Generates templates for a specific packager/announcer'
-                    t.jlogger.set(logger)
+                    t.jlogger.set(loggerProvider)
+                    t.usesService(loggerProvider)
                     t.outputDirectory.set(project.layout
                         .projectDirectory
                         .dir('src/jreleaser'))
@@ -114,7 +118,8 @@ class JReleaserProjectConfigurer {
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
                     t.model.set(model)
-                    t.jlogger.set(logger)
+                    t.jlogger.set(loggerProvider)
+                    t.usesService(loggerProvider)
                     t.outputDirectory.set(outputDirectory)
                 }
             })
@@ -129,7 +134,8 @@ class JReleaserProjectConfigurer {
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
                     t.model.set(model)
-                    t.jlogger.set(logger)
+                    t.jlogger.set(loggerProvider)
+                    t.usesService(loggerProvider)
                     t.outputDirectory.set(outputDirectory)
                 }
             })
@@ -144,7 +150,8 @@ class JReleaserProjectConfigurer {
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
                     t.model.set(model)
-                    t.jlogger.set(logger)
+                    t.jlogger.set(loggerProvider)
+                    t.usesService(loggerProvider)
                     t.outputDirectory.set(outputDirectory)
                 }
             })
@@ -159,7 +166,8 @@ class JReleaserProjectConfigurer {
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
                     t.model.set(model)
-                    t.jlogger.set(logger)
+                    t.jlogger.set(loggerProvider)
+                    t.usesService(loggerProvider)
                     t.outputDirectory.set(outputDirectory)
                     if (hasDistributionPlugin) {
                         t.dependsOn('assembleDist')
@@ -177,7 +185,8 @@ class JReleaserProjectConfigurer {
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
                     t.model.set(model)
-                    t.jlogger.set(logger)
+                    t.jlogger.set(loggerProvider)
+                    t.usesService(loggerProvider)
                     t.outputDirectory.set(outputDirectory)
                     if (hasDistributionPlugin) {
                         t.dependsOn('assembleDist')
@@ -195,7 +204,8 @@ class JReleaserProjectConfigurer {
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
                     t.model.set(model)
-                    t.jlogger.set(logger)
+                    t.jlogger.set(loggerProvider)
+                    t.usesService(loggerProvider)
                     t.outputDirectory.set(outputDirectory)
                 }
             })
@@ -210,7 +220,8 @@ class JReleaserProjectConfigurer {
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
                     t.model.set(model)
-                    t.jlogger.set(logger)
+                    t.jlogger.set(loggerProvider)
+                    t.usesService(loggerProvider)
                     t.outputDirectory.set(outputDirectory)
                     if (hasDistributionPlugin) {
                         t.dependsOn('assembleDist')
@@ -228,7 +239,8 @@ class JReleaserProjectConfigurer {
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
                     t.model.set(model)
-                    t.jlogger.set(logger)
+                    t.jlogger.set(loggerProvider)
+                    t.usesService(loggerProvider)
                     t.outputDirectory.set(outputDirectory)
                     if (hasDistributionPlugin) {
                         t.dependsOn('assembleDist')
@@ -245,6 +257,8 @@ class JReleaserProjectConfigurer {
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
+                    t.jlogger.set(loggerProvider)
+                    t.usesService(loggerProvider)
                     t.outputDirectory.set(outputDirectory)
                 }
             })
@@ -259,7 +273,8 @@ class JReleaserProjectConfigurer {
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
                     t.model.set(model)
-                    t.jlogger.set(logger)
+                    t.jlogger.set(loggerProvider)
+                    t.usesService(loggerProvider)
                     t.outputDirectory.set(outputDirectory)
                     if (hasDistributionPlugin) {
                         t.dependsOn('assembleDist')
@@ -277,7 +292,8 @@ class JReleaserProjectConfigurer {
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
                     t.model.set(model)
-                    t.jlogger.set(logger)
+                    t.jlogger.set(loggerProvider)
+                    t.usesService(loggerProvider)
                     t.outputDirectory.set(outputDirectory)
                     if (hasDistributionPlugin) {
                         t.dependsOn('assembleDist')
@@ -295,7 +311,8 @@ class JReleaserProjectConfigurer {
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
                     t.model.set(model)
-                    t.jlogger.set(logger)
+                    t.jlogger.set(loggerProvider)
+                    t.usesService(loggerProvider)
                     t.outputDirectory.set(outputDirectory)
                     if (hasDistributionPlugin) {
                         t.dependsOn('assembleDist')
@@ -313,7 +330,8 @@ class JReleaserProjectConfigurer {
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
                     t.model.set(model)
-                    t.jlogger.set(logger)
+                    t.jlogger.set(loggerProvider)
+                    t.usesService(loggerProvider)
                     t.outputDirectory.set(outputDirectory)
                     if (hasDistributionPlugin) {
                         t.dependsOn('assembleDist')
@@ -331,7 +349,8 @@ class JReleaserProjectConfigurer {
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
                     t.model.set(model)
-                    t.jlogger.set(logger)
+                    t.jlogger.set(loggerProvider)
+                    t.usesService(loggerProvider)
                     t.outputDirectory.set(outputDirectory)
                     if (hasDistributionPlugin) {
                         t.dependsOn('assembleDist')
@@ -342,15 +361,6 @@ class JReleaserProjectConfigurer {
 
     private static boolean configureDefaultDistribution(Project project, JReleaserExtensionImpl extension) {
         return project.plugins.findPlugin('distribution')
-    }
-
-    private static JReleaserLogger createLogger(Project project, Provider<Directory> outputDirectory) {
-        Path outputDirectoryPath = outputDirectory.get().asFile.toPath()
-        Files.createDirectories(outputDirectoryPath)
-        PrintWriter tracer = new PrintWriter(new FileOutputStream(outputDirectoryPath
-            .resolve('trace.log').toFile()), true)
-
-        new JReleaserLoggerAdapter(project, tracer)
     }
 
     private static void configureModel(Project project, JReleaserModel model) {
