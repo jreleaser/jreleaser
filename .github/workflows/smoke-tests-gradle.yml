@@ -45,8 +45,6 @@ jobs:
           - { os: windows-latest, sign: gpg   ,  args: '--exclude-packager docker' }
           - { os: windows-latest, sign: cosign,  args: '--exclude-packager docker' }
     runs-on: ${{ matrix.job.os }}
-    env:
-      JAVA_OPTS: "-javaagent:.github/test-files/file-leak-detector-1.13-jar-with-dependencies.jar=dumpatshutdown"
     steps:
       - name: Checkout
         uses: actions/checkout@v3
