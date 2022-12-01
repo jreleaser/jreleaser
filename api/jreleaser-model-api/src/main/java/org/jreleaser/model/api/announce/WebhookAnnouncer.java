@@ -29,4 +29,6 @@ public interface WebhookAnnouncer extends Announcer {
     String getMessageProperty();
 
     String getMessageTemplate();
+
+    boolean isStructuredMessage();
 }

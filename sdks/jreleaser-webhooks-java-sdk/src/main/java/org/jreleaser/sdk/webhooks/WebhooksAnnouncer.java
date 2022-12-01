@@ -88,18 +88,20 @@ public class WebhooksAnnouncer implements Announcer<org.jreleaser.model.api.anno
         String message = "";
         if (isNotBlank(webhook.getMessage())) {
             message = webhook.getResolvedMessage(context);
+        } else {
+            Map<String, Object> props = new LinkedHashMap<>();
+            props.put(Constants.KEY_CHANGELOG, MustacheUtils.passThrough(context.getChangelog()));
+            context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
+            message = webhook.getResolvedMessageTemplate(context, props);
+        }
 
+        if (webhook.isStructuredMessage() && isNotBlank(webhook.getMessageProperty())) {
             ObjectMapper objectMapper = new ObjectMapper();
             try {
                 message = objectMapper.writeValueAsString(CollectionUtils.mapOf(webhook.getMessageProperty(), message));
             } catch (JsonProcessingException e) {
                 throw new AnnounceException(RB.$("ERROR_unexpected_json_format"), e);
             }
-        } else {
-            Map<String, Object> props = new LinkedHashMap<>();
-            props.put(Constants.KEY_CHANGELOG, MustacheUtils.passThrough(context.getChangelog()));
-            context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
-            message = webhook.getResolvedMessageTemplate(context, props);
         }
 
         context.getLogger().info("message: {}", message);

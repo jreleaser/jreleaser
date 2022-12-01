@@ -34,7 +34,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.4.0
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
-public class MattermostAnnouncer implements Announcer<org.jreleaser.model.api.announce.MattermostAnnouncer> {
+public class
+MattermostAnnouncer implements Announcer<org.jreleaser.model.api.announce.MattermostAnnouncer> {
     private final JReleaserContext context;
     private final org.jreleaser.model.internal.announce.MattermostAnnouncer mattermost;
 
@@ -70,14 +71,15 @@ public class MattermostAnnouncer implements Announcer<org.jreleaser.model.api.an
             message = mattermost.getResolvedMessageTemplate(context, props);
         }
 
-        context.getLogger().info("message: {}", message);
+        Object msg = mattermost.isStructuredMessage() ? Message.of(message) : message;
+        context.getLogger().info("message: {}", msg);
 
         if (!context.isDryrun()) {
             ClientUtils.webhook(context.getLogger(),
                 mattermost.getWebhook(),
                 mattermost.getConnectTimeout(),
                 mattermost.getReadTimeout(),
-                Message.of(message));
+                msg);
         }
     }
 }

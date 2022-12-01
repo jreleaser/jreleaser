@@ -45,6 +45,7 @@ public final class MattermostAnnouncer extends AbstractAnnouncer<MattermostAnnou
     private String webhook;
     private String message;
     private String messageTemplate;
+    private Boolean structuredMessage;
 
     private final org.jreleaser.model.api.announce.MattermostAnnouncer immutable = new org.jreleaser.model.api.announce.MattermostAnnouncer() {
         @Override
@@ -65,6 +66,11 @@ public final class MattermostAnnouncer extends AbstractAnnouncer<MattermostAnnou
         @Override
         public String getMessageTemplate() {
             return messageTemplate;
+        }
+
+        @Override
+        public boolean isStructuredMessage() {
+            return MattermostAnnouncer.this.isStructuredMessage();
         }
 
         @Override
@@ -128,6 +134,7 @@ public final class MattermostAnnouncer extends AbstractAnnouncer<MattermostAnnou
         this.webhook = merge(this.webhook, source.webhook);
         this.message = merge(this.message, source.message);
         this.messageTemplate = merge(this.messageTemplate, source.messageTemplate);
+        this.structuredMessage = merge(this.structuredMessage, source.structuredMessage);
     }
 
     public String getResolvedMessage(JReleaserContext context) {
@@ -177,10 +184,19 @@ public final class MattermostAnnouncer extends AbstractAnnouncer<MattermostAnnou
         this.messageTemplate = messageTemplate;
     }
 
+    public boolean isStructuredMessage() {
+        return structuredMessage == null || structuredMessage;
+    }
+
+    public void setStructuredMessage(Boolean structuredMessage) {
+        this.structuredMessage = structuredMessage;
+    }
+
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("webhook", isNotBlank(webhook) ? HIDE : UNSET);
         props.put("message", message);
         props.put("messageTemplate", messageTemplate);
+        props.put("structuredMessage", isStructuredMessage());
     }
 }

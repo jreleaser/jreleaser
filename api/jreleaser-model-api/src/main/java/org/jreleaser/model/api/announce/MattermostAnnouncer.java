@@ -30,4 +30,6 @@ public interface MattermostAnnouncer extends Announcer {
     String getMessage();
 
     String getMessageTemplate();
+
+    boolean isStructuredMessage();
 }

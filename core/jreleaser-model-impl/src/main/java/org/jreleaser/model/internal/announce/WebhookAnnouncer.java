@@ -45,6 +45,7 @@ public final class WebhookAnnouncer extends AbstractAnnouncer<WebhookAnnouncer, 
     private String message;
     private String messageProperty;
     private String messageTemplate;
+    private Boolean structuredMessage;
 
     private final org.jreleaser.model.api.announce.WebhookAnnouncer immutable = new org.jreleaser.model.api.announce.WebhookAnnouncer() {
         @Override
@@ -70,6 +71,11 @@ public final class WebhookAnnouncer extends AbstractAnnouncer<WebhookAnnouncer, 
         @Override
         public String getMessageTemplate() {
             return messageTemplate;
+        }
+
+        @Override
+        public boolean isStructuredMessage() {
+            return WebhookAnnouncer.this.isStructuredMessage();
         }
 
         @Override
@@ -135,6 +141,7 @@ public final class WebhookAnnouncer extends AbstractAnnouncer<WebhookAnnouncer, 
         this.message = merge(this.message, source.message);
         this.messageTemplate = merge(this.messageTemplate, source.messageTemplate);
         this.messageProperty = merge(this.messageProperty, source.messageProperty);
+        this.structuredMessage = merge(this.structuredMessage, source.structuredMessage);
     }
 
     public String getResolvedMessage(JReleaserContext context) {
@@ -201,11 +208,20 @@ public final class WebhookAnnouncer extends AbstractAnnouncer<WebhookAnnouncer, 
         this.messageTemplate = messageTemplate;
     }
 
+    public boolean isStructuredMessage() {
+        return structuredMessage != null && structuredMessage;
+    }
+
+    public void setStructuredMessage(Boolean structuredMessage) {
+        this.structuredMessage = structuredMessage;
+    }
+
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("webhook", isNotBlank(webhook) ? HIDE : UNSET);
         props.put("message", message);
         props.put("messageProperty", messageProperty);
         props.put("messageTemplate", messageTemplate);
+        props.put("structuredMessage", isStructuredMessage());
     }
 }
