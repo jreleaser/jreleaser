@@ -21,6 +21,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.file.Directory
 import org.gradle.api.plugins.JavaApplication
 import org.gradle.api.provider.Provider
@@ -71,6 +72,18 @@ class JReleaserProjectConfigurer {
                 spec.parameters.logLevel.set(project.gradle.startParameter.logLevel)
                 spec.parameters.outputDirectory.set(outputDirectory)
             }
+
+        project.tasks.named('clean', new Action<Task>() {
+            @Override
+            void execute(Task t) {
+                t.doFirst(new Action<Task>() {
+                    @Override
+                    void execute(Task task) {
+                        loggerProvider.get().close()
+                    }
+                })
+            }
+        })
 
         JReleaserModel model = extension.toModel(project, loggerProvider.get().logger)
         configureModel(project, model)
