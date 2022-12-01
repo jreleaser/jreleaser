@@ -45,19 +45,11 @@ jobs:
           - { os: windows-latest, sign: gpg   ,  args: '-Djreleaser.excluded.packagers=docker' }
           - { os: windows-latest, sign: cosign,  args: '-Djreleaser.excluded.packagers=docker' }
     runs-on: ${{ matrix.job.os }}
-    env:
-      CI: true
-      GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-      JRELEASER_OCI_COMPARTMENTID: ${{ secrets.JRELEASER_OCI_COMPARTMENTID }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-
-      - name: Decrypt secrets
-        shell: bash
-        run: sh .github/scripts/decrypt-secrets.sh
 
       - name: Setup Java
         uses: actions/setup-java@v3

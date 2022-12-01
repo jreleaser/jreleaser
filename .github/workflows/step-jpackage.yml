@@ -14,11 +14,6 @@ on:
         default: 'zulu'
         required: false
         type: string
-    secrets:
-      compartment-id:
-        required: true
-      gpg-passphrase:
-        required: true
 
 jobs:
   jpackage:
@@ -28,17 +23,9 @@ jobs:
       matrix:
         os: [ubuntu-latest, macOS-latest, windows-latest]
     runs-on: ${{ matrix.os }}
-    env:
-      CI: true
-      GPG_PASSPHRASE: ${{ secrets.gpg-passphrase }}
-      JRELEASER_OCI_COMPARTMENTID: ${{ secrets.compartment-id }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-
-      - name: Decrypt secrets
-        shell: bash
-        run: sh .github/scripts/decrypt-secrets.sh
 
       - name: Download artifacts
         uses: actions/download-artifact@v3

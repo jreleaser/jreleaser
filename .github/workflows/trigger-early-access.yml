@@ -11,16 +11,8 @@ jobs:
   earlyaccess:
     name: 'Trigger Early Access'
     runs-on: ubuntu-latest
-    env:
-      CI: true
-      GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-      JRELEASER_OCI_COMPARTMENTID: ${{ secrets.JRELEASER_OCI_COMPARTMENTID }}
     steps:
       - uses: actions/checkout@v3
-
-      - name: Decrypt secrets
-        shell: bash
-        run: sh .github/scripts/decrypt-secrets.sh
 
       - name: Setup Java
         uses: actions/setup-java@v3

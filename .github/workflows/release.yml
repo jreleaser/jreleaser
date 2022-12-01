@@ -46,9 +46,6 @@ jobs:
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
       project-version: ${{ needs.precheck.outputs.VERSION }}
-    secrets:
-      compartment-id: ${{ secrets.JRELEASER_OCI_COMPARTMENTID }}
-      gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
   jpackage:
     needs: [precheck, jlink]
@@ -57,9 +54,6 @@ jobs:
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
       project-version: ${{ needs.precheck.outputs.VERSION }}
-    secrets:
-      compartment-id: ${{ secrets.JRELEASER_OCI_COMPARTMENTID }}
-      gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
   native-image:
     needs: [precheck, jlink]
@@ -70,18 +64,11 @@ jobs:
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
       project-version: ${{ needs.precheck.outputs.VERSION }}
-    secrets:
-      compartment-id: ${{ secrets.JRELEASER_OCI_COMPARTMENTID }}
-      gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
 
   release:
     name: Release
     needs: [precheck, jlink, jpackage, native-image]
     runs-on: ubuntu-latest
-    env:
-      CI: true
-      GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-      JRELEASER_OCI_COMPARTMENTID: ${{ secrets.JRELEASER_OCI_COMPARTMENTID }}
     outputs:
       JAR_SIZE: ${{ steps.bach.outputs.JAR_SIZE }}
       JAR_CSUM: ${{ steps.bach.outputs.JAR_CSUM }}
@@ -91,10 +78,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-
-      - name: Decrypt secrets
-        shell: bash
-        run: sh .github/scripts/decrypt-secrets.sh
 
       - name: Download artifacts
         uses: actions/download-artifact@v3
