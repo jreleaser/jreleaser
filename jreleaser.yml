@@ -232,8 +232,6 @@ assemble:
           platform: 'osx-x86_64'
         - path: '{{jdkPathPrefix}}/graal17Linux/{{graalFilePrefix}}'
           platform: 'linux-x86_64'
-        #- path: '{{jdkPathPrefix}}/graal17LinuxArm/{{graalFilePrefix}}'
-        #  platform: 'linux-aarch_64'
         - path: '{{jdkPathPrefix}}/graal17Windows/{{graalFilePrefix}}'
           platform: 'windows-x86_64'
       upx:
@@ -261,10 +259,14 @@ distributions:
         - --filesystem=host
       categories:
         - Developer Tools
+      skipReleases:
+        - '.*-RC.*'
+        - '.*-M.*'
       repository:
         active: RELEASE
         owner: flathub
         name: org.jreleaser.cli
+        branch: master
     chocolatey:
       active: ALWAYS
       remoteBuild: true
@@ -414,8 +416,6 @@ distributions:
         platform: 'osx-x86_64'
       - path: '{{nativeImageDir}}/{{distributionName}}-{{projectEffectiveVersion}}-linux-x86_64.zip'
         platform: 'linux-x86_64'
-      #- path: '{{nativeImageDir}}/{{distributionName}}-{{projectEffectiveVersion}}-linux-aarch64.zip'
-      #  platform: 'linux-aarch_64'
       - path: '{{nativeImageDir}}/{{distributionName}}-{{projectEffectiveVersion}}-windows-x86_64.zip'
         platform: 'windows-x86_64'
 
