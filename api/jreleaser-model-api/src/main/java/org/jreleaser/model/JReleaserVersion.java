@@ -45,9 +45,14 @@ public class JReleaserVersion {
             out.printf("------------------------------------------------------------%n");
             out.printf("jreleaser %s%n", JRELEASER_VERSION);
 
+            String jvm = System.getProperty("java.version") + " (" +
+                System.getProperty("java.vendor") + " " +
+                System.getProperty("java.vm.version") + ")";
+
             out.printf("------------------------------------------------------------%n");
             out.printf("Build time:   %s %s%n", BUILD_DATE, BUILD_TIME);
             out.println("Revision:     " + BUILD_REVISION);
+            out.println("JVM:          " + jvm);
             out.printf("------------------------------------------------------------%n");
         } else {
             out.printf("jreleaser %s%n", JRELEASER_VERSION);
@@ -63,9 +68,14 @@ public class JReleaserVersion {
             out.printf("------------------------------------------------------------%n");
             out.printf("jreleaser %s%n", JRELEASER_VERSION);
 
+            String jvm = System.getProperty("java.version") + " (" +
+                System.getProperty("java.vendor") + " " +
+                System.getProperty("java.vm.version") + ")";
+
             out.printf("------------------------------------------------------------%n");
             out.printf("Build time:   %s %s%n", BUILD_DATE, BUILD_TIME);
             out.println("Revision:     " + BUILD_REVISION);
+            out.println("JVM:          " + jvm);
             out.printf("------------------------------------------------------------%n");
         } else {
             out.printf("jreleaser %s%n", JRELEASER_VERSION);
