@@ -38,6 +38,13 @@ jobs:
         shell: bash
         run: |
           echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          echo ${{ github.event.inputs.version }} > VERSION
+          git add VERSION
+          sed -i -e "s/^\:project-version\:\ .*/:project-version: ${{ github.event.inputs.version }}/g" README.adoc
+          git config --global user.email "${{ env.GITHUB_BOT_EMAIL }}"
+          git config --global user.name "GitHub Action"
+          git commit -a -m "Releasing version ${{ github.event.inputs.version }}"
+          git push origin main
 
   jlink:
     needs: [precheck]
@@ -77,6 +84,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
+          ref: main
           fetch-depth: 0
 
       - name: Download artifacts
@@ -122,19 +130,6 @@ jobs:
           path: ~/.gradle/wrapper
           key: ${{ runner.os }}-gradlew-${{ hashFiles('**/gradlew') }}
           restore-keys: ${{ runner.os }}-gradlew-
-
-      - name: Version
-        run: |
-          echo ${{ needs.precheck.outputs.VERSION }} > VERSION
-
-      - name: Commit version
-        run: |
-          git add VERSION
-          sed -i -e "s/^\:project-version\:\ .*/:project-version: ${{ needs.precheck.outputs.VERSION }}/g" README.adoc
-          git config --global user.email "${{ env.GITHUB_BOT_EMAIL }}"
-          git config --global user.name "GitHub Action"
-          git commit -a -m "Releasing version ${{ needs.precheck.outputs.VERSION }}"
-          git push origin main
 
       - name: Deploy
         env:
