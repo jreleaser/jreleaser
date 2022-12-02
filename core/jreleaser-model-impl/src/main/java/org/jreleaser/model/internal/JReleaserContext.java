@@ -906,6 +906,8 @@ public class JReleaserContext {
             }
         }
         props.put("javaVersion", System.getProperty("java.version"));
+        props.put("javaVendor", System.getProperty("java.vendor"));
+        props.put("javaVmVersion", System.getProperty("java.vm.version"));
 
         Map<String, Object> resolvedExtraProperties = project.getResolvedExtraProperties();
         safePut(project.getPrefix() + capitalize(KEY_VERSION_MAJOR), resolvedExtraProperties, props);
