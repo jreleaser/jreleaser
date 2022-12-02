@@ -37,6 +37,7 @@ import java.util.Set;
 
 import static java.util.Comparator.naturalOrder;
 import static java.util.stream.Collectors.toList;
+import static org.jreleaser.model.Distribution.DistributionType.FLAT_BINARY;
 
 /**
  * @author Andres Almiray
@@ -85,6 +86,15 @@ public abstract class AbstractPackager<A extends org.jreleaser.model.api.package
 
     @Override
     public List<Artifact> resolveCandidateArtifacts(JReleaserContext context, Distribution distribution) {
+        if (distribution.getType() == FLAT_BINARY && supportsDistribution(distribution.getType())) {
+            return distribution.getArtifacts().stream()
+                .filter(Artifact::isActive)
+                .filter(artifact -> supportsPlatform(artifact.getPlatform()))
+                .filter(this::isNotSkipped)
+                .sorted(Artifact.comparatorByPlatform())
+                .collect(toList());
+        }
+
         List<String> fileExtensions = new ArrayList<>(getSupportedFileExtensions(distribution.getType()));
         fileExtensions.sort(naturalOrder());
 

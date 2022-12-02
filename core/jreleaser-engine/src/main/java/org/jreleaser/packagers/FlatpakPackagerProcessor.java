@@ -50,6 +50,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT;
 import static org.jreleaser.model.Constants.KEY_FLATPACK_ICONS;
@@ -75,6 +77,9 @@ import static org.jreleaser.model.Constants.KEY_FLATPAK_SDK_EXTENSIONS;
 import static org.jreleaser.model.Constants.KEY_FLATPAK_SDK_FINISH_ARGS;
 import static org.jreleaser.model.Constants.KEY_FLATPAK_URLS;
 import static org.jreleaser.model.Constants.KEY_PROJECT_AUTHORS;
+import static org.jreleaser.model.Constants.KEY_SPEC_BINARIES;
+import static org.jreleaser.model.Constants.KEY_SPEC_DIRECTORIES;
+import static org.jreleaser.model.Constants.KEY_SPEC_FILES;
 import static org.jreleaser.model.Constants.SKIP_OPENJDK;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
@@ -102,49 +107,55 @@ public class FlatpakPackagerProcessor extends AbstractRepositoryPackagerProcesso
         Path artifactPath = artifact.getResolvedPath(context, distribution);
         String artifactFileName = getFilename(artifactPath.getFileName().toString(), packager.getSupportedFileExtensions(distribution.getType()));
 
-        try {
-            List<String> entries = FileUtils.inspectArchive(artifactPath);
+        if (distribution.getType() == org.jreleaser.model.Distribution.DistributionType.FLAT_BINARY) {
+            props.put(KEY_SPEC_DIRECTORIES, emptyList());
+            props.put(KEY_SPEC_BINARIES, singletonList(distribution.getExecutable().resolveExecutable("linux")));
+            props.put(KEY_SPEC_FILES, emptyList());
+        } else {
+            try {
+                List<String> entries = FileUtils.inspectArchive(artifactPath);
 
-            Set<String> directories = new LinkedHashSet<>();
-            List<String> binaries = new ArrayList<>();
-            List<String> files = new ArrayList<>();
+                Set<String> directories = new LinkedHashSet<>();
+                List<String> binaries = new ArrayList<>();
+                List<String> files = new ArrayList<>();
 
-            entries.stream()
-                // skip Windows executables
-                .filter(e -> !e.endsWith(distribution.getExecutable().resolveWindowsExtension()))
-                // skip directories
-                .filter(e -> !e.endsWith("/"))
-                // remove root from name
-                .map(e -> e.substring(artifactFileName.length() + 1))
-                // match only binaries
-                .filter(e -> e.startsWith("bin/"))
-                .sorted()
-                .forEach(entry -> {
-                    String[] parts = entry.split("/");
-                    binaries.add(parts[1]);
-                });
+                entries.stream()
+                    // skip Windows executables
+                    .filter(e -> !e.endsWith(distribution.getExecutable().resolveWindowsExtension()))
+                    // skip directories
+                    .filter(e -> !e.endsWith("/"))
+                    // remove root from name
+                    .map(e -> e.substring(artifactFileName.length() + 1))
+                    // match only binaries
+                    .filter(e -> e.startsWith("bin/"))
+                    .sorted()
+                    .forEach(entry -> {
+                        String[] parts = entry.split("/");
+                        binaries.add(parts[1]);
+                    });
 
-            entries.stream()
-                // skip Windows executables
-                .filter(e -> !e.endsWith(distribution.getExecutable().resolveWindowsExtension()))
-                // skip directories
-                .filter(e -> !e.endsWith("/"))
-                // remove root from name
-                .map(e -> e.substring(artifactFileName.length() + 1))
-                // skip executables
-                .filter(e -> !e.startsWith("bin/"))
-                .sorted()
-                .forEach(entry -> {
-                    String[] parts = entry.split("/");
-                    if (parts.length > 1) directories.add(parts[0]);
-                    files.add(entry);
-                });
+                entries.stream()
+                    // skip Windows executables
+                    .filter(e -> !e.endsWith(distribution.getExecutable().resolveWindowsExtension()))
+                    // skip directories
+                    .filter(e -> !e.endsWith("/"))
+                    // remove root from name
+                    .map(e -> e.substring(artifactFileName.length() + 1))
+                    // skip executables
+                    .filter(e -> !e.startsWith("bin/"))
+                    .sorted()
+                    .forEach(entry -> {
+                        String[] parts = entry.split("/");
+                        if (parts.length > 1) directories.add(parts[0]);
+                        files.add(entry);
+                    });
 
-            props.put(KEY_FLATPAK_DIRECTORIES, directories);
-            props.put(KEY_FLATPAK_BINARIES, binaries);
-            props.put(KEY_FLATPAK_FILES, files);
-        } catch (IOException e) {
-            throw new PackagerProcessingException("ERROR", e);
+                props.put(KEY_FLATPAK_DIRECTORIES, directories);
+                props.put(KEY_FLATPAK_BINARIES, binaries);
+                props.put(KEY_FLATPAK_FILES, files);
+            } catch (IOException e) {
+                throw new PackagerProcessingException("ERROR", e);
+            }
         }
 
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();

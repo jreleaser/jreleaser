@@ -61,6 +61,7 @@ public final class ChocolateyPackager extends AbstractRepositoryPackager<org.jre
         SUPPORTED.put(JAVA_BINARY, extensions);
         SUPPORTED.put(JLINK, extensions);
         SUPPORTED.put(NATIVE_PACKAGE, setOf(EXE.extension(), MSI.extension()));
+        // SUPPORTED.put(FLAT_BINARY, emptySet());
     }
 
     private final ChocolateyRepository repository = new ChocolateyRepository();

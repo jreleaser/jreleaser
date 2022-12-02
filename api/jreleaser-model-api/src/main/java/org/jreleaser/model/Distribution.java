@@ -28,6 +28,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
 public class Distribution {
     public enum DistributionType {
         BINARY("binary"),
+        FLAT_BINARY("flat"),
         JAVA_BINARY("java"),
         JLINK("jlink"),
         SINGLE_JAR("uberjar"),

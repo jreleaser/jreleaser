@@ -39,6 +39,7 @@ import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toList;
 import static org.jreleaser.model.Distribution.DistributionType.BINARY;
+import static org.jreleaser.model.Distribution.DistributionType.FLAT_BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JLINK;
 import static org.jreleaser.model.api.packagers.FlatpakPackager.SKIP_FLATPAK;
@@ -72,6 +73,7 @@ public final class FlatpakPackager extends AbstractRepositoryPackager<org.jrelea
         SUPPORTED.put(BINARY, extensions);
         SUPPORTED.put(JAVA_BINARY, extensions);
         SUPPORTED.put(JLINK, extensions);
+        SUPPORTED.put(FLAT_BINARY, emptySet());
     }
 
     private final FlatpakRepository repository = new FlatpakRepository();

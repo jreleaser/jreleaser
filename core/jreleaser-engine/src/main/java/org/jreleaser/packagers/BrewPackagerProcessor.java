@@ -27,6 +27,7 @@ import org.jreleaser.model.internal.util.Artifacts;
 import org.jreleaser.model.spi.packagers.PackagerProcessingException;
 import org.jreleaser.mustache.MustacheUtils;
 import org.jreleaser.util.Algorithm;
+import org.jreleaser.util.FileType;
 import org.jreleaser.util.PlatformUtils;
 
 import java.nio.file.Path;
@@ -54,6 +55,7 @@ import static org.jreleaser.model.Constants.KEY_BREW_FORMULA_NAME;
 import static org.jreleaser.model.Constants.KEY_BREW_HAS_LIVECHECK;
 import static org.jreleaser.model.Constants.KEY_BREW_LIVECHECK;
 import static org.jreleaser.model.Constants.KEY_BREW_MULTIPLATFORM;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_NAME;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_VERSION;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_URL;
 import static org.jreleaser.model.Constants.KEY_HOMEBREW_TAP_NAME;
@@ -65,6 +67,7 @@ import static org.jreleaser.mustache.MustacheUtils.passThrough;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.FileType.ZIP;
+import static org.jreleaser.util.StringUtils.getFilename;
 import static org.jreleaser.util.StringUtils.getHyphenatedName;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -74,7 +77,8 @@ import static org.jreleaser.util.StringUtils.isTrue;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> {
+public class
+BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> {
     private static final String KEY_DISTRIBUTION_CHECKSUM_SHA_256 = "distributionChecksumSha256";
 
     private static final String TPL_MAC_ARM = "  if OS.mac? && Hardware::CPU.arm?\n" +
@@ -92,6 +96,39 @@ public class BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<B
     private static final String TPL_LINUX_INTEL = "  if OS.linux? && Hardware::CPU.intel?\n" +
         "    url \"{{distributionUrl}}\"\n" +
         "    sha256 \"{{distributionChecksumSha256}}\"\n" +
+        "  end\n";
+
+    private static final String TPL_MAC_ARM_FLAT_BINARY = "  if OS.mac? && Hardware::CPU.arm?\n" +
+        "    url \"{{distributionUrl}}\"\n" +
+        "    sha256 \"{{distributionChecksumSha256}}\"\n" +
+        "\n" +
+        "    def install\n" +
+        "      bin.install \"{{distributionArtifactFileName}}\" => \"{{distributionExecutableName}}\"\n" +
+        "    end\n" +
+        "  end\n";
+    private static final String TPL_MAC_INTEL_FLAT_BINARY = "  if OS.mac? && Hardware::CPU.intel?\n" +
+        "    url \"{{distributionUrl}}\"\n" +
+        "    sha256 \"{{distributionChecksumSha256}}\"\n" +
+        "\n" +
+        "    def install\n" +
+        "      bin.install \"{{distributionArtifactFileName}}\" => \"{{distributionExecutableName}}\"\n" +
+        "    end\n" +
+        "  end\n";
+    private static final String TPL_LINUX_ARM_FLAT_BINARY = "  if OS.linux? && Hardware::CPU.arm? && Hardware::CPU.is_64_bit?\n" +
+        "    url \"{{distributionUrl}}\"\n" +
+        "    sha256 \"{{distributionChecksumSha256}}\"\n" +
+        "\n" +
+        "    def install\n" +
+        "      bin.install \"{{distributionArtifactFileName}}\" => \"{{distributionExecutableName}}\"\n" +
+        "    end\n" +
+        "  end\n";
+    private static final String TPL_LINUX_INTEL_FLAT_BINARY = "  if OS.linux? && Hardware::CPU.intel?\n" +
+        "    url \"{{distributionUrl}}\"\n" +
+        "    sha256 \"{{distributionChecksumSha256}}\"\n" +
+        "\n" +
+        "    def install\n" +
+        "      bin.install \"{{distributionArtifactFileName}}\" => \"{{distributionExecutableName}}\"\n" +
+        "    end\n" +
         "  end\n";
 
     private static final String CASK_RB = "cask.rb";
@@ -172,31 +209,39 @@ public class BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<B
             Artifact osxIntelArtifact = null;
             Artifact osxArmArtifact = null;
 
+            boolean flatBinary = distribution.getType() == org.jreleaser.model.Distribution.DistributionType.FLAT_BINARY;
+
             for (Artifact artifact : collectArtifacts(distribution)) {
-                if (!artifact.getPath().endsWith(ZIP.extension()) || isBlank(artifact.getPlatform())) continue;
+                if (!artifact.getPath().endsWith(ZIP.extension()) && !flatBinary ||
+                    isBlank(artifact.getPlatform())) {
+                    continue;
+                }
 
                 String template = null;
                 String artifactUrl = resolveArtifactUrl(props, distribution, artifact);
+                String artifactFile = artifact.getEffectivePath().getFileName().toString();
+                String artifactFileName = getFilename(artifactFile, FileType.getSupportedExtensions());
 
                 if (PlatformUtils.isMac(artifact.getPlatform())) {
                     if (PlatformUtils.isArm(artifact.getPlatform())) {
-                        template = TPL_MAC_ARM;
+                        template = flatBinary ? TPL_LINUX_ARM_FLAT_BINARY : TPL_MAC_ARM;
                         osxArmArtifact = artifact;
                     } else {
-                        template = TPL_MAC_INTEL;
+                        template = flatBinary ? TPL_MAC_INTEL_FLAT_BINARY : TPL_MAC_INTEL;
                         osxIntelArtifact = artifact;
                     }
                 } else if (PlatformUtils.isLinux(artifact.getPlatform())) {
                     if (PlatformUtils.isArm(artifact.getPlatform())) {
-                        template = TPL_LINUX_ARM;
+                        template = flatBinary ? TPL_LINUX_ARM_FLAT_BINARY : TPL_LINUX_ARM;
                     } else {
-                        template = TPL_LINUX_INTEL;
+                        template = flatBinary ? TPL_LINUX_INTEL_FLAT_BINARY : TPL_LINUX_INTEL;
                     }
                 }
 
                 if (isNotBlank(template)) {
                     Map<String, Object> newProps = new LinkedHashMap<>(props);
                     newProps.put(KEY_DISTRIBUTION_URL, artifactUrl);
+                    newProps.put(KEY_DISTRIBUTION_ARTIFACT_FILE_NAME, artifactFileName);
                     newProps.put(KEY_DISTRIBUTION_CHECKSUM_SHA_256, artifact.getHash(Algorithm.SHA_256));
                     multiPlatforms.add(resolveTemplate(template, newProps));
                 }
@@ -205,10 +250,13 @@ public class BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<B
             // On OSX, use intel binary for arm if there's no match
             if (osxIntelArtifact != null && osxArmArtifact == null) {
                 String artifactUrl = resolveArtifactUrl(props, distribution, osxIntelArtifact);
+                String artifactFile = osxIntelArtifact.getEffectivePath().getFileName().toString();
+                String artifactFileName = getFilename(artifactFile, FileType.getSupportedExtensions());
                 Map<String, Object> newProps = new LinkedHashMap<>(props);
                 newProps.put(KEY_DISTRIBUTION_URL, artifactUrl);
+                newProps.put(KEY_DISTRIBUTION_ARTIFACT_FILE_NAME, artifactFileName);
                 newProps.put(KEY_DISTRIBUTION_CHECKSUM_SHA_256, osxIntelArtifact.getHash(Algorithm.SHA_256));
-                multiPlatforms.add(resolveTemplate(TPL_MAC_ARM, newProps));
+                multiPlatforms.add(resolveTemplate(flatBinary ? TPL_LINUX_ARM_FLAT_BINARY : TPL_MAC_ARM, newProps));
             }
 
             if (multiPlatforms.isEmpty()) {

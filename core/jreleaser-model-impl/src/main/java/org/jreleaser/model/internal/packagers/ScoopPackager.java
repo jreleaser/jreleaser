@@ -33,6 +33,7 @@ import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
 import static org.jreleaser.model.Distribution.DistributionType.BINARY;
+import static org.jreleaser.model.Distribution.DistributionType.FLAT_BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JLINK;
 import static org.jreleaser.model.Distribution.DistributionType.NATIVE_PACKAGE;
@@ -40,8 +41,12 @@ import static org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR;
 import static org.jreleaser.model.api.packagers.ScoopPackager.SKIP_SCOOP;
 import static org.jreleaser.model.api.packagers.ScoopPackager.TYPE;
 import static org.jreleaser.util.CollectionUtils.setOf;
+import static org.jreleaser.util.FileType.BAT;
+import static org.jreleaser.util.FileType.CMD;
+import static org.jreleaser.util.FileType.EXE;
 import static org.jreleaser.util.FileType.JAR;
 import static org.jreleaser.util.FileType.MSI;
+import static org.jreleaser.util.FileType.PS1;
 import static org.jreleaser.util.FileType.ZIP;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isFalse;
@@ -60,6 +65,7 @@ public final class ScoopPackager extends AbstractRepositoryPackager<org.jrelease
         SUPPORTED.put(JLINK, extensions);
         SUPPORTED.put(NATIVE_PACKAGE, setOf(MSI.extension()));
         SUPPORTED.put(SINGLE_JAR, setOf(JAR.extension()));
+        SUPPORTED.put(FLAT_BINARY, setOf(BAT.extension(), CMD.extension(), EXE.extension(), PS1.extension()));
     }
 
     private final ScoopRepository repository = new ScoopRepository();

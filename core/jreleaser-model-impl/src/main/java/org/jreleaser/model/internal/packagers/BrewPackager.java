@@ -41,6 +41,7 @@ import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toList;
 import static org.jreleaser.model.Distribution.DistributionType.BINARY;
+import static org.jreleaser.model.Distribution.DistributionType.FLAT_BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JLINK;
 import static org.jreleaser.model.Distribution.DistributionType.NATIVE_PACKAGE;
@@ -73,6 +74,7 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
         SUPPORTED.put(JLINK, extensions);
         SUPPORTED.put(NATIVE_PACKAGE, setOf(ZIP.extension(), DMG.extension(), PKG.extension()));
         SUPPORTED.put(SINGLE_JAR, setOf(JAR.extension()));
+        SUPPORTED.put(FLAT_BINARY, emptySet());
     }
 
     private final List<Dependency> dependencies = new ArrayList<>();

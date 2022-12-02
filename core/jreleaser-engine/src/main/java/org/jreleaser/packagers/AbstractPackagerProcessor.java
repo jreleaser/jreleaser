@@ -338,8 +338,13 @@ abstract class AbstractPackagerProcessor<T extends Packager<?>> implements Packa
 
             String artifactFile = artifact.getEffectivePath().getFileName().toString();
             String artifactFileName = getFilename(artifactFile, FileType.getSupportedExtensions());
-            String artifactFileExtension = artifactFile.substring(artifactFileName.length());
-            String artifactFileFormat = artifactFileExtension.substring(1);
+            String artifactFileExtension = "";
+            String artifactFileFormat = "";
+
+            if (!artifactFile.equals(artifactFileName)) {
+                artifactFileExtension = artifactFile.substring(artifactFileName.length());
+                artifactFileFormat = artifactFileExtension.substring(1);
+            }
 
             String artifactName = "";
             String artifactVersion = "";

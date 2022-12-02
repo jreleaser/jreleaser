@@ -36,6 +36,7 @@ import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
 import static org.jreleaser.model.Distribution.DistributionType.BINARY;
+import static org.jreleaser.model.Distribution.DistributionType.FLAT_BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JLINK;
 import static org.jreleaser.model.Distribution.DistributionType.NATIVE_PACKAGE;
@@ -61,6 +62,7 @@ public final class MacportsPackager extends AbstractRepositoryPackager<org.jrele
         SUPPORTED.put(JAVA_BINARY, extensions);
         SUPPORTED.put(JLINK, extensions);
         SUPPORTED.put(NATIVE_PACKAGE, setOf(DMG.extension()));
+        SUPPORTED.put(FLAT_BINARY, emptySet());
     }
 
     private final List<String> categories = new ArrayList<>();

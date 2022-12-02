@@ -33,6 +33,7 @@ import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
 import static org.jreleaser.model.Distribution.DistributionType.BINARY;
+import static org.jreleaser.model.Distribution.DistributionType.FLAT_BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JLINK;
 import static org.jreleaser.model.api.packagers.AsdfPackager.SKIP_ASDF;
@@ -66,6 +67,7 @@ public final class AsdfPackager extends AbstractRepositoryPackager<org.jreleaser
         SUPPORTED.put(BINARY, extensions);
         SUPPORTED.put(JAVA_BINARY, extensions);
         SUPPORTED.put(JLINK, extensions);
+        SUPPORTED.put(FLAT_BINARY, emptySet());
     }
 
     private final AsdfRepository repository = new AsdfRepository();

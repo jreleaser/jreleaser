@@ -33,6 +33,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT;
 import static org.jreleaser.model.Constants.KEY_PROJECT_VERSION;
 import static org.jreleaser.model.Constants.KEY_SPEC_BINARIES;
@@ -55,14 +57,22 @@ public class SpecPackagerProcessor extends AbstractRepositoryPackagerProcessor<S
 
     @Override
     protected void doPrepareDistribution(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
-        setupJavaBinary(distribution, props);
+        setupFiles(distribution, props);
         super.doPrepareDistribution(distribution, props);
     }
 
-    private void setupJavaBinary(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
+    private void setupFiles(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
         Artifact artifact = (Artifact) props.get(KEY_DISTRIBUTION_ARTIFACT);
         Path artifactPath = artifact.getResolvedPath(context, distribution);
         String artifactFileName = getFilename(artifactPath.getFileName().toString(), packager.getSupportedFileExtensions(distribution.getType()));
+
+        if (distribution.getType() == org.jreleaser.model.Distribution.DistributionType.FLAT_BINARY) {
+            props.put(KEY_PROJECT_VERSION, context.getModel().getProject().version().toRpmVersion());
+            props.put(KEY_SPEC_DIRECTORIES, emptyList());
+            props.put(KEY_SPEC_BINARIES, singletonList(distribution.getExecutable().resolveExecutable("linux")));
+            props.put(KEY_SPEC_FILES, emptyList());
+            return;
+        }
 
         try {
             List<String> entries = FileUtils.inspectArchive(artifactPath);

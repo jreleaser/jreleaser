@@ -31,6 +31,8 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public enum FileType {
     ASC("asc"),
+    BAT("bat"),
+    CMD("cmd"),
     DEB("deb"),
     DMG("dmg"),
     EXE("exe"),
@@ -38,7 +40,9 @@ public enum FileType {
     MSI("msi"),
     NUGET("nuget"),
     PKG("pkg"),
+    PS1("ps1"),
     RPM("rpm"),
+    SH("sh"),
     SIG("sig"),
     TAR("tar", true),
     TAR_BZ2("tar.bz2", true),

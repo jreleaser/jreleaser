@@ -48,6 +48,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 import static org.jreleaser.model.Distribution.DistributionType.BINARY;
+import static org.jreleaser.model.Distribution.DistributionType.FLAT_BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JLINK;
 import static org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR;
@@ -71,6 +72,7 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
         SUPPORTED.put(JAVA_BINARY, extensions);
         SUPPORTED.put(JLINK, extensions);
         SUPPORTED.put(SINGLE_JAR, setOf(JAR.extension()));
+        SUPPORTED.put(FLAT_BINARY, emptySet());
     }
 
     private final Map<String, DockerSpec> specs = new LinkedHashMap<>();
@@ -311,6 +313,15 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
 
     @Override
     public List<Artifact> resolveCandidateArtifacts(JReleaserContext context, Distribution distribution) {
+        if (distribution.getType() == FLAT_BINARY && supportsDistribution(distribution.getType())) {
+            return distribution.getArtifacts().stream()
+                .filter(Artifact::isActive)
+                .filter(artifact -> supportsPlatform(artifact.getPlatform()))
+                .filter(this::isNotSkipped)
+                .sorted(Artifact.comparatorByPlatform())
+                .collect(toList());
+        }
+
         List<String> fileExtensions = new ArrayList<>(getSupportedFileExtensions(distribution.getType()));
         fileExtensions.sort(naturalOrder());
 

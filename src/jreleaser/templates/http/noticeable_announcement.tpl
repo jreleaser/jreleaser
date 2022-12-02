@@ -8,6 +8,9 @@ contains the messages.
 **Docker*:** Multi-platform support is now available via buildx. For the time being only JAVA_BINARY and SINGLE_JAR
 distributions are supported.
 
+**Distribution:** New flat-binary distribution may be used to release binaries without packaging them in archives. Several
+package managers support this new distribution type.
+
 **Assemble:** The new `java-archive` assembler may be used to create JAVA_BINARY distrirbutions instead of using Maven's
 appassembler/assembly plugins or Gradle's application/distribution plugins.
 

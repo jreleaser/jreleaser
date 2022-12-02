@@ -98,7 +98,7 @@ public abstract class SpecPackagerValidator extends Validator {
         if (packager.getRequires().isEmpty()) {
             packager.setRequires(parentPackager.getRequires());
         }
-        if (packager.getRequires().isEmpty()) {
+        if (packager.getRequires().isEmpty() && distribution.getType() == org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY) {
             packager.setRequires(Collections.singletonList("java"));
         }
 

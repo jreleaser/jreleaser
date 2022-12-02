@@ -129,6 +129,7 @@ public abstract class DistributionsValidator extends Validator {
             switch (distribution.getType()) {
                 case BINARY:
                 case NATIVE_PACKAGE:
+                case FLAT_BINARY:
                     distribution.getExecutable().setWindowsExtension("exe");
                     break;
                 default:
@@ -295,6 +296,7 @@ public abstract class DistributionsValidator extends Validator {
                                                  List<Artifact> candidateArtifacts, Errors errors) {
         // validate distribution type
         if (distribution.getType() == org.jreleaser.model.Distribution.DistributionType.BINARY ||
+            distribution.getType() == org.jreleaser.model.Distribution.DistributionType.FLAT_BINARY ||
             distribution.getType() == org.jreleaser.model.Distribution.DistributionType.JLINK ||
             distribution.getType() == org.jreleaser.model.Distribution.DistributionType.NATIVE_PACKAGE) {
             // ensure all artifacts define a platform
@@ -304,7 +306,8 @@ public abstract class DistributionsValidator extends Validator {
             String noPlatform = "<nil>";
             Map<String, List<Artifact>> byPlatform = candidateArtifacts.stream()
                 .peek(artifact -> {
-                    if (distribution.getType() == org.jreleaser.model.Distribution.DistributionType.BINARY &&
+                    if ((distribution.getType() == org.jreleaser.model.Distribution.DistributionType.BINARY ||
+                        distribution.getType() == org.jreleaser.model.Distribution.DistributionType.FLAT_BINARY) &&
                         artifact.extraPropertyIsTrue("universal")) {
                         universal.compareAndSet(false, true);
                     }

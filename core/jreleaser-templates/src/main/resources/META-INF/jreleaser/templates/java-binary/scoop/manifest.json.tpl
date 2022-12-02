@@ -1,7 +1,7 @@
 {
-  "homepage": "{{projectWebsite}}",
-  "description": "{{projectDescription}}",
   "version": "{{projectVersion}}",
+  "description": "{{projectDescription}}",
+  "homepage": "{{projectWebsite}}",
   "license": "{{projectLicense}}",
   "url": "{{distributionUrl}}",
   "hash": "sha256:{{distributionChecksumSha256}}",
