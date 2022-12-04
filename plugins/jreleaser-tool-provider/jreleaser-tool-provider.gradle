@@ -23,6 +23,9 @@ plugins {
 mainClassName = 'org.jreleaser.tool.JReleaser'
 
 config {
+    info {
+        bytecodeVersion = project.findProperty('targetCompatibility')
+    }
     docs {
         javadoc {
             empty = true
