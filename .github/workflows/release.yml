@@ -176,6 +176,13 @@ jobs:
           echo "JAR_CSUM=$(echo $JAR_CSUM)" >> $GITHUB_OUTPUT
           echo "DOC_SIZE=$(echo $DOC_SIZE)" >> $GITHUB_OUTPUT
 
+      - name: Bach-info script
+        uses: actions/upload-artifact@v3
+        with:
+          retention-days: 1
+          name: bach
+          path: .github/scripts/update-bach-info.sh
+
       - name: JReleaser release output
         if: always()
         uses: actions/upload-artifact@v3
@@ -226,24 +233,16 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
+      - name: Download bach-info script
+        uses: actions/download-artifact@v3
+        with:
+          name: bach
+
       - name: Commit
-        run: |
-          VERSION=${{ needs.precheck.outputs.VERSION }}
-          JAR_SIZE=${{ needs.release.outputs.JAR_SIZE }}
-          JAR_CSUM=${{ needs.release.outputs.JAR_CSUM }}
-          DOC_SIZE=${{ needs.release.outputs.DOC_SIZE }}
-          TARGET_FILE=".bach/external-tools/jreleaser@$VERSION.tool-directory.properties"
-          echo "@description JReleaser $VERSION" > $TARGET_FILE
-          echo " " >> $TARGET_FILE
-          echo "jreleaser-tool-provider-$VERSION.jar=\\" >> $TARGET_FILE
-          echo "  https://github.com/jreleaser/jreleaser/releases/download/v$VERSION/jreleaser-tool-provider-$VERSION.jar\\" >> $TARGET_FILE
-          echo "  #SIZE=${JAR_SIZE}&SHA-256=${JAR_CSUM}" >> $TARGET_FILE
-          echo "README.adoc=\\" >> $TARGET_FILE
-          echo "  https://github.com/jreleaser/jreleaser/raw/v$VERSION/README.adoc\\" >> $TARGET_FILE
-          echo "  #SIZE=${DOC_SIZE}" >> $TARGET_FILE
-          echo "" >> $TARGET_FILE
-          git add $TARGET_FILE
-          git config --global user.email "${{ env.GITHUB_BOT_EMAIL }}"
-          git config --global user.name "GitHub Action"
-          git commit -a -m "Releasing v$VERSION"
-          git push origin main
+        env: |
+          TAG: "v${{ needs.precheck.outputs.VERSION }}"
+          VERSION: ${{ needs.precheck.outputs.VERSION }}
+          JAR_SIZE: ${{ needs.release.outputs.JAR_SIZE }}
+          JAR_CSUM: ${{ needs.release.outputs.JAR_CSUM }}
+          DOC_SIZE: ${{ needs.release.outputs.DOC_SIZE }}
+        run: sh update-bach-info.sh
