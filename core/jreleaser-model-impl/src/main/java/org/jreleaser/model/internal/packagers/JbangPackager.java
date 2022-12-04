@@ -21,6 +21,7 @@ import org.jreleaser.model.Active;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Stereotype;
 import org.jreleaser.model.internal.common.Artifact;
+import org.jreleaser.model.internal.project.Project;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -230,6 +231,15 @@ public final class JbangPackager extends AbstractRepositoryPackager<org.jrelease
         @Override
         public String getResolvedName() {
             return tapName;
+        }
+
+        @Override
+        public boolean resolveEnabled(Project project) {
+            if (null == active) {
+                active = Active.ALWAYS;
+            }
+            enabled = active.check(project);
+            return enabled;
         }
     }
 }
