@@ -36,6 +36,7 @@ import org.jreleaser.version.Version;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -43,10 +44,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 
 import static java.lang.System.lineSeparator;
@@ -348,7 +351,7 @@ public class ChangelogGenerator {
 
         commits.stream()
             .sorted(revCommitComparator)
-            .map(Commit::of)
+            .map(rc -> "conventional-commits".equals(changelog.getPreset()) ? ConventionalCommit.of(rc) : Commit.of(rc))
             .peek(c -> {
                 if (!changelog.getContributors().isEnabled()) return;
 
@@ -571,9 +574,26 @@ public class ChangelogGenerator {
         private String fullHash;
         private String shortHash;
         private String title;
-        private String body;
+        protected String body;
         private Author author;
         private int time;
+
+        protected Commit(RevCommit rc) {
+            fullHash = rc.getId().name();
+            shortHash = rc.getId().abbreviate(7).name();
+            body = rc.getFullMessage();
+            String[] lines = split(body);
+            title = lines[0];
+            author = new Author(rc.getAuthorIdent().getName(), rc.getAuthorIdent().getEmailAddress());
+            addContributor(rc.getCommitterIdent().getName(), rc.getCommitterIdent().getEmailAddress());
+            time = rc.getCommitTime();
+            for (String line : lines) {
+                Matcher m = CO_AUTHORED_BY_PATTERN.matcher(line);
+                if (m.matches()) {
+                    addContributor(m.group(1), m.group(2));
+                }
+            }
+        }
 
         Map<String, Object> asContext(boolean links, String commitsUrl) {
             Map<String, Object> context = new LinkedHashMap<>();
@@ -597,27 +617,134 @@ public class ChangelogGenerator {
         }
 
         static Commit of(RevCommit rc) {
-            Commit c = new Commit();
-            c.fullHash = rc.getId().name();
-            c.shortHash = rc.getId().abbreviate(7).name();
-            c.body = rc.getFullMessage();
-            String[] lines = split(c.body);
-            c.title = lines[0];
-            c.author = new Author(rc.getAuthorIdent().getName(), rc.getAuthorIdent().getEmailAddress());
-            c.addContributor(rc.getCommitterIdent().getName(), rc.getCommitterIdent().getEmailAddress());
-            c.time = rc.getCommitTime();
-            for (String line : lines) {
-                Matcher m = CO_AUTHORED_BY_PATTERN.matcher(line);
-                if (m.matches()) {
-                    c.addContributor(m.group(1), m.group(2));
-                }
-            }
-            return c;
+            return new Commit(rc);
         }
 
-        private static String[] split(String str) {
+        protected static String[] split(String str) {
             // Any Unicode linebreak sequence
             return str.split("\\R");
+        }
+    }
+
+    static class ConventionalCommit extends Commit {
+        private static final Pattern FIRST_LINE_PATTERN =
+            Pattern.compile("^(?<type>[a-z]+)(?:\\((?<scope>\\w+)\\))?(?<bang>!)?: (?<description>.*$)");
+        private static final Pattern BREAKING_CHANGE_PATTERN = Pattern.compile("^BREAKING[ \\-]CHANGE:\\s+(?<content>[\\w\\W]+)", Pattern.MULTILINE);
+        private static final Pattern TRAILER_PATTERN = Pattern.compile("(?<token>^\\w+(?:-\\w+)*)(?:: | #)(?<value>.*$)");
+
+        private boolean isConventional = true;
+        private boolean ccIsBreakingChange;
+        private String ccType = "";
+        private String ccScope = "";
+        private String ccDescription = "";
+        private String ccBody = "";
+        private final List<Trailer> trailers = new ArrayList<>();
+        private String ccBreakingChangeContent = "";
+
+        private ConventionalCommit(RevCommit rc) {
+            super(rc);
+            List<String> lines = new ArrayList<>(Arrays.asList(split(body)));
+            Matcher matcherFirstLine = FIRST_LINE_PATTERN.matcher(lines.get(0));
+            if (matcherFirstLine.matches()) {
+                lines.remove(0); // consumed first line
+                if (matcherFirstLine.group("bang") != null && !matcherFirstLine.group("bang").isEmpty()) {
+                    ccIsBreakingChange = true;
+                }
+                ccType = matcherFirstLine.group("type");
+                ccScope = matcherFirstLine.group("scope") == null ? "" : matcherFirstLine.group("scope");
+                ccDescription = matcherFirstLine.group("description");
+            } else {
+                isConventional = false;
+                return;
+            }
+
+            // drop any empty lines at the beginning
+            while (!lines.isEmpty() && lines.get(0).equals("")) {
+                lines.remove(0);
+            }
+
+            // try to match trailers from the end
+            while (!lines.isEmpty()) {
+                Matcher matcherTrailer = TRAILER_PATTERN.matcher(lines.get(lines.size() - 1));
+                if (matcherTrailer.matches()) {
+                    String token = matcherTrailer.group("token");
+                    if(token.equals("BREAKING-CHANGE")) break;
+                    trailers.add(new Trailer(token, matcherTrailer.group("value")));
+                    lines.remove(lines.size() - 1); // consume last line
+                } else {
+                    break;
+                }
+            }
+
+            // drop any empty lines at the end
+            while (!lines.isEmpty() && lines.get(lines.size() - 1).equals("")) {
+                lines.remove(lines.size() - 1);
+            }
+
+            Matcher matcherBC = BREAKING_CHANGE_PATTERN.matcher(String.join("\n", lines));
+            if (matcherBC.find()) {
+                ccIsBreakingChange = true;
+                ccBreakingChangeContent = matcherBC.group("content");
+                // consume the breaking change
+                OptionalInt match = IntStream.range(0, lines.size())
+                    .filter(i -> BREAKING_CHANGE_PATTERN.matcher(lines.get(i)).find())
+                    .findFirst();
+                if (match.isPresent()) {
+                    if (lines.size() > match.getAsInt()) {
+                        lines.subList(match.getAsInt(), lines.size()).clear();
+                    }
+                }
+            }
+
+            // the rest is the body
+            ccBody = String.join("\n", lines);
+        }
+
+        public static Commit of(RevCommit rc) {
+            ConventionalCommit c = new ConventionalCommit(rc);
+            if(c.isConventional) return c;
+            // not ideal to reparse the commit, but that way we return a Commit instead of a ConventionalCommit
+            else return Commit.of(rc);
+        }
+
+        @Override
+        Map<String, Object> asContext(boolean links, String commitsUrl) {
+            Map<String, Object> context = super.asContext(links, commitsUrl);
+            context.put("commitIsConventional", isConventional);
+            context.put("conventionalCommitBreakingChangeContent", passThrough(ccBreakingChangeContent));
+            context.put("conventionalCommitIsBreakingChange", ccIsBreakingChange);
+            context.put("conventionalCommitType", passThrough(ccType));
+            context.put("conventionalCommitScope", passThrough(ccScope));
+            context.put("conventionalCommitDescription", passThrough(ccDescription));
+            context.put("conventionalCommitBody", passThrough(ccBody));
+            return context;
+        }
+
+        public List<Trailer> getTrailers() {
+            return trailers;
+        }
+
+        static class Trailer {
+            private final String token;
+            private final String value;
+
+            @Override
+            public boolean equals(Object o) {
+                if (this == o) return true;
+                if (!(o instanceof Trailer)) return false;
+                Trailer trailer = (Trailer) o;
+                return token.equals(trailer.token) && value.equals(trailer.value);
+            }
+
+            @Override
+            public int hashCode() {
+                return Objects.hash(token, value);
+            }
+
+            public Trailer(String token, String value) {
+                this.token = token;
+                this.value = value;
+            }
         }
     }
 

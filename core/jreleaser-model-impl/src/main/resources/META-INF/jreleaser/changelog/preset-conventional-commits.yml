@@ -81,10 +81,4 @@ categories:
     labels:
       - 'docs'
 
-replacers:
-  - search: '((?:build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(?:\(.*\))?)!(:\s.*)'
-    replace: '🚨 $1$2'
-  - search: '(?:build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)\((.*)\):\s(.*)'
-    replace: '\*\*$1\*\*: $2'
-  - search: '(?:build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test):\s(.*)'
-    replace: '$1'
+format: '- {{commitShortHash}} {{#commitIsConventional}}{{#conventionalCommitIsBreakingChange}}🚨 {{/conventionalCommitIsBreakingChange}}{{#conventionalCommitScope}}**{{conventionalCommitScope}}**: {{/conventionalCommitScope}}{{conventionalCommitDescription}}{{#conventionalCommitBreakingChangeContent}} - *{{conventionalCommitBreakingChangeContent}}*{{/conventionalCommitBreakingChangeContent}}{{/commitIsConventional}}{{^commitIsConventional}}{{commitTitle}}{{/commitIsConventional}}'
