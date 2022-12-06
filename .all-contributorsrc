@@ -413,6 +413,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "gotson",
+      "name": "Gauthier",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2139133?v=4",
+      "profile": "https://github.com/gotson",
+      "contributions": [
+        "code",
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
