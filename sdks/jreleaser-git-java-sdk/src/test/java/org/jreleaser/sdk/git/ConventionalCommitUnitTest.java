@@ -253,8 +253,8 @@ public class ConventionalCommitUnitTest {
             .containsEntry("commitIsConventional", true)
             .containsEntry("conventionalCommitBreakingChangeContent", "")
             .containsEntry("conventionalCommitIsBreakingChange", true)
-            .containsEntry("conventionalCommitType", "!!feat!!")
-            .containsEntry("conventionalCommitScope", "!!api!!")
+            .containsEntry("conventionalCommitType", "feat")
+            .containsEntry("conventionalCommitScope", "api")
             .containsEntry("conventionalCommitDescription", "!!send an email to the customer when a product is shipped!!")
             .containsEntry("conventionalCommitBody", "");
     }
@@ -281,7 +281,7 @@ public class ConventionalCommitUnitTest {
             .containsEntry("commitIsConventional", true)
             .containsEntry("conventionalCommitBreakingChangeContent", "!!use JavaScript features not available in Node 6.!!")
             .containsEntry("conventionalCommitIsBreakingChange", true)
-            .containsEntry("conventionalCommitType", "!!chore!!")
+            .containsEntry("conventionalCommitType", "chore")
             .containsEntry("conventionalCommitScope", "")
             .containsEntry("conventionalCommitDescription", "!!drop support for Node 6!!")
             .containsEntry("conventionalCommitBody", "");

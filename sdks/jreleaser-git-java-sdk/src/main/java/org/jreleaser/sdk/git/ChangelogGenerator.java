@@ -53,6 +53,7 @@ import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 
 import static java.lang.System.lineSeparator;
+import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
@@ -571,10 +572,10 @@ public class ChangelogGenerator {
         private static final Pattern CO_AUTHORED_BY_PATTERN = Pattern.compile("^[Cc]o-authored-by:\\s+(.*)\\s+<(.*)>.*$");
         private final Set<String> labels = new LinkedHashSet<>();
         private final Set<Author> committers = new LinkedHashSet<>();
+        protected String body;
         private String fullHash;
         private String shortHash;
         private String title;
-        protected String body;
         private Author author;
         private int time;
 
@@ -632,13 +633,13 @@ public class ChangelogGenerator {
         private static final Pattern BREAKING_CHANGE_PATTERN = Pattern.compile("^BREAKING[ \\-]CHANGE:\\s+(?<content>[\\w\\W]+)", Pattern.MULTILINE);
         private static final Pattern TRAILER_PATTERN = Pattern.compile("(?<token>^\\w+(?:-\\w+)*)(?:: | #)(?<value>.*$)");
 
+        private final List<Trailer> trailers = new ArrayList<>();
         private boolean isConventional = true;
         private boolean ccIsBreakingChange;
         private String ccType = "";
         private String ccScope = "";
         private String ccDescription = "";
         private String ccBody = "";
-        private final List<Trailer> trailers = new ArrayList<>();
         private String ccBreakingChangeContent = "";
 
         private ConventionalCommit(RevCommit rc) {
@@ -668,7 +669,7 @@ public class ChangelogGenerator {
                 Matcher matcherTrailer = TRAILER_PATTERN.matcher(lines.get(lines.size() - 1));
                 if (matcherTrailer.matches()) {
                     String token = matcherTrailer.group("token");
-                    if(token.equals("BREAKING-CHANGE")) break;
+                    if (token.equals("BREAKING-CHANGE")) break;
                     trailers.add(new Trailer(token, matcherTrailer.group("value")));
                     lines.remove(lines.size() - 1); // consume last line
                 } else {
@@ -700,23 +701,17 @@ public class ChangelogGenerator {
             ccBody = String.join("\n", lines);
         }
 
-        public static Commit of(RevCommit rc) {
-            ConventionalCommit c = new ConventionalCommit(rc);
-            if(c.isConventional) return c;
-            // not ideal to reparse the commit, but that way we return a Commit instead of a ConventionalCommit
-            else return Commit.of(rc);
-        }
-
         @Override
         Map<String, Object> asContext(boolean links, String commitsUrl) {
             Map<String, Object> context = super.asContext(links, commitsUrl);
             context.put("commitIsConventional", isConventional);
             context.put("conventionalCommitBreakingChangeContent", passThrough(ccBreakingChangeContent));
             context.put("conventionalCommitIsBreakingChange", ccIsBreakingChange);
-            context.put("conventionalCommitType", passThrough(ccType));
-            context.put("conventionalCommitScope", passThrough(ccScope));
+            context.put("conventionalCommitType", ccType);
+            context.put("conventionalCommitScope", ccScope);
             context.put("conventionalCommitDescription", passThrough(ccDescription));
             context.put("conventionalCommitBody", passThrough(ccBody));
+            context.put("conventionalCommitTrailers", unmodifiableList(trailers));
             return context;
         }
 
@@ -724,9 +719,37 @@ public class ChangelogGenerator {
             return trailers;
         }
 
+        public static Commit of(RevCommit rc) {
+            ConventionalCommit c = new ConventionalCommit(rc);
+            if (c.isConventional) {
+                return c;
+            } else {
+                // not ideal to reparse the commit, but that way we return a Commit instead of a ConventionalCommit
+                return Commit.of(rc);
+            }
+        }
+
         static class Trailer {
             private final String token;
             private final String value;
+
+            public Trailer(String token, String value) {
+                this.token = token;
+                this.value = value;
+            }
+
+            public String getToken() {
+                return token;
+            }
+
+            public String getValue() {
+                return value;
+            }
+
+            @Override
+            public String toString() {
+                return passThrough(token + ": " + value);
+            }
 
             @Override
             public boolean equals(Object o) {
@@ -739,11 +762,6 @@ public class ChangelogGenerator {
             @Override
             public int hashCode() {
                 return Objects.hash(token, value);
-            }
-
-            public Trailer(String token, String value) {
-                this.token = token;
-                this.value = value;
             }
         }
     }
