@@ -294,10 +294,6 @@ public abstract class BaseReleaserValidator extends Validator {
             changelog.setSort(org.jreleaser.model.Changelog.Sort.DESC);
         }
 
-        if (isBlank(changelog.getFormat())) {
-            changelog.setFormat("- {{commitShortHash}} {{commitTitle}} ({{commitAuthor}})");
-        }
-
         if (isBlank(changelog.getCategoryTitleFormat())) {
             changelog.setCategoryTitleFormat("## {{categoryTitle}}");
         }
@@ -323,6 +319,11 @@ public abstract class BaseReleaserValidator extends Validator {
 
         if (isNotBlank(changelog.getPreset())) {
             loadPreset(context, changelog, errors);
+        }
+
+        // set the default format after the preset, as preset can contain a default format too
+        if (isBlank(changelog.getFormat())) {
+            changelog.setFormat("- {{commitShortHash}} {{commitTitle}} ({{commitAuthor}})");
         }
 
         if (changelog.getCategories().isEmpty()) {
@@ -423,6 +424,10 @@ public abstract class BaseReleaserValidator extends Validator {
 
             if (null != inputStream) {
                 Changelog loaded = JReleaserConfigLoader.load(Changelog.class, presetFileName, inputStream);
+
+                if(isBlank(changelog.getFormat())) {
+                    changelog.setFormat(loaded.getFormat());
+                }
 
                 Set<Changelog.Labeler> labelersCopy = new TreeSet<>(Changelog.Labeler.ORDER);
                 labelersCopy.addAll(changelog.getLabelers());
