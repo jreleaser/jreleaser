@@ -20,7 +20,6 @@ config {
         description = 'jreleaser'
         inceptionYear = '2020'
         tags = ['release']
-        bytecodeVersion = 8
 
         links {
             website      = "https://github.com/jreleaser/${project.rootProject.name}"
