@@ -42,6 +42,8 @@ TIP: You maye use link:https://github.com/kordamp/gm[] instead in which case the
  * Fork the jreleaser repository to your own github account and clone it locally.
  * Hack on your changes.
  * Correctly format your commit message see <<commit-messages,>> below.
+ * Make sure file headers are updated by running `./gradlew licenseFormat`.
+ * Run a local build before committing, `./gradlew build`.
  * Ensure that CI passes, if it fails, fix the failures.
  * Every pull request requires a review from the jreleaser subprojects MAINTAINERS.
  * If your pull request consists of more than one commit, please squash your commits as described in <<squash-commits,>>
