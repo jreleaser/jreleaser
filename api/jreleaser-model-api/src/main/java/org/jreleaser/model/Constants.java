@@ -200,6 +200,9 @@ public interface Constants {
     // Brew
     String KEY_BREW_FORMULA_NAME = "brewFormulaName";
     String KEY_BREW_DEPENDENCIES = "brewDependencies";
+    String KEY_HOMEBREW_TAP_REPO_OWNER = "brewTapRepoOwner";
+    String KEY_HOMEBREW_TAP_REPO_NAME = "brewTapRepoName";
+    String KEY_HOMEBREW_TAP_NAME = "brewTapName";
     String KEY_HOMEBREW_TAP_REPO_URL = "brewTapRepoUrl";
     String KEY_HOMEBREW_TAP_REPO_CLONE_URL = "brewTapRepoCloneUrl";
     String KEY_BREW_HAS_LIVECHECK = "brewHasLivecheck";

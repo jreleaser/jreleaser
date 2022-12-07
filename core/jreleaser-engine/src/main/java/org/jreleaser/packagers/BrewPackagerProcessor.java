@@ -56,16 +56,19 @@ import static org.jreleaser.model.Constants.KEY_BREW_LIVECHECK;
 import static org.jreleaser.model.Constants.KEY_BREW_MULTIPLATFORM;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_VERSION;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_URL;
+import static org.jreleaser.model.Constants.KEY_HOMEBREW_TAP_NAME;
 import static org.jreleaser.model.Constants.KEY_HOMEBREW_TAP_REPO_CLONE_URL;
+import static org.jreleaser.model.Constants.KEY_HOMEBREW_TAP_REPO_NAME;
+import static org.jreleaser.model.Constants.KEY_HOMEBREW_TAP_REPO_OWNER;
 import static org.jreleaser.model.Constants.KEY_HOMEBREW_TAP_REPO_URL;
 import static org.jreleaser.mustache.MustacheUtils.passThrough;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.FileType.ZIP;
+import static org.jreleaser.util.StringUtils.getHyphenatedName;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.isTrue;
-import static org.jreleaser.util.StringUtils.getHyphenatedName;
 
 /**
  * @author Andres Almiray
@@ -115,6 +118,9 @@ public class BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<B
 
         props.put(KEY_BREW_FORMULA_NAME, packager.getResolvedFormulaName(props));
 
+        props.put(KEY_HOMEBREW_TAP_REPO_OWNER, packager.getTap().getOwner());
+        props.put(KEY_HOMEBREW_TAP_REPO_NAME, packager.getTap().getResolvedName());
+        props.put(KEY_HOMEBREW_TAP_NAME, packager.getTap().getResolvedName().substring("homebrew-".length()));
         props.put(KEY_HOMEBREW_TAP_REPO_URL,
             releaser.getResolvedRepoUrl(context.getModel(), packager.getTap().getOwner(), packager.getTap().getResolvedName()));
         props.put(KEY_HOMEBREW_TAP_REPO_CLONE_URL,
@@ -237,7 +243,7 @@ public class BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<B
             if (CASK_RB.equals(fileName) || FORMULA_MULTI_RB.equals(fileName)) return;
             Path outputFile = FORMULA_RB.equals(fileName) ?
                 outputDirectory.resolve(FORMULA)
-                        .resolve(getHyphenatedName(packager.getFormulaName()).concat(RB)) :
+                    .resolve(getHyphenatedName(packager.getFormulaName()).concat(RB)) :
                 outputDirectory.resolve(fileName);
             writeFile(content, outputFile);
         }

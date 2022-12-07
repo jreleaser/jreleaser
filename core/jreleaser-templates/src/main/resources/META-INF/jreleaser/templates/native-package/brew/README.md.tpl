@@ -4,20 +4,20 @@
 Invoke either of the following commands if the formula is hosted at GitHub
 
 ```sh
-$ brew install {{repoOwner}}/tap/<formula>
+$ brew install {{brewTapRepoOwner}}/{{brewTapName}}/<formula>
 ```
 
 Or
 
 ```sh
-$ brew tap {{repoOwner}}/tap
+$ brew tap {{brewTapRepoOwner}}/{{brewTapName}}
 $ brew install <formula>
 ```
 
 Invoke the following command if the formula is *not* hosted at GitHub
 
 ```sh
-brew tap {{repoOwner}}/homebrew-tap {{tapRepoCloneUrl}}
+brew tap {{brewTapRepoOwner}}/{{brewTapRepoName}} {{tapRepoCloneUrl}}
 brew install <formula>
 ```
 
@@ -25,20 +25,20 @@ brew install <formula>
 Invoke either of the following commands if the cask is hosted at GitHub
 
 ```sh
-$ brew install --cask {{repoOwner}}/tap/<cask>
+$ brew install --cask {{brewTapRepoOwner}}/{{brewTapName}}/<cask>
 ```
 
 Or
 
 ```sh
-$ brew tap {{repoOwner}}/tap
+$ brew tap {{brewTapRepoOwner}}/{{brewTapName}}
 $ brew install --cask <cask>
 ```
 
 Invoke the following command if the cask is *not* hosted at GitHub
 
 ```sh
-brew tap {{repoOwner}}/homebrew-tap {{tapRepoCloneUrl}}
+brew tap {{brewTapRepoOwner}}/{{brewTapRepoName}} {{tapRepoCloneUrl}}
 brew install --cask <formula>
 ```
 
