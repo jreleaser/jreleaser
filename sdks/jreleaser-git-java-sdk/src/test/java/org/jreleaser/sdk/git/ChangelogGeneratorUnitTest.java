@@ -294,7 +294,7 @@ public class ChangelogGeneratorUnitTest {
         when(mockGitSdk.open()).thenReturn(git);
 
         ChangelogGenerator.Commit commit = mock(ChangelogGenerator.Commit.class);
-        when(commit.asContext(anyBoolean(), any())).thenReturn(new HashMap<>());
+        when(commit.asContext(anyBoolean(), any(), any())).thenReturn(new HashMap<>());
         commitMockedStatic.when(() -> ChangelogGenerator.Commit.of(any())).thenReturn(commit);
 
         Mockito.doReturn(true).when(changelogGenerator).checkLabels(commit, changelog);
