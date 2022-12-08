@@ -651,6 +651,7 @@ public class StringUtils {
     }
 
     public static String escapeRegexChars(String str) {
+        if (str.isEmpty()) return "";
         boolean start = false;
         boolean end = false;
 
