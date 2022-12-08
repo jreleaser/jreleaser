@@ -272,9 +272,13 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
         return resolveTemplate(latestReleaseUrl, props(model));
     }
 
-    public String getResolvedIssueTrackerUrl(JReleaserModel model) {
+    public String getResolvedIssueTrackerUrl(JReleaserModel model, boolean appendSlash) {
         if (!releaseSupported) return "";
-        return resolveTemplate(issueTrackerUrl, props(model));
+        String issueTracker = resolveTemplate(issueTrackerUrl, props(model));
+        if (appendSlash && isNotBlank(issueTracker) && !issueTracker.endsWith("/")) {
+            issueTracker += "/";
+        }
+        return issueTracker;
     }
 
     public boolean resolveUploadAssetsEnabled(Project project) {
@@ -771,7 +775,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
         props.put(Constants.KEY_SRC_URL, getResolvedSrcUrl(model));
         props.put(Constants.KEY_RELEASE_NOTES_URL, getResolvedReleaseNotesUrl(model));
         props.put(Constants.KEY_LATEST_RELEASE_URL, getResolvedLatestReleaseUrl(model));
-        props.put(Constants.KEY_ISSUE_TRACKER_URL, getResolvedIssueTrackerUrl(model));
+        props.put(Constants.KEY_ISSUE_TRACKER_URL, getResolvedIssueTrackerUrl(model, false));
     }
 
     public static final class Update extends AbstractModelObject<Update> implements Domain, EnabledAware {

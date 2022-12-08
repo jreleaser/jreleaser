@@ -119,10 +119,7 @@ public class ChangelogProvider {
         context.getLogger().info(RB.$("issues.generator.extract"));
 
         BaseReleaser releaser = context.getModel().getRelease().getReleaser();
-        String issueTracker = releaser.getResolvedIssueTrackerUrl(context.getModel());
-        if (!issueTracker.endsWith("/")) {
-            issueTracker += "/";
-        }
+        String issueTracker = releaser.getResolvedIssueTrackerUrl(context.getModel(), true);
 
         String p1 = StringUtils.escapeRegexChars(issueTracker);
         String p2 = StringUtils.escapeRegexChars(releaser.getCanonicalRepoName());

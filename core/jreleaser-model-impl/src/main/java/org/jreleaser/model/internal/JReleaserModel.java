@@ -539,7 +539,7 @@ public class JReleaserModel {
         props.put(Constants.KEY_SRC_URL, service.getResolvedSrcUrl(this));
         props.put(Constants.KEY_RELEASE_NOTES_URL, service.getResolvedReleaseNotesUrl(this));
         props.put(Constants.KEY_LATEST_RELEASE_URL, service.getResolvedLatestReleaseUrl(this));
-        props.put(Constants.KEY_ISSUE_TRACKER_URL, service.getResolvedIssueTrackerUrl(this));
+        props.put(Constants.KEY_ISSUE_TRACKER_URL, service.getResolvedIssueTrackerUrl(this, false));
     }
 
     private final class ReleaserDownloadUrl implements TemplateFunction {
