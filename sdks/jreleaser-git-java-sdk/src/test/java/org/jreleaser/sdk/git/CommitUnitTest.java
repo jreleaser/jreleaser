@@ -94,7 +94,7 @@ public class CommitUnitTest {
 
         ChangelogGenerator.Commit c = mockCommit(commitBody).extractIssues(defaultContext);
 
-        assertThat(c.issues)
+        assertThat(c.getIssues())
             .hasSize(1)
             .containsExactlyInAnyOrder(42);
     }
@@ -114,7 +114,7 @@ public class CommitUnitTest {
 
         ChangelogGenerator.Commit c = mockCommit(commitBody).extractIssues(defaultContext);
 
-        assertThat(c.issues)
+        assertThat(c.getIssues())
             .hasSize(1)
             .containsExactlyInAnyOrder(123);
     }
@@ -125,7 +125,7 @@ public class CommitUnitTest {
 
         ChangelogGenerator.Commit c = mockCommit(commitBody).extractIssues(defaultContext);
 
-        assertThat(c.issues)
+        assertThat(c.getIssues())
             .hasSize(2)
             .containsExactlyInAnyOrder(46, 47);
     }
@@ -137,7 +137,7 @@ public class CommitUnitTest {
 
         ChangelogGenerator.Commit c = mockCommit(commitBody).extractIssues(defaultContext);
 
-        assertThat(c.issues)
+        assertThat(c.getIssues())
             .hasSize(3)
             .containsExactlyInAnyOrder(1, 2, 3);
     }
@@ -151,7 +151,7 @@ public class CommitUnitTest {
 
         ChangelogGenerator.Commit c = mockCommit(commitBody).extractIssues(context);
 
-        assertThat(c.issues)
+        assertThat(c.getIssues())
             .hasSize(3)
             .containsExactlyInAnyOrder(1, 2, 3);
     }
@@ -163,7 +163,7 @@ public class CommitUnitTest {
 
         ChangelogGenerator.Commit c = mockCommit(commitBody).extractIssues(defaultContext);
 
-        assertThat(c.issues)
+        assertThat(c.getIssues())
             .hasSize(2)
             .containsExactlyInAnyOrder(1, 2);
     }
@@ -177,7 +177,7 @@ public class CommitUnitTest {
 
         ChangelogGenerator.Commit c = mockCommit(commitBody).extractIssues(context);
 
-        assertThat(c.issues)
+        assertThat(c.getIssues())
             .hasSize(3)
             .containsExactlyInAnyOrder(2, 3, 4);
     }
@@ -191,6 +191,6 @@ public class CommitUnitTest {
 
         ChangelogGenerator.Commit c = mockCommit(commitBody).extractIssues(context);
 
-        assertThat(c.issues).isEmpty();
+        assertThat(c.getIssues()).isEmpty();
     }
 }

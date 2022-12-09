@@ -55,6 +55,7 @@ import java.util.stream.StreamSupport;
 import static java.lang.System.lineSeparator;
 import static java.util.Collections.singletonMap;
 import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
@@ -575,13 +576,12 @@ public class ChangelogGenerator {
         private static final Pattern CO_AUTHORED_BY_PATTERN = Pattern.compile("^[Cc]o-authored-by:\\s+(.*)\\s+<(.*)>.*$");
         private final Set<String> labels = new LinkedHashSet<>();
         private final Set<Author> committers = new LinkedHashSet<>();
+        private final Set<Integer> issues = new TreeSet<>();
+        private final String fullHash;
+        private final String shortHash;
+        private final String title;
+        private final Author author;
         protected String body;
-        private String fullHash;
-        private String shortHash;
-        private String title;
-        private Author author;
-        Set<Integer> issues = new LinkedHashSet<>();
-        private int time;
 
         protected Commit(RevCommit rc) {
             fullHash = rc.getId().name();
@@ -591,7 +591,6 @@ public class ChangelogGenerator {
             title = lines[0];
             author = new Author(rc.getAuthorIdent().getName(), rc.getAuthorIdent().getEmailAddress());
             addContributor(rc.getCommitterIdent().getName(), rc.getCommitterIdent().getEmailAddress());
-            time = rc.getCommitTime();
             for (String line : lines) {
                 Matcher m = CO_AUTHORED_BY_PATTERN.matcher(line);
                 if (m.matches()) {
@@ -620,10 +619,19 @@ public class ChangelogGenerator {
             return context;
         }
 
+        public Set<Integer> getIssues() {
+            return unmodifiableSet(issues);
+        }
+
         private void addContributor(String name, String email) {
             if (isNotBlank(name) && isNotBlank(email)) {
                 committers.add(new Author(name, email));
             }
+        }
+
+        public Commit extractIssues(JReleaserContext context) {
+            issues.addAll(ChangelogProvider.extractIssues(context, body));
+            return this;
         }
 
         static Commit of(RevCommit rc) {
@@ -633,11 +641,6 @@ public class ChangelogGenerator {
         protected static String[] split(String str) {
             // Any Unicode linebreak sequence
             return str.split("\\R");
-        }
-
-        public Commit extractIssues(JReleaserContext context) {
-            issues.addAll(ChangelogProvider.extractIssues(context, body));
-            return this;
         }
     }
 
