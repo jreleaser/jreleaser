@@ -119,20 +119,20 @@ public class ChangelogProvider {
         context.getLogger().info(RB.$("issues.generator.extract"));
 
         BaseReleaser releaser = context.getModel().getRelease().getReleaser();
-        String issueTracker = releaser.getResolvedIssueTrackerUrl(context.getModel());
-        if (!issueTracker.endsWith("/")) {
-            issueTracker += "/";
-        }
+        String issueTracker = releaser.getResolvedIssueTrackerUrl(context.getModel(), true);
 
         String p1 = StringUtils.escapeRegexChars(issueTracker);
         String p2 = StringUtils.escapeRegexChars(releaser.getCanonicalRepoName());
-        Pattern pattern = Pattern.compile(".*" + p1 + "(\\d+)|.*" + p2 + "#(\\d+)|.*#(\\d+)" + ".*");
+        String p3 = StringUtils.escapeRegexChars(releaser.getName());
+        String regex = "(?:" + p2 + "|(?<!/)" + p3 + ")#(?<repo>\\d+)|[^a-zA-Z0-9]#(?<hash>\\d+)";
+        regex += isNotBlank(p1) ? "|" + p1 + "(?<tracker>\\d+)" : "";
+        Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(content);
         Set<Integer> issues = new TreeSet<>();
         while (matcher.find()) {
-            if (isNotBlank(matcher.group(1))) issues.add(Integer.valueOf(matcher.group(1)));
-            if (isNotBlank(matcher.group(2))) issues.add(Integer.valueOf(matcher.group(2)));
-            if (isNotBlank(matcher.group(3))) issues.add(Integer.valueOf(matcher.group(3)));
+            if (isNotBlank(matcher.group("repo"))) issues.add(Integer.valueOf(matcher.group("repo")));
+            if (isNotBlank(matcher.group("hash"))) issues.add(Integer.valueOf(matcher.group("hash")));
+            if (isNotBlank(p1) && isNotBlank(matcher.group("tracker"))) issues.add(Integer.valueOf(matcher.group("tracker")));
         }
 
         return issues;

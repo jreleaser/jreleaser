@@ -53,6 +53,7 @@ import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 
 import static java.lang.System.lineSeparator;
+import static java.util.Collections.singletonMap;
 import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.joining;
@@ -353,6 +354,7 @@ public class ChangelogGenerator {
         commits.stream()
             .sorted(revCommitComparator)
             .map(rc -> "conventional-commits".equals(changelog.getPreset()) ? ConventionalCommit.of(rc) : Commit.of(rc))
+            .map(c -> c.extractIssues(context))
             .peek(c -> {
                 if (!changelog.getContributors().isEnabled()) return;
 
@@ -371,6 +373,7 @@ public class ChangelogGenerator {
 
         BaseReleaser releaser = context.getModel().getRelease().getReleaser();
         String commitsUrl = releaser.getResolvedCommitUrl(context.getModel());
+        String issueTracker = releaser.getResolvedIssueTrackerUrl(context.getModel(), true);
 
         Map<String, Object> props = context.fullProps();
         StringBuilder changes = new StringBuilder();
@@ -385,7 +388,7 @@ public class ChangelogGenerator {
             final String categoryFormat = resolveCommitFormat(changelog, category);
 
             changes.append(categories.get(categoryKey).stream()
-                    .map(c -> resolveTemplate(categoryFormat, c.asContext(changelog.isLinks(), commitsUrl)))
+                    .map(c -> resolveTemplate(categoryFormat, c.asContext(changelog.isLinks(), commitsUrl, issueTracker)))
                     .collect(joining(lineSeparator)))
                 .append(lineSeparator)
                 .append(lineSeparator());
@@ -398,7 +401,7 @@ public class ChangelogGenerator {
             }
 
             changes.append(categories.get(UNCATEGORIZED).stream()
-                    .map(c -> resolveTemplate(changelog.getFormat(), c.asContext(changelog.isLinks(), commitsUrl)))
+                    .map(c -> resolveTemplate(changelog.getFormat(), c.asContext(changelog.isLinks(), commitsUrl, issueTracker)))
                     .collect(joining(lineSeparator)))
                 .append(lineSeparator)
                 .append(lineSeparator());
@@ -577,6 +580,7 @@ public class ChangelogGenerator {
         private String shortHash;
         private String title;
         private Author author;
+        Set<Integer> issues = new LinkedHashSet<>();
         private int time;
 
         protected Commit(RevCommit rc) {
@@ -596,7 +600,7 @@ public class ChangelogGenerator {
             }
         }
 
-        Map<String, Object> asContext(boolean links, String commitsUrl) {
+        Map<String, Object> asContext(boolean links, String commitsUrl, String issueTrackerUrl) {
             Map<String, Object> context = new LinkedHashMap<>();
             if (links) {
                 context.put("commitShortHash", passThrough("[" + shortHash + "](" + commitsUrl + "/" + shortHash + ")"));
@@ -608,6 +612,11 @@ public class ChangelogGenerator {
             context.put("commitTitle", passThrough(title));
             context.put("commitAuthor", passThrough(author.name));
             context.put("commitBody", passThrough(body));
+            context.put("commitHasIssues", !issues.isEmpty());
+            context.put("commitIssues", issues.stream().map(i -> {
+                String issue = links ? passThrough("[#" + i + "](" + issueTrackerUrl + i + ")") : "#" + i;
+                return singletonMap("issue", issue);
+            }).collect(toList()));
             return context;
         }
 
@@ -624,6 +633,11 @@ public class ChangelogGenerator {
         protected static String[] split(String str) {
             // Any Unicode linebreak sequence
             return str.split("\\R");
+        }
+
+        public Commit extractIssues(JReleaserContext context) {
+            issues.addAll(ChangelogProvider.extractIssues(context, body));
+            return this;
         }
     }
 
@@ -702,8 +716,8 @@ public class ChangelogGenerator {
         }
 
         @Override
-        Map<String, Object> asContext(boolean links, String commitsUrl) {
-            Map<String, Object> context = super.asContext(links, commitsUrl);
+        Map<String, Object> asContext(boolean links, String commitsUrl, String issueTrackerUrl) {
+            Map<String, Object> context = super.asContext(links, commitsUrl, issueTrackerUrl);
             context.put("commitIsConventional", isConventional);
             context.put("conventionalCommitBreakingChangeContent", passThrough(ccBreakingChangeContent));
             context.put("conventionalCommitIsBreakingChange", ccIsBreakingChange);
