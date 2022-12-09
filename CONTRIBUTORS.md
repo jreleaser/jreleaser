@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-44-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-45-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -68,6 +68,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <tr>
       <td align="center"><a href="https://github.com/nestabur"><img src="https://avatars.githubusercontent.com/u/6052881?v=4?s=100" width="100px;" alt="nestabur"/><br /><sub><b>nestabur</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=nestabur" title="Code">💻</a></td>
       <td align="center"><a href="https://github.com/gotson"><img src="https://avatars.githubusercontent.com/u/2139133?v=4?s=100" width="100px;" alt="Gauthier"/><br /><sub><b>Gauthier</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=gotson" title="Code">💻</a> <a href="https://github.com/jreleaser/jreleaser/issues?q=author%3Agotson" title="Bug reports">🐛</a></td>
+      <td align="center"><a href="https://www.linkedin.com/in/adrien-sales/"><img src="https://avatars.githubusercontent.com/u/5235127?v=4?s=100" width="100px;" alt="SALES"/><br /><sub><b>SALES</b></sub></a><br /><a href="#ideas-adriens" title="Ideas, Planning, & Feedback">🤔</a> <a href="#promotion-adriens" title="Promotion">📣</a></td>
     </tr>
   </tbody>
 </table>

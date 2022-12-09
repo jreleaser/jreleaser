@@ -425,6 +425,16 @@
         "code",
         "bug"
       ]
+    },
+    {
+      "login": "adriens",
+      "name": "SALES",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5235127?v=4",
+      "profile": "https://www.linkedin.com/in/adrien-sales/",
+      "contributions": [
+        "ideas",
+        "promotion"
+      ]
     }
   ],
   "contributorsPerLine": 7,
