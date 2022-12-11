@@ -29,7 +29,7 @@ buildscript {
         classpath "org.kordamp.gradle:checkstyle-gradle-plugin:$kordampPluginVersion"
         classpath "org.kordamp.gradle:kordamp-parentbuild:$kordampBuildVersion"
         classpath "org.jreleaser:jdks-gradle-plugin:$jdksPluginVersion"
-        classpath 'de.undercouch:gradle-download-task:4.1.1'
+        classpath 'de.undercouch:gradle-download-task:5.3.0'
         classpath "info.solidsoft.gradle.pitest:gradle-pitest-plugin:$pitestPluginVersion"
         classpath "org.ow2.asm:asm:$asmVersion"
         classpath "org.ow2.asm:asm-commons:$asmVersion"
