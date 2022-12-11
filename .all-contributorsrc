@@ -474,6 +474,16 @@
         "bug",
         "userTesting"
       ]
+    },
+    {
+      "login": "sualeh",
+      "name": "Sualeh Fatehi",
+      "avatar_url": "https://avatars.githubusercontent.com/u/36505153?v=4",
+      "profile": "https://www.linkedin.com/in/sualeh/",
+      "contributions": [
+        "ideas",
+        "userTesting"
+      ]
     }
   ],
   "contributorsPerLine": 7,
