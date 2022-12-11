@@ -40,13 +40,13 @@ image:https://img.shields.io/docker/pulls/{project-owner}/{project-owner}-alpine
 
 == Community
 
- * Ask questions on our link:https://github.com/jreleaser/jreleaser/discussions[Discussions] page.
- * image:https://img.shields.io/twitter/follow/jreleaser?style=social[Twitter Follow]
+ * Ask questions on our link:https://github.com/{project-owner}/{project-name}/discussions[Discussions] page.
+ * image:https://img.shields.io/twitter/follow/{project-name}?style=social[Twitter Follow]
  * image:https://img.shields.io/mastodon/follow/109318759441003625?domain=https%3A%2F%2Ffosstodon.org&style=social[Mastodon Follow]
  * Join our link:CONTRIBUTORS.md[contributors] by reporting bugs, proposing features, sending patches, promoting the project, helping others.
 
 == Code of Conduct
 
-This project adheres to a link:https://github.com/jreleaser/jreleaser/blob/main/CODE_OF_CONDUCT.md[code of conduct].
+This project adheres to a link:https://github.com/{project-owner}/{project-name}/blob/main/CODE_OF_CONDUCT.md[code of conduct].
 By participating, you are expected to uphold this code. We appreciate your contribution. Please refer to our
-link:https://github.com/jreleaser/jreleaser/blob/main/CONTRIBUTING.adoc[contributing guidelines] for further information.
+link:https://github.com/{project-owner}/{project-name}/blob/main/CONTRIBUTING.adoc[contributing guidelines] for further information.
