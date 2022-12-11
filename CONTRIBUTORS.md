@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-49-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-50-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -73,6 +73,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center"><a href="https://www.morling.dev/"><img src="https://avatars.githubusercontent.com/u/28612?v=4?s=100" width="100px;" alt="Gunnar Morling"/><br /><sub><b>Gunnar Morling</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/issues?q=author%3Agunnarmorling" title="Bug reports">🐛</a> <a href="#userTesting-gunnarmorling" title="User Testing">📓</a></td>
       <td align="center"><a href="http://www.dlsc.com"><img src="https://avatars.githubusercontent.com/u/9534301?v=4?s=100" width="100px;" alt="Dirk Lemmermann"/><br /><sub><b>Dirk Lemmermann</b></sub></a><br /><a href="#userTesting-dlemmermann" title="User Testing">📓</a></td>
       <td align="center"><a href="https://github.com/loiclefevre"><img src="https://avatars.githubusercontent.com/u/21245376?v=4?s=100" width="100px;" alt="Loïc LEFEVRE"/><br /><sub><b>Loïc LEFEVRE</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/issues?q=author%3Aloiclefevre" title="Bug reports">🐛</a> <a href="#userTesting-loiclefevre" title="User Testing">📓</a></td>
+    </tr>
+    <tr>
+      <td align="center"><a href="https://www.linkedin.com/in/sualeh/"><img src="https://avatars.githubusercontent.com/u/36505153?v=4?s=100" width="100px;" alt="Sualeh Fatehi"/><br /><sub><b>Sualeh Fatehi</b></sub></a><br /><a href="#ideas-sualeh" title="Ideas, Planning, & Feedback">🤔</a> <a href="#userTesting-sualeh" title="User Testing">📓</a></td>
     </tr>
   </tbody>
 </table>
