@@ -485,6 +485,17 @@
         "ideas",
         "userTesting"
       ]
+    },
+    {
+      "login": "manikmagar",
+      "name": "Manik Magar",
+      "avatar_url": "https://avatars.githubusercontent.com/u/877286?v=4",
+      "profile": "https://manik.magar.me",
+      "contributions": [
+        "bug",
+        "userTesting",
+        "promotion"
+      ]
     }
   ],
   "contributorsPerLine": 7,
