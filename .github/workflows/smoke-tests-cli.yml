@@ -8,6 +8,10 @@ env:
   JAVA_VERSION: '11'
   JAVA_DISTRO: 'zulu'
 
+permissions:
+  contents: read
+  actions: write
+
 jobs:
   precheck:
     if: github.repository == 'jreleaser/jreleaser' && startsWith(github.event.head_commit.message, 'Releasing version') != true

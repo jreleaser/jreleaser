@@ -10,6 +10,10 @@ env:
   GRAAL_VERSION: '22.3.0'
   GRAAL_JAVA_VERSION: '17'
 
+permissions:
+  contents: read
+  actions: write
+
 jobs:
   precheck:
     name: Precheck

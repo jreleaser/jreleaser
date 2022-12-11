@@ -7,6 +7,9 @@ env:
   JAVA_VERSION: '11'
   JAVA_DISTRO: 'zulu'
 
+permissions:
+  contents: read
+
 jobs:
   build:
     name: Build

@@ -7,6 +7,9 @@ env:
   JAVA_VERSION: '11'
   JAVA_DISTRO: 'zulu'
 
+permissions:
+  contents: read
+
 jobs:
   earlyaccess:
     name: 'Trigger Early Access'
@@ -49,7 +52,7 @@ jobs:
         uses: marvinpinto/action-automatic-releases@latest
         with:
           automatic_release_tag: 'early-access'
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          repo_token: ${{ secrets.GIT_ACCESS_TOKEN }}
           prerelease: true
           title: "JReleaser Early-Access"
           files: |
