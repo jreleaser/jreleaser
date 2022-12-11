@@ -1,0 +1,21 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+  - package-ecosystem: gradle
+    directory: /
+    schedule:
+      interval: daily
+    ignore:
+      # jgit 6 requires Java 11+
+      - dependency-name: org.eclipse.jgit:org.eclipse.jgit
+      # commons-net has a broken timestamp version -> 20030805.205232
+      - dependency-name: commons-net:commons-net
+      # hub4j v1.3+ requires Java 11+
+      - dependency-name: org.kohsuke:github-api
+      # twitterj 4.1.x breaks BC
+      - dependency-name: org.twitter4j:twitter4j-core
+      # aws-java-sdk updates several times per week
+      - dependency-name: com.amazonaws:aws-java-sdk-s3
