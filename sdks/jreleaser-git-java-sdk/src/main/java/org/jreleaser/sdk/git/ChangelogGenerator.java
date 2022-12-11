@@ -116,6 +116,8 @@ public class ChangelogGenerator {
                 String rawContent = commitList.stream()
                     .map(RevCommit::getFullMessage)
                     .collect(joining(lineSeparator()));
+
+                context.getLogger().info(RB.$("issues.generator.extract"));
                 Set<Integer> issues = extractIssues(context, rawContent);
                 storeIssues(context, issues);
             }

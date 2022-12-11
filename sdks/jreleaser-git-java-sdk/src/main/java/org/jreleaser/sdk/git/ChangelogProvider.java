@@ -104,6 +104,7 @@ public class ChangelogProvider {
             String content = new String(Files.readAllBytes(externalChangelogPath));
 
             if (context.getModel().getRelease().getReleaser().getIssues().isEnabled()) {
+                context.getLogger().info(RB.$("issues.generator.extract"));
                 Set<Integer> issues = extractIssues(context, content);
                 storeIssues(context, issues);
             }
@@ -116,8 +117,6 @@ public class ChangelogProvider {
     }
 
     public static Set<Integer> extractIssues(JReleaserContext context, String content) {
-        context.getLogger().info(RB.$("issues.generator.extract"));
-
         BaseReleaser releaser = context.getModel().getRelease().getReleaser();
         String issueTracker = releaser.getResolvedIssueTrackerUrl(context.getModel(), true);
 

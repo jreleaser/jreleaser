@@ -91,6 +91,7 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
             String content = generateReleaseNotesByAPI();
 
             if (github.getIssues().isEnabled()) {
+                context.getLogger().info(RB.$("issues.generator.extract"));
                 Set<Integer> issues = extractIssues(context, content);
                 storeIssues(context, issues);
             }
