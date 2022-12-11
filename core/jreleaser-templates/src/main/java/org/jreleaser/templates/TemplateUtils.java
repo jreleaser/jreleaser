@@ -140,18 +140,20 @@ public final class TemplateUtils {
 
         logger.debug(RB.$("templates.templates.resolve.classpath"));
 
-        String templatePrefix = distributionTypeName + "." + toolName.toLowerCase(Locale.ENGLISH) + (snapshot ? "-snapshot" : "");
+        String suffix = snapshot ? "-snapshot" : "";
+        String templatePrefix = distributionTypeName + "." + toolName.toLowerCase(Locale.ENGLISH) + suffix;
         logger.debug(RB.$("templates.template.resolve.classpath", templatePrefix));
         String values = TEMPLATES_INVENTORY.getProperty(templatePrefix);
         if (isBlank(values) && snapshot) {
             templatePrefix = distributionTypeName + "." + toolName.toLowerCase(Locale.ENGLISH);
             logger.debug(RB.$("templates.template.resolve.classpath", templatePrefix));
             values = TEMPLATES_INVENTORY.getProperty(templatePrefix);
+            suffix = "";
         }
 
         if (isNotBlank(values)) {
             for (String k : values.split(",")) {
-                templates.put(k, resolveTemplate(logger, distributionTypeName + "/" + toolName.toLowerCase(Locale.ENGLISH) + "/" + k));
+                templates.put(k, resolveTemplate(logger, distributionTypeName + "/" + toolName.toLowerCase(Locale.ENGLISH) + suffix + "/" + k));
             }
         }
 
