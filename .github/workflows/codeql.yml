@@ -13,13 +13,14 @@ env:
   JAVA_VERSION: '11'
   JAVA_DISTRO: 'zulu'
 
+permissions:
+  security-events: write
+  actions: read
+  contents: read
+
 jobs:
   CodeQL:
     runs-on: ubuntu-latest
-    permissions:
-      security-events: write
-      actions: read
-      contents: read
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
