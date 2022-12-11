@@ -9,6 +9,9 @@ env:
   JAVA_DISTRO: 'zulu'
   GRAAL_VERSION: '22.3.0'
   GRAAL_JAVA_VERSION: '17'
+  REPO_OWNER: 'jreleaser'
+  REPO_NAME: 'jreleaser'
+  GITHUB_BOT_EMAIL: '41898282+github-actions[bot]@users.noreply.github.com'
 
 permissions:
   contents: read
@@ -75,6 +78,7 @@ jobs:
       JAR_SIZE: ${{ steps.bach.outputs.JAR_SIZE }}
       JAR_CSUM: ${{ steps.bach.outputs.JAR_CSUM }}
       DOC_SIZE: ${{ steps.bach.outputs.DOC_SIZE }}
+      HASHES: ${{ steps.hash.outputs.hashes }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -118,6 +122,15 @@ jobs:
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
           JRELEASER_DOCKER_DEFAULT_PASSWORD: ${{ secrets.JRELEASER_DOCKER_PASSWORD }}
 
+      - name: JReleaser release output
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: jreleaser-release
+          path: |
+            out/jreleaser/trace.log
+            out/jreleaser/output.properties
+
       - name: Grab bach-info
         id: bach
         shell: bash
@@ -129,21 +142,45 @@ jobs:
           echo "JAR_CSUM=$(echo $JAR_CSUM)" >> $GITHUB_OUTPUT
           echo "DOC_SIZE=$(echo $DOC_SIZE)" >> $GITHUB_OUTPUT
 
-      - name: Bach-info script
-        uses: actions/upload-artifact@v3
-        with:
-          retention-days: 1
-          name: bach
-          path: .github/scripts/update-bach-info.sh
+      - name: SLSA hashes
+        shell: bash
+        id: hash
+        run: |
+          echo "hashes=$(cat out/jreleaser/checksums/checksums_sha256.txt | base64 -w0)" >> "$GITHUB_OUTPUT"
 
-      - name: JReleaser release output
-        if: always()
-        uses: actions/upload-artifact@v3
+  provenance:
+    needs: [release]
+    permissions:
+      actions: read
+      id-token: write
+      contents: write
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.4.0
+    with:
+      base64-subjects: "${{ needs.release.outputs.HASHES }}"
+      upload-assets: false
+      provenance-name: 'jreleaser-all.intoto.jsonl'
+
+  upload-provenance:
+    name: Upload provenance
+    needs: [precheck, provenance]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download upload-provenance script
+        run: |
+          curl -sL https://raw.githubusercontent.com/kordamp/jarviz/main/.github/scripts/upload-provenance.sh --output upload-provenance.sh
+          chmod +x upload-provenance.sh
+
+      - name: Download provenance
+        uses: actions/download-artifact@v3
         with:
-          name: jreleaser-release
-          path: |
-            out/jreleaser/trace.log
-            out/jreleaser/output.properties
+          name: jreleaser-all.intoto.jsonl
+
+      - name: Commit
+        env:
+          GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
+          TAG: 'early-access'
+          PROVENANCE_FILE: 'jreleaser-all.intoto.jsonl'
+        run: sh upload-provenance.sh
 
   update-bach-info:
     name: Update bach-info
@@ -159,14 +196,14 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
-      - name: Download bach-info script
-        uses: actions/download-artifact@v3
-        with:
-          name: bach
+      - name: Download update-bach-info script
+        run: |
+          curl -sL https://raw.githubusercontent.com/jreleaser/jreleaser/main/.github/scripts/update-bach-info.sh --output update-bach-info.sh
+          chmod +x update-bach-info.sh
 
       - name: Commit
         env:
-          TAG: "early-access"
+          TAG: 'early-access'
           VERSION: ${{ needs.precheck.outputs.VERSION }}
           JAR_SIZE: ${{ needs.release.outputs.JAR_SIZE }}
           JAR_CSUM: ${{ needs.release.outputs.JAR_CSUM }}

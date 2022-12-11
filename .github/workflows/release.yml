@@ -12,6 +12,8 @@ env:
   JAVA_DISTRO: 'zulu'
   GRAAL_VERSION: '22.3.0'
   GRAAL_JAVA_VERSION: '17'
+  REPO_OWNER: 'jreleaser'
+  REPO_NAME: 'jreleaser'
   GITHUB_BOT_EMAIL: '41898282+github-actions[bot]@users.noreply.github.com'
 
 permissions:
@@ -83,6 +85,7 @@ jobs:
       JAR_SIZE: ${{ steps.bach.outputs.JAR_SIZE }}
       JAR_CSUM: ${{ steps.bach.outputs.JAR_CSUM }}
       DOC_SIZE: ${{ steps.bach.outputs.DOC_SIZE }}
+      HASHES: ${{ steps.hash.outputs.hashes }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -167,6 +170,15 @@ jobs:
           NOTICEABLE_AUTHOR_EMAIL: ${{ secrets.NOTICEABLE_AUTHOR_EMAIL }}
           NOTICEABLE_PROJECTID: ${{ secrets.NOTICEABLE_PROJECTID }}
 
+      - name: JReleaser release output
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: jreleaser-release
+          path: |
+            out/jreleaser/trace.log
+            out/jreleaser/output.properties
+
       - name: Grab bach-info
         id: bach
         shell: bash
@@ -179,21 +191,45 @@ jobs:
           echo "JAR_CSUM=$(echo $JAR_CSUM)" >> $GITHUB_OUTPUT
           echo "DOC_SIZE=$(echo $DOC_SIZE)" >> $GITHUB_OUTPUT
 
-      - name: Bach-info script
-        uses: actions/upload-artifact@v3
-        with:
-          retention-days: 1
-          name: bach
-          path: .github/scripts/update-bach-info.sh
+      - name: SLSA hashes
+        shell: bash
+        id: hash
+        run: |
+          echo "hashes=$(cat out/jreleaser/checksums/checksums_sha256.txt | base64 -w0)" >> "$GITHUB_OUTPUT"
 
-      - name: JReleaser release output
-        if: always()
-        uses: actions/upload-artifact@v3
+  provenance:
+    needs: [release]
+    permissions:
+      actions: read
+      id-token: write
+      contents: write
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.4.0
+    with:
+      base64-subjects: "${{ needs.release.outputs.HASHES }}"
+      upload-assets: false
+      provenance-name: 'jreleaser-all.intoto.jsonl'
+
+  upload-provenance:
+    name: Upload provenance
+    needs: [precheck, provenance]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download upload-provenance script
+        run: |
+          curl -sL https://raw.githubusercontent.com/kordamp/jarviz/main/.github/scripts/upload-provenance.sh --output upload-provenance.sh
+          chmod +x upload-provenance.sh
+
+      - name: Download provenance
+        uses: actions/download-artifact@v3
         with:
-          name: jreleaser-release
-          path: |
-            out/jreleaser/trace.log
-            out/jreleaser/output.properties
+          name: jreleaser-all.intoto.jsonl
+
+      - name: Commit
+        env:
+          GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
+          TAG: "v${{ needs.precheck.outputs.VERSION }}"
+          PROVENANCE_FILE: 'jreleaser-all.intoto.jsonl'
+        run: sh upload-provenance.sh
 
   update-website:
     name: Update website
@@ -209,18 +245,16 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
-      - name: Commit
+      - name: Download update-website script
         run: |
-          git merge origin/development
-          sed -i -e "s/^\version\:\ early-access.*/version: latest/g" docs/antora.yml
-          sed -i -e "s/jreleaser-version\:\ .*/jreleaser-version: ${{ needs.precheck.outputs.VERSION }}/g" docs/antora.yml
-          VERSION=${{ needs.precheck.outputs.VERSION }}
-          echo ${{ needs.precheck.outputs.VERSION }} > VERSION
-          git add VERSION
-          git config --global user.email "${{ env.GITHUB_BOT_EMAIL }}"
-          git config --global user.name "GitHub Action"
-          git commit -a -m "Releasing version ${{ needs.precheck.outputs.VERSION }}"
-          git push origin main
+          curl -sL https://raw.githubusercontent.com/jreleaser/jreleaser/main/.github/scripts/update-website.sh --output update-website.sh
+          chmod +x update-website.sh
+
+      - name: Commit
+        env:
+          TAG: "v${{ needs.precheck.outputs.VERSION }}"
+          VERSION: ${{ needs.precheck.outputs.VERSION }}
+        run: sh update-website.sh
 
   update-bach-info:
     name: Update bach-info
@@ -236,13 +270,13 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
-      - name: Download bach-info script
-        uses: actions/download-artifact@v3
-        with:
-          name: bach
+      - name: Download update-bach-info script
+        run: |
+          curl -sL https://raw.githubusercontent.com/jreleaser/jreleaser/main/.github/scripts/update-bach-info.sh --output update-bach-info.sh
+          chmod +x update-bach-info.sh
 
       - name: Commit
-        env: |
+        env:
           TAG: "v${{ needs.precheck.outputs.VERSION }}"
           VERSION: ${{ needs.precheck.outputs.VERSION }}
           JAR_SIZE: ${{ needs.release.outputs.JAR_SIZE }}
