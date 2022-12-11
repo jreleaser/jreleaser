@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-47-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-48-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -71,6 +71,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center"><a href="https://www.linkedin.com/in/adrien-sales/"><img src="https://avatars.githubusercontent.com/u/5235127?v=4?s=100" width="100px;" alt="SALES"/><br /><sub><b>SALES</b></sub></a><br /><a href="#ideas-adriens" title="Ideas, Planning, & Feedback">🤔</a> <a href="#promotion-adriens" title="Promotion">📣</a></td>
       <td align="center"><a href="http://www.evolutionnext.com"><img src="https://avatars.githubusercontent.com/u/410757?v=4?s=100" width="100px;" alt="Daniel Hinojosa"/><br /><sub><b>Daniel Hinojosa</b></sub></a><br /><a href="#talk-dhinojosa" title="Talks">📢</a></td>
       <td align="center"><a href="https://www.morling.dev/"><img src="https://avatars.githubusercontent.com/u/28612?v=4?s=100" width="100px;" alt="Gunnar Morling"/><br /><sub><b>Gunnar Morling</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/issues?q=author%3Agunnarmorling" title="Bug reports">🐛</a> <a href="#userTesting-gunnarmorling" title="User Testing">📓</a></td>
+      <td align="center"><a href="http://www.dlsc.com"><img src="https://avatars.githubusercontent.com/u/9534301?v=4?s=100" width="100px;" alt="Dirk Lemmermann"/><br /><sub><b>Dirk Lemmermann</b></sub></a><br /><a href="#userTesting-dlemmermann" title="User Testing">📓</a></td>
     </tr>
   </tbody>
 </table>

@@ -455,6 +455,15 @@
         "bug",
         "userTesting"
       ]
+    },
+    {
+      "login": "dlemmermann",
+      "name": "Dirk Lemmermann",
+      "avatar_url": "https://avatars.githubusercontent.com/u/9534301?v=4",
+      "profile": "http://www.dlsc.com",
+      "contributions": [
+        "userTesting"
+      ]
     }
   ],
   "contributorsPerLine": 7,
