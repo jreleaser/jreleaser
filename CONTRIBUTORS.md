@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-50-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-51-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -76,6 +76,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     </tr>
     <tr>
       <td align="center"><a href="https://www.linkedin.com/in/sualeh/"><img src="https://avatars.githubusercontent.com/u/36505153?v=4?s=100" width="100px;" alt="Sualeh Fatehi"/><br /><sub><b>Sualeh Fatehi</b></sub></a><br /><a href="#ideas-sualeh" title="Ideas, Planning, & Feedback">🤔</a> <a href="#userTesting-sualeh" title="User Testing">📓</a></td>
+      <td align="center"><a href="https://manik.magar.me"><img src="https://avatars.githubusercontent.com/u/877286?v=4?s=100" width="100px;" alt="Manik Magar"/><br /><sub><b>Manik Magar</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/issues?q=author%3Amanikmagar" title="Bug reports">🐛</a> <a href="#userTesting-manikmagar" title="User Testing">📓</a> <a href="#promotion-manikmagar" title="Promotion">📣</a></td>
     </tr>
   </tbody>
 </table>
