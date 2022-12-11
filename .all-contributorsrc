@@ -464,6 +464,16 @@
       "contributions": [
         "userTesting"
       ]
+    },
+    {
+      "login": "loiclefevre",
+      "name": "Loïc LEFEVRE",
+      "avatar_url": "https://avatars.githubusercontent.com/u/21245376?v=4",
+      "profile": "https://github.com/loiclefevre",
+      "contributions": [
+        "bug",
+        "userTesting"
+      ]
     }
   ],
   "contributorsPerLine": 7,
