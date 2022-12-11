@@ -54,6 +54,9 @@ public class UpdateStatusTwitterCommandTest {
             .accessToken("ACCESS_TOKEN")
             .accessTokenSecret("ACCESS_TOKEN_SECRET")
             .statuses(listOf("success"))
+            .connectTimeout(20)
+            .readTimeout(60)
+            .dryrun(false)
             .build();
 
         // when:
@@ -78,6 +81,9 @@ public class UpdateStatusTwitterCommandTest {
             .accessToken("ACCESS_TOKEN")
             .accessTokenSecret("ACCESS_TOKEN_SECRET")
             .statuses(listOf("success", "success", "success"))
+            .connectTimeout(20)
+            .readTimeout(60)
+            .dryrun(false)
             .build();
 
         // when:
@@ -102,6 +108,9 @@ public class UpdateStatusTwitterCommandTest {
             .accessToken("ACCESS_TOKEN")
             .accessTokenSecret("ACCESS_TOKEN_SECRET")
             .statuses(listOf("failure"))
+            .connectTimeout(20)
+            .readTimeout(60)
+            .dryrun(false)
             .build();
 
         // expected:

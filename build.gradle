@@ -112,6 +112,16 @@ subprojects {
     }
 }
 
+subprojects { p ->
+    pitest {
+        outputFormats = ['XML', 'HTML']
+        exportLineCoverage = true
+        timestampedReports = false
+        junit5PluginVersion = '1.1.0'
+        failWhenNoMutations = hasTestsAt(p.file('src/test'))
+    }
+}
+
 projects {
     subprojects {
         dirs(['api', 'core', 'sdks']) {
@@ -136,4 +146,8 @@ tasks.register('cleanupStagedRepository') {
         repoDir.dir('jreleaser-gradle-plugin').asFile.deleteDir()
         repoDir.dir('org.jreleaser.gradle.plugin').asFile.deleteDir()
     }
+}
+
+boolean hasTestsAt(File testDir) {
+    testDir.exists() && testDir.listFiles()?.size()
 }

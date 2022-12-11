@@ -44,6 +44,9 @@ dependencies {
 
     compileOnly "org.apache.maven:maven-core:$mavenVersion"
     compileOnly "org.apache.maven.plugin-tools:maven-plugin-annotations:$mvnAnnotationsVersion"
+
+    testImplementation "org.apache.maven:maven-core:$mavenVersion"
+    testImplementation "org.apache.maven.plugin-tools:maven-plugin-annotations:$mvnAnnotationsVersion"
 }
 
 license {

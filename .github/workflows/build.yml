@@ -43,4 +43,16 @@ jobs:
           restore-keys: ${{ runner.os }}-gradlew-
 
       - name: Build
-        run: ./gradlew build -S
+        run: ./gradlew build pitest -S
+
+      - name: Upload reports
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: reports-${{ runner.os }}
+          retention-days: 7
+          path: |
+             api/*/build/reports/
+             core/*/build/reports/
+             plugins/*/build/reports/
+             sdks/*/build/reports/
