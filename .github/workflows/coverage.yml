@@ -90,8 +90,7 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          directory: ./build/reports/jacoco/aggregate
-          files: ./jacocoTestReport.xml
+          files: build/reports/jacoco/aggregate/jacocoTestReport.xml
           flags: build
           fail_ci_if_error: false
           name: jreleaser-build
