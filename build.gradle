@@ -15,6 +15,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+boolean qualityCheck = (project.rootProject.findProperty('qualityCheck') ?: false).toBoolean()
+
 config {
     info {
         description = 'jreleaser'
@@ -64,6 +67,23 @@ config {
                 enabled = true
             }
         }
+        spotbugs {
+            enabled = qualityCheck
+            toolVersion = spotbugsVersion
+            report = 'html'
+            aggregate {
+                enabled = qualityCheck
+            }
+        }
+        errorprone {
+            enabled = qualityCheck
+            excludedPaths = '.*/build/mavenPlugin/.*'
+            args = [
+                '-Xep:MissingSummary:OFF',
+                '-Xep:SameNameButDifferent:OFF',
+                '-Xep:JavaLangClash:OFF'
+            ]
+        }
     }
 
     coverage {
@@ -89,10 +109,6 @@ allprojects {
 
     tasks.withType(JavaCompile) {
         options.encoding = 'UTF-8'
-    }
-
-    tasks.withType(JavaCompiler) {
-        options.compilerArgs += ['-Duser.language=en', '-Duser.country=US']
     }
 }
 

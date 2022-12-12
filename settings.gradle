@@ -28,7 +28,8 @@ buildscript {
         classpath "org.kordamp.gradle:plugin-gradle-plugin:$kordampPluginVersion"
         classpath "org.kordamp.gradle:checkstyle-gradle-plugin:$kordampPluginVersion"
         classpath "org.kordamp.gradle:jacoco-gradle-plugin:$kordampPluginVersion"
-        classpath "org.kordamp.gradle:coveralls-gradle-plugin:$kordampPluginVersion"
+        classpath "org.kordamp.gradle:spotbugs-gradle-plugin:$kordampPluginVersion"
+        classpath "org.kordamp.gradle:errorprone-gradle-plugin:$kordampPluginVersion"
         classpath "org.kordamp.gradle:kordamp-parentbuild:$kordampBuildVersion"
         classpath "org.jreleaser:jdks-gradle-plugin:$jdksPluginVersion"
         classpath 'de.undercouch:gradle-download-task:4.1.1'
@@ -54,8 +55,9 @@ projects {
         path(':') {
             id 'org.kordamp.gradle.java-project'
             id 'org.kordamp.gradle.checkstyle'
-            id 'org.kordamp.gradle.jacoco'
             id 'org.kordamp.gradle.coveralls'
+            id 'org.kordamp.gradle.spotbugs'
+            id 'org.kordamp.gradle.errorprone'
             id 'info.solidsoft.pitest.aggregator'
         }
         dirs(['infra', 'api', 'core', 'sdks', 'plugins']) {
@@ -116,6 +118,11 @@ enforce {
             "org.hamcrest:hamcrest:$hamcrestVersion",
             "org.apache.httpcomponents:httpclient:$httpclientVersion",
             "com.sun.mail:jakarta.mail:$mailApiVersion",
-            "net.bytebuddy:byte-buddy:$bytebuddyVersion"
+            "net.bytebuddy:byte-buddy:$bytebuddyVersion",
+            "com.google.errorprone:error_prone_annotations:$errorproneVersion",
+            "com.github.ben-manes.caffeine:caffeine:$caffeineVersion",
+            "org.checkerframework:checker-qual:$checkerqualVersion",
+            "com.google.code.findbugs:jsr305:$jsr305Version",
+            "com.google.guava:guava:$guavaVersion"
     }
 }
