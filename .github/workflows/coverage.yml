@@ -70,22 +70,6 @@ jobs:
           ./gradlew test pitest jacocoTestReport 
           ./gradlew :aggregateJacocoReport
 
-      - name: Upload reports
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: reports-${{ runner.os }}
-          retention-days: 7
-          path: |
-            api/*/build/test-results/
-            core/*/build/test-results/
-            plugins/*/build/test-results/
-            sdks/*/build/test-results/
-            api/*/build/reports/
-            core/*/build/reports/
-            plugins/*/build/reports/
-            sdks/*/build/reports/
-
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
