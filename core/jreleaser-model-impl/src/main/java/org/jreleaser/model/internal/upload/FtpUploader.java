@@ -171,6 +171,7 @@ public final class FtpUploader extends AbstractUploader<org.jreleaser.model.api.
         return username;
     }
 
+    @Override
     public void setUsername(String username) {
         this.username = username;
     }
@@ -180,6 +181,7 @@ public final class FtpUploader extends AbstractUploader<org.jreleaser.model.api.
         return password;
     }
 
+    @Override
     public void setPassword(String password) {
         this.password = password;
     }
@@ -189,6 +191,7 @@ public final class FtpUploader extends AbstractUploader<org.jreleaser.model.api.
         return host;
     }
 
+    @Override
     public void setHost(String host) {
         this.host = host;
     }
@@ -198,6 +201,7 @@ public final class FtpUploader extends AbstractUploader<org.jreleaser.model.api.
         return null != port ? port : 21;
     }
 
+    @Override
     public void setPort(Integer port) {
         this.port = port;
     }

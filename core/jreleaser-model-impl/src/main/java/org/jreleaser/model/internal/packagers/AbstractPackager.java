@@ -83,6 +83,7 @@ public abstract class AbstractPackager<A extends org.jreleaser.model.api.package
         return failed;
     }
 
+    @Override
     public List<Artifact> resolveCandidateArtifacts(JReleaserContext context, Distribution distribution) {
         List<String> fileExtensions = new ArrayList<>(getSupportedFileExtensions(distribution.getType()));
         fileExtensions.sort(naturalOrder());

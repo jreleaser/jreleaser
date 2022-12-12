@@ -156,6 +156,7 @@ public final class Assemble extends AbstractModelObject<Assemble> implements Dom
         }
     }
 
+    @Override
     public void disable() {
         active = Active.NEVER;
         enabled = false;

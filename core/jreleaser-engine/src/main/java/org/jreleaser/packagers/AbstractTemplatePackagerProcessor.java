@@ -53,6 +53,7 @@ abstract class AbstractTemplatePackagerProcessor<T extends TemplatePackager<?>> 
         super(context);
     }
 
+    @Override
     protected void doPrepareDistribution(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
         try {
             doPrepareDistribution(distribution, props, distribution.getName(),
@@ -134,6 +135,7 @@ abstract class AbstractTemplatePackagerProcessor<T extends TemplatePackager<?>> 
             .anyMatch(fname::matches);
     }
 
+    @Override
     protected void doPackageDistribution(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
         doPackageDistribution(distribution, props, getPackageDirectory(props));
     }

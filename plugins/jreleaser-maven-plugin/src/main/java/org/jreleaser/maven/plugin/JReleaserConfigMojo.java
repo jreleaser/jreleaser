@@ -82,6 +82,7 @@ public class JReleaserConfigMojo extends AbstractPlatformAwareJReleaserMojo {
         context.report();
     }
 
+    @Override
     protected Mode getMode() {
         if (download) return Mode.DOWNLOAD;
         if (assembly) return Mode.ASSEMBLE;

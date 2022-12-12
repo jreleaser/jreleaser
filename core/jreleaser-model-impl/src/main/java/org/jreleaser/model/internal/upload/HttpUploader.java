@@ -165,6 +165,7 @@ public final class HttpUploader extends AbstractWebUploader<org.jreleaser.model.
         setHeaders(merge(this.headers, source.headers));
     }
 
+    @Override
     public String getUsername() {
         return username;
     }
@@ -173,6 +174,7 @@ public final class HttpUploader extends AbstractWebUploader<org.jreleaser.model.
         this.username = username;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
@@ -181,6 +183,7 @@ public final class HttpUploader extends AbstractWebUploader<org.jreleaser.model.
         this.password = password;
     }
 
+    @Override
     public Authorization getAuthorization() {
         return authorization;
     }
@@ -205,6 +208,7 @@ public final class HttpUploader extends AbstractWebUploader<org.jreleaser.model.
         this.method = HttpUploader.Method.of(method);
     }
 
+    @Override
     public Map<String, String> getHeaders() {
         return headers;
     }

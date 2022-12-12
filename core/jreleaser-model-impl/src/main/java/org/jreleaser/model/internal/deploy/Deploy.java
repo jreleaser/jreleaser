@@ -84,6 +84,7 @@ public final class Deploy extends AbstractModelObject<Deploy> implements Domain,
         return enabled;
     }
 
+    @Override
     public void disable() {
         active = Active.NEVER;
         enabled = false;

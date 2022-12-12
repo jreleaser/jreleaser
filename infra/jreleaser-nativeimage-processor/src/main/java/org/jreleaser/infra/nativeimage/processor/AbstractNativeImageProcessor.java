@@ -18,7 +18,6 @@
 package org.jreleaser.infra.nativeimage.processor;
 
 import javax.annotation.processing.AbstractProcessor;
-import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
@@ -37,17 +36,9 @@ import static org.jreleaser.infra.nativeimage.processor.ProcessorUtil.stacktrace
  * @since 1.0.0
  */
 abstract class AbstractNativeImageProcessor extends AbstractProcessor {
-    protected ProcessingEnvironment processingEnv;
-
-    @Override
-    public synchronized void init(ProcessingEnvironment processingEnv) {
-        this.processingEnv = processingEnv;
-    }
-
     @Override
     public SourceVersion getSupportedSourceVersion() {
         SupportedSourceVersion ssv = this.getClass().getAnnotation(SupportedSourceVersion.class);
-        SourceVersion sv = null;
         if (ssv == null) {
             return SourceVersion.latest();
         } else {
@@ -68,25 +59,27 @@ abstract class AbstractNativeImageProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         try {
-            for (TypeElement annotation : annotations) {
-                Set<Element> elements = new LinkedHashSet<>();
+            Set<Element> elements = new LinkedHashSet<>();
 
-                for (Element rootElement : roundEnv.getRootElements()) {
-                    elements.add(rootElement);
-                    for (Element element : rootElement.getEnclosedElements()) {
-                        switch (element.getKind()) {
-                            case ENUM:
-                            case INTERFACE:
-                            case CLASS:
-                                elements.add(element);
-                        }
+            for (Element rootElement : roundEnv.getRootElements()) {
+                elements.add(rootElement);
+                for (Element element : rootElement.getEnclosedElements()) {
+                    switch (element.getKind()) {
+                        case ENUM:
+                        case INTERFACE:
+                        case CLASS:
+                            elements.add(element);
+                            break;
+                        default:
+                            // noop
+                            break;
                     }
                 }
-                if (!elements.isEmpty()) {
-                    process(new Context(processingEnv, roundEnv, elements));
-                }
             }
-            return true;
+            if (!elements.isEmpty()) {
+                process(new Context(processingEnv, roundEnv, elements));
+            }
+            return false;
         } catch (Exception e) {
             fatalError(stacktrace(e));
         }

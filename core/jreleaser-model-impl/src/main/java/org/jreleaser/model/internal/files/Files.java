@@ -122,6 +122,7 @@ public final class Files extends AbstractModelObject<Files> implements Domain, A
         return enabled;
     }
 
+    @Override
     public void disable() {
         active = Active.NEVER;
         enabled = false;

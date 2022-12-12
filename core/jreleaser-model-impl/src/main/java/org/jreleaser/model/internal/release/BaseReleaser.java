@@ -450,10 +450,12 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
         this.branch = branch;
     }
 
+    @Override
     public CommitAuthor getCommitAuthor() {
         return commitAuthor;
     }
 
+    @Override
     public void setCommitAuthor(CommitAuthor commitAuthor) {
         this.commitAuthor.merge(commitAuthor);
     }
@@ -883,10 +885,12 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
             enabled = false;
         }
 
+        @Override
         public boolean isEnabled() {
             return enabled != null && enabled;
         }
 
+        @Override
         public void setEnabled(Boolean enabled) {
             this.enabled = enabled;
         }

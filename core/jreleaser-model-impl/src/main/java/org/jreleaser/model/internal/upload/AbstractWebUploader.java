@@ -83,6 +83,7 @@ public abstract class AbstractWebUploader<A extends org.jreleaser.model.api.uplo
         this.downloadUrl = downloadUrl;
     }
 
+    @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("uploadUrl", uploadUrl);
         props.put("downloadUrl", downloadUrl);

@@ -153,6 +153,7 @@ public final class Maven extends AbstractModelObject<Maven> implements Domain, A
         return enabled && active != null;
     }
 
+    @Override
     public void disable() {
         active = Active.NEVER;
         enabled = false;

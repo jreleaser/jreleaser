@@ -131,6 +131,7 @@ public final class Download extends AbstractModelObject<Download> implements Dom
         return enabled && active != null;
     }
 
+    @Override
     public void disable() {
         active = Active.NEVER;
         enabled = false;

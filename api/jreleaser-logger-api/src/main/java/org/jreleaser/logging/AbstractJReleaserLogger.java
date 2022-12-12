@@ -18,14 +18,14 @@
 package org.jreleaser.logging;
 
 import java.io.PrintWriter;
-import java.util.Stack;
+import java.util.ArrayDeque;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 public abstract class AbstractJReleaserLogger implements JReleaserLogger {
-    private final Stack<String> prefix = new Stack<>();
+    private final ArrayDeque<String> prefix = new ArrayDeque<>();
     private final PrintWriter tracer;
     private String indent = "";
 

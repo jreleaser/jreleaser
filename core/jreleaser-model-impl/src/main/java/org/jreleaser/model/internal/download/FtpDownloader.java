@@ -57,7 +57,7 @@ public final class FtpDownloader extends AbstractDownloader<org.jreleaser.model.
         public List<? extends org.jreleaser.model.api.download.Downloader.Asset> getAssets() {
             if (null == assets) {
                 assets = FtpDownloader.this.assets.stream()
-                    .map(AbstractDownloader.Asset::asImmutable)
+                    .map(Downloader.Asset::asImmutable)
                     .collect(toList());
             }
             return assets;
@@ -137,34 +137,42 @@ public final class FtpDownloader extends AbstractDownloader<org.jreleaser.model.
         this.port = merge(this.port, source.port);
     }
 
+    @Override
     public String getUsername() {
         return username;
     }
 
+    @Override
     public void setUsername(String username) {
         this.username = username;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
 
+    @Override
     public void setPassword(String password) {
         this.password = password;
     }
 
+    @Override
     public String getHost() {
         return host;
     }
 
+    @Override
     public void setHost(String host) {
         this.host = host;
     }
 
+    @Override
     public Integer getPort() {
         return null != port ? port : 21;
     }
 
+    @Override
     public void setPort(Integer port) {
         this.port = port;
     }

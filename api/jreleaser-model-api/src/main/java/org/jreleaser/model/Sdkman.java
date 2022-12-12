@@ -30,6 +30,7 @@ public class Sdkman {
         MAJOR,
         MINOR;
 
+        @Override
         public String toString() {
             return name().toLowerCase(Locale.ENGLISH);
         }

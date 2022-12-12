@@ -192,6 +192,7 @@ public final class TelegramAnnouncer extends AbstractAnnouncer<TelegramAnnouncer
         this.messageTemplate = messageTemplate;
     }
 
+    @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("token", isNotBlank(token) ? HIDE : UNSET);
         props.put("chatId", isNotBlank(chatId) ? HIDE : UNSET);

@@ -60,6 +60,7 @@ public class JsonSchema extends AbstractCommand {
         return parent;
     }
 
+    @Override
     protected void execute() {
         Map<String, String> mappings = new LinkedHashMap<>();
         mappings.put("Map<String, Object>", "Properties");

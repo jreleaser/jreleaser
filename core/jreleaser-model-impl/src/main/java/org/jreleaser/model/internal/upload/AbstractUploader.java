@@ -86,6 +86,7 @@ public abstract class AbstractUploader<A extends org.jreleaser.model.api.upload.
         return enabled;
     }
 
+    @Override
     public void disable() {
         active = Active.NEVER;
         enabled = false;

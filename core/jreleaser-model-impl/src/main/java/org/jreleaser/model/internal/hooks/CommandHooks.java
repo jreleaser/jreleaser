@@ -121,6 +121,7 @@ public final class CommandHooks extends AbstractModelObject<CommandHooks> implem
         return enabled;
     }
 
+    @Override
     public void disable() {
         active = Active.NEVER;
         enabled = false;

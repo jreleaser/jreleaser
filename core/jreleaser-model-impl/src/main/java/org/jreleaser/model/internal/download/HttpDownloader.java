@@ -78,7 +78,7 @@ public final class HttpDownloader extends AbstractDownloader<org.jreleaser.model
         public List<? extends Asset> getAssets() {
             if (null == assets) {
                 assets = HttpDownloader.this.assets.stream()
-                    .map(AbstractDownloader.Asset::asImmutable)
+                    .map(Downloader.Asset::asImmutable)
                     .collect(toList());
             }
             return assets;

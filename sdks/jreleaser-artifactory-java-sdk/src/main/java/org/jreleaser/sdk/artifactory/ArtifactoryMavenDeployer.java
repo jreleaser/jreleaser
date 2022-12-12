@@ -46,10 +46,12 @@ public class ArtifactoryMavenDeployer extends AbstractMavenDeployer<org.jrelease
         super(context);
     }
 
+    @Override
     public org.jreleaser.model.internal.deploy.maven.ArtifactoryMavenDeployer getDeployer() {
         return deployer;
     }
 
+    @Override
     public void setDeployer(org.jreleaser.model.internal.deploy.maven.ArtifactoryMavenDeployer deployer) {
         this.deployer = deployer;
     }

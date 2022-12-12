@@ -91,6 +91,7 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
         return enabled;
     }
 
+    @Override
     public void disable() {
         active = Active.NEVER;
         enabled = false;

@@ -62,6 +62,7 @@ abstract class AbstractLoggingCommand extends AbstractCommand implements Callabl
 
     protected ColorizedJReleaserLoggerAdapter.Level level = ColorizedJReleaserLoggerAdapter.Level.INFO;
 
+    @Override
     protected void setup() {
         if (debug) {
             level = ColorizedJReleaserLoggerAdapter.Level.DEBUG;

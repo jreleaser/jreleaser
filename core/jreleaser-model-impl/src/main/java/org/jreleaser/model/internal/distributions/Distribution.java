@@ -228,6 +228,7 @@ public final class Distribution extends Packagers<Distribution> implements Domai
         }
     };
 
+    @Override
     public org.jreleaser.model.api.distributions.Distribution asImmutable() {
         return immutable;
     }
@@ -289,6 +290,7 @@ public final class Distribution extends Packagers<Distribution> implements Domai
         return enabled;
     }
 
+    @Override
     public void disable() {
         active = Active.NEVER;
         enabled = false;

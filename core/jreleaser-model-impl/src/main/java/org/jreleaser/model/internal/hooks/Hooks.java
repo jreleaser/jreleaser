@@ -83,6 +83,7 @@ public final class Hooks extends AbstractModelObject<Hooks> implements Domain, A
         return enabled;
     }
 
+    @Override
     public void disable() {
         active = Active.NEVER;
         enabled = false;

@@ -599,6 +599,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
             this.contentTemplate = contentTemplate;
         }
 
+        @Override
         public Map<String, Object> asMap(boolean full) {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("enabled", isEnabled());
@@ -739,6 +740,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
             this.order = order;
         }
 
+        @Override
         public Map<String, Object> asMap(boolean full) {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("key", key);

@@ -50,10 +50,12 @@ public class GitlabMavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
         super(context);
     }
 
+    @Override
     public org.jreleaser.model.internal.deploy.maven.GitlabMavenDeployer getDeployer() {
         return deployer;
     }
 
+    @Override
     public void setDeployer(org.jreleaser.model.internal.deploy.maven.GitlabMavenDeployer deployer) {
         this.deployer = deployer;
     }

@@ -351,19 +351,15 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
     }
 
     private void updateAssets(Gitlab api, GlRelease release, List<Asset> assetsToBeUpdated, Integer projectIdentifier, String tagName, Map<String, GlLink> existingLinks) throws IOException {
-       try {
-           if (!assetsToBeUpdated.isEmpty()) {
-               for (Asset asset : assetsToBeUpdated) {
-                   GlLink existingLink = existingLinks.get(asset.getFilename());
-                   api.deleteLinkedAsset(gitlab.getToken(), projectIdentifier, tagName, existingLink);
-               }
+        if (!assetsToBeUpdated.isEmpty()) {
+            for (Asset asset : assetsToBeUpdated) {
+                GlLink existingLink = existingLinks.get(asset.getFilename());
+                api.deleteLinkedAsset(gitlab.getToken(), projectIdentifier, tagName, existingLink);
+            }
 
-               Collection<GlFileUpload> uploads = api.uploadAssets(gitlab.getOwner(), gitlab.getName(), projectIdentifier, assetsToBeUpdated);
-               api.linkReleaseAssets(gitlab.getOwner(), gitlab.getName(), release, projectIdentifier, uploads);
-           }
-       }catch(Exception e) {
-           e.printStackTrace();
-       }
+            Collection<GlFileUpload> uploads = api.uploadAssets(gitlab.getOwner(), gitlab.getName(), projectIdentifier, assetsToBeUpdated);
+            api.linkReleaseAssets(gitlab.getOwner(), gitlab.getName(), release, projectIdentifier, uploads);
+        }
     }
 
     private void uploadAssets(Gitlab api, GlRelease release, List<Asset> assetsToBeUploaded, Integer projectIdentifier) throws IOException {

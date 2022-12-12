@@ -61,6 +61,7 @@ public abstract class AbstractSshDownloader<A extends org.jreleaser.model.api.do
         return username;
     }
 
+    @Override
     public void setUsername(String username) {
         this.username = username;
     }
@@ -70,6 +71,7 @@ public abstract class AbstractSshDownloader<A extends org.jreleaser.model.api.do
         return password;
     }
 
+    @Override
     public void setPassword(String password) {
         this.password = password;
     }
@@ -79,6 +81,7 @@ public abstract class AbstractSshDownloader<A extends org.jreleaser.model.api.do
         return host;
     }
 
+    @Override
     public void setHost(String host) {
         this.host = host;
     }
@@ -88,6 +91,7 @@ public abstract class AbstractSshDownloader<A extends org.jreleaser.model.api.do
         return null != port ? port : 22;
     }
 
+    @Override
     public void setPort(Integer port) {
         this.port = port;
     }
@@ -97,6 +101,7 @@ public abstract class AbstractSshDownloader<A extends org.jreleaser.model.api.do
         return knownHostsFile;
     }
 
+    @Override
     public void setKnownHostsFile(String knownHostsFile) {
         this.knownHostsFile = knownHostsFile;
     }
@@ -106,6 +111,7 @@ public abstract class AbstractSshDownloader<A extends org.jreleaser.model.api.do
         return publicKey;
     }
 
+    @Override
     public void setPublicKey(String publicKey) {
         this.publicKey = publicKey;
     }
@@ -115,6 +121,7 @@ public abstract class AbstractSshDownloader<A extends org.jreleaser.model.api.do
         return privateKey;
     }
 
+    @Override
     public void setPrivateKey(String privateKey) {
         this.privateKey = privateKey;
     }
@@ -124,6 +131,7 @@ public abstract class AbstractSshDownloader<A extends org.jreleaser.model.api.do
         return passphrase;
     }
 
+    @Override
     public void setPassphrase(String passphrase) {
         this.passphrase = passphrase;
     }
@@ -133,6 +141,7 @@ public abstract class AbstractSshDownloader<A extends org.jreleaser.model.api.do
         return fingerprint;
     }
 
+    @Override
     public void setFingerprint(String fingerprint) {
         this.fingerprint = fingerprint;
     }

@@ -204,6 +204,7 @@ public final class Announce extends AbstractModelObject<Announce> implements Dom
         }
     }
 
+    @Override
     public void disable() {
         active = Active.NEVER;
         enabled = false;
@@ -217,18 +218,22 @@ public final class Announce extends AbstractModelObject<Announce> implements Dom
         return enabled;
     }
 
+    @Override
     public Active getActive() {
         return active;
     }
 
+    @Override
     public void setActive(Active active) {
         this.active = active;
     }
 
+    @Override
     public void setActive(String str) {
         setActive(Active.of(str));
     }
 
+    @Override
     public boolean isActiveSet() {
         return active != null;
     }

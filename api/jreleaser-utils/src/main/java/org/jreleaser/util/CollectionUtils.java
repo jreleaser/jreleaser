@@ -260,50 +260,62 @@ public final class CollectionUtils {
             return this;
         }
 
+        @Override
         public int size() {
             return delegate.size();
         }
 
+        @Override
         public boolean isEmpty() {
             return delegate.isEmpty();
         }
 
+        @Override
         public boolean containsKey(Object o) {
             return delegate.containsKey(o);
         }
 
+        @Override
         public boolean containsValue(Object o) {
             return delegate.containsValue(o);
         }
 
+        @Override
         public V get(Object o) {
             return delegate.get(o);
         }
 
+        @Override
         public V put(K k, V v) {
             return delegate.put(k, v);
         }
 
+        @Override
         public V remove(Object o) {
             return delegate.remove(o);
         }
 
+        @Override
         public void putAll(Map<? extends K, ? extends V> map) {
             delegate.putAll(map);
         }
 
+        @Override
         public void clear() {
             delegate.clear();
         }
 
+        @Override
         public Set<K> keySet() {
             return delegate.keySet();
         }
 
+        @Override
         public Collection<V> values() {
             return delegate.values();
         }
 
+        @Override
         public Set<Entry<K, V>> entrySet() {
             return delegate.entrySet();
         }
@@ -337,58 +349,72 @@ public final class CollectionUtils {
             return this;
         }
 
+        @Override
         public int size() {
             return delegate.size();
         }
 
+        @Override
         public boolean isEmpty() {
             return delegate.isEmpty();
         }
 
+        @Override
         public boolean contains(Object o) {
             return delegate.contains(o);
         }
 
+        @Override
         public Iterator<E> iterator() {
             return delegate.iterator();
         }
 
+        @Override
         public Object[] toArray() {
             return delegate.toArray();
         }
 
+        @Override
         public <T> T[] toArray(T[] ts) {
             return delegate.toArray(ts);
         }
 
+        @Override
         public boolean add(E e) {
             return delegate.add(e);
         }
 
+        @Override
         public boolean remove(Object o) {
             return delegate.remove(o);
         }
 
+        @Override
         public boolean containsAll(Collection<?> objects) {
             return delegate.containsAll(objects);
         }
 
+        @Override
         public boolean addAll(Collection<? extends E> es) {
             return delegate.addAll(es);
         }
 
+        @Override
         public boolean addAll(int i, Collection<? extends E> es) {
             return delegate.addAll(i, es);
         }
 
+        @Override
         public boolean removeAll(Collection<?> objects) {
             return delegate.removeAll(objects);
         }
 
+        @Override
         public boolean retainAll(Collection<?> objects) {
             return delegate.retainAll(objects);
         }
 
+        @Override
         public void clear() {
             delegate.clear();
         }
@@ -408,38 +434,47 @@ public final class CollectionUtils {
             return delegate.toString();
         }
 
+        @Override
         public E get(int i) {
             return delegate.get(i);
         }
 
+        @Override
         public E set(int i, E e) {
             return delegate.set(i, e);
         }
 
+        @Override
         public void add(int i, E e) {
             delegate.add(i, e);
         }
 
+        @Override
         public E remove(int i) {
             return delegate.remove(i);
         }
 
+        @Override
         public int indexOf(Object o) {
             return delegate.indexOf(o);
         }
 
+        @Override
         public int lastIndexOf(Object o) {
             return delegate.lastIndexOf(o);
         }
 
+        @Override
         public ListIterator<E> listIterator() {
             return delegate.listIterator();
         }
 
+        @Override
         public ListIterator<E> listIterator(int i) {
             return delegate.listIterator(i);
         }
 
+        @Override
         public List<E> subList(int i, int i1) {
             return delegate.subList(i, i1);
         }
@@ -458,54 +493,67 @@ public final class CollectionUtils {
             return this;
         }
 
+        @Override
         public int size() {
             return delegate.size();
         }
 
+        @Override
         public boolean isEmpty() {
             return delegate.isEmpty();
         }
 
+        @Override
         public boolean contains(Object o) {
             return delegate.contains(o);
         }
 
+        @Override
         public Iterator<E> iterator() {
             return delegate.iterator();
         }
 
+        @Override
         public Object[] toArray() {
             return delegate.toArray();
         }
 
+        @Override
         public <T> T[] toArray(T[] ts) {
             return delegate.toArray(ts);
         }
 
+        @Override
         public boolean add(E e) {
             return delegate.add(e);
         }
 
+        @Override
         public boolean remove(Object o) {
             return delegate.remove(o);
         }
 
+        @Override
         public boolean containsAll(Collection<?> objects) {
             return delegate.containsAll(objects);
         }
 
+        @Override
         public boolean addAll(Collection<? extends E> es) {
             return delegate.addAll(es);
         }
 
+        @Override
         public boolean retainAll(Collection<?> objects) {
             return delegate.retainAll(objects);
         }
 
+        @Override
         public boolean removeAll(Collection<?> objects) {
             return delegate.removeAll(objects);
         }
 
+        @Override
         public void clear() {
             delegate.clear();
         }

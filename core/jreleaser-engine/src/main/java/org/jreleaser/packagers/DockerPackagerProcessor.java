@@ -21,7 +21,6 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.distributions.Distribution;
-import org.jreleaser.model.internal.packagers.AbstractDockerConfiguration;
 import org.jreleaser.model.internal.packagers.DockerConfiguration;
 import org.jreleaser.model.internal.packagers.DockerPackager;
 import org.jreleaser.model.internal.packagers.DockerSpec;
@@ -365,7 +364,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
                                  DockerConfiguration docker) throws PackagerProcessingException {
         Map<String, List<String>> tagNames = resolveTagNames(docker, props);
 
-        for (AbstractDockerConfiguration.Registry registry : docker.getRegistries()) {
+        for (DockerConfiguration.Registry registry : docker.getRegistries()) {
             login(registry);
         }
 
@@ -403,7 +402,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
             }
         }
 
-        for (AbstractDockerConfiguration.Registry registry : docker.getRegistries()) {
+        for (DockerConfiguration.Registry registry : docker.getRegistries()) {
             logout(registry);
         }
 
@@ -419,7 +418,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         }
     }
 
-    private void login(AbstractDockerConfiguration.Registry registry) throws PackagerProcessingException {
+    private void login(DockerConfiguration.Registry registry) throws PackagerProcessingException {
         Command cmd = createCommand("login");
         if (isNotBlank(registry.getServer())) {
             cmd.arg(registry.getServer());
@@ -440,7 +439,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
     private Map<String, List<String>> resolveTagNames(DockerConfiguration docker, Map<String, Object> props) throws PackagerProcessingException {
         Map<String, List<String>> tags = new LinkedHashMap<>();
 
-        for (AbstractDockerConfiguration.Registry registry : docker.getRegistries()) {
+        for (DockerConfiguration.Registry registry : docker.getRegistries()) {
             for (String imageName : docker.getImageNames()) {
                 imageName = resolveTemplate(imageName, props).toLowerCase(Locale.ENGLISH);
 
@@ -454,7 +453,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
                 // else
                 //   tag: server/repositoryName/imageName
 
-                if (AbstractDockerConfiguration.Registry.DEFAULT_NAME.equals(serverName)) {
+                if (DockerConfiguration.Registry.DEFAULT_NAME.equals(serverName)) {
                     server = "docker.io";
                     if (!tag.startsWith(repositoryName)) {
                         int pos = tag.indexOf("/");
@@ -494,7 +493,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         if (!context.isDryrun()) executeCommand(cmd);
     }
 
-    private void logout(AbstractDockerConfiguration.Registry registry) throws PackagerProcessingException {
+    private void logout(DockerConfiguration.Registry registry) throws PackagerProcessingException {
         Command cmd = createCommand("logout");
         if (isNotBlank(registry.getServer())) {
             cmd.arg(registry.getServerName());

@@ -49,6 +49,7 @@ abstract class AbstractRepositoryPackagerProcessor<T extends RepositoryPackager<
         super(context);
     }
 
+    @Override
     protected void doPublishDistribution(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
         RepositoryTap tap = packager.getRepositoryTap();
         if (!tap.isEnabled()) {

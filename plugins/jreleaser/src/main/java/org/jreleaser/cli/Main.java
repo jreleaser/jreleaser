@@ -38,6 +38,7 @@ public class Main extends BaseCommand implements Runnable {
     PrintWriter out;
     PrintWriter err;
 
+    @Override
     public void run() {
         Banner.display(out);
 

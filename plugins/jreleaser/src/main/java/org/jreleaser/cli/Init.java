@@ -64,6 +64,7 @@ public class Init extends AbstractLoggingCommand {
         return parent;
     }
 
+    @Override
     protected void execute() {
         try {
             outputDirectory = null != basedir ? basedir : Paths.get(".").normalize();

@@ -44,6 +44,7 @@ public interface Project extends Domain, ExtraProperties, Active.Releaseable {
 
     boolean isSnapshot();
 
+    @Override
     boolean isRelease();
 
     String getName();

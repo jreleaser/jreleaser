@@ -157,8 +157,8 @@ public class Packagers<S extends Packagers<S>> extends AbstractModelObject<S> im
         return appImage;
     }
 
-    public void setAppImage(AppImagePackager appimage) {
-        this.appImage.merge(appimage);
+    public void setAppImage(AppImagePackager appImage) {
+        this.appImage.merge(appImage);
     }
 
     public AsdfPackager getAsdf() {

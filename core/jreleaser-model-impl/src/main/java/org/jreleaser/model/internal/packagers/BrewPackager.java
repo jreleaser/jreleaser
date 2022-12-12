@@ -360,6 +360,7 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
         return unmodifiableSet(SUPPORTED.getOrDefault(distributionType, emptySet()));
     }
 
+    @Override
     public List<Artifact> resolveCandidateArtifacts(JReleaserContext context, Distribution distribution) {
         List<Artifact> candidateArtifacts = super.resolveCandidateArtifacts(context, distribution);
 

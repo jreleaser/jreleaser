@@ -268,6 +268,7 @@ public class Release extends AbstractPlatformAwareModelCommand {
         return context;
     }
 
+    @Override
     protected void execute() {
         if (composite == null || !composite.autoConfig()) {
             super.execute();

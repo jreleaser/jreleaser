@@ -87,6 +87,7 @@ public final class CommandHook extends AbstractHook<CommandHook> {
         return enabled;
     }
 
+    @Override
     public void disable() {
         active = Active.NEVER;
         enabled = false;
@@ -148,6 +149,7 @@ public final class CommandHook extends AbstractHook<CommandHook> {
         return filter;
     }
 
+    @Override
     public void setFilter(Filter filter) {
         this.filter.merge(filter);
     }

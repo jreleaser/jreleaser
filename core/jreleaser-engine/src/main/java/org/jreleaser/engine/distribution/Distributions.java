@@ -155,6 +155,9 @@ public class Distributions {
                 return JReleaserCommand.PACKAGE.toStep();
             case PUBLISH:
                 return JReleaserCommand.PUBLISH.toStep();
+            default:
+                // noop
+                break;
         }
         return JReleaserCommand.PREPARE.toStep();
     }

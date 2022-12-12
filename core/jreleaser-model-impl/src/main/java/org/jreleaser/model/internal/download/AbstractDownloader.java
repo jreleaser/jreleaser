@@ -70,6 +70,7 @@ public abstract class AbstractDownloader<A extends org.jreleaser.model.api.downl
         return enabled;
     }
 
+    @Override
     public void disable() {
         active = Active.NEVER;
         enabled = false;
@@ -88,6 +89,7 @@ public abstract class AbstractDownloader<A extends org.jreleaser.model.api.downl
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
@@ -158,11 +160,13 @@ public abstract class AbstractDownloader<A extends org.jreleaser.model.api.downl
         return assets;
     }
 
+    @Override
     public void setAssets(List<Asset> assets) {
         this.assets.clear();
         this.assets.addAll(assets);
     }
 
+    @Override
     public void addAsset(Asset asset) {
         if (null != asset) {
             this.assets.add(asset);

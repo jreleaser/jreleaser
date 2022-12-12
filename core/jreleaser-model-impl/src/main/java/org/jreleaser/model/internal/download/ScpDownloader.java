@@ -48,7 +48,7 @@ public final class ScpDownloader extends AbstractSshDownloader<org.jreleaser.mod
         public List<? extends org.jreleaser.model.api.download.Downloader.Asset> getAssets() {
             if (null == assets) {
                 assets = ScpDownloader.this.assets.stream()
-                    .map(AbstractDownloader.Asset::asImmutable)
+                    .map(Downloader.Asset::asImmutable)
                     .collect(toList());
             }
             return assets;

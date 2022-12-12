@@ -489,6 +489,7 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
             return enabled;
         }
 
+        @Override
         public void disable() {
             active = Active.NEVER;
             enabled = false;
@@ -565,6 +566,7 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
             setArgs(merge(this.args, source.args));
         }
 
+        @Override
         public List<String> getArgs() {
             return args;
         }
@@ -575,6 +577,7 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
             this.args.addAll(args);
         }
 
+        @Override
         public String getPlatform() {
             return platform;
         }

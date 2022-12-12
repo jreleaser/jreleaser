@@ -17,7 +17,6 @@
  */
 package org.jreleaser.maven.plugin;
 
-import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -67,8 +66,6 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
      */
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     private MavenProject project;
-    @Parameter(defaultValue = "${session}", required = true)
-    private MavenSession session;
     @Parameter(property = "jreleaser.output.directory", defaultValue = "${project.build.directory}/jreleaser")
     private File outputDirectory;
     /**

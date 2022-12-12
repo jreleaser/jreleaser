@@ -51,6 +51,7 @@ import static org.jreleaser.util.ChecksumUtils.checksum;
  * @since 1.3.0
  */
 public final class DefaultMustacheExtensionPoint implements MustacheExtensionPoint {
+    @Override
     public void apply(Map<String, Object> context) {
         ZonedDateTime now = (ZonedDateTime) context.get(Constants.KEY_ZONED_DATE_TIME_NOW);
         if (null == now) {
@@ -266,7 +267,7 @@ public final class DefaultMustacheExtensionPoint implements MustacheExtensionPoi
         }
     }
 
-    private class RecursiveEvalFunction implements Function<String, String> {
+    private static class RecursiveEvalFunction implements Function<String, String> {
         private final Map<String, Object> context;
 
         public RecursiveEvalFunction(Map<String, Object> context) {

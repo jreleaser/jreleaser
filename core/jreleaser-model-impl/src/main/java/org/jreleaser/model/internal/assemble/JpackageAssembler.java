@@ -692,6 +692,7 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
             setTypes(merge(this.types, source.types));
         }
 
+        @Override
         public String getResolvedAppName(JReleaserContext context, JpackageAssembler jpackage) {
             Map<String, Object> props = context.getModel().props();
             props.putAll(jpackage.props());
@@ -718,6 +719,7 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
             this.icon = icon;
         }
 
+        @Override
         public List<String> getValidTypes() {
             return validTypes;
         }

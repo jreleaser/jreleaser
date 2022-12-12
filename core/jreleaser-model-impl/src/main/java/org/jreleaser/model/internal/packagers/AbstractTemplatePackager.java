@@ -75,6 +75,7 @@ public abstract class AbstractTemplatePackager<A extends org.jreleaser.model.api
         }
     }
 
+    @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("templateDirectory", templateDirectory);
         props.put("skipTemplates", skipTemplates);

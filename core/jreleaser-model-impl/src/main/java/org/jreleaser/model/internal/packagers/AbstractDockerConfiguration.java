@@ -87,6 +87,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
         return enabled;
     }
 
+    @Override
     public void disable() {
         active = Active.NEVER;
         enabled = false;
@@ -133,6 +134,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
         return templateDirectory;
     }
 
+    @Override
     public void setTemplateDirectory(String templateDirectory) {
         this.templateDirectory = templateDirectory;
     }
@@ -142,15 +144,18 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
         return skipTemplates;
     }
 
+    @Override
     public void setSkipTemplates(List<String> skipTemplates) {
         this.skipTemplates.clear();
         this.skipTemplates.addAll(skipTemplates);
     }
 
+    @Override
     public void addSkipTemplates(List<String> templates) {
         this.skipTemplates.addAll(templates);
     }
 
+    @Override
     public void addSkipTemplate(String template) {
         if (isNotBlank(template)) {
             this.skipTemplates.add(template.trim());
@@ -178,6 +183,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
         return baseImage;
     }
 
+    @Override
     public void setBaseImage(String baseImage) {
         this.baseImage = baseImage;
     }
@@ -187,15 +193,18 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
         return labels;
     }
 
+    @Override
     public void setLabels(Map<String, String> labels) {
         this.labels.clear();
         this.labels.putAll(labels);
     }
 
+    @Override
     public void addLabels(Map<String, String> labels) {
         this.labels.putAll(labels);
     }
 
+    @Override
     public void addLabel(String key, String value) {
         if (isNotBlank(value)) {
             this.labels.put(key, value);
@@ -207,6 +216,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
         return imageNames;
     }
 
+    @Override
     public void setImageNames(Set<String> imageNames) {
         if (imageNames != null) {
             this.imageNames.clear();
@@ -214,6 +224,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
         }
     }
 
+    @Override
     public void addImageName(String imageName) {
         if (isNotBlank(imageName)) {
             this.imageNames.add(imageName);
@@ -225,6 +236,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
         return buildArgs;
     }
 
+    @Override
     public void setBuildArgs(List<String> buildArgs) {
         if (buildArgs != null) {
             this.buildArgs.clear();
@@ -232,6 +244,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
         }
     }
 
+    @Override
     public void addBuildArg(String buildArg) {
         if (isNotBlank(buildArg)) {
             this.buildArgs.add(buildArg);
@@ -243,6 +256,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
         return preCommands;
     }
 
+    @Override
     public void setPreCommands(List<String> preCommands) {
         if (preCommands != null) {
             this.preCommands.clear();
@@ -250,10 +264,12 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
         }
     }
 
+    @Override
     public List<String> getPostCommands() {
         return postCommands;
     }
 
+    @Override
     public void setPostCommands(List<String> postCommands) {
         if (postCommands != null) {
             this.postCommands.clear();
@@ -261,10 +277,12 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
         }
     }
 
+    @Override
     public Set<Registry> getRegistries() {
         return registries;
     }
 
+    @Override
     public void setRegistries(Set<? extends Registry> registries) {
         if (registries != null) {
             this.registries.clear();
@@ -272,6 +290,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
         }
     }
 
+    @Override
     public void addRegistry(Registry registry) {
         if (null != registry) {
             this.registries.add(registry);
@@ -283,10 +302,12 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
         return useLocalArtifact == null || useLocalArtifact;
     }
 
+    @Override
     public void setUseLocalArtifact(Boolean useLocalArtifact) {
         this.useLocalArtifact = useLocalArtifact;
     }
 
+    @Override
     public boolean isUseLocalArtifactSet() {
         return useLocalArtifact != null;
     }

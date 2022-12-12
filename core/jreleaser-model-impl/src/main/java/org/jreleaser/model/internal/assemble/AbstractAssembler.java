@@ -75,6 +75,7 @@ public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A ext
         setExtraProperties(merge(this.extraProperties, source.extraProperties));
     }
 
+    @Override
     public Map<String, Object> props() {
         Map<String, Object> props = new LinkedHashMap<>();
         applyTemplates(props, getResolvedExtraProperties());
@@ -108,6 +109,7 @@ public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A ext
         return enabled;
     }
 
+    @Override
     public void disable() {
         active = Active.NEVER;
         enabled = false;

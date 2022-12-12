@@ -199,6 +199,7 @@ public final class Upload extends AbstractModelObject<Upload> implements Domain,
         }
     }
 
+    @Override
     public void disable() {
         active = Active.NEVER;
         enabled = false;

@@ -1198,6 +1198,10 @@ public final class Project extends AbstractModelObject<Project> implements Domai
                     if (isNotBlank(format)) {
                         s += ":" + format;
                     }
+                    break;
+                default:
+                    // noop
+                    break;
             }
             return s;
         }

@@ -344,6 +344,9 @@ public final class FileUtils {
             case TXZ:
             case TAR_XZ:
                 return new XZCompressorInputStream(in);
+            default:
+                // noop
+                break;
         }
 
         return null;
@@ -592,10 +595,12 @@ public final class FileUtils {
 
     public static void deleteFiles(Path path, boolean keepRoot) throws IOException {
         if (Files.exists(path)) {
-            Files.walk(path)
-                .sorted(Comparator.reverseOrder())
-                .map(Path::toFile)
-                .forEach(File::delete);
+            try (Stream<Path> stream = Files.walk(path)) {
+                stream
+                    .sorted(Comparator.reverseOrder())
+                    .map(Path::toFile)
+                    .forEach(File::delete);
+            }
             if (!keepRoot) Files.deleteIfExists(path);
         }
     }
@@ -656,17 +661,19 @@ public final class FileUtils {
         Predicate<Path> actualFilter = filter != null ? filter : path -> true;
         IOException[] thrown = new IOException[1];
 
-        Files.list(source)
-            .filter(Files::isRegularFile)
-            .filter(actualFilter)
-            .forEach(child -> {
-                try {
-                    Files.copy(child, target.resolve(child.getFileName()), REPLACE_EXISTING);
-                } catch (IOException e) {
-                    logger.error(RB.$("ERROR_files_copy"), child, e);
-                    if (null == thrown[0]) thrown[0] = e;
-                }
-            });
+        try (Stream<Path> stream = Files.list(source)) {
+            stream
+                .filter(Files::isRegularFile)
+                .filter(actualFilter)
+                .forEach(child -> {
+                    try {
+                        Files.copy(child, target.resolve(child.getFileName()), REPLACE_EXISTING);
+                    } catch (IOException e) {
+                        logger.error(RB.$("ERROR_files_copy"), child, e);
+                        if (null == thrown[0]) thrown[0] = e;
+                    }
+                });
+        }
 
         if (thrown[0] != null) {
             throw thrown[0];

@@ -153,6 +153,7 @@ public final class Signing extends AbstractModelObject<Signing> implements Domai
         return enabled;
     }
 
+    @Override
     public void disable() {
         active = Active.NEVER;
         enabled = false;

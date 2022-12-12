@@ -37,10 +37,12 @@ public class Nexus2MavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
         super(context);
     }
 
+    @Override
     public org.jreleaser.model.internal.deploy.maven.Nexus2MavenDeployer getDeployer() {
         return deployer;
     }
 
+    @Override
     public void setDeployer(org.jreleaser.model.internal.deploy.maven.Nexus2MavenDeployer deployer) {
         this.deployer = deployer;
     }

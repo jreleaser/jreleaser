@@ -83,7 +83,7 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
     private String downloadUrl;
 
     private final org.jreleaser.model.api.packagers.DockerPackager immutable = new org.jreleaser.model.api.packagers.DockerPackager() {
-        private Set<? extends org.jreleaser.model.api.packagers.DockerPackager.Registry> registries;
+        private Set<? extends org.jreleaser.model.api.packagers.DockerConfiguration.Registry> registries;
         private Map<String, ? extends org.jreleaser.model.api.packagers.DockerSpec> specs;
 
         @Override
@@ -147,7 +147,7 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
         }
 
         @Override
-        public Set<? extends org.jreleaser.model.api.packagers.DockerPackager.Registry> getRegistries() {
+        public Set<? extends org.jreleaser.model.api.packagers.DockerConfiguration.Registry> getRegistries() {
             if (null == registries) {
                 registries = DockerPackager.this.registries.stream()
                     .map(DockerConfiguration.Registry::asImmutable)
@@ -328,7 +328,7 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
             .collect(toList());
     }
 
-    protected boolean isNotSkipped(Artifact artifact) {
+    private boolean isNotSkipped(Artifact artifact) {
         return isFalse(artifact.getExtraProperties().get(SKIP_DOCKER));
     }
 

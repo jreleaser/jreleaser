@@ -51,6 +51,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
@@ -102,6 +103,7 @@ public final class DefaultExtensionManager implements ExtensionManager {
         context.setWorkflowListeners(findExtensionPoints(WorkflowListener.class));
     }
 
+    @Override
     public <T extends ExtensionPoint> Set<T> findExtensionPoints(Class<T> extensionPointType) {
         return (Set<T>) extensionPoints.computeIfAbsent(extensionPointType.getName(), k -> {
             Set<T> set = new LinkedHashSet<>();
@@ -134,8 +136,8 @@ public final class DefaultExtensionManager implements ExtensionManager {
         }
 
         List<Path> jars = null;
-        try {
-            jars = Files.list(directoryPath)
+        try (Stream<Path> jarPaths = Files.list(directoryPath)){
+            jars = jarPaths
                 .filter(path -> path.getFileName().toString().endsWith(".jar"))
                 .collect(toList());
         } catch (IOException e) {

@@ -174,7 +174,7 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
 
         @Override
         public boolean isExported() {
-            return isExported();
+            return JlinkAssembler.this.isExported();
         }
 
         @Override
@@ -209,7 +209,7 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
 
         @Override
         public boolean isEnabled() {
-            return isEnabled();
+            return JlinkAssembler.this.isEnabled();
         }
 
         @Override

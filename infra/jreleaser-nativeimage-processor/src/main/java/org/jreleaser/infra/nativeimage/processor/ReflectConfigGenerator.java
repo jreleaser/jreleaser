@@ -48,6 +48,10 @@ class ReflectConfigGenerator extends AbstractGenerator {
                         break;
                     case CLASS:
                         collector.put(className, formatClass(className));
+                        break;
+                    default:
+                        // noop
+                        break;
                 }
             }
         }

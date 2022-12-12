@@ -163,6 +163,7 @@ public class JReleaserGpgSigner extends GpgSigner implements GpgObjectSigner {
             this.committer = committer;
         }
 
+        @Override
         public void sign(ObjectBuilder object) throws SigningException {
             Keyring keyring = context.createKeyring();
             PGPSignatureGenerator signatureGenerator = initSignatureGenerator(context.getModel().getSigning(), keyring);

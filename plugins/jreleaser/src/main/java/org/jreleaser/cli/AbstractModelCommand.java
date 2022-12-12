@@ -76,6 +76,7 @@ public abstract class AbstractModelCommand extends AbstractLoggingCommand {
         return parent;
     }
 
+    @Override
     protected void execute() {
         resolveConfigFile();
         resolveBasedir();
@@ -191,6 +192,7 @@ public abstract class AbstractModelCommand extends AbstractLoggingCommand {
         throw new IllegalArgumentException($("ERROR_invalid_config_format", configFile.getFileName()));
     }
 
+    @Override
     protected Path getOutputDirectory() {
         return resolveOutputDirectory(actualBasedir, outputdir, "out");
     }

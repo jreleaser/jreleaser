@@ -46,10 +46,12 @@ public class GiteaMavenDeployer extends AbstractMavenDeployer<org.jreleaser.mode
         super(context);
     }
 
+    @Override
     public org.jreleaser.model.internal.deploy.maven.GiteaMavenDeployer getDeployer() {
         return deployer;
     }
 
+    @Override
     public void setDeployer(org.jreleaser.model.internal.deploy.maven.GiteaMavenDeployer deployer) {
         this.deployer = deployer;
     }

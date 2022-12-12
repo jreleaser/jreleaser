@@ -121,6 +121,7 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
         return owner + "/" + getResolvedName();
     }
 
+    @Override
     public String getResolvedName() {
         if (isNotBlank(name)) {
             return name;
@@ -128,10 +129,12 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
         return tapName;
     }
 
+    @Override
     public String getResolvedCommitMessage(Map<String, Object> props) {
         return resolveTemplate(commitMessage, props);
     }
 
+    @Override
     public String getResolvedTagName(Map<String, Object> props) {
         return resolveTemplate(tagName, props);
     }
@@ -141,6 +144,7 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
         return owner;
     }
 
+    @Override
     public void setOwner(String owner) {
         this.owner = owner;
     }
@@ -150,6 +154,7 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
         return name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
@@ -159,6 +164,7 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
         return tagName;
     }
 
+    @Override
     public void setTagName(String tagName) {
         this.tagName = tagName;
     }
@@ -168,6 +174,7 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
         return branch;
     }
 
+    @Override
     public void setBranch(String branch) {
         this.branch = branch;
     }
@@ -177,6 +184,7 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
         return username;
     }
 
+    @Override
     public void setUsername(String username) {
         this.username = username;
     }
@@ -186,6 +194,7 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
         return token;
     }
 
+    @Override
     public void setToken(String token) {
         this.token = token;
     }
@@ -195,6 +204,7 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
         return commitMessage;
     }
 
+    @Override
     public void setCommitMessage(String commitMessage) {
         this.commitMessage = commitMessage;
     }
