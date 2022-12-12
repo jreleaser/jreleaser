@@ -65,6 +65,16 @@ config {
             }
         }
     }
+
+    coverage {
+        jacoco {
+            enabled = true
+            toolVersion = jacocoVersion
+        }
+        coveralls {
+            enabled = true
+        }
+    }
 }
 
 allprojects {
@@ -113,6 +123,14 @@ subprojects {
 }
 
 subprojects { p ->
+    config {
+        coverage {
+            jacoco {
+                enabled = hasTestsAt(p.file('src/test'))
+            }
+        }
+    }
+
     pitest {
         outputFormats = ['XML', 'HTML']
         exportLineCoverage = true

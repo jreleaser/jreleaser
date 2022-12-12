@@ -1,7 +1,8 @@
-name: Build
+name: Coverage
 
 on:
-  pull_request:
+  push:
+    branches: [ main ]
 
 env:
   JAVA_VERSION: '11'
@@ -9,10 +10,33 @@ env:
 
 permissions:
   contents: read
+  actions: write
 
 jobs:
+  precheck:
+    name: Precheck
+    if: github.repository == 'jreleaser/jreleaser' && startsWith(github.event.head_commit.message, 'Releasing version') != true
+    runs-on: ubuntu-latest
+    outputs:
+      VERSION: ${{ steps.vars.outputs.VERSION }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Cancel previous run
+        uses: styfle/cancel-workflow-action@0.11.0
+        with:
+          access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Version
+        id: vars
+        shell: bash
+        run: |
+          echo "VERSION=$(cat VERSION)" >> $GITHUB_OUTPUT
+
   build:
-    name: Build
+    needs: [precheck]
+    if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
     strategy:
       fail-fast: false
       matrix:
@@ -41,9 +65,9 @@ jobs:
           key: ${{ runner.os }}-gradlew-${{ hashFiles('**/gradlew') }}
           restore-keys: ${{ runner.os }}-gradlew-
 
-      - name: Build
+      - name: Test
         run: |
-          ./gradlew build pitest jacocoTestReport 
+          ./gradlew test pitest jacocoTestReport 
           ./gradlew :aggregateJacocoReport
 
       - name: Upload reports
@@ -68,7 +92,12 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           directory: ./build/reports/jacoco/aggregate
           files: ./jacocoTestReport.xml
-          flags: pr
+          flags: build
           fail_ci_if_error: false
-          name: jreleaser-pr
+          name: jreleaser-build
           verbose: true
+
+      - name: Upload coverage to Coveralls
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
+        run: ./gradlew :coveralls
