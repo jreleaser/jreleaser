@@ -193,7 +193,7 @@ jobs:
           echo "hashes=$(cat out/jreleaser/checksums/checksums_sha256.txt | base64 -w0)" >> "$GITHUB_OUTPUT"
 
   provenance:
-    needs: [release]
+    needs: [precheck, release]
     permissions:
       actions: read
       id-token: write
@@ -202,7 +202,7 @@ jobs:
     with:
       base64-subjects: "${{ needs.release.outputs.HASHES }}"
       upload-assets: false
-      provenance-name: 'jreleaser-all.intoto.jsonl'
+      provenance-name: 'jreleaser-all-${{ needs.precheck.outputs.VERSION }}.intoto.jsonl'
 
   upload-provenance:
     name: Upload provenance
@@ -217,13 +217,13 @@ jobs:
       - name: Download provenance
         uses: actions/download-artifact@v3
         with:
-          name: jreleaser-all.intoto.jsonl
+          name: 'jreleaser-all-${{ needs.precheck.outputs.VERSION }}.intoto.jsonl'
 
       - name: Commit
         env:
           GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
           TAG: "v${{ needs.precheck.outputs.VERSION }}"
-          PROVENANCE_FILE: 'jreleaser-all.intoto.jsonl'
+          PROVENANCE_FILE: 'jreleaser-all-${{ needs.precheck.outputs.VERSION }}.intoto.jsonl'
         run: sh upload-provenance.sh
 
   update-website:

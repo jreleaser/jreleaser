@@ -158,7 +158,7 @@ jobs:
     with:
       base64-subjects: "${{ needs.release.outputs.HASHES }}"
       upload-assets: false
-      provenance-name: 'jreleaser-all.intoto.jsonl'
+      provenance-name: 'jreleaser-all-early-access.intoto.jsonl'
 
   upload-provenance:
     name: Upload provenance
@@ -173,13 +173,13 @@ jobs:
       - name: Download provenance
         uses: actions/download-artifact@v3
         with:
-          name: jreleaser-all.intoto.jsonl
+          name: jreleaser-all-early-access.intoto.jsonl
 
       - name: Commit
         env:
           GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
           TAG: 'early-access'
-          PROVENANCE_FILE: 'jreleaser-all.intoto.jsonl'
+          PROVENANCE_FILE: 'jreleaser-all-early-access.intoto.jsonl'
         run: sh upload-provenance.sh
 
   update-bach-info:
