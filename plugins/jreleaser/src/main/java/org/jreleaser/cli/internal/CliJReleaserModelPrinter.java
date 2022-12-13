@@ -15,7 +15,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.ant.tasks.internal;
+package org.jreleaser.cli.internal;
+
+import org.jreleaser.model.internal.JReleaserModelPrinter;
+import picocli.CommandLine;
 
 import java.io.PrintWriter;
 
@@ -23,13 +26,13 @@ import java.io.PrintWriter;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class JReleaserModelPrinter extends org.jreleaser.model.internal.JReleaserModelPrinter {
-    public JReleaserModelPrinter(PrintWriter out) {
+public class CliJReleaserModelPrinter extends JReleaserModelPrinter {
+    public CliJReleaserModelPrinter(PrintWriter out) {
         super(out);
     }
 
     @Override
     protected String color(String color, String input) {
-        return input;
+        return CommandLine.Help.Ansi.AUTO.string("@|" + color + " " + input + "|@");
     }
 }

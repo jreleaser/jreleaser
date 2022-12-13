@@ -46,6 +46,7 @@ import org.jreleaser.gradle.plugin.tasks.JReleaserTemplateTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserUploadTask
 import org.jreleaser.model.internal.JReleaserModel
 import org.jreleaser.version.SemanticVersion
+import org.kordamp.gradle.util.AnsiConsole
 
 import static org.kordamp.gradle.util.StringUtils.isBlank
 

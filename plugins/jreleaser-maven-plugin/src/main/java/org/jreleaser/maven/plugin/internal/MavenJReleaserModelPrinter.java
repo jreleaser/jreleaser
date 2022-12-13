@@ -17,6 +17,8 @@
  */
 package org.jreleaser.maven.plugin.internal;
 
+import org.jreleaser.model.internal.JReleaserModelPrinter;
+
 import java.io.PrintWriter;
 
 import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
@@ -26,8 +28,8 @@ import static org.apache.maven.shared.utils.logging.MessageUtils.isColorEnabled;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class JReleaserModelPrinter extends org.jreleaser.model.internal.JReleaserModelPrinter {
-    public JReleaserModelPrinter(PrintWriter out) {
+public class MavenJReleaserModelPrinter extends JReleaserModelPrinter {
+    public MavenJReleaserModelPrinter(PrintWriter out) {
         super(out);
     }
 

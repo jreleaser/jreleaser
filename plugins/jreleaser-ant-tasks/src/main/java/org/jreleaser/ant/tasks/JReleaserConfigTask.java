@@ -17,7 +17,7 @@
  */
 package org.jreleaser.ant.tasks;
 
-import org.jreleaser.ant.tasks.internal.JReleaserModelPrinter;
+import org.jreleaser.ant.tasks.internal.AntJReleaserModelPrinter;
 import org.jreleaser.engine.context.ModelValidator;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
@@ -58,7 +58,7 @@ public class JReleaserConfigTask extends AbstractPlatformAwareJReleaserTask {
     @Override
     protected void doExecute(JReleaserContext context) {
         ModelValidator.validate(context);
-        new JReleaserModelPrinter(new PrintWriter(System.out, true))
+        new AntJReleaserModelPrinter(new PrintWriter(System.out, true))
             .print(context.getModel().asMap(full));
         context.report();
     }

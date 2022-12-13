@@ -24,6 +24,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.jreleaser.logging.JReleaserLogger
+import org.kordamp.gradle.util.AnsiConsole
 
 import java.nio.file.Files
 import java.nio.file.Path

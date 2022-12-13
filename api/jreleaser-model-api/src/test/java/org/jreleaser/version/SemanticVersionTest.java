@@ -59,7 +59,7 @@ public class SemanticVersionTest {
         assertThat(version.hashCode(), equalTo(version.hashCode()));
         Assertions.assertTrue(ComparatorUtils.greaterThanOrEqualTo(version, version));
         Assertions.assertTrue(ComparatorUtils.lessThanOrEqualTo(version, version));
-        assertThat(version.compareTo(version), equalTo(0));
+        assertThat(version.compareTo(SemanticVersion.of(input)), equalTo(0));
     }
 
     @ParameterizedTest

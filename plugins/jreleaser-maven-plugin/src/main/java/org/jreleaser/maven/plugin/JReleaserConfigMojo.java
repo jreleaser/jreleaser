@@ -22,7 +22,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.jreleaser.engine.context.ModelValidator;
-import org.jreleaser.maven.plugin.internal.JReleaserModelPrinter;
+import org.jreleaser.maven.plugin.internal.MavenJReleaserModelPrinter;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 
@@ -77,7 +77,7 @@ public class JReleaserConfigMojo extends AbstractPlatformAwareJReleaserMojo {
 
         JReleaserContext context = createContext();
         ModelValidator.validate(context);
-        new JReleaserModelPrinter(new PrintWriter(System.out, true))
+        new MavenJReleaserModelPrinter(new PrintWriter(System.out, true))
             .print(context.getModel().asMap(full));
         context.report();
     }
