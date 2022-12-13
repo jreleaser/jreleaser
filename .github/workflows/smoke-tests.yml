@@ -1,10 +1,8 @@
 name: SmokeTests
 
 on:
-  workflow_run:
-    workflows: [EarlyAccess]
-    types:
-      - completed
+  push:
+    branches: [ main ]
 
 env:
   JAVA_VERSION: '11'
@@ -219,7 +217,7 @@ jobs:
       - name: Assemble
         shell: bash
         run: |
-          ant jreleaser-assemble
+          ant ${{ env.JAVA_OPTS }} jreleaser-assemble
         env:
           JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
@@ -238,7 +236,7 @@ jobs:
       - name: Full Release
         shell: bash
         run: |
-          ant ${{ matrix.job.args }} jreleaser-full-release
+          ant  ${{ env.JAVA_OPTS }} ${{ matrix.job.args }} jreleaser-full-release
         env:
           JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
@@ -488,7 +486,7 @@ jobs:
         env:
           JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
-          JAVA_OPTS: '-javaagent:jacoco/jacocoagent.jar=includes=*jreleaser*,destfile=jreleaser-maven-${{ runner.os }}-${{ matrix.job.sign }}.exec'
+          MAVEN_OPTS: '-javaagent:jacoco/jacocoagent.jar=includes=*jreleaser*,destfile=jreleaser-maven-${{ runner.os }}-${{ matrix.job.sign }}.exec'
 
       - name: JReleaser assemble output
         if: always()
@@ -516,7 +514,7 @@ jobs:
           JRELEASER_S3_JRELEASER_BUCKET: ${{ secrets.S3_BUCKET }}
           JRELEASER_S3_JRELEASER_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY_ID }}
           JRELEASER_S3_JRELEASER_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
-          JAVA_OPTS: '-javaagent:jacoco/jacocoagent.jar=includes=*jreleaser*,destfile=jreleaser-maven-${{ runner.os }}-${{ matrix.job.sign }}.exec'
+          MAVEN_OPTS: '-javaagent:jacoco/jacocoagent.jar=includes=*jreleaser*,destfile=jreleaser-maven-${{ runner.os }}-${{ matrix.job.sign }}.exec'
 
       - name: JReleaser full-release output
         if: always()
@@ -548,6 +546,7 @@ jobs:
   unit-tests:
     needs: [ precheck ]
     if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
+    name: 'Unit Test ${{ matrix.os }}'
     strategy:
       fail-fast: false
       matrix:
@@ -653,11 +652,9 @@ jobs:
           verbose: true
 
       - name: Upload coverage to Coveralls
-        uses: coverallsapp/github-action@1.1.3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          flaf-name: Integration
-          path-to-lcov: build/reports/jacoco/aggregate/jacocoTestReport.xml
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
+        run: ./gradlew :coveralls
 
       - name: Cleanup build-cache
         if: always()
