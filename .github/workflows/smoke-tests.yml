@@ -1,8 +1,10 @@
 name: SmokeTests
 
 on:
-  push:
-    branches: [ main ]
+  workflow_run:
+    workflows: [EarlyAccess]
+    types:
+      - completed
 
 env:
   JAVA_VERSION: '11'
