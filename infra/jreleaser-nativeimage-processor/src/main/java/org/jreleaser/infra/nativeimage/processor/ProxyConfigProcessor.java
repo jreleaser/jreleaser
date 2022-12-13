@@ -17,13 +17,12 @@
  */
 package org.jreleaser.infra.nativeimage.processor;
 
-import org.jreleaser.infra.nativeimage.annotations.ProxyConfig;
 import org.kordamp.jipsy.annotations.ServiceProviderFor;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.Processor;
+import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedOptions;
-import java.lang.annotation.Annotation;
 
 /**
  * @author Andres Almiray
@@ -33,12 +32,8 @@ import java.lang.annotation.Annotation;
     ProxyConfigGenerator.OPTION_DISABLE
 })
 @ServiceProviderFor(Processor.class)
+@SupportedAnnotationTypes({"org.jreleaser.infra.nativeimage.annotations.ProxyConfig"})
 public class ProxyConfigProcessor extends AbstractCompositeGeneratorProcessor {
-    @Override
-    protected Class<? extends Annotation> getAnnotationClass() {
-        return ProxyConfig.class;
-    }
-
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);

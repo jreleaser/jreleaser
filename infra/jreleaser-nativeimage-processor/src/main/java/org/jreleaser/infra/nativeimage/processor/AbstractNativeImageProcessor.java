@@ -24,10 +24,8 @@ import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
-import java.lang.annotation.Annotation;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 import static org.jreleaser.infra.nativeimage.processor.ProcessorUtil.stacktrace;
 
@@ -44,16 +42,6 @@ abstract class AbstractNativeImageProcessor extends AbstractProcessor {
         } else {
             return ssv.value();
         }
-    }
-
-    @Override
-    public Set<String> getSupportedAnnotationTypes() {
-        Set<String> result = super.getSupportedAnnotationTypes();
-        if (!result.contains(getAnnotationClass().getCanonicalName())) {
-            result = new TreeSet<>(result);
-            result.add(getAnnotationClass().getCanonicalName());
-        }
-        return result;
     }
 
     @Override
@@ -87,8 +75,6 @@ abstract class AbstractNativeImageProcessor extends AbstractProcessor {
     }
 
     protected abstract void process(Context context);
-
-    protected abstract Class<? extends Annotation> getAnnotationClass();
 
     protected void fatalError(String msg) {
         processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "FATAL ERROR: " + msg);

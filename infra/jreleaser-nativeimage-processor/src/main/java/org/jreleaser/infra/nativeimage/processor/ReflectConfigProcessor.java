@@ -17,13 +17,12 @@
  */
 package org.jreleaser.infra.nativeimage.processor;
 
-import org.jreleaser.infra.nativeimage.annotations.NativeImage;
 import org.kordamp.jipsy.annotations.ServiceProviderFor;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.Processor;
+import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedOptions;
-import java.lang.annotation.Annotation;
 
 /**
  * @author Andres Almiray
@@ -33,12 +32,8 @@ import java.lang.annotation.Annotation;
     ReflectConfigGenerator.OPTION_DISABLE
 })
 @ServiceProviderFor(Processor.class)
+@SupportedAnnotationTypes({"org.jreleaser.infra.nativeimage.annotations.NativeImage"})
 public class ReflectConfigProcessor extends AbstractCompositeGeneratorProcessor {
-    @Override
-    protected Class<? extends Annotation> getAnnotationClass() {
-        return NativeImage.class;
-    }
-
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
