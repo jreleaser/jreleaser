@@ -31,6 +31,7 @@ import static java.util.Collections.unmodifiableMap;
 import static org.jreleaser.model.Constants.HIDE;
 import static org.jreleaser.model.Constants.KEY_TAG_NAME;
 import static org.jreleaser.model.Constants.UNSET;
+import static org.jreleaser.model.JReleaserOutput.nag;
 import static org.jreleaser.model.api.announce.TeamsAnnouncer.TYPE;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplate;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
@@ -40,6 +41,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.2.0
  */
+@Deprecated
 public final class TeamsAnnouncer extends AbstractAnnouncer<TeamsAnnouncer, org.jreleaser.model.api.announce.TeamsAnnouncer> {
     private String webhook;
     private String messageTemplate;
@@ -120,6 +122,17 @@ public final class TeamsAnnouncer extends AbstractAnnouncer<TeamsAnnouncer, org.
         super.merge(source);
         this.webhook = merge(this.webhook, source.webhook);
         this.messageTemplate = merge(this.messageTemplate, source.messageTemplate);
+
+        if (isSet()) {
+            nag("announce." + getName() + " is deprecated since 1.4.0 and will be removed in 2.0.0. Use announce.webhooks instead");
+        }
+    }
+
+    @Override
+    protected boolean isSet() {
+        return super.isSet() ||
+            isNotBlank(webhook) ||
+            isNotBlank(messageTemplate);
     }
 
     public String getResolvedMessageTemplate(JReleaserContext context, Map<String, Object> extraProps) {
@@ -159,5 +172,14 @@ public final class TeamsAnnouncer extends AbstractAnnouncer<TeamsAnnouncer, org.
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("webhook", isNotBlank(webhook) ? HIDE : UNSET);
         props.put("messageTemplate", messageTemplate);
+    }
+
+    public WebhookAnnouncer asWebhookAnnouncer() {
+        WebhookAnnouncer announcer = new WebhookAnnouncer();
+        announcer.setName(getName());
+        announcer.setWebhook(webhook);
+        announcer.setMessageTemplate(messageTemplate);
+        announcer.setStructuredMessage(false);
+        return announcer;
     }
 }

@@ -17,17 +17,10 @@
  */
 package org.jreleaser.sdk.gitter;
 
-import org.jreleaser.model.Constants;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.spi.announce.AnnounceException;
 import org.jreleaser.model.spi.announce.Announcer;
-import org.jreleaser.mustache.MustacheUtils;
-import org.jreleaser.sdk.commons.ClientUtils;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import static org.jreleaser.util.StringUtils.isNotBlank;
+import org.jreleaser.sdk.webhooks.WebhooksAnnouncer;
 
 /**
  * @author Andres Almiray
@@ -60,24 +53,13 @@ public class GitterAnnouncer implements Announcer<org.jreleaser.model.api.announ
 
     @Override
     public void announce() throws AnnounceException {
-        String message = "";
-        if (isNotBlank(gitter.getMessage())) {
-            message = gitter.getResolvedMessage(context);
-        } else {
-            Map<String, Object> props = new LinkedHashMap<>();
-            props.put(Constants.KEY_CHANGELOG, MustacheUtils.passThrough(context.getChangelog()));
-            context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
-            message = gitter.getResolvedMessageTemplate(context, props);
-        }
-
-        context.getLogger().info("message: {}", message);
-
-        if (!context.isDryrun()) {
-            ClientUtils.webhook(context.getLogger(),
-                gitter.getWebhook(),
-                gitter.getConnectTimeout(),
-                gitter.getReadTimeout(),
-                Message.of(message));
+        context.getLogger().setPrefix("webhook." + getName());
+        try {
+            WebhooksAnnouncer.announce(context, gitter.asWebhookAnnouncer(), false);
+        } catch (AnnounceException x) {
+            context.getLogger().warn(x.getMessage().trim());
+        } finally {
+            context.getLogger().restorePrefix();
         }
     }
 }

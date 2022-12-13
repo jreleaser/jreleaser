@@ -19,5 +19,5 @@ dependencies {
     compileOnly "org.kordamp.jipsy:jipsy-annotations:${jipsyVersion}"
     annotationProcessor "org.kordamp.jipsy:jipsy-processor:${jipsyVersion}"
 
-    api project(':jreleaser-java-sdk-commons')
+    api project(':jreleaser-webhooks-java-sdk')
 }

@@ -17,25 +17,17 @@
  */
 package org.jreleaser.sdk.mattermost;
 
-import org.jreleaser.model.Constants;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.spi.announce.AnnounceException;
 import org.jreleaser.model.spi.announce.Announcer;
-import org.jreleaser.mustache.MustacheUtils;
-import org.jreleaser.sdk.commons.ClientUtils;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import static org.jreleaser.util.StringUtils.isNotBlank;
+import org.jreleaser.sdk.webhooks.WebhooksAnnouncer;
 
 /**
  * @author Andres Almiray
  * @since 0.4.0
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
-public class
-MattermostAnnouncer implements Announcer<org.jreleaser.model.api.announce.MattermostAnnouncer> {
+public class MattermostAnnouncer implements Announcer<org.jreleaser.model.api.announce.MattermostAnnouncer> {
     private final JReleaserContext context;
     private final org.jreleaser.model.internal.announce.MattermostAnnouncer mattermost;
 
@@ -61,25 +53,13 @@ MattermostAnnouncer implements Announcer<org.jreleaser.model.api.announce.Matter
 
     @Override
     public void announce() throws AnnounceException {
-        String message = "";
-        if (isNotBlank(mattermost.getMessage())) {
-            message = mattermost.getResolvedMessage(context);
-        } else {
-            Map<String, Object> props = new LinkedHashMap<>();
-            props.put(Constants.KEY_CHANGELOG, MustacheUtils.passThrough(context.getChangelog()));
-            context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
-            message = mattermost.getResolvedMessageTemplate(context, props);
-        }
-
-        Object msg = mattermost.isStructuredMessage() ? Message.of(message) : message;
-        context.getLogger().info("message: {}", msg);
-
-        if (!context.isDryrun()) {
-            ClientUtils.webhook(context.getLogger(),
-                mattermost.getWebhook(),
-                mattermost.getConnectTimeout(),
-                mattermost.getReadTimeout(),
-                msg);
+        context.getLogger().setPrefix("webhook." + getName());
+        try {
+            WebhooksAnnouncer.announce(context, mattermost.asWebhookAnnouncer(), false);
+        } catch (AnnounceException x) {
+            context.getLogger().warn(x.getMessage().trim());
+        } finally {
+            context.getLogger().restorePrefix();
         }
     }
 }

@@ -28,13 +28,13 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.announce.WebhookAnnouncer;
 import org.jreleaser.model.spi.announce.AnnounceException;
 import org.jreleaser.model.spi.announce.Announcer;
-import org.jreleaser.mustache.MustacheUtils;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.util.CollectionUtils;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static org.jreleaser.mustache.MustacheUtils.passThrough;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -74,7 +74,7 @@ public class WebhooksAnnouncer implements Announcer<org.jreleaser.model.api.anno
             if (e.getValue().isEnabled()) {
                 context.getLogger().setPrefix("webhook." + e.getKey());
                 try {
-                    announce(e.getValue());
+                    announce(context, e.getValue(), false);
                 } catch (AnnounceException x) {
                     context.getLogger().warn(x.getMessage().trim());
                 } finally {
@@ -84,13 +84,17 @@ public class WebhooksAnnouncer implements Announcer<org.jreleaser.model.api.anno
         }
     }
 
-    public void announce(WebhookAnnouncer webhook) throws AnnounceException {
+    public static void announce(JReleaserContext context, WebhookAnnouncer webhook, boolean discreet) throws AnnounceException {
         String message = "";
         if (isNotBlank(webhook.getMessage())) {
             message = webhook.getResolvedMessage(context);
         } else {
             Map<String, Object> props = new LinkedHashMap<>();
-            props.put(Constants.KEY_CHANGELOG, MustacheUtils.passThrough(context.getChangelog()));
+            if (webhook.getName().equals("teams")) {
+                props.put(Constants.KEY_CHANGELOG, passThrough(convertLineEndings(context.getChangelog())));
+            } else {
+                props.put(Constants.KEY_CHANGELOG, passThrough(context.getChangelog()));
+            }
             context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
             message = webhook.getResolvedMessageTemplate(context, props);
         }
@@ -104,10 +108,14 @@ public class WebhooksAnnouncer implements Announcer<org.jreleaser.model.api.anno
             }
         }
 
-        context.getLogger().info("message: {}", message);
+        if (discreet) {
+            context.getLogger().info(RB.$("webhook.message.send"));
+        } else {
+            context.getLogger().info(message);
+        }
 
         if (!context.isDryrun()) {
-            fireAnnouncerEvent(ExecutionEvent.before(JReleaserCommand.ANNOUNCE.toStep()), webhook);
+            fireAnnouncerEvent(ExecutionEvent.before(JReleaserCommand.ANNOUNCE.toStep()), context, webhook);
 
             try {
                 ClientUtils.webhook(context.getLogger(),
@@ -116,21 +124,25 @@ public class WebhooksAnnouncer implements Announcer<org.jreleaser.model.api.anno
                     webhook.getReadTimeout(),
                     message);
 
-                fireAnnouncerEvent(ExecutionEvent.success(JReleaserCommand.ANNOUNCE.toStep()), webhook);
+                fireAnnouncerEvent(ExecutionEvent.success(JReleaserCommand.ANNOUNCE.toStep()), context, webhook);
             } catch (RuntimeException e) {
-                fireAnnouncerEvent(ExecutionEvent.failure(JReleaserCommand.ANNOUNCE.toStep(), e), webhook);
+                fireAnnouncerEvent(ExecutionEvent.failure(JReleaserCommand.ANNOUNCE.toStep(), e), context, webhook);
 
                 throw e;
             }
         }
     }
 
-    private void fireAnnouncerEvent(ExecutionEvent event, WebhookAnnouncer webhook) {
+    private static void fireAnnouncerEvent(ExecutionEvent event, JReleaserContext context, WebhookAnnouncer webhook) {
         try {
             context.fireAnnounceStepEvent(event, webhook.asImmutable());
         } catch (WorkflowListenerException e) {
             context.getLogger().error(RB.$("listener.failure", e.getListener().getClass().getName()));
             context.getLogger().trace(e);
         }
+    }
+
+    public static String convertLineEndings(String str) {
+        return str.replaceAll("\\n", "\\\\n\\\\n");
     }
 }

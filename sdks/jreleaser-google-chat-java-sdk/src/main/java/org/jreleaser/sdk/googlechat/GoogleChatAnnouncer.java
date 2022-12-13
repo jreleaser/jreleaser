@@ -17,17 +17,10 @@
  */
 package org.jreleaser.sdk.googlechat;
 
-import org.jreleaser.model.Constants;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.spi.announce.AnnounceException;
 import org.jreleaser.model.spi.announce.Announcer;
-import org.jreleaser.mustache.MustacheUtils;
-import org.jreleaser.sdk.commons.ClientUtils;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import static org.jreleaser.util.StringUtils.isNotBlank;
+import org.jreleaser.sdk.webhooks.WebhooksAnnouncer;
 
 /**
  * @author Anyul Rivas
@@ -38,7 +31,7 @@ public class GoogleChatAnnouncer implements Announcer<org.jreleaser.model.api.an
     private final JReleaserContext context;
     private final org.jreleaser.model.internal.announce.GoogleChatAnnouncer googleChat;
 
-    GoogleChatAnnouncer(JReleaserContext context) {
+    public GoogleChatAnnouncer(JReleaserContext context) {
         this.context = context;
         this.googleChat = context.getModel().getAnnounce().getGoogleChat();
     }
@@ -60,24 +53,13 @@ public class GoogleChatAnnouncer implements Announcer<org.jreleaser.model.api.an
 
     @Override
     public void announce() throws AnnounceException {
-        String message;
-        if (isNotBlank(googleChat.getMessage())) {
-            message = googleChat.getResolvedMessage(context);
-        } else {
-            Map<String, Object> props = new LinkedHashMap<>();
-            props.put(Constants.KEY_CHANGELOG, MustacheUtils.passThrough(context.getChangelog()));
-            context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
-            message = googleChat.getResolvedMessageTemplate(context, props);
-        }
-
-        context.getLogger().info("message: {}", message);
-
-        if (!context.isDryrun()) {
-            ClientUtils.webhook(context.getLogger(),
-                googleChat.getWebhook(),
-                googleChat.getConnectTimeout(),
-                googleChat.getReadTimeout(),
-                Message.of(message));
+        context.getLogger().setPrefix("webhook." + getName());
+        try {
+            WebhooksAnnouncer.announce(context, googleChat.asWebhookAnnouncer(), false);
+        } catch (AnnounceException x) {
+            context.getLogger().warn(x.getMessage().trim());
+        } finally {
+            context.getLogger().restorePrefix();
         }
     }
 }

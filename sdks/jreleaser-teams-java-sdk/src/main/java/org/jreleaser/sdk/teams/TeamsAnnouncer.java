@@ -17,17 +17,10 @@
  */
 package org.jreleaser.sdk.teams;
 
-import org.jreleaser.bundle.RB;
-import org.jreleaser.model.Constants;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.spi.announce.AnnounceException;
 import org.jreleaser.model.spi.announce.Announcer;
-import org.jreleaser.sdk.commons.ClientUtils;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import static org.jreleaser.mustache.MustacheUtils.passThrough;
+import org.jreleaser.sdk.webhooks.WebhooksAnnouncer;
 
 /**
  * @author Andres Almiray
@@ -60,23 +53,13 @@ public class TeamsAnnouncer implements Announcer<org.jreleaser.model.api.announc
 
     @Override
     public void announce() throws AnnounceException {
-        Map<String, Object> props = new LinkedHashMap<>();
-        props.put(Constants.KEY_CHANGELOG, passThrough(convertLineEndings(context.getChangelog())));
-        context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
-        String message = teams.getResolvedMessageTemplate(context, props);
-
-        context.getLogger().info(RB.$("webhook.message.send"));
-
-        if (!context.isDryrun()) {
-            ClientUtils.webhook(context.getLogger(),
-                teams.getWebhook(),
-                teams.getConnectTimeout(),
-                teams.getReadTimeout(),
-                message);
+        context.getLogger().setPrefix("webhook." + getName());
+        try {
+            WebhooksAnnouncer.announce(context, teams.asWebhookAnnouncer(), true);
+        } catch (AnnounceException x) {
+            context.getLogger().warn(x.getMessage().trim());
+        } finally {
+            context.getLogger().restorePrefix();
         }
-    }
-
-    public static String convertLineEndings(String str) {
-        return str.replaceAll("\\n", "\\\\n\\\\n");
     }
 }

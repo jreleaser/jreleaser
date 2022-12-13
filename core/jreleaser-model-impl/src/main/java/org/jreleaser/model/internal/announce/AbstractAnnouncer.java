@@ -53,6 +53,13 @@ public abstract class AbstractAnnouncer<S extends AbstractAnnouncer<S, A>, A ext
         setExtraProperties(merge(this.extraProperties, source.extraProperties));
     }
 
+    protected boolean isSet() {
+        return active != null ||
+            connectTimeout != null ||
+            readTimeout != null ||
+            !extraProperties.isEmpty();
+    }
+
     @Override
     public String getPrefix() {
         return name;

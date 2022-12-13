@@ -31,6 +31,7 @@ import static java.util.Collections.unmodifiableMap;
 import static org.jreleaser.model.Constants.HIDE;
 import static org.jreleaser.model.Constants.KEY_TAG_NAME;
 import static org.jreleaser.model.Constants.UNSET;
+import static org.jreleaser.model.JReleaserOutput.nag;
 import static org.jreleaser.model.api.announce.GitterAnnouncer.TYPE;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplate;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
@@ -41,6 +42,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.2.0
  */
+@Deprecated
 public final class GitterAnnouncer extends AbstractAnnouncer<GitterAnnouncer, org.jreleaser.model.api.announce.GitterAnnouncer> {
     private String webhook;
     private String message;
@@ -128,6 +130,18 @@ public final class GitterAnnouncer extends AbstractAnnouncer<GitterAnnouncer, or
         this.webhook = merge(this.webhook, source.webhook);
         this.message = merge(this.message, source.message);
         this.messageTemplate = merge(this.messageTemplate, source.messageTemplate);
+
+        if (isSet()) {
+            nag("announce." + getName() + " is deprecated since 1.4.0 and will be removed in 2.0.0. Use announce.webhooks instead");
+        }
+    }
+
+    @Override
+    protected boolean isSet() {
+        return super.isSet() ||
+            isNotBlank(webhook) ||
+            isNotBlank(message) ||
+            isNotBlank(messageTemplate);
     }
 
     public String getResolvedMessage(JReleaserContext context) {
@@ -182,5 +196,16 @@ public final class GitterAnnouncer extends AbstractAnnouncer<GitterAnnouncer, or
         props.put("webhook", isNotBlank(webhook) ? HIDE : UNSET);
         props.put("message", message);
         props.put("messageTemplate", messageTemplate);
+    }
+
+    public WebhookAnnouncer asWebhookAnnouncer() {
+        WebhookAnnouncer announcer = new WebhookAnnouncer();
+        announcer.setName(getName());
+        announcer.setWebhook(webhook);
+        announcer.setMessage(message);
+        announcer.setMessageTemplate(messageTemplate);
+        announcer.setStructuredMessage(true);
+        announcer.setMessageProperty("message");
+        return announcer;
     }
 }

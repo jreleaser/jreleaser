@@ -324,7 +324,7 @@ jobs:
           restore-keys: ${{ runner.os }}-gradlew-
 
       - name: Build
-        run: ./gradlew -Prelease=true -PreproducibleBuild=true clean build publishToMavenLocal -S
+        run: ./gradlew -Prelease=true -PreproducibleBuild=true build publishToMavenLocal -S
 
       - name: Prepare
         shell: bash
@@ -463,7 +463,7 @@ jobs:
           restore-keys: ${{ runner.os }}-gradlew-
 
       - name: Build
-        run: ./gradlew -Prelease=true -PreproducibleBuild=true clean build publishToMavenLocal -S
+        run: ./gradlew -Prelease=true -PreproducibleBuild=true build publishToMavenLocal -S
 
       - name: Prepare
         shell: bash
