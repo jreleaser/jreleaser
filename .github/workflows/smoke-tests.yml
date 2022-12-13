@@ -217,11 +217,11 @@ jobs:
       - name: Assemble
         shell: bash
         run: |
-          ant ${{ env.JAVA_OPTS }} jreleaser-assemble
+          ant jreleaser-assemble
         env:
           JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
-          JAVA_OPTS: '-javaagent:jacoco/jacocoagent.jar=includes=*jreleaser*,destfile=jreleaser-ant-${{ runner.os }}-${{ matrix.job.sign }}.exec'
+          ANT_OPTS: '-javaagent:jacoco/jacocoagent.jar=includes=*jreleaser*,destfile=jreleaser-ant-${{ runner.os }}-${{ matrix.job.sign }}.exec'
 
       - name: JReleaser assemble output
         if: always()
@@ -236,7 +236,7 @@ jobs:
       - name: Full Release
         shell: bash
         run: |
-          ant  ${{ env.JAVA_OPTS }} ${{ matrix.job.args }} jreleaser-full-release
+          ant ${{ matrix.job.args }} jreleaser-full-release
         env:
           JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
@@ -249,7 +249,7 @@ jobs:
           JRELEASER_S3_JRELEASER_BUCKET: ${{ secrets.S3_BUCKET }}
           JRELEASER_S3_JRELEASER_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY_ID }}
           JRELEASER_S3_JRELEASER_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
-          JAVA_OPTS: '-javaagent:jacoco/jacocoagent.jar=includes=*jreleaser*,destfile=jreleaser-ant-${{ runner.os }}-${{ matrix.job.sign }}.exec'
+          ANT_OPTS: '-javaagent:jacoco/jacocoagent.jar=includes=*jreleaser*,destfile=jreleaser-ant-${{ runner.os }}-${{ matrix.job.sign }}.exec'
 
       - name: JReleaser full-release output
         if: always()
