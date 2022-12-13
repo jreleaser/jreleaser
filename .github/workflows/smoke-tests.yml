@@ -581,7 +581,6 @@ jobs:
 
       - name: Test
         run: |
-          ./gradlew test pitest jacocoTestReport
           ./gradlew :aggregateJacocoReport
 
       - name: Rename JaCoCo execution data

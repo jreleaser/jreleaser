@@ -43,15 +43,4 @@ jobs:
 
       - name: Build
         run: |
-          ./gradlew build pitest jacocoTestReport 
-          ./gradlew :aggregateJacocoReport
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: build/reports/jacoco/aggregate/jacocoTestReport.xml
-          flags: pr
-          fail_ci_if_error: false
-          name: jreleaser-pr
-          verbose: true
+          ./gradlew build -S
