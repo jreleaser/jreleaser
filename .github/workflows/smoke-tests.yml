@@ -10,7 +10,11 @@ env:
 
 permissions:
   contents: read
-  actions: write
+  actions: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   precheck:
@@ -21,11 +25,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-
-      - name: Cancel previous run
-        uses: styfle/cancel-workflow-action@0.11.0
-        with:
-          access_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Version
         id: vars
@@ -83,7 +82,7 @@ jobs:
         run: |
           unzip -qo plugins/jreleaser/build/distributions/jreleaser-${{ needs.precheck.outputs.VERSION }}.zip
           cp .github/test-files/jreleaser-${{ matrix.job.sign }}.yml jreleaser.yml
-          sh ./github/scripts/jacoco-instrument.sh
+          sh .github/scripts/jacoco-instrument.sh
 
       - name: Assemble
         shell: bash
@@ -201,7 +200,7 @@ jobs:
           sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" build.xml
           mkdir lib
           unzip -dlib -qo plugins/jreleaser-ant-tasks/build/distributions/jreleaser-ant-tasks-${{ needs.precheck.outputs.VERSION }}.zip
-          sh ./github/scripts/jacoco-instrument.sh
+          sh .github/scripts/jacoco-instrument.sh
 
       - name: Assemble
         shell: bash
@@ -319,7 +318,7 @@ jobs:
           cp .github/test-files/build-${{ matrix.job.sign }}.gradle build.gradle
           sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" settings.gradle
           sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" gradle.properties
-          sh ./github/scripts/jacoco-instrument.sh
+          sh .github/scripts/jacoco-instrument.sh
 
       - name: Assemble
         shell: bash
@@ -451,7 +450,7 @@ jobs:
         run: |
           cp .github/test-files/pom-${{ matrix.job.sign }}.xml pom.xml
           sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" pom.xml
-          sh ./github/scripts/jacoco-instrument.sh
+          sh .github/scripts/jacoco-instrument.sh
 
       - name: Cache Maven packages
         uses: actions/cache@v3
@@ -524,8 +523,57 @@ jobs:
           rm -rf ~/.m2/repository/org/jreleaser
           rm -rf ~/.gradle/caches/modules-2/files-2.1/org.jreleaser
 
+  unit-tests:
+    needs: [ precheck ]
+    if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRO }}
+
+      - name: Cache Gradle
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}-${{ hashFiles('**/gradle.properties') }}
+          restore-keys: ${{ runner.os }}-gradle-
+
+      - name: Cache Gradle wrapper
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradlew-${{ hashFiles('**/gradlew') }}
+          restore-keys: ${{ runner.os }}-gradlew-
+
+      - name: Test
+        run: |
+          ./gradlew test pitest jacocoTestReport
+          ./gradlew :aggregateJacocoReport
+
+      - name: Rename JaCoCo execution data
+        shell: bash
+        run: |
+          mv build/jacoco/aggregate.exec aggregate-${{ runner.os }}.exec
+
+      - name: JaCoCo upload
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          retention-days: 1
+          name: jacoco
+          path: '*.exec'
+
   jacoco:
-    needs: [ build-cli, build-ant, build-gradle, build-maven ]
+    needs: [ build-cli, build-ant, build-gradle, build-maven, unit-tests ]
     if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
     name: Jacoco
     runs-on: ubuntu-latest
@@ -563,10 +611,10 @@ jobs:
           path: jacoco
 
       - name: JaCoCo merge
-        run: sh ./github/scripts/jacoco-merge.sh
+        run: sh .github/scripts/jacoco-merge.sh
 
       - name: JaCoCo report
-        run: sh ./github/scripts/jacoco-report.sh
+        run: sh .github/scripts/jacoco-report.sh
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
