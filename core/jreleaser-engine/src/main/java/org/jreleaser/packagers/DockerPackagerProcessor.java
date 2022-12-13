@@ -261,7 +261,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
 
         for (Artifact artifact : artifacts) {
             Path artifactPath = artifact.getEffectivePath(context, distribution);
-            if (distribution.getType() == org.jreleaser.model.Distribution.DistributionType.NATIVE_IMAGE) {
+            if (distribution.getType() == org.jreleaser.model.Distribution.DistributionType.BINARY) {
                 if (artifactPath.toString().endsWith(".zip")) {
                     FileUtils.unpackArchive(artifactPath, assemblyDirectory);
                 } else {

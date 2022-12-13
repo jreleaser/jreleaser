@@ -50,7 +50,6 @@ import static java.util.stream.Collectors.toSet;
 import static org.jreleaser.model.Distribution.DistributionType.BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JLINK;
-import static org.jreleaser.model.Distribution.DistributionType.NATIVE_IMAGE;
 import static org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR;
 import static org.jreleaser.model.api.packagers.DockerPackager.SKIP_DOCKER;
 import static org.jreleaser.util.CollectionUtils.setOf;
@@ -71,7 +70,6 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
         SUPPORTED.put(BINARY, extensions);
         SUPPORTED.put(JAVA_BINARY, extensions);
         SUPPORTED.put(JLINK, extensions);
-        SUPPORTED.put(NATIVE_IMAGE, extensions);
         SUPPORTED.put(SINGLE_JAR, setOf(JAR.extension()));
     }
 

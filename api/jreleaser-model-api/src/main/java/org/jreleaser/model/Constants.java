@@ -344,4 +344,6 @@ public interface Constants {
     String KEY_PACKAGE_DIRECTORY = "packageDirectory";
     String KEY_DISTRIBUTION_PREPARE_DIRECTORY = "distributionPrepareDirectory";
     String KEY_DISTRIBUTION_PACKAGE_DIRECTORY = "distributionPackageDirectory";
+
+    String KEY_GRAALVM_NAGIVE_IMAGE = "graalVMNativeImage";
 }

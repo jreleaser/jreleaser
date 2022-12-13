@@ -40,7 +40,6 @@ import static java.util.stream.Collectors.toList;
 import static org.jreleaser.model.Distribution.DistributionType.BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JLINK;
-import static org.jreleaser.model.Distribution.DistributionType.NATIVE_IMAGE;
 import static org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR;
 import static org.jreleaser.model.api.packagers.AppImagePackager.SKIP_APPIMAGE;
 import static org.jreleaser.model.api.packagers.AppImagePackager.TYPE;
@@ -74,7 +73,6 @@ public final class AppImagePackager extends AbstractRepositoryPackager<org.jrele
         SUPPORTED.put(BINARY, extensions);
         SUPPORTED.put(JAVA_BINARY, extensions);
         SUPPORTED.put(JLINK, extensions);
-        SUPPORTED.put(NATIVE_IMAGE, extensions);
         SUPPORTED.put(SINGLE_JAR, setOf(JAR.extension()));
     }
 

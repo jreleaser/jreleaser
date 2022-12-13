@@ -178,7 +178,7 @@ public class SdkmanAnnouncer implements Announcer<org.jreleaser.model.api.announ
     private boolean isDistributionSupported(Distribution distribution) {
         return (distribution.getType() == org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY ||
             distribution.getType() == org.jreleaser.model.Distribution.DistributionType.JLINK ||
-            distribution.getType() == org.jreleaser.model.Distribution.DistributionType.NATIVE_IMAGE) &&
+            distribution.getType() == org.jreleaser.model.Distribution.DistributionType.BINARY) &&
             !isTrue(distribution.getExtraProperties().get("skipSdkman"));
     }
 }

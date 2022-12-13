@@ -42,6 +42,7 @@ project:
     groupId: org.jreleaser
     version: 8
     multiProject: true
+    mainClass: org.jreleaser.cli.Main
   tags:
     - 'jreleaser'
     - 'release'
@@ -150,7 +151,6 @@ assemble:
       active: ALWAYS
       java:
         version: 11
-        mainClass: org.jreleaser.cli.Main
       imageName: '{{distributionName}}-{{projectEffectiveVersion}}'
       executable: jreleaser
       jdeps:
@@ -219,7 +219,6 @@ assemble:
       active: ALWAYS
       java:
         version: 17
-        mainClass: org.jreleaser.cli.Main
       imageName: '{{distributionName}}-{{projectEffectiveVersion}}'
       executable: jreleaser
       mainJar:
@@ -244,8 +243,6 @@ assemble:
 
 distributions:
   jreleaser:
-    java:
-      mainClass: org.jreleaser.cli.Main
     flatpak:
       continueOnError: true
       active: ALWAYS

@@ -35,7 +35,6 @@ import static java.util.Collections.unmodifiableSet;
 import static org.jreleaser.model.Distribution.DistributionType.BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JLINK;
-import static org.jreleaser.model.Distribution.DistributionType.NATIVE_IMAGE;
 import static org.jreleaser.model.api.packagers.GofishPackager.SKIP_GOFISH;
 import static org.jreleaser.model.api.packagers.GofishPackager.TYPE;
 import static org.jreleaser.util.CollectionUtils.setOf;
@@ -67,7 +66,6 @@ public final class GofishPackager extends AbstractRepositoryPackager<org.jreleas
         SUPPORTED.put(BINARY, extensions);
         SUPPORTED.put(JAVA_BINARY, extensions);
         SUPPORTED.put(JLINK, extensions);
-        SUPPORTED.put(NATIVE_IMAGE, extensions);
     }
 
     private final GofishRepository repository = new GofishRepository();

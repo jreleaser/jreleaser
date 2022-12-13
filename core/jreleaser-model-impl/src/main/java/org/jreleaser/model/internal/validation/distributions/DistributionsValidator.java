@@ -128,7 +128,7 @@ public abstract class DistributionsValidator extends Validator {
         if (isBlank(distribution.getExecutable().getWindowsExtension())) {
             switch (distribution.getType()) {
                 case BINARY:
-                case NATIVE_IMAGE:
+                case NATIVE_PACKAGE:
                     distribution.getExecutable().setWindowsExtension("exe");
                     break;
                 default:
@@ -252,7 +252,7 @@ public abstract class DistributionsValidator extends Validator {
             distribution.getJava().setMainClass(project.getJava().getMainClass());
         }
 
-        if (distribution.getType() == org.jreleaser.model.Distribution.DistributionType.NATIVE_IMAGE) {
+        if (distribution.getType() == org.jreleaser.model.Distribution.DistributionType.BINARY) {
             return true;
         }
 
@@ -296,7 +296,6 @@ public abstract class DistributionsValidator extends Validator {
         // validate distribution type
         if (distribution.getType() == org.jreleaser.model.Distribution.DistributionType.BINARY ||
             distribution.getType() == org.jreleaser.model.Distribution.DistributionType.JLINK ||
-            distribution.getType() == org.jreleaser.model.Distribution.DistributionType.NATIVE_IMAGE ||
             distribution.getType() == org.jreleaser.model.Distribution.DistributionType.NATIVE_PACKAGE) {
             // ensure all artifacts define a platform
 

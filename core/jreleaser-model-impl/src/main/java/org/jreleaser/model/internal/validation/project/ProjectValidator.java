@@ -18,6 +18,7 @@
 package org.jreleaser.model.internal.validation.project;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.model.Constants;
 import org.jreleaser.model.LicenseId;
 import org.jreleaser.model.VersionPattern;
 import org.jreleaser.model.api.JReleaserContext.Mode;
@@ -39,6 +40,7 @@ import static org.jreleaser.model.api.project.Project.PROJECT_VERSION_PATTERN;
 import static org.jreleaser.util.FileUtils.findLicenseFile;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.StringUtils.isTrue;
 
 /**
  * @author Andres Almiray
@@ -100,15 +102,20 @@ public abstract class ProjectValidator extends Validator {
             }
         }
 
+        // TODO: NATIVE_PACKAGE may not necessarily be related to Java
         boolean javaDistributions = context.getModel().getDistributions().values().stream()
             .map(Distribution::getType)
             .anyMatch(type -> type == org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY ||
                 type == org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR ||
-                type == org.jreleaser.model.Distribution.DistributionType.NATIVE_IMAGE ||
-                type == org.jreleaser.model.Distribution.DistributionType.NATIVE_PACKAGE);
+                type == org.jreleaser.model.Distribution.DistributionType.NATIVE_PACKAGE) ||
+            context.getModel().getDistributions().values().stream()
+                .anyMatch(distribution -> distribution.getType() == org.jreleaser.model.Distribution.DistributionType.BINARY &&
+                    isTrue(distribution.getExtraProperties().get(Constants.KEY_GRAALVM_NAGIVE_IMAGE)));
+
         boolean javaAssemblers = !context.getModel().getAssemble().getJlink().isEmpty() ||
             !context.getModel().getAssemble().getJpackage().isEmpty() ||
             !context.getModel().getAssemble().getNativeImage().isEmpty();
+
         boolean nexusDeployers = !context.getModel().getDeploy().getMaven().getNexus2().isEmpty();
 
         if (javaAssemblers || nexusDeployers || mode.validateConfig() && javaDistributions) {

@@ -34,9 +34,9 @@ import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
 import static org.jreleaser.model.Constants.HIDE;
 import static org.jreleaser.model.Constants.UNSET;
+import static org.jreleaser.model.Distribution.DistributionType.BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JLINK;
-import static org.jreleaser.model.Distribution.DistributionType.NATIVE_IMAGE;
 import static org.jreleaser.model.api.packagers.SdkmanPackager.SKIP_SDKMAN;
 import static org.jreleaser.model.api.packagers.SdkmanPackager.TYPE;
 import static org.jreleaser.util.CollectionUtils.setOf;
@@ -55,7 +55,7 @@ public final class SdkmanPackager extends AbstractPackager<org.jreleaser.model.a
         Set<String> extensions = setOf(ZIP.extension());
         SUPPORTED.put(JAVA_BINARY, extensions);
         SUPPORTED.put(JLINK, extensions);
-        SUPPORTED.put(NATIVE_IMAGE, extensions);
+        SUPPORTED.put(BINARY, extensions);
     }
 
     private Sdkman.Command command;

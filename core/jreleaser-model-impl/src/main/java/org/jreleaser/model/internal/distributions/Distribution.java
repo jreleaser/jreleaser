@@ -65,6 +65,7 @@ import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_NAME;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_STEREOTYPE;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_TAGS_BY_COMMA;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_TAGS_BY_SPACE;
+import static org.jreleaser.model.JReleaserOutput.nag;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
 import static org.jreleaser.util.CollectionUtils.safePut;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -342,7 +343,12 @@ public final class Distribution extends Packagers<Distribution> implements Domai
     }
 
     public void setType(org.jreleaser.model.Distribution.DistributionType type) {
-        this.type = type;
+        if (type == org.jreleaser.model.Distribution.DistributionType.NATIVE_IMAGE) {
+            nag("NATIVE_IMAGE is deprecated since 1.4.0 and will be removed in 2.0.0. Use BINARY instead");
+            this.type = org.jreleaser.model.Distribution.DistributionType.BINARY;
+        } else {
+            this.type = type;
+        }
     }
 
     public void setType(String type) {

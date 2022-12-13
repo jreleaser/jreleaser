@@ -261,7 +261,7 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
 
     @Override
     public Distribution.DistributionType getDistributionType() {
-        return Distribution.DistributionType.NATIVE_IMAGE;
+        return Distribution.DistributionType.BINARY;
     }
 
     @Override
