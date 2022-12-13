@@ -15,4 +15,5 @@ tmp/
 .classpath
 .project
 .settings
+.oci
 /bin/

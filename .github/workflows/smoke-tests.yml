@@ -9,6 +9,9 @@ on:
 env:
   JAVA_VERSION: '11'
   JAVA_DISTRO: 'zulu'
+  CI: true
+  GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+  JRELEASER_OCI_COMPARTMENTID: ${{ secrets.JRELEASER_OCI_COMPARTMENTID }}
 
 permissions:
   contents: read
@@ -56,6 +59,10 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
+      - name: Decrypt secrets
+        shell: bash
+        run: sh .github/scripts/decrypt-secrets.sh
 
       - name: Setup Java
         uses: actions/setup-java@v3
@@ -171,6 +178,10 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
+      - name: Decrypt secrets
+        shell: bash
+        run: sh .github/scripts/decrypt-secrets.sh
 
       - name: Setup Java
         uses: actions/setup-java@v3
@@ -289,6 +300,10 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
+      - name: Decrypt secrets
+        shell: bash
+        run: sh .github/scripts/decrypt-secrets.sh
 
       - name: Setup Java
         uses: actions/setup-java@v3
@@ -425,6 +440,10 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Decrypt secrets
+        shell: bash
+        run: sh .github/scripts/decrypt-secrets.sh
+
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
@@ -536,6 +555,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
+
+      - name: Decrypt secrets
+        shell: bash
+        run: sh .github/scripts/decrypt-secrets.sh
 
       - name: Setup Java
         uses: actions/setup-java@v3
