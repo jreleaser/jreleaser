@@ -7,6 +7,8 @@
 # REPO_NAME
 # PROVENANCE_FILE: xxx.intoto.jsonl
 
+set -e
+
 echo "⬇️ Fetching release id for ${TAG}"
 curl -s \
   -H "Accept: application/vnd.github+json" \

@@ -4,7 +4,7 @@
 # VERSION
 # GITHUB_BOT_EMAIL
 
-VERSION=${{ needs.precheck.outputs.VERSION }}
+set -e
 
 git merge origin/development
 sed -i -e "s/^\version\:\ early-access.*/version: latest/g" docs/antora.yml
