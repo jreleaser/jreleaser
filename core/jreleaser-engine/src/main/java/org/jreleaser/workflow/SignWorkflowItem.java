@@ -21,8 +21,8 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.engine.sign.Signer;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.api.JReleaserCommand;
-import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.api.signing.SigningException;
+import org.jreleaser.model.internal.JReleaserContext;
 
 /**
  * @author Andres Almiray

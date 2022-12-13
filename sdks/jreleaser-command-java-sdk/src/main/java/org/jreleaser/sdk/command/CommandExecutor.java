@@ -19,6 +19,7 @@ package org.jreleaser.sdk.command;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.logging.JReleaserLogger;
+import org.jreleaser.util.IoUtils;
 import org.zeroturnaround.exec.ProcessExecutor;
 import org.zeroturnaround.exec.ProcessInitException;
 
@@ -183,7 +184,7 @@ public class CommandExecutor {
     }
 
     private void log(ByteArrayOutputStream stream, Consumer<? super String> consumer) {
-        String str = stream.toString();
+        String str = IoUtils.toString(stream);
         if (isBlank(str)) return;
 
         Arrays.stream(str.split(System.lineSeparator()))

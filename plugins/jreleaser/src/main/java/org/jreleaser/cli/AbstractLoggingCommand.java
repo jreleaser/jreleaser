@@ -33,6 +33,7 @@ import java.util.Locale;
 import java.util.concurrent.Callable;
 
 import static org.jreleaser.model.JReleaserOutput.JRELEASER_QUIET;
+import static org.jreleaser.util.IoUtils.newPrintWriter;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -89,9 +90,8 @@ abstract class AbstractLoggingCommand extends AbstractCommand implements Callabl
     protected PrintWriter createTracer() {
         try {
             Files.createDirectories(getOutputDirectory());
-            return new PrintWriter(new FileOutputStream(
-                getOutputDirectory().resolve("trace.log").toFile()),
-                true);
+            return newPrintWriter(new FileOutputStream(
+                    getOutputDirectory().resolve("trace.log").toFile()));
         } catch (IOException e) {
             throw new IllegalStateException($("ERROR_trace_file_init"), e);
         }

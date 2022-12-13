@@ -22,6 +22,8 @@ import org.gradle.api.Project
 import org.jreleaser.model.internal.JReleaserModelPrinter
 import org.kordamp.gradle.util.AnsiConsole
 
+import static org.jreleaser.util.IoUtils.newPrintWriter
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -31,7 +33,7 @@ class GradleJReleaserModelPrinter extends JReleaserModelPrinter {
     private final AnsiConsole console
 
     GradleJReleaserModelPrinter(Project project) {
-        this(project, new PrintWriter(System.out, true))
+        this(project, newPrintWriter(System.out))
     }
 
     GradleJReleaserModelPrinter(Project project, PrintWriter out) {

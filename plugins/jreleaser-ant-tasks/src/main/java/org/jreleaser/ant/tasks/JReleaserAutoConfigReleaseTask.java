@@ -47,6 +47,7 @@ import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 import static org.jreleaser.util.FileUtils.resolveOutputDirectory;
+import static org.jreleaser.util.IoUtils.newPrintWriter;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -275,7 +276,7 @@ public class JReleaserAutoConfigReleaseTask extends Task {
 
     @Override
     public void execute() throws BuildException {
-        Banner.display(new PrintWriter(System.out, true));
+        Banner.display(newPrintWriter(System.out));
 
         basedir();
         initLogger();
@@ -353,7 +354,7 @@ public class JReleaserAutoConfigReleaseTask extends Task {
     private PrintWriter createTracer() {
         try {
             Files.createDirectories(getOutputDirectory());
-            return new PrintWriter(new FileOutputStream(
+            return newPrintWriter(new FileOutputStream(
                 getOutputDirectory().resolve("trace.log").toFile()));
         } catch (IOException e) {
             throw new IllegalStateException("Could not initialize trace file", e);

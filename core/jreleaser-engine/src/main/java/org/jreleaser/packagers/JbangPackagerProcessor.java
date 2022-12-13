@@ -32,6 +32,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.jreleaser.model.Constants.KEY_JBANG_ALIAS_NAME;
 import static org.jreleaser.model.Constants.KEY_JBANG_CATALOG_REPO_CLONE_URL;
 import static org.jreleaser.model.Constants.KEY_JBANG_CATALOG_REPO_URL;
@@ -183,7 +184,7 @@ public class JbangPackagerProcessor extends AbstractRepositoryPackagerProcessor<
             JsonNode merged = JsonUtils.merge(previous, current);
 
             // write merged catalog
-            Files.write(catalog, merged.toPrettyString().getBytes());
+            Files.write(catalog, merged.toPrettyString().getBytes(UTF_8));
         } else {
             // copy all files
             super.prepareWorkingCopy(props, directory, distribution);

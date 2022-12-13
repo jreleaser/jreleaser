@@ -35,6 +35,8 @@ import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static org.jreleaser.util.IoUtils.newPrintWriter;
+
 /**
  * Generate a packager/announcer template.
  *
@@ -145,7 +147,7 @@ public class JReleaserTemplateMojo extends AbstractMojo {
     protected PrintWriter createTracer() throws MojoExecutionException {
         try {
             java.nio.file.Files.createDirectories(outputDirectory.toPath());
-            return new PrintWriter(new FileOutputStream(outputDirectory.toPath().resolve("trace.log").toFile()));
+            return newPrintWriter(new FileOutputStream(outputDirectory.toPath().resolve("trace.log").toFile()));
         } catch (IOException e) {
             throw new MojoExecutionException("Could not initialize trace file", e);
         }

@@ -450,9 +450,9 @@ public final class FileUtils {
 
     private static String getLinkName(ArchiveInputStream in, ArchiveEntry entry) throws IOException {
         if (entry instanceof ZipArchiveEntry) {
-            try (OutputStream o = new ByteArrayOutputStream()) {
+            try (ByteArrayOutputStream o = new ByteArrayOutputStream()) {
                 IOUtils.copy(in, o);
-                return o.toString();
+                return IoUtils.toString(o);
             }
         } else if (entry instanceof TarArchiveEntry) {
             return ((TarArchiveEntry) entry).getLinkName();

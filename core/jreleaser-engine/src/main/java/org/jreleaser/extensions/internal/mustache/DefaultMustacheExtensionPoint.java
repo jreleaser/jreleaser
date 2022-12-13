@@ -43,6 +43,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.Files.readAllBytes;
 import static org.jreleaser.util.ChecksumUtils.checksum;
 
@@ -184,11 +185,11 @@ public final class DefaultMustacheExtensionPoint implements MustacheExtensionPoi
         public String apply(Object input) {
             try {
                 if (input instanceof Path) {
-                    return new String(Files.readAllBytes((Path) input));
+                    return new String(Files.readAllBytes((Path) input), UTF_8);
                 } else if (input instanceof File) {
-                    return new String(Files.readAllBytes(((File) input).toPath()));
+                    return new String(Files.readAllBytes(((File) input).toPath()), UTF_8);
                 } else if (input instanceof CharSequence) {
-                    return new String(Files.readAllBytes(Paths.get(String.valueOf(input).trim())));
+                    return new String(Files.readAllBytes(Paths.get(String.valueOf(input).trim())), UTF_8);
                 }
             } catch (IOException e) {
                 throw new IllegalStateException(RB.$("ERROR_unexpected_file_read", input), e);

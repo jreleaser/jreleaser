@@ -35,6 +35,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 /**
  * @author Andres Almiray
  * @since 0.3.0
@@ -84,8 +86,8 @@ public class ArtifactoryArtifactUploader extends AbstractArtifactUploader<org.jr
                     switch (uploader.resolveAuthorization()) {
                         case BASIC:
                             String auth = username + ":" + password;
-                            byte[] encodedAuth = Base64.getEncoder().encode(auth.getBytes());
-                            auth = new String(encodedAuth);
+                            byte[] encodedAuth = Base64.getEncoder().encode(auth.getBytes(UTF_8));
+                            auth = new String(encodedAuth, UTF_8);
                             headers.put("Authorization", "Basic " + auth);
                             break;
                         case BEARER:

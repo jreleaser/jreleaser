@@ -35,6 +35,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
@@ -193,6 +194,6 @@ abstract class AbstractTemplatePackagerProcessor<T extends TemplatePackager<?>> 
     }
 
     protected void writeFile(String content, Path outputFile) throws PackagerProcessingException {
-        writeFile(content.getBytes(), outputFile);
+        writeFile(content.getBytes(UTF_8), outputFile);
     }
 }

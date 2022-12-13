@@ -198,6 +198,7 @@ public class AppImagePackagerProcessor extends AbstractRepositoryPackagerProcess
         writeFile(content, outputFile);
     }
 
+    @Override
     protected void writeFile(Project project, Distribution distribution, InputStream inputStream, Map<String, Object> props, Path outputDirectory, String fileName) throws PackagerProcessingException {
         Path outputFile = outputDirectory.resolve(fileName);
 

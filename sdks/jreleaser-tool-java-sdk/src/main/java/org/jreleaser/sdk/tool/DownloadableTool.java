@@ -23,6 +23,7 @@ import org.jreleaser.sdk.command.Command;
 import org.jreleaser.sdk.command.CommandException;
 import org.jreleaser.sdk.command.CommandExecutor;
 import org.jreleaser.util.FileUtils;
+import org.jreleaser.util.IoUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -131,7 +132,6 @@ public class DownloadableTool {
             .arg(properties.getProperty(COMMAND_VERSION));
 
         try {
-
             String verify = properties.getProperty(COMMAND_VERIFY).trim();
             Map<String, Object> props = props();
             verify = resolveTemplate(verify, props);
@@ -142,13 +142,12 @@ public class DownloadableTool {
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 ByteArrayOutputStream err = new ByteArrayOutputStream();
                 executeCommandCapturing(command, out, err);
-                return pattern.matcher(out.toString()).find() || pattern.matcher(err.toString()).find();
+                return pattern.matcher(IoUtils.toString(out)).find() || pattern.matcher(IoUtils.toString(err)).find();
             } else {
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 executeCommandCapturing(command, out, null);
-                return pattern.matcher(out.toString()).find();
+                return pattern.matcher(IoUtils.toString(out)).find();
             }
-
         } catch (CommandException e) {
             if (null != e.getCause()) {
                 logger.debug(e.getCause().getMessage());

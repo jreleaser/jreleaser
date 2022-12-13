@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -46,7 +48,7 @@ public class Changelog {
 
         if (Files.exists(changelogFile)) {
             try {
-                return new String(Files.readAllBytes(changelogFile)).trim();
+                return new String(Files.readAllBytes(changelogFile), UTF_8).trim();
             } catch (IOException e) {
                 context.getLogger().warn(RB.$("ERROR_cannot_read_changelog"),
                     context.relativizeToBasedir(changelogFile));

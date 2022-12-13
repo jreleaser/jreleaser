@@ -23,6 +23,8 @@ import org.kordamp.jipsy.annotations.ServiceProviderFor;
 import java.io.PrintWriter;
 import java.util.spi.ToolProvider;
 
+import static org.jreleaser.util.IoUtils.newPrintWriter;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -40,8 +42,8 @@ public class JReleaser implements ToolProvider {
     }
 
     public static void main(String[] args) {
-        PrintWriter out = new PrintWriter(System.out, true);
-        PrintWriter err = new PrintWriter(System.err, true);
+        PrintWriter out = newPrintWriter(System.out);
+        PrintWriter err = newPrintWriter(System.err);
         System.exit(Main.run(out, err, args));
     }
 }

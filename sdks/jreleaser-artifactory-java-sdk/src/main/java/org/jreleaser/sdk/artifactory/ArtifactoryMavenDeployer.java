@@ -35,6 +35,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 /**
  * @author Andres Almiray
  * @since 1.3.0
@@ -90,8 +92,8 @@ public class ArtifactoryMavenDeployer extends AbstractMavenDeployer<org.jrelease
                     switch (deployer.resolveAuthorization()) {
                         case BASIC:
                             String auth = username + ":" + password;
-                            byte[] encodedAuth = Base64.getEncoder().encode(auth.getBytes());
-                            auth = new String(encodedAuth);
+                            byte[] encodedAuth = Base64.getEncoder().encode(auth.getBytes(UTF_8));
+                            auth = new String(encodedAuth, UTF_8);
                             headers.put("Authorization", "Basic " + auth);
                             break;
                         case BEARER:

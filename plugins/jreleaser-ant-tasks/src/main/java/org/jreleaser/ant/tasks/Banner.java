@@ -27,6 +27,9 @@ import java.text.MessageFormat;
 import java.util.ResourceBundle;
 import java.util.Scanner;
 
+import static org.jreleaser.util.IoUtils.newPrintStream;
+import static org.jreleaser.util.IoUtils.newScanner;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -50,7 +53,7 @@ final class Banner {
             if (!markerFile.exists()) {
                 writer.println(BANNER.banner);
                 markerFile.getParentFile().mkdirs();
-                PrintStream out = new PrintStream(new FileOutputStream(markerFile));
+                PrintStream out = newPrintStream(new FileOutputStream(markerFile));
                 out.println("1");
                 out.close();
                 writeQuietly(markerFile, "1");
@@ -73,7 +76,7 @@ final class Banner {
 
     private static void writeQuietly(File file, String text) {
         try {
-            PrintStream out = new PrintStream(new FileOutputStream(file));
+            PrintStream out = newPrintStream(new FileOutputStream(file));
             out.println(text);
             out.close();
         } catch (IOException ignored) {
@@ -83,7 +86,7 @@ final class Banner {
 
     private static String readQuietly(File file) {
         try {
-            Scanner in = new Scanner(new FileInputStream(file));
+            Scanner in = newScanner(new FileInputStream(file));
             return in.next();
         } catch (Exception ignored) {
             return "";

@@ -32,6 +32,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -70,7 +71,7 @@ public class Cosign extends AbstractTool {
         Path homeDir = resolveJReleaserHomeDir();
         try {
             executeCommand(() -> new CommandExecutor(context.getLogger(), true)
-                .environment("COSIGN_PASSWORD", new String(password))
+                .environment("COSIGN_PASSWORD", new String(password, UTF_8))
                 .executeCommand(homeDir, command));
         } catch (CommandException e) {
             throw new SigningException(RB.$("ERROR_unexpected_generate_key_pair"), e);

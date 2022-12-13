@@ -220,8 +220,8 @@ public class Nexus2 {
             Map<String, String> headers = new LinkedHashMap<>();
 
             String auth = username + ":" + password;
-            byte[] encodedAuth = Base64.getEncoder().encode(auth.getBytes());
-            auth = new String(encodedAuth);
+            byte[] encodedAuth = Base64.getEncoder().encode(auth.getBytes(UTF_8));
+            auth = new String(encodedAuth, UTF_8);
             headers.put("Authorization", "Basic " + auth);
 
             StringBuilder url = new StringBuilder(apiHost);

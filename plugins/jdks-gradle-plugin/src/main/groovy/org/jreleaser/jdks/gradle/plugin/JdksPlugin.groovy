@@ -37,6 +37,8 @@ import org.jreleaser.jdks.gradle.plugin.tasks.ListJdksTask
 import org.jreleaser.jdks.gradle.plugin.tasks.UnpackTask
 import org.jreleaser.util.Errors
 
+import static org.jreleaser.util.IoUtils.newPrintWriter
+
 /**
  *
  * @author Andres Almiray
@@ -70,7 +72,7 @@ class JdksPlugin implements Plugin<Project> {
                 Errors errors = new Errors()
                 jdkContainer.each { jdk -> jdk.validate(errors) }
                 if (errors.hasErrors()) {
-                    errors.logErrors(new PrintWriter(System.out, true))
+                    errors.logErrors(newPrintWriter(System.out))
                     throw new IllegalStateException('Jdks are not properly configured')
                 }
 

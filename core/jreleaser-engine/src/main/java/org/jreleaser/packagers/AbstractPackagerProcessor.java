@@ -31,6 +31,7 @@ import org.jreleaser.sdk.command.CommandExecutor;
 import org.jreleaser.util.Algorithm;
 import org.jreleaser.util.FileType;
 import org.jreleaser.util.FileUtils;
+import org.jreleaser.util.IoUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -462,7 +463,7 @@ abstract class AbstractPackagerProcessor<T extends Packager<?>> implements Packa
     }
 
     private void log(ByteArrayOutputStream stream, Consumer<? super String> consumer) {
-        String str = stream.toString();
+        String str = IoUtils.toString(stream);
         if (isBlank(str)) return;
 
         Arrays.stream(str.split(System.lineSeparator()))

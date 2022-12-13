@@ -31,6 +31,8 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import static org.jreleaser.util.IoUtils.newPrintWriter;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -85,7 +87,7 @@ public class JReleaserTemplateTask extends Task {
 
     @Override
     public void execute() throws BuildException {
-        Banner.display(new PrintWriter(System.out, true));
+        Banner.display(newPrintWriter(System.out));
         if (skip) return;
 
         try {
@@ -139,7 +141,7 @@ public class JReleaserTemplateTask extends Task {
             Path outputDirectory = getOutputDirectory().resolve("out")
                 .resolve("jreleaser");
             Files.createDirectories(outputDirectory);
-            return new PrintWriter(new FileOutputStream(
+            return newPrintWriter(new FileOutputStream(
                 outputDirectory
                     .resolve("trace.log").toFile()));
         } catch (IOException e) {

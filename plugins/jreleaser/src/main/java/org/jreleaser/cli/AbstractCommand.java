@@ -29,6 +29,7 @@ import java.util.concurrent.Callable;
 abstract class AbstractCommand extends BaseCommand implements Callable<Integer> {
     protected abstract Main parent();
 
+    @Override
     public Integer call() {
         setup();
 

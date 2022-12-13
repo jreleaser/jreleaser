@@ -30,6 +30,7 @@ import org.jreleaser.util.Algorithm;
 import org.jreleaser.util.ChecksumUtils;
 import org.jreleaser.util.DefaultVersions;
 import org.jreleaser.util.Errors;
+import org.jreleaser.util.IoUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -40,7 +41,6 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
@@ -59,6 +59,7 @@ import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.FileVisitResult.CONTINUE;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -190,8 +191,8 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
                 continue;
             }
 
-            OutputStream out = new ByteArrayOutputStream();
-            OutputStream err = new ByteArrayOutputStream();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ByteArrayOutputStream err = new ByteArrayOutputStream();
 
             List<String> args = new ArrayList<>();
             args.add("check-maven-central");
@@ -205,8 +206,8 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
             try {
                 pomChecker.invoke(context.getBasedir(), args, out, err);
             } catch (CommandException e) {
-                String plumbing = err.toString().trim();
-                String validation = out.toString().trim();
+                String plumbing = IoUtils.toString(err).trim();
+                String validation = IoUtils.toString(out).trim();
 
                 // 1st check out -> validation issues
                 if (isNotBlank(validation)) {
@@ -278,7 +279,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
 
                     context.getLogger().debug(RB.$("checksum.calculating", algorithm.formatted(), deployable.getFilename()));
                     String checksum = ChecksumUtils.checksum(algorithm, data);
-                    Files.write(checksumDeployable.getLocalPath(), checksum.getBytes());
+                    Files.write(checksumDeployable.getLocalPath(), checksum.getBytes(UTF_8));
                     deployables.add(checksumDeployable);
                 }
             } catch (IOException e) {

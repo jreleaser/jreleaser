@@ -28,6 +28,7 @@ import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.spi.packagers.PackagerProcessingException;
 import org.jreleaser.sdk.command.Command;
 import org.jreleaser.util.FileUtils;
+import org.jreleaser.util.IoUtils;
 import org.jreleaser.util.PlatformUtils;
 
 import java.io.ByteArrayInputStream;
@@ -44,6 +45,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
@@ -241,7 +243,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
             .arg("buildx")
             .arg("ls");
         executeCommandCapturing(cmd, baos);
-        if (baos.toString().contains("jreleaser")) return;
+        if (IoUtils.toString(baos).contains("jreleaser")) return;
 
         cmd = buildxCreateCommand(props, docker);
         context.getLogger().debug(String.join(" ", cmd.getArgs()));
@@ -428,7 +430,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         cmd.arg("-p");
         cmd.arg(registry.getPassword());
 
-        ByteArrayInputStream in = new ByteArrayInputStream((registry.getPassword() + System.lineSeparator()).getBytes());
+        ByteArrayInputStream in = new ByteArrayInputStream((registry.getPassword() + System.lineSeparator()).getBytes(UTF_8));
 
         context.getLogger().debug(RB.$("docker.login"),
             registry.getServerName(),

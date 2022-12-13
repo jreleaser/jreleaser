@@ -29,6 +29,8 @@ import org.kordamp.gradle.util.AnsiConsole
 import java.nio.file.Files
 import java.nio.file.Path
 
+import static org.jreleaser.util.IoUtils.newPrintWriter
+
 /**
  * @author Andres Almiray
  * @since 1.4.0
@@ -48,8 +50,8 @@ abstract class JReleaserLoggerService implements BuildService<JReleaserLoggerSer
     JReleaserLoggerService() {
         Path outputDirectoryPath = parameters.outputDirectory.get().asFile.toPath()
         Files.createDirectories(outputDirectoryPath)
-        PrintWriter tracer = new PrintWriter(new FileOutputStream(outputDirectoryPath
-            .resolve('trace.log').toFile()), true)
+        PrintWriter tracer = newPrintWriter(new FileOutputStream(outputDirectoryPath
+            .resolve('trace.log').toFile()))
 
         logger = new JReleaserLoggerAdapter(parameters.console.get(), parameters.logLevel.get(), tracer)
     }

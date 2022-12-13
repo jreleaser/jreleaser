@@ -29,6 +29,7 @@ import org.jreleaser.sdk.command.Command;
 import org.jreleaser.templates.TemplateResource;
 import org.jreleaser.templates.TemplateUtils;
 import org.jreleaser.util.FileUtils;
+import org.jreleaser.util.IoUtils;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.version.SemanticVersion;
 
@@ -265,7 +266,7 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<o
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         executeCommandCapturing(cmd, out);
         if (assembler.isVerbose()) {
-            context.getLogger().debug(out.toString());
+            context.getLogger().debug(IoUtils.toString(out));
         }
 
         // replace only if not linux

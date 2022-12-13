@@ -23,6 +23,8 @@ import org.jreleaser.logging.AbstractJReleaserLogger
 import org.kordamp.gradle.util.AnsiConsole
 import org.slf4j.helpers.MessageFormatter
 
+import static org.jreleaser.util.IoUtils.newPrintWriter
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -34,7 +36,7 @@ class JReleaserLoggerAdapter extends AbstractJReleaserLogger {
     private final AnsiConsole console
 
     JReleaserLoggerAdapter(AnsiConsole console, LogLevel logLevel, PrintWriter tracer) {
-        this(console, logLevel, tracer, new PrintWriter(System.out, true))
+        this(console, logLevel, tracer, newPrintWriter(System.out))
     }
 
     JReleaserLoggerAdapter(AnsiConsole console, LogLevel logLevel, PrintWriter tracer, PrintWriter out) {

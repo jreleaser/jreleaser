@@ -18,12 +18,14 @@
 package org.jreleaser.templates;
 
 import org.jreleaser.model.JReleaserVersion;
+import org.jreleaser.util.IoUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
@@ -31,14 +33,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 class VersionDecoratingWriterTest {
     private final ByteArrayOutputStream sink = new ByteArrayOutputStream();
-    private final VersionDecoratingWriter writer = new VersionDecoratingWriter(new OutputStreamWriter(sink));
+    private final VersionDecoratingWriter writer = new VersionDecoratingWriter(new OutputStreamWriter(sink, UTF_8));
 
     @Test
     void should_ignore_content_without_marker() throws IOException {
         writer.write("cask \"{{brewCaskName}}\" do");
         writer.flush();
 
-        assertThat(sink.toString(), is("cask \"{{brewCaskName}}\" do"));
+        assertThat(IoUtils.toString(sink), is("cask \"{{brewCaskName}}\" do"));
     }
 
     @Test
@@ -46,7 +48,7 @@ class VersionDecoratingWriterTest {
         writer.write("# {{jreleaserCreationStamp}}");
         writer.flush();
 
-        assertThat(sink.toString(), not(containsString("{{jreleaserCreationStamp}}")));
-        assertThat(sink.toString(), containsString(JReleaserVersion.getPlainVersion()));
+        assertThat(IoUtils.toString(sink), not(containsString("{{jreleaserCreationStamp}}")));
+        assertThat(IoUtils.toString(sink), containsString(JReleaserVersion.getPlainVersion()));
     }
 }

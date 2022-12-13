@@ -36,6 +36,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.lang.System.lineSeparator;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
@@ -69,7 +70,7 @@ public class ChangelogProvider {
         context.getLogger().debug(content);
 
         Files.createDirectories(changelogFile.getParent());
-        Files.write(changelogFile, content.getBytes(), CREATE, WRITE, TRUNCATE_EXISTING);
+        Files.write(changelogFile, content.getBytes(UTF_8), CREATE, WRITE, TRUNCATE_EXISTING);
 
         return content;
     }
@@ -101,7 +102,7 @@ public class ChangelogProvider {
             }
 
             context.getLogger().info(RB.$("changelog.generator.read"), context.getBasedir().relativize(externalChangelogPath));
-            String content = new String(Files.readAllBytes(externalChangelogPath));
+            String content = new String(Files.readAllBytes(externalChangelogPath), UTF_8);
 
             if (context.getModel().getRelease().getReleaser().getIssues().isEnabled()) {
                 context.getLogger().info(RB.$("issues.generator.extract"));
@@ -131,7 +132,8 @@ public class ChangelogProvider {
         while (matcher.find()) {
             if (isNotBlank(matcher.group("repo"))) issues.add(Integer.valueOf(matcher.group("repo")));
             if (isNotBlank(matcher.group("hash"))) issues.add(Integer.valueOf(matcher.group("hash")));
-            if (isNotBlank(p1) && isNotBlank(matcher.group("tracker"))) issues.add(Integer.valueOf(matcher.group("tracker")));
+            if (isNotBlank(p1) && isNotBlank(matcher.group("tracker")))
+                issues.add(Integer.valueOf(matcher.group("tracker")));
         }
 
         return issues;
@@ -146,7 +148,7 @@ public class ChangelogProvider {
         context.getLogger().debug(content);
 
         Files.createDirectories(issuesFile.getParent());
-        Files.write(issuesFile, content.getBytes(), CREATE, WRITE, TRUNCATE_EXISTING);
+        Files.write(issuesFile, content.getBytes(UTF_8), CREATE, WRITE, TRUNCATE_EXISTING);
     }
 
     public static Path getReleaseFilePath(JReleaserContext context, String fileName) {

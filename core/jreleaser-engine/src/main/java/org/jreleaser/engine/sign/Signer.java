@@ -51,6 +51,7 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.jreleaser.model.api.signing.Signing.KEY_SKIP_SIGNING;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -123,7 +124,7 @@ public class Signer {
 
         Path privateKeyFile = isNotBlank(privateKey) ? context.getBasedir().resolve(privateKey) : null;
         Path publicKeyFile = isNotBlank(publicKey) ? context.getBasedir().resolve(publicKey) : null;
-        byte[] password = (signing.getPassphrase() + System.lineSeparator()).getBytes();
+        byte[] password = (signing.getPassphrase() + System.lineSeparator()).getBytes(UTF_8);
 
         boolean forceSign = false;
         if (null == privateKeyFile) {

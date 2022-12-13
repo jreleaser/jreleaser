@@ -41,6 +41,7 @@ import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
@@ -136,7 +137,7 @@ public class JsonSchema extends AbstractCommand {
             String fileName = String.format("jreleaser-%s-schema.json", JReleaserVersion.getPlainVersion());
             Path schemaPath = Paths.get(fileName);
             String json = configBuilder.getObjectMapper().writeValueAsString(jsonSchema);
-            Files.write(schemaPath, json.getBytes(), CREATE, WRITE, TRUNCATE_EXISTING);
+            Files.write(schemaPath, json.getBytes(UTF_8), CREATE, WRITE, TRUNCATE_EXISTING);
             parent().out.println("Schema written to " + schemaPath.toAbsolutePath());
         } catch (Exception e) {
             throw new JReleaserException($("ERROR_unexpected_error"), e);

@@ -42,12 +42,12 @@ import org.eclipse.jgit.lib.ObjectBuilder;
 import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.transport.CredentialsProvider;
 import org.jreleaser.bundle.RB;
+import org.jreleaser.model.api.signing.Keyring;
+import org.jreleaser.model.api.signing.SigningException;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.signing.Signing;
 import org.jreleaser.sdk.command.CommandException;
 import org.jreleaser.sdk.signing.GpgCommandSigner;
-import org.jreleaser.model.api.signing.Keyring;
-import org.jreleaser.model.api.signing.SigningException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

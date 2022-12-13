@@ -27,6 +27,7 @@ import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.spi.assemble.AssemblerProcessingException;
 import org.jreleaser.sdk.command.Command;
 import org.jreleaser.util.FileUtils;
+import org.jreleaser.util.IoUtils;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.StringUtils;
 import org.jreleaser.version.SemanticVersion;
@@ -305,7 +306,7 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<org.
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         executeCommandCapturing(jarsDirectory, cmd, out);
 
-        String output = out.toString().trim();
+        String output = IoUtils.toString(out).trim();
         long lineCount = Arrays.stream(output.split(System.lineSeparator()))
             .map(String::trim)
             .count();

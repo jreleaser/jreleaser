@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardOpenOption.WRITE;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -91,7 +92,7 @@ public final class GpgCommandSigner {
 
         new CommandExecutor(logger)
             .executeCommandWithInput(cmd,
-                new ByteArrayInputStream(passphrase.getBytes()));
+                new ByteArrayInputStream(passphrase.getBytes(UTF_8)));
     }
 
     public boolean verify(Path signature, Path target) throws CommandException {

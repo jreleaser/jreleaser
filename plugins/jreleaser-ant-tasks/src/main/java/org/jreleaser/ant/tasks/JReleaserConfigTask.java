@@ -22,7 +22,7 @@ import org.jreleaser.engine.context.ModelValidator;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 
-import java.io.PrintWriter;
+import static org.jreleaser.util.IoUtils.newPrintWriter;
 
 /**
  * @author Andres Almiray
@@ -58,7 +58,7 @@ public class JReleaserConfigTask extends AbstractPlatformAwareJReleaserTask {
     @Override
     protected void doExecute(JReleaserContext context) {
         ModelValidator.validate(context);
-        new AntJReleaserModelPrinter(new PrintWriter(System.out, true))
+        new AntJReleaserModelPrinter(newPrintWriter(System.out))
             .print(context.getModel().asMap(full));
         context.report();
     }

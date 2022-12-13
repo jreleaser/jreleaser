@@ -53,6 +53,7 @@ import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
 import static java.util.stream.Collectors.toList;
@@ -195,7 +196,7 @@ public final class DefaultExtensionManager implements ExtensionManager {
                 .replaceAll("@artifactId@", gav[1])
                 .replaceAll("@version@", gav[2]);
 
-            Files.write(pom, content.getBytes(), WRITE, TRUNCATE_EXISTING);
+            Files.write(pom, content.getBytes(UTF_8), WRITE, TRUNCATE_EXISTING);
 
             List<String> args = new ArrayList<>();
             args.add("-B");

@@ -19,8 +19,8 @@ package org.jreleaser.engine.deploy.maven;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.internal.JReleaserContext;
-import org.jreleaser.model.spi.deploy.maven.MavenDeployer;
 import org.jreleaser.model.spi.deploy.DeployException;
+import org.jreleaser.model.spi.deploy.maven.MavenDeployer;
 
 import static java.util.Objects.requireNonNull;
 

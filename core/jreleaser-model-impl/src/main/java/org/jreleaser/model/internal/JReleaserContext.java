@@ -69,6 +69,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.unmodifiableList;
 import static org.jreleaser.model.Constants.KEY_COMMIT_FULL_HASH;
 import static org.jreleaser.model.Constants.KEY_COMMIT_SHORT_HASH;
@@ -951,8 +952,8 @@ public class JReleaserContext {
             }
 
             return new InMemoryKeyring(
-                model.getSigning().getPublicKey().getBytes(),
-                model.getSigning().getSecretKey().getBytes()
+                model.getSigning().getPublicKey().getBytes(UTF_8),
+                model.getSigning().getSecretKey().getBytes(UTF_8)
             ).initialize(model.getSigning().isArmored());
         } catch (IOException | PGPException e) {
             throw new SigningException(RB.$("ERROR_signing_init_keyring"), e);

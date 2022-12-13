@@ -42,6 +42,7 @@ import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
+import static org.jreleaser.util.IoUtils.newPrintWriter;
 
 /**
  * @author Andres Almiray
@@ -62,7 +63,7 @@ public class JReleaserInitTask extends Task {
 
     @Override
     public void execute() throws BuildException {
-        Banner.display(new PrintWriter(System.out, true));
+        Banner.display(newPrintWriter(System.out));
 
         try {
             initLogger();
@@ -100,7 +101,7 @@ public class JReleaserInitTask extends Task {
                 .resolve("out")
                 .resolve("jreleaser");
             Files.createDirectories(outputDirectory);
-            return new PrintWriter(new FileOutputStream(
+            return newPrintWriter(new FileOutputStream(
                 outputDirectory.resolve("trace.log").toFile()));
         } catch (IOException e) {
             throw new IllegalStateException("Could not initialize trace file", e);

@@ -19,8 +19,12 @@ package org.jreleaser.logging;
 
 import org.slf4j.helpers.MessageFormatter;
 
+import java.io.BufferedWriter;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @author Andres Almiray
@@ -39,11 +43,11 @@ public class SimpleJReleaserLoggerAdapter extends AbstractJReleaserLogger {
     }
 
     public SimpleJReleaserLoggerAdapter(OutputStream out) {
-        this(new PrintWriter(out, true), Level.WARN);
+        this(newPrintWriter(out, true), Level.WARN);
     }
 
     public SimpleJReleaserLoggerAdapter(OutputStream out, Level level) {
-        this(new PrintWriter(out, true), level);
+        this(newPrintWriter(out, true), level);
     }
 
     public SimpleJReleaserLoggerAdapter(PrintWriter out) {
@@ -51,7 +55,7 @@ public class SimpleJReleaserLoggerAdapter extends AbstractJReleaserLogger {
     }
 
     public SimpleJReleaserLoggerAdapter(PrintWriter out, Level level) {
-        super(new PrintWriter(System.err));
+        super(newPrintWriter(System.err));
         this.out = out;
         this.level = level;
     }
@@ -177,6 +181,14 @@ public class SimpleJReleaserLoggerAdapter extends AbstractJReleaserLogger {
 
     private boolean isLevelEnabled(Level requested) {
         return requested.ordinal() >= level.ordinal();
+    }
+
+    private static PrintWriter newPrintWriter(OutputStream out) {
+        return newPrintWriter(out, true);
+    }
+
+    private static PrintWriter newPrintWriter(OutputStream out, boolean autoFlush) {
+        return new PrintWriter(new BufferedWriter(new OutputStreamWriter(out, UTF_8)), autoFlush);
     }
 
     public enum Level {

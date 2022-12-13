@@ -49,6 +49,7 @@ import java.util.Locale;
 
 import static java.util.stream.Collectors.toList;
 import static org.jreleaser.model.JReleaserOutput.JRELEASER_QUIET;
+import static org.jreleaser.util.IoUtils.newPrintWriter;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -110,9 +111,8 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
     protected PrintWriter createTracer() throws MojoExecutionException {
         try {
             java.nio.file.Files.createDirectories(outputDirectory.toPath());
-            return new PrintWriter(new FileOutputStream(
-                outputDirectory.toPath().resolve("trace.log").toFile()),
-                true);
+            return newPrintWriter(new FileOutputStream(
+                outputDirectory.toPath().resolve("trace.log").toFile()));
         } catch (IOException e) {
             throw new MojoExecutionException("Could not initialize trace file", e);
         }

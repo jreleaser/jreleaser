@@ -30,6 +30,7 @@ import java.nio.file.Path;
 import java.util.Map;
 
 import static java.lang.System.lineSeparator;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardOpenOption.WRITE;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplate;
 import static org.jreleaser.mustache.MustacheUtils.passThrough;
@@ -75,7 +76,7 @@ class ChangelogWorkflowItem extends AbstractWorkflowItem {
         Path target = context.getBasedir().resolve(append.getTarget());
         String fullChangelog = null;
         try {
-            fullChangelog = new String(Files.readAllBytes(target));
+            fullChangelog = new String(Files.readAllBytes(target), UTF_8);
         } catch (IOException e) {
             context.getLogger().warn(RB.$("ERROR_cannot_read_changelog"),
                 context.relativizeToBasedir(append.getTarget()));
@@ -93,7 +94,7 @@ class ChangelogWorkflowItem extends AbstractWorkflowItem {
         context.getLogger().info(RB.$("changelog.generator.store"), context.getBasedir().relativize(target));
 
         try {
-            Files.write(target, fullChangelog.getBytes(), WRITE);
+            Files.write(target, fullChangelog.getBytes(UTF_8), WRITE);
         } catch (IOException e) {
             context.getLogger().error(RB.$("ERROR_unexpected_error_changelog_append"));
         }

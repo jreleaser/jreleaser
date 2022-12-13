@@ -26,7 +26,7 @@ import org.jreleaser.maven.plugin.internal.MavenJReleaserModelPrinter;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 
-import java.io.PrintWriter;
+import static org.jreleaser.util.IoUtils.newPrintWriter;
 
 /**
  * Display current configuration.
@@ -77,7 +77,7 @@ public class JReleaserConfigMojo extends AbstractPlatformAwareJReleaserMojo {
 
         JReleaserContext context = createContext();
         ModelValidator.validate(context);
-        new MavenJReleaserModelPrinter(new PrintWriter(System.out, true))
+        new MavenJReleaserModelPrinter(newPrintWriter(System.out))
             .print(context.getModel().asMap(full));
         context.report();
     }
