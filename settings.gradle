@@ -120,6 +120,7 @@ enforce {
             "org.codehaus.plexus:plexus-utils:$plexusVersion",
             "org.hamcrest:hamcrest-core:$hamcrestVersion",
             "org.hamcrest:hamcrest:$hamcrestVersion",
+            "org.junit:junit-bom:$junit5Version",
             "org.junit.jupiter:junit-jupiter-api:$junit5Version",
             "org.opentest4j:opentest4j:$opentest4jVersion",
             "org.ow2.asm:asm:$asmVersion",

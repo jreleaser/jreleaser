@@ -51,7 +51,8 @@ public enum Algorithm {
     public static Algorithm of(String str) {
         if (isBlank(str)) return null;
 
-        String value = str.toUpperCase(Locale.ENGLISH).trim();
+        String value = str.toUpperCase(Locale.ENGLISH).trim()
+            .replace("-", "_");
 
         switch (value) {
             case "SHA1":

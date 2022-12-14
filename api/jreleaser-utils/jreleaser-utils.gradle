@@ -30,6 +30,11 @@ dependencies {
     api "com.github.veithen.cosmos.bootstrap:org.tukaani.xz:$xzVersion"
 }
 
+// test {
+//     // Required for junit-pioneer in JDK17+
+//     jvmArgs '--add-opens java.base/java.lang=ALL-UNNAMED'
+// }
+
 processResources {
     filesMatching(['**/*.properties']) {
         expand(

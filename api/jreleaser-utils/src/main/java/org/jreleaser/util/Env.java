@@ -40,6 +40,7 @@ public class Env {
     public static String toVar(String str) {
         return str.replaceAll(" ", "_")
             .replaceAll("-", "_")
+            .replace(".", "_")
             .toUpperCase(Locale.ENGLISH);
     }
 
@@ -47,8 +48,7 @@ public class Env {
         if (!key.startsWith(JRELEASER_ENV_PREFIX)) {
             key = JRELEASER_ENV_PREFIX + key;
         }
-        return key.replace(".", "_")
-            .toUpperCase(Locale.ENGLISH);
+        return toVar(key);
     }
 
     public static String sysKey(String key) {
