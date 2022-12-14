@@ -110,7 +110,6 @@ release:
 signing:
   active: ALWAYS
   armored: true
-  files: false
 
 deploy:
   maven:
@@ -407,5 +406,6 @@ files:
     - path: VERSION
       extraProperties:
         skipChecksum: true
+        skipSigning: true
     - path: plugins/jreleaser-ant-tasks/build/distributions/jreleaser-ant-tasks-{{projectVersion}}.zip
       transform: 'jreleaser-ant-tasks/jreleaser-ant-tasks-{{projectEffectiveVersion}}.zip'
