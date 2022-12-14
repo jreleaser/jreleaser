@@ -116,7 +116,7 @@ assemble:
     jreleaser-archive:
       active: always
       attachPlatform: true
-      formats: [ZIP, TAR, TAR_BZ2, TAR_GZ, TAR_XZ, TBZ2, TGZ, TXZ]
+      formats: [ZIP, TAR, TAR_BZ2, TAR_GZ, TAR_XZ, TAR_ZST, TBZ2, TGZ, TXZ]
       fileSets:
         - input: '.'
           includes: [ 'VERSION' ]

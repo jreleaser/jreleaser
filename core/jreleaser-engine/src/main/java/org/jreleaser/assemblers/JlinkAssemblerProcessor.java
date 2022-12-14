@@ -226,25 +226,7 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<org.
             copyFiles(context, imageDirectory);
             copyFileSets(context, imageDirectory);
 
-            switch (archiveFormat) {
-                case ZIP:
-                    FileUtils.zip(workDirectory, imageArchive, context.getModel().resolveArchiveTimestamp());
-                    break;
-                case TAR:
-                    FileUtils.tar(workDirectory, imageArchive, context.getModel().resolveArchiveTimestamp());
-                    break;
-                case TGZ:
-                case TAR_GZ:
-                    FileUtils.tgz(workDirectory, imageArchive, context.getModel().resolveArchiveTimestamp());
-                    break;
-                case TXZ:
-                case TAR_XZ:
-                    FileUtils.xz(workDirectory, imageArchive, context.getModel().resolveArchiveTimestamp());
-                    break;
-                case TBZ2:
-                case TAR_BZ2:
-                    FileUtils.bz2(workDirectory, imageArchive, context.getModel().resolveArchiveTimestamp());
-            }
+            FileUtils.packArchive(workDirectory, imageArchive, context.getModel().resolveArchiveTimestamp());
 
             context.getLogger().debug("- {}", imageArchive.getFileName());
 

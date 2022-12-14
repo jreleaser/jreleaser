@@ -201,7 +201,7 @@
                                 <jreleaser-archive>
                                     <active>ALWAYS</active>
                                     <attachPlatform>true</attachPlatform>
-                                    <formats>ZIP,TAR,TAR_BZ2,TAR_GZ,TAR_XZ,TBZ2,TGZ,TXZ</formats>
+                                    <formats>ZIP,TAR,TAR_BZ2,TAR_GZ,TAR_XZ,TAR_ZST,TBZ2,TGZ,TXZ</formats>
                                     <fileSets>
                                         <fileSet>
                                             <input>.</input>

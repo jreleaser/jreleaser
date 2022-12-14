@@ -153,25 +153,7 @@ public class JavaArchiveAssemblerProcessor extends AbstractAssemblerProcessor<or
 
         try {
             Path archiveFile = assembleDirectory.resolve(finalArchiveName);
-            switch (format) {
-                case ZIP:
-                    FileUtils.zip(workDirectory, archiveFile, context.getModel().resolveArchiveTimestamp());
-                    break;
-                case TAR:
-                    FileUtils.tar(workDirectory, archiveFile, context.getModel().resolveArchiveTimestamp());
-                    break;
-                case TGZ:
-                case TAR_GZ:
-                    FileUtils.tgz(workDirectory, archiveFile, context.getModel().resolveArchiveTimestamp());
-                    break;
-                case TXZ:
-                case TAR_XZ:
-                    FileUtils.xz(workDirectory, archiveFile, context.getModel().resolveArchiveTimestamp());
-                    break;
-                case TBZ2:
-                case TAR_BZ2:
-                    FileUtils.bz2(workDirectory, archiveFile, context.getModel().resolveArchiveTimestamp());
-            }
+            FileUtils.packArchive(workDirectory, archiveFile, context.getModel().resolveArchiveTimestamp());
         } catch (IOException e) {
             throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
         }

@@ -17,6 +17,7 @@
  */
 package org.jreleaser.util;
 
+import com.github.luben.zstd.Zstd;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
@@ -33,6 +34,8 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.commons.compress.compressors.xz.XZCompressorInputStream;
 import org.apache.commons.compress.compressors.xz.XZCompressorOutputStream;
+import org.apache.commons.compress.compressors.zstandard.ZstdCompressorInputStream;
+import org.apache.commons.compress.compressors.zstandard.ZstdCompressorOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.logging.JReleaserLogger;
@@ -59,7 +62,6 @@ import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.Enumeration;
@@ -79,9 +81,11 @@ import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import static org.jreleaser.util.FileType.TAR;
 import static org.jreleaser.util.FileType.TAR_BZ2;
 import static org.jreleaser.util.FileType.TAR_GZ;
 import static org.jreleaser.util.FileType.TAR_XZ;
+import static org.jreleaser.util.FileType.TAR_ZST;
 import static org.jreleaser.util.FileType.TBZ2;
 import static org.jreleaser.util.FileType.TGZ;
 import static org.jreleaser.util.FileType.TXZ;
@@ -105,6 +109,7 @@ public final class FileUtils {
         TAR_BZ2.extension(),
         TAR_GZ.extension(),
         TAR_XZ.extension(),
+        TAR_ZST.extension(),
         TBZ2.extension(),
         TGZ.extension(),
         TXZ.extension()
@@ -127,7 +132,7 @@ public final class FileUtils {
     }
 
     public static Optional<Path> findLicenseFile(Path basedir) {
-        for (String licenseFilename : Arrays.asList(LICENSE_FILE_NAMES)) {
+        for (String licenseFilename : LICENSE_FILE_NAMES) {
             Path path = basedir.resolve(licenseFilename);
             if (Files.exists(path)) {
                 return Optional.of(path);
@@ -235,6 +240,18 @@ public final class FileUtils {
         }
     }
 
+    public static void zst(Path src, Path dest) throws IOException {
+        zst(src, dest, null);
+    }
+
+    public static void zst(Path src, Path dest, ZonedDateTime timestamp) throws IOException {
+        try (TarArchiveOutputStream out = new TarArchiveOutputStream(
+            new ZstdCompressorOutputStream(Files.newOutputStream(dest, CREATE, TRUNCATE_EXISTING),
+                Zstd.defaultCompressionLevel(), true))) {
+            tar(src, out, timestamp);
+        }
+    }
+
     private static void tar(Path src, TarArchiveOutputStream out, ZonedDateTime timestamp) throws IOException {
         out.setLongFileMode(TarArchiveOutputStream.LONGFILE_POSIX);
 
@@ -265,6 +282,27 @@ public final class FileUtils {
             }
 
             out.closeArchiveEntry();
+        }
+    }
+
+    public static void packArchive(Path src, Path dest) throws IOException {
+        packArchive(src, dest, null);
+    }
+
+    public static void packArchive(Path src, Path dest, ZonedDateTime timestamp) throws IOException {
+        String filename = dest.getFileName().toString();
+        if (filename.endsWith(ZIP.extension())) {
+            zip(src, dest, timestamp);
+        } else if (filename.endsWith(TAR_BZ2.extension()) || filename.endsWith(TBZ2.extension())) {
+            bz2(src, dest, timestamp);
+        } else if (filename.endsWith(TAR_GZ.extension()) || filename.endsWith(TGZ.extension())) {
+            tgz(src, dest, timestamp);
+        } else if (filename.endsWith(TAR_XZ.extension()) || filename.endsWith(TXZ.extension())) {
+            xz(src, dest, timestamp);
+        } else if (filename.endsWith(TAR_ZST.extension())) {
+            zst(src, dest, timestamp);
+        } else if (filename.endsWith(TAR.extension())) {
+            tar(src, dest, timestamp);
         }
     }
 
@@ -344,6 +382,8 @@ public final class FileUtils {
             case TXZ:
             case TAR_XZ:
                 return new XZCompressorInputStream(in);
+            case TAR_ZST:
+                return new ZstdCompressorInputStream(in);
             default:
                 // noop
                 break;

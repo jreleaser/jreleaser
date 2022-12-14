@@ -199,25 +199,7 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
             copyFileSets(context, distDirectory);
 
             Path imageArchive = assembleDirectory.resolve(finalImageName + "." + assembler.getArchiveFormat().extension());
-            switch (assembler.getArchiveFormat()) {
-                case ZIP:
-                    FileUtils.zip(tempDirectory, imageArchive, context.getModel().resolveArchiveTimestamp());
-                    break;
-                case TAR:
-                    FileUtils.tar(tempDirectory, imageArchive, context.getModel().resolveArchiveTimestamp());
-                    break;
-                case TGZ:
-                case TAR_GZ:
-                    FileUtils.tgz(tempDirectory, imageArchive, context.getModel().resolveArchiveTimestamp());
-                    break;
-                case TXZ:
-                case TAR_XZ:
-                    FileUtils.xz(tempDirectory, imageArchive, context.getModel().resolveArchiveTimestamp());
-                    break;
-                case TBZ2:
-                case TAR_BZ2:
-                    FileUtils.bz2(tempDirectory, imageArchive, context.getModel().resolveArchiveTimestamp());
-            }
+            FileUtils.packArchive(tempDirectory, imageArchive, context.getModel().resolveArchiveTimestamp());
 
             context.getLogger().debug("- {}", imageArchive.getFileName());
 

@@ -135,6 +135,7 @@ jreleaser {
                 format('TAR_BZ2')
                 format('TAR_GZ')
                 format('TAR_XZ')
+                format('TAR_ZST')
                 format('TBZ2')
                 format('TGZ')
                 format('TXZ')

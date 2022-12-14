@@ -44,10 +44,12 @@ public enum FileType {
     TAR_BZ2("tar.bz2", true),
     TAR_GZ("tar.gz", true),
     TAR_XZ("tar.xz", true),
+    TAR_ZST("tar.zst", true),
     TBZ2("tbz2", true),
     TGZ("tgz", true),
     TXZ("txz", true),
-    ZIP("zip", true);
+    ZIP("zip", true),
+    ZST("zst", true);
 
     private final String type;
     private final boolean archive;

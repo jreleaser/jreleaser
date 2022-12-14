@@ -32,6 +32,7 @@ public class Archive {
         TAR_BZ2("tar.bz2"),
         TAR_GZ("tar.gz"),
         TAR_XZ("tar.xz"),
+        TAR_ZST("tar.zst"),
         TBZ2("tbz2"),
         TGZ("tgz"),
         TXZ("txz");
