@@ -112,9 +112,6 @@ signing:
   armored: true
   files: false
 
-checksum:
-  files: false
-
 deploy:
   maven:
     nexus2:
@@ -323,11 +320,6 @@ distributions:
         extraProperties:
           skipFlatpak: true
 
-  jreleaser-ant-tasks:
-    artifacts:
-      - path: plugins/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.zip
-        transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.zip'
-
   jreleaser-tool-provider:
     type: SINGLE_JAR
     artifacts:
@@ -387,8 +379,6 @@ distributions:
 
   jreleaser-installer:
     type: NATIVE_PACKAGE
-    executable:
-      windowsExtension: exe
     artifacts:
       - path: '{{jpackageDir}}/JReleaser-{{projectVersionNumber}}-osx-x86_64.pkg'
         transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}-osx-x86_64.pkg'
@@ -404,9 +394,6 @@ distributions:
         platform: 'windows-x86_64'
 
   jreleaser-native:
-    type: NATIVE_IMAGE
-    executable:
-      windowsExtension: exe
     artifacts:
       - path: '{{nativeImageDir}}/{{distributionName}}-{{projectEffectiveVersion}}-osx-x86_64.zip'
         platform: 'osx-x86_64'
@@ -418,3 +405,7 @@ distributions:
 files:
   artifacts:
     - path: VERSION
+      extraProperties:
+        skipChecksum: true
+    - path: plugins/jreleaser-ant-tasks/build/distributions/jreleaser-ant-tasks-{{projectVersion}}.zip
+      transform: 'jreleaser-ant-tasks/jreleaser-ant-tasks-{{projectEffectiveVersion}}.zip'
