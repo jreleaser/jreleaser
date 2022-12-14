@@ -93,6 +93,7 @@ config {
         }
         coveralls {
             enabled = true
+            standalone = true
         }
     }
 }
