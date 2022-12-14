@@ -36,7 +36,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 
 public class MastodonSdkTest {
-
     private static final String API_V_1_STATUSES = "/api/v1/statuses";
 
     @RegisterExtension

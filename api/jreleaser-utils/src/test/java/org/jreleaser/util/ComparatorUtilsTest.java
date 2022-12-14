@@ -20,6 +20,7 @@ package org.jreleaser.util;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ComparatorUtilsTest {
@@ -37,7 +38,11 @@ public class ComparatorUtilsTest {
             () -> assertTrue(ComparatorUtils.lessThanOrEqualTo(one, two)),
             () -> assertTrue(ComparatorUtils.greaterThan(two, one)),
             () -> assertTrue(ComparatorUtils.greaterThanOrEqualTo(two, two)),
-            () -> assertTrue(ComparatorUtils.greaterThanOrEqualTo(three, two))
+            () -> assertTrue(ComparatorUtils.greaterThanOrEqualTo(three, two)),
+            () -> assertFalse(ComparatorUtils.lessThan(two, one)),
+            () -> assertFalse(ComparatorUtils.lessThanOrEqualTo(two, one)),
+            () -> assertFalse(ComparatorUtils.greaterThan(one, two)),
+            () -> assertFalse(ComparatorUtils.greaterThanOrEqualTo(two, three))
         );
     }
 }

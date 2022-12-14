@@ -34,6 +34,13 @@ public class ChecksumUtils {
     }
 
     public static String checksum(Algorithm algorithm, byte[] data) throws IOException {
+        if (null == algorithm) {
+            throw new IOException(RB.$("ERROR_unsupported_algorithm", algorithm));
+        }
+        if (data == null || data.length == 0) {
+            throw new IOException(RB.$("ERROR_empty_data", algorithm));
+        }
+
         switch (algorithm) {
             case MD2:
                 return DigestUtils.md2Hex(data);

@@ -17,6 +17,7 @@
  */
 package org.jreleaser.util;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -27,6 +28,7 @@ import java.util.stream.Stream;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ChecksumUtilsTest {
     @ParameterizedTest
@@ -37,6 +39,16 @@ public class ChecksumUtilsTest {
 
         // then:
         assertThat(actual, equalTo(expected));
+    }
+
+    @Test
+    void testInvalidAlgorithm() {
+        assertThrows(IOException.class, () ->
+            ChecksumUtils.checksum(null, "JRELEASER\n".getBytes(UTF_8)));
+        assertThrows(IOException.class, () ->
+            ChecksumUtils.checksum(Algorithm.SHA_256, null));
+        assertThrows(IOException.class, () ->
+            ChecksumUtils.checksum(Algorithm.SHA_256, new byte[0]));
     }
 
     @ParameterizedTest
@@ -51,6 +63,8 @@ public class ChecksumUtilsTest {
 
     private static Stream<Arguments> algorithm_factory() {
         return Stream.of(
+            Arguments.of(null, null),
+            Arguments.of(null, ""),
             Arguments.of(Algorithm.MD2, "md2"),
             Arguments.of(Algorithm.MD2, "MD2"),
             Arguments.of(Algorithm.MD5, "md5"),
