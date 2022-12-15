@@ -44,6 +44,8 @@ public class FtpUtils {
     }
 
     public static FTPClient open(JReleaserContext context, FtpDownloader downloader) throws DownloadException {
+        if (context.isDryrun()) return null;
+
         try {
             return ftpClient(context, downloader);
         } catch (IOException e) {
@@ -100,7 +102,7 @@ public class FtpUtils {
 
     public static void close(FtpDownloader downloader, FTPClient ftp) throws DownloadException {
         try {
-            ftp.disconnect();
+            if (null != ftp) ftp.disconnect();
         } catch (IOException e) {
             throw new DownloadException(RB.$("ERROR_disconnect", downloader.getName()), e);
         }

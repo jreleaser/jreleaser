@@ -45,6 +45,7 @@ public abstract class AbstractArtifactDownloader<A extends org.jreleaser.model.a
         if (unpack.isEnabled() && fileType.isPresent() && fileType.get().archive()) {
             try {
                 context.getLogger().info(RB.$("downloader.unpack"), outputPath.getFileName().toString());
+                if (context.isDryrun()) return;
                 FileUtils.unpackArchive(outputPath,
                     outputPath.getParent(),
                     unpack.isSkipRootEntry(),

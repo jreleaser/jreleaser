@@ -75,14 +75,16 @@ public class HttpArtifactDownloader extends AbstractArtifactDownloader<org.jrele
         Path outputPath = context.getDownloadDirectory().resolve(name).resolve(output);
         context.getLogger().info("{} -> {}", input, context.relativizeToBasedir(outputPath));
 
-        try {
-            org.apache.commons.io.FileUtils.copyURLToFile(
-                new URL(input),
-                outputPath.toFile(),
-                downloader.getConnectTimeout() * 1000,
-                downloader.getReadTimeout() * 1000);
-        } catch (IOException e) {
-            throw new DownloadException(RB.$("ERROR_unexpected_download", input), e);
+        if (!context.isDryrun()) {
+            try {
+                org.apache.commons.io.FileUtils.copyURLToFile(
+                    new URL(input),
+                    outputPath.toFile(),
+                    downloader.getConnectTimeout() * 1000,
+                    downloader.getReadTimeout() * 1000);
+            } catch (IOException e) {
+                throw new DownloadException(RB.$("ERROR_unexpected_download", input), e);
+            }
         }
 
         unpack(asset.getUnpack(), outputPath);

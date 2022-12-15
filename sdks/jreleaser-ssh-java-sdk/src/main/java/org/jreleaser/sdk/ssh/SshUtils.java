@@ -50,7 +50,7 @@ public class SshUtils {
         // noop
     }
 
-    public static SSHClient createSSHClient(JReleaserContext context, SshUploader uploader) throws UploadException {
+    public static SSHClient createSSHClient(JReleaserContext context, SshUploader<?> uploader) throws UploadException {
         if (context.isDryrun()) return null;
 
         try {
@@ -63,7 +63,9 @@ public class SshUtils {
         }
     }
 
-    public static SSHClient createSSHClient(JReleaserContext context, SshDownloader downloader) throws DownloadException {
+    public static SSHClient createSSHClient(JReleaserContext context, SshDownloader<?> downloader) throws DownloadException {
+        if (context.isDryrun()) return null;
+
         try {
             SSHClient client = sshClient(context, downloader);
             client.setConnectTimeout(downloader.getConnectTimeout() * 1000);
@@ -125,7 +127,7 @@ public class SshUtils {
         return client;
     }
 
-    public static SFTPClient createSFTPClient(JReleaserContext context, SshUploader uploader, SSHClient ssh) throws UploadException {
+    public static SFTPClient createSFTPClient(JReleaserContext context, SshUploader<?> uploader, SSHClient ssh) throws UploadException {
         if (null == ssh) return null;
 
         try {
@@ -135,7 +137,9 @@ public class SshUtils {
         }
     }
 
-    public static SFTPClient createSFTPClient(JReleaserContext context, SshDownloader downloader, SSHClient ssh) throws DownloadException {
+    public static SFTPClient createSFTPClient(JReleaserContext context, SshDownloader<?> downloader, SSHClient ssh) throws DownloadException {
+        if (null == ssh) return null;
+
         try {
             return ssh.newSFTPClient();
         } catch (IOException e) {
@@ -143,7 +147,7 @@ public class SshUtils {
         }
     }
 
-    public static void createDirectories(JReleaserContext context, SshUploader uploader, SSHClient ssh, Path path) throws UploadException {
+    public static void createDirectories(JReleaserContext context, SshUploader<?> uploader, SSHClient ssh, Path path) throws UploadException {
         try (Session session = ssh.startSession()) {
             Session.Command cmd = session.exec("mkdir -p " + path.toAbsolutePath());
             cmd.join(uploader.getReadTimeout(), TimeUnit.SECONDS);
@@ -153,7 +157,7 @@ public class SshUtils {
         }
     }
 
-    public static void disconnect(SshUploader uploader, SSHClient ssh) throws UploadException {
+    public static void disconnect(SshUploader<?> uploader, SSHClient ssh) throws UploadException {
         try {
             if (null != ssh) ssh.disconnect();
         } catch (IOException e) {
@@ -161,15 +165,15 @@ public class SshUtils {
         }
     }
 
-    public static void disconnect(SshDownloader downloader, SSHClient ssh) throws DownloadException {
+    public static void disconnect(SshDownloader<?> downloader, SSHClient ssh) throws DownloadException {
         try {
-            ssh.disconnect();
+            if (null != ssh) ssh.disconnect();
         } catch (IOException e) {
             throw new DownloadException(RB.$("ERROR_disconnect", downloader.getName()), e);
         }
     }
 
-    public static void close(SshUploader uploader, SFTPClient sftp) throws UploadException {
+    public static void close(SshUploader<?> uploader, SFTPClient sftp) throws UploadException {
         try {
             if (null != sftp) sftp.close();
         } catch (IOException e) {
@@ -177,9 +181,9 @@ public class SshUtils {
         }
     }
 
-    public static void close(SshDownloader downloader, SFTPClient sftp) throws DownloadException {
+    public static void close(SshDownloader<?> downloader, SFTPClient sftp) throws DownloadException {
         try {
-            sftp.close();
+            if (null != sftp) sftp.close();
         } catch (IOException e) {
             throw new DownloadException(RB.$("ERROR_disconnect", downloader.getName()), e);
         }
