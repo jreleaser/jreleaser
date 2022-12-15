@@ -3,7 +3,10 @@
 :project-owner:   jreleaser
 :project-name:    jreleaser
 :project-group:   org.jreleaser
+:project-artifactId: jreleaser-model-api
 :project-version: 1.3.1
+:plugin-path:     org/jreleaser
+:plugin-id:       org.jreleaser
 
 image::src/media/banner.png[JReleaser]
 
@@ -11,22 +14,21 @@ image::src/media/banner.png[JReleaser]
 
 Release Java and non-Java projects quickly and easily with link:https://jreleaser.org[JReleaser]!
 
-JReleaser is a release automation tool for Java and non-Java projects. Its goal is to simplify creating releases and
-publishing artifacts to multiple package managers while providing customizable options.
+JReleaser is a release automation tool for Java and non-Java projects (Rust, Elixir, C#, etc). Its goal is to simplify
+creating releases and publishing artifacts to multiple package managers while providing customizable options.
 
 For questions, support and general discussion, please use link:https://github.com/jreleaser/jreleaser/discussions[GitHub Discussions].
 
 == Badges
 
-image:http://img.shields.io/github/actions/workflow/status/{project-owner}/{project-name}/early-access.yml?branch=main&logo=github&label=Build["Build Status", link="https://github.com/{project-owner}/{project-name}/actions"]
-image:http://img.shields.io/github/actions/workflow/status/{project-owner}/{project-name}/codeql.yml?branch=main&logo=github&label=CodeQL["CodeQL", link="https://github.com/{project-owner}/{project-name}/actions"]
+image:https://img.shields.io/github/actions/workflow/status/{project-owner}/{project-name}/early-access.yml?branch=main&logo=github&label=Build["Build Status", link="https://github.com/{project-owner}/{project-name}/actions"]
 image:https://bestpractices.coreinfrastructure.org/projects/6393/badge["OpenSSF Best Practices", link="https://bestpractices.coreinfrastructure.org/projects/6393"]
 image:https://img.shields.io/ossf-scorecard/github.com/{project-owner}/{project-name}?label=openssf%20scorecard["OpenSSF Scorecard", link="https://api.securityscorecards.dev/projects/github.com/{project-owner}/{project-name}"]
 image:https://slsa.dev/images/gh-badge-level3.svg["SLSA 3", link="https://slsa.dev"]
+image:https://img.shields.io/opencollective/all/{project-name}?logo=opencollective&logoColor=white["Open Collective backers and sponsors", link="https://opencollective.com/{project-name}"]
 
-image:https://img.shields.io/github/downloads/{project-owner}/{project-name}/total["GitHub all releases", link="https://github.com/{project-owner}/{project-name}/releases"]
-image:https://img.shields.io/docker/pulls/{project-owner}/{project-owner}-slim?label={project-owner}-slim&logo=docker&logoColor=white["Docker Pulls {project-owner}-slim", link="https://hub.docker.com/r/{project-owner}/jreleaser-slim"]
-image:https://img.shields.io/docker/pulls/{project-owner}/{project-owner}-alpine?label={project-owner}-alpine&logo=docker&logoColor=white["Docker Pulls {project-owner}-alpine", link="https://hub.docker.com/r/{project-owner}/jreleaser-alpine"]
+image:https://img.shields.io/maven-central/v/{project-group}/{project-artifactId}?logo=apache%20maven[Download, link="https://search.maven.org/#search|ga|1|g:{project-group} AND a:{project-artifactId}"]
+image:https://img.shields.io/gradle-plugin-portal/v/{plugin-id}?logo=gradle["Gradle Plugin Portal", link="https://plugins.gradle.org/plugin/{plugin-id}"]
 
 == Install
 
@@ -50,3 +52,19 @@ image:https://img.shields.io/docker/pulls/{project-owner}/{project-owner}-alpine
 This project adheres to a link:https://github.com/{project-owner}/{project-name}/blob/main/CODE_OF_CONDUCT.md[code of conduct].
 By participating, you are expected to uphold this code. We appreciate your contribution. Please refer to our
 link:https://github.com/{project-owner}/{project-name}/blob/main/CONTRIBUTING.adoc[contributing guidelines] for further information.
+
+== Downloads
+
+image:https://img.shields.io/github/downloads/{project-owner}/{project-name}/total?logo=github["GitHub all releases", link="https://github.com/{project-owner}/{project-name}/releases"]
+image:https://img.shields.io/docker/pulls/{project-owner}/{project-owner}-slim?label={project-owner}-slim&logo=docker&logoColor=white["Docker Pulls {project-owner}-slim", link="https://hub.docker.com/r/{project-owner}/jreleaser-slim"]
+image:https://img.shields.io/docker/pulls/{project-owner}/{project-owner}-alpine?label={project-owner}-alpine&logo=docker&logoColor=white["Docker Pulls {project-owner}-alpine", link="https://hub.docker.com/r/{project-owner}/jreleaser-alpine"]
+image:https://img.shields.io/flathub/downloads/org.jreleaser.cli?label=flathub&logo=flathub&logoColor=white[Flathub, link="https://github.com/flathub/org.jreleaser.cli"]
+image:https://img.shields.io/chocolatey/dt/{project-owner}?label=chocolatey&logo=chocolatey&logoColor=white[Chocolatey, link="https://community.chocolatey.org/packages/{project-owner}"]
+image:https://img.shields.io/github/downloads/{project-owner}/{project-name}-appimage/total?label=appimage&logo=linux&logoColor=white[AppImage, link="https://github.com/{project-owner}/{project-name}-appimage"]
+
+== Code Health
+
+image:http://img.shields.io/github/actions/workflow/status/{project-owner}/{project-name}/codeql.yml?branch=main&logo=github&label=CodeQL["CodeQL", link="https://github.com/{project-owner}/{project-name}/actions"]
+image:https://img.shields.io/coverallsCoverage/github/{project-owner}/{project-name}?label=coveralls&logo=coveralls["Coveralls", link="https://coveralls.io/github/{project-owner}/{project-name}?branch=main"]
+image:https://img.shields.io/codecov/c/github/{project-owner}/{project-name}?label=codecov&logo=codecov&logoColor=white["Codecov", link="https://app.codecov.io/gh/{project-owner}/{project-name}"]
+image:https://img.shields.io/snyk/vulnerabilities/github/{project-owner}/{project-name}?logo=snyk[Snyk Vulnerabilities for GitHub Repo]
