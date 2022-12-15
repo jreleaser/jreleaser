@@ -91,7 +91,7 @@ public class S3ArtifactUploader extends AbstractArtifactUploader<org.jreleaser.m
 
         // does the bucket exist?
         context.getLogger().debug(RB.$("s3.bucket.check"), bucketName);
-        if (!s3.doesBucketExistV2(bucketName)) {
+        if (!context.isDryrun() && !s3.doesBucketExistV2(bucketName)) {
             // create the bucket
             context.getLogger().debug(RB.$("s3.bucket.create"), bucketName);
             s3.createBucket(bucketName);
