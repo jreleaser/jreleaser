@@ -29,11 +29,11 @@ import java.util.Map;
  */
 @ProxyConfig
 public interface DiscourseAPI {
-   @RequestLine("POST /posts.json")
-   @Headers("Content-Type: application/json")
-   Post createPost(Map<String, String> params);
+    @RequestLine("POST /posts.json")
+    @Headers("Content-Type: application/json")
+    Post createPost(Map<String, String> params);
 
-   @RequestLine("GET /categories.json")
-   @Headers("Content-Type: application/json")
-   CategoryResponse getCategories();
+    @RequestLine("GET /categories.json")
+    @Headers("Content-Type: application/json")
+    CategoryResponse getCategories();
 }

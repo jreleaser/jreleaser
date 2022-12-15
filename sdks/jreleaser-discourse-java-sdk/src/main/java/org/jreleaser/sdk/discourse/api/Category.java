@@ -26,7 +26,7 @@ import java.util.List;
  * @since 1.3.0
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Category{
+public class Category {
     public int id;
     public String name;
     public String color;
@@ -368,5 +368,9 @@ public class Category{
 
     public void setUploaded_background(String uploaded_background) {
         this.uploaded_background = uploaded_background;
+    }
+
+    public static Category empty() {
+        return new Category();
     }
 }

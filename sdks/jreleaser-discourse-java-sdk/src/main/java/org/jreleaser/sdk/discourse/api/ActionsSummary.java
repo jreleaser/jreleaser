@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  * @since 1.3.0
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ActionsSummary{
+public class ActionsSummary {
     public int id;
     public boolean can_act;
 }

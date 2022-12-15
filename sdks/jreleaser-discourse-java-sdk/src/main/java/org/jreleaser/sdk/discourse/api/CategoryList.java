@@ -24,7 +24,7 @@ import java.util.List;
  * @author shblue21
  * @since 1.3.0
  */
-public class CategoryList{
+public class CategoryList {
     public boolean can_create_category;
     public boolean can_create_topic;
     public List<Category> categories;
