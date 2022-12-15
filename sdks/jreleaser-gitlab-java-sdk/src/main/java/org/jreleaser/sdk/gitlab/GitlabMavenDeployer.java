@@ -78,17 +78,19 @@ public class GitlabMavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
         Gitlab api = createApi(baseUrl, token);
         List<GlPackage> glPackages = new ArrayList<>();
 
-        try {
-            glPackages.addAll(api.listPackages(Integer.parseInt(deployer.getProjectIdentifier()), "maven"));
-        } catch (IOException e) {
-            context.getLogger().trace(e);
-            throw new DeployException(RB.$("ERROR_unexpected_error"), e);
-        }
+        if (!context.isDryrun()) {
+            try {
+                glPackages.addAll(api.listPackages(Integer.parseInt(deployer.getProjectIdentifier()), "maven"));
+            } catch (IOException e) {
+                context.getLogger().trace(e);
+                throw new DeployException(RB.$("ERROR_unexpected_error"), e);
+            }
 
-        // delete existing packages (if any)
-        for (Deployable deployable : deployables) {
-            if (deployable.getFilename().endsWith(".pom")) {
-                deletePackage(api, deployable, glPackages);
+            // delete existing packages (if any)
+            for (Deployable deployable : deployables) {
+                if (deployable.getFilename().endsWith(".pom")) {
+                    deletePackage(api, deployable, glPackages);
+                }
             }
         }
 
