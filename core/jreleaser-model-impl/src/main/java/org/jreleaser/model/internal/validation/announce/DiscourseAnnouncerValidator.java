@@ -78,10 +78,6 @@ public abstract class DiscourseAnnouncerValidator extends Validator {
         }
 
         if (isBlank(discourse.getMessage()) && isBlank(discourse.getMessageTemplate())) {
-            discourse.setMessageTemplate(DEFAULT_DISCOURSE_TPL);
-        }
-
-        if (isBlank(discourse.getMessage()) && isBlank(discourse.getMessageTemplate())) {
             if (Files.exists(context.getBasedir().resolve(DEFAULT_DISCOURSE_TPL))) {
                 discourse.setMessageTemplate(DEFAULT_DISCOURSE_TPL);
             } else {

@@ -23,11 +23,8 @@ package org.jreleaser.model.api.announce;
  */
 public interface DiscourseAnnouncer extends Announcer {
     String TYPE = "discourse";
-
     String DISCOURSE_API_KEY = "DISCOURSE_API_KEY";
-
     String DISCOURSE_USERNAME = "DISCOURSE_USERNAME";
-
     String DISCOURSE_CATEGORY_NAME = "DISCOURSE_CATEGORY_NAME";
 
     String getHost();
