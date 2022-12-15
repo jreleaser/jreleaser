@@ -171,7 +171,7 @@ public class SshUtils {
 
     public static void close(SshUploader uploader, SFTPClient sftp) throws UploadException {
         try {
-            sftp.close();
+            if (null != sftp) sftp.close();
         } catch (IOException e) {
             throw new UploadException(RB.$("ERROR_disconnect", uploader.getName()), e);
         }
