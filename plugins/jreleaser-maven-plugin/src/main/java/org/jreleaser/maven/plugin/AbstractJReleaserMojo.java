@@ -124,7 +124,7 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
     }
 
     protected JReleaserModel readModel(JReleaserLogger logger) {
-        JReleaserModel jreleaserModel = (JReleaserModel) ContextCreator.resolveModel(logger, configFile.toPath());
+        JReleaserModel jreleaserModel = ContextCreator.resolveModel(logger, configFile.toPath());
         return JReleaserModelConfigurer.configure(jreleaserModel, project, session);
     }
 
