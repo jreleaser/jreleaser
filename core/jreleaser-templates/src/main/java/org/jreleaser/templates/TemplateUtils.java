@@ -87,6 +87,10 @@ public final class TemplateUtils {
         }
         Path actualTemplateDirectory = directory;
 
+        if (!Files.exists(actualTemplateDirectory)) {
+            return templates;
+        }
+
         try {
             Files.walkFileTree(actualTemplateDirectory, new SimpleFileVisitor<Path>() {
                 @Override
@@ -99,7 +103,7 @@ public final class TemplateUtils {
         } catch (IOException e) {
             String distributionTypeName = distributionType.toLowerCase(Locale.ENGLISH).replace('_', '-');
             throw new JReleaserException(RB.$("ERROR_unexpected_reading_templates_distribution",
-                distributionTypeName, toolName, actualTemplateDirectory.toAbsolutePath()));
+                distributionTypeName, toolName, actualTemplateDirectory.toAbsolutePath()), e);
         }
 
         return templates;
@@ -107,6 +111,10 @@ public final class TemplateUtils {
 
     public static Map<String, TemplateResource> resolveTemplates(Path templateDirectory) {
         Map<String, TemplateResource> templates = new LinkedHashMap<>();
+
+        if (!Files.exists(templateDirectory)) {
+            return templates;
+        }
 
         try {
             Files.walkFileTree(templateDirectory, new SimpleFileVisitor<Path>() {
@@ -118,7 +126,7 @@ public final class TemplateUtils {
                 }
             });
         } catch (IOException e) {
-            throw new JReleaserException(RB.$("ERROR_unexpected_reading_templates_from", templateDirectory.toAbsolutePath()));
+            throw new JReleaserException(RB.$("ERROR_unexpected_reading_templates_from", templateDirectory.toAbsolutePath()), e);
         }
 
         return templates;
