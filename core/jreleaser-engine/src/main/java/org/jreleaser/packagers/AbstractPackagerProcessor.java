@@ -45,8 +45,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
 import static org.jreleaser.model.Constants.KEY_ARTIFACT_ARCH;
 import static org.jreleaser.model.Constants.KEY_ARTIFACT_FILE;
 import static org.jreleaser.model.Constants.KEY_ARTIFACT_FILE_EXTENSION;
@@ -301,7 +301,7 @@ abstract class AbstractPackagerProcessor<T extends Packager<?>> implements Packa
                                             List<Artifact> artifacts) throws PackagerProcessingException {
         List<Artifact> activeArtifacts = artifacts.stream()
             .filter(Artifact::isActive)
-            .collect(Collectors.toList());
+            .collect(toList());
 
         if (activeArtifacts.size() == 0) {
             // we can't proceed

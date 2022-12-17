@@ -111,6 +111,7 @@ abstract class AbstractJReleaserTask extends Task {
         JReleaserVersion.banner(logger.getTracer());
         logger.info("Configuring with {}", actualConfigFile);
         logger.info(" - basedir set to {}", actualBasedir.toAbsolutePath());
+        logger.info(" - outputdir set to {}", getOutputDirectory().toAbsolutePath());
         doExecute(createContext());
     }
 

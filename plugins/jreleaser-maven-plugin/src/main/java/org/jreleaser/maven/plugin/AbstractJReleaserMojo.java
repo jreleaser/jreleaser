@@ -145,6 +145,7 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
             }
             logger.increaseIndent();
             logger.info("- basedir set to {}", basedir.toAbsolutePath());
+            logger.info("- outputdir set to {}", outputDirectory.toPath().toAbsolutePath());
             logger.decreaseIndent();
 
             return ContextCreator.create(

@@ -52,7 +52,7 @@ jobs:
           name: jlink
           path: out/jreleaser/assemble/jreleaser-standalone/jlink
 
-      - name: Set up Graal
+      - name: Setup Graal
         uses: graalvm/setup-graalvm@v1
         with:
           version: ${{ inputs.graal-version }}

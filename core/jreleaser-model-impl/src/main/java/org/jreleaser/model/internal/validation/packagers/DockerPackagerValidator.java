@@ -252,6 +252,12 @@ public abstract class DockerPackagerValidator extends Validator {
             errors.configuration(RB.$("validation_must_not_be_empty", element + ".matchers"));
         }
 
+        if (spec.getArtifact() == null) {
+            context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
+            spec.disable();
+            return;
+        }
+
         if (!spec.isUseLocalArtifactSet() && docker.isUseLocalArtifactSet()) {
             spec.setUseLocalArtifact(docker.isUseLocalArtifact());
         }

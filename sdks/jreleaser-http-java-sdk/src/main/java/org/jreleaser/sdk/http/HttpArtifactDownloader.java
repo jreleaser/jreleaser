@@ -27,7 +27,6 @@ import org.jreleaser.sdk.commons.AbstractArtifactDownloader;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -66,10 +65,10 @@ public class HttpArtifactDownloader extends AbstractArtifactDownloader<org.jrele
 
     private void downloadAsset(String name, Downloader.Asset asset) throws DownloadException {
         String input = asset.getResolvedInput(context, downloader);
-        String output = asset.getResolvedOutput(context, downloader, Paths.get(input).getFileName().toString());
+        String output = asset.getResolvedOutput(context, downloader, getFilename(input));
 
         if (isBlank(output)) {
-            output = Paths.get(input).getFileName().toString();
+            output = getFilename(input);
         }
 
         Path outputPath = context.getDownloadDirectory().resolve(name).resolve(output);
@@ -88,5 +87,9 @@ public class HttpArtifactDownloader extends AbstractArtifactDownloader<org.jrele
         }
 
         unpack(asset.getUnpack(), outputPath);
+    }
+
+    private String getFilename(String name) {
+        return name.substring(name.lastIndexOf('/') + 1);
     }
 }

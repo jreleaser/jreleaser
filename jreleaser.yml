@@ -240,7 +240,6 @@ assemble:
 distributions:
   jreleaser:
     flatpak:
-      continueOnError: true
       active: ALWAYS
       componentId: org.jreleaser.cli
       developerName: JReleaser
@@ -284,6 +283,7 @@ distributions:
         active: RELEASE
     sdkman:
       active: RELEASE
+      continueOnError: true
     snap:
       active: ALWAYS
       remoteBuild: true
@@ -327,7 +327,6 @@ distributions:
 
   jreleaser-standalone:
     appImage:
-      continueOnError: true
       active: ALWAYS
       componentId: org.jreleaser.cli
       developerName: JReleaser

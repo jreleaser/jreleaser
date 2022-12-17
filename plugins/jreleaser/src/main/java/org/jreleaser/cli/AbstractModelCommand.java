@@ -87,6 +87,7 @@ public abstract class AbstractModelCommand extends AbstractLoggingCommand {
         logger.info($("TEXT_config_file"), actualConfigFile);
         logger.increaseIndent();
         logger.info($("TEXT_basedir_set"), actualBasedir.toAbsolutePath());
+        logger.info($("TEXT_outputdir_set"), getOutputDirectory().toAbsolutePath());
         logger.decreaseIndent();
         doExecute(createContext());
     }

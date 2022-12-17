@@ -318,11 +318,11 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     JReleaserModel toModel(org.gradle.api.Project gradleProject, JReleaserLogger logger) {
         if (configFile.present) {
             JReleaserModel jreleaser = ContextCreator.resolveModel(logger, configFile.asFile.get().toPath())
-            if (isBlank(jreleaser.project.name)) jreleaser.project.name = project.name.orNull
-            if (isBlank(jreleaser.project.version)) jreleaser.project.version = project.version.orNull
-            if (isBlank(jreleaser.project.description)) jreleaser.project.description = project.description.orNull
+            if (isBlank(jreleaser.project.name)) jreleaser.project.name = gradleProject.name
+            if (isBlank(jreleaser.project.version)) jreleaser.project.version = gradleProject.version
+            if (isBlank(jreleaser.project.description)) jreleaser.project.description = gradleProject.description
             jreleaser.environment.propertiesSource = new org.jreleaser.model.internal.environment.Environment.MapPropertiesSource(
-                filterProperties(project.properties))
+                filterProperties(gradleProject.properties))
             return jreleaser
         }
 

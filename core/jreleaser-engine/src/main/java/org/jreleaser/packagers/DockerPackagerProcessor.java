@@ -38,7 +38,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -47,6 +46,7 @@ import java.util.Set;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY;
@@ -133,7 +133,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
     }
 
     private Map<String, Object> fillSpecProps(Distribution distribution, Map<String, Object> props, DockerSpec spec) throws PackagerProcessingException {
-        List<Artifact> artifacts = Collections.singletonList(spec.getArtifact());
+        List<Artifact> artifacts = singletonList(spec.getArtifact());
         Map<String, Object> newProps = fillProps(distribution, props);
         newProps.put(KEY_DOCKER_SPEC_NAME, spec.getName());
         fillDockerProperties(newProps, distribution, spec);
@@ -172,7 +172,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
             context.getLogger().debug(RB.$("distributions.action.packaging") + " {} spec", spec.getName());
             Map<String, Object> newProps = fillSpecProps(distribution, props, spec);
             packageDocker(distribution, newProps, packageDirectory.resolve(spec.getName()),
-                spec, Collections.singletonList(spec.getArtifact()));
+                spec, singletonList(spec.getArtifact()));
         }
     }
 

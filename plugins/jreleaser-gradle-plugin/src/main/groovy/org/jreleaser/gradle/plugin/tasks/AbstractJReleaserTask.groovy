@@ -23,6 +23,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.options.Option
 import org.jreleaser.engine.context.ContextCreator
@@ -60,7 +61,7 @@ abstract class AbstractJReleaserTask extends DefaultTask {
     @Input
     final Property<Boolean> strict
 
-    @Input
+    @InputDirectory
     final DirectoryProperty outputDirectory
 
     @Internal
@@ -106,6 +107,7 @@ abstract class AbstractJReleaserTask extends DefaultTask {
         JReleaserVersion.banner(logger.getTracer())
         logger.increaseIndent()
         logger.info('- basedir set to {}', project.projectDir.toPath().toAbsolutePath())
+        logger.info('- outputdir set to {}', outputDirectory.get().asFile.toPath().toAbsolutePath())
         logger.decreaseIndent()
 
         return ContextCreator.create(

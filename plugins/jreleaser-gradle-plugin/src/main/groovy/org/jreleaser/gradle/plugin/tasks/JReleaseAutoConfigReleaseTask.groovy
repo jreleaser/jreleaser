@@ -26,6 +26,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
@@ -53,7 +54,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
  */
 @CompileStatic
 abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
-    @Input
+    @InputDirectory
     final DirectoryProperty outputDirectory
     @Input
     @Optional

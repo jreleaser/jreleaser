@@ -7,6 +7,8 @@ on:
 env:
   JAVA_VERSION: '11'
   JAVA_DISTRO: 'zulu'
+  GRAAL_VERSION: '22.3.0'
+  GRAAL_JAVA_VERSION: '17'
   CI: true
   GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
   JRELEASER_OCI_COMPARTMENTID: ${{ secrets.JRELEASER_OCI_COMPARTMENTID }}
@@ -40,17 +42,14 @@ jobs:
   build-cli:
     needs: [ precheck ]
     if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
-    name: 'CLI ${{ matrix.job.os }}-${{ matrix.job.sign }}'
+    name: 'CLI ${{ matrix.job.os }}'
     strategy:
       fail-fast: false
       matrix:
         job:
-          - { os: macos-latest  , sign: gpg   , args: '-xp docker' }
-          - { os: macos-latest  , sign: cosign, args: '-xp docker' }
-          - { os: ubuntu-latest , sign: gpg   , args: '' }
-          - { os: ubuntu-latest , sign: cosign, args: '' }
-          - { os: windows-latest, sign: gpg   , args: '-xp docker' }
-          - { os: windows-latest, sign: cosign, args: '-xp docker' }
+          - { os: macos-latest  , args: '-xp docker' }
+          - { os: ubuntu-latest , args: '' }
+          - { os: windows-latest, args: '-xp docker' }
     runs-on: ${{ matrix.job.os }}
     steps:
       - name: Checkout
@@ -83,63 +82,115 @@ jobs:
           restore-keys: ${{ runner.os }}-gradlew-
 
       - name: Build
-        run: ./gradlew -Prelease=true -PreproducibleBuild=true build -S
+        run: ./gradlew -Prelease=true -PreproducibleBuild=true build publishToMavenLocal -S
+
+      - name: Checkout smoketests repository
+        uses: actions/checkout@v3
+        with:
+          repository: jreleaser/smoketests-jreleaser
+          path: smoketests-jreleaser
+          fetch-depth: 0
+          token: ${{ secrets.GIT_ACCESS_TOKEN }}
+
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
 
       - name: Prepare
         shell: bash
         run: |
-          unzip -qo plugins/jreleaser/build/distributions/jreleaser-${{ needs.precheck.outputs.VERSION }}.zip
-          cp .github/test-files/jreleaser-${{ matrix.job.sign }}.yml jreleaser.yml
-          sh .github/scripts/jacoco-instrument.sh
+          cd smoketests-jreleaser
+          unzip -qo ../plugins/jreleaser/build/distributions/jreleaser-${{ needs.precheck.outputs.VERSION }}.zip
+          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" pom.xml
+          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" build.xml
+          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" gradle.properties
+          sh ../.github/scripts/jacoco-instrument.sh
 
-      - name: Assemble
-        shell: bash
-        run: |
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser assemble
-        env:
-          JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
-          JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
-          JAVA_OPTS: '-javaagent:jacoco/jacocoagent.jar=includes=*jreleaser*,destfile=jreleaser-cli-${{ runner.os }}-${{ matrix.job.sign }}.exec'
-
-      - name: JReleaser assemble output
-        if: always()
-        uses: actions/upload-artifact@v3
+      - name: Setup Graal
+        uses: graalvm/setup-graalvm@v1
         with:
-          retention-days: 7
-          name: 'jreleaser-assemble-cli-${{ runner.os }}-${{ matrix.job.sign }}'
-          path: |
-            out/jreleaser/trace.log
-            out/jreleaser/output.properties
+          version: ${{ env.GRAAL_VERSION }}
+          java-version: ${{ env.GRAAL_JAVA_VERSION }}
+          components: 'native-image'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Full Release
+      - name: JReleaser
         shell: bash
         run: |
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser full-release --dry-run ${{ matrix.job.args }}
+          cd smoketests-jreleaser
+          echo "::group::➡️ build"
+          chmod +x gradlew
+          ./gradlew build
+          chmod +x mvnw
+          ./mvnw -B -ntp deploy -DaltDeploymentRepository=local::file:./target/staging-deploy
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser json-schema
+          echo "::endgroup::"
+          echo "::group::➡️ assemble"
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser assemble -PoutputDir=out
+          echo "::endgroup::"
+          echo "::group::➡️ config"
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser config -PoutputDir=out
+          echo "::endgroup::"
+          echo "::group::➡️ changelog"
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser changelog -PoutputDir=out
+          echo "::endgroup::"
+          echo "::group::➡️ download"
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser download -PoutputDir=out --dry-run
+          echo "::endgroup::"
+          echo "::group::➡️ checksum"
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser checksum -PoutputDir=out -scp
+          echo "::endgroup::"
+          echo "::group::➡️ sign"
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser sign -PoutputDir=out -scp
+          echo "::endgroup::"
+          echo "::group::➡️ deploy"
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser deploy -PoutputDir=out --dry-run
+          echo "::endgroup::"
+          echo "::group::➡️ upload"
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser upload -scp -PoutputDir=out --dry-run
+          echo "::endgroup::"
+          echo "::group::➡️ release"
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser release -scp -PoutputDir=out --dry-run
+          echo "::endgroup::"
+          echo "::group::➡️ prepare"
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser prepare -scp -PoutputDir=out ${{ matrix.job.args }}
+          echo "::endgroup::"
+          echo "::group::➡️ package"
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser package -scp -PoutputDir=out ${{ matrix.job.args }}
+          echo "::endgroup::"
+          echo "::group::➡️ publish"
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser publish -scp -PoutputDir=out --dry-run ${{ matrix.job.args }}
+          echo "::endgroup::"
+          echo "::group::➡️ full-release"
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser full-release -PoutputDir=out -scp --dry-run ${{ matrix.job.args }}
+          echo "::endgroup::"
+          echo "::group::➡️ announce"
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser announce -PoutputDir=out --dry-run
+          echo "::endgroup::"
         env:
-          JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
-          JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
+          JRELEASER_OUTPUT_DIRECTORY: out
+          JRELEASER_USER_HOME: ${{ github.workspace }}/smoketests-jreleaser/.jreleaser
+          JRELEASER_PROJECT_VERSION: 1.0.0
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           JRELEASER_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
-          JRELEASER_COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-          JRELEASER_DOCKER_DEFAULT_PASSWORD: ${{ secrets.JRELEASER_DOCKER_PASSWORD }}
-          JRELEASER_S3_JRELEASER_REGION: ${{ secrets.S3_REGION }}
-          JRELEASER_S3_JRELEASER_BUCKET: ${{ secrets.S3_BUCKET }}
-          JRELEASER_S3_JRELEASER_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY_ID }}
-          JRELEASER_S3_JRELEASER_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
-          JAVA_OPTS: '-javaagent:jacoco/jacocoagent.jar=includes=*jreleaser*,destfile=jreleaser-cli-${{ runner.os }}-${{ matrix.job.sign }}.exec'
+          JAVA_OPTS: '-javaagent:jacoco/jacocoagent.jar=includes=*jreleaser*,destfile=jreleaser-cli-${{ runner.os }}.exec'
 
-      - name: JReleaser full-release output
+      - name: JReleaser output
         if: always()
         uses: actions/upload-artifact@v3
         with:
           retention-days: 7
-          name: 'jreleaser-full-release-cli-${{ runner.os }}-${{ matrix.job.sign }}'
+          name: 'jreleaser-cli-${{ runner.os }}'
           path: |
-            out/jreleaser/trace.log
-            out/jreleaser/output.properties
-            out/jreleaser/release/CHANGELOG.md
-            out/jreleaser/prepare
+            smoketests-jreleaser/out/jreleaser/trace.log
+            smoketests-jreleaser/out/jreleaser/output.properties
+            smoketests-jreleaser/out/jreleaser/release/CHANGELOG.md
+            smoketests-jreleaser/out/jreleaser/prepare
 
       - name: JaCoCo upload
         if: always()
@@ -147,7 +198,7 @@ jobs:
         with:
           retention-days: 1
           name: jacoco
-          path: '*.exec'
+          path: smoketests-jreleaser/*.exec
 
       - name: Cleanup cache
         if: always()
@@ -159,17 +210,14 @@ jobs:
   build-ant:
     needs: [ precheck ]
     if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
-    name: 'Ant ${{ matrix.job.os }}-${{ matrix.job.sign }}'
+    name: 'Ant ${{ matrix.job.os }}'
     strategy:
       fail-fast: false
       matrix:
         job:
-          - { os: macos-latest  , sign: gpg   ,  args: '-Djreleaser.excluded.packagers=docker' }
-          - { os: macos-latest  , sign: cosign,  args: '-Djreleaser.excluded.packagers=docker' }
-          - { os: ubuntu-latest , sign: gpg   ,  args: '' }
-          - { os: ubuntu-latest , sign: cosign,  args: '' }
-          - { os: windows-latest, sign: gpg   ,  args: '-Djreleaser.excluded.packagers=docker' }
-          - { os: windows-latest, sign: cosign,  args: '-Djreleaser.excluded.packagers=docker' }
+          - { os: macos-latest  , args: '-Djreleaser.excluded.packagers=docker' }
+          - { os: ubuntu-latest , args: '' }
+          - { os: windows-latest, args: '-Djreleaser.excluded.packagers=docker' }
     runs-on: ${{ matrix.job.os }}
     steps:
       - name: Checkout
@@ -202,66 +250,115 @@ jobs:
           restore-keys: ${{ runner.os }}-gradlew-
 
       - name: Build
-        run: ./gradlew -Prelease=true -PreproducibleBuild=true build -S
+        run: ./gradlew -Prelease=true -PreproducibleBuild=true build publishToMavenLocal -S
+
+      - name: Checkout smoketests repository
+        uses: actions/checkout@v3
+        with:
+          repository: jreleaser/smoketests-jreleaser
+          path: smoketests-jreleaser
+          fetch-depth: 0
+          token: ${{ secrets.GIT_ACCESS_TOKEN }}
+
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
 
       - name: Prepare
         shell: bash
         run: |
-          cp .github/test-files/jreleaser-${{ matrix.job.sign }}.yml jreleaser.yml
-          cp .github/test-files/build.xml build.xml
-          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" build.xml
+          cd smoketests-jreleaser
           mkdir lib
-          unzip -dlib -qo plugins/jreleaser-ant-tasks/build/distributions/jreleaser-ant-tasks-${{ needs.precheck.outputs.VERSION }}.zip
-          sh .github/scripts/jacoco-instrument.sh
+          unzip -dlib -qo ../plugins/jreleaser-ant-tasks/build/distributions/jreleaser-ant-tasks-${{ needs.precheck.outputs.VERSION }}.zip
+          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" pom.xml
+          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" build.xml
+          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" gradle.properties
+          sh ../.github/scripts/jacoco-instrument.sh
 
-      - name: Assemble
-        shell: bash
-        run: |
-          ant jreleaser-assemble
-        env:
-          JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
-          JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
-          ANT_OPTS: '-javaagent:jacoco/jacocoagent.jar=includes=*jreleaser*,destfile=jreleaser-ant-${{ runner.os }}-${{ matrix.job.sign }}.exec'
-
-      - name: JReleaser assemble output
-        if: always()
-        uses: actions/upload-artifact@v3
+      - name: Setup Graal
+        uses: graalvm/setup-graalvm@v1
         with:
-          retention-days: 7
-          name: 'jreleaser-assemble-ant-${{ runner.os }}-${{ matrix.job.sign }}'
-          path: |
-            build/jreleaser/trace.log
-            build/jreleaser/output.properties
+          version: ${{ env.GRAAL_VERSION }}
+          java-version: ${{ env.GRAAL_JAVA_VERSION }}
+          components: 'native-image'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Full Release
+      - name: JReleaser
         shell: bash
         run: |
-          ant ${{ matrix.job.args }} jreleaser-full-release
+          cd smoketests-jreleaser
+          echo "::group::➡️ build"
+          chmod +x gradlew
+          ./gradlew build
+          chmod +x mvnw
+          ./mvnw -B -ntp deploy -DaltDeploymentRepository=local::file:./target/staging-deploy
+          echo "::endgroup::"
+          echo "::group::➡️ assemble"
+          ant jreleaser-assemble -DoutputDir=build
+          echo "::endgroup::"
+          echo "::group::➡️ config"
+          ant jreleaser-config -DoutputDir=build
+          echo "::endgroup::"
+          echo "::group::➡️ changelog"
+          ant jreleaser-changelog -DoutputDir=build
+          echo "::endgroup::"
+          echo "::group::➡️ download"
+          ant jreleaser-download -DoutputDir=build -Djreleaser.dry.run=true
+          echo "::endgroup::"
+          echo "::group::➡️ checksum"
+          ant jreleaser-checksum -DoutputDir=build -Djreleaser.select.current.platform=true
+          echo "::endgroup::"
+          echo "::group::➡️ sign"
+          ant jreleaser-sign -DoutputDir=build -Djreleaser.select.current.platform=true
+          echo "::endgroup::"
+          echo "::group::➡️ deploy"
+          ant jreleaser-deploy -DoutputDir=build -Djreleaser.dry.run=true
+          echo "::endgroup::"
+          echo "::group::➡️ upload"
+          ant jreleaser-upload -DoutputDir=build -Djreleaser.select.current.platform=true -Djreleaser.dry.run=true
+          echo "::endgroup::"
+          echo "::group::➡️ release"
+          ant jreleaser-release -DoutputDir=build -Djreleaser.select.current.platform=true -Djreleaser.dry.run=true
+          echo "::endgroup::"
+          echo "::group::➡️ prepare"
+          ant jreleaser-prepare -DoutputDir=build -Djreleaser.select.current.platform=true ${{ matrix.job.args }}
+          echo "::endgroup::"
+          echo "::group::➡️ package"
+          ant jreleaser-package -DoutputDir=build -Djreleaser.select.current.platform=true ${{ matrix.job.args }} 
+          echo "::endgroup::"
+          echo "::group::➡️ publish"
+          ant jreleaser-publish -DoutputDir=build -Djreleaser.select.current.platform=true -Djreleaser.dry.run=true ${{ matrix.job.args }} 
+          echo "::endgroup::"
+          echo "::group::➡️ full-release"
+          ant jreleaser-full-release -DoutputDir=build -Djreleaser.select.current.platform=true -Djreleaser.dry.run=true ${{ matrix.job.args }} 
+          echo "::endgroup::"
+          echo "::group::➡️ announce"
+          ant jreleaser-announce -DoutputDir=build -Djreleaser.dry.run=true
+          echo "::endgroup::"
         env:
-          JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
-          JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
+          JRELEASER_OUTPUT_DIRECTORY: out
+          JRELEASER_USER_HOME: ${{ github.workspace }}/smoketests-jreleaser/.jreleaser
+          JRELEASER_PROJECT_VERSION: 1.0.0
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           JRELEASER_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
-          JRELEASER_COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-          JRELEASER_DOCKER_DEFAULT_PASSWORD: ${{ secrets.JRELEASER_DOCKER_PASSWORD }}
-          JRELEASER_S3_JRELEASER_REGION: ${{ secrets.S3_REGION }}
-          JRELEASER_S3_JRELEASER_BUCKET: ${{ secrets.S3_BUCKET }}
-          JRELEASER_S3_JRELEASER_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY_ID }}
-          JRELEASER_S3_JRELEASER_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
-          ANT_OPTS: '-javaagent:jacoco/jacocoagent.jar=includes=*jreleaser*,destfile=jreleaser-ant-${{ runner.os }}-${{ matrix.job.sign }}.exec'
+          ANT_OPTS: '-javaagent:jacoco/jacocoagent.jar=includes=*jreleaser*,destfile=jreleaser-ant-${{ runner.os }}.exec'
 
-      - name: JReleaser full-release output
+      - name: JReleaser output
         if: always()
         uses: actions/upload-artifact@v3
         with:
           retention-days: 7
-          name: 'jreleaser-full-release-ant-${{ runner.os }}-${{ matrix.job.sign }}'
+          name: 'jreleaser-full-release-ant-${{ runner.os }}'
           path: |
-            build/jreleaser/trace.log
-            build/jreleaser/output.properties
-            build/jreleaser/release/CHANGELOG.md
-            build/jreleaser/prepare
+            smoketests-jreleaser/build/jreleaser/trace.log
+            smoketests-jreleaser/build/jreleaser/output.properties
+            smoketests-jreleaser/build/jreleaser/release/CHANGELOG.md
+            smoketests-jreleaser/build/jreleaser/prepare
 
       - name: JaCoCo upload
         if: always()
@@ -269,7 +366,7 @@ jobs:
         with:
           retention-days: 1
           name: jacoco
-          path: '*.exec'
+          path: smoketests-jreleaser/*.exec
 
       - name: Cleanup cache
         if: always()
@@ -281,17 +378,14 @@ jobs:
   build-gradle:
     needs: [ precheck ]
     if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
-    name: 'Gradle ${{ matrix.job.os }}-${{ matrix.job.sign }}'
+    name: 'Gradle ${{ matrix.job.os }}'
     strategy:
       fail-fast: false
       matrix:
         job:
-          - { os: macos-latest  , sign: gpg   ,  args: '--exclude-packager docker' }
-          - { os: macos-latest  , sign: cosign,  args: '--exclude-packager docker' }
-          - { os: ubuntu-latest , sign: gpg   ,  args: '' }
-          - { os: ubuntu-latest , sign: cosign,  args: '' }
-          - { os: windows-latest, sign: gpg   ,  args: '--exclude-packager docker' }
-          - { os: windows-latest, sign: cosign,  args: '--exclude-packager docker' }
+          - { os: macos-latest  , args: '--exclude-packager docker' }
+          - { os: ubuntu-latest , args: '' }
+          - { os: windows-latest, args: '--exclude-packager docker' }
     runs-on: ${{ matrix.job.os }}
     steps:
       - name: Checkout
@@ -326,81 +420,111 @@ jobs:
       - name: Build
         run: ./gradlew -Prelease=true -PreproducibleBuild=true build publishToMavenLocal -S
 
+      - name: Checkout smoketests repository
+        uses: actions/checkout@v3
+        with:
+          repository: jreleaser/smoketests-jreleaser
+          path: smoketests-jreleaser
+          fetch-depth: 0
+          token: ${{ secrets.GIT_ACCESS_TOKEN }}
+
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+
       - name: Prepare
         shell: bash
         run: |
-          cp .github/test-files/gradle.properties gradle.properties
-          cp .github/test-files/settings.gradle settings.gradle
-          cp .github/test-files/build-${{ matrix.job.sign }}.gradle build.gradle
-          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" settings.gradle
+          cd smoketests-jreleaser
+          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" pom.xml
+          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" build.xml
           sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" gradle.properties
-          sh .github/scripts/jacoco-instrument.sh
+          sh ../.github/scripts/jacoco-instrument.sh
 
-      - name: Assemble
+      - name: Setup Graal
+        uses: graalvm/setup-graalvm@v1
+        with:
+          version: ${{ env.GRAAL_VERSION }}
+          java-version: ${{ env.GRAAL_JAVA_VERSION }}
+          components: 'native-image'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: JReleaser
         shell: bash
         run: |
-          ./gradlew jreleaserAssemble
+          cd smoketests-jreleaser
+          echo "::group::➡️ build"
+          chmod +x gradlew
+          ./gradlew build
+          chmod +x mvnw
+          ./mvnw -B -ntp deploy -DaltDeploymentRepository=local::file:./target/staging-deploy
+          echo "::endgroup::"
+          echo "::group::➡️ assemble"
+          ./gradlew jreleaserAssemble -PoutputDir=build -S
+          echo "::endgroup::"
+          echo "::group::➡️ config"
+          ./gradlew jreleaserConfig -PoutputDir=build -S
+          echo "::endgroup::"
+          echo "::group::➡️ changelog"
+          ./gradlew jreleaserChangelog -PoutputDir=build -S
+          echo "::endgroup::"
+          echo "::group::➡️ download"
+          ./gradlew jreleaserDownload -PoutputDir=build -S
+          echo "::endgroup::"
+          echo "::group::➡️ checksum"
+          ./gradlew jreleaserChecksum -PoutputDir=build --select-current-platform -S
+          echo "::endgroup::"
+          echo "::group::➡️ sign"
+          ./gradlew jreleaserSign -PoutputDir=build --select-current-platform -S
+          echo "::endgroup::"
+          echo "::group::➡️ deploy"
+          ./gradlew jreleaserDeploy -PoutputDir=build -S
+          echo "::endgroup::"
+          echo "::group::➡️ upload"
+          ./gradlew jreleaserUpload -PoutputDir=build --select-current-platform -S
+          echo "::endgroup::"
+          echo "::group::➡️ release"
+          ./gradlew jreleaserRelease -PoutputDir=build --select-current-platform -S
+          echo "::endgroup::"
+          echo "::group::➡️ prepare"
+          ./gradlew jreleaserPrepare -PoutputDir=build --select-current-platform  ${{ matrix.job.args }} -S
+          echo "::endgroup::"
+          echo "::group::➡️ package"
+          ./gradlew jreleaserPackage -PoutputDir=build --select-current-platform  ${{ matrix.job.args }} -S
+          echo "::endgroup::"
+          echo "::group::➡️ publish"
+          ./gradlew jreleaserPublish -PoutputDir=build --select-current-platform  ${{ matrix.job.args }} -S
+          echo "::endgroup::"
+          echo "::group::➡️ full-release"
+          ./gradlew jreleaserFullRelease -PoutputDir=build --select-current-platform  ${{ matrix.job.args }} -S
+          echo "::endgroup::"
+          echo "::group::➡️ announce"
+          ./gradlew jreleaserAnnounce -PoutputDir=build -S
+          echo "::endgroup::"
         env:
-          JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
-          JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
-          JAVA_OPTS: '-javaagent:jacoco/jacocoagent.jar=includes=*jreleaser*,destfile=jreleaser-gradle-${{ runner.os }}-${{ matrix.job.sign }}.exec'
+          JRELEASER_OUTPUT_DIRECTORY: out
+          JRELEASER_USER_HOME: ${{ github.workspace }}/smoketests-jreleaser/.jreleaser
+          JRELEASER_PROJECT_VERSION: 1.0.0
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JRELEASER_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
+          JRELEASER_GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
+          JAVA_OPTS: '-javaagent:jacoco/jacocoagent.jar=includes=*jreleaser*,destfile=jreleaser-gradle-${{ runner.os }}.exec'
 
-      - name: JReleaser assemble output
+      - name: JReleaser output
         if: always()
         uses: actions/upload-artifact@v3
         with:
           retention-days: 7
-          name: 'jreleaser-assemble-gradle-${{ runner.os }}-${{ matrix.job.sign }}'
+          name: 'jreleaser-full-release-gradle-${{ runner.os }}'
           path: |
-            build/jreleaser/trace.log
-            build/jreleaser/output.properties
-
-      - name: Full Release
-        shell: bash
-        run: |
-          ./gradlew jreleaserFullRelease ${{ matrix.job.args }}
-        env:
-          JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
-          JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
-          JRELEASER_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-          JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
-          JRELEASER_GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
-          JRELEASER_COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-          JRELEASER_DOCKER_DEFAULT_PASSWORD: ${{ secrets.JRELEASER_DOCKER_PASSWORD }}
-          JRELEASER_S3_JRELEASER_REGION: ${{ secrets.S3_REGION }}
-          JRELEASER_S3_JRELEASER_BUCKET: ${{ secrets.S3_BUCKET }}
-          JRELEASER_S3_JRELEASER_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY_ID }}
-          JRELEASER_S3_JRELEASER_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
-          JAVA_OPTS: '-javaagent:jacoco/jacocoagent.jar=includes=*jreleaser*,destfile=jreleaser-gradle-${{ runner.os }}-${{ matrix.job.sign }}.exec'
-
-      - name: JReleaser full-release output
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          retention-days: 7
-          name: 'jreleaser-full-release-gradle-${{ runner.os }}-${{ matrix.job.sign }}'
-          path: |
-            build/jreleaser/trace.log
-            build/jreleaser/output.properties
-            build/jreleaser/release/CHANGELOG.md
-            build/jreleaser/prepare
-
-      - name: Clean
-        shell: bash
-        run: |
-          ./gradlew clean -S
-        env:
-          JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
-          JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
-          JRELEASER_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-          JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
-          JRELEASER_GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
-          JRELEASER_COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-          JRELEASER_DOCKER_DEFAULT_PASSWORD: ${{ secrets.JRELEASER_DOCKER_PASSWORD }}
-          JRELEASER_S3_JRELEASER_REGION: ${{ secrets.S3_REGION }}
-          JRELEASER_S3_JRELEASER_BUCKET: ${{ secrets.S3_BUCKET }}
-          JRELEASER_S3_JRELEASER_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY_ID }}
-          JRELEASER_S3_JRELEASER_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
+            smoketests-jreleaser/build/jreleaser/trace.log
+            smoketests-jreleaser/build/jreleaser/output.properties
+            smoketests-jreleaser/build/jreleaser/release/CHANGELOG.md
+            smoketests-jreleaser/build/jreleaser/prepare
 
       - name: JaCoCo upload
         if: always()
@@ -408,7 +532,20 @@ jobs:
         with:
           retention-days: 1
           name: jacoco
-          path: '*.exec'
+          path: smoketests-jreleaser/*.exec
+
+      - name: Clean
+        shell: bash
+        run: |
+          cd smoketests-jreleaser
+          ./gradlew clean -S
+        env:
+          JRELEASER_USER_HOME: ${{ github.workspace }}/smoketests-jreleaser/.jreleaser
+          JRELEASER_PROJECT_VERSION: 1.0.0
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JRELEASER_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+          JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
+          JRELEASER_GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
 
       - name: Cleanup cache
         if: always()
@@ -420,17 +557,14 @@ jobs:
   build-maven:
     needs: [ precheck ]
     if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
-    name: 'Maven ${{ matrix.job.os }}-${{ matrix.job.sign }}'
+    name: 'Maven ${{ matrix.job.os }}'
     strategy:
       fail-fast: false
       matrix:
         job:
-          - { os: macos-latest  , sign: gpg   ,  args: '-Djreleaser.excluded.packagers=docker' }
-          - { os: macos-latest  , sign: cosign,  args: '-Djreleaser.excluded.packagers=docker' }
-          - { os: ubuntu-latest , sign: gpg   ,  args: '' }
-          - { os: ubuntu-latest , sign: cosign,  args: '' }
-          - { os: windows-latest, sign: gpg   ,  args: '-Djreleaser.excluded.packagers=docker' }
-          - { os: windows-latest, sign: cosign,  args: '-Djreleaser.excluded.packagers=docker' }
+          - { os: macos-latest  , args: '-Djreleaser.excluded.packagers=docker' }
+          - { os: ubuntu-latest , args: '' }
+          - { os: windows-latest, args: '-Djreleaser.excluded.packagers=docker' }
     runs-on: ${{ matrix.job.os }}
     steps:
       - name: Checkout
@@ -465,12 +599,13 @@ jobs:
       - name: Build
         run: ./gradlew -Prelease=true -PreproducibleBuild=true build publishToMavenLocal -S
 
-      - name: Prepare
-        shell: bash
-        run: |
-          cp .github/test-files/pom-${{ matrix.job.sign }}.xml pom.xml
-          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" pom.xml
-          sh .github/scripts/jacoco-instrument.sh
+      - name: Checkout smoketests repository
+        uses: actions/checkout@v3
+        with:
+          repository: jreleaser/smoketests-jreleaser
+          path: smoketests-jreleaser
+          fetch-depth: 0
+          token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
       - name: Cache Maven packages
         uses: actions/cache@v3
@@ -479,54 +614,96 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Assemble
+      - name: Prepare
         shell: bash
         run: |
-          mvn -B jreleaser:assemble
-        env:
-          JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
-          JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
-          MAVEN_OPTS: '-javaagent:jacoco/jacocoagent.jar=includes=*jreleaser*,destfile=jreleaser-maven-${{ runner.os }}-${{ matrix.job.sign }}.exec'
+          cd smoketests-jreleaser
+          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" pom.xml
+          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" build.xml
+          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" gradle.properties
+          sh ../.github/scripts/jacoco-instrument.sh
 
-      - name: JReleaser assemble output
-        if: always()
-        uses: actions/upload-artifact@v3
+      - name: Setup Graal
+        uses: graalvm/setup-graalvm@v1
         with:
-          retention-days: 7
-          name: 'jreleaser-assemble-maven-${{ runner.os }}-${{ matrix.job.sign }}'
-          path: |
-            target/jreleaser/trace.log
-            target/jreleaser/output.properties
+          version: ${{ env.GRAAL_VERSION }}
+          java-version: ${{ env.GRAAL_JAVA_VERSION }}
+          components: 'native-image'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Full Release
+      - name: JReleaser
         shell: bash
         run: |
-          mvn -B -Djreleaser.dry.run=true ${{ matrix.job.args }} jreleaser:full-release
+          cd smoketests-jreleaser
+          echo "::group::➡️ build"
+          chmod +x gradlew
+          ./gradlew build
+          chmod +x mvnw
+          ./mvnw -B -ntp deploy -DaltDeploymentRepository=local::file:./target/staging-deploy
+          echo "::endgroup::"
+          echo "::group::➡️ assemble"
+          ./mvnw -B -ntp jreleaser:assemble -DoutputDir=target
+          echo "::endgroup::"
+          echo "::group::➡️ config"
+          ./mvnw -B -ntp jreleaser:config -DoutputDir=target
+          echo "::endgroup::"
+          echo "::group::➡️ changelog"
+          ./mvnw -B -ntp jreleaser:changelog -DoutputDir=target
+          echo "::endgroup::"
+          echo "::group::➡️ download"
+          ./mvnw -B -ntp jreleaser:download -DoutputDir=target -Djreleaser.dry.run=true
+          echo "::endgroup::"
+          echo "::group::➡️ checksum"
+          ./mvnw -B -ntp jreleaser:checksum -DoutputDir=target -Djreleaser.select.current.platform=true
+          echo "::endgroup::"
+          echo "::group::➡️ sign"
+          ./mvnw -B -ntp jreleaser:sign -DoutputDir=target -Djreleaser.select.current.platform=true
+          echo "::endgroup::"
+          echo "::group::➡️ deploy"
+          ./mvnw -B -ntp jreleaser:deploy -DoutputDir=target -Djreleaser.dry.run=true
+          echo "::endgroup::"
+          echo "::group::➡️ upload"
+          ./mvnw -B -ntp jreleaser:upload -DoutputDir=target -Djreleaser.select.current.platform=true -Djreleaser.dry.run=true
+          echo "::endgroup::"
+          echo "::group::➡️ release"
+          ./mvnw -B -ntp jreleaser:release -DoutputDir=target -Djreleaser.select.current.platform=true -Djreleaser.dry.run=true
+          echo "::endgroup::"
+          echo "::group::➡️ prepare"
+          ./mvnw -B -ntp jreleaser:prepare -DoutputDir=target -Djreleaser.select.current.platform=true ${{ matrix.job.args }}
+          echo "::endgroup::"
+          echo "::group::➡️ package"
+          ./mvnw -B -ntp jreleaser:package -DoutputDir=target -Djreleaser.select.current.platform=true ${{ matrix.job.args }}
+          echo "::endgroup::"
+          echo "::group::➡️ publish"
+          ./mvnw -B -ntp jreleaser:publish -DoutputDir=target -Djreleaser.select.current.platform=true -Djreleaser.dry.run=true ${{ matrix.job.args }}
+          echo "::endgroup::"
+          echo "::group::➡️ full-release"
+          ./mvnw -B -ntp jreleaser:full-release -DoutputDir=target -Djreleaser.select.current.platform=true -Djreleaser.dry.run=true ${{ matrix.job.args }}
+          echo "::endgroup::"
+          echo "::group::➡️ announce"
+          ./mvnw -B -ntp jreleaser:announce -DoutputDir=target -Djreleaser.dry.run=true
+          echo "::endgroup::"
         env:
-          JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
-          JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
+          JRELEASER_OUTPUT_DIRECTORY: out
+          JRELEASER_USER_HOME: ${{ github.workspace }}/smoketests-jreleaser/.jreleaser
+          JRELEASER_PROJECT_VERSION: 1.0.0
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           JRELEASER_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
-          JRELEASER_COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
-          JRELEASER_DOCKER_DEFAULT_PASSWORD: ${{ secrets.JRELEASER_DOCKER_PASSWORD }}
-          JRELEASER_S3_JRELEASER_REGION: ${{ secrets.S3_REGION }}
-          JRELEASER_S3_JRELEASER_BUCKET: ${{ secrets.S3_BUCKET }}
-          JRELEASER_S3_JRELEASER_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY_ID }}
-          JRELEASER_S3_JRELEASER_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
-          MAVEN_OPTS: '-javaagent:jacoco/jacocoagent.jar=includes=*jreleaser*,destfile=jreleaser-maven-${{ runner.os }}-${{ matrix.job.sign }}.exec'
+          MAVEN_OPTS: '-javaagent:jacoco/jacocoagent.jar=includes=*jreleaser*,destfile=jreleaser-maven-${{ runner.os }}.exec'
 
-      - name: JReleaser full-release output
+      - name: JReleaser output
         if: always()
         uses: actions/upload-artifact@v3
         with:
           retention-days: 7
-          name: 'jreleaser-full-release-maven-${{ runner.os }}-${{ matrix.job.sign }}'
+          name: 'jreleaser-full-release-maven-${{ runner.os }}'
           path: |
-            target/jreleaser/trace.log
-            target/jreleaser/output.properties
-            target/jreleaser/release/CHANGELOG.md
-            target/jreleaser/prepare
+            smoketests-jreleaser/target/jreleaser/trace.log
+            smoketests-jreleaser/target/jreleaser/output.properties
+            smoketests-jreleaser/target/jreleaser/release/CHANGELOG.md
+            smoketests-jreleaser/target/jreleaser/prepare
 
       - name: JaCoCo upload
         if: always()
@@ -534,7 +711,7 @@ jobs:
         with:
           retention-days: 1
           name: jacoco
-          path: '*.exec'
+          path: smoketests-jreleaser/*.exec
 
       - name: Cleanup cache
         if: always()
