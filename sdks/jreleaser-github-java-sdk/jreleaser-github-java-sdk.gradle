@@ -25,4 +25,10 @@ dependencies {
     }
 
     api "org.kohsuke:github-api:$githubVersion"
+
+    testImplementation "org.assertj:assertj-core:$assertjVersion"
+    testImplementation("com.github.tomakehurst:wiremock-jre8:$wiremockVersion") {
+        exclude group: 'org.eclipse.jetty', module: 'jetty-alpn-java-server'
+        exclude group: 'org.eclipse.jetty', module: 'jetty-alpn-java-client'
+    }
 }

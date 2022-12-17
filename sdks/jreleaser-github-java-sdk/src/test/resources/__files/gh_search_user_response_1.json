@@ -1,0 +1,27 @@
+{
+  "total_count": 1,
+  "incomplete_results": false,
+  "items": [
+    {
+      "login": "jreleaserbot",
+      "id": 82947543,
+      "node_id": "abxy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/82947543?v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/jreleaserbot",
+      "html_url": "https://github.com/jreleaserbot",
+      "followers_url": "https://api.github.com/users/jreleaserbot/followers",
+      "following_url": "https://api.github.com/users/jreleaserbot/following{/other_user}",
+      "gists_url": "https://api.github.com/users/jreleaserbot/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/jreleaserbot/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/jreleaserbot/subscriptions",
+      "organizations_url": "https://api.github.com/users/jreleaserbot/orgs",
+      "repos_url": "https://api.github.com/users/jreleaserbot/repos",
+      "events_url": "https://api.github.com/users/jreleaserbot/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/jreleaserbot/received_events",
+      "type": "User",
+      "site_admin": false,
+      "score": 1.0
+    }
+  ]
+}
