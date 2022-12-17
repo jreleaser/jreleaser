@@ -442,7 +442,7 @@ public class ChangelogGenerator {
 
         Map<String, List<Contributor>> grouped = contributors.stream()
             .peek(contributor -> {
-                if (isNotBlank(format) && (format.contains("AsLink") || format.contains("Username"))) {
+                if (!context.isDryrun() && isNotBlank(format) && (format.contains("AsLink") || format.contains("Username"))) {
                     context.getReleaser().findUser(contributor.email, contributor.name)
                         .ifPresent(contributor::setUser);
                 }

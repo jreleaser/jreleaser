@@ -28,9 +28,17 @@ import picocli.CommandLine;
  */
 @CommandLine.Command(name = "changelog")
 public class Changelog extends AbstractModelCommand {
+    @CommandLine.Option(names = {"--dry-run"})
+    Boolean dryrun;
+
     @Override
     protected void doExecute(JReleaserContext context) {
         Workflows.changelog(context).execute();
+    }
+
+    @Override
+    protected Boolean dryrun() {
+        return dryrun;
     }
 
     @Override
