@@ -57,6 +57,7 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @since 0.6.0
  */
 class XGithub {
+    public static final String USERS_NOREPLY_GITHUB_COM = "@users.noreply.github.com";
     private final JReleaserLogger logger;
     private final GithubAPI api;
 
@@ -90,24 +91,30 @@ class XGithub {
         api.updateRelease(release, owner, repo, id);
     }
 
+    private String getPrivateEmailUserId(String email) {
+        if (!email.endsWith(USERS_NOREPLY_GITHUB_COM)) return null;
+        String username = email.substring(0, email.indexOf("@"));
+        if (username.contains("+")) {
+            username = username.substring(username.indexOf("+") + 1);
+        }
+        return username;
+    }
+
     Optional<User> findUser(String email, String name) throws RestAPIException {
         logger.debug(RB.$("git.user.lookup"), name, email);
+
+        String username = getPrivateEmailUserId(email);
+        if (username != null) {
+            GhUser user = api.getUser(username);
+            if (user != null) {
+                return Optional.of(new User(user.getLogin(), email, user.getHtmlUrl()));
+            }
+        }
 
         GhSearchUser search = api.searchUser(CollectionUtils.<String, String>mapOf("q", email));
         if (search.getTotalCount() > 0) {
             GhUser user = search.getItems().get(0);
             return Optional.of(new User(user.getLogin(), email, user.getHtmlUrl()));
-        }
-
-        // use full name instead
-        String query = "fullname:" + name + " type:user";
-        search = api.searchUser(CollectionUtils.<String, String>mapOf("q", query));
-        if (search.getTotalCount() > 0) {
-            GhUser user = search.getItems().get(0);
-            GhUser test = api.getUser(user.getLogin());
-            if (name.equals(test.getName())) {
-                return Optional.of(new User(user.getLogin(), email, user.getHtmlUrl()));
-            }
         }
 
         return Optional.empty();
