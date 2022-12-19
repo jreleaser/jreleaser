@@ -26,6 +26,8 @@ import org.jreleaser.util.Errors;
 import java.nio.file.Files;
 
 import static org.jreleaser.model.api.announce.SmtpAnnouncer.MAIL_PASSWORD;
+import static org.jreleaser.model.api.announce.SmtpAnnouncer.SMTP_PASSWORD;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -63,8 +65,10 @@ public abstract class SmtpAnnouncerValidator extends Validator {
 
         smtp.setPassword(
             checkProperty(context,
-                MAIL_PASSWORD,
-                "announce.mail.password",
+                listOf(
+                    MAIL_PASSWORD,
+                    SMTP_PASSWORD),
+                "announce.smtp.password",
                 smtp.getPassword(),
                 errors,
                 context.isDryrun()));

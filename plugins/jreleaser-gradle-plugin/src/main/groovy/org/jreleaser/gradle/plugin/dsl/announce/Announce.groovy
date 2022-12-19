@@ -41,6 +41,7 @@ interface Announce extends Activatable {
 
     GoogleChatAnnouncer getGoogleChat()
 
+    @Deprecated
     SmtpAnnouncer getMail()
 
     SmtpAnnouncer getSmtp()

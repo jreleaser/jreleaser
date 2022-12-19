@@ -47,7 +47,7 @@ public final class Announce extends AbstractModelObject<Announce> implements Dom
     private final GitterAnnouncer gitter = new GitterAnnouncer();
     private final GoogleChatAnnouncer googleChat = new GoogleChatAnnouncer();
     private final HttpAnnouncers http = new HttpAnnouncers();
-    private final SmtpAnnouncer mail = new SmtpAnnouncer();
+    private final SmtpAnnouncer smtp = new SmtpAnnouncer();
     private final MastodonAnnouncer mastodon = new MastodonAnnouncer();
     private final MattermostAnnouncer mattermost = new MattermostAnnouncer();
     private final SdkmanAnnouncer sdkman = new SdkmanAnnouncer();
@@ -95,7 +95,12 @@ public final class Announce extends AbstractModelObject<Announce> implements Dom
 
         @Override
         public org.jreleaser.model.api.announce.SmtpAnnouncer getMail() {
-            return mail.asImmutable();
+            return smtp.asImmutable();
+        }
+
+        @Override
+        public org.jreleaser.model.api.announce.SmtpAnnouncer getSmtp() {
+            return smtp.asImmutable();
         }
 
         @Override
@@ -179,7 +184,7 @@ public final class Announce extends AbstractModelObject<Announce> implements Dom
         setGitter(source.gitter);
         setGoogleChat(source.googleChat);
         setConfiguredHttp(source.http);
-        setMail(source.mail);
+        setSmtp(source.smtp);
         setMastodon(source.mastodon);
         setMattermost(source.mattermost);
         setSdkman(source.sdkman);
@@ -286,12 +291,23 @@ public final class Announce extends AbstractModelObject<Announce> implements Dom
         this.googleChat.merge(googleChat);
     }
 
+    @Deprecated
     public SmtpAnnouncer getMail() {
-        return mail;
+        return getSmtp();
     }
 
+    @Deprecated
     public void setMail(SmtpAnnouncer mail) {
-        this.mail.merge(mail);
+        nag("announce.mail is deprecated since 1.4.0 and will be removed in 2.0.0");
+        setSmtp(mail);
+    }
+
+    public SmtpAnnouncer getSmtp() {
+        return smtp;
+    }
+
+    public void setSmtp(SmtpAnnouncer smtp) {
+        this.smtp.merge(smtp);
     }
 
     public MastodonAnnouncer getMastodon() {
@@ -410,7 +426,7 @@ public final class Announce extends AbstractModelObject<Announce> implements Dom
         map.putAll(gitter.asMap(full));
         map.putAll(googleChat.asMap(full));
         map.putAll(http.asMap(full));
-        map.putAll(mail.asMap(full));
+        map.putAll(smtp.asMap(full));
         map.putAll(mastodon.asMap(full));
         map.putAll(mattermost.asMap(full));
         map.putAll(sdkman.asMap(full));
@@ -423,7 +439,7 @@ public final class Announce extends AbstractModelObject<Announce> implements Dom
         return map;
     }
 
-    public <A extends Announcer> A findAnnouncer(String name) {
+    public <A extends Announcer<?>> A findAnnouncer(String name) {
         if (isBlank(name)) {
             throw new JReleaserException("Announcer name must not be blank");
         }
@@ -431,7 +447,7 @@ public final class Announce extends AbstractModelObject<Announce> implements Dom
         return resolveAnnouncer(name);
     }
 
-    public <A extends Announcer> A getAnnouncer(String name) {
+    public <A extends Announcer<?>> A getAnnouncer(String name) {
         A announcer = findAnnouncer(name);
         if (null != announcer) {
             return announcer;
@@ -439,7 +455,7 @@ public final class Announce extends AbstractModelObject<Announce> implements Dom
         throw new JReleaserException(RB.$("ERROR_announcer_not_configured", name));
     }
 
-    private <A extends Announcer> A resolveAnnouncer(String name) {
+    private <A extends Announcer<?>> A resolveAnnouncer(String name) {
         switch (name.toLowerCase(Locale.ENGLISH).trim()) {
             case org.jreleaser.model.api.announce.ArticleAnnouncer.TYPE:
                 return (A) getArticle();
@@ -456,7 +472,8 @@ public final class Announce extends AbstractModelObject<Announce> implements Dom
             case org.jreleaser.model.api.announce.HttpAnnouncers.TYPE:
                 return (A) getConfiguredHttp();
             case org.jreleaser.model.api.announce.SmtpAnnouncer.TYPE:
-                return (A) getMail();
+            case org.jreleaser.model.api.announce.SmtpAnnouncer.TYPE_LEGACY:
+                return (A) getSmtp();
             case org.jreleaser.model.api.announce.MastodonAnnouncer.TYPE:
                 return (A) getMastodon();
             case org.jreleaser.model.api.announce.MattermostAnnouncer.TYPE:

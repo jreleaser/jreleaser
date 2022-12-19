@@ -50,6 +50,7 @@ public final class JReleaserSupport {
         set.add(org.jreleaser.model.api.announce.GitterAnnouncer.TYPE);
         set.add(org.jreleaser.model.api.announce.GoogleChatAnnouncer.TYPE);
         set.add(org.jreleaser.model.api.announce.HttpAnnouncers.TYPE);
+        set.add(org.jreleaser.model.api.announce.SmtpAnnouncer.TYPE_LEGACY);
         set.add(org.jreleaser.model.api.announce.SmtpAnnouncer.TYPE);
         set.add(org.jreleaser.model.api.announce.MastodonAnnouncer.TYPE);
         set.add(org.jreleaser.model.api.announce.MattermostAnnouncer.TYPE);

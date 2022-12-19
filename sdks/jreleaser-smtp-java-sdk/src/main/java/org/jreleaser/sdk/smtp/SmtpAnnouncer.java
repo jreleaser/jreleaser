@@ -39,7 +39,7 @@ public class SmtpAnnouncer implements Announcer<org.jreleaser.model.api.announce
 
     public SmtpAnnouncer(JReleaserContext context) {
         this.context = context;
-        this.smtp = context.getModel().getAnnounce().getMail();
+        this.smtp = context.getModel().getAnnounce().getSmtp();
     }
 
     @Override

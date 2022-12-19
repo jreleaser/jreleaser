@@ -26,7 +26,9 @@ import java.util.Map;
  * @since 0.1.0
  */
 public interface SmtpAnnouncer extends Announcer {
-    String TYPE = "mail";
+    String TYPE = "smtp";
+    String SMTP_PASSWORD = "SMTP_PASSWORD";
+    String TYPE_LEGACY = "mail";
     String MAIL_PASSWORD = "MAIL_PASSWORD";
 
     Mail.Transport getTransport();

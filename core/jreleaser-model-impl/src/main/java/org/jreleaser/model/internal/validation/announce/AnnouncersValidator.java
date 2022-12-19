@@ -63,7 +63,7 @@ public abstract class AnnouncersValidator extends Validator {
         validateGitter(context, announce.getGitter(), errors);
         validateGoogleChat(context, announce.getGoogleChat(), errors);
         validateHttpAnnouncers(context, mode, announce.getConfiguredHttp(), errors);
-        validateSmtp(context, announce.getMail(), errors);
+        validateSmtp(context, announce.getSmtp(), errors);
         validateMastodon(context, announce.getMastodon(), errors);
         validateMattermost(context, announce.getMattermost(), errors);
         validateSdkmanAnnouncer(context, announce.getSdkman(), errors);
@@ -85,7 +85,7 @@ public abstract class AnnouncersValidator extends Validator {
                 announce.getGitter().isEnabled() ||
                 announce.getGoogleChat().isEnabled() ||
                 announce.getConfiguredHttp().isEnabled() ||
-                announce.getMail().isEnabled() ||
+                announce.getSmtp().isEnabled() ||
                 announce.getMastodon().isEnabled() ||
                 announce.getMattermost().isEnabled() ||
                 announce.getSdkman().isEnabled() ||
