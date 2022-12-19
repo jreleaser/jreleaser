@@ -5,6 +5,8 @@ updates:
     schedule:
       interval: weekly
   - package-ecosystem: gradle
+    commit-message:
+      prefix: deps
     directory: /
     schedule:
       interval: daily
