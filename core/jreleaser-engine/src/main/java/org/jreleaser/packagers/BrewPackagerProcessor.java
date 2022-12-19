@@ -168,6 +168,10 @@ public class BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<B
             }
         } else if (packager.isMultiPlatform()) {
             List<String> multiPlatforms = new ArrayList<>();
+
+            Artifact osxIntelArtifact = null;
+            Artifact osxArmArtifact = null;
+
             for (Artifact artifact : collectArtifacts(distribution)) {
                 if (!artifact.getPath().endsWith(ZIP.extension()) || isBlank(artifact.getPlatform())) continue;
 
@@ -177,8 +181,10 @@ public class BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<B
                 if (PlatformUtils.isMac(artifact.getPlatform())) {
                     if (PlatformUtils.isArm(artifact.getPlatform())) {
                         template = TPL_MAC_ARM;
+                        osxArmArtifact = artifact;
                     } else {
                         template = TPL_MAC_INTEL;
+                        osxIntelArtifact = artifact;
                     }
                 } else if (PlatformUtils.isLinux(artifact.getPlatform())) {
                     if (PlatformUtils.isArm(artifact.getPlatform())) {
@@ -194,6 +200,15 @@ public class BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<B
                     newProps.put(KEY_DISTRIBUTION_CHECKSUM_SHA_256, artifact.getHash(Algorithm.SHA_256));
                     multiPlatforms.add(resolveTemplate(template, newProps));
                 }
+            }
+
+            // On OSX, use intel binary for arm if there's no match
+            if (osxIntelArtifact != null && osxArmArtifact == null) {
+                String artifactUrl = resolveArtifactUrl(props, distribution, osxIntelArtifact);
+                Map<String, Object> newProps = new LinkedHashMap<>(props);
+                newProps.put(KEY_DISTRIBUTION_URL, artifactUrl);
+                newProps.put(KEY_DISTRIBUTION_CHECKSUM_SHA_256, osxIntelArtifact.getHash(Algorithm.SHA_256));
+                multiPlatforms.add(resolveTemplate(TPL_MAC_ARM, newProps));
             }
 
             if (multiPlatforms.isEmpty()) {
