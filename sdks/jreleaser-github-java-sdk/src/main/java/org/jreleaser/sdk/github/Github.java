@@ -28,6 +28,7 @@ import org.kohsuke.github.GHBranch;
 import org.kohsuke.github.GHDiscussion;
 import org.kohsuke.github.GHException;
 import org.kohsuke.github.GHFileNotFoundException;
+import org.kohsuke.github.GHIOException;
 import org.kohsuke.github.GHIssue;
 import org.kohsuke.github.GHIssueState;
 import org.kohsuke.github.GHLabel;
@@ -192,9 +193,16 @@ class Github {
             }
 
             logger.info(" " + RB.$("git.upload.asset"), asset.getFilename());
-            GHAsset ghasset = release.uploadAsset(asset.getPath().toFile(), MediaType.parse(tika.detect(asset.getPath())).toString());
-            if (!"uploaded".equalsIgnoreCase(ghasset.getState())) {
-                logger.warn(" " + RB.$("git.upload.asset.failure"), asset.getFilename());
+            try {
+                GHAsset ghasset = release.uploadAsset(asset.getPath().toFile(), MediaType.parse(tika.detect(asset.getPath())).toString());
+                if (!"uploaded".equalsIgnoreCase(ghasset.getState())) {
+                    logger.warn(" " + RB.$("git.upload.asset.failure"), asset.getFilename());
+                }
+            } catch (GHIOException ghioe) {
+                logger.trace(ghioe);
+                if ("Stream Closed".equals(ghioe.getMessage())) {
+                    logger.warn(" " + RB.$("git.upload.asset.stream.closed"), asset.getFilename());
+                }
             }
         }
     }
