@@ -26,10 +26,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 
-/**
- * @author Andres Almiray
- * @since 0.1.0
- */
+
 class Stubs {
     static void verifyPostContains(String endpoint, String maybeJson) {
         verifyRequestContains(postRequestedFor(urlEqualTo(endpoint)), maybeJson);

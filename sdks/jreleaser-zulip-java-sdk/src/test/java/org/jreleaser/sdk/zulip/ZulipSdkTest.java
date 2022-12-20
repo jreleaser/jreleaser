@@ -17,7 +17,9 @@
  */
 package org.jreleaser.sdk.zulip;
 
+import com.github.tomakehurst.wiremock.client.WireMock;
 import org.jreleaser.logging.SimpleJReleaserLoggerAdapter;
+import org.jreleaser.test.WireMockExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -27,15 +29,12 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.jreleaser.sdk.zulip.ApiEndpoints.MESSAGES_ENDPOINT;
-import static org.jreleaser.sdk.zulip.Stubs.verifyPostContains;
+import static org.jreleaser.test.WireMockStubs.verifyPostContains;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/**
- * @author Andres Almiray
- * @since 0.1.0
- */
-public class ZulipMessageTest {
+public class ZulipSdkTest {
     @RegisterExtension
     WireMockExtension api = new WireMockExtension(options().dynamicPort());
 
@@ -50,6 +49,9 @@ public class ZulipMessageTest {
             .apiHost(api.baseUrl())
             .account("ACCOUNT")
             .apiKey("API_KEY")
+            .connectTimeout(20)
+            .readTimeout(60)
+            .dryrun(false)
             .build();
 
         // when:
@@ -67,6 +69,30 @@ public class ZulipMessageTest {
     }
 
     @Test
+    public void testDryrun() throws ZulipException {
+        // given:
+        stubFor(post(urlEqualTo(MESSAGES_ENDPOINT))
+            .willReturn(okJson("{\"status\": 202, \"message\":\"success\"}")));
+
+        ZulipSdk sdk = ZulipSdk
+            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
+            .apiHost(api.baseUrl())
+            .account("ACCOUNT")
+            .apiKey("API_KEY")
+            .connectTimeout(20)
+            .readTimeout(60)
+            .dryrun(true)
+            .build();
+
+        // when:
+        sdk.message("announce", "App 1.0.0", "App 1.0.0 has been released");
+
+        // then:
+        assertThat(WireMock.findUnmatchedRequests())
+            .hasSize(0);
+    }
+
+    @Test
     public void testError() {
         // given:
         stubFor(post(urlEqualTo(MESSAGES_ENDPOINT))
@@ -77,6 +103,9 @@ public class ZulipMessageTest {
             .apiHost(api.baseUrl())
             .account("ACCOUNT")
             .apiKey("API_KEY")
+            .connectTimeout(20)
+            .readTimeout(60)
+            .dryrun(false)
             .build();
 
         // expected:

@@ -17,10 +17,6 @@
  */
 package org.jreleaser.sdk.twitter;
 
-/**
- * @author Andres Almiray
- * @since 0.1.0
- */
 public class ApiEndpoints {
     public static final String UPDATE_STATUS_ENDPOINT = "/statuses/update";
 }

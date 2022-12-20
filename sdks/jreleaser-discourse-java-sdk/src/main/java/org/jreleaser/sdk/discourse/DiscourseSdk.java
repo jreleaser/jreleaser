@@ -87,13 +87,14 @@ public class DiscourseSdk {
     }
 
     public void createPost(String title, String body, String categoryName) throws DiscourseException {
-        Category category = Category.empty();
-        if (!dryrun) category = findCategoryByName(categoryName);
-        Map<String, String> params = new LinkedHashMap<>();
-        params.put("title", title);
-        params.put("raw", body);
-        params.put("category", String.valueOf(category.getId()));
-        wrap(() -> api.createPost(params));
+        wrap(() -> {
+            Category category = findCategoryByName(categoryName);
+            Map<String, String> params = new LinkedHashMap<>();
+            params.put("title", title);
+            params.put("raw", body);
+            params.put("category", String.valueOf(category.getId()));
+            api.createPost(params);
+        });
     }
 
     public Category findCategoryByName(String categoryName) throws DiscourseException {
@@ -105,9 +106,9 @@ public class DiscourseSdk {
             .orElseThrow(() -> new DiscourseException(RB.$("sdk.operation.failed", categoryName)));
     }
 
-    private void wrap(Runnable runnable) throws DiscourseException {
+    private void wrap(DiscourseOperation op) throws DiscourseException {
         try {
-            if (!dryrun) runnable.run();
+            if (!dryrun) op.run();
         } catch (RestAPIException e) {
             logger.trace(e);
             throw new DiscourseException(RB.$("sdk.operation.failed", "discourse"), e);
@@ -116,6 +117,11 @@ public class DiscourseSdk {
 
     public static Builder builder(JReleaserLogger logger) {
         return new Builder(logger);
+    }
+
+    @FunctionalInterface
+    public interface DiscourseOperation {
+        void run() throws DiscourseException;
     }
 
     static class Builder {

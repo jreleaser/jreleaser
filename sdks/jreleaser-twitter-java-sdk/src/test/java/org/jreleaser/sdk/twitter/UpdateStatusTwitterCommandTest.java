@@ -18,6 +18,7 @@
 package org.jreleaser.sdk.twitter;
 
 import org.jreleaser.logging.SimpleJReleaserLoggerAdapter;
+import org.jreleaser.test.WireMockExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -32,10 +33,6 @@ import static org.jreleaser.sdk.twitter.Stubs.verifyPostContains;
 import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/**
- * @author Andres Almiray
- * @since 0.1.0
- */
 public class UpdateStatusTwitterCommandTest {
     @RegisterExtension
     WireMockExtension api = new WireMockExtension(options().dynamicPort());

@@ -66,7 +66,7 @@ public class Workflows {
 
     public static Workflow deploy(JReleaserContext context) {
         context.setCommand(JReleaserCommand.DEPLOY);
-        return new WorkflowImpl(context, asList(
+        return new WorkflowImpl(context, singletonList(
             new DeployWorkflowItem()
         ));
     }

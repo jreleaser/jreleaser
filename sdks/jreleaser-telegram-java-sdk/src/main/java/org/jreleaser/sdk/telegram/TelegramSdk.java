@@ -25,6 +25,7 @@ import org.jreleaser.sdk.telegram.api.Message;
 import org.jreleaser.sdk.telegram.api.TelegramAPI;
 
 import static java.util.Objects.requireNonNull;
+import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 
 /**
@@ -37,23 +38,22 @@ public class TelegramSdk {
     private final boolean dryrun;
 
     private TelegramSdk(JReleaserLogger logger,
-                        String token,
+                        String apiHost,
                         int connectTimeout,
                         int readTimeout,
                         boolean dryrun) {
         requireNonNull(logger, "'logger' must not be null");
-        requireNonBlank(token, "'token' must not be blank");
+        requireNonBlank(apiHost, "'apiHost' must not be blank");
 
         this.logger = logger;
         this.dryrun = dryrun;
         this.api = ClientUtils.builder(logger, connectTimeout, readTimeout)
-            .target(TelegramAPI.class, "https://api.telegram.org/bot" + token);
+            .target(TelegramAPI.class, apiHost);
 
         this.logger.debug(RB.$("workflow.dryrun"), dryrun);
     }
 
-    public void sendMessage(String chatId,
-                            String message) throws TelegramException {
+    public void sendMessage(String chatId, String message) throws TelegramException {
         Message payload = Message.of(chatId, message);
         logger.debug("telegram.message: " + payload);
         wrap(() -> api.sendMessage(payload));
@@ -76,6 +76,7 @@ public class TelegramSdk {
     static class Builder {
         private final JReleaserLogger logger;
         private boolean dryrun;
+        private String apiHost;
         private String token;
         private int connectTimeout = 20;
         private int readTimeout = 60;
@@ -86,6 +87,11 @@ public class TelegramSdk {
 
         public Builder dryrun(boolean dryrun) {
             this.dryrun = dryrun;
+            return this;
+        }
+
+        public Builder apiHost(String apiHost) {
+            this.apiHost = requireNonBlank(apiHost, "'apiHost' must not be blank").trim();
             return this;
         }
 
@@ -105,7 +111,14 @@ public class TelegramSdk {
         }
 
         private void validate() {
-            requireNonBlank(token, "'account' must not be blank");
+            requireNonBlank(token, "'token' must not be blank");
+            if (isBlank(apiHost)) {
+                apiHost("https://api.telegram.org/bot");
+            }
+
+            if (!apiHost.endsWith(token)) {
+                apiHost += token;
+            }
         }
 
         public TelegramSdk build() {
@@ -113,7 +126,7 @@ public class TelegramSdk {
 
             return new TelegramSdk(
                 logger,
-                token,
+                apiHost,
                 connectTimeout,
                 readTimeout,
                 dryrun);

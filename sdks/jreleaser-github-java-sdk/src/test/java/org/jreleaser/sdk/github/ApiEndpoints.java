@@ -17,10 +17,6 @@
  */
 package org.jreleaser.sdk.github;
 
-/**
- * @author Andres Almiray
- * @since 0.1.0
- */
 public class ApiEndpoints {
     public static final String SEARCH_USERS = "/search/users";
     public static final String GET_USER_JRELEASER = "/users/jreleaserbot";

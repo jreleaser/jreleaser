@@ -26,8 +26,5 @@ dependencies {
     api "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
     api "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
 
-    testImplementation("com.github.tomakehurst:wiremock-jre8:$wiremockVersion") {
-        exclude group: 'org.eclipse.jetty', module: 'jetty-alpn-java-server'
-        exclude group: 'org.eclipse.jetty', module: 'jetty-alpn-java-client'
-    }
+    testImplementation project(':jreleaser-test-support')
 }

@@ -1,0 +1,38 @@
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Copyright 2020-2022 The JReleaser authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+# Generated with JReleaser 1.4.0-SNAPSHOT at 2022-12-20T13:20:00.594262-06:00
+[project]
+  name = "app"
+  version = "1.0.0-SNAPSHOT"
+  description = "Awesome App"
+  longDescription = "Awesome App"
+  authors = ["Duke"]
+  license = "Apache-2.0"
+  links.homepage = "https://acme.com/app"
+  java.groupId = "com.acme"
+  java.version = "8"
+  inceptionYear = "2022"
+
+[release.github]
+  owner = "duke"
+
+[distributions.app]
+  artifacts = [
+    { path = "path/to/{{distributionName}}-{{projectVersion}}.zip" }
+  ]

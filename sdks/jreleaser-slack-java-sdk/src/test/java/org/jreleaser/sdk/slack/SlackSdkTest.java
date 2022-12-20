@@ -17,7 +17,9 @@
  */
 package org.jreleaser.sdk.slack;
 
+import com.github.tomakehurst.wiremock.client.WireMock;
 import org.jreleaser.logging.SimpleJReleaserLoggerAdapter;
+import org.jreleaser.test.WireMockExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -27,14 +29,12 @@ import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.jreleaser.sdk.slack.ApiEndpoints.MESSAGES_ENDPOINT;
+import static org.jreleaser.test.WireMockStubs.verifyPostContains;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/**
- * @author Andres Almiray
- * @since 0.1.0
- */
-public class SlackMessageTest {
+public class SlackSdkTest {
     @RegisterExtension
     WireMockExtension api = new WireMockExtension(options().dynamicPort());
 
@@ -48,16 +48,42 @@ public class SlackMessageTest {
             .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
             .token("TOKEN")
             .apiHost(api.baseUrl())
+            .connectTimeout(20)
+            .readTimeout(60)
+            .dryrun(false)
             .build();
 
         // when:
         sdk.message("#announce", "App 1.0.0 has been released");
 
         // then:
-        Stubs.verifyPostContains(MESSAGES_ENDPOINT,
+        verifyPostContains(MESSAGES_ENDPOINT,
             "channel=%23announce");
-        Stubs.verifyPostContains(MESSAGES_ENDPOINT,
+        verifyPostContains(MESSAGES_ENDPOINT,
             "text=App+1.0.0+has+been+released");
+    }
+
+    @Test
+    public void testDryrun() throws SlackException {
+        // given:
+        stubFor(post(urlEqualTo(MESSAGES_ENDPOINT))
+            .willReturn(okJson("{\"status\": 202, \"ok\":\"true\"}")));
+
+        SlackSdk sdk = SlackSdk
+            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
+            .token("TOKEN")
+            .apiHost(api.baseUrl())
+            .connectTimeout(20)
+            .readTimeout(60)
+            .dryrun(true)
+            .build();
+
+        // when:
+        sdk.message("#announce", "App 1.0.0 has been released");
+
+        // then:
+        assertThat(WireMock.findUnmatchedRequests())
+            .hasSize(0);
     }
 
     @Test
@@ -70,6 +96,9 @@ public class SlackMessageTest {
             .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
             .token("TOKEN")
             .apiHost(api.baseUrl())
+            .connectTimeout(20)
+            .readTimeout(60)
+            .dryrun(false)
             .build();
 
         // expected:

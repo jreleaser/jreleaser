@@ -17,9 +17,9 @@
  */
 package org.jreleaser.sdk.github;
 
-
 import org.jreleaser.logging.SimpleJReleaserLoggerAdapter;
 import org.jreleaser.model.spi.release.User;
+import org.jreleaser.test.WireMockExtension;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -37,8 +37,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class XGithubTest {
-
+public class XGithubTest {
     @RegisterExtension
     WireMockExtension api = new WireMockExtension(options().dynamicPort());
 
@@ -113,5 +112,4 @@ class XGithubTest {
             .extracting(u -> u.asLink("test"))
             .isEqualTo("[test](https://github.com/jreleaserbot)");
     }
-
 }

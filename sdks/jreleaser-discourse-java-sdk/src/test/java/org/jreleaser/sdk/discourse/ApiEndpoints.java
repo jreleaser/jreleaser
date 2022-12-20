@@ -17,10 +17,6 @@
  */
 package org.jreleaser.sdk.discourse;
 
-/**
- * @author shblue21
- * @since 1.3.0
- */
 public class ApiEndpoints {
     public static final String POSTS_ENDPOINT = "/posts.json";
 

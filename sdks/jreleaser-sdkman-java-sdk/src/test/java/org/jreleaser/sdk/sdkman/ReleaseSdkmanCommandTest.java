@@ -18,6 +18,7 @@
 package org.jreleaser.sdk.sdkman;
 
 import org.jreleaser.logging.SimpleJReleaserLoggerAdapter;
+import org.jreleaser.test.WireMockExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -29,10 +30,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/**
- * @author Andres Almiray
- * @since 0.1.0
- */
 public class ReleaseSdkmanCommandTest {
     @RegisterExtension
     WireMockExtension api = new WireMockExtension(options().dynamicPort());
@@ -51,6 +48,9 @@ public class ReleaseSdkmanCommandTest {
             .candidate("jreleaser")
             .version("1.0.0")
             .url("https://host/jreleaser-1.0.0.zip")
+            .connectTimeout(20)
+            .readTimeout(60)
+            .dryrun(false)
             .build();
 
         // when:
@@ -79,6 +79,9 @@ public class ReleaseSdkmanCommandTest {
             .candidate("jreleaser")
             .version("1.0.0")
             .platform("MAC_OSX", "https://host/jreleaser-1.0.0.zip")
+            .connectTimeout(20)
+            .readTimeout(60)
+            .dryrun(false)
             .build();
 
         // when:
@@ -109,6 +112,9 @@ public class ReleaseSdkmanCommandTest {
             .platform("MAC_OSX", "https://host/jreleaser-1.0.0-mac.zip")
             .platform("WINDOWS_64", "https://host/jreleaser-1.0.0-win.zip")
             .platform("LINUX_64", "https://host/jreleaser-1.0.0-linux.zip")
+            .connectTimeout(20)
+            .readTimeout(60)
+            .dryrun(false)
             .build();
 
         // when:

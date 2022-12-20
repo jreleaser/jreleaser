@@ -17,10 +17,6 @@
  */
 package org.jreleaser.sdk.zulip;
 
-/**
- * @author Andres Almiray
- * @since 0.1.0
- */
 public class ApiEndpoints {
     public static final String MESSAGES_ENDPOINT = "/messages";
 }

@@ -17,8 +17,10 @@
  */
 package org.jreleaser.sdk.mastodon;
 
+import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 import org.jreleaser.logging.SimpleJReleaserLoggerAdapter;
+import org.jreleaser.test.WireMockExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -34,6 +36,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class MastodonSdkTest {
     private static final String API_V_1_STATUSES = "/api/v1/statuses";
@@ -45,11 +48,14 @@ public class MastodonSdkTest {
     public void testUpdateStatus() throws MastodonException {
         // given:
         stubFor(post(urlEqualTo(API_V_1_STATUSES))
-                    .willReturn(okJson("{\"status\": 202, \"message\":\"success\"}")));
+            .willReturn(okJson("{\"status\": 202, \"message\":\"success\"}")));
         MastodonSdk command = MastodonSdk.builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
-                                         .accessToken("ACCESS_TOKEN")
-                                         .host(api.baseUrl() + "/")
-                                         .build();
+            .accessToken("ACCESS_TOKEN")
+            .host(api.baseUrl() + "/")
+            .connectTimeout(20)
+            .readTimeout(60)
+            .dryrun(false)
+            .build();
 
         // when:
         command.toot(Collections.singletonList("success"));
@@ -60,14 +66,38 @@ public class MastodonSdkTest {
     }
 
     @Test
+    public void testDryrun() throws MastodonException {
+        // given:
+        stubFor(post(urlEqualTo(API_V_1_STATUSES))
+            .willReturn(okJson("{\"status\": 202, \"message\":\"success\"}")));
+        MastodonSdk command = MastodonSdk.builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
+            .accessToken("ACCESS_TOKEN")
+            .host(api.baseUrl() + "/")
+            .connectTimeout(20)
+            .readTimeout(60)
+            .dryrun(true)
+            .build();
+
+        // when:
+        command.toot(Collections.singletonList("success"));
+
+        // then:
+        assertThat(WireMock.findUnmatchedRequests())
+            .hasSize(0);
+    }
+
+    @Test
     public void testUpdateStatuses() throws MastodonException {
         // given:
         stubFor(post(urlEqualTo(API_V_1_STATUSES))
-                    .willReturn(okJson("{\"id\": \"1234\", \"status\": 202, \"message\":\"success\"}")));
+            .willReturn(okJson("{\"id\": \"1234\", \"status\": 202, \"message\":\"success\"}")));
         MastodonSdk command = MastodonSdk.builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
-                                         .accessToken("ACCESS_TOKEN")
-                                         .host(api.baseUrl() + "/")
-                                         .build();
+            .accessToken("ACCESS_TOKEN")
+            .host(api.baseUrl() + "/")
+            .connectTimeout(20)
+            .readTimeout(60)
+            .dryrun(false)
+            .build();
 
         // when:
         command.toot(Arrays.asList("success1", "success2"));
@@ -75,12 +105,12 @@ public class MastodonSdkTest {
         // then:
         RequestPatternBuilder builder = postRequestedFor(urlEqualTo(API_V_1_STATUSES));
         verify(builder
-                   .withRequestBody(containing("success2"))
-                   .withRequestBody(containing("\"in_reply_to_id\" : \"1234\""))
+            .withRequestBody(containing("success2"))
+            .withRequestBody(containing("\"in_reply_to_id\" : \"1234\""))
         );
         verify(postRequestedFor(urlEqualTo(API_V_1_STATUSES))
-                   .withRequestBody(containing("success1"))
-                   .withRequestBody(notMatching("in_reply_to_id"))
+            .withRequestBody(containing("success1"))
+            .withRequestBody(notMatching("in_reply_to_id"))
         );
     }
 }

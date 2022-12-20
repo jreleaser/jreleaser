@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.sdk.discourse;
+package org.jreleaser.test;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
@@ -24,12 +24,8 @@ import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
-/**
- * @author shblue21
- * @since 1.3.0
- */
-class WireMockExtension extends WireMockServer implements BeforeEachCallback, AfterEachCallback {
-    WireMockExtension(Options options) {
+public class WireMockExtension extends WireMockServer implements BeforeEachCallback, AfterEachCallback {
+    public WireMockExtension(Options options) {
         super(options);
     }
 

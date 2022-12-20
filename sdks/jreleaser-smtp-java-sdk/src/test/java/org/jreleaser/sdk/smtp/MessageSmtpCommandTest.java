@@ -31,10 +31,6 @@ import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-/**
- * @author Andres Almiray
- * @since 0.1.0
- */
 public class MessageSmtpCommandTest {
     @RegisterExtension
     GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP);
@@ -61,6 +57,7 @@ public class MessageSmtpCommandTest {
             .subject("Test")
             .message(message)
             .mimeType(org.jreleaser.model.Mail.MimeType.HTML)
+            .dryrun(false)
             .build();
 
         // when:
@@ -74,5 +71,38 @@ public class MessageSmtpCommandTest {
         assertThat(sender, equalTo(greenMail.getReceivedMessages()[0].getFrom()[0].toString()));
         assertThat(cc, equalTo(greenMail.getReceivedMessages()[0].getRecipients(CC)[0].toString()));
         assertThat(sender, equalTo(greenMail.getReceivedMessages()[0].getFrom()[0].toString()));
+    }
+
+    @Test
+    public void testDryRun() throws SmtpException, MessagingException {
+        // given:
+        String sender = "test@acme.com";
+        String receiver = "jreleaser@acme.com";
+        String cc = "copy@acme.com";
+        String bcc = "hidden@acme.com";
+        String message = "<html><body>Test<body></html>";
+
+        MessageSmtpCommand command = MessageSmtpCommand
+            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
+            .transport(org.jreleaser.model.Mail.Transport.SMTP)
+            .host("localhost")
+            .port(3025)
+            .auth(false)
+            .from(sender)
+            .to(receiver)
+            .cc(cc)
+            .bcc(bcc)
+            .subject("Test")
+            .message(message)
+            .mimeType(org.jreleaser.model.Mail.MimeType.HTML)
+            .dryrun(true)
+            .build();
+
+        // when:
+        command.execute();
+        await().atMost(3, SECONDS);
+
+        // then:
+        assertThat(greenMail.getReceivedMessages().length, equalTo(0));
     }
 }

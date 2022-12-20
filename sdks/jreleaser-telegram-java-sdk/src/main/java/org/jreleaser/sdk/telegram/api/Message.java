@@ -47,6 +47,7 @@ public class Message {
     @Override
     public String toString() {
         return "Message[" +
+            "chatId='" + chat_id + "', " +
             "text='" + text + '\'' +
             "]";
     }

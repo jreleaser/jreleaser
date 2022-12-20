@@ -17,10 +17,6 @@
  */
 package org.jreleaser.sdk.sdkman;
 
-/**
- * @author Andres Almiray
- * @since 0.1.0
- */
 public class ApiEndpoints {
     public static final String ANNOUNCE_ENDPOINT = "/announce/struct";
     public static final String DEFAULT_ENDPOINT = "/default";

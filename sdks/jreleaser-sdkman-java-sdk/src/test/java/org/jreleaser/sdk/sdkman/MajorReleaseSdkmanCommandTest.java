@@ -18,6 +18,7 @@
 package org.jreleaser.sdk.sdkman;
 
 import org.jreleaser.logging.SimpleJReleaserLoggerAdapter;
+import org.jreleaser.test.WireMockExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
@@ -35,10 +36,6 @@ import static org.jreleaser.sdk.sdkman.Stubs.verifyPost;
 import static org.jreleaser.sdk.sdkman.Stubs.verifyPut;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-/**
- * @author Andres Almiray
- * @since 0.1.0
- */
 public class MajorReleaseSdkmanCommandTest {
     @RegisterExtension
     WireMockExtension api = new WireMockExtension(options().dynamicPort());
@@ -61,6 +58,9 @@ public class MajorReleaseSdkmanCommandTest {
             .candidate("jreleaser")
             .version("1.0.0")
             .url("https://host/jreleaser-1.0.0.zip")
+            .connectTimeout(20)
+            .readTimeout(60)
+            .dryrun(false)
             .build();
 
         // when:
