@@ -773,10 +773,10 @@ jobs:
           name: jacoco
           path: '*.exec'
 
-  jacoco:
+  coveralls:
     needs: [ build-cli, build-ant, build-gradle, build-maven, unit-tests ]
     if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
-    name: Jacoco
+    name: Coveralls
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -817,16 +817,6 @@ jobs:
       - name: JaCoCo report
         run: sh .github/scripts/jacoco-report.sh
 
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          files: build/reports/jacoco/aggregate/jacocoTestReport.xml
-          flags: smoke-tests
-          fail_ci_if_error: false
-          name: jreleaser-smoke-tests
-          verbose: true
-
       - name: Upload coverage to Coveralls
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
@@ -837,3 +827,34 @@ jobs:
         shell: bash
         run: |
           rm -rf ~/.gradle/caches/build-cache-1
+
+  codecov:
+    needs: [ build-cli, build-ant, build-gradle, build-maven, unit-tests ]
+    if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
+    name: Codecov
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Download JaCoCo execution data
+        uses: actions/download-artifact@v3
+        with:
+          name: jacoco
+          path: jacoco
+
+      - name: JaCoCo merge
+        run: sh .github/scripts/jacoco-merge.sh
+
+      - name: JaCoCo report
+        run: sh .github/scripts/jacoco-report.sh
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: build/reports/jacoco/aggregate/jacocoTestReport.xml
+          flags: smoke-tests
+          fail_ci_if_error: false
+          name: jreleaser-smoke-tests
+          verbose: true
