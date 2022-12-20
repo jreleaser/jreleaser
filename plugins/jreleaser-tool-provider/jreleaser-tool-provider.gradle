@@ -70,9 +70,9 @@ shadowJar {
     exclude 'plugin.xml'
 }
 
-task relocateShadowJar(type: com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation) {
+task relocateShadowJar(type: org.jreleaser.gradle.shadow.ConfigureShadowRelocation) {
     target = tasks.shadowJar
-    prefix = 'jreleaser.shadow'
+    exclude('zstd-jni.*')
 }
 
 tasks.shadowJar.dependsOn tasks.relocateShadowJar
