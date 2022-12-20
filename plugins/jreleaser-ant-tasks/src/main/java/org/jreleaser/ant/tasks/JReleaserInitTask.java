@@ -17,31 +17,20 @@
  */
 package org.jreleaser.ant.tasks;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 import org.jreleaser.ant.tasks.internal.JReleaserLoggerAdapter;
-import org.jreleaser.config.JReleaserConfigParser;
+import org.jreleaser.engine.init.Init;
 import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.JReleaserException;
-import org.jreleaser.templates.TemplateResource;
-import org.jreleaser.templates.TemplateUtils;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Writer;
-import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.LinkedHashSet;
-import java.util.ServiceLoader;
-import java.util.Set;
 
-import static java.nio.file.StandardOpenOption.CREATE;
-import static java.nio.file.StandardOpenOption.CREATE_NEW;
-import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
-import static java.nio.file.StandardOpenOption.WRITE;
+import static org.jreleaser.bundle.RB.$;
 import static org.jreleaser.util.IoUtils.newPrintWriter;
 
 /**
@@ -64,32 +53,11 @@ public class JReleaserInitTask extends Task {
     @Override
     public void execute() throws BuildException {
         Banner.display(newPrintWriter(System.out));
-
         try {
             initLogger();
-
-            if (!getSupportedConfigFormats().contains(format)) {
-                throw new BuildException("Unsupported file format. Must be one of [" +
-                    String.join("|", getSupportedConfigFormats()) + "]");
-            }
-
-            Path outputDirectory = getOutputDirectory();
-            Path outputFile = outputDirectory.resolve("jreleaser." + format);
-
-            TemplateResource template = TemplateUtils.resolveTemplate(logger, "init/jreleaser." + format + ".tpl");
-
-            logger.info("Writing file " + outputFile.toAbsolutePath());
-            try (Writer writer = Files.newBufferedWriter(outputFile, overwrite ? CREATE : CREATE_NEW, WRITE, TRUNCATE_EXISTING)) {
-                IOUtils.copy(template.getReader(), writer);
-            } catch (FileAlreadyExistsException e) {
-                logger.error("File {} already exists and overwrite was set to false.", outputFile.toAbsolutePath());
-                return;
-            }
-
-            logger.info("JReleaser initialized at " + outputDirectory.toAbsolutePath());
-        } catch (IllegalStateException | IOException e) {
-            logger.trace(e);
-            throw new JReleaserException("Unexpected error", e);
+            Init.execute(logger, format, overwrite, getOutputDirectory());
+        } catch (IllegalStateException e) {
+            throw new JReleaserException($("ERROR_unexpected_error"), e);
         } finally {
             if (logger != null) logger.close();
         }
@@ -112,23 +80,9 @@ public class JReleaserInitTask extends Task {
         return getProject().getBaseDir().toPath().normalize();
     }
 
-    private JReleaserLogger initLogger() {
+    private void initLogger() {
         if (null == logger) {
             logger = new JReleaserLoggerAdapter(createTracer(), getProject());
         }
-        return logger;
-    }
-
-    private Set<String> getSupportedConfigFormats() {
-        Set<String> extensions = new LinkedHashSet<>();
-
-        ServiceLoader<JReleaserConfigParser> parsers = ServiceLoader.load(JReleaserConfigParser.class,
-            JReleaserConfigParser.class.getClassLoader());
-
-        for (JReleaserConfigParser parser : parsers) {
-            extensions.add(parser.getPreferredFileExtension());
-        }
-
-        return extensions;
     }
 }

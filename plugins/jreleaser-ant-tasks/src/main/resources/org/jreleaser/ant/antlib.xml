@@ -19,6 +19,10 @@
 -->
 <antlib>
     <taskdef
+            name="jsonSchema"
+            classname="org.jreleaser.ant.tasks.JReleaserJsonSchemaTask"/>
+
+    <taskdef
             name="autoConfigRelease"
             classname="org.jreleaser.ant.tasks.JReleaserAutoConfigReleaseTask"/>
 

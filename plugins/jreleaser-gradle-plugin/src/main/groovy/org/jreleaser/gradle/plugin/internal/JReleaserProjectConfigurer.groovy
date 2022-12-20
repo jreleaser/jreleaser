@@ -37,6 +37,8 @@ import org.jreleaser.gradle.plugin.tasks.JReleaserConfigTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserDeployTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserDownloadTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserFullReleaseTask
+import org.jreleaser.gradle.plugin.tasks.JReleaserInitTask
+import org.jreleaser.gradle.plugin.tasks.JReleaserJsonSchemaTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserPackageTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserPrepareTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserPublishTask
@@ -369,6 +371,28 @@ class JReleaserProjectConfigurer {
                     if (hasDistributionPlugin) {
                         t.dependsOn('assembleDist')
                     }
+                }
+            })
+
+        project.tasks.register('jreleaserInit', JReleaserInitTask,
+            new Action<JReleaserInitTask>() {
+                @Override
+                void execute(JReleaserInitTask t) {
+                    t.group = JRELEASER_GROUP
+                    t.description = 'Create a jreleaser config file'
+                    t.jlogger.set(loggerProvider)
+                    t.usesService(loggerProvider)
+                    t.outputDirectory.set(project.layout
+                        .projectDirectory)
+                }
+            })
+
+        project.tasks.register('jreleaserJsonSchema', JReleaserJsonSchemaTask,
+            new Action<JReleaserJsonSchemaTask>() {
+                @Override
+                void execute(JReleaserJsonSchemaTask t) {
+                    t.group = JRELEASER_GROUP
+                    t.description = 'Generate JSON schema'
                 }
             })
     }

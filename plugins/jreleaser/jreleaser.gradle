@@ -42,8 +42,6 @@ dependencies {
     api project(':jreleaser-config-yaml')
     api project(':jreleaser-config-toml')
     api project(':jreleaser-config-json')
-    api "com.github.victools:jsonschema-generator:$jsonSchemaVersion"
-    api "com.github.victools:jsonschema-module-jackson:$jsonSchemaVersion"
 
     annotationProcessor "info.picocli:picocli-codegen:$picocliVersion"
     api "info.picocli:picocli:$picocliVersion"

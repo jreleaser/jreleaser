@@ -15,27 +15,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.cli;
+package org.jreleaser.gradle.plugin.tasks
 
-import org.jreleaser.engine.schema.JsonSchemaGenerator;
-import picocli.CommandLine;
+import groovy.transform.CompileStatic
+import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.TaskAction
+import org.jreleaser.engine.schema.JsonSchemaGenerator
+import org.jreleaser.util.IoUtils
 
 /**
+ *
  * @author Andres Almiray
- * @since 0.10.0
+ * @since 1.4.0
  */
-@CommandLine.Command(name = "json-schema")
-public class JsonSchema extends AbstractCommand {
-    @CommandLine.ParentCommand
-    Main parent;
-
-    @Override
-    protected Main parent() {
-        return parent;
-    }
-
-    @Override
-    protected void execute() {
-        JsonSchemaGenerator.generate(parent().out);
+@CompileStatic
+abstract class JReleaserJsonSchemaTask extends DefaultTask {
+    @TaskAction
+    void generateJsonSchema() {
+        JsonSchemaGenerator.generate(IoUtils.newPrintWriter(System.out))
     }
 }

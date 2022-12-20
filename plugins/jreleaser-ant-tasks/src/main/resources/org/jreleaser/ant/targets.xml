@@ -168,6 +168,10 @@
                                 excludedUploaderNames="${jreleaser.excluded.uploader.names}"/>
     </target>
 
+    <target name="jreleaser-json-schema">
+        <jreleaser:jsonSchema/>
+    </target>
+
     <target name="jreleaser-init">
         <jreleaser:init overwrite="${jreleaser.overwrite}"
                         format="${jreleaser.format}"/>

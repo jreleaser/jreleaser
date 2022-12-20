@@ -15,27 +15,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.cli;
+package org.jreleaser.ant.tasks;
 
+import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
 import org.jreleaser.engine.schema.JsonSchemaGenerator;
-import picocli.CommandLine;
+import org.jreleaser.util.IoUtils;
+
+import static org.jreleaser.util.IoUtils.newPrintWriter;
 
 /**
  * @author Andres Almiray
- * @since 0.10.0
+ * @since 1.4.0
  */
-@CommandLine.Command(name = "json-schema")
-public class JsonSchema extends AbstractCommand {
-    @CommandLine.ParentCommand
-    Main parent;
-
+public class JReleaserJsonSchemaTask extends Task {
     @Override
-    protected Main parent() {
-        return parent;
-    }
-
-    @Override
-    protected void execute() {
-        JsonSchemaGenerator.generate(parent().out);
+    public void execute() throws BuildException {
+        Banner.display(newPrintWriter(System.out));
+        JsonSchemaGenerator.generate(IoUtils.newPrintWriter(System.out));
     }
 }
