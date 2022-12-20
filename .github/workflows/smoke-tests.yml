@@ -524,9 +524,9 @@ jobs:
           ant jreleaser-announce -DoutputDir=build -Djreleaser.dry.run=true
           echo "::endgroup::"
           echo "::group::➡️ init"
-          ant init -Djreleaser.format=yml
-          ant init -Djreleaser.format=toml
-          ant init -Djreleaser.format=json
+          ant jreleaser-init -Djreleaser.format=yml
+          ant jreleaser-init -Djreleaser.format=toml
+          ant jreleaser-init -Djreleaser.format=json
           echo "::endgroup::"
         env:
           JRELEASER_OUTPUT_DIRECTORY: out
@@ -883,9 +883,9 @@ jobs:
           ./mvnw -B -ntp jreleaser:announce -DoutputDir=target -Djreleaser.dry.run=true
           echo "::endgroup::"
           echo "::group::➡️ init"
-          ./mvnw -B -ntp jreleaser:init -DoutputDir=target -Djreleaser.format=yml
-          ./mvnw -B -ntp jreleaser:init -DoutputDir=target -Djreleaser.format=toml
-          ./mvnw -B -ntp jreleaser:init -DoutputDir=target -Djreleaser.format=json
+          ./mvnw -B -ntp jreleaser:init -DoutputDir=target -Djreleaser.init.format=yml
+          ./mvnw -B -ntp jreleaser:init -DoutputDir=target -Djreleaser.init.format=toml
+          ./mvnw -B -ntp jreleaser:init -DoutputDir=target -Djreleaser.init.format=json
           echo "::endgroup::"
         env:
           JRELEASER_OUTPUT_DIRECTORY: out
