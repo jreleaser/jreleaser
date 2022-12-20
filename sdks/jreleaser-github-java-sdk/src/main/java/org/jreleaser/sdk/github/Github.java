@@ -202,6 +202,8 @@ class Github {
                 logger.trace(ghioe);
                 if ("Stream Closed".equals(ghioe.getMessage())) {
                     logger.warn(" " + RB.$("git.upload.asset.stream.closed"), asset.getFilename());
+                } else {
+                    throw ghioe;
                 }
             }
         }
