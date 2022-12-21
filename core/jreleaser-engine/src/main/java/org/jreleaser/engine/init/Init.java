@@ -23,12 +23,15 @@ import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.templates.TemplateResource;
 import org.jreleaser.templates.TemplateUtils;
+import org.jreleaser.templates.VersionDecoratingWriter;
 
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.ServiceLoader;
 import java.util.Set;
@@ -37,6 +40,7 @@ import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
+import static org.jreleaser.bundle.RB.$;
 
 /**
  * @author Andres Almiray
@@ -46,26 +50,31 @@ public class Init {
     public static void execute(JReleaserLogger logger, String format, boolean overwrite, Path outputDirectory) {
         try {
             if (!getSupportedConfigFormats().contains(format)) {
-                throw new JReleaserException("Unsupported file format. Must be one of [" +
-                    String.join("|", getSupportedConfigFormats()) + "]");
+                throw new IllegalArgumentException($("jreleaser.init.ERROR_invalid_format",
+                    String.join("|", getSupportedConfigFormats())));
             }
 
             Path outputFile = outputDirectory.resolve("jreleaser." + format);
 
             TemplateResource template = TemplateUtils.resolveTemplate(logger, "init/jreleaser." + format + ".tpl");
 
-            logger.info("Writing file " + outputFile.toAbsolutePath());
-            try (Writer writer = Files.newBufferedWriter(outputFile, overwrite ? CREATE : CREATE_NEW, WRITE, TRUNCATE_EXISTING)) {
-                IOUtils.copy(template.getReader(), writer);
+            String content = IOUtils.toString(template.getReader());
+            LocalDate now = LocalDate.now();
+            content = content.replaceAll("@year@", now.getYear() + "");
+
+            logger.info($("jreleaser.init.TEXT_writing_file"), outputFile.toAbsolutePath());
+
+            try (Writer fileWriter = Files.newBufferedWriter(outputFile, overwrite ? CREATE : CREATE_NEW, WRITE, TRUNCATE_EXISTING);
+                 BufferedWriter decoratedWriter = new VersionDecoratingWriter(fileWriter)) {
+                decoratedWriter.write(content);
             } catch (FileAlreadyExistsException e) {
-                logger.error("File {} already exists and overwrite was set to false.", outputFile.toAbsolutePath());
+                logger.error($("jreleaser.init.ERROR_file_exists"), outputFile.toAbsolutePath());
                 return;
             }
 
-            logger.info("JReleaser initialized at " + outputDirectory.toAbsolutePath());
+            logger.info($("jreleaser.init.TEXT_success"), outputDirectory.toAbsolutePath());
         } catch (IllegalStateException | IOException e) {
-            logger.trace(e);
-            throw new JReleaserException("Unexpected error", e);
+            throw new JReleaserException($("ERROR_unexpected_error"), e);
         } finally {
             if (logger != null) logger.close();
         }
