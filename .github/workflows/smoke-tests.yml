@@ -348,9 +348,9 @@ jobs:
           java $JAVA_OPTS -jar jreleaser.jar announce -PoutputDir=out --dry-run
           echo "::endgroup::"
           echo "::group::➡️ init"
-          java $JAVA_OPTS -jar jreleaser.jar init -d tmp1 -o -f yml
-          java $JAVA_OPTS -jar jreleaser.jar init -d tmp2 -o -f toml
-          java $JAVA_OPTS -jar jreleaser.jar init -d tmp3 -o -f json
+          java $JAVA_OPTS -jar jreleaser.jar init -o -f yml
+          java $JAVA_OPTS -jar jreleaser.jar init -o -f toml
+          java $JAVA_OPTS -jar jreleaser.jar init -o -f json
           echo "::endgroup::"
         env:
           JRELEASER_OUTPUT_DIRECTORY: out
