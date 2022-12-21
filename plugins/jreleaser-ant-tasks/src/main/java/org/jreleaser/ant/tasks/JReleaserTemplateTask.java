@@ -44,6 +44,7 @@ public class JReleaserTemplateTask extends Task {
     private org.jreleaser.model.Distribution.DistributionType distributionType = org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
     private String packagerName;
     private String announcerName;
+    private String assemblerName;
     private String assemblerType;
     private boolean overwrite;
     private boolean snapshot;
@@ -71,6 +72,10 @@ public class JReleaserTemplateTask extends Task {
 
     public void setAssemblerType(String assemblerType) {
         this.assemblerType = assemblerType;
+    }
+
+    public void setAssemblerName(String assemblerName) {
+        this.assemblerName = assemblerName;
     }
 
     public void setOverwrite(boolean overwrite) {
@@ -104,7 +109,7 @@ public class JReleaserTemplateTask extends Task {
                 .packagerName(packagerName)
                 .announcerName(announcerName)
                 .assemblerType(assemblerType)
-                .assemblerName(distributionName)
+                .assemblerName(assemblerName)
                 .outputDirectory(outputDirectory)
                 .overwrite(overwrite)
                 .snapshot(snapshot)

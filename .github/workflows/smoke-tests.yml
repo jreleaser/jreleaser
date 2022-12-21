@@ -541,7 +541,7 @@ jobs:
           echo "::endgroup::"
           echo "::group::➡️ template"
           ant jreleaser-template -Djreleaser.announcer.name=discord
-          ant jreleaser-template -Djreleaser.assembler.type=jlink -Djreleaser.distribution.name=app-standalone
+          ant jreleaser-template -Djreleaser.assembler.type=jlink -Djreleaser.assembler.name=app-standalone
           ant jreleaser-template -Djreleaser.packager.name=brew -Djreleaser.distribution.name=app
           echo "::endgroup::"
           echo "::group::➡️ init"
@@ -718,7 +718,7 @@ jobs:
           echo "::endgroup::"
           echo "::group::➡️ template"
           ./gradlew jreleaserTemplate --announcer-name discord
-          ./gradlew jreleaserTemplate --assembler-type jlink --distribution-name app-standalone
+          ./gradlew jreleaserTemplate --assembler-type jlink --assembler-name app-standalone
           ./gradlew jreleaserTemplate --packager-name brew --distribution-name app
           echo "::endgroup::"
           echo "::group::➡️ init"
@@ -913,7 +913,7 @@ jobs:
           echo "::endgroup::"
           echo "::group::➡️ template"
           ./mvnw -B -ntp jreleaser:template -Djreleaser.announcer.name=discord
-          ./mvnw -B -ntp jreleaser:template -Djreleaser.assembler.type=jlink -Djreleaser.template.distribution.name=app-standalone
+          ./mvnw -B -ntp jreleaser:template -Djreleaser.assembler.type=jlink -Djreleaser.assembler.name=app-standalone
           ./mvnw -B -ntp jreleaser:template -Djreleaser.template.packager.name=brew -Djreleaser.template.distribution.name=app
           echo "::endgroup::"
           echo "::group::➡️ init"

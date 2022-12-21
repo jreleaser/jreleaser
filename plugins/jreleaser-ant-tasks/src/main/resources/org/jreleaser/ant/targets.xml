@@ -36,6 +36,7 @@
     <property name="jreleaser.packager.name" value=""/>
     <property name="jreleaser.announcer.name" value=""/>
     <property name="jreleaser.assembler.type" value=""/>
+    <property name="jreleaser.assembler.name" value=""/>
     <property name="jreleaser.overwrite" value="false"/>
     <property name="jreleaser.snapshot" value="false"/>
     <property name="jreleaser.full" value="false"/>
@@ -68,12 +69,11 @@
 
     <target name="jreleaser-template">
         <jreleaser:template skip="${jreleaser.skip}"
-                            basedir="${jreleaser.basedir}"
-                            configFile="${jreleaser.config.file}"
                             distributionName="${jreleaser.distribution.name}"
                             packagerName="${jreleaser.packager.name}"
                             announcerName="${jreleaser.announcer.name}"
                             assemblerType="${jreleaser.assembler.type}"
+                            assemblerName="${jreleaser.assembler.name}"
                             distributionType="${jreleaser.distribution.type}"
                             overwrite="${jreleaser.overwrite}"
                             snapshot="${jreleaser.snapshot}"
