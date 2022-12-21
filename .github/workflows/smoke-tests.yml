@@ -172,10 +172,18 @@ jobs:
           echo "::group::➡️ announce"
           ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser announce -PoutputDir=out --dry-run
           echo "::endgroup::"
+          echo "::group::➡️ template"
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser template -a discord
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser template -st jlink -s app-standalone
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser template -p brew -d app
+          echo "::endgroup::"
           echo "::group::➡️ init"
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser init -f yml
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser init -f toml
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser init -f json
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser init -o -f yml
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser init -o -f toml
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser init -o -f json
+          echo "::endgroup::"
+          echo "::group::➡️ auto-config"
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser release --auto-config --dry-run
           echo "::endgroup::"
         env:
           JRELEASER_OUTPUT_DIRECTORY: out
@@ -347,10 +355,18 @@ jobs:
           echo "::group::➡️ announce"
           java $JAVA_OPTS -jar jreleaser.jar announce -PoutputDir=out --dry-run
           echo "::endgroup::"
+          echo "::group::➡️ template"
+          java $JAVA_OPTS -jar jreleaser.jar template -a discord
+          java $JAVA_OPTS -jar jreleaser.jar template -st jlink -s app-standalone
+          java $JAVA_OPTS -jar jreleaser.jar template -p brew -d app
+          echo "::endgroup::"
           echo "::group::➡️ init"
           java $JAVA_OPTS -jar jreleaser.jar init -o -f yml
           java $JAVA_OPTS -jar jreleaser.jar init -o -f toml
           java $JAVA_OPTS -jar jreleaser.jar init -o -f json
+          echo "::endgroup::"
+          echo "::group::➡️ auto-config"
+          java $JAVA_OPTS -jar jreleaser.jar release --auto-config --dry-run
           echo "::endgroup::"
         env:
           JRELEASER_OUTPUT_DIRECTORY: out
@@ -523,10 +539,15 @@ jobs:
           echo "::group::➡️ announce"
           ant jreleaser-announce -DoutputDir=build -Djreleaser.dry.run=true
           echo "::endgroup::"
+          echo "::group::➡️ template"
+          ant jreleaser-template -Djreleaser.announcer.name=discord
+          ant jreleaser-template -Djreleaser.assembler.type=jlink -Djreleaser.distribution.name=app-standalone
+          ant jreleaser-template -Djreleaser.packager.name=brew -Djreleaser.distribution.name=app
+          echo "::endgroup::"
           echo "::group::➡️ init"
-          ant jreleaser-init -Djreleaser.format=yml
-          ant jreleaser-init -Djreleaser.format=toml
-          ant jreleaser-init -Djreleaser.format=json
+          ant jreleaser-init -Djreleaser.overwrite=true -Djreleaser.format=yml
+          ant jreleaser-init -Djreleaser.overwrite=true -Djreleaser.format=toml
+          ant jreleaser-init -Djreleaser.overwrite=true -Djreleaser.format=json
           echo "::endgroup::"
         env:
           JRELEASER_OUTPUT_DIRECTORY: out
@@ -695,10 +716,18 @@ jobs:
           echo "::group::➡️ announce"
           ./gradlew jreleaserAnnounce -PoutputDir=build -S
           echo "::endgroup::"
+          echo "::group::➡️ template"
+          ./gradlew jreleaserTemplate --announcer-name discord
+          ./gradlew jreleaserTemplate --assembler-type jlink --distribution-name app-standalone
+          ./gradlew jreleaserTemplate --packager-name brew --distribution-name app
+          echo "::endgroup::"
           echo "::group::➡️ init"
-          ./gradlew jreleaserInit --format yml
-          ./gradlew jreleaserInit --format toml
-          ./gradlew jreleaserInit --format json
+          ./gradlew jreleaserInit --overwrite --format yml
+          ./gradlew jreleaserInit --overwrite --format toml
+          ./gradlew jreleaserInit --overwrite --format json
+          echo "::endgroup::"
+          echo "::group::➡️ auto-config"
+          ./gradlew jreleaserAutoConfigRelease
           echo "::endgroup::"
         env:
           JRELEASER_OUTPUT_DIRECTORY: out
@@ -882,10 +911,18 @@ jobs:
           echo "::group::➡️ announce"
           ./mvnw -B -ntp jreleaser:announce -DoutputDir=target -Djreleaser.dry.run=true
           echo "::endgroup::"
+          echo "::group::➡️ template"
+          ./mvnw -B -ntp jreleaser:template -Djreleaser.announcer.name=discord
+          ./mvnw -B -ntp jreleaser:template -Djreleaser.assembler.type=jlink -Djreleaser.template.distribution.name=app-standalone
+          ./mvnw -B -ntp jreleaser:template -Djreleaser.template.packager.name=brew -Djreleaser.template.distribution.name=app
+          echo "::endgroup::"
           echo "::group::➡️ init"
-          ./mvnw -B -ntp jreleaser:init -DoutputDir=target -Djreleaser.init.format=yml
-          ./mvnw -B -ntp jreleaser:init -DoutputDir=target -Djreleaser.init.format=toml
-          ./mvnw -B -ntp jreleaser:init -DoutputDir=target -Djreleaser.init.format=json
+          ./mvnw -B -ntp jreleaser:init -Djreleaser.template.overwrite=true -Djreleaser.init.format=yml
+          ./mvnw -B -ntp jreleaser:init -Djreleaser.template.overwrite=true -Djreleaser.init.format=toml
+          ./mvnw -B -ntp jreleaser:init -Djreleaser.template.overwrite=true -Djreleaser.init.format=json
+          echo "::endgroup::"
+          echo "::group::➡️ auto-config"
+          ./mvnw -B -ntp jreleaser:auto-config-release -Djreleaser.dry.run=true
           echo "::endgroup::"
         env:
           JRELEASER_OUTPUT_DIRECTORY: out
