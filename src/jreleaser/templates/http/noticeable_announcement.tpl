@@ -11,6 +11,9 @@ distributions are supported.
 **Assemble:** The new `java-archive` assembler may be used to create JAVA_BINARY distrirbutions instead of using Maven's
 appassembler/assembly plugins or Gradle's application/distribution plugins.
 
+**Changelog:** Conventional-Commit preset can handle BREAKING CHANGE footer, referenced issues, and additional trailing
+elements. Be ware that it now also applies a custom format by default.
+
 **GitLab:** Update existing assets when posting an updated release. This aligns GitLab support with GitHub/Gitea.
 
 [🚀Changelog](https://github.com/jreleaser/jreleaser/releases/tag/{{tagName}})
