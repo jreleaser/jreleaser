@@ -24,6 +24,10 @@ application {
     mainClass = 'org.jreleaser.cli.Main'
 }
 
+startScripts {
+    classpath = files('$APP_HOME/lib/*')
+}
+
 jar {
     manifest {
         attributes('Main-Class': 'org.jreleaser.cli.Main')
