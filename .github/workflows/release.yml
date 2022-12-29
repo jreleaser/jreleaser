@@ -254,6 +254,7 @@ jobs:
         env:
           TAG: "v${{ needs.precheck.outputs.VERSION }}"
           VERSION: ${{ needs.precheck.outputs.VERSION }}
+          GITHUB_BOT_EMAIL: ${{ env.GITHUB_BOT_EMAIL }}
         run: sh update-website.sh
 
   update-bach-info:
