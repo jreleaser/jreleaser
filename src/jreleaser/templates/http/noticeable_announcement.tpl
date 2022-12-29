@@ -5,13 +5,13 @@ JReleaser {{projectVersion}} is now available! This release brings plenty of fea
 **Mastodon:** Message threads can now be posted to Mastodon. You may set a list of messages or a path to a file that
 contains the messages.
 
-**Docker*:** Multi-platform support is now available via buildx. For the time being only JAVA_BINARY and SINGLE_JAR
+**Docker:** Multi-platform support is now available via buildx. For the time being only JAVA_BINARY and SINGLE_JAR
 distributions are supported.
 
 **Distribution:** New flat-binary distribution may be used to release binaries without packaging them in archives. Several
 package managers support this new distribution type.
 
-**Assemble:** The new `java-archive` assembler may be used to create JAVA_BINARY distrirbutions instead of using Maven's
+**Assemble:** The new `java-archive` assembler may be used to create JAVA_BINARY distributions instead of using Maven's
 appassembler/assembly plugins or Gradle's application/distribution plugins.
 
 **Changelog:** Conventional-Commit preset can handle BREAKING CHANGE footer, referenced issues, and additional trailing
