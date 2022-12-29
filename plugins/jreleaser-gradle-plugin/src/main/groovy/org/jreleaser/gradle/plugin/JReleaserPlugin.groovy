@@ -39,7 +39,9 @@ class JReleaserPlugin implements Plugin<Project> {
     @Override
     void apply(Project project) {
         if (project.gradle.startParameter.logLevel != LogLevel.QUIET) {
-            Banner.display(project)
+            project.gradle.sharedServices
+                .registerIfAbsent('jreleaser-banner', Banner, { spec -> })
+                .get().display(project)
         } else {
             System.setProperty(JRELEASER_QUIET, 'true')
         }

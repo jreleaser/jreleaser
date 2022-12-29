@@ -18,67 +18,69 @@
 package org.jreleaser.jdks.gradle.plugin
 
 import groovy.transform.CompileStatic
-import org.gradle.BuildAdapter
-import org.gradle.BuildResult
 import org.gradle.api.Project
+import org.gradle.api.services.BuildService
+import org.gradle.api.services.BuildServiceParameters
 
 import java.text.MessageFormat
 
 /**
  *
  * @author Andres Almiray
- * @since 0.3.0
  */
 @CompileStatic
-final class Banner {
-    private final ResourceBundle bundle = ResourceBundle.getBundle(Banner.name)
-    private final String productVersion = bundle.getString('product.version')
-    private final String productId = bundle.getString('product.id')
-    private final String productName = bundle.getString('product.name')
-    private final String banner = MessageFormat.format(bundle.getString('product.banner'), productName, productVersion)
-    private final List<String> visited = []
+abstract class Banner implements BuildService<Params> {
+    private static final String ORG_KORDAMP_BANNER = 'org.kordamp.banner'
 
-    private static final Banner BANNER = new Banner()
+    private String productVersion
+    private String productId
+    private final List<String> projectNames = []
 
-    private Banner() {
-        // noop
+    interface Params extends BuildServiceParameters {
     }
 
-    static void display(Project project) {
-        if (BANNER.visited.contains(project.rootProject.name)) {
-            return
-        }
-        BANNER.visited.add(project.rootProject.name)
-        project.gradle.addBuildListener(new BuildAdapter() {
-            @Override
-            void buildFinished(BuildResult result) {
-                BANNER.visited.clear()
-            }
-        })
+    void display(Project project) {
+        if (checkIfVisited(project)) return
+
+        ResourceBundle bundle = ResourceBundle.getBundle(Banner.name)
+        productVersion = bundle.getString('product.version')
+        productId = bundle.getString('product.id')
+        String productName = bundle.getString('product.name')
+        String banner = MessageFormat.format(bundle.getString('product.banner'), productName, productVersion)
+
+        boolean printBanner = null == System.getProperty(ORG_KORDAMP_BANNER) || Boolean.getBoolean(ORG_KORDAMP_BANNER)
 
         File parent = new File(project.gradle.gradleUserHomeDir, 'caches')
-        File markerFile = BANNER.getMarkerFile(parent)
+        File markerFile = getMarkerFile(parent)
         if (!markerFile.exists()) {
             markerFile.parentFile.mkdirs()
             markerFile.text = '1'
-            println(BANNER.banner)
+            if (printBanner) println(banner)
         } else {
             try {
                 int count = Integer.parseInt(markerFile.text)
                 if (count < 3) {
-                    println(BANNER.banner)
+                    if (printBanner) println(banner)
                 }
                 markerFile.text = (count + 1) + ''
             } catch (NumberFormatException e) {
                 markerFile.text = '1'
-                println(BANNER.banner)
+                if (printBanner) println(banner)
             }
         }
     }
 
+    private boolean checkIfVisited(Project project) {
+        if (projectNames.contains(project.rootProject.name)) {
+            return true
+        }
+        projectNames.add(project.rootProject.name)
+        return false
+    }
+
     private File getMarkerFile(File parent) {
         new File(parent,
-            'jreleaser' +
+            'kordamp' +
                 File.separator +
                 productId +
                 File.separator +

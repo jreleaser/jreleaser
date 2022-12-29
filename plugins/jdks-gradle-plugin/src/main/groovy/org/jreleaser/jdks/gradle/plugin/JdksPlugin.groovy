@@ -28,6 +28,7 @@ import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
+import org.gradle.api.logging.LogLevel
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Delete
@@ -50,7 +51,11 @@ class JdksPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
-        Banner.display(project)
+        if (project.gradle.startParameter.logLevel != LogLevel.QUIET) {
+            project.gradle.sharedServices
+                .registerIfAbsent('jdks-banner', Banner, { spec -> })
+                .get().display(project)
+        }
 
         NamedDomainObjectContainer<JdkImpl> jdkContainer = project.objects.domainObjectContainer(JdkImpl,
             new NamedDomainObjectFactory<JdkImpl>() {
