@@ -7,23 +7,61 @@ on:
 env:
   JAVA_VERSION: '11'
   JAVA_DISTRO: 'zulu'
+  CI: true
+  GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+  JRELEASER_OCI_COMPARTMENTID: ${{ secrets.JRELEASER_OCI_COMPARTMENTID }}
 
 permissions:
   contents: write
+  actions: write
   pull-requests: write
   security-events: write
 
 jobs:
-  create-fix-pull-requests:
+  precheck:
+    name: Precheck
+    if: github.repository == 'jreleaser/jreleaser' && startsWith(github.event.head_commit.message, 'Releasing version') != true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Cancel previous run
+        uses: styfle/cancel-workflow-action@0.11.0
+        with:
+          access_token: ${{ secrets.GITHUB_TOKEN }}
+
+  frogbot:
+    name: Frogbot
+    needs: [precheck]
+    if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
+      - name: Decrypt secrets
+        shell: bash
+        run: sh .github/scripts/decrypt-secrets.sh
 
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: ${{ env.JAVA_DISTRO }}
+
+      - name: Cache Gradle
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}-${{ hashFiles('**/gradle.properties') }}
+          restore-keys: ${{ runner.os }}-gradle-
+
+      - name: Cache Gradle wrapper
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradlew-${{ hashFiles('**/gradlew') }}
+          restore-keys: ${{ runner.os }}-gradlew-
 
       - uses: jfrog/frogbot@b92e53d9631139a697cb71d9e70229a70ca56694
         env:
