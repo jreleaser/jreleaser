@@ -16,9 +16,6 @@ env:
   REPO_NAME: 'jreleaser'
   GITHUB_BOT_EMAIL: '41898282+github-actions[bot]@users.noreply.github.com'
 
-permissions:
-  contents: read
-
 jobs:
   precheck:
     name: Precheck
