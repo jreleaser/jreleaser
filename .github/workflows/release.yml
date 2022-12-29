@@ -140,6 +140,14 @@ jobs:
           ./gradlew -Pprofile=release -PreproducibleBuild=true publishPlugins publish -S
           ./gradlew cleanupStagedRepository
 
+      - name: Upload deploy artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          retention-days: 7
+          name: deploy
+          path: |
+            build/repos/local/release/
+
       - name: Release
         uses: jreleaser/release-action@v2
         with:
