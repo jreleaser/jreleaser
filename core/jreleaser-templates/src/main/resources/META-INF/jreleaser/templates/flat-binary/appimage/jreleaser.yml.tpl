@@ -16,7 +16,6 @@ release:
     changelog:
       formatted: ALWAYS
       preset: conventional-commits{{=<% %>=}}
-      format: '- {{commitShortHash}} {{commitTitle}}'
       contributors:
         format: '- {{contributorName}}{{#contributorUsernameAsLink}} ({{.}}){{/contributorUsernameAsLink}}'<%={{ }}=%>
       hide:

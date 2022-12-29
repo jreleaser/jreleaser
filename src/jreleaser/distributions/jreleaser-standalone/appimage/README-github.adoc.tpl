@@ -7,7 +7,7 @@
 :project-version: {{projectVersion}}
 :project-tag:     {{tagName}}
 
-image:https://img.shields.io/github/workflow/status/{project-owner}/{project-name}/Release?logo=github["Build Status", link="https://github.com/{project-owner}/{project-name}/actions"]
+image:https://img.shields.io/github/actions/workflow/status/{project-owner}/{project-name}/release.yml?branch=main&logo=github&label=Build["Build Status", link="https://github.com/{project-owner}/{project-name}/actions"]
 image:https://img.shields.io/github/downloads/{project-owner}/{project-name}/total[GitHub Release Total]
 
 ---

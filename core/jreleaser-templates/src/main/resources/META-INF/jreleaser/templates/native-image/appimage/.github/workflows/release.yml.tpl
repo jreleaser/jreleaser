@@ -20,6 +20,11 @@ jobs:
           echo "version=$(cat VERSION)" >> $GITHUB_OUTPUT
           echo "tag=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
+      - name: Install libfuse
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install fuse
+
       - name: Create the AppImage
         run: sh create-appimage.sh
         env:

@@ -20,6 +20,11 @@ jobs:
           echo "version=$(cat VERSION)" >>$GITHUB_OUTPUT
           echo "tag=${GITHUB_REF#refs/tags/}" >>$GITHUB_OUTPUT
 
+      - name: Install libfuse
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install fuse
+
       - name: Create the AppImage
         run: sh create-appimage.sh
         env:
@@ -41,6 +46,7 @@ jobs:
           JRELEASER_TWITTER_CONSUMER_SECRET: ${{=<% %>=}}{{ secrets.TWITTER_CONSUMER_SECRET }}<%={{ }}=%>
           JRELEASER_TWITTER_ACCESS_TOKEN: ${{=<% %>=}}{{ secrets.TWITTER_ACCESS_TOKEN }}<%={{ }}=%>
           JRELEASER_TWITTER_ACCESS_TOKEN_SECRET: ${{=<% %>=}}{{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}<%={{ }}=%>
+          JRELEASER_MASTODON_ACCESS_TOKEN: ${{=<% %>=}}{{ secrets.MASTODON_ACCESS_TOKEN }}<%={{ }}=%>
 
       - name: JReleaser output
         if: always()
