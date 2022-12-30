@@ -32,9 +32,13 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
  * @since 1.2.0
  */
 public final class CommandHook extends AbstractHook<CommandHook> {
+    private static final long serialVersionUID = 2854389040444050570L;
+
     private String cmd;
 
     private final org.jreleaser.model.api.hooks.CommandHook immutable = new org.jreleaser.model.api.hooks.CommandHook() {
+        private static final long serialVersionUID = 4950097179887952669L;
+
         @Override
         public String getCmd() {
             return cmd;

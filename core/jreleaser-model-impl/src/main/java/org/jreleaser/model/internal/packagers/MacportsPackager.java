@@ -55,6 +55,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public final class MacportsPackager extends AbstractRepositoryPackager<org.jreleaser.model.api.packagers.MacportsPackager, MacportsPackager> {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
+    private static final long serialVersionUID = 6339866408211084697L;
 
     static {
         Set<String> extensions = setOf(ZIP.extension());
@@ -73,6 +74,8 @@ public final class MacportsPackager extends AbstractRepositoryPackager<org.jrele
     private Integer revision;
 
     private final org.jreleaser.model.api.packagers.MacportsPackager immutable = new org.jreleaser.model.api.packagers.MacportsPackager() {
+        private static final long serialVersionUID = 1625817436978161466L;
+
         @Override
         public String getPackageName() {
             return packageName;
@@ -299,6 +302,8 @@ public final class MacportsPackager extends AbstractRepositoryPackager<org.jrele
     }
 
     public static final class MacportsRepository extends PackagerRepository {
+        private static final long serialVersionUID = 2162971034366096607L;
+
         public MacportsRepository() {
             super("macports", "macports");
         }

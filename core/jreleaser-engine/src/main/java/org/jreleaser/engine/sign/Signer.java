@@ -220,14 +220,12 @@ public class Signer {
     private static boolean verify(JReleaserContext context, Keyring keyring, SigningUtils.FilePair filePair) throws SigningException {
         context.getLogger().setPrefix("verify");
 
-        try {
-            context.getLogger().debug("{}",
-                context.relativizeToBasedir(filePair.getSignatureFile()));
+        context.getLogger().debug("{}",
+            context.relativizeToBasedir(filePair.getSignatureFile()));
 
-            InputStream sigInputStream = PGPUtil.getDecoderStream(
-                new BufferedInputStream(
-                    new FileInputStream(filePair.getSignatureFile().toFile())));
-
+        try (InputStream sigInputStream = PGPUtil.getDecoderStream(
+            new BufferedInputStream(
+                new FileInputStream(filePair.getSignatureFile().toFile())))) {
             PGPObjectFactory pgpObjFactory = new PGPObjectFactory(sigInputStream, keyring.getKeyFingerPrintCalculator());
             Iterable<?> pgpSigList = null;
 
@@ -251,8 +249,6 @@ public class Signer {
                     sig.update((byte) ch);
                 }
             }
-
-            sigInputStream.close();
 
             return sig.verify();
         } catch (IOException | PGPException e) {

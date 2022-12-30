@@ -114,9 +114,7 @@ public class Nexus2 {
             .encoder(new JacksonEncoder())
             .decoder(new ContentNegotiationDecoder())
             .requestInterceptor(new BasicAuthRequestInterceptor(username, password))
-            .requestInterceptor(template -> {
-                template.header("User-Agent", "JReleaser/" + JReleaserVersion.getPlainVersion());
-            })
+            .requestInterceptor(template -> template.header("User-Agent", "JReleaser/" + JReleaserVersion.getPlainVersion()))
             .errorDecoder(new NexusErrorDecoder(logger))
             .options(new Request.Options(connectTimeout, TimeUnit.SECONDS, readTimeout, TimeUnit.SECONDS, true))
             .target(NexusAPI.class, apiHost);

@@ -36,12 +36,16 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
  * @since 0.4.0
  */
 public final class Checksum extends AbstractModelObject<Checksum> implements Domain {
+    private static final long serialVersionUID = -2684650548296767434L;
+
     private final Set<Algorithm> algorithms = new LinkedHashSet<>();
     private Boolean individual;
     private String name;
     private Boolean files;
 
     private final org.jreleaser.model.api.checksum.Checksum immutable = new org.jreleaser.model.api.checksum.Checksum() {
+        private static final long serialVersionUID = -7632183071376409444L;
+
         @Override
         public String getName() {
             return name;

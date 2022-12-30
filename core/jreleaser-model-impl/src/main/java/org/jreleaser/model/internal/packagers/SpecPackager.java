@@ -57,6 +57,7 @@ import static org.jreleaser.util.StringUtils.isFalse;
  */
 public final class SpecPackager extends AbstractRepositoryPackager<org.jreleaser.model.api.packagers.SpecPackager, SpecPackager> {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
+    private static final long serialVersionUID = 3054130455318535496L;
 
     static {
         Set<String> extensions = setOf(
@@ -82,6 +83,8 @@ public final class SpecPackager extends AbstractRepositoryPackager<org.jreleaser
     private String release;
 
     private final org.jreleaser.model.api.packagers.SpecPackager immutable = new org.jreleaser.model.api.packagers.SpecPackager() {
+        private static final long serialVersionUID = -3139422195483595734L;
+
         @Override
         public String getPackageName() {
             return packageName;
@@ -279,6 +282,8 @@ public final class SpecPackager extends AbstractRepositoryPackager<org.jreleaser
     }
 
     public static final class SpecRepository extends PackagerRepository {
+        private static final long serialVersionUID = -4727714362653863706L;
+
         public SpecRepository() {
             super("spec", "spec");
         }

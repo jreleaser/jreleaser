@@ -24,7 +24,6 @@ import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.DockerConfiguration;
 import org.jreleaser.model.internal.packagers.DockerPackager;
 import org.jreleaser.model.internal.packagers.DockerSpec;
-import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.spi.packagers.PackagerProcessingException;
 import org.jreleaser.sdk.command.Command;
 import org.jreleaser.util.FileUtils;
@@ -254,7 +253,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
                                  Map<String, Object> props,
                                  Path packageDirectory,
                                  List<Artifact> artifacts) throws IOException, PackagerProcessingException {
-        copyPreparedFiles(distribution, props);
+        copyPreparedFiles(props);
         Path assemblyDirectory = packageDirectory.resolve("assembly");
 
         Files.createDirectories(assemblyDirectory);
@@ -348,7 +347,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         for (DockerSpec spec : packager.getActiveSpecs()) {
             context.getLogger().debug(RB.$("distributions.action.publishing") + " {} spec", spec.getName());
             Map<String, Object> newProps = fillSpecProps(distribution, props, spec);
-            publishDocker(distribution, newProps, spec);
+            publishDocker(newProps, spec);
         }
     }
 
@@ -358,11 +357,10 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
 
     @Override
     protected void doPublishDistribution(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
-        publishDocker(distribution, props, getPackager());
+        publishDocker(props, getPackager());
     }
 
-    protected void publishDocker(Distribution distribution,
-                                 Map<String, Object> props,
+    protected void publishDocker(Map<String, Object> props,
                                  DockerConfiguration docker) throws PackagerProcessingException {
         Map<String, List<String>> tagNames = resolveTagNames(docker, props);
 
@@ -531,13 +529,11 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
     }
 
     @Override
-    protected void writeFile(Project project,
-                             Distribution distribution,
+    protected void writeFile(Distribution distribution,
                              String content,
                              Map<String, Object> props,
                              Path outputDirectory,
-                             String fileName)
-        throws PackagerProcessingException {
+                             String fileName) throws PackagerProcessingException {
         fileName = trimTplExtension(fileName);
 
         Path outputFile = "executable".equals(fileName) ?

@@ -127,7 +127,7 @@ public class SshUtils {
         return client;
     }
 
-    public static SFTPClient createSFTPClient(JReleaserContext context, SshUploader<?> uploader, SSHClient ssh) throws UploadException {
+    public static SFTPClient createSFTPClient(SshUploader<?> uploader, SSHClient ssh) throws UploadException {
         if (null == ssh) return null;
 
         try {
@@ -137,7 +137,7 @@ public class SshUtils {
         }
     }
 
-    public static SFTPClient createSFTPClient(JReleaserContext context, SshDownloader<?> downloader, SSHClient ssh) throws DownloadException {
+    public static SFTPClient createSFTPClient(SshDownloader<?> downloader, SSHClient ssh) throws DownloadException {
         if (null == ssh) return null;
 
         try {

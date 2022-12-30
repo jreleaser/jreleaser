@@ -37,11 +37,15 @@ import static java.util.stream.Collectors.toSet;
  * @since 0.4.0
  */
 public final class DockerSpec extends AbstractDockerConfiguration<DockerSpec> implements Domain {
+    private static final long serialVersionUID = 3990523023493032498L;
+
     private final Map<String, Object> matchers = new LinkedHashMap<>();
     private Artifact artifact;
     private String name;
 
     private final org.jreleaser.model.api.packagers.DockerSpec immutable = new org.jreleaser.model.api.packagers.DockerSpec() {
+        private static final long serialVersionUID = -932413489796274177L;
+
         private Set<? extends org.jreleaser.model.api.packagers.DockerPackager.Registry> registries;
 
         @Override

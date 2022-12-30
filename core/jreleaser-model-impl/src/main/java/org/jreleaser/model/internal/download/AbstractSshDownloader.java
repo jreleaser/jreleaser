@@ -28,6 +28,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 1.1.0
  */
 public abstract class AbstractSshDownloader<A extends org.jreleaser.model.api.download.Downloader, S extends AbstractSshDownloader<A, S>> extends AbstractDownloader<A, S> implements SshDownloader<A> {
+    private static final long serialVersionUID = -6171515598110485664L;
+
     protected String username;
     protected String password;
     protected String host;

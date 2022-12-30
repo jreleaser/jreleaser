@@ -49,6 +49,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.3.0
  */
 public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.model.api.upload.ArtifactoryUploader, ArtifactoryUploader> {
+    private static final long serialVersionUID = -8107525740451541910L;
+
     private final List<ArtifactoryRepository> repositories = new ArrayList<>();
     private String host;
     private String username;
@@ -56,6 +58,8 @@ public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.mo
     private Http.Authorization authorization;
 
     private final org.jreleaser.model.api.upload.ArtifactoryUploader immutable = new org.jreleaser.model.api.upload.ArtifactoryUploader() {
+        private static final long serialVersionUID = -6040496931102283198L;
+
         private List<? extends org.jreleaser.model.api.upload.ArtifactoryUploader.ArtifactoryRepository> repositories;
 
         @Override
@@ -282,6 +286,8 @@ public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.mo
     }
 
     public static final class ArtifactoryRepository extends AbstractModelObject<ArtifactoryRepository> implements Domain, Activatable {
+        private static final long serialVersionUID = 112708885585709294L;
+
         private final Set<FileType> fileTypes = new LinkedHashSet<>();
 
         private Active active;
@@ -289,6 +295,8 @@ public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.mo
         private String path;
 
         private final org.jreleaser.model.api.upload.ArtifactoryUploader.ArtifactoryRepository immutable = new org.jreleaser.model.api.upload.ArtifactoryUploader.ArtifactoryRepository() {
+            private static final long serialVersionUID = -954690979964972109L;
+
             @Override
             public String getPath() {
                 return path;

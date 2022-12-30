@@ -21,7 +21,6 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.ChocolateyPackager;
-import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.internal.release.BaseReleaser;
 import org.jreleaser.model.internal.release.GithubReleaser;
 import org.jreleaser.model.internal.release.Releaser;
@@ -63,7 +62,7 @@ public class ChocolateyPackagerProcessor extends AbstractRepositoryPackagerProce
     protected void doPackageDistribution(Distribution distribution, Map<String, Object> props, Path packageDirectory) throws PackagerProcessingException {
         super.doPackageDistribution(distribution, props, packageDirectory);
 
-        copyPreparedFiles(distribution, props);
+        copyPreparedFiles(props);
 
         if (packager.isRemoteBuild()) {
             return;
@@ -123,13 +122,12 @@ public class ChocolateyPackagerProcessor extends AbstractRepositoryPackagerProce
     }
 
     @Override
-    protected void writeFile(Project project,
-                             Distribution distribution,
+    protected void writeFile(Distribution distribution,
                              String content,
                              Map<String, Object> props,
                              Path outputDirectory,
                              String fileName) throws PackagerProcessingException {
-        Releaser gitService = context.getModel().getRelease().getReleaser();
+        Releaser<?> gitService = context.getModel().getRelease().getReleaser();
         if (fileName.contains(".github") && (!packager.isRemoteBuild() || !(gitService instanceof GithubReleaser))) {
             // skip
             return;

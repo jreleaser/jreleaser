@@ -28,6 +28,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.6.0
  */
 public abstract class AbstractTemplatePackager<A extends org.jreleaser.model.api.packagers.TemplatePackager, S extends AbstractTemplatePackager<A, S>> extends AbstractPackager<A, S> implements TemplatePackager<A> {
+    private static final long serialVersionUID = -8446580540897795402L;
+
     protected final List<String> skipTemplates = new ArrayList<>();
     protected String templateDirectory;
 

@@ -187,7 +187,7 @@ public class Validator {
     }
 
     public static void validateTap(JReleaserContext context, Distribution distribution,
-                            RepositoryTap tap, RepositoryTap parentTap, String property) {
+                                   RepositoryTap tap, RepositoryTap parentTap, String property) {
         validateOwner(tap, parentTap);
 
         if (isBlank(tap.getCommitMessage()) && isNotBlank(parentTap.getCommitMessage())) {
@@ -236,7 +236,7 @@ public class Validator {
                 "HEAD"));
     }
 
-    public static void validateGlobs(JReleaserContext context, Collection<Glob> globs, String property, Errors errors) {
+    public static void validateGlobs(Collection<Glob> globs, String property, Errors errors) {
         int i = 0;
         for (Glob glob : globs) {
             if (isBlank(glob.getPattern())) {
@@ -245,13 +245,13 @@ public class Validator {
         }
     }
 
-    public static void validateFileSet(JReleaserContext context, Mode mode, Assembler assembler, FileSet fileSet, int index, Errors errors) {
+    public static void validateFileSet(Mode mode, Assembler assembler, FileSet fileSet, int index, Errors errors) {
         if (mode.validateStandalone() && isBlank(fileSet.getInput())) {
             errors.configuration(RB.$("validation_must_not_be_null", assembler.getType() + "." + assembler.getName() + ".fileSet[" + index + "].input"));
         }
     }
 
-    public static void validateScreenshots(JReleaserContext context, Mode mode, List<Screenshot> screenshots, Errors errors, String base) {
+    public static void validateScreenshots(List<Screenshot> screenshots, Errors errors, String base) {
         if (screenshots.size() == 1) {
             screenshots.get(0).setPrimary(true);
         }
@@ -285,11 +285,11 @@ public class Validator {
         }
     }
 
-    public static void validateIcons(JReleaserContext context, Mode mode, List<Icon> icons, Errors errors, String base) {
-        validateIcons(context, mode, icons, errors, base, true);
+    public static void validateIcons(List<Icon> icons, Errors errors, String base) {
+        validateIcons(icons, errors, base, true);
     }
 
-    public static void validateIcons(JReleaserContext context, Mode mode, List<Icon> icons, Errors errors, String base, boolean validatePrimary) {
+    public static void validateIcons(List<Icon> icons, Errors errors, String base, boolean validatePrimary) {
         if (validatePrimary) {
             if (icons.size() == 1) {
                 icons.get(0).setPrimary(true);

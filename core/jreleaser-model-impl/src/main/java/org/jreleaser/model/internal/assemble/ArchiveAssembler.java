@@ -43,6 +43,8 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
  * @since 0.8.0
  */
 public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, org.jreleaser.model.api.assemble.ArchiveAssembler> {
+    private static final long serialVersionUID = -5357543355978214383L;
+
     private final Set<Archive.Format> formats = new LinkedHashSet<>();
 
     private String archiveName;
@@ -50,6 +52,8 @@ public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, 
     private Distribution.DistributionType distributionType;
 
     private final org.jreleaser.model.api.assemble.ArchiveAssembler immutable = new org.jreleaser.model.api.assemble.ArchiveAssembler() {
+        private static final long serialVersionUID = 2328211292902490488L;
+
         private List<? extends org.jreleaser.model.api.common.FileSet> fileSets;
         private Set<? extends org.jreleaser.model.api.common.Artifact> outputs;
 

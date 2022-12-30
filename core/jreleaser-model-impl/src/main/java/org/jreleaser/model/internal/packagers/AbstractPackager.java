@@ -44,6 +44,8 @@ import static org.jreleaser.model.Distribution.DistributionType.FLAT_BINARY;
  * @since 0.1.0
  */
 public abstract class AbstractPackager<A extends org.jreleaser.model.api.packagers.Packager, S extends AbstractPackager<A, S>> extends AbstractModelObject<S> implements Packager<A> {
+    private static final long serialVersionUID = -5096983259019667436L;
+
     @JsonIgnore
     protected final String type;
     protected final Map<String, Object> extraProperties = new LinkedHashMap<>();

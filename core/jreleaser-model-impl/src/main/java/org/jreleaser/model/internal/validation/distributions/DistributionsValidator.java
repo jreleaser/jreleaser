@@ -292,7 +292,7 @@ public abstract class DistributionsValidator extends Validator {
         }
     }
 
-    public static void validateArtifactPlatforms(JReleaserContext context, Distribution distribution, Packager packager,
+    public static void validateArtifactPlatforms(Distribution distribution, Packager packager,
                                                  List<Artifact> candidateArtifacts, Errors errors) {
         // validate distribution type
         if (distribution.getType() == org.jreleaser.model.Distribution.DistributionType.BINARY ||
@@ -328,7 +328,7 @@ public abstract class DistributionsValidator extends Validator {
         }
     }
 
-    public static void postValidateDistributions(JReleaserContext context, Mode mode, Errors errors) {
+    public static void postValidateDistributions(JReleaserContext context, Errors errors) {
         context.getLogger().debug("distributions");
         Map<String, Distribution> distributions = context.getModel().getDistributions();
 

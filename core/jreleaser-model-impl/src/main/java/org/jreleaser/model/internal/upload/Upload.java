@@ -49,6 +49,8 @@ import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSepar
  * @since 0.3.0
  */
 public final class Upload extends AbstractModelObject<Upload> implements Domain, Activatable {
+    private static final long serialVersionUID = -7894546875482014801L;
+
     private final Map<String, ArtifactoryUploader> artifactory = new LinkedHashMap<>();
     private final Map<String, FtpUploader> ftp = new LinkedHashMap<>();
     private final Map<String, GiteaUploader> gitea = new LinkedHashMap<>();
@@ -63,6 +65,8 @@ public final class Upload extends AbstractModelObject<Upload> implements Domain,
     private boolean enabled = true;
 
     private final org.jreleaser.model.api.upload.Upload immutable = new org.jreleaser.model.api.upload.Upload() {
+        private static final long serialVersionUID = -1954880769141203693L;
+
         private Map<String, ? extends org.jreleaser.model.api.upload.ArtifactoryUploader> artifactory;
         private Map<String, ? extends org.jreleaser.model.api.upload.FtpUploader> ftp;
         private Map<String, ? extends org.jreleaser.model.api.upload.GiteaUploader> gitea;

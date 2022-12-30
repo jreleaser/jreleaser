@@ -103,7 +103,7 @@ class Gitlab {
            String endpoint,
            String token,
            int connectTimeout,
-           int readTimeout) throws IOException {
+           int readTimeout) {
         requireNonNull(logger, "'logger' must not be null");
         requireNonBlank(token, "'token' must not be blank");
 

@@ -30,6 +30,8 @@ import static java.util.Collections.unmodifiableMap;
  * @since 0.1.0
  */
 public final class Release extends AbstractModelObject<Release> implements Domain {
+    private static final long serialVersionUID = -7382956682399917298L;
+
     private GithubReleaser github;
     private GitlabReleaser gitlab;
     private GiteaReleaser gitea;
@@ -37,6 +39,8 @@ public final class Release extends AbstractModelObject<Release> implements Domai
     private GenericGitReleaser generic;
 
     private final org.jreleaser.model.api.release.Release immutable = new org.jreleaser.model.api.release.Release() {
+        private static final long serialVersionUID = 8607297611597648860L;
+
         @Override
         public org.jreleaser.model.api.release.GithubReleaser getGithub() {
             return null != github ? github.asImmutable() : null;

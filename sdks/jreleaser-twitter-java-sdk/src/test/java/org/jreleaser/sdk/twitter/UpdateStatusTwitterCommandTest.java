@@ -33,12 +33,12 @@ import static org.jreleaser.sdk.twitter.Stubs.verifyPostContains;
 import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class UpdateStatusTwitterCommandTest {
+class UpdateStatusTwitterCommandTest {
     @RegisterExtension
     WireMockExtension api = new WireMockExtension(options().dynamicPort());
 
     @Test
-    public void testUpdateStatus() throws TwitterException {
+    void testUpdateStatus() throws TwitterException {
         // given:
         stubFor(post(urlEqualTo(UPDATE_STATUS_ENDPOINT + ".json"))
             .willReturn(okJson("{\"status\": 202, \"message\":\"success\"}")));
@@ -65,7 +65,7 @@ public class UpdateStatusTwitterCommandTest {
     }
 
     @Test
-    public void testUpdateStatuses() throws TwitterException {
+    void testUpdateStatuses() throws TwitterException {
         // given:
         stubFor(post(urlEqualTo(UPDATE_STATUS_ENDPOINT + ".json"))
             .willReturn(okJson("{\"status\": 202, \"message\":\"success\"}")));
@@ -92,7 +92,7 @@ public class UpdateStatusTwitterCommandTest {
     }
 
     @Test
-    public void testError() {
+    void testError() {
         // given:
         stubFor(post(urlEqualTo(UPDATE_STATUS_ENDPOINT + ".json"))
             .willReturn(aResponse().withStatus(400)));

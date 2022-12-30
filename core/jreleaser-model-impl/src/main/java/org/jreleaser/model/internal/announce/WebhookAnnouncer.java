@@ -41,6 +41,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.5.0
  */
 public final class WebhookAnnouncer extends AbstractAnnouncer<WebhookAnnouncer, org.jreleaser.model.api.announce.WebhookAnnouncer> {
+    private static final long serialVersionUID = 5440853994806591898L;
+
     private String webhook;
     private String message;
     private String messageProperty;
@@ -48,6 +50,8 @@ public final class WebhookAnnouncer extends AbstractAnnouncer<WebhookAnnouncer, 
     private Boolean structuredMessage;
 
     private final org.jreleaser.model.api.announce.WebhookAnnouncer immutable = new org.jreleaser.model.api.announce.WebhookAnnouncer() {
+        private static final long serialVersionUID = 6579288631060633630L;
+
         @Override
         public String getType() {
             return org.jreleaser.model.api.announce.WebhooksAnnouncer.TYPE;

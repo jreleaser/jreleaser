@@ -23,7 +23,6 @@ import org.jreleaser.model.Constants;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.JpackageAssembler;
 import org.jreleaser.model.internal.common.Artifact;
-import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.spi.assemble.AssemblerProcessingException;
 import org.jreleaser.sdk.command.Command;
 import org.jreleaser.templates.TemplateResource;
@@ -39,7 +38,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Predicate;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.jreleaser.assemblers.AssemblerUtils.copyJars;
@@ -142,13 +140,10 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<o
         Path adjustedImage = workDirectory.resolve("runtime-image");
 
         try {
-            if (!FileUtils.copyFilesRecursive(context.getLogger(), originalImage, adjustedImage, new Predicate<Path>() {
-                @Override
-                public boolean test(Path path) {
-                    boolean pathIsJar = path.getFileName().toString().endsWith(".jar") && path.getParent().getFileName().toString().equals("jars");
-                    boolean pathIsExecutable = path.getFileName().toString().equals(context.getModel().getAssemble().findJlink(assembler.getJlink()).getExecutable());
-                    return pathIsJar || pathIsExecutable;
-                }
+            if (!FileUtils.copyFilesRecursive(context.getLogger(), originalImage, adjustedImage, path -> {
+                boolean pathIsJar = path.getFileName().toString().endsWith(".jar") && path.getParent().getFileName().toString().equals("jars");
+                boolean pathIsExecutable = path.getFileName().toString().equals(context.getModel().getAssemble().findJlink(assembler.getJlink()).getExecutable());
+                return pathIsJar || pathIsExecutable;
             })) {
                 throw new IOException(RB.$("ERROR_assembler_adjusting_image", adjustedImage));
             }
@@ -306,15 +301,15 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<o
         }
 
         if (packager instanceof JpackageAssembler.Osx) {
-            customizeOsx(type, (JpackageAssembler.Osx) packager, inputsDirectory, cmd, props);
+            customizeOsx((JpackageAssembler.Osx) packager, inputsDirectory, cmd, props);
         } else if (packager instanceof JpackageAssembler.Linux) {
-            customizeLinux(type, (JpackageAssembler.Linux) packager, inputsDirectory, cmd, props);
+            customizeLinux(type, (JpackageAssembler.Linux) packager, inputsDirectory, cmd);
         } else if (packager instanceof JpackageAssembler.Windows) {
-            customizeWindows(type, (JpackageAssembler.Windows) packager, inputsDirectory, cmd, props);
+            customizeWindows((JpackageAssembler.Windows) packager, inputsDirectory, cmd);
         }
     }
 
-    private void customizeOsx(String type, JpackageAssembler.Osx packager, Path inputsDirectory, Command cmd, Map<String, Object> props) {
+    private void customizeOsx(JpackageAssembler.Osx packager, Path inputsDirectory, Command cmd, Map<String, Object> props) {
         if (isNotBlank(packager.getPackageName())) {
             cmd.arg("--mac-package-name")
                 .arg(packager.getPackageName());
@@ -344,7 +339,7 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<o
             .arg(inputsDirectory.resolve(assembler.getName() + ".icns").toAbsolutePath().toString());
     }
 
-    private void customizeLinux(String type, JpackageAssembler.Linux packager, Path inputsDirectory, Command cmd, Map<String, Object> props) {
+    private void customizeLinux(String type, JpackageAssembler.Linux packager, Path inputsDirectory, Command cmd) {
         if (isNotBlank(packager.getPackageName())) {
             cmd.arg("--linux-package-name")
                 .arg(packager.getPackageName());
@@ -385,7 +380,7 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<o
             .arg(inputsDirectory.resolve(assembler.getName() + ".png").toAbsolutePath().toString());
     }
 
-    private void customizeWindows(String type, JpackageAssembler.Windows packager, Path inputsDirectory, Command cmd, Map<String, Object> props) {
+    private void customizeWindows(JpackageAssembler.Windows packager, Path inputsDirectory, Command cmd) {
         if (packager.isConsole()) {
             cmd.arg("--win-console");
         }
@@ -415,7 +410,7 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<o
     }
 
     @Override
-    protected void writeFile(Project project, String content, Map<String, Object> props, String fileName)
+    protected void writeFile(String content, Map<String, Object> props, String fileName)
         throws AssemblerProcessingException {
         fileName = trimTplExtension(fileName);
 

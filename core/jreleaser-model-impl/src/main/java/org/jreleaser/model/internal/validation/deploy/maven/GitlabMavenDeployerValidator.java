@@ -49,7 +49,7 @@ public abstract class GitlabMavenDeployerValidator extends Validator {
     }
 
     private static void validateGitlabMavenDeployer(JReleaserContext context, Mode mode, GitlabMavenDeployer mavenDeployer, Errors errors) {
-        validateMavenDeployer(context, mode, mavenDeployer, errors);
+        validateMavenDeployer(context, mavenDeployer, errors);
         if (!mavenDeployer.isEnabled()) return;
 
         String baseEnvKey = mavenDeployer.getType().toUpperCase(Locale.ENGLISH);

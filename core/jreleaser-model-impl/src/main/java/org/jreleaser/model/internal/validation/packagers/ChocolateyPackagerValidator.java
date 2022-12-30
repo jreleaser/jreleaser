@@ -156,7 +156,7 @@ public abstract class ChocolateyPackagerValidator extends Validator {
                     context.isDryrun()));
         }
 
-        validateArtifactPlatforms(context, distribution, packager, candidateArtifacts, errors);
+        validateArtifactPlatforms(distribution, packager, candidateArtifacts, errors);
 
         // packageVersion must be #, #.#, #.#.#, #.#.#.#, #.#.#.yyyyMMdd
         // tag is allowed but only if separated by -
@@ -164,7 +164,7 @@ public abstract class ChocolateyPackagerValidator extends Validator {
             String packageVersion = resolveTemplate(packager.getPackageVersion(), context.getModel().props());
             switch (project.versionPattern().getType()) {
                 case SEMVER:
-                    checkSemver(context, distribution, packager, SemanticVersion.of(packageVersion), errors);
+                    checkSemver(SemanticVersion.of(packageVersion));
                     break;
                 case JAVA_RUNTIME:
                     checkJavaRuntime(context, distribution, packager, JavaRuntimeVersion.of(packageVersion), errors);
@@ -188,7 +188,7 @@ public abstract class ChocolateyPackagerValidator extends Validator {
         }
     }
 
-    private static void checkSemver(JReleaserContext context, Distribution distribution, ChocolateyPackager packager, SemanticVersion version, Errors errors) {
+    private static void checkSemver(SemanticVersion version) {
         if (version.hasBuild()) {
             throw new IllegalArgumentException();
         }

@@ -42,16 +42,19 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 1.3.0
  */
 public final class DiscourseAnnouncer extends AbstractAnnouncer<DiscourseAnnouncer, org.jreleaser.model.api.announce.DiscourseAnnouncer> {
+    private static final long serialVersionUID = -8948508622306503243L;
+
     private String host;
     private String apiKey;
     private String username;
-
     private String categoryName;
     private String title;
     private String message;
     private String messageTemplate;
 
     private final org.jreleaser.model.api.announce.DiscourseAnnouncer immutable = new org.jreleaser.model.api.announce.DiscourseAnnouncer() {
+        private static final long serialVersionUID = -913374837542980481L;
+
         @Override
         public String getType() {
             return org.jreleaser.model.api.announce.DiscourseAnnouncer.TYPE;

@@ -37,6 +37,8 @@ import static org.jreleaser.model.api.announce.ArticleAnnouncer.TYPE;
  * @since 0.6.0
  */
 public final class ArticleAnnouncer extends AbstractAnnouncer<ArticleAnnouncer, org.jreleaser.model.api.announce.ArticleAnnouncer> implements CommitAuthorAware {
+    private static final long serialVersionUID = -987068222017084352L;
+
     private final Set<Artifact> files = new LinkedHashSet<>();
     private final CommitAuthor commitAuthor = new CommitAuthor();
     private final Repository repository = new Repository();
@@ -44,6 +46,8 @@ public final class ArticleAnnouncer extends AbstractAnnouncer<ArticleAnnouncer, 
     private String templateDirectory;
 
     private final org.jreleaser.model.api.announce.ArticleAnnouncer immutable = new org.jreleaser.model.api.announce.ArticleAnnouncer() {
+        private static final long serialVersionUID = 6971332126023008307L;
+
         private Set<? extends org.jreleaser.model.api.common.Artifact> files;
 
         @Override

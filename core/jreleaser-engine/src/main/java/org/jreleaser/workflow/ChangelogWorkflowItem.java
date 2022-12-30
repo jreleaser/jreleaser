@@ -42,7 +42,6 @@ import static org.jreleaser.util.StringUtils.stripMargin;
  * @since 0.1.0
  */
 class ChangelogWorkflowItem extends AbstractWorkflowItem {
-
     private static final String JRELEASER_CHANGELOG_ANCHOR = "<!-- JRELEASER_CHANGELOG_APPEND - Do not remove or modify this section -->";
 
     protected ChangelogWorkflowItem() {
@@ -78,6 +77,7 @@ class ChangelogWorkflowItem extends AbstractWorkflowItem {
         try {
             fullChangelog = new String(Files.readAllBytes(target), UTF_8);
         } catch (IOException e) {
+            fullChangelog = "";
             context.getLogger().warn(RB.$("ERROR_cannot_read_changelog"),
                 context.relativizeToBasedir(append.getTarget()));
         }

@@ -35,9 +35,13 @@ import static org.jreleaser.model.api.announce.WebhooksAnnouncer.TYPE;
  * @since 0.5.0
  */
 public final class WebhooksAnnouncer extends AbstractAnnouncer<WebhooksAnnouncer, org.jreleaser.model.api.announce.WebhooksAnnouncer> {
+    private static final long serialVersionUID = -5077394951486597096L;
+
     private final Map<String, WebhookAnnouncer> webhooks = new LinkedHashMap<>();
 
     private final org.jreleaser.model.api.announce.WebhooksAnnouncer immutable = new org.jreleaser.model.api.announce.WebhooksAnnouncer() {
+        private static final long serialVersionUID = -8196857821339657945L;
+
         private Map<String, ? extends org.jreleaser.model.api.announce.WebhookAnnouncer> webhooks;
 
         @Override

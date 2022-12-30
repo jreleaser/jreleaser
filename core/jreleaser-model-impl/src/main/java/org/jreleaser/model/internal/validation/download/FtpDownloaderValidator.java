@@ -43,12 +43,12 @@ public abstract class FtpDownloaderValidator extends Validator {
         for (Map.Entry<String, FtpDownloader> e : ftp.entrySet()) {
             e.getValue().setName(e.getKey());
             if (mode.validateConfig() || mode.validateDownload()) {
-                validateFtp(context, mode, e.getValue(), errors);
+                validateFtp(context, e.getValue(), errors);
             }
         }
     }
 
-    private static void validateFtp(JReleaserContext context, Mode mode, FtpDownloader ftp, Errors errors) {
+    private static void validateFtp(JReleaserContext context, FtpDownloader ftp, Errors errors) {
         context.getLogger().debug("download.ftp.{}", ftp.getName());
 
         if (!ftp.isActiveSet()) {

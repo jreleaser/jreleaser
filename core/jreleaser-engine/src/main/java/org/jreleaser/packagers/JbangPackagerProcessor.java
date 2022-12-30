@@ -22,7 +22,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.JbangPackager;
-import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.internal.release.BaseReleaser;
 import org.jreleaser.model.spi.packagers.PackagerProcessingException;
 import org.jreleaser.util.JsonUtils;
@@ -60,7 +59,7 @@ public class JbangPackagerProcessor extends AbstractRepositoryPackagerProcessor<
     @Override
     protected void doPackageDistribution(Distribution distribution, Map<String, Object> props, Path packageDirectory) throws PackagerProcessingException {
         super.doPackageDistribution(distribution, props, packageDirectory);
-        copyPreparedFiles(distribution, props);
+        copyPreparedFiles(props);
     }
 
     @Override
@@ -148,8 +147,7 @@ public class JbangPackagerProcessor extends AbstractRepositoryPackagerProcessor<
     }
 
     @Override
-    protected void writeFile(Project project,
-                             Distribution distribution,
+    protected void writeFile(Distribution distribution,
                              String content,
                              Map<String, Object> props,
                              Path outputDirectory,

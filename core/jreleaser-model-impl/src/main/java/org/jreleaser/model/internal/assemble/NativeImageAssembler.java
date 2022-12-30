@@ -54,6 +54,8 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.2.0
  */
 public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImageAssembler, org.jreleaser.model.api.assemble.NativeImageAssembler> {
+    private static final long serialVersionUID = -8815074350596679986L;
+
     private final List<String> args = new ArrayList<>();
     private final Set<String> components = new LinkedHashSet<>();
     private final Artifact graal = new Artifact();
@@ -68,6 +70,8 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
     private Archive.Format archiveFormat;
 
     private final org.jreleaser.model.api.assemble.NativeImageAssembler immutable = new org.jreleaser.model.api.assemble.NativeImageAssembler() {
+        private static final long serialVersionUID = 9006136650468947726L;
+
         private Set<? extends org.jreleaser.model.api.common.Artifact> graalJdks;
         private List<? extends org.jreleaser.model.api.common.FileSet> fileSets;
         private Set<? extends org.jreleaser.model.api.common.Artifact> outputs;
@@ -438,6 +442,8 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
     }
 
     public static final class Upx extends AbstractModelObject<Upx> implements Domain, Activatable {
+        private static final long serialVersionUID = -8620628719023438997L;
+
         private final List<String> args = new ArrayList<>();
 
         @JsonIgnore
@@ -446,6 +452,8 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
         private String version;
 
         private final org.jreleaser.model.api.assemble.NativeImageAssembler.Upx immutable = new org.jreleaser.model.api.assemble.NativeImageAssembler.Upx() {
+            private static final long serialVersionUID = 3190807504460186043L;
+
             @Override
             public String getVersion() {
                 return version;
@@ -554,6 +562,8 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
     }
 
     private abstract static class AbstractPlatformCustomizer<S extends AbstractPlatformCustomizer<S>> extends AbstractModelObject<S> implements PlatformCustomizer {
+        private static final long serialVersionUID = -8914682170245234087L;
+
         protected final List<String> args = new ArrayList<>();
         protected final String platform;
 
@@ -594,7 +604,11 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
     }
 
     public static final class Linux extends NativeImageAssembler.AbstractPlatformCustomizer<Linux> {
+        private static final long serialVersionUID = -7751015791770722168L;
+
         private final org.jreleaser.model.api.assemble.NativeImageAssembler.Linux immutable = new org.jreleaser.model.api.assemble.NativeImageAssembler.Linux() {
+            private static final long serialVersionUID = -4020602674846221641L;
+
             @Override
             public String getPlatform() {
                 return platform;
@@ -621,7 +635,11 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
     }
 
     public static final class Windows extends NativeImageAssembler.AbstractPlatformCustomizer<Windows> {
+        private static final long serialVersionUID = -2310019463850744244L;
+
         private final org.jreleaser.model.api.assemble.NativeImageAssembler.Windows immutable = new org.jreleaser.model.api.assemble.NativeImageAssembler.Windows() {
+            private static final long serialVersionUID = 1216711581026682524L;
+
             @Override
             public String getPlatform() {
                 return platform;
@@ -648,7 +666,11 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
     }
 
     public static final class Osx extends NativeImageAssembler.AbstractPlatformCustomizer<Osx> {
+        private static final long serialVersionUID = 1619426199448547975L;
+
         private final org.jreleaser.model.api.assemble.NativeImageAssembler.Osx immutable = new org.jreleaser.model.api.assemble.NativeImageAssembler.Osx() {
+            private static final long serialVersionUID = -4484609486153782109L;
+
             @Override
             public String getPlatform() {
                 return platform;

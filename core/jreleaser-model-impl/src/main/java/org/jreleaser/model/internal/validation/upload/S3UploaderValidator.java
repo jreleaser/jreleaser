@@ -43,12 +43,12 @@ public abstract class S3UploaderValidator extends Validator {
         for (Map.Entry<String, S3Uploader> e : s3.entrySet()) {
             e.getValue().setName(e.getKey());
             if (mode.validateConfig()) {
-                validateS3(context, mode, e.getValue(), errors);
+                validateS3(context, e.getValue(), errors);
             }
         }
     }
 
-    private static void validateS3(JReleaserContext context, Mode mode, S3Uploader s3, Errors errors) {
+    private static void validateS3(JReleaserContext context, S3Uploader s3, Errors errors) {
         context.getLogger().debug("upload.s3.{}", s3.getName());
 
         if (!s3.isActiveSet()) {

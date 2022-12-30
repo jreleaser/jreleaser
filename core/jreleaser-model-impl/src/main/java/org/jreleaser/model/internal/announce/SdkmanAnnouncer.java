@@ -33,6 +33,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public final class SdkmanAnnouncer extends AbstractAnnouncer<SdkmanAnnouncer, org.jreleaser.model.api.announce.SdkmanAnnouncer> {
+    private static final long serialVersionUID = 4952849468692642471L;
+
     private String consumerKey;
     private String consumerToken;
     private String candidate;
@@ -41,6 +43,8 @@ public final class SdkmanAnnouncer extends AbstractAnnouncer<SdkmanAnnouncer, or
     private Sdkman.Command command;
 
     private final org.jreleaser.model.api.announce.SdkmanAnnouncer immutable = new org.jreleaser.model.api.announce.SdkmanAnnouncer() {
+        private static final long serialVersionUID = 733706145901019309L;
+
         @Override
         public String getType() {
             return org.jreleaser.model.api.announce.SdkmanAnnouncer.TYPE;

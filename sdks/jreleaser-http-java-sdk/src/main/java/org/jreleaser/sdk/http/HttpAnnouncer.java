@@ -32,7 +32,6 @@ import org.jreleaser.model.spi.upload.UploadException;
 import org.jreleaser.mustache.MustacheUtils;
 import org.jreleaser.sdk.commons.ClientUtils;
 
-import java.io.IOException;
 import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -150,7 +149,7 @@ public class HttpAnnouncer implements Announcer<org.jreleaser.model.api.announce
             }
 
             fireAnnouncerEvent(ExecutionEvent.success(JReleaserCommand.ANNOUNCE.toStep()), announcer);
-        } catch (IOException | UploadException e) {
+        } catch (UploadException e) {
             fireAnnouncerEvent(ExecutionEvent.failure(JReleaserCommand.ANNOUNCE.toStep(), e), announcer);
 
             context.getLogger().trace(e);

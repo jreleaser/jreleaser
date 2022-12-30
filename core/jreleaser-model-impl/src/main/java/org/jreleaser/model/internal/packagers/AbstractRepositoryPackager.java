@@ -26,6 +26,8 @@ import java.util.Map;
  * @since 0.1.0
  */
 public abstract class AbstractRepositoryPackager<A extends org.jreleaser.model.api.packagers.RepositoryPackager, S extends AbstractRepositoryPackager<A, S>> extends AbstractTemplatePackager<A, S> implements RepositoryPackager<A> {
+    private static final long serialVersionUID = -3471486221996029215L;
+
     protected final CommitAuthor commitAuthor = new CommitAuthor();
 
     protected AbstractRepositoryPackager(String type) {

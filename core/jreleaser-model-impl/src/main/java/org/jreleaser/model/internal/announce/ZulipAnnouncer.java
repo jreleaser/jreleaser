@@ -42,6 +42,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public final class ZulipAnnouncer extends AbstractAnnouncer<ZulipAnnouncer, org.jreleaser.model.api.announce.ZulipAnnouncer> {
+    private static final long serialVersionUID = -4115677283031495196L;
+
     private String account;
     private String apiKey;
     private String apiHost;
@@ -51,6 +53,8 @@ public final class ZulipAnnouncer extends AbstractAnnouncer<ZulipAnnouncer, org.
     private String messageTemplate;
 
     private final org.jreleaser.model.api.announce.ZulipAnnouncer immutable = new org.jreleaser.model.api.announce.ZulipAnnouncer() {
+        private static final long serialVersionUID = -2240453843686094465L;
+
         @Override
         public String getType() {
             return org.jreleaser.model.api.announce.ZulipAnnouncer.TYPE;

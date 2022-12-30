@@ -29,6 +29,8 @@ import java.util.Map;
  * @since 1.2.0
  */
 public abstract class AbstractHook<S extends AbstractHook<S>> extends AbstractModelObject<S> implements Hook {
+    private static final long serialVersionUID = 3623478287829766322L;
+
     protected final Filter filter = new Filter();
     protected Boolean continueOnError;
     protected Active active;

@@ -29,6 +29,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public final class Java extends AbstractModelObject<Java> implements Domain, ExtraProperties, EnabledAware {
+    private static final long serialVersionUID = -2234061310893799176L;
+    
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
 
     private Boolean enabled;
@@ -40,6 +42,8 @@ public final class Java extends AbstractModelObject<Java> implements Domain, Ext
     private Boolean multiProject;
 
     private final org.jreleaser.model.api.common.Java immutable = new org.jreleaser.model.api.common.Java() {
+        private static final long serialVersionUID = 1595567967292822458L;
+
         @Override
         public String getVersion() {
             return version;

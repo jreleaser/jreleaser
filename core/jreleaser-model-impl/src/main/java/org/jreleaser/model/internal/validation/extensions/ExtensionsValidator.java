@@ -44,11 +44,11 @@ public abstract class ExtensionsValidator extends Validator {
             if (isBlank(extension.getName())) {
                 extension.setName(e.getKey());
             }
-            validateExtension(context, mode, extension, errors);
+            validateExtension(context, extension, errors);
         }
     }
 
-    private static void validateExtension(JReleaserContext context, Mode mode, Extension extension, Errors errors) {
+    private static void validateExtension(JReleaserContext context, Extension extension, Errors errors) {
         context.getLogger().debug("extension.{}", extension.getName());
 
         if (!extension.isEnabledSet()) {
@@ -70,11 +70,11 @@ public abstract class ExtensionsValidator extends Validator {
         }
 
         for (int i = 0; i < extension.getProviders().size(); i++) {
-            validateExtensionProvider(context, mode, extension, extension.getProviders().get(i), i, errors);
+            validateExtensionProvider(context, extension, extension.getProviders().get(i), i, errors);
         }
     }
 
-    private static void validateExtensionProvider(JReleaserContext context, Mode mode, Extension extension, Extension.Provider provider, int index, Errors errors) {
+    private static void validateExtensionProvider(JReleaserContext context, Extension extension, Extension.Provider provider, int index, Errors errors) {
         if (isBlank(provider.getType())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "extensions.{}.providers[{}]", extension.getName(), index));
             context.getLogger().debug(RB.$("validation.disabled.error"));

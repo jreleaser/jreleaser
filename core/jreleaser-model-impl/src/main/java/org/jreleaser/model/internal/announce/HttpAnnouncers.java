@@ -35,9 +35,13 @@ import static org.jreleaser.model.api.announce.HttpAnnouncers.TYPE;
  * @since 1.3.0
  */
 public final class HttpAnnouncers extends AbstractAnnouncer<HttpAnnouncers, org.jreleaser.model.api.announce.HttpAnnouncers> {
+    private static final long serialVersionUID = -447592522304823495L;
+
     private final Map<String, HttpAnnouncer> httpAnnouncers = new LinkedHashMap<>();
 
     private final org.jreleaser.model.api.announce.HttpAnnouncers immutable = new org.jreleaser.model.api.announce.HttpAnnouncers() {
+        private static final long serialVersionUID = -4845169566439955317L;
+
         private Map<String, ? extends org.jreleaser.model.api.announce.HttpAnnouncer> httpAnnouncers;
 
         @Override

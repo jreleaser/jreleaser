@@ -27,7 +27,6 @@ import org.jreleaser.model.internal.common.Icon;
 import org.jreleaser.model.internal.common.Screenshot;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.FlatpakPackager;
-import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.internal.release.BaseReleaser;
 import org.jreleaser.model.internal.release.GithubReleaser;
 import org.jreleaser.model.internal.release.Releaser;
@@ -204,7 +203,7 @@ public class FlatpakPackagerProcessor extends AbstractRepositoryPackagerProcesso
     @Override
     protected void doPackageDistribution(Distribution distribution, Map<String, Object> props, Path packageDirectory) throws PackagerProcessingException {
         super.doPackageDistribution(distribution, props, packageDirectory);
-        copyPreparedFiles(distribution, props);
+        copyPreparedFiles(props);
     }
 
     @Override
@@ -232,13 +231,12 @@ public class FlatpakPackagerProcessor extends AbstractRepositoryPackagerProcesso
     }
 
     @Override
-    protected void writeFile(Project project,
-                             Distribution distribution,
+    protected void writeFile(Distribution distribution,
                              String content,
                              Map<String, Object> props,
                              Path outputDirectory,
                              String fileName) throws PackagerProcessingException {
-        Releaser gitService = context.getModel().getRelease().getReleaser();
+        Releaser<?> gitService = context.getModel().getRelease().getReleaser();
         if (fileName.contains("github") && !(gitService instanceof GithubReleaser)) {
             // skip
             return;

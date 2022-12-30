@@ -43,12 +43,12 @@ public abstract class HttpDownloaderValidator extends Validator {
         for (Map.Entry<String, HttpDownloader> e : http.entrySet()) {
             e.getValue().setName(e.getKey());
             if (mode.validateConfig() || mode.validateDownload()) {
-                validateHttp(context, mode, e.getValue(), errors);
+                validateHttp(context, e.getValue(), errors);
             }
         }
     }
 
-    private static void validateHttp(JReleaserContext context, Mode mode, HttpDownloader http, Errors errors) {
+    private static void validateHttp(JReleaserContext context, HttpDownloader http, Errors errors) {
         context.getLogger().debug("download.http.{}", http.getName());
 
         if (!http.isActiveSet()) {

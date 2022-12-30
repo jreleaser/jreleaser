@@ -48,6 +48,7 @@ import static org.jreleaser.util.CollectionUtils.setOf;
  */
 public final class FileSet extends AbstractModelObject<FileSet> implements Domain, ExtraProperties {
     private static final String GLOB_PREFIX = "glob:";
+    private static final long serialVersionUID = 1108903420380266057L;
 
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private final Set<String> includes = new LinkedHashSet<>();
@@ -58,6 +59,8 @@ public final class FileSet extends AbstractModelObject<FileSet> implements Domai
     private Boolean failOnMissingInput;
 
     private final org.jreleaser.model.api.common.FileSet immutable = new org.jreleaser.model.api.common.FileSet() {
+        private static final long serialVersionUID = 1386323645145691467L;
+
         @Override
         public Set<String> getIncludes() {
             return unmodifiableSet(includes);

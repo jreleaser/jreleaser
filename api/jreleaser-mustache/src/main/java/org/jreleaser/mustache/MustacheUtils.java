@@ -76,12 +76,7 @@ public final class MustacheUtils {
             if (value instanceof CharSequence) {
                 String val = String.valueOf(value);
                 if (val.contains("{{")) {
-                    context.put(e.getKey(), new TemplateFunction() {
-                        @Override
-                        public String apply(String s) {
-                            return val;
-                        }
-                    });
+                    context.put(e.getKey(), (TemplateFunction) s -> val);
                 }
             }
         }

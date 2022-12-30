@@ -33,6 +33,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.4.0
  */
 public final class HttpUploader extends AbstractWebUploader<org.jreleaser.model.api.upload.HttpUploader, HttpUploader> {
+    private static final long serialVersionUID = -2372935050836857644L;
+
     private final Map<String, String> headers = new LinkedHashMap<>();
     private String username;
     private String password;
@@ -40,6 +42,8 @@ public final class HttpUploader extends AbstractWebUploader<org.jreleaser.model.
     private Method method;
 
     private final org.jreleaser.model.api.upload.HttpUploader immutable = new org.jreleaser.model.api.upload.HttpUploader() {
+        private static final long serialVersionUID = 3000310615738273509L;
+
         @Override
         public Method getMethod() {
             return method;

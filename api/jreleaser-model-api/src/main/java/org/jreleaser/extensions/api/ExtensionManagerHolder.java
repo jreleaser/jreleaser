@@ -54,6 +54,10 @@ public final class ExtensionManagerHolder {
         return EXTENSION_MANAGER_THREAD_LOCAL.get();
     }
 
+    public static void cleanup() {
+        EXTENSION_MANAGER_THREAD_LOCAL.remove();
+    }
+
     private static ServiceLoader<ExtensionManager> resolveServiceLoader() {
         // TODO: review when moving baseline to JDK11+
         // Check if handlers must be loaded from a ModuleLayer

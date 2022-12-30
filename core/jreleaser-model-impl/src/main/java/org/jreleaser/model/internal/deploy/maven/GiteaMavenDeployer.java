@@ -31,7 +31,11 @@ import static java.util.Collections.unmodifiableMap;
  * @since 1.3.0
  */
 public final class GiteaMavenDeployer extends AbstractMavenDeployer<GiteaMavenDeployer, org.jreleaser.model.api.deploy.maven.GiteaMavenDeployer> {
+    private static final long serialVersionUID = -5441090984288035705L;
+    
     private final org.jreleaser.model.api.deploy.maven.GiteaMavenDeployer immutable = new org.jreleaser.model.api.deploy.maven.GiteaMavenDeployer() {
+        private static final long serialVersionUID = 2723686027082362594L;
+
         @Override
         public String getGroup() {
             return org.jreleaser.model.api.deploy.maven.MavenDeployer.GROUP;

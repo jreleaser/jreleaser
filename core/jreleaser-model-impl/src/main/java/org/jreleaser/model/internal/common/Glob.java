@@ -44,6 +44,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public final class Glob extends AbstractModelObject<Glob> implements Domain, ExtraProperties {
     private static final String GLOB_PREFIX = "glob:";
     private static final String REGEX_PREFIX = "regex:";
+    private static final long serialVersionUID = 4512169122959023605L;
 
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
 
@@ -54,6 +55,8 @@ public final class Glob extends AbstractModelObject<Glob> implements Domain, Ext
     private String directory;
 
     private final org.jreleaser.model.api.common.Glob immutable = new org.jreleaser.model.api.common.Glob() {
+        private static final long serialVersionUID = -8118196314326497395L;
+
         @Override
         public String getPattern() {
             return pattern;

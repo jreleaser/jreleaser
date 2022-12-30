@@ -92,20 +92,20 @@ public abstract class JavaArchiveAssemblerValidator extends Validator {
         if (archive.getJars().isEmpty() && isBlank(archive.getMainJar().getPath())) {
             errors.configuration(RB.$("validation_java_archive_empty_jars", archive.getName()));
         } else {
-            validateGlobs(context,
+            validateGlobs(
                 archive.getJars(),
                 "java-archive." + archive.getName() + ".jars",
                 errors);
         }
 
-        validateGlobs(context,
+        validateGlobs(
             archive.getFiles(),
             "java-archive." + archive.getName() + ".files",
             errors);
 
         int i = 0;
         for (FileSet fileSet : archive.getFileSets()) {
-            validateFileSet(context, mode, archive, fileSet, i++, errors);
+            validateFileSet(mode, archive, fileSet, i++, errors);
         }
 
         String defaultTemplateDirectory = "src/jreleaser/assemblers/" + archive.getName() + "/" + archive.getType();

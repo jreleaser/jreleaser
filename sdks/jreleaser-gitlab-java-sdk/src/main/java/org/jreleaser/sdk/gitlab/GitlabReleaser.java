@@ -221,7 +221,7 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
                 gitlab.getConnectTimeout(),
                 gitlab.getReadTimeout())
                 .findUser(email, name);
-        } catch (RestAPIException | IOException e) {
+        } catch (RestAPIException e) {
             context.getLogger().trace(e);
             context.getLogger().debug(RB.$("git.releaser.user.not.found"), email);
         }
@@ -445,12 +445,12 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
                 api.addLabelToIssue(projectIdentifier, glIssue, glLabel);
                 api.commentOnIssue(projectIdentifier, glIssue, comment);
 
-                milestone.ifPresent(glMilestone -> applyMilestone(gitlab, api, projectIdentifier, issueNumber, glIssue, applyMilestone, glMilestone));
+                milestone.ifPresent(glMilestone -> applyMilestone(api, projectIdentifier, issueNumber, glIssue, applyMilestone, glMilestone));
             }
         }
     }
 
-    private void applyMilestone(org.jreleaser.model.internal.release.GitlabReleaser gitlab, Gitlab api, Integer projectIdentifier,
+    private void applyMilestone(Gitlab api, Integer projectIdentifier,
                                 String issueNumber, GlIssue glIssue, Apply applyMilestone, GlMilestone targetMilestone) {
         GlMilestone issueMilestone = glIssue.getMilestone();
         String targetMilestoneTitle = targetMilestone.getTitle();

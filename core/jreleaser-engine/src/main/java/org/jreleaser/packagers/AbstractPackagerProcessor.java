@@ -267,7 +267,7 @@ abstract class AbstractPackagerProcessor<T extends Packager<?>> implements Packa
         }
     }
 
-    protected void copyPreparedFiles(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
+    protected void copyPreparedFiles(Map<String, Object> props) throws PackagerProcessingException {
         Path prepareDirectory = getPrepareDirectory(props);
         Path packageDirectory = getPackageDirectory(props);
         copyFiles(prepareDirectory, packageDirectory);

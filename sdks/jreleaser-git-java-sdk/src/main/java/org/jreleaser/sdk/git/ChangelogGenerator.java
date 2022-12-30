@@ -359,6 +359,8 @@ public class ChangelogGenerator {
             .map(rc -> "conventional-commits".equals(changelog.getPreset()) ? ConventionalCommit.of(rc) : Commit.of(rc))
             .map(c -> c.extractIssues(context))
             .peek(c -> {
+                applyLabels(c, changelog.getLabelers());
+
                 if (!changelog.getContributors().isEnabled()) return;
 
                 if (!changelog.getHide().containsContributor(c.author.name)) {
@@ -368,7 +370,6 @@ public class ChangelogGenerator {
                     .filter(author -> !changelog.getHide().containsContributor(author.name))
                     .forEach(author -> contributors.add(new Contributor(author)));
             })
-            .peek(c -> applyLabels(c, changelog.getLabelers()))
             .filter(c -> checkLabels(c, changelog))
             .forEach(commit -> categories
                 .computeIfAbsent(categorize(commit, changelog), k -> new ArrayList<>())

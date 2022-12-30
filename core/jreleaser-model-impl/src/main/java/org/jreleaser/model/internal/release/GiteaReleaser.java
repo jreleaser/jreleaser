@@ -28,9 +28,13 @@ import static java.util.Collections.unmodifiableMap;
  * @since 0.1.0
  */
 public class GiteaReleaser extends BaseReleaser<org.jreleaser.model.api.release.GiteaReleaser, GiteaReleaser> {
+    private static final long serialVersionUID = -1447563457831439973L;
+
     private Boolean draft;
 
     private final org.jreleaser.model.api.release.GiteaReleaser immutable = new org.jreleaser.model.api.release.GiteaReleaser() {
+        private static final long serialVersionUID = -4771633429376290348L;
+
         @Override
         public boolean isPrerelease() {
             return GiteaReleaser.this.isPrerelease();

@@ -54,6 +54,7 @@ import static org.jreleaser.util.StringUtils.isFalse;
  */
 public final class AsdfPackager extends AbstractRepositoryPackager<org.jreleaser.model.api.packagers.AsdfPackager, AsdfPackager> {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
+    private static final long serialVersionUID = 2289622050226719068L;
 
     static {
         Set<String> extensions = setOf(
@@ -75,6 +76,8 @@ public final class AsdfPackager extends AbstractRepositoryPackager<org.jreleaser
     private String toolCheck;
 
     private final org.jreleaser.model.api.packagers.AsdfPackager immutable = new org.jreleaser.model.api.packagers.AsdfPackager() {
+        private static final long serialVersionUID = 2602907890530867272L;
+
         @Override
         public String getToolCheck() {
             return toolCheck;
@@ -242,6 +245,8 @@ public final class AsdfPackager extends AbstractRepositoryPackager<org.jreleaser
     }
 
     public static final class AsdfRepository extends PackagerRepository {
+        private static final long serialVersionUID = -3477982615763115685L;
+
         public AsdfRepository() {
             super("asdf", "asdf");
         }

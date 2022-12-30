@@ -28,9 +28,13 @@ import static java.util.Collections.unmodifiableMap;
  * @since 0.4.0
  */
 public class CodebergReleaser extends BaseReleaser<org.jreleaser.model.api.release.CodebergReleaser, CodebergReleaser> {
+    private static final long serialVersionUID = -3260112972191332390L;
+
     private Boolean draft;
 
     private final org.jreleaser.model.api.release.CodebergReleaser immutable = new org.jreleaser.model.api.release.CodebergReleaser() {
+        private static final long serialVersionUID = 404713458541214377L;
+
         @Override
         public boolean isPrerelease() {
             return CodebergReleaser.this.isPrerelease();

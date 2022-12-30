@@ -49,6 +49,8 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.2.0
  */
 public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, org.jreleaser.model.api.assemble.JlinkAssembler> {
+    private static final long serialVersionUID = -4001565972495119198L;
+
     private final Set<Artifact> targetJdks = new LinkedHashSet<>();
     private final Set<String> moduleNames = new LinkedHashSet<>();
     private final Set<String> additionalModuleNames = new LinkedHashSet<>();
@@ -61,6 +63,8 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
     private Boolean copyJars;
 
     private final org.jreleaser.model.api.assemble.JlinkAssembler immutable = new org.jreleaser.model.api.assemble.JlinkAssembler() {
+        private static final long serialVersionUID = -1953894547371342764L;
+
         private List<? extends org.jreleaser.model.api.common.FileSet> fileSets;
         private Set<? extends org.jreleaser.model.api.common.Artifact> outputs;
         private List<? extends org.jreleaser.model.api.common.Glob> jars;
@@ -375,6 +379,8 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
     }
 
     public static final class Jdeps extends AbstractModelObject<Jdeps> implements Domain, EnabledAware {
+        private static final long serialVersionUID = 2752412877591717403L;
+
         private final Set<String> targets = new LinkedHashSet<>();
         private String multiRelease;
         private Boolean ignoreMissingDeps;
@@ -382,6 +388,8 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
         private Boolean enabled;
 
         private final org.jreleaser.model.api.assemble.JlinkAssembler.Jdeps immutable = new org.jreleaser.model.api.assemble.JlinkAssembler.Jdeps() {
+            private static final long serialVersionUID = -6727485936574423582L;
+
             @Override
             public String getMultiRelease() {
                 return multiRelease;

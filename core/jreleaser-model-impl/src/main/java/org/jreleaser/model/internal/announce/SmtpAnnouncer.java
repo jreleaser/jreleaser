@@ -45,6 +45,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public final class SmtpAnnouncer extends AbstractAnnouncer<SmtpAnnouncer, org.jreleaser.model.api.announce.SmtpAnnouncer> {
+    private static final long serialVersionUID = -1477687439659358188L;
+
     private final Map<String, String> properties = new LinkedHashMap<>();
 
     private Mail.Transport transport;
@@ -63,6 +65,8 @@ public final class SmtpAnnouncer extends AbstractAnnouncer<SmtpAnnouncer, org.jr
     private Mail.MimeType mimeType;
 
     private final org.jreleaser.model.api.announce.SmtpAnnouncer immutable = new org.jreleaser.model.api.announce.SmtpAnnouncer() {
+        private static final long serialVersionUID = -7617403297991452674L;
+
         @Override
         public String getType() {
             return org.jreleaser.model.api.announce.SmtpAnnouncer.TYPE;

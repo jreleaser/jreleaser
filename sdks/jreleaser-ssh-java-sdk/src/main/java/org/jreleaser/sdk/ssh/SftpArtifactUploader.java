@@ -71,7 +71,7 @@ public class SftpArtifactUploader extends AbstractArtifactUploader<org.jreleaser
         }
 
         SSHClient ssh = createSSHClient(context, uploader);
-        SFTPClient sftp = createSFTPClient(context, uploader, ssh);
+        SFTPClient sftp = createSFTPClient(uploader, ssh);
 
         try {
             for (Artifact artifact : artifacts) {

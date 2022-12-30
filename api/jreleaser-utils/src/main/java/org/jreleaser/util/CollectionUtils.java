@@ -696,7 +696,7 @@ public final class CollectionUtils {
 
         @Override
         public Set<Object> keySet() {
-            return new LinkedHashSet<Object>(map.keySet());
+            return new LinkedHashSet<>(map.keySet());
         }
 
         @Override

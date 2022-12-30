@@ -42,12 +42,16 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.8.0
  */
 public final class TelegramAnnouncer extends AbstractAnnouncer<TelegramAnnouncer, org.jreleaser.model.api.announce.TelegramAnnouncer> {
+    private static final long serialVersionUID = -7942186218415757885L;
+
     private String token;
     private String chatId;
     private String message;
     private String messageTemplate;
 
     private final org.jreleaser.model.api.announce.TelegramAnnouncer immutable = new org.jreleaser.model.api.announce.TelegramAnnouncer() {
+        private static final long serialVersionUID = -5918930180588439497L;
+
         @Override
         public String getType() {
             return org.jreleaser.model.api.announce.TelegramAnnouncer.TYPE;

@@ -108,14 +108,14 @@ public class Artifacts {
     public static String resolveForArtifact(String input, JReleaserContext context, Artifact artifact, Distribution distribution) {
         Map<String, Object> props = context.fullProps();
         props.putAll(distribution.props());
-        props = artifactProps(artifact, props);
+        artifactProps(artifact, props);
         return resolveTemplate(input, props);
     }
 
     public static String resolveForArtifact(String input, JReleaserContext context, Artifact artifact, Assembler assembler) {
         Map<String, Object> props = context.fullProps();
         props.putAll(assembler.props());
-        props = artifactProps(artifact, props);
+        artifactProps(artifact, props);
         return resolveTemplate(input, props);
     }
 

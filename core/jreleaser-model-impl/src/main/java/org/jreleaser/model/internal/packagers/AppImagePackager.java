@@ -61,6 +61,7 @@ import static org.jreleaser.util.StringUtils.isFalse;
  */
 public final class AppImagePackager extends AbstractRepositoryPackager<org.jreleaser.model.api.packagers.AppImagePackager, AppImagePackager> {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
+    private static final long serialVersionUID = 577455998009820304L;
 
     static {
         Set<String> extensions = setOf(
@@ -88,6 +89,8 @@ public final class AppImagePackager extends AbstractRepositoryPackager<org.jrele
     private Boolean requiresTerminal;
 
     private final org.jreleaser.model.api.packagers.AppImagePackager immutable = new org.jreleaser.model.api.packagers.AppImagePackager() {
+        private static final long serialVersionUID = -5612869889684591103L;
+        
         private List<? extends org.jreleaser.model.api.common.Screenshot> screenshots;
         private List<? extends org.jreleaser.model.api.common.Icon> icons;
 
@@ -392,6 +395,8 @@ public final class AppImagePackager extends AbstractRepositoryPackager<org.jrele
     }
 
     public static final class AppImageRepository extends PackagerRepository {
+        private static final long serialVersionUID = -2610749875787410531L;
+
         public AppImageRepository() {
             super("appimage", "appimage");
         }

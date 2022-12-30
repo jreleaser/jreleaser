@@ -210,7 +210,7 @@ public class GiteaReleaser extends AbstractReleaser<org.jreleaser.model.api.rele
                 gitea.getConnectTimeout(),
                 gitea.getReadTimeout())
                 .findUser(email, name, host);
-        } catch (RestAPIException | IOException e) {
+        } catch (RestAPIException e) {
             context.getLogger().trace(e);
             context.getLogger().debug(RB.$("git.releaser.user.not.found"), email);
         }

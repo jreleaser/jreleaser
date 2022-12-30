@@ -70,7 +70,7 @@ public abstract class DockerPackagerValidator extends Validator {
         if (!packager.isActiveSet() && parentPackager.isActiveSet()) {
             packager.setActive(parentPackager.getActive());
         }
-        if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) {
+        if (!packager.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             packager.disable();
             return;
@@ -91,7 +91,7 @@ public abstract class DockerPackagerValidator extends Validator {
             if (!spec.isActiveSet() && packager.isActiveSet()) {
                 spec.setActive(packager.getActive());
             }
-            spec.resolveEnabled(context.getModel().getProject(), distribution);
+            spec.resolveEnabled(context.getModel().getProject());
         }
 
         validateTemplate(context, distribution, packager, parentPackager, errors);
@@ -147,7 +147,7 @@ public abstract class DockerPackagerValidator extends Validator {
         }
         validateLabels(packager);
 
-        validateArtifactPlatforms(context, distribution, packager, candidateArtifacts, errors);
+        validateArtifactPlatforms(distribution, packager, candidateArtifacts, errors);
 
         validateRegistries(context, packager, parentPackager, errors, element);
 

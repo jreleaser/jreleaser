@@ -119,6 +119,8 @@ public class GitSdk {
                 case "codeberg.org":
                     kind = Repository.Kind.CODEBERG;
                     break;
+                default:
+                    // noop
             }
 
             String[] parts = uri.getPath().split("/");

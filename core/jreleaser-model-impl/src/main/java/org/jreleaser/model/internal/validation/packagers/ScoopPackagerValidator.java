@@ -111,6 +111,6 @@ public abstract class ScoopPackagerValidator extends Validator {
             packager.setAutoupdateUrl(parentPackager.getAutoupdateUrl());
         }
 
-        validateArtifactPlatforms(context, distribution, packager, candidateArtifacts, errors);
+        validateArtifactPlatforms(distribution, packager, candidateArtifacts, errors);
     }
 }

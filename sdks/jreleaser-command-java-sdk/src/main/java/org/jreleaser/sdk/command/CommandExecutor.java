@@ -82,6 +82,9 @@ public class CommandExecutor {
             return exitValue;
         } catch (ProcessInitException e) {
             throw new CommandException(RB.$("ERROR_unexpected_error"), e.getCause());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new CommandException(RB.$("ERROR_unexpected_error"), e);
         } catch (Exception e) {
             throw new CommandException(RB.$("ERROR_unexpected_error"), e);
         }
@@ -170,6 +173,9 @@ public class CommandExecutor {
             return exitValue;
         } catch (ProcessInitException e) {
             throw new CommandException(RB.$("ERROR_unexpected_error"), e.getCause());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new CommandException(RB.$("ERROR_unexpected_error"), e);
         } catch (Exception e) {
             throw new CommandException(RB.$("ERROR_unexpected_error"), e);
         }

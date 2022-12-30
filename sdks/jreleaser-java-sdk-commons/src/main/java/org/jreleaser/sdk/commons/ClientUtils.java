@@ -71,11 +71,11 @@ public final class ClientUtils {
         // noop
     }
 
-    public static FormData toFormData(String fileName, String contentType, String content) throws IOException {
+    public static FormData toFormData(String fileName, String contentType, String content) {
         return toFormData(fileName, contentType, content.getBytes(UTF_8));
     }
 
-    public static FormData toFormData(String fileName, String contentType, byte[] content) throws IOException {
+    public static FormData toFormData(String fileName, String contentType, byte[] content) {
         return FormData.builder()
             .fileName(fileName)
             .contentType(contentType)

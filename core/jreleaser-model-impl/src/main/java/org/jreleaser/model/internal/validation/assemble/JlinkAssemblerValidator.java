@@ -162,12 +162,12 @@ public abstract class JlinkAssemblerValidator extends Validator {
             errors.configuration(RB.$("validation_must_not_be_null", "jlink." + jlink.getName() + ".mainJar.path"));
         }
 
-        validateGlobs(context,
+        validateGlobs(
             jlink.getJars(),
             "jlink." + jlink.getName() + ".jars",
             errors);
 
-        validateGlobs(context,
+        validateGlobs(
             jlink.getFiles(),
             "jlink." + jlink.getName() + ".files",
             errors);
@@ -179,7 +179,7 @@ public abstract class JlinkAssemblerValidator extends Validator {
         if (!jlink.getFileSets().isEmpty()) {
             i = 0;
             for (FileSet fileSet : jlink.getFileSets()) {
-                validateFileSet(context, mode, jlink, fileSet, i++, errors);
+                validateFileSet(mode, jlink, fileSet, i++, errors);
             }
         }
 

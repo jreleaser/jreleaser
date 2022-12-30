@@ -54,6 +54,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public final class ChocolateyPackager extends AbstractRepositoryPackager<org.jreleaser.model.api.packagers.ChocolateyPackager, ChocolateyPackager> {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
+    private static final long serialVersionUID = -2548972697129361822L;
 
     static {
         Set<String> extensions = setOf(ZIP.extension());
@@ -75,6 +76,8 @@ public final class ChocolateyPackager extends AbstractRepositoryPackager<org.jre
     private Boolean remoteBuild;
 
     private final org.jreleaser.model.api.packagers.ChocolateyPackager immutable = new org.jreleaser.model.api.packagers.ChocolateyPackager() {
+        private static final long serialVersionUID = 4573744832740015330L;
+
         @Override
         public String getPackageName() {
             return packageName;
@@ -350,6 +353,8 @@ public final class ChocolateyPackager extends AbstractRepositoryPackager<org.jre
     }
 
     public static final class ChocolateyRepository extends PackagerRepository {
+        private static final long serialVersionUID = 3536191707611666696L;
+
         public ChocolateyRepository() {
             super("chocolatey", "chocolatey-bucket");
         }

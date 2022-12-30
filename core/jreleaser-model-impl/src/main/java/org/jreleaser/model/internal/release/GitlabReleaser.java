@@ -33,10 +33,14 @@ import static org.jreleaser.model.JReleaserOutput.nag;
  * @since 0.1.0
  */
 public final class GitlabReleaser extends BaseReleaser<org.jreleaser.model.api.release.GitlabReleaser, GitlabReleaser> {
+    private static final long serialVersionUID = 8626675568115866407L;
+
     private final Map<String, String> uploadLinks = new LinkedHashMap<>();
     private String projectIdentifier;
 
     private final org.jreleaser.model.api.release.GitlabReleaser immutable = new org.jreleaser.model.api.release.GitlabReleaser() {
+        private static final long serialVersionUID = 5455037714043718567L;
+
         @Override
         public boolean isPrerelease() {
             return GitlabReleaser.this.isPrerelease();

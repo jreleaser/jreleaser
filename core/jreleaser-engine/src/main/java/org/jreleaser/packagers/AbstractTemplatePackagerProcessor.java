@@ -22,7 +22,6 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.TemplatePackager;
-import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.spi.packagers.PackagerProcessingException;
 import org.jreleaser.templates.TemplateResource;
 import org.jreleaser.util.FileUtils;
@@ -98,10 +97,10 @@ abstract class AbstractTemplatePackagerProcessor<T extends TemplatePackager<?>> 
                     content += System.lineSeparator();
                 }
                 context.getLogger().debug(RB.$("packager.write.template"), filename, distributionName, packagerName);
-                writeFile(context.getModel().getProject(), distribution, content, props, prepareDirectory, filename);
+                writeFile(distribution, content, props, prepareDirectory, filename);
             } else {
                 context.getLogger().debug(RB.$("packager.write.file"), filename, distributionName, packagerName);
-                writeFile(context.getModel().getProject(), distribution, value.getInputStream(), props, prepareDirectory, filename);
+                writeFile(distribution, value.getInputStream(), props, prepareDirectory, filename);
             }
         }
 
@@ -151,16 +150,12 @@ abstract class AbstractTemplatePackagerProcessor<T extends TemplatePackager<?>> 
         }
     }
 
-    protected abstract void writeFile(Project project, Distribution distribution, String content, Map<String, Object> props, Path outputDirectory, String fileName) throws PackagerProcessingException;
+    protected abstract void writeFile(Distribution distribution, String content, Map<String, Object> props, Path outputDirectory, String fileName) throws PackagerProcessingException;
 
-    protected void writeFile(Project project, Distribution distribution, InputStream inputStream, Map<String, Object> props, Path outputDirectory, String fileName) throws PackagerProcessingException {
+    protected void writeFile(Distribution distribution, InputStream inputStream, Map<String, Object> props, Path outputDirectory, String fileName) throws PackagerProcessingException {
         Path outputFile = outputDirectory.resolve(fileName);
 
         writeFile(inputStream, outputFile);
-    }
-
-    protected void writeFile(Project project, Distribution distribution, Reader reader, Map<String, Object> props, Path outputDirectory, String fileName) throws PackagerProcessingException {
-        writeFile(reader, outputDirectory.resolve(fileName));
     }
 
     protected void writeFile(Reader reader, Path outputFile) throws PackagerProcessingException {

@@ -32,6 +32,8 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
  * @since 1.3.0
  */
 public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2MavenDeployer, org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer> {
+    private static final long serialVersionUID = 5345438040625249900L;
+    
     private String snapshotUrl;
     private Boolean closeRepository;
     private Boolean releaseRepository;
@@ -39,6 +41,8 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
     private int transitionMaxRetries;
 
     private final org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer immutable = new org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer() {
+        private static final long serialVersionUID = -325247395895899196L;
+
         @Override
         public String getGroup() {
             return org.jreleaser.model.api.deploy.maven.MavenDeployer.GROUP;

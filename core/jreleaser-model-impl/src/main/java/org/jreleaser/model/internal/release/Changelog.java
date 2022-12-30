@@ -55,6 +55,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public final class Changelog extends AbstractModelObject<Changelog> implements Domain, EnabledAware {
+    private static final long serialVersionUID = 4043071800577311864L;
+
     private final Set<String> includeLabels = new LinkedHashSet<>();
     private final Set<String> excludeLabels = new LinkedHashSet<>();
     private final Set<Category> categories = new TreeSet<>(Category.ORDER_COMPARATOR);
@@ -78,6 +80,8 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
     private String preset;
 
     private final org.jreleaser.model.api.release.Changelog immutable = new org.jreleaser.model.api.release.Changelog() {
+        private static final long serialVersionUID = 796060231164279450L;
+
         private Set<? extends org.jreleaser.model.api.release.Changelog.Category> categories;
         private List<? extends org.jreleaser.model.api.release.Changelog.Replacer> replacers;
         private Set<? extends org.jreleaser.model.api.release.Changelog.Labeler> labelers;
@@ -508,6 +512,8 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
     }
 
     public static final class Append extends AbstractModelObject<Append> implements Domain {
+        private static final long serialVersionUID = -7396820796498154377L;
+
         private Boolean enabled;
         private String title;
         private String target;
@@ -515,6 +521,8 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
         private String contentTemplate;
 
         private final org.jreleaser.model.api.release.Changelog.Append immutable = new org.jreleaser.model.api.release.Changelog.Append() {
+            private static final long serialVersionUID = -5635998660542618226L;
+
             @Override
             public boolean isEnabled() {
                 return Append.this.isEnabled();
@@ -640,6 +648,8 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
             return o1.getOrder().compareTo(o2.getOrder());
         };
 
+        private static final long serialVersionUID = 8812582603331073781L;
+
         private final Set<String> labels = new LinkedHashSet<>();
 
         private String key;
@@ -648,6 +658,8 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
         private Integer order;
 
         private final org.jreleaser.model.api.release.Changelog.Category immutable = new org.jreleaser.model.api.release.Changelog.Category() {
+            private static final long serialVersionUID = -6331412945094114818L;
+
             @Override
             public String getFormat() {
                 return format;
@@ -781,10 +793,14 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
     }
 
     public static final class Replacer extends AbstractModelObject<Replacer> implements Domain {
+        private static final long serialVersionUID = -3996062461946189421L;
+
         private String search;
         private String replace = "";
 
         private final org.jreleaser.model.api.release.Changelog.Replacer immutable = new org.jreleaser.model.api.release.Changelog.Replacer() {
+            private static final long serialVersionUID = -8515498818759834354L;
+
             @Override
             public String getSearch() {
                 return search;
@@ -843,12 +859,16 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
             return o1.getOrder().compareTo(o2.getOrder());
         };
 
+        private static final long serialVersionUID = 1510091671085545316L;
+
         private String label;
         private String title;
         private String body;
         private Integer order;
 
         private final org.jreleaser.model.api.release.Changelog.Labeler immutable = new org.jreleaser.model.api.release.Changelog.Labeler() {
+            private static final long serialVersionUID = -6780960364911032512L;
+
             @Override
             public String getLabel() {
                 return label;
@@ -945,10 +965,14 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
     }
 
     public static final class Contributors extends AbstractModelObject<Contributors> implements Domain, EnabledAware {
+        private static final long serialVersionUID = 3162308397837135084L;
+
         private Boolean enabled;
         private String format;
 
         private final org.jreleaser.model.api.release.Changelog.Contributors immutable = new org.jreleaser.model.api.release.Changelog.Contributors() {
+            private static final long serialVersionUID = 1849581704581927871L;
+
             @Override
             public String getFormat() {
                 return format;
@@ -1013,11 +1037,15 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
     }
 
     public static final class Hide extends AbstractModelObject<Hide> implements Domain {
+        private static final long serialVersionUID = 314185207203186567L;
+
         private final Set<String> categories = new LinkedHashSet<>();
         private final Set<String> contributors = new LinkedHashSet<>();
         private Boolean uncategorized;
 
         private final org.jreleaser.model.api.release.Changelog.Hide immutable = new org.jreleaser.model.api.release.Changelog.Hide() {
+            private static final long serialVersionUID = 4820100134325634530L;
+
             @Override
             public boolean isUncategorized() {
                 return Hide.this.isUncategorized();

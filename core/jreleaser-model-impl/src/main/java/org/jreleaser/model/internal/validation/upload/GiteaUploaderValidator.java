@@ -43,12 +43,12 @@ public abstract class GiteaUploaderValidator extends Validator {
         for (Map.Entry<String, GiteaUploader> e : gitea.entrySet()) {
             e.getValue().setName(e.getKey());
             if (mode.validateConfig()) {
-                validateGiteaUploader(context, mode, e.getValue(), errors);
+                validateGiteaUploader(context, e.getValue(), errors);
             }
         }
     }
 
-    private static void validateGiteaUploader(JReleaserContext context, Mode mode, GiteaUploader gitea, Errors errors) {
+    private static void validateGiteaUploader(JReleaserContext context, GiteaUploader gitea, Errors errors) {
         context.getLogger().debug("upload.gitea.{}", gitea.getName());
 
         if (!gitea.isActiveSet()) {

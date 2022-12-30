@@ -43,12 +43,12 @@ public abstract class HttpUploaderValidator extends Validator {
         for (Map.Entry<String, HttpUploader> e : http.entrySet()) {
             e.getValue().setName(e.getKey());
             if (mode.validateConfig()) {
-                validateHttp(context, mode, e.getValue(), errors);
+                validateHttp(context, e.getValue(), errors);
             }
         }
     }
 
-    private static void validateHttp(JReleaserContext context, Mode mode, HttpUploader http, Errors errors) {
+    private static void validateHttp(JReleaserContext context, HttpUploader http, Errors errors) {
         context.getLogger().debug("upload.http.{}", http.getName());
 
         if (!http.isActiveSet()) {

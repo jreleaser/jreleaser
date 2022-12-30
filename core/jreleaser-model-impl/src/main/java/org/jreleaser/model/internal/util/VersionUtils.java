@@ -73,7 +73,7 @@ public class VersionUtils {
                 return chronVer(context.getLogger(), tagName, versionPattern, strict);
             case CUSTOM:
             default:
-                return versionOf(tagName, versionPattern, strict);
+                return versionOf(tagName, versionPattern);
         }
     }
 
@@ -212,7 +212,7 @@ public class VersionUtils {
         return ChronVer.defaultOf();
     }
 
-    private static CustomVersion versionOf(String tagName, Pattern versionPattern, boolean strict) {
+    private static CustomVersion versionOf(String tagName, Pattern versionPattern) {
         Matcher matcher = versionPattern.matcher(tagName);
         if (matcher.matches()) {
             return CustomVersion.of(matcher.group(1));

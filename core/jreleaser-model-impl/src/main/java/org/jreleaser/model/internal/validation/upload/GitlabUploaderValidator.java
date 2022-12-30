@@ -43,12 +43,12 @@ public abstract class GitlabUploaderValidator extends Validator {
         for (Map.Entry<String, GitlabUploader> e : gitlab.entrySet()) {
             e.getValue().setName(e.getKey());
             if (mode.validateConfig()) {
-                validateGitlabUploader(context, mode, e.getValue(), errors);
+                validateGitlabUploader(context, e.getValue(), errors);
             }
         }
     }
 
-    private static void validateGitlabUploader(JReleaserContext context, Mode mode, GitlabUploader gitlab, Errors errors) {
+    private static void validateGitlabUploader(JReleaserContext context, GitlabUploader gitlab, Errors errors) {
         context.getLogger().debug("upload.gitlab.{}", gitlab.getName());
 
         if (!gitlab.isActiveSet()) {

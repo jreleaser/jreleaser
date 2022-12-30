@@ -35,12 +35,16 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 1.1.0
  */
 public final class FtpDownloader extends AbstractDownloader<org.jreleaser.model.api.download.FtpDownloader, FtpDownloader> implements Ftp {
+    private static final long serialVersionUID = -4601112710782126715L;
+
     private String username;
     private String password;
     private String host;
     private Integer port;
 
     private final org.jreleaser.model.api.download.FtpDownloader immutable = new org.jreleaser.model.api.download.FtpDownloader() {
+        private static final long serialVersionUID = -3069423247317140050L;
+
         private List<? extends org.jreleaser.model.api.download.Downloader.Asset> assets;
 
         @Override

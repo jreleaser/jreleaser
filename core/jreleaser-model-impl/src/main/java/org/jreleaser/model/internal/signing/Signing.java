@@ -46,6 +46,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public final class Signing extends AbstractModelObject<Signing> implements Domain, Activatable {
+    private static final long serialVersionUID = 6323797672803535814L;
+
     private final Command command = new Command();
     private final Cosign cosign = new Cosign();
 
@@ -62,6 +64,8 @@ public final class Signing extends AbstractModelObject<Signing> implements Domai
     private Boolean checksums;
 
     private final org.jreleaser.model.api.signing.Signing immutable = new org.jreleaser.model.api.signing.Signing() {
+        private static final long serialVersionUID = 5272378040186196053L;
+
         @Override
         public boolean isArmored() {
             return Signing.this.isArmored();
@@ -330,6 +334,8 @@ public final class Signing extends AbstractModelObject<Signing> implements Domai
     }
 
     public static class Command extends AbstractModelObject<Command> implements Domain {
+        private static final long serialVersionUID = 6761158529249184059L;
+
         private final List<String> args = new ArrayList<>();
 
         private String executable;
@@ -339,6 +345,8 @@ public final class Signing extends AbstractModelObject<Signing> implements Domai
         private Boolean defaultKeyring;
 
         private final org.jreleaser.model.api.signing.Signing.Command immutable = new org.jreleaser.model.api.signing.Signing.Command() {
+            private static final long serialVersionUID = -8636071040086599491L;
+
             @Override
             public String getExecutable() {
                 return executable;
@@ -458,11 +466,15 @@ public final class Signing extends AbstractModelObject<Signing> implements Domai
     }
 
     public static class Cosign extends AbstractModelObject<Cosign> implements Domain {
+        private static final long serialVersionUID = 5608123183696686008L;
+
         private String version;
         private String privateKeyFile;
         private String publicKeyFile;
 
         private final org.jreleaser.model.api.signing.Signing.Cosign immutable = new org.jreleaser.model.api.signing.Signing.Cosign() {
+            private static final long serialVersionUID = 3675807300391748445L;
+
             @Override
             public String getVersion() {
                 return version;

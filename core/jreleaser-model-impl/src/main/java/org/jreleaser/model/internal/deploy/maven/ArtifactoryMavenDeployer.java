@@ -31,7 +31,11 @@ import static java.util.Collections.unmodifiableMap;
  * @since 1.3.0
  */
 public final class ArtifactoryMavenDeployer extends AbstractMavenDeployer<ArtifactoryMavenDeployer, org.jreleaser.model.api.deploy.maven.ArtifactoryMavenDeployer> {
+    private static final long serialVersionUID = 2876306953402604076L;
+
     private final org.jreleaser.model.api.deploy.maven.ArtifactoryMavenDeployer immutable = new org.jreleaser.model.api.deploy.maven.ArtifactoryMavenDeployer() {
+        private static final long serialVersionUID = 7913526241183452717L;
+
         @Override
         public String getGroup() {
             return org.jreleaser.model.api.deploy.maven.MavenDeployer.GROUP;

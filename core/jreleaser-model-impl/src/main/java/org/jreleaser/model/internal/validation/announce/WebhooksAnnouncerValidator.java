@@ -49,7 +49,7 @@ public abstract class WebhooksAnnouncerValidator extends Validator {
         for (Map.Entry<String, WebhookAnnouncer> e : webhook.entrySet()) {
             e.getValue().setName(e.getKey());
             if (mode.validateConfig() || mode.validateAnnounce()) {
-                if (validateWebhook(context, webhooks, e.getValue(), errors)) {
+                if (validateWebhook(context, e.getValue(), errors)) {
                     enabled = true;
                 }
             }
@@ -66,7 +66,7 @@ public abstract class WebhooksAnnouncerValidator extends Validator {
         }
     }
 
-    public static boolean validateWebhook(JReleaserContext context, WebhooksAnnouncer webhooks, WebhookAnnouncer webhook, Errors errors) {
+    public static boolean validateWebhook(JReleaserContext context, WebhookAnnouncer webhook, Errors errors) {
         context.getLogger().debug("announce.webhook." + webhook.getName());
         if (!webhook.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));

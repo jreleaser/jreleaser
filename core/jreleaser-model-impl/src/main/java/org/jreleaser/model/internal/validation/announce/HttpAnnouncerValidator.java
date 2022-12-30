@@ -50,7 +50,7 @@ public abstract class HttpAnnouncerValidator extends Validator {
         for (Map.Entry<String, HttpAnnouncer> e : ha.entrySet()) {
             e.getValue().setName(e.getKey());
             if (mode.validateConfig() || mode.validateAnnounce()) {
-                if (validateHttpAnnouncer(context, http, e.getValue(), errors)) {
+                if (validateHttpAnnouncer(context, e.getValue(), errors)) {
                     enabled = true;
                 }
             }
@@ -67,7 +67,7 @@ public abstract class HttpAnnouncerValidator extends Validator {
         }
     }
 
-    public static boolean validateHttpAnnouncer(JReleaserContext context, HttpAnnouncers http, HttpAnnouncer announcer, Errors errors) {
+    public static boolean validateHttpAnnouncer(JReleaserContext context, HttpAnnouncer announcer, Errors errors) {
         context.getLogger().debug("announce.http." + announcer.getName());
         if (!announcer.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));

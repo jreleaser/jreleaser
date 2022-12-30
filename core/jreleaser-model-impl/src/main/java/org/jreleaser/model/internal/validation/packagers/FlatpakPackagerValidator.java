@@ -116,7 +116,7 @@ public abstract class FlatpakPackagerValidator extends Validator {
         if (packager.getScreenshots().isEmpty()) {
             errors.configuration(RB.$("validation_is_empty", "distribution." + distribution.getName() + ".flatpak.screenshots"));
         }
-        validateScreenshots(context, mode, packager.getScreenshots(), errors, "distribution." + distribution.getName() + ".flatpak");
+        validateScreenshots(packager.getScreenshots(), errors, "distribution." + distribution.getName() + ".flatpak");
         packager.getScreenshots().removeIf(screenshot -> isTrue(screenshot.getExtraProperties().get(SKIP_FLATPAK)));
         if (packager.getScreenshots().isEmpty()) {
             errors.configuration(RB.$("validation_is_empty", "distribution." + distribution.getName() + ".flatpak.screenshots"));
@@ -128,7 +128,7 @@ public abstract class FlatpakPackagerValidator extends Validator {
         if (packager.getIcons().isEmpty()) {
             errors.configuration(RB.$("validation_is_empty", "distribution." + distribution.getName() + ".flatpak.icons"));
         }
-        validateIcons(context, mode, packager.getIcons(), errors, "distribution." + distribution.getName() + ".flatpak", false);
+        validateIcons(packager.getIcons(), errors, "distribution." + distribution.getName() + ".flatpak", false);
         packager.getIcons().removeIf(icon -> isTrue(icon.getExtraProperties().get(SKIP_FLATPAK)));
         if (packager.getIcons().isEmpty()) {
             errors.configuration(RB.$("validation_is_empty", "distribution." + distribution.getName() + ".flatpak.icons"));
@@ -193,6 +193,6 @@ public abstract class FlatpakPackagerValidator extends Validator {
         if (isBlank(packager.getDownloadUrl())) {
             packager.setDownloadUrl(parentPackager.getDownloadUrl());
         }
-        validateArtifactPlatforms(context, distribution, packager, candidateArtifacts, errors);
+        validateArtifactPlatforms(distribution, packager, candidateArtifacts, errors);
     }
 }

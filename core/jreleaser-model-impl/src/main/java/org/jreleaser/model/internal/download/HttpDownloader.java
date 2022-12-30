@@ -36,12 +36,16 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 1.1.0
  */
 public final class HttpDownloader extends AbstractDownloader<org.jreleaser.model.api.download.HttpDownloader, HttpDownloader> implements Http {
+    private static final long serialVersionUID = -2133185020490422565L;
+
     private final Map<String, String> headers = new LinkedHashMap<>();
     private String username;
     private String password;
     private Authorization authorization;
 
     private final org.jreleaser.model.api.download.HttpDownloader immutable = new org.jreleaser.model.api.download.HttpDownloader() {
+        private static final long serialVersionUID = -1955685895966905403L;
+
         private List<? extends Asset> assets;
 
         @Override

@@ -139,7 +139,7 @@ public abstract class SnapPackagerValidator extends Validator {
             }
         }
 
-        validateArtifactPlatforms(context, distribution, packager, candidateArtifacts, errors);
+        validateArtifactPlatforms(distribution, packager, candidateArtifacts, errors);
 
         packager.addArchitecture(parentPackager.getArchitectures());
         for (int i = 0; i < packager.getArchitectures().size(); i++) {

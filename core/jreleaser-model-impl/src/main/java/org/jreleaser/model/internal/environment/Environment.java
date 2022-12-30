@@ -48,6 +48,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public final class Environment extends AbstractModelObject<Environment> implements Domain {
+    private static final long serialVersionUID = 1514816744502607426L;
+
     private final Map<String, Object> properties = new LinkedHashMap<>();
     @JsonIgnore
     private final Map<String, Object> sourcedProperties = new LinkedHashMap<>();
@@ -58,6 +60,8 @@ public final class Environment extends AbstractModelObject<Environment> implemen
     private Properties vars;
 
     private final org.jreleaser.model.api.environment.Environment immutable = new org.jreleaser.model.api.environment.Environment() {
+        private static final long serialVersionUID = -7287090119869371299L;
+
         @Override
         public Properties getVars() {
             return vars;

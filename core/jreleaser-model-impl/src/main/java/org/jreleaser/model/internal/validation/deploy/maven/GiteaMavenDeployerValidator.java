@@ -48,7 +48,7 @@ public abstract class GiteaMavenDeployerValidator extends Validator {
     }
 
     private static void validateGiteaMavenDeployer(JReleaserContext context, Mode mode, GiteaMavenDeployer mavenDeployer, Errors errors) {
-        validateMavenDeployer(context, mode, mavenDeployer, errors);
+        validateMavenDeployer(context, mavenDeployer, errors);
         if (!mavenDeployer.isEnabled()) return;
 
         String baseEnvKey = mavenDeployer.getType().toUpperCase(Locale.ENGLISH);

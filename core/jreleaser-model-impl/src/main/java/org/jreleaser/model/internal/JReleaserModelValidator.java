@@ -82,7 +82,7 @@ public final class JReleaserModelValidator {
         try {
             postValidateProject(context, mode, errors);
             if (mode.validateConfig() || mode.validateAssembly()) postValidateAssemblers(context, mode, errors);
-            if (mode.validateConfig()) postValidateDistributions(context, mode, errors);
+            if (mode.validateConfig()) postValidateDistributions(context, errors);
         } finally {
             context.getLogger().restorePrefix();
         }

@@ -89,7 +89,7 @@ public abstract class ArchiveAssemblerValidator extends Validator {
         } else {
             int i = 0;
             for (FileSet fileSet : archive.getFileSets()) {
-                validateFileSet(context, mode, archive, fileSet, i++, errors);
+                validateFileSet(mode, archive, fileSet, i++, errors);
             }
         }
     }

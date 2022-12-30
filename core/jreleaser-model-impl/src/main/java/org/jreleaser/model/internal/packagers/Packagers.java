@@ -30,6 +30,8 @@ import static java.util.Collections.unmodifiableMap;
  * @since 0.1.0
  */
 public class Packagers<S extends Packagers<S>> extends AbstractModelObject<S> implements Domain {
+    private static final long serialVersionUID = -3860225912405368405L;
+
     protected final AppImagePackager appImage = new AppImagePackager();
     protected final AsdfPackager asdf = new AsdfPackager();
     protected final BrewPackager brew = new BrewPackager();
@@ -45,6 +47,8 @@ public class Packagers<S extends Packagers<S>> extends AbstractModelObject<S> im
     protected final SpecPackager spec = new SpecPackager();
 
     private final org.jreleaser.model.api.packagers.Packagers immutable = new org.jreleaser.model.api.packagers.Packagers() {
+        private static final long serialVersionUID = 5183532997114141029L;
+
         @Override
         public org.jreleaser.model.api.packagers.AppImagePackager getAppImage() {
             return appImage.asImmutable();

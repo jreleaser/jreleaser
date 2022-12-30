@@ -40,12 +40,12 @@ public abstract class ArtifactoryUploaderValidator extends Validator {
         for (Map.Entry<String, ArtifactoryUploader> e : artifactory.entrySet()) {
             e.getValue().setName(e.getKey());
             if (mode.validateConfig()) {
-                validateArtifactory(context, mode, e.getValue(), errors);
+                validateArtifactory(context, e.getValue(), errors);
             }
         }
     }
 
-    private static void validateArtifactory(JReleaserContext context, Mode mode, ArtifactoryUploader artifactory, Errors errors) {
+    private static void validateArtifactory(JReleaserContext context, ArtifactoryUploader artifactory, Errors errors) {
         context.getLogger().debug("upload.artifactory.{}", artifactory.getName());
 
         if (!artifactory.isActiveSet()) {

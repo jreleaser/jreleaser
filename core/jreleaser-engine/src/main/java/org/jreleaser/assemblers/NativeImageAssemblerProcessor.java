@@ -22,7 +22,6 @@ import org.jreleaser.model.Constants;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.NativeImageAssembler;
 import org.jreleaser.model.internal.common.Artifact;
-import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.spi.assemble.AssemblerProcessingException;
 import org.jreleaser.sdk.command.Command;
 import org.jreleaser.sdk.command.CommandException;
@@ -256,7 +255,7 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
     }
 
     @Override
-    protected void writeFile(Project project, String content, Map<String, Object> props, String fileName)
+    protected void writeFile(String content, Map<String, Object> props, String fileName)
         throws AssemblerProcessingException {
         // noop
     }

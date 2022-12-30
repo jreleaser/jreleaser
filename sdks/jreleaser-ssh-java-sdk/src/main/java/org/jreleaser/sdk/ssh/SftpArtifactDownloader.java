@@ -66,7 +66,7 @@ public class SftpArtifactDownloader extends AbstractArtifactDownloader<org.jrele
     @Override
     public void download(String name) throws DownloadException {
         SSHClient ssh = createSSHClient(context, downloader);
-        SFTPClient sftp = createSFTPClient(context, downloader, ssh);
+        SFTPClient sftp = createSFTPClient(downloader, ssh);
 
         try {
             try {

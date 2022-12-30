@@ -33,6 +33,8 @@ import java.util.Map;
  * @since 1.1.0
  */
 public abstract class AbstractDownloader<A extends org.jreleaser.model.api.download.Downloader, S extends AbstractDownloader<A, S>> extends AbstractModelObject<S> implements Downloader<A> {
+    private static final long serialVersionUID = -5506209794302097933L;
+
     @JsonIgnore
     protected final String type;
     protected final Map<String, Object> extraProperties = new LinkedHashMap<>();

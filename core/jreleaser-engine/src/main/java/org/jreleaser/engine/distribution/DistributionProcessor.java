@@ -57,7 +57,7 @@ public class DistributionProcessor {
 
     public void prepareDistribution() throws PackagerProcessingException {
         Distribution distribution = context.getModel().findDistribution(distributionName);
-        Packager<?> packager = distribution.getPackager(packagerName);
+        Packager<?> packager = distribution.findPackager(packagerName);
         if (!packager.isEnabled()) {
             context.getLogger().debug(RB.$("distributions.skip.distribution"), distributionName);
             return;
@@ -86,7 +86,7 @@ public class DistributionProcessor {
 
     public void packageDistribution() throws PackagerProcessingException {
         Distribution distribution = context.getModel().findDistribution(distributionName);
-        Packager<?> packager = distribution.getPackager(packagerName);
+        Packager<?> packager = distribution.findPackager(packagerName);
         if (!packager.isEnabled()) {
             context.getLogger().debug(RB.$("distributions.skip.distribution"), distributionName);
             return;
@@ -119,7 +119,7 @@ public class DistributionProcessor {
 
     public void publishDistribution() throws PackagerProcessingException {
         Distribution distribution = context.getModel().findDistribution(distributionName);
-        Packager<?> packager = distribution.getPackager(packagerName);
+        Packager<?> packager = distribution.findPackager(packagerName);
         if (!packager.isEnabled()) {
             context.getLogger().debug(RB.$("distributions.skip.distribution"), distributionName);
             return;

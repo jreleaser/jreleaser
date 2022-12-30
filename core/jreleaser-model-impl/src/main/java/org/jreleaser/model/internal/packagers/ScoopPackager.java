@@ -57,6 +57,7 @@ import static org.jreleaser.util.StringUtils.isFalse;
  */
 public final class ScoopPackager extends AbstractRepositoryPackager<org.jreleaser.model.api.packagers.ScoopPackager, ScoopPackager> {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
+    private static final long serialVersionUID = -2718700168146488344L;
 
     static {
         Set<String> extensions = setOf(ZIP.extension());
@@ -74,6 +75,8 @@ public final class ScoopPackager extends AbstractRepositoryPackager<org.jrelease
     private String autoupdateUrl;
 
     private final org.jreleaser.model.api.packagers.ScoopPackager immutable = new org.jreleaser.model.api.packagers.ScoopPackager() {
+        private static final long serialVersionUID = 7006999983739292013L;
+
         @Override
         public String getPackageName() {
             return packageName;
@@ -269,6 +272,8 @@ public final class ScoopPackager extends AbstractRepositoryPackager<org.jrelease
     }
 
     public static final class ScoopRepository extends PackagerRepository {
+        private static final long serialVersionUID = 5693815301518572010L;
+
         public ScoopRepository() {
             super("scoop", "scoop");
         }

@@ -31,7 +31,11 @@ import static org.jreleaser.model.api.download.ScpDownloader.TYPE;
  * @since 1.1.0
  */
 public final class ScpDownloader extends AbstractSshDownloader<org.jreleaser.model.api.download.ScpDownloader, ScpDownloader> {
+    private static final long serialVersionUID = -59581960524753148L;
+
     private final org.jreleaser.model.api.download.ScpDownloader immutable = new org.jreleaser.model.api.download.ScpDownloader() {
+        private static final long serialVersionUID = 322325976684206094L;
+
         private List<? extends org.jreleaser.model.api.download.Downloader.Asset> assets;
 
         @Override

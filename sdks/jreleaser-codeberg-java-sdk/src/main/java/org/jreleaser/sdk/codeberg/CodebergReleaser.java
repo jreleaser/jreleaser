@@ -211,7 +211,7 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
                 codeberg.getConnectTimeout(),
                 codeberg.getReadTimeout())
                 .findUser(email, name, host);
-        } catch (RestAPIException | IOException e) {
+        } catch (RestAPIException e) {
             context.getLogger().trace(e);
             context.getLogger().debug(RB.$("git.releaser.user.not.found"), email);
         }

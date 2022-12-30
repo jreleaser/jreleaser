@@ -19,6 +19,7 @@ package org.jreleaser.workflow;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.engine.context.ModelValidator;
+import org.jreleaser.extensions.api.ExtensionManagerHolder;
 import org.jreleaser.extensions.api.workflow.WorkflowListenerException;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.api.hooks.ExecutionEvent;
@@ -50,6 +51,7 @@ class WorkflowImpl implements Workflow {
         try {
             doExecute();
         } finally {
+            ExtensionManagerHolder.cleanup();
             context.getLogger().close();
         }
     }
@@ -94,8 +96,8 @@ class WorkflowImpl implements Workflow {
         }
 
         if (null == startSessionException) {
-            boolean failure = false;
             for (WorkflowItem item : items) {
+                boolean failure = false;
                 try {
                     context.fireWorkflowEvent(ExecutionEvent.before(item.getCommand().toStep()));
                 } catch (WorkflowListenerException beforeException) {

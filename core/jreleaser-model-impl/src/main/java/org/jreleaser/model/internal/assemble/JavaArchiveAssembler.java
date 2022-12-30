@@ -50,6 +50,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 1.4.0
  */
 public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAssembler, org.jreleaser.model.api.assemble.JavaArchiveAssembler> {
+    private static final long serialVersionUID = -4060683029719902130L;
+
     private final Set<Archive.Format> formats = new LinkedHashSet<>();
     private final List<Glob> jars = new ArrayList<>();
     private final List<Glob> files = new ArrayList<>();
@@ -61,6 +63,8 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
     private String templateDirectory;
 
     private final org.jreleaser.model.api.assemble.JavaArchiveAssembler immutable = new org.jreleaser.model.api.assemble.JavaArchiveAssembler() {
+        private static final long serialVersionUID = -5871153107080301721L;
+
         private List<? extends org.jreleaser.model.api.common.FileSet> fileSets;
         private Set<? extends org.jreleaser.model.api.common.Artifact> outputs;
         private List<? extends org.jreleaser.model.api.common.Glob> jars;
@@ -342,10 +346,15 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
     }
 
     public static final class Java extends AbstractModelObject<org.jreleaser.model.internal.assemble.JavaArchiveAssembler.Java> implements Domain {
+        private static final long serialVersionUID = 7202113953208274002L;
+
         private final List<String> options = new ArrayList<>();
         private String mainModule;
         private String mainClass;
+
         private final org.jreleaser.model.api.assemble.JavaArchiveAssembler.Java immutable = new org.jreleaser.model.api.assemble.JavaArchiveAssembler.Java() {
+            private static final long serialVersionUID = 5951754473564143458L;
+
             @Override
             public String getMainClass() {
                 return mainClass;

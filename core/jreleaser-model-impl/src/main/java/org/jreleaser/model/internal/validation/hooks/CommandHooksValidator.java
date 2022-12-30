@@ -41,13 +41,13 @@ public abstract class CommandHooksValidator extends Validator {
         hooks.resolveEnabled(context.getModel().getProject());
 
         for (int i = 0; i < hooks.getBefore().size(); i++) {
-            validateCommandHook(context, mode, hooks.getBefore().get(i), "before", i, errors);
+            validateCommandHook(context, hooks.getBefore().get(i), "before", i, errors);
         }
         for (int i = 0; i < hooks.getSuccess().size(); i++) {
-            validateCommandHook(context, mode, hooks.getSuccess().get(i), "success", i, errors);
+            validateCommandHook(context, hooks.getSuccess().get(i), "success", i, errors);
         }
         for (int i = 0; i < hooks.getFailure().size(); i++) {
-            validateCommandHook(context, mode, hooks.getFailure().get(i), "failure", i, errors);
+            validateCommandHook(context, hooks.getFailure().get(i), "failure", i, errors);
         }
 
         if (hooks.isEnabled()) {
@@ -62,7 +62,7 @@ public abstract class CommandHooksValidator extends Validator {
         }
     }
 
-    private static void validateCommandHook(JReleaserContext context, Mode mode, CommandHook hook, String type, int index, Errors errors) {
+    private static void validateCommandHook(JReleaserContext context, CommandHook hook, String type, int index, Errors errors) {
         context.getLogger().debug("hooks.command.{}[{}]", type, index);
 
         if (!hook.isActiveSet()) {

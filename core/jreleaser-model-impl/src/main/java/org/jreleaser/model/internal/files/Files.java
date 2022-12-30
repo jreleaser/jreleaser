@@ -44,6 +44,8 @@ import static java.util.stream.Collectors.toSet;
  * @since 0.1.0
  */
 public final class Files extends AbstractModelObject<Files> implements Domain, Activatable {
+    private static final long serialVersionUID = 6099467639296901721L;
+
     private final Set<Artifact> artifacts = new LinkedHashSet<>();
     private final List<Glob> globs = new ArrayList<>();
     @JsonIgnore
@@ -55,6 +57,8 @@ public final class Files extends AbstractModelObject<Files> implements Domain, A
     private boolean enabled;
 
     private final org.jreleaser.model.api.files.Files immutable = new org.jreleaser.model.api.files.Files() {
+        private static final long serialVersionUID = -328612924170955820L;
+
         private Set<? extends org.jreleaser.model.api.common.Artifact> paths;
         private Set<? extends org.jreleaser.model.api.common.Artifact> artifacts;
         private List<? extends org.jreleaser.model.api.common.Glob> globs;

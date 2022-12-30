@@ -120,7 +120,7 @@ public abstract class AppImagePackagerValidator extends Validator {
         if (packager.getScreenshots().isEmpty()) {
             errors.configuration(RB.$("validation_is_empty", "distribution." + distribution.getName() + ".appImage.screenshots"));
         }
-        validateScreenshots(context, mode, packager.getScreenshots(), errors, "distribution." + distribution.getName() + ".appImage");
+        validateScreenshots(packager.getScreenshots(), errors, "distribution." + distribution.getName() + ".appImage");
         packager.getScreenshots().removeIf(screenshot -> isTrue(screenshot.getExtraProperties().get(SKIP_APPIMAGE)));
         if (packager.getScreenshots().isEmpty()) {
             errors.configuration(RB.$("validation_is_empty", "distribution." + distribution.getName() + ".appImage.screenshots"));
@@ -132,7 +132,7 @@ public abstract class AppImagePackagerValidator extends Validator {
         if (packager.getIcons().isEmpty()) {
             errors.configuration(RB.$("validation_is_empty", "distribution." + distribution.getName() + ".appImage.icons"));
         }
-        validateIcons(context, mode, packager.getIcons(), errors, "distribution." + distribution.getName() + ".appImage");
+        validateIcons(packager.getIcons(), errors, "distribution." + distribution.getName() + ".appImage");
         packager.getIcons().removeIf(icon -> isTrue(icon.getExtraProperties().get(SKIP_APPIMAGE)));
         if (packager.getIcons().isEmpty()) {
             errors.configuration(RB.$("validation_is_empty", "distribution." + distribution.getName() + ".appImage.icons"));
@@ -176,6 +176,6 @@ public abstract class AppImagePackagerValidator extends Validator {
         if (isBlank(packager.getDownloadUrl())) {
             packager.setDownloadUrl(parentPackager.getDownloadUrl());
         }
-        validateArtifactPlatforms(context, distribution, packager, candidateArtifacts, errors);
+        validateArtifactPlatforms(distribution, packager, candidateArtifacts, errors);
     }
 }

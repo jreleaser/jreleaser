@@ -45,6 +45,8 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.2.0
  */
 public final class Assemble extends AbstractModelObject<Assemble> implements Domain, Activatable {
+    private static final long serialVersionUID = -7772753165999516328L;
+
     private final Map<String, ArchiveAssembler> archive = new LinkedHashMap<>();
     private final Map<String, JavaArchiveAssembler> javaArchive = new LinkedHashMap<>();
     private final Map<String, JlinkAssembler> jlink = new LinkedHashMap<>();
@@ -56,6 +58,8 @@ public final class Assemble extends AbstractModelObject<Assemble> implements Dom
     private boolean enabled = true;
 
     private final org.jreleaser.model.api.assemble.Assemble immutable = new org.jreleaser.model.api.assemble.Assemble() {
+        private static final long serialVersionUID = -7622959098817234697L;
+
         private Map<String, ? extends org.jreleaser.model.api.assemble.ArchiveAssembler> archive;
         private Map<String, ? extends org.jreleaser.model.api.assemble.JavaArchiveAssembler> javaArchive;
         private Map<String, ? extends org.jreleaser.model.api.assemble.JlinkAssembler> jlink;
@@ -341,7 +345,7 @@ public final class Assemble extends AbstractModelObject<Assemble> implements Dom
         return map;
     }
 
-    public <A extends Assembler> Map<String, A> findAssemblersByType(String assemblerName) {
+    public <A extends Assembler<?>> Map<String, A> findAssemblersByType(String assemblerName) {
         switch (assemblerName) {
             case org.jreleaser.model.api.assemble.ArchiveAssembler.TYPE:
                 return (Map<String, A>) archive;
@@ -358,7 +362,7 @@ public final class Assemble extends AbstractModelObject<Assemble> implements Dom
         return Collections.emptyMap();
     }
 
-    public <A extends Assembler> Collection<A> findAllAssemblers() {
+    public <A extends Assembler<?>> Collection<A> findAllAssemblers() {
         List<A> assemblers = new ArrayList<>();
         assemblers.addAll((List<A>) getActiveArchives());
         assemblers.addAll((List<A>) getActiveJavaArchives());

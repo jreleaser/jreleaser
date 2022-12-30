@@ -41,6 +41,8 @@ import static java.util.stream.Collectors.toMap;
  * @since 1.1.0
  */
 public final class Download extends AbstractModelObject<Download> implements Domain, Activatable {
+    private static final long serialVersionUID = 1196278870619429563L;
+
     private final Map<String, FtpDownloader> ftp = new LinkedHashMap<>();
     private final Map<String, HttpDownloader> http = new LinkedHashMap<>();
     private final Map<String, ScpDownloader> scp = new LinkedHashMap<>();
@@ -50,6 +52,8 @@ public final class Download extends AbstractModelObject<Download> implements Dom
     private boolean enabled = true;
 
     private final org.jreleaser.model.api.download.Download immutable = new org.jreleaser.model.api.download.Download() {
+        private static final long serialVersionUID = -6843721083893842034L;
+
         private Map<String, ? extends org.jreleaser.model.api.download.FtpDownloader> ftp;
         private Map<String, ? extends org.jreleaser.model.api.download.HttpDownloader> http;
         private Map<String, ? extends org.jreleaser.model.api.download.ScpDownloader> scp;

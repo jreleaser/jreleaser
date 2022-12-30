@@ -40,6 +40,8 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.1.0
  */
 public final class Announce extends AbstractModelObject<Announce> implements Domain, Activatable {
+    private static final long serialVersionUID = -7824255325400377999L;
+
     private final ArticleAnnouncer article = new ArticleAnnouncer();
     private final DiscordAnnouncer discord = new DiscordAnnouncer();
     private final DiscourseAnnouncer discourse = new DiscourseAnnouncer();
@@ -63,6 +65,8 @@ public final class Announce extends AbstractModelObject<Announce> implements Dom
     private boolean enabled = true;
 
     private final org.jreleaser.model.api.announce.Announce immutable = new org.jreleaser.model.api.announce.Announce() {
+        private static final long serialVersionUID = 5983475776968116269L;
+
         @Override
         public org.jreleaser.model.api.announce.ArticleAnnouncer getArticle() {
             return article.asImmutable();
@@ -445,14 +449,6 @@ public final class Announce extends AbstractModelObject<Announce> implements Dom
         }
 
         return resolveAnnouncer(name);
-    }
-
-    public <A extends Announcer<?>> A getAnnouncer(String name) {
-        A announcer = findAnnouncer(name);
-        if (null != announcer) {
-            return announcer;
-        }
-        throw new JReleaserException(RB.$("ERROR_announcer_not_configured", name));
     }
 
     private <A extends Announcer<?>> A resolveAnnouncer(String name) {

@@ -42,12 +42,12 @@ public abstract class ScpUploaderValidator extends Validator {
         for (Map.Entry<String, ScpUploader> e : scp.entrySet()) {
             e.getValue().setName(e.getKey());
             if (mode.validateConfig()) {
-                validateScpUploader(context, mode, e.getValue(), errors);
+                validateScpUploader(context, e.getValue(), errors);
             }
         }
     }
 
-    private static void validateScpUploader(JReleaserContext context, Mode mode, ScpUploader scp, Errors errors) {
+    private static void validateScpUploader(JReleaserContext context, ScpUploader scp, Errors errors) {
         context.getLogger().debug("upload.scp.{}", scp.getName());
 
         if (!scp.isActiveSet()) {

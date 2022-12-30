@@ -132,7 +132,7 @@ public abstract class SdkmanPackagerValidator extends Validator {
 
         validateTimeout(packager);
 
-        validateArtifactPlatforms(context, distribution, packager, candidateArtifacts, errors);
+        validateArtifactPlatforms(distribution, packager, candidateArtifacts, errors);
     }
 
     public static void postValidateSdkman(JReleaserContext context, Errors errors) {

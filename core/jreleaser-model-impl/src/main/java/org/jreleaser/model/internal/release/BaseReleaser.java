@@ -51,6 +51,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Releaser, S extends BaseReleaser<A, S>> extends AbstractModelObject<S> implements Releaser<A> {
+    private static final long serialVersionUID = 8252794656914924803L;
+
     @JsonIgnore
     protected final String serviceName;
     protected final Changelog changelog = new Changelog();
@@ -846,10 +848,14 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
     }
 
     public static final class Prerelease extends AbstractModelObject<Prerelease> implements Domain, EnabledAware {
+        private static final long serialVersionUID = -7358833182369685133L;
+
         private Boolean enabled;
         private String pattern;
 
         private final org.jreleaser.model.api.release.Releaser.Prerelease immutable = new org.jreleaser.model.api.release.Releaser.Prerelease() {
+            private static final long serialVersionUID = -862797136353472181L;
+
             @Override
             public boolean isPrerelease(String version) {
                 return Prerelease.this.isPrerelease(version);
@@ -935,10 +941,14 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
     }
 
     public static final class Milestone extends AbstractModelObject<Milestone> implements Domain {
+        private static final long serialVersionUID = 5385291379888571159L;
+
         private Boolean close;
         private String name;
 
         private final org.jreleaser.model.api.release.Releaser.Milestone immutable = new org.jreleaser.model.api.release.Releaser.Milestone() {
+            private static final long serialVersionUID = 2957887352276816797L;
+
             @Override
             public boolean isClose() {
                 return Milestone.this.isClose();
@@ -1020,12 +1030,16 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
     }
 
     public static final class Issues extends AbstractModelObject<Issues> implements Domain, EnabledAware {
+        private static final long serialVersionUID = -8544658826532962076L;
+
         private final Label label = new Label();
         private Apply applyMilestone;
         private String comment;
         private Boolean enabled;
 
         private final org.jreleaser.model.api.release.Releaser.Issues immutable = new org.jreleaser.model.api.release.Releaser.Issues() {
+            private static final long serialVersionUID = 7857893617001154950L;
+
             @Override
             public String getComment() {
                 return comment;
@@ -1118,11 +1132,15 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
         }
 
         public static final class Label extends AbstractModelObject<Label> implements Domain {
+            private static final long serialVersionUID = 6951467063217168128L;
+
             private String name;
             private String color;
             private String description;
 
             private final org.jreleaser.model.api.release.Releaser.Issues.Label immutable = new org.jreleaser.model.api.release.Releaser.Issues.Label() {
+                private static final long serialVersionUID = 8642359487826561699L;
+
                 @Override
                 public String getName() {
                     return name;

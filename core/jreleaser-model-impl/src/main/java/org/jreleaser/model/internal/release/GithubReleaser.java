@@ -32,12 +32,15 @@ import static java.util.Collections.unmodifiableMap;
  * @since 0.1.0
  */
 public final class GithubReleaser extends BaseReleaser<org.jreleaser.model.api.release.GithubReleaser, GithubReleaser> {
+    private static final long serialVersionUID = -7946819245345601709L;
     private final ReleaseNotes releaseNotes = new ReleaseNotes();
 
     private Boolean draft;
     private String discussionCategoryName;
 
     private final org.jreleaser.model.api.release.GithubReleaser immutable = new org.jreleaser.model.api.release.GithubReleaser() {
+        private static final long serialVersionUID = -4917130438022026501L;
+
         @Override
         public boolean isPrerelease() {
             return GithubReleaser.this.isPrerelease();
@@ -339,10 +342,14 @@ public final class GithubReleaser extends BaseReleaser<org.jreleaser.model.api.r
     }
 
     public static final class ReleaseNotes extends AbstractModelObject<ReleaseNotes> implements Domain, EnabledAware {
+        private static final long serialVersionUID = -1029998017479730113L;
+
         private Boolean enabled;
         private String configurationFile;
 
         private final org.jreleaser.model.api.release.GithubReleaser.ReleaseNotes immutable = new org.jreleaser.model.api.release.GithubReleaser.ReleaseNotes() {
+            private static final long serialVersionUID = -301461478911447433L;
+
             @Override
             public String getConfigurationFile() {
                 return configurationFile;

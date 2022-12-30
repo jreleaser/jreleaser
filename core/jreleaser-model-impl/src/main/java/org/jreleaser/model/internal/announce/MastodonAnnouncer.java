@@ -43,6 +43,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.4.0
  */
 public final class MastodonAnnouncer extends AbstractAnnouncer<MastodonAnnouncer, org.jreleaser.model.api.announce.MastodonAnnouncer> {
+    private static final long serialVersionUID = -3861331728740142122L;
+
     private final List<String> statuses = new ArrayList<>();
     private String host;
     private String accessToken;
@@ -50,6 +52,8 @@ public final class MastodonAnnouncer extends AbstractAnnouncer<MastodonAnnouncer
     private String statusTemplate;
 
     private final org.jreleaser.model.api.announce.MastodonAnnouncer immutable = new org.jreleaser.model.api.announce.MastodonAnnouncer() {
+        private static final long serialVersionUID = -8926470689255000598L;
+
         @Override
         public String getType() {
             return org.jreleaser.model.api.announce.MastodonAnnouncer.TYPE;

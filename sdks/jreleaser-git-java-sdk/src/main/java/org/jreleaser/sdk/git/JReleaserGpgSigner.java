@@ -19,6 +19,7 @@ package org.jreleaser.sdk.git;
 
 import org.bouncycastle.bcpg.ArmoredOutputStream;
 import org.bouncycastle.bcpg.BCPGOutputStream;
+import org.bouncycastle.bcpg.HashAlgorithmTags;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPrivateKey;
@@ -27,7 +28,6 @@ import org.bouncycastle.openpgp.PGPSecretKey;
 import org.bouncycastle.openpgp.PGPSignature;
 import org.bouncycastle.openpgp.PGPSignatureGenerator;
 import org.bouncycastle.openpgp.PGPSignatureSubpacketGenerator;
-import org.bouncycastle.openpgp.PGPUtil;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentSignerBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyDecryptorBuilder;
 import org.eclipse.jgit.api.errors.CanceledException;
@@ -181,7 +181,7 @@ public class JReleaserGpgSigner extends GpgSigner implements GpgObjectSigner {
                         .build(signing.getPassphrase().toCharArray()));
 
                 PGPSignatureGenerator signatureGenerator = new PGPSignatureGenerator(
-                    new JcaPGPContentSignerBuilder(secretKey.getPublicKey().getAlgorithm(), PGPUtil.SHA256)
+                    new JcaPGPContentSignerBuilder(secretKey.getPublicKey().getAlgorithm(), HashAlgorithmTags.SHA256)
                         .setProvider(BouncyCastleProvider.PROVIDER_NAME));
 
                 signatureGenerator.init(PGPSignature.BINARY_DOCUMENT, privateKey);

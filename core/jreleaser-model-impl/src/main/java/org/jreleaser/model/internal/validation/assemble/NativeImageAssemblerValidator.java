@@ -153,12 +153,12 @@ public abstract class NativeImageAssemblerValidator extends Validator {
             nativeImage.setArchiveFormat(Archive.Format.ZIP);
         }
 
-        validateGlobs(context,
+        validateGlobs(
             nativeImage.getJars(),
             "nativeImage." + nativeImage.getName() + ".jars",
             errors);
 
-        validateGlobs(context,
+        validateGlobs(
             nativeImage.getFiles(),
             "nativeImage." + nativeImage.getName() + ".files",
             errors);
@@ -170,13 +170,11 @@ public abstract class NativeImageAssemblerValidator extends Validator {
         if (!nativeImage.getFileSets().isEmpty()) {
             i = 0;
             for (FileSet fileSet : nativeImage.getFileSets()) {
-                validateFileSet(context, mode, nativeImage, fileSet, i++, errors);
+                validateFileSet(mode, nativeImage, fileSet, i++, errors);
             }
         }
 
-        if (nativeImage.getComponents().contains("native-image")) {
-            nativeImage.getComponents().remove("native-image");
-        }
+        nativeImage.getComponents().remove("native-image");
 
         NativeImageAssembler.Upx upx = nativeImage.getUpx();
         if (!upx.isActiveSet()) {

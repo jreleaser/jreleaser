@@ -44,6 +44,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public final class TwitterAnnouncer extends AbstractAnnouncer<TwitterAnnouncer, org.jreleaser.model.api.announce.TwitterAnnouncer> {
+    private static final long serialVersionUID = -8841484657067120352L;
+
     private final List<String> statuses = new ArrayList<>();
     private String consumerKey;
     private String consumerSecret;
@@ -53,6 +55,8 @@ public final class TwitterAnnouncer extends AbstractAnnouncer<TwitterAnnouncer, 
     private String statusTemplate;
 
     private final org.jreleaser.model.api.announce.TwitterAnnouncer immutable = new org.jreleaser.model.api.announce.TwitterAnnouncer() {
+        private static final long serialVersionUID = -7092168952957318545L;
+
         @Override
         public String getType() {
             return org.jreleaser.model.api.announce.TwitterAnnouncer.TYPE;

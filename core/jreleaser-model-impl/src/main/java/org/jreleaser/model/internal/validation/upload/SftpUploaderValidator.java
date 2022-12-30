@@ -42,12 +42,12 @@ public abstract class SftpUploaderValidator extends Validator {
         for (Map.Entry<String, SftpUploader> e : sftp.entrySet()) {
             e.getValue().setName(e.getKey());
             if (mode.validateConfig()) {
-                validateSftpUploader(context, mode, e.getValue(), errors);
+                validateSftpUploader(context, e.getValue(), errors);
             }
         }
     }
 
-    private static void validateSftpUploader(JReleaserContext context, Mode mode, SftpUploader sftp, Errors errors) {
+    private static void validateSftpUploader(JReleaserContext context, SftpUploader sftp, Errors errors) {
         context.getLogger().debug("upload.sftp.{}", sftp.getName());
 
         if (!sftp.isActiveSet()) {

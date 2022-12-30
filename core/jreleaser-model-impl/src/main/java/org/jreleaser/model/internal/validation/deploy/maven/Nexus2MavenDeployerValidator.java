@@ -63,7 +63,7 @@ public abstract class Nexus2MavenDeployerValidator extends Validator {
             mavenDeployer.setTransitionMaxRetries(60);
         }
 
-        validateMavenDeployer(context, mode, mavenDeployer, errors);
+        validateMavenDeployer(context, mavenDeployer, errors);
         if (!mavenDeployer.isEnabled()) return;
 
         String baseEnvKey = mavenDeployer.getType().toUpperCase(Locale.ENGLISH);

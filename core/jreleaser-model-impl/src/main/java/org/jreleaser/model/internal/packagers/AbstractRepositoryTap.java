@@ -35,6 +35,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> extends AbstractModelObject<S> implements RepositoryTap {
+    private static final long serialVersionUID = 7482877906064145508L;
+
     protected Active active;
     @JsonIgnore
     protected boolean enabled;

@@ -23,7 +23,6 @@ import org.jreleaser.model.Constants;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.JavaAssembler;
 import org.jreleaser.model.internal.common.Glob;
-import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.spi.assemble.AssemblerProcessingException;
 import org.jreleaser.templates.TemplateResource;
 
@@ -78,10 +77,10 @@ abstract class AbstractJavaAssemblerProcessor<A extends org.jreleaser.model.api.
                     context.getLogger().debug(RB.$("packager.evaluate.template"), key, assembler.getName(), assembler.getType());
                     String content = applyTemplate(value.getReader(), newProps, key);
                     context.getLogger().debug(RB.$("packager.write.template"), key, assembler.getName(), assembler.getType());
-                    writeFile(context.getModel().getProject(), content, newProps, key);
+                    writeFile(content, newProps, key);
                 } else {
                     context.getLogger().debug(RB.$("packager.write.template"), key, assembler.getName(), assembler.getType());
-                    writeFile(context.getModel().getProject(), IOUtils.toByteArray(value.getInputStream()), newProps, key);
+                    writeFile(IOUtils.toByteArray(value.getInputStream()), newProps, key);
                 }
             }
 
@@ -118,9 +117,9 @@ abstract class AbstractJavaAssemblerProcessor<A extends org.jreleaser.model.api.
         return paths;
     }
 
-    protected abstract void writeFile(Project project, String content, Map<String, Object> props, String fileName) throws AssemblerProcessingException;
+    protected abstract void writeFile(String content, Map<String, Object> props, String fileName) throws AssemblerProcessingException;
 
-    protected void writeFile(Project project, byte[] content, Map<String, Object> props, String fileName) throws AssemblerProcessingException {
+    protected void writeFile(byte[] content, Map<String, Object> props, String fileName) throws AssemblerProcessingException {
         Path outputDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
         Path inputsDirectory = outputDirectory.resolve("inputs");
         try {

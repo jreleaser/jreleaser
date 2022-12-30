@@ -43,12 +43,12 @@ public abstract class ScpDownloaderValidator extends Validator {
         for (Map.Entry<String, ScpDownloader> e : scp.entrySet()) {
             e.getValue().setName(e.getKey());
             if (mode.validateConfig() || mode.validateDownload()) {
-                validateScpDownloader(context, mode, e.getValue(), errors);
+                validateScpDownloader(context, e.getValue(), errors);
             }
         }
     }
 
-    private static void validateScpDownloader(JReleaserContext context, Mode mode, ScpDownloader scp, Errors errors) {
+    private static void validateScpDownloader(JReleaserContext context, ScpDownloader scp, Errors errors) {
         context.getLogger().debug("download.scp.{}", scp.getName());
 
         if (!scp.isActiveSet()) {

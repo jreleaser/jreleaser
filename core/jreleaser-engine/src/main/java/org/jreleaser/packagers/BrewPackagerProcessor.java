@@ -21,7 +21,6 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.BrewPackager;
-import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.internal.release.BaseReleaser;
 import org.jreleaser.model.internal.util.Artifacts;
 import org.jreleaser.model.spi.packagers.PackagerProcessingException;
@@ -146,7 +145,7 @@ BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> 
     @Override
     protected void doPackageDistribution(Distribution distribution, Map<String, Object> props, Path packageDirectory) throws PackagerProcessingException {
         super.doPackageDistribution(distribution, props, packageDirectory);
-        copyPreparedFiles(distribution, props);
+        copyPreparedFiles(props);
     }
 
     @Override
@@ -197,7 +196,7 @@ BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> 
             if (!hasApp && !hasPkg) {
                 for (Artifact artifact : collectArtifacts(distribution)) {
                     if (artifact.getPath().endsWith(ZIP.extension())) {
-                        props.put(KEY_DISTRIBUTION_URL, resolveArtifactUrl(props, distribution, artifact));
+                        props.put(KEY_DISTRIBUTION_URL, resolveArtifactUrl(distribution, artifact));
                         props.put(KEY_BREW_CASK_HAS_BINARY, true);
                         break;
                     }
@@ -218,13 +217,13 @@ BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> 
                 }
 
                 String template = null;
-                String artifactUrl = resolveArtifactUrl(props, distribution, artifact);
+                String artifactUrl = resolveArtifactUrl(distribution, artifact);
                 String artifactFile = artifact.getEffectivePath().getFileName().toString();
                 String artifactFileName = getFilename(artifactFile, FileType.getSupportedExtensions());
 
                 if (PlatformUtils.isMac(artifact.getPlatform())) {
                     if (PlatformUtils.isArm(artifact.getPlatform())) {
-                        template = flatBinary ? TPL_LINUX_ARM_FLAT_BINARY : TPL_MAC_ARM;
+                        template = flatBinary ? TPL_MAC_ARM_FLAT_BINARY : TPL_MAC_ARM;
                         osxArmArtifact = artifact;
                     } else {
                         template = flatBinary ? TPL_MAC_INTEL_FLAT_BINARY : TPL_MAC_INTEL;
@@ -249,7 +248,7 @@ BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> 
 
             // On OSX, use intel binary for arm if there's no match
             if (osxIntelArtifact != null && osxArmArtifact == null) {
-                String artifactUrl = resolveArtifactUrl(props, distribution, osxIntelArtifact);
+                String artifactUrl = resolveArtifactUrl(distribution, osxIntelArtifact);
                 String artifactFile = osxIntelArtifact.getEffectivePath().getFileName().toString();
                 String artifactFileName = getFilename(artifactFile, FileType.getSupportedExtensions());
                 Map<String, Object> newProps = new LinkedHashMap<>(props);
@@ -276,13 +275,12 @@ BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> 
             .collect(Collectors.toList()));
     }
 
-    private String resolveArtifactUrl(Map<String, Object> props, Distribution distribution, Artifact artifact) {
+    private String resolveArtifactUrl(Distribution distribution, Artifact artifact) {
         return Artifacts.resolveDownloadUrl(context, org.jreleaser.model.api.packagers.BrewPackager.TYPE, distribution, artifact);
     }
 
     @Override
-    protected void writeFile(Project project,
-                             Distribution distribution,
+    protected void writeFile(Distribution distribution,
                              String content,
                              Map<String, Object> props,
                              Path outputDirectory,

@@ -58,11 +58,15 @@ public final class Artifact extends AbstractModelObject<Artifact> implements Dom
     @JsonIgnore
     private boolean active;
     @JsonIgnore
-    private Path effectivePath;
+    private transient Path effectivePath;
     @JsonIgnore
-    private Path resolvedPath;
+    private transient Path resolvedPath;
+    @JsonIgnore
+    private transient Path resolvedTransform;
 
     private final org.jreleaser.model.api.common.Artifact immutable = new org.jreleaser.model.api.common.Artifact() {
+        private static final long serialVersionUID = 5096726011565071921L;
+
         @Override
         public boolean isActive() {
             return Artifact.this.isActive();
@@ -118,8 +122,6 @@ public final class Artifact extends AbstractModelObject<Artifact> implements Dom
             return unmodifiableMap(extraProperties);
         }
     };
-    @JsonIgnore
-    private Path resolvedTransform;
 
     public org.jreleaser.model.api.common.Artifact asImmutable() {
         return immutable;

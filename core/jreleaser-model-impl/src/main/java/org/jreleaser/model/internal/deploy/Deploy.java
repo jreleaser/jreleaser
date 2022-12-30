@@ -36,6 +36,8 @@ import static java.util.Collections.unmodifiableMap;
  * @since 1.3.0
  */
 public final class Deploy extends AbstractModelObject<Deploy> implements Domain, Activatable {
+    private static final long serialVersionUID = 2526076491166719954L;
+    
     private final Maven maven = new Maven();
 
     private Active active;
@@ -43,6 +45,8 @@ public final class Deploy extends AbstractModelObject<Deploy> implements Domain,
     private boolean enabled = true;
 
     private final org.jreleaser.model.api.deploy.Deploy immutable = new org.jreleaser.model.api.deploy.Deploy() {
+        private static final long serialVersionUID = 487506438939211307L;
+
         @Override
         public org.jreleaser.model.api.deploy.maven.Maven getMaven() {
             return maven.asImmutable();

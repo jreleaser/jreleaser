@@ -51,6 +51,6 @@ public abstract class FilesValidator extends Validator {
                 if (context.isPlatformSelected(artifact)) artifact.activate();
             });
 
-        validateGlobs(context, files.getGlobs(), "files.glob", errors);
+        validateGlobs(files.getGlobs(), "files.glob", errors);
     }
 }

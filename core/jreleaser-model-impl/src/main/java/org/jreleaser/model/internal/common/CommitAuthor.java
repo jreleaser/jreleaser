@@ -27,10 +27,14 @@ import static java.util.Collections.unmodifiableMap;
  * @since 0.1.0
  */
 public final class CommitAuthor extends AbstractModelObject<CommitAuthor> implements Domain {
+    private static final long serialVersionUID = 8282090922077012974L;
+
     private String email;
     private String name;
 
     private final org.jreleaser.model.api.common.CommitAuthor immutable = new org.jreleaser.model.api.common.CommitAuthor() {
+        private static final long serialVersionUID = -4344080671093237233L;
+
         @Override
         public String getName() {
             return name;

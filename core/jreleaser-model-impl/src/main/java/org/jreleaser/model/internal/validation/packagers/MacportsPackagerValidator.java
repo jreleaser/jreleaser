@@ -127,6 +127,6 @@ public abstract class MacportsPackagerValidator extends Validator {
             }
         }
 
-        validateArtifactPlatforms(context, distribution, packager, candidateArtifacts, errors);
+        validateArtifactPlatforms(distribution, packager, candidateArtifacts, errors);
     }
 }

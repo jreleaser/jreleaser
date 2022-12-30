@@ -22,7 +22,6 @@ import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.common.Activatable;
 import org.jreleaser.model.internal.common.ExtraProperties;
-import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.project.Project;
 
 import java.util.ArrayList;
@@ -42,6 +41,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfiguration<S>> extends AbstractModelObject<S>
     implements DockerConfiguration, ExtraProperties, Activatable {
+    private static final long serialVersionUID = 7661138924685710150L;
+
     protected final Map<String, Object> extraProperties = new LinkedHashMap<>();
     protected final Map<String, String> labels = new LinkedHashMap<>();
     protected final Set<String> imageNames = new LinkedHashSet<>();
@@ -94,14 +95,6 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
     }
 
     public boolean resolveEnabled(Project project) {
-        if (null == active) {
-            active = Active.NEVER;
-        }
-        enabled = active.check(project);
-        return enabled;
-    }
-
-    public boolean resolveEnabled(Project project, Distribution distribution) {
         if (null == active) {
             active = Active.NEVER;
         }

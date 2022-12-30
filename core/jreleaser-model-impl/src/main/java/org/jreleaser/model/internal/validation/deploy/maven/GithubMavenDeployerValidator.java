@@ -52,7 +52,7 @@ public abstract class GithubMavenDeployerValidator extends Validator {
             mavenDeployer.setUrl("https://maven.pkg.github.com/{{owner}}/{{repository}}");
         }
 
-        validateMavenDeployer(context, mode, mavenDeployer, errors);
+        validateMavenDeployer(context, mavenDeployer, errors);
         if (!mavenDeployer.isEnabled()) return;
 
         String baseEnvKey = mavenDeployer.getType().toUpperCase(Locale.ENGLISH);

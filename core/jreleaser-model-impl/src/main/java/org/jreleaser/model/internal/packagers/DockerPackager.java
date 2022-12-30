@@ -65,6 +65,7 @@ import static org.jreleaser.util.StringUtils.isFalse;
  */
 public final class DockerPackager extends AbstractDockerConfiguration<DockerPackager> implements RepositoryPackager<org.jreleaser.model.api.packagers.DockerPackager>, CommitAuthorAware {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
+    private static final long serialVersionUID = -6156759704738854921L;
 
     static {
         Set<String> extensions = setOf(ZIP.extension());
@@ -83,6 +84,8 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
     private String downloadUrl;
 
     private final org.jreleaser.model.api.packagers.DockerPackager immutable = new org.jreleaser.model.api.packagers.DockerPackager() {
+        private static final long serialVersionUID = -8249625838795141546L;
+
         private Set<? extends org.jreleaser.model.api.packagers.DockerConfiguration.Registry> registries;
         private Map<String, ? extends org.jreleaser.model.api.packagers.DockerSpec> specs;
 
@@ -421,9 +424,13 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
     }
 
     public static final class DockerRepository extends AbstractRepositoryTap<DockerRepository> implements Domain {
+        private static final long serialVersionUID = -3428854203388975153L;
+
         private Boolean versionedSubfolders;
 
         private final org.jreleaser.model.api.packagers.DockerPackager.DockerRepository immutable = new org.jreleaser.model.api.packagers.DockerPackager.DockerRepository() {
+            private static final long serialVersionUID = -8039494200339437225L;
+
             @Override
             public boolean isVersionedSubfolders() {
                 return DockerRepository.this.isVersionedSubfolders();

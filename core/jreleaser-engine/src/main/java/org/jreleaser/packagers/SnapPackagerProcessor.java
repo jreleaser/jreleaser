@@ -21,7 +21,6 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.SnapPackager;
-import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.internal.release.BaseReleaser;
 import org.jreleaser.model.spi.packagers.PackagerProcessingException;
 import org.jreleaser.mustache.MustacheUtils;
@@ -66,7 +65,7 @@ public class SnapPackagerProcessor extends AbstractRepositoryPackagerProcessor<S
     @Override
     protected void doPackageDistribution(Distribution distribution, Map<String, Object> props, Path packageDirectory) throws PackagerProcessingException {
         super.doPackageDistribution(distribution, props, packageDirectory);
-        copyPreparedFiles(distribution, props);
+        copyPreparedFiles(props);
 
         if (packager.isRemoteBuild()) {
             return;
@@ -77,7 +76,7 @@ public class SnapPackagerProcessor extends AbstractRepositoryPackagerProcessor<S
             return;
         }
 
-        createSnap(distribution, props);
+        createSnap(props);
     }
 
     @Override
@@ -97,8 +96,8 @@ public class SnapPackagerProcessor extends AbstractRepositoryPackagerProcessor<S
             return;
         }
 
-        login(distribution, props);
-        push(distribution, props);
+        login(distribution);
+        push(props);
     }
 
     @Override
@@ -134,13 +133,11 @@ public class SnapPackagerProcessor extends AbstractRepositoryPackagerProcessor<S
     }
 
     @Override
-    protected void writeFile(Project project,
-                             Distribution distribution,
+    protected void writeFile(Distribution distribution,
                              String content,
                              Map<String, Object> props,
                              Path outputDirectory,
-                             String fileName)
-        throws PackagerProcessingException {
+                             String fileName) throws PackagerProcessingException {
         fileName = trimTplExtension(fileName);
 
         Path outputFile = outputDirectory.resolve(fileName);
@@ -148,7 +145,7 @@ public class SnapPackagerProcessor extends AbstractRepositoryPackagerProcessor<S
         writeFile(content, outputFile);
     }
 
-    private void login(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
+    private void login(Distribution distribution) throws PackagerProcessingException {
         Command cmd = new Command("snapcraft")
             .arg("login")
             .arg("--with")
@@ -156,7 +153,7 @@ public class SnapPackagerProcessor extends AbstractRepositoryPackagerProcessor<S
         executeCommand(cmd);
     }
 
-    private void push(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
+    private void push(Map<String, Object> props) throws PackagerProcessingException {
         Path packageDirectory = (Path) props.get(KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
         String version = (String) props.get(KEY_PROJECT_EFFECTIVE_VERSION);
         String snapName = packager.getPackageName() + "-" + version + ".snap";
@@ -167,7 +164,7 @@ public class SnapPackagerProcessor extends AbstractRepositoryPackagerProcessor<S
         executeCommand(packageDirectory, cmd);
     }
 
-    private void createSnap(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
+    private void createSnap(Map<String, Object> props) throws PackagerProcessingException {
         Path packageDirectory = (Path) props.get(KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
         String version = (String) props.get(KEY_PROJECT_EFFECTIVE_VERSION);
         String snapName = packager.getPackageName() + "-" + version + ".snap";

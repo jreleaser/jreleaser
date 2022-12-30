@@ -37,6 +37,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public final class GitlabUploader extends AbstractUploader<org.jreleaser.model.api.upload.GitlabUploader, GitlabUploader> {
     private static final String DOWNLOAD_URL = "https://{{host}}/api/v4/projects/{{projectIdentifier}}/packages/generic/{{packageName}}/{{packageVersion}}/{{artifactFile}}";
+    private static final long serialVersionUID = 4471788124636163088L;
 
     private String host;
     private String token;
@@ -45,6 +46,8 @@ public final class GitlabUploader extends AbstractUploader<org.jreleaser.model.a
     private String projectIdentifier;
 
     private final org.jreleaser.model.api.upload.GitlabUploader immutable = new org.jreleaser.model.api.upload.GitlabUploader() {
+        private static final long serialVersionUID = 7721607213181794594L;
+
         @Override
         public String getHost() {
             return host;

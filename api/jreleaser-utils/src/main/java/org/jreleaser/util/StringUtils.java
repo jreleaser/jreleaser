@@ -405,7 +405,7 @@ public class StringUtils {
             return name;
         }
 
-        List<String> words = new ArrayList<String>();
+        List<String> words = new ArrayList<>();
         int i = 0;
         char[] chars = name.toCharArray();
         for (char c : chars) {

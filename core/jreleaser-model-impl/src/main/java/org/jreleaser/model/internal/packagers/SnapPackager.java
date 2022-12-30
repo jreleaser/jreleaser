@@ -66,6 +66,7 @@ import static org.jreleaser.util.StringUtils.isFalse;
  */
 public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser.model.api.packagers.SnapPackager, SnapPackager> {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
+    private static final long serialVersionUID = -1449485744755116084L;
 
     static {
         Set<String> extensions = setOf(
@@ -100,6 +101,8 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
     private Boolean remoteBuild;
 
     private final org.jreleaser.model.api.packagers.SnapPackager immutable = new org.jreleaser.model.api.packagers.SnapPackager() {
+        private static final long serialVersionUID = -8321640926545215502L;
+
         private List<? extends org.jreleaser.model.api.packagers.SnapPackager.Architecture> architectures;
         private List<? extends org.jreleaser.model.api.packagers.SnapPackager.Slot> slots;
         private List<? extends org.jreleaser.model.api.packagers.SnapPackager.Plug> plugs;
@@ -478,12 +481,16 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
     }
 
     public static final class Slot extends AbstractModelObject<Slot> implements Domain {
+        private static final long serialVersionUID = 8422045649925759163L;
+
         private final Map<String, String> attributes = new LinkedHashMap<>();
         private final List<String> reads = new ArrayList<>();
         private final List<String> writes = new ArrayList<>();
         private String name;
 
         private final org.jreleaser.model.api.packagers.SnapPackager.Slot immutable = new org.jreleaser.model.api.packagers.SnapPackager.Slot() {
+            private static final long serialVersionUID = -3518924698578544847L;
+
             @Override
             public String getName() {
                 return name;
@@ -591,12 +598,16 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
     }
 
     public static final class Plug extends AbstractModelObject<Plug> implements Domain {
+        private static final long serialVersionUID = -2210365052943258689L;
+
         private final Map<String, String> attributes = new LinkedHashMap<>();
         private final List<String> reads = new ArrayList<>();
         private final List<String> writes = new ArrayList<>();
         private String name;
 
         private final org.jreleaser.model.api.packagers.SnapPackager.Plug immutable = new org.jreleaser.model.api.packagers.SnapPackager.Plug() {
+            private static final long serialVersionUID = -5689359361910963388L;
+
             @Override
             public String getName() {
                 return name;
@@ -704,17 +715,23 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
     }
 
     public static final class SnapRepository extends PackagerRepository {
+        private static final long serialVersionUID = 4117738159449060256L;
+
         public SnapRepository() {
             super("snap", "snap");
         }
     }
 
     public static final class Architecture extends AbstractModelObject<Architecture> implements Domain {
+        private static final long serialVersionUID = 1878739013053454056L;
+
         private final List<String> buildOn = new ArrayList<>();
         private final List<String> runOn = new ArrayList<>();
         private Boolean ignoreError;
 
         private final org.jreleaser.model.api.packagers.SnapPackager.Architecture immutable = new org.jreleaser.model.api.packagers.SnapPackager.Architecture() {
+            private static final long serialVersionUID = 7707062117835809382L;
+
             @Override
             public List<String> getBuildOn() {
                 return unmodifiableList(buildOn);

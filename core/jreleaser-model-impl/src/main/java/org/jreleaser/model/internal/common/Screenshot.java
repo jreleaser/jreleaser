@@ -29,6 +29,8 @@ import static java.util.Collections.unmodifiableMap;
  * @since 1.2.0
  */
 public final class Screenshot extends AbstractModelObject<Screenshot> implements Domain, ExtraProperties {
+    private static final long serialVersionUID = 7278270297286736205L;
+    
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
 
     private org.jreleaser.model.Screenshot.Type type = org.jreleaser.model.Screenshot.Type.SOURCE;
@@ -39,6 +41,8 @@ public final class Screenshot extends AbstractModelObject<Screenshot> implements
     private Integer height;
 
     private final org.jreleaser.model.api.common.Screenshot immutable = new org.jreleaser.model.api.common.Screenshot() {
+        private static final long serialVersionUID = 3229726441750227017L;
+
         @Override
         public org.jreleaser.model.Screenshot.Type getType() {
             return type;

@@ -42,6 +42,8 @@ import static java.util.stream.Collectors.toMap;
  * @since 1.3.0
  */
 public final class Maven extends AbstractModelObject<Maven> implements Domain, Activatable {
+    private static final long serialVersionUID = 5134111041215252245L;
+
     private final Map<String, ArtifactoryMavenDeployer> artifactory = new LinkedHashMap<>();
     private final Map<String, GiteaMavenDeployer> gitea = new LinkedHashMap<>();
     private final Map<String, GithubMavenDeployer> github = new LinkedHashMap<>();
@@ -53,6 +55,8 @@ public final class Maven extends AbstractModelObject<Maven> implements Domain, A
     private boolean enabled = true;
 
     private final org.jreleaser.model.api.deploy.maven.Maven immutable = new org.jreleaser.model.api.deploy.maven.Maven() {
+        private static final long serialVersionUID = -4093252379809403524L;
+
         private Map<String, ? extends org.jreleaser.model.api.deploy.maven.ArtifactoryMavenDeployer> artifactory;
         private Map<String, ? extends org.jreleaser.model.api.deploy.maven.GiteaMavenDeployer> gitea;
         private Map<String, ? extends org.jreleaser.model.api.deploy.maven.GithubMavenDeployer> github;

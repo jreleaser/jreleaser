@@ -29,7 +29,11 @@ import static org.jreleaser.model.api.upload.SftpUploader.TYPE;
  * @since 1.1.0
  */
 public final class SftpUploader extends AbstractSshUploader<org.jreleaser.model.api.upload.SftpUploader, SftpUploader> {
+    private static final long serialVersionUID = -1747846855467388566L;
+
     private final org.jreleaser.model.api.upload.SftpUploader immutable = new org.jreleaser.model.api.upload.SftpUploader() {
+        private static final long serialVersionUID = -7331208873409466189L;
+
         @Override
         public String getPath() {
             return path;

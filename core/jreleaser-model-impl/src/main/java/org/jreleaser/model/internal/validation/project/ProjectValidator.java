@@ -122,8 +122,8 @@ public abstract class ProjectValidator extends Validator {
             validateJava(context, project, errors);
         }
 
-        validateScreenshots(context, mode, project.getScreenshots(), errors, "project");
-        validateIcons(context, mode, project.getIcons(), errors, "project");
+        validateScreenshots(project.getScreenshots(), errors, "project");
+        validateIcons(project.getIcons(), errors, "project");
     }
 
     public static void postValidateProject(JReleaserContext context, Mode mode, Errors errors) {

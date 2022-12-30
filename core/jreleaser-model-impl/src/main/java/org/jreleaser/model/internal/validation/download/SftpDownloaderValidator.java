@@ -43,12 +43,12 @@ public abstract class SftpDownloaderValidator extends Validator {
         for (Map.Entry<String, SftpDownloader> e : sftp.entrySet()) {
             e.getValue().setName(e.getKey());
             if (mode.validateConfig() || mode.validateDownload()) {
-                validateSftpDownloader(context, mode, e.getValue(), errors);
+                validateSftpDownloader(context, e.getValue(), errors);
             }
         }
     }
 
-    private static void validateSftpDownloader(JReleaserContext context, Mode mode, SftpDownloader sftp, Errors errors) {
+    private static void validateSftpDownloader(JReleaserContext context, SftpDownloader sftp, Errors errors) {
         context.getLogger().debug("download.sftp.{}", sftp.getName());
 
         if (!sftp.isActiveSet()) {

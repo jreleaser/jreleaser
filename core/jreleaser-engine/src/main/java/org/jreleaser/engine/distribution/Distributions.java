@@ -126,7 +126,7 @@ public class Distributions {
     }
 
     private static void processPackager(JReleaserContext context, Distribution distribution, String packagerName, DistributionProcessor.PackagingAction action) {
-        Packager<?> packager = distribution.getPackager(packagerName);
+        Packager<?> packager = distribution.findPackager(packagerName);
 
         try {
             context.getLogger().increaseIndent();

@@ -76,6 +76,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public final class Distribution extends Packagers<Distribution> implements Domain, Activatable, ExtraProperties {
+    private static final long serialVersionUID = -2280223853953568007L;
+
     private final List<String> tags = new ArrayList<>();
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private final Set<Artifact> artifacts = new LinkedHashSet<>();
@@ -91,6 +93,8 @@ public final class Distribution extends Packagers<Distribution> implements Domai
     private Stereotype stereotype;
 
     private final org.jreleaser.model.api.distributions.Distribution immutable = new org.jreleaser.model.api.distributions.Distribution() {
+        private static final long serialVersionUID = -5130197186070603201L;
+
         private Set<? extends org.jreleaser.model.api.common.Artifact> artifacts;
 
         @Override
@@ -461,14 +465,6 @@ public final class Distribution extends Packagers<Distribution> implements Domai
         }
 
         return resolvePackager(name);
-    }
-
-    public <T extends Packager<?>> T getPackager(String name) {
-        T packager = findPackager(name);
-        if (null != packager) {
-            return packager;
-        }
-        throw new JReleaserException(RB.$("ERROR_packager_not_configured", name));
     }
 
     private <T extends Packager<?>> T resolvePackager(String name) {

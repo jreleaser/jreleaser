@@ -30,11 +30,15 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public class Executable extends AbstractModelObject<Executable> implements Domain {
+    private static final long serialVersionUID = -2611682172967876842L;
+
     private String name;
     private String unixExtension;
     private String windowsExtension = "bat";
 
     private final org.jreleaser.model.api.common.Executable immutable = new org.jreleaser.model.api.common.Executable() {
+        private static final long serialVersionUID = 5589040357178439205L;
+
         @Override
         public String getName() {
             return name;

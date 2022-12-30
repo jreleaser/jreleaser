@@ -321,6 +321,6 @@ public final class PlatformUtils {
     }
 
     public static String getDetectedVersion() {
-        return OS_DETECTOR.get(OsDetector.DETECTED_VERSION);
+        return OS_DETECTOR.get(Detector.DETECTED_VERSION);
     }
 }

@@ -438,7 +438,9 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
             if (!artifactPath.getFileName().toString().endsWith("." + PACKAGING_POM)) return PACKAGING_JAR;
 
             try {
-                Document document = DocumentBuilderFactory.newInstance()
+                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+                Document document = factory
                     .newDocumentBuilder()
                     .parse(artifactPath.toFile());
                 String query = "/project/packaging";

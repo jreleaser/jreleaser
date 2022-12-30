@@ -23,7 +23,6 @@ import org.jreleaser.model.Constants;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.JlinkAssembler;
 import org.jreleaser.model.internal.common.Artifact;
-import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.spi.assemble.AssemblerProcessingException;
 import org.jreleaser.sdk.command.Command;
 import org.jreleaser.util.FileUtils;
@@ -339,7 +338,7 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<org.
     }
 
     @Override
-    protected void writeFile(Project project, String content, Map<String, Object> props, String fileName)
+    protected void writeFile(String content, Map<String, Object> props, String fileName)
         throws AssemblerProcessingException {
         fileName = trimTplExtension(fileName);
 

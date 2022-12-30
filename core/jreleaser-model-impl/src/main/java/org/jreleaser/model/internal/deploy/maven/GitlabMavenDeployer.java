@@ -32,9 +32,13 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
  * @since 1.3.0
  */
 public final class GitlabMavenDeployer extends AbstractMavenDeployer<GitlabMavenDeployer, org.jreleaser.model.api.deploy.maven.GitlabMavenDeployer> {
+    private static final long serialVersionUID = -8939160558633337196L;
+    
     private String projectIdentifier;
 
     private final org.jreleaser.model.api.deploy.maven.GitlabMavenDeployer immutable = new org.jreleaser.model.api.deploy.maven.GitlabMavenDeployer() {
+        private static final long serialVersionUID = -7592311646357396039L;
+
         @Override
         public String getGroup() {
             return org.jreleaser.model.api.deploy.maven.MavenDeployer.GROUP;

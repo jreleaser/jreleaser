@@ -60,6 +60,7 @@ import static org.jreleaser.util.StringUtils.isFalse;
  */
 public final class FlatpakPackager extends AbstractRepositoryPackager<org.jreleaser.model.api.packagers.FlatpakPackager, FlatpakPackager> {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
+    private static final long serialVersionUID = -4671519237661633232L;
 
     static {
         Set<String> extensions = setOf(
@@ -89,6 +90,8 @@ public final class FlatpakPackager extends AbstractRepositoryPackager<org.jrelea
     private String runtimeVersion;
 
     private final org.jreleaser.model.api.packagers.FlatpakPackager immutable = new org.jreleaser.model.api.packagers.FlatpakPackager() {
+        private static final long serialVersionUID = -7925187932243488062L;
+
         private List<? extends org.jreleaser.model.api.common.Screenshot> screenshots;
         private List<? extends org.jreleaser.model.api.common.Icon> icons;
 
@@ -440,6 +443,8 @@ public final class FlatpakPackager extends AbstractRepositoryPackager<org.jrelea
     }
 
     public static final class FlatpakRepository extends PackagerRepository {
+        private static final long serialVersionUID = 6821986475211460731L;
+
         public FlatpakRepository() {
             super("flatpak", "flatpak");
         }

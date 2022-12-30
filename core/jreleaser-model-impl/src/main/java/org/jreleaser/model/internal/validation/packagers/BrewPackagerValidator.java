@@ -117,7 +117,7 @@ public abstract class BrewPackagerValidator extends Validator {
         }
 
         if (!cask.isEnabled()) {
-            validateArtifactPlatforms(context, distribution, packager, candidateArtifacts, errors);
+            validateArtifactPlatforms(distribution, packager, candidateArtifacts, errors);
         }
     }
 

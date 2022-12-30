@@ -31,9 +31,13 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.10.0
  */
 public final class Platform extends AbstractModelObject<Platform> implements Domain {
+    private static final long serialVersionUID = -5939953296773672903L;
+
     private final Map<String, String> replacements = new LinkedHashMap<>();
 
     private final org.jreleaser.model.api.platform.Platform immutable = new org.jreleaser.model.api.platform.Platform() {
+        private static final long serialVersionUID = 7959953437571066163L;
+
         @Override
         public Map<String, String> getReplacements() {
             return unmodifiableMap(replacements);

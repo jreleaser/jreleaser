@@ -39,6 +39,8 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
  * @since 0.1.0
  */
 public final class DiscussionsAnnouncer extends AbstractAnnouncer<DiscussionsAnnouncer, org.jreleaser.model.api.announce.DiscussionsAnnouncer> {
+    private static final long serialVersionUID = 4154059408306645873L;
+
     private String organization;
     private String team;
     private String title;
@@ -46,6 +48,8 @@ public final class DiscussionsAnnouncer extends AbstractAnnouncer<DiscussionsAnn
     private String messageTemplate;
 
     private final org.jreleaser.model.api.announce.DiscussionsAnnouncer immutable = new org.jreleaser.model.api.announce.DiscussionsAnnouncer() {
+        private static final long serialVersionUID = -3455087550754390394L;
+
         @Override
         public String getType() {
             return org.jreleaser.model.api.announce.DiscussionsAnnouncer.TYPE;

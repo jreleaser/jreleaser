@@ -29,7 +29,11 @@ import static org.jreleaser.model.api.upload.ScpUploader.TYPE;
  * @since 1.1.0
  */
 public final class ScpUploader extends AbstractSshUploader<org.jreleaser.model.api.upload.ScpUploader, ScpUploader> {
+    private static final long serialVersionUID = -6887462905710198298L;
+
     private final org.jreleaser.model.api.upload.ScpUploader immutable = new org.jreleaser.model.api.upload.ScpUploader() {
+        private static final long serialVersionUID = -8857037637920388079L;
+
         @Override
         public String getPath() {
             return path;

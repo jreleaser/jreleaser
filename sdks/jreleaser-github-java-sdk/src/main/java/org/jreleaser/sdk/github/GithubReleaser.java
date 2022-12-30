@@ -278,7 +278,7 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
                 github.getConnectTimeout(),
                 github.getReadTimeout())
                 .findUser(email, name);
-        } catch (RestAPIException | IOException e) {
+        } catch (RestAPIException e) {
             context.getLogger().trace(e);
             context.getLogger().debug(RB.$("git.releaser.user.not.found"), email);
         }
@@ -522,7 +522,7 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
                 tagName,
                 release.getId(),
                 ghRelease);
-        } catch (RestAPIException | IOException e) {
+        } catch (RestAPIException e) {
             context.getLogger().trace(e);
             context.getLogger().warn(RB.$("git.releaser.link.discussion.error"),
                 tagName, discussionCategoryName);

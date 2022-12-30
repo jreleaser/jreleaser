@@ -42,6 +42,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public final class SlackAnnouncer extends AbstractAnnouncer<SlackAnnouncer, org.jreleaser.model.api.announce.SlackAnnouncer> {
+    private static final long serialVersionUID = 1381380804088705522L;
+
     private String token;
     private String webhook;
     private String channel;
@@ -49,6 +51,8 @@ public final class SlackAnnouncer extends AbstractAnnouncer<SlackAnnouncer, org.
     private String messageTemplate;
 
     private final org.jreleaser.model.api.announce.SlackAnnouncer immutable = new org.jreleaser.model.api.announce.SlackAnnouncer() {
+        private static final long serialVersionUID = -6078751771948977999L;
+
         @Override
         public String getType() {
             return org.jreleaser.model.api.announce.SlackAnnouncer.TYPE;

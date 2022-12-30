@@ -69,7 +69,7 @@ public abstract class Keyring {
 
     protected abstract InputStream getSecretKeyRingStream() throws IOException;
 
-    public void addPublicKey(boolean armored, InputStream raw) throws IOException, PGPException {
+    public void addPublicKey(boolean armored, InputStream raw) throws IOException {
         if (!armored) {
             addPublicKeyRing(new PGPPublicKeyRing(raw, keyFingerPrintCalculator));
             return;

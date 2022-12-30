@@ -66,6 +66,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser.model.api.packagers.BrewPackager, BrewPackager> {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
+    private static final long serialVersionUID = 6672298465123577661L;
 
     static {
         Set<String> extensions = setOf(ZIP.extension());
@@ -87,6 +88,8 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
     private Boolean multiPlatform;
 
     private final org.jreleaser.model.api.packagers.BrewPackager immutable = new org.jreleaser.model.api.packagers.BrewPackager() {
+        private static final long serialVersionUID = -7968635280218751108L;
+
         @Override
         public String getFormulaName() {
             return formulaName;
@@ -432,12 +435,16 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
     }
 
     public static final class HomebrewTap extends PackagerRepository {
+        private static final long serialVersionUID = -2283978797852378530L;
+
         public HomebrewTap() {
             super("homebrew", "homebrew-tap");
         }
     }
 
     public static final class Cask extends AbstractModelObject<Cask> implements Domain {
+        private static final long serialVersionUID = 7405724862627754232L;
+
         private final List<CaskItem> uninstall = new ArrayList<>();
         private final List<CaskItem> zap = new ArrayList<>();
         private Boolean enabled;
@@ -448,6 +455,8 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
         private String appcast;
 
         private final org.jreleaser.model.api.packagers.BrewPackager.Cask immutable = new org.jreleaser.model.api.packagers.BrewPackager.Cask() {
+            private static final long serialVersionUID = 5862868849533321019L;
+
             private List<? extends org.jreleaser.model.api.packagers.BrewPackager.CaskItem> uninstall;
             private List<? extends org.jreleaser.model.api.packagers.BrewPackager.CaskItem> zap;
 
@@ -742,10 +751,14 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
     }
 
     public static final class CaskItem extends AbstractModelObject<CaskItem> implements Domain {
+        private static final long serialVersionUID = -2577845359978097441L;
+
         private final List<String> items = new ArrayList<>();
         private String name;
 
         private final org.jreleaser.model.api.packagers.BrewPackager.CaskItem immutable = new org.jreleaser.model.api.packagers.BrewPackager.CaskItem() {
+            private static final long serialVersionUID = -8230159341038906539L;
+
             @Override
             public String getName() {
                 return name;

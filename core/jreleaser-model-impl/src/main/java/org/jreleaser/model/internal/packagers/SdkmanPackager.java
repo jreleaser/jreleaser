@@ -50,6 +50,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public final class SdkmanPackager extends AbstractPackager<org.jreleaser.model.api.packagers.SdkmanPackager, SdkmanPackager> implements TimeoutAware {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
+    private static final long serialVersionUID = 1868781313369481612L;
 
     static {
         Set<String> extensions = setOf(ZIP.extension());
@@ -69,6 +70,8 @@ public final class SdkmanPackager extends AbstractPackager<org.jreleaser.model.a
     private boolean published;
 
     private final org.jreleaser.model.api.packagers.SdkmanPackager immutable = new org.jreleaser.model.api.packagers.SdkmanPackager() {
+        private static final long serialVersionUID = 3123151880557373320L;
+
         @Override
         public String getCandidate() {
             return candidate;

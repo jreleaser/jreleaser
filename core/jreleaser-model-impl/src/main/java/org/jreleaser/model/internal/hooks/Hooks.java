@@ -35,6 +35,8 @@ import static java.util.Collections.unmodifiableMap;
  * @since 1.2.0
  */
 public final class Hooks extends AbstractModelObject<Hooks> implements Domain, Activatable {
+    private static final long serialVersionUID = -882153513127002918L;
+
     private final CommandHooks command = new CommandHooks();
 
     private Active active;
@@ -42,6 +44,8 @@ public final class Hooks extends AbstractModelObject<Hooks> implements Domain, A
     private boolean enabled = true;
 
     private final org.jreleaser.model.api.hooks.Hooks immutable = new org.jreleaser.model.api.hooks.Hooks() {
+        private static final long serialVersionUID = -960078052893791966L;
+
         @Override
         public org.jreleaser.model.api.hooks.CommandHooks getCommand() {
             return command.asImmutable();

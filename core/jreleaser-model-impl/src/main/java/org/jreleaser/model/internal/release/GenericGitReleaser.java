@@ -28,7 +28,11 @@ import static java.util.Collections.unmodifiableMap;
  * @since 0.4.0
  */
 public final class GenericGitReleaser extends BaseReleaser<org.jreleaser.model.api.release.GenericGitReleaser, GenericGitReleaser> {
+    private static final long serialVersionUID = -2400306764813478894L;
+
     private final org.jreleaser.model.api.release.GenericGitReleaser immutable = new org.jreleaser.model.api.release.GenericGitReleaser() {
+        private static final long serialVersionUID = 6940631975402037540L;
+
         @Override
         public boolean isPrerelease() {
             return GenericGitReleaser.this.isPrerelease();

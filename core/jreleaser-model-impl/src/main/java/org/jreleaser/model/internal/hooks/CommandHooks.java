@@ -38,6 +38,8 @@ import static java.util.stream.Collectors.toList;
  * @since 1.2.0
  */
 public final class CommandHooks extends AbstractModelObject<CommandHooks> implements Domain, Activatable {
+    private static final long serialVersionUID = 2902577556347608164L;
+
     private final List<CommandHook> before = new ArrayList<>();
     private final List<CommandHook> success = new ArrayList<>();
     private final List<CommandHook> failure = new ArrayList<>();
@@ -47,6 +49,8 @@ public final class CommandHooks extends AbstractModelObject<CommandHooks> implem
     private boolean enabled = true;
 
     private final org.jreleaser.model.api.hooks.CommandHooks immutable = new org.jreleaser.model.api.hooks.CommandHooks() {
+        private static final long serialVersionUID = 5109938718153117453L;
+
         private List<? extends org.jreleaser.model.api.hooks.CommandHook> before;
         private List<? extends org.jreleaser.model.api.hooks.CommandHook> success;
         private List<? extends org.jreleaser.model.api.hooks.CommandHook> failure;

@@ -67,6 +67,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public final class Project extends AbstractModelObject<Project> implements Domain, ExtraProperties, Active.Releaseable {
+    private static final long serialVersionUID = -4652723515081514165L;
+
     private final List<String> authors = new ArrayList<>();
     private final List<String> tags = new ArrayList<>();
     private final List<String> maintainers = new ArrayList<>();
@@ -88,6 +90,8 @@ public final class Project extends AbstractModelObject<Project> implements Domai
     private Stereotype stereotype = Stereotype.NONE;
 
     private final org.jreleaser.model.api.project.Project immutable = new org.jreleaser.model.api.project.Project() {
+        private static final long serialVersionUID = 4384858957895818432L;
+
         private List<? extends org.jreleaser.model.api.common.Screenshot> screenshots;
         private List<? extends org.jreleaser.model.api.common.Icon> icons;
 
@@ -705,11 +709,17 @@ public final class Project extends AbstractModelObject<Project> implements Domai
     }
 
     public static class Snapshot extends AbstractModelObject<Snapshot> implements Domain {
+        private static final long serialVersionUID = -4157019875957411109L;
+
         private Boolean enabled;
         private String pattern;
         private String label;
         private Boolean fullChangelog;
+        private String cachedLabel;
+
         private final org.jreleaser.model.api.project.Project.Snapshot immutable = new org.jreleaser.model.api.project.Project.Snapshot() {
+            private static final long serialVersionUID = 2581314557970795502L;
+
             @Override
             public String getPattern() {
                 return pattern;
@@ -730,7 +740,6 @@ public final class Project extends AbstractModelObject<Project> implements Domai
                 return unmodifiableMap(Snapshot.this.asMap(full));
             }
         };
-        private String cachedLabel;
 
         public org.jreleaser.model.api.project.Project.Snapshot asImmutable() {
             return immutable;
@@ -895,6 +904,7 @@ public final class Project extends AbstractModelObject<Project> implements Domai
 
     public static class Links extends AbstractModelObject<Links> implements Domain {
         private static final String PROJECT_LINK = "projectLink";
+        private static final long serialVersionUID = 1574571238759859477L;
 
         private String homepage;
         private String documentation;
@@ -909,6 +919,8 @@ public final class Project extends AbstractModelObject<Project> implements Domai
         private String contribute;
 
         private final org.jreleaser.model.api.project.Project.Links immutable = new org.jreleaser.model.api.project.Project.Links() {
+            private static final long serialVersionUID = 3891594676066031996L;
+
             @Override
             public String getHomepage() {
                 return homepage;
