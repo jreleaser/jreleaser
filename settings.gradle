@@ -30,6 +30,7 @@ buildscript {
         classpath "org.kordamp.gradle:jacoco-gradle-plugin:$kordampPluginVersion"
         classpath "org.kordamp.gradle:spotbugs-gradle-plugin:$kordampPluginVersion"
         classpath "org.kordamp.gradle:errorprone-gradle-plugin:$kordampPluginVersion"
+        classpath "org.kordamp.gradle:sonar-gradle-plugin:$kordampPluginVersion"
         classpath "org.kordamp.gradle:kordamp-parentbuild:$kordampBuildVersion"
         classpath "org.jreleaser:jdks-gradle-plugin:$jdksPluginVersion"
         classpath 'de.undercouch:gradle-download-task:4.1.1'
@@ -60,6 +61,7 @@ projects {
             id 'org.kordamp.gradle.coveralls'
             id 'org.kordamp.gradle.spotbugs'
             id 'org.kordamp.gradle.errorprone'
+            id 'org.kordamp.gradle.sonar'
             id 'info.solidsoft.pitest.aggregator'
         }
         dirs(['infra', 'api', 'core', 'sdks', 'plugins']) {

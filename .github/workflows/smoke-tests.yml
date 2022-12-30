@@ -43,6 +43,7 @@ jobs:
     needs: [ precheck ]
     if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
     name: 'CLI ${{ matrix.job.os }}'
+    continue-on-error: true
     strategy:
       fail-fast: false
       matrix:
@@ -226,6 +227,7 @@ jobs:
     needs: [ precheck ]
     if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
     name: 'Tool ${{ matrix.job.os }}'
+    continue-on-error: true
     strategy:
       fail-fast: false
       matrix:
@@ -409,6 +411,7 @@ jobs:
     needs: [ precheck ]
     if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
     name: 'Ant ${{ matrix.job.os }}'
+    continue-on-error: true
     strategy:
       fail-fast: false
       matrix:
@@ -590,6 +593,7 @@ jobs:
     needs: [ precheck ]
     if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
     name: 'Gradle ${{ matrix.job.os }}'
+    continue-on-error: true
     strategy:
       fail-fast: false
       matrix:
@@ -783,6 +787,7 @@ jobs:
     needs: [ precheck ]
     if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
     name: 'Maven ${{ matrix.job.os }}'
+    continue-on-error: true
     strategy:
       fail-fast: false
       matrix:
@@ -965,6 +970,7 @@ jobs:
     needs: [ precheck ]
     if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
     name: 'Unit Test ${{ matrix.os }}'
+    continue-on-error: true
     strategy:
       fail-fast: false
       matrix:
@@ -1018,10 +1024,15 @@ jobs:
     needs: [ build-cli, build-tool, build-ant, build-gradle, build-maven, unit-tests ]
     if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
     name: Coveralls
+    continue-on-error: true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Decrypt secrets
+        shell: bash
+        run: sh .github/scripts/decrypt-secrets.sh
 
       - name: Setup Java
         uses: actions/setup-java@v3
@@ -1073,10 +1084,15 @@ jobs:
     needs: [ build-cli, build-tool, build-ant, build-gradle, build-maven, unit-tests ]
     if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
     name: Codecov
+    continue-on-error: true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Decrypt secrets
+        shell: bash
+        run: sh .github/scripts/decrypt-secrets.sh
 
       - name: Setup Java
         uses: actions/setup-java@v3
@@ -1122,3 +1138,56 @@ jobs:
           fail_ci_if_error: false
           name: jreleaser-smoke-tests
           verbose: true
+
+  sonar:
+    needs: [ build-cli, build-tool, build-ant, build-gradle, build-maven, unit-tests ]
+    if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
+    name: Sonar
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Decrypt secrets
+        shell: bash
+        run: sh .github/scripts/decrypt-secrets.sh
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRO }}
+
+      - name: Cache Gradle
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}-${{ hashFiles('**/gradle.properties') }}
+          restore-keys: ${{ runner.os }}-gradle-
+
+      - name: Cache Gradle wrapper
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradlew-${{ hashFiles('**/gradlew') }}
+          restore-keys: ${{ runner.os }}-gradlew-
+
+      - name: Build
+        run: ./gradlew check -PspotbugsEnabled=true
+
+      - name: Download JaCoCo execution data
+        uses: actions/download-artifact@v3
+        with:
+          name: jacoco
+          path: jacoco
+
+      - name: JaCoCo merge
+        run: sh .github/scripts/jacoco-merge.sh
+
+      - name: JaCoCo report
+        run: sh .github/scripts/jacoco-report.sh
+
+      - name: Sonar
+        run: |
+          ./gradlew sonarqube -Dsonar.login=${{ secrets.SONARCLOUD_TOKEN }} -PsonarEnabled=true

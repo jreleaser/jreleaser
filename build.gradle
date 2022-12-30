@@ -16,7 +16,10 @@
  * limitations under the License.
  */
 
-boolean qualityCheck = (project.rootProject.findProperty('qualityCheck') ?: false).toBoolean()
+boolean qualityEnabled    = (project.rootProject.findProperty('qualityEnabled') ?: false).toBoolean()
+boolean sonarEnabled      = qualityEnabled || (project.rootProject.findProperty('sonarEnabled') ?: false).toBoolean()
+boolean spotbugsEnabled   = qualityEnabled || (project.rootProject.findProperty('spotbugsEnabled') ?: false).toBoolean()
+boolean errorproneEnabled = qualityEnabled || (project.rootProject.findProperty('errorproneEnabled') ?: false).toBoolean()
 
 config {
     info {
@@ -68,21 +71,29 @@ config {
             }
         }
         spotbugs {
-            enabled = qualityCheck
+            enabled = spotbugsEnabled
             toolVersion = spotbugsVersion
-            report = 'html'
+            ignoreFailures = true
+            report = 'xml'
             aggregate {
-                enabled = qualityCheck
+                enabled = spotbugsEnabled
             }
         }
         errorprone {
-            enabled = qualityCheck
+            enabled = errorproneEnabled
             excludedPaths = '.*/build/mavenPlugin/.*'
             args = [
                 '-Xep:MissingSummary:OFF',
                 '-Xep:SameNameButDifferent:OFF',
                 '-Xep:JavaLangClash:OFF'
             ]
+        }
+        sonar {
+            enabled = sonarEnabled
+            standalone = true
+            hostUrl = 'https://sonarcloud.io'
+            organization = 'org-jreleaser-sonar'
+            projectKey = 'org_jreleaser_jreleaser'
         }
     }
 
