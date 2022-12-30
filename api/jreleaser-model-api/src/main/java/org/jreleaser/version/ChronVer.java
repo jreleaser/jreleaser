@@ -34,8 +34,8 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @since 1.0.0
  */
 public class ChronVer implements Version<ChronVer> {
-    private static final Pattern PATTERN = Pattern.compile("^([2-9][0-9]{3})\\.(0[1-9]|1[0-2])\\.(0[1-9]|[1-2][0-9]|3[0-1])(?:\\.((?:[1-9]\\d*)(?:(?:-[a-zA-Z0-9]+)+(?:\\.[1-9]\\d*)?)?))?$");
-    private static final Pattern CHANGESET = Pattern.compile("^(?:((?:[1-9]\\d*))(?:-([a-zA-Z0-9-]+[a-zA-Z0-9]?)(?:\\.([1-9]\\d*))?)?)?$");
+    private static final Pattern VERSION_PATTERN = Pattern.compile("^([2-9][0-9]{3})\\.(0[1-9]|1[0-2])\\.(0[1-9]|[1-2][0-9]|3[0-1])(?:\\.((?:[1-9]\\d*)(?:(?:-[a-zA-Z0-9]+)+(?:\\.[1-9]\\d*)?)?))?$");
+    private static final Pattern CHANGESET_PATTERN = Pattern.compile("^(?:((?:[1-9]\\d*))(?:-([a-zA-Z0-9-]+[a-zA-Z0-9]?)(?:\\.([1-9]\\d*))?)?)?$");
 
     private final int year;
     private final int month;
@@ -134,7 +134,7 @@ public class ChronVer implements Version<ChronVer> {
     public static ChronVer of(String version) {
         requireNonBlank(version, "Argument 'version' must not be blank");
 
-        Matcher m = PATTERN.matcher(version.trim());
+        Matcher m = VERSION_PATTERN.matcher(version.trim());
 
         if (m.matches()) {
             int year = Integer.parseInt(m.group(1));
@@ -171,7 +171,7 @@ public class ChronVer implements Version<ChronVer> {
         private Changeset(String identifier) {
             if (isNotBlank(identifier)) {
                 this.identifier = identifier.trim();
-                Matcher matcher = CHANGESET.matcher(identifier);
+                Matcher matcher = CHANGESET_PATTERN.matcher(identifier);
                 if (matcher.matches()) {
                     this.change = Integer.parseInt(matcher.group(1));
                     this.tag = matcher.group(2);

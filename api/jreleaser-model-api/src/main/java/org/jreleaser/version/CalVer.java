@@ -43,45 +43,45 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
 public class CalVer implements Version<CalVer> {
     private static final Map<String, String> PATTERNS = new LinkedHashMap<>();
 
-    private static final String YEAR = "YEAR";
-    private static final String YEAR_LONG = "YYYY";
-    private static final String YEAR_SHORT = "YY";
-    private static final String YEAR_ZERO = "0Y";
-    private static final String MONTH = "MONTH";
-    private static final String MONTH_SHORT = "MM";
-    private static final String MONTH_ZERO = "0M";
-    private static final String WEEK = "WEEK";
-    private static final String WEEK_SHORT = "WW";
-    private static final String WEEK_ZERO = "0W";
-    private static final String DAY = "DAY";
-    private static final String DAY_SHORT = "DD";
-    private static final String DAY_ZERO = "0D";
-    private static final String MINOR = "MINOR";
-    private static final String MICRO = "MICRO";
-    private static final String MODIFIER = "MODIFIER";
-    private static final String MODIFIER_OP = "[MODIFIER]";
-    private static final String MODIFIER_OP2 = "MODIFIER]";
+    private static final String T_YEAR = "YEAR";
+    private static final String T_YEAR_LONG = "YYYY";
+    private static final String T_YEAR_SHORT = "YY";
+    private static final String T_YEAR_ZERO = "0Y";
+    private static final String T_MONTH = "MONTH";
+    private static final String T_MONTH_SHORT = "MM";
+    private static final String T_MONTH_ZERO = "0M";
+    private static final String T_WEEK = "WEEK";
+    private static final String T_WEEK_SHORT = "WW";
+    private static final String T_WEEK_ZERO = "0W";
+    private static final String T_DAY = "DAY";
+    private static final String T_DAY_SHORT = "DD";
+    private static final String T_DAY_ZERO = "0D";
+    private static final String T_MINOR = "MINOR";
+    private static final String T_MICRO = "MICRO";
+    private static final String T_MODIFIER = "MODIFIER";
+    private static final String T_MODIFIER_OP = "[MODIFIER]";
+    private static final String T_MODIFIER_OP2 = "MODIFIER]";
 
-    private static final String[] YEARS = {YEAR_ZERO, YEAR_SHORT, YEAR_LONG};
-    private static final String[] MONTHS = {MONTH_ZERO, MONTH_SHORT};
-    private static final String[] WEEKS = {WEEK_ZERO, WEEK_SHORT};
-    private static final String[] DAYS = {DAY_ZERO, DAY_SHORT};
-    private static final String[] NUMBERS = {MICRO, MINOR};
+    private static final String[] YEARS = {T_YEAR_ZERO, T_YEAR_SHORT, T_YEAR_LONG};
+    private static final String[] MONTHS = {T_MONTH_ZERO, T_MONTH_SHORT};
+    private static final String[] WEEKS = {T_WEEK_ZERO, T_WEEK_SHORT};
+    private static final String[] DAYS = {T_DAY_ZERO, T_DAY_SHORT};
+    private static final String[] NUMBERS = {T_MICRO, T_MINOR};
 
     static {
-        PATTERNS.put(YEAR_LONG, "([2-9][0-9]{3})");
-        PATTERNS.put(YEAR_SHORT, "([1-9]|[1-9][0-9]|[1-9][0-9]{2})");
-        PATTERNS.put(YEAR_ZERO, "(0[1-9]|[1-9][0-9]|[1-9][0-9]{2})");
-        PATTERNS.put(MONTH_SHORT, "([1-9]|1[0-2])");
-        PATTERNS.put(MONTH_ZERO, "(0[1-9]|1[0-2])");
-        PATTERNS.put(WEEK_SHORT, "([1-9]|[1-4][0-9]|5[0-2])");
-        PATTERNS.put(WEEK_ZERO, "(0[1-9]|[1-4][0-9]|5[0-2])");
-        PATTERNS.put(DAY_SHORT, "([1-9]|[1-2][0-9]|3[0-1])");
-        PATTERNS.put(DAY_ZERO, "(0[1-9]|[1-2][0-9]|3[0-1])");
-        PATTERNS.put(MINOR, "(0|[1-9]\\d*)");
-        PATTERNS.put(MICRO, "(0|[1-9]\\d*)");
-        PATTERNS.put(MODIFIER, "([a-zA-Z\\-][0-9a-zA-Z\\-]*)");
-        PATTERNS.put(MODIFIER_OP, "([a-zA-Z\\-][0-9a-zA-Z\\-]*))?");
+        PATTERNS.put(T_YEAR_LONG, "([2-9][0-9]{3})");
+        PATTERNS.put(T_YEAR_SHORT, "([1-9]|[1-9][0-9]|[1-9][0-9]{2})");
+        PATTERNS.put(T_YEAR_ZERO, "(0[1-9]|[1-9][0-9]|[1-9][0-9]{2})");
+        PATTERNS.put(T_MONTH_SHORT, "([1-9]|1[0-2])");
+        PATTERNS.put(T_MONTH_ZERO, "(0[1-9]|1[0-2])");
+        PATTERNS.put(T_WEEK_SHORT, "([1-9]|[1-4][0-9]|5[0-2])");
+        PATTERNS.put(T_WEEK_ZERO, "(0[1-9]|[1-4][0-9]|5[0-2])");
+        PATTERNS.put(T_DAY_SHORT, "([1-9]|[1-2][0-9]|3[0-1])");
+        PATTERNS.put(T_DAY_ZERO, "(0[1-9]|[1-2][0-9]|3[0-1])");
+        PATTERNS.put(T_MINOR, "(0|[1-9]\\d*)");
+        PATTERNS.put(T_MICRO, "(0|[1-9]\\d*)");
+        PATTERNS.put(T_MODIFIER, "([a-zA-Z\\-][0-9a-zA-Z\\-]*)");
+        PATTERNS.put(T_MODIFIER_OP, "([a-zA-Z\\-][0-9a-zA-Z\\-]*))?");
     }
 
     private final String year;
@@ -101,13 +101,13 @@ public class CalVer implements Version<CalVer> {
     private final int microAsInt;
 
     public CalVer(String pattern, Map<String, String> elements) {
-        String y = elements.get(YEAR);
-        String m = elements.get(MONTH);
-        String w = elements.get(WEEK);
-        String d = elements.get(DAY);
-        String n = elements.get(MINOR);
-        String r = elements.get(MICRO);
-        String o = elements.get(MODIFIER);
+        String y = elements.get(T_YEAR);
+        String m = elements.get(T_MONTH);
+        String w = elements.get(T_WEEK);
+        String d = elements.get(T_DAY);
+        String n = elements.get(T_MINOR);
+        String r = elements.get(T_MICRO);
+        String o = elements.get(T_MODIFIER);
 
         this.pattern = pattern;
         this.year = isNotBlank(y) ? y.trim() : null;
@@ -239,18 +239,18 @@ public class CalVer implements Version<CalVer> {
 
     @Override
     public String toString() {
-        String str = safeReplace(pattern, YEAR_LONG, year);
-        str = safeReplace(str, YEAR_SHORT, year);
-        str = safeReplace(str, YEAR_ZERO, year);
-        str = safeReplace(str, MONTH_SHORT, month);
-        str = safeReplace(str, MONTH_ZERO, month);
-        str = safeReplace(str, WEEK_SHORT, week);
-        str = safeReplace(str, WEEK_ZERO, week);
-        str = safeReplace(str, DAY_SHORT, day);
-        str = safeReplace(str, DAY_ZERO, day);
-        str = safeReplace(str, MINOR, minor);
-        str = safeReplace(str, MICRO, micro);
-        str = safeReplace(str, MODIFIER, modifier);
+        String str = safeReplace(pattern, T_YEAR_LONG, year);
+        str = safeReplace(str, T_YEAR_SHORT, year);
+        str = safeReplace(str, T_YEAR_ZERO, year);
+        str = safeReplace(str, T_MONTH_SHORT, month);
+        str = safeReplace(str, T_MONTH_ZERO, month);
+        str = safeReplace(str, T_WEEK_SHORT, week);
+        str = safeReplace(str, T_WEEK_ZERO, week);
+        str = safeReplace(str, T_DAY_SHORT, day);
+        str = safeReplace(str, T_DAY_ZERO, day);
+        str = safeReplace(str, T_MINOR, minor);
+        str = safeReplace(str, T_MICRO, micro);
+        str = safeReplace(str, T_MODIFIER, modifier);
         str = safeReplace(str, "[", "");
         str = safeReplace(str, "]", "");
 
@@ -346,7 +346,7 @@ public class CalVer implements Version<CalVer> {
         s = take(f, i, delims);
         if (binarySearch(MONTHS, s.token) >= 0) {
             // cannot have weeks
-            if (f.contains(WEEK_ZERO) || f.contains(WEEK_SHORT)) {
+            if (f.contains(T_WEEK_ZERO) || f.contains(T_WEEK_SHORT)) {
                 throw new IllegalArgumentException(RB.$("ERROR_calver_month", f));
             }
             m = s.token;
@@ -364,10 +364,10 @@ public class CalVer implements Version<CalVer> {
             }
         } else if (binarySearch(WEEKS, s.token) >= 0) {
             // cannot have months nor days
-            if (f.contains(MONTH_ZERO) || f.contains(MONTH_SHORT)) {
+            if (f.contains(T_MONTH_ZERO) || f.contains(T_MONTH_SHORT)) {
                 throw new IllegalArgumentException(RB.$("ERROR_calver_week_month", f));
             }
-            if (f.contains(DAY_ZERO) || f.contains(DAY_SHORT)) {
+            if (f.contains(T_DAY_ZERO) || f.contains(T_DAY_SHORT)) {
                 throw new IllegalArgumentException(RB.$("ERROR_calver_week_day", f));
             }
             w = s.token;
@@ -384,7 +384,7 @@ public class CalVer implements Version<CalVer> {
             tokens.add(s.token);
             if (isNotBlank(s.sep)) tokens.add(s.sep);
             i += s.token.length() + 1;
-            micro = MICRO.equals(s.token);
+            micro = T_MICRO.equals(s.token);
             n = !micro ? s.token : null;
             r = micro ? s.token : null;
             s = take(f, i, delims);
@@ -399,12 +399,12 @@ public class CalVer implements Version<CalVer> {
         if (!done) {
             if (binarySearch(NUMBERS, s.token) >= 0) {
                 if (micro) {
-                    if (MICRO.equals(s.token)) {
+                    if (T_MICRO.equals(s.token)) {
                         throw new IllegalArgumentException(RB.$("ERROR_calver_micro_duplicate", f));
                     } else {
                         throw new IllegalArgumentException(RB.$("ERROR_calver_micro_minor", f));
                     }
-                } else if (MINOR.equals(s.token)) {
+                } else if (T_MINOR.equals(s.token)) {
                     throw new IllegalArgumentException(RB.$("ERROR_calver_minor_duplicate", f));
                 }
                 tokens.add(s.token);
@@ -421,9 +421,9 @@ public class CalVer implements Version<CalVer> {
             }
         }
 
-        if (tokens.size() > 0 && tokens.get(tokens.size() - 1).endsWith(MODIFIER_OP2)) {
+        if (tokens.size() > 0 && tokens.get(tokens.size() - 1).endsWith(T_MODIFIER_OP2)) {
             String sep = tokens.remove(tokens.size() - 2);
-            String mod = "(?:" + sep + PATTERNS.get(MODIFIER_OP);
+            String mod = "(?:" + sep + PATTERNS.get(T_MODIFIER_OP);
             tokens.set(tokens.size() - 1, mod);
         }
 
@@ -436,24 +436,24 @@ public class CalVer implements Version<CalVer> {
         if (matcher.matches()) {
             i = 1;
             Map<String, String> elements = new LinkedHashMap<>();
-            elements.put(YEAR, matcher.group(i++));
+            elements.put(T_YEAR, matcher.group(i++));
             if (isNotBlank(w)) {
-                elements.put(WEEK, matcher.group(i++));
+                elements.put(T_WEEK, matcher.group(i++));
             }
             if (isNotBlank(m)) {
-                elements.put(MONTH, matcher.group(i++));
+                elements.put(T_MONTH, matcher.group(i++));
             }
             if (isNotBlank(d)) {
-                elements.put(DAY, matcher.group(i++));
+                elements.put(T_DAY, matcher.group(i++));
             }
             if (isNotBlank(n)) {
-                elements.put(MINOR, matcher.group(i++));
+                elements.put(T_MINOR, matcher.group(i++));
             }
             if (isNotBlank(r)) {
-                elements.put(MICRO, matcher.group(i++));
+                elements.put(T_MICRO, matcher.group(i++));
             }
             if (i <= matcher.groupCount()) {
-                elements.put(MODIFIER, matcher.group(matcher.groupCount()));
+                elements.put(T_MODIFIER, matcher.group(matcher.groupCount()));
             }
 
             return new CalVer(format, elements);
@@ -465,18 +465,18 @@ public class CalVer implements Version<CalVer> {
     public static CalVer defaultOf(String format) {
         requireNonBlank(format, "Argument 'format' must not be blank");
 
-        return of(format, format.replace(YEAR_LONG, "2000")
-            .replace(YEAR_SHORT, "0")
-            .replace(YEAR_ZERO, "0")
-            .replace(MONTH_SHORT, "1")
-            .replace(MONTH_ZERO, "01")
-            .replace(WEEK_SHORT, "1")
-            .replace(WEEK_ZERO, "01")
-            .replace(DAY_SHORT, "1")
-            .replace(DAY_ZERO, "01")
-            .replace(MINOR, "0")
-            .replace(MICRO, "0")
-            .replace(MODIFIER, "A")
+        return of(format, format.replace(T_YEAR_LONG, "2000")
+            .replace(T_YEAR_SHORT, "0")
+            .replace(T_YEAR_ZERO, "0")
+            .replace(T_MONTH_SHORT, "1")
+            .replace(T_MONTH_ZERO, "01")
+            .replace(T_WEEK_SHORT, "1")
+            .replace(T_WEEK_ZERO, "01")
+            .replace(T_DAY_SHORT, "1")
+            .replace(T_DAY_ZERO, "01")
+            .replace(T_MINOR, "0")
+            .replace(T_MICRO, "0")
+            .replace(T_MODIFIER, "A")
             .replace("[", "")
             .replace("]", ""));
     }

@@ -22,6 +22,7 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.logging.JReleaserLogger;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -259,9 +260,9 @@ public final class PlatformUtils {
 
             Path release = Paths.get(javaHome).resolve("release");
 
-            try {
+            try (InputStream in = Files.newInputStream(release)) {
                 Properties props = new Properties();
-                props.load(Files.newInputStream(release));
+                props.load(in);
                 if (props.containsKey("LIBC")) {
                     String libc = props.getProperty("LIBC");
                     if ("musl".equalsIgnoreCase(libc)) {

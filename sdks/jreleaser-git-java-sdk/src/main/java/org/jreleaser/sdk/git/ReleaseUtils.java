@@ -17,6 +17,7 @@
  */
 package org.jreleaser.sdk.git;
 
+import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.internal.JReleaserContext;
@@ -80,11 +81,13 @@ public final class ReleaseUtils {
                 context.getModel().getRelease().getReleaser().getUsername(),
                 context.getModel().getRelease().getReleaser().getToken());
 
-            gitSdk.open().push()
-                .setDryRun(context.isDryrun())
-                .setPushTags()
-                .setCredentialsProvider(credentialsProvider)
-                .call();
+            try (Git git = gitSdk.open()) {
+                git.push()
+                    .setDryRun(context.isDryrun())
+                    .setPushTags()
+                    .setCredentialsProvider(credentialsProvider)
+                    .call();
+            }
         } catch (Exception e) {
             context.getLogger().trace(e);
             throw new ReleaseException(e);

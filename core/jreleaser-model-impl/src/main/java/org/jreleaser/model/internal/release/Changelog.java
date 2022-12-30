@@ -57,9 +57,9 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public final class Changelog extends AbstractModelObject<Changelog> implements Domain, EnabledAware {
     private final Set<String> includeLabels = new LinkedHashSet<>();
     private final Set<String> excludeLabels = new LinkedHashSet<>();
-    private final Set<Category> categories = new TreeSet<>(Category.ORDER);
+    private final Set<Category> categories = new TreeSet<>(Category.ORDER_COMPARATOR);
     private final List<Replacer> replacers = new ArrayList<>();
-    private final Set<Labeler> labelers = new TreeSet<>(Labeler.ORDER);
+    private final Set<Labeler> labelers = new TreeSet<>(Labeler.ORDER_COMPARATOR);
     private final Hide hide = new Hide();
     private final Contributors contributors = new Contributors();
     private final Append append = new Append();
@@ -634,7 +634,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
     }
 
     public static final class Category extends AbstractModelObject<Category> implements Domain {
-        public static final Comparator<Category> ORDER = (o1, o2) -> {
+        public static final Comparator<Category> ORDER_COMPARATOR = (o1, o2) -> {
             if (null == o1.getOrder()) return 1;
             if (null == o2.getOrder()) return -1;
             return o1.getOrder().compareTo(o2.getOrder());
@@ -765,7 +765,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
         }
 
         public static Set<Category> sort(Set<Category> categories) {
-            TreeSet<Category> tmp = new TreeSet<>(ORDER);
+            TreeSet<Category> tmp = new TreeSet<>(ORDER_COMPARATOR);
             tmp.addAll(categories);
             return tmp;
         }
@@ -837,7 +837,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
     }
 
     public static final class Labeler extends AbstractModelObject<Labeler> implements Domain {
-        public static final Comparator<Labeler> ORDER = (o1, o2) -> {
+        public static final Comparator<Labeler> ORDER_COMPARATOR = (o1, o2) -> {
             if (null == o1.getOrder()) return 1;
             if (null == o2.getOrder()) return -1;
             return o1.getOrder().compareTo(o2.getOrder());

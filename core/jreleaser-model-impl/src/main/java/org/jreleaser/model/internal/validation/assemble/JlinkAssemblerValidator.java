@@ -206,7 +206,7 @@ public abstract class JlinkAssemblerValidator extends Validator {
             jlink.getJava().setEnabled(jlink.getJava().isSet());
         }
 
-        if (!jlink.getJava().isEnabled()) return true;
+        if (!jlink.getJava().isEnabled()) return false;
 
         if (isBlank(jlink.getJava().getArtifactId())) {
             jlink.getJava().setArtifactId(project.getJava().getArtifactId());

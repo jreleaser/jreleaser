@@ -93,7 +93,7 @@ public class Release extends AbstractPlatformAwareModelCommand {
             return exclude != null ? exclude.excludedUploaderNames : null;
         }
 
-        boolean autoConfig() {
+        boolean isAutoConfig() {
             return autoConfig != null && autoConfig.autoConfig;
         }
     }
@@ -270,7 +270,7 @@ public class Release extends AbstractPlatformAwareModelCommand {
 
     @Override
     protected void execute() {
-        if (composite == null || !composite.autoConfig()) {
+        if (composite == null || !composite.isAutoConfig()) {
             super.execute();
             return;
         }

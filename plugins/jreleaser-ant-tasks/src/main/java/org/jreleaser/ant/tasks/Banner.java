@@ -35,7 +35,7 @@ import static org.jreleaser.util.IoUtils.newScanner;
  * @since 0.1.0
  */
 final class Banner {
-    private static final Banner BANNER = new Banner();
+    private static final Banner INSTANCE = new Banner();
     private final ResourceBundle bundle = ResourceBundle.getBundle(Banner.class.getName());
     private final String productVersion = bundle.getString("product.version");
     private final String productId = bundle.getString("product.id");
@@ -49,9 +49,9 @@ final class Banner {
     public static void display(PrintWriter writer) {
         try {
             File parent = new File(System.getProperty("user.home"), "/.ant/caches");
-            File markerFile = getMarkerFile(parent, BANNER);
+            File markerFile = getMarkerFile(parent, INSTANCE);
             if (!markerFile.exists()) {
-                writer.println(BANNER.banner);
+                writer.println(INSTANCE.banner);
                 markerFile.getParentFile().mkdirs();
                 PrintStream out = newPrintStream(new FileOutputStream(markerFile));
                 out.println("1");
@@ -61,12 +61,12 @@ final class Banner {
                 try {
                     int count = Integer.parseInt(readQuietly(markerFile));
                     if (count < 3) {
-                        writer.println(BANNER.banner);
+                        writer.println(INSTANCE.banner);
                     }
                     writeQuietly(markerFile, (count + 1) + "");
                 } catch (NumberFormatException e) {
                     writeQuietly(markerFile, "1");
-                    writer.println(BANNER.banner);
+                    writer.println(INSTANCE.banner);
                 }
             }
         } catch (IOException ignored) {
@@ -85,8 +85,7 @@ final class Banner {
     }
 
     private static String readQuietly(File file) {
-        try {
-            Scanner in = newScanner(new FileInputStream(file));
+        try (Scanner in = newScanner(new FileInputStream(file))) {
             return in.next();
         } catch (Exception ignored) {
             return "";

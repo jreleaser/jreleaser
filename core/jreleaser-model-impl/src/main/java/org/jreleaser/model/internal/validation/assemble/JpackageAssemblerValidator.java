@@ -285,7 +285,7 @@ public abstract class JpackageAssemblerValidator extends Validator {
             jpackage.getJava().setEnabled(jpackage.getJava().isSet());
         }
 
-        if (!jpackage.getJava().isEnabled()) return true;
+        if (!jpackage.getJava().isEnabled()) return false;
 
         if (isBlank(jpackage.getJava().getArtifactId())) {
             jpackage.getJava().setArtifactId(project.getJava().getArtifactId());

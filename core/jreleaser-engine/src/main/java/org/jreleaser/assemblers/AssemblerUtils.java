@@ -26,6 +26,7 @@ import org.jreleaser.util.PlatformUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -54,9 +55,9 @@ public final class AssemblerUtils {
             throw new AssemblerProcessingException(RB.$("ERROR_assembler_invalid_jdk_release", path.toAbsolutePath()));
         }
 
-        try {
+        try (InputStream in = Files.newInputStream(release)) {
             Properties props = new Properties();
-            props.load(Files.newInputStream(release));
+            props.load(in);
             if (props.containsKey(KEY_JAVA_VERSION)) {
                 String version = props.getProperty(KEY_JAVA_VERSION);
                 if (version.startsWith("\"") && version.endsWith("\"")) {

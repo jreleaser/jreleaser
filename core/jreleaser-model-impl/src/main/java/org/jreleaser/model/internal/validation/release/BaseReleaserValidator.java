@@ -429,7 +429,7 @@ public abstract class BaseReleaserValidator extends Validator {
                     changelog.setFormat(loaded.getFormat());
                 }
 
-                Set<Changelog.Labeler> labelersCopy = new TreeSet<>(Changelog.Labeler.ORDER);
+                Set<Changelog.Labeler> labelersCopy = new TreeSet<>(Changelog.Labeler.ORDER_COMPARATOR);
                 labelersCopy.addAll(changelog.getLabelers());
                 labelersCopy.addAll(loaded.getLabelers());
                 changelog.setLabelers(labelersCopy);

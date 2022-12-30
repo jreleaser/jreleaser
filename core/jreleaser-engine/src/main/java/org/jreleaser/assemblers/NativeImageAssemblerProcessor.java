@@ -34,6 +34,7 @@ import org.jreleaser.version.SemanticVersion;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -237,9 +238,9 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
             throw new AssemblerProcessingException(RB.$("ERROR_assembler_invalid_graal_release", path.toAbsolutePath()));
         }
 
-        try {
+        try (InputStream in = Files.newInputStream(release)) {
             Properties props = new Properties();
-            props.load(Files.newInputStream(release));
+            props.load(in);
             if (props.containsKey(KEY_GRAALVM_VERSION)) {
                 String version = props.getProperty(KEY_GRAALVM_VERSION);
                 if (version.startsWith("\"") && version.endsWith("\"")) {

@@ -50,13 +50,13 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public class DownloadableTool {
     private static final String BASE_TEMPLATE_PREFIX = "META-INF/jreleaser/tools/";
-    private static final String DOWNLOAD_URL = "download.url";
-    private static final String VERSION = "version";
-    private static final String EXECUTABLE = ".executable";
-    private static final String FILENAME = ".filename";
-    private static final String COMMAND_VERSION = "command.version";
-    private static final String COMMAND_VERIFY = "command.verify";
-    private static final String EXECUTABLE_PATH = ".executable.path";
+    private static final String K_DOWNLOAD_URL = "download.url";
+    private static final String K_VERSION = "version";
+    private static final String K_EXECUTABLE = ".executable";
+    private static final String K_FILENAME = ".filename";
+    private static final String K_COMMAND_VERSION = "command.version";
+    private static final String K_COMMAND_VERIFY = "command.verify";
+    private static final String K_EXECUTABLE_PATH = ".executable.path";
     private static final String UNPACK = "unpack";
 
     private final JReleaserLogger logger;
@@ -82,9 +82,9 @@ public class DownloadableTool {
             properties = new Properties();
             properties.load(DownloadableTool.class.getClassLoader()
                 .getResourceAsStream(BASE_TEMPLATE_PREFIX + key));
-            enabled = properties.containsKey(platformKey(EXECUTABLE));
+            enabled = properties.containsKey(platformKey(K_EXECUTABLE));
             if (enabled) {
-                executable = Paths.get(properties.getProperty(platformKey(EXECUTABLE)));
+                executable = Paths.get(properties.getProperty(platformKey(K_EXECUTABLE)));
             }
         } catch (Exception e) {
             throw new ToolException(RB.$("ERROR_unexpected_reading_resource_for", key, "classpath"));
@@ -129,10 +129,10 @@ public class DownloadableTool {
 
     private boolean verify(Path executable) {
         Command command = new Command(executable.toString())
-            .arg(properties.getProperty(COMMAND_VERSION));
+            .arg(properties.getProperty(K_COMMAND_VERSION));
 
         try {
-            String verify = properties.getProperty(COMMAND_VERIFY).trim();
+            String verify = properties.getProperty(K_COMMAND_VERIFY).trim();
             Map<String, Object> props = props();
             verify = resolveTemplate(verify, props);
 
@@ -159,7 +159,7 @@ public class DownloadableTool {
     }
 
     public void download() throws ToolException {
-        String filename = properties.getProperty(platformKey(FILENAME));
+        String filename = properties.getProperty(platformKey(K_FILENAME));
 
         if (isBlank(filename)) {
             executable = null;
@@ -170,9 +170,9 @@ public class DownloadableTool {
         Path dest = caches.resolve(name).resolve(version);
 
         boolean unpack = Boolean.parseBoolean(properties.getProperty(UNPACK));
-        String downloadUrl = properties.getProperty(DOWNLOAD_URL);
-        String executablePath = properties.getProperty(platformKey(EXECUTABLE_PATH));
-        String exec = properties.getProperty(platformKey(EXECUTABLE));
+        String downloadUrl = properties.getProperty(K_DOWNLOAD_URL);
+        String executablePath = properties.getProperty(platformKey(K_EXECUTABLE_PATH));
+        String exec = properties.getProperty(platformKey(K_EXECUTABLE));
 
         Map<String, Object> props = props();
         filename = resolveTemplate(filename, props);
@@ -227,7 +227,7 @@ public class DownloadableTool {
 
     private Map<String, Object> props() {
         Map<String, Object> props = new LinkedHashMap<>();
-        props.put(VERSION, version);
+        props.put(K_VERSION, version);
         return props;
     }
 

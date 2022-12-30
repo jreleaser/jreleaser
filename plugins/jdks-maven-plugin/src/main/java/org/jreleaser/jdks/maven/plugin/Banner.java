@@ -39,7 +39,7 @@ import static org.jreleaser.util.IoUtils.newScanner;
  * @since 0.3.0
  */
 final class Banner {
-    private static final Banner BANNER = new Banner();
+    private static final Banner INSTANCE = new Banner();
     private final ResourceBundle bundle = ResourceBundle.getBundle(Banner.class.getName());
     private final String productVersion = bundle.getString("product.version");
     private final String productId = bundle.getString("product.id");
@@ -52,17 +52,17 @@ final class Banner {
     }
 
     public static void display(MavenProject project, Log log) {
-        if (BANNER.visited.contains(project.getName())) {
+        if (INSTANCE.visited.contains(project.getName())) {
             return;
         }
 
-        BANNER.visited.add(project.getName());
+        INSTANCE.visited.add(project.getName());
 
         try {
             File parent = new File(System.getProperty("user.home"), "/.m2/caches");
-            File markerFile = getMarkerFile(parent, BANNER);
+            File markerFile = getMarkerFile(parent, INSTANCE);
             if (!markerFile.exists()) {
-                System.out.println(BANNER.banner);
+                System.out.println(INSTANCE.banner);
                 markerFile.getParentFile().mkdirs();
                 PrintStream out = newPrintStream(new FileOutputStream(markerFile));
                 out.println("1");
@@ -72,12 +72,12 @@ final class Banner {
                 try {
                     int count = Integer.parseInt(readQuietly(markerFile));
                     if (count < 3) {
-                        System.out.println(BANNER.banner);
+                        System.out.println(INSTANCE.banner);
                     }
                     writeQuietly(markerFile, (count + 1) + "");
                 } catch (NumberFormatException e) {
                     writeQuietly(markerFile, "1");
-                    System.out.println(BANNER.banner);
+                    System.out.println(INSTANCE.banner);
                 }
             }
         } catch (IOException ignored) {
@@ -96,8 +96,7 @@ final class Banner {
     }
 
     private static String readQuietly(File file) {
-        try {
-            Scanner in = newScanner(new FileInputStream(file));
+        try (Scanner in = newScanner(new FileInputStream(file))) {
             return in.next();
         } catch (Exception ignored) {
             return "";
