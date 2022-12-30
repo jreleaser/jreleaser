@@ -22,6 +22,8 @@ package org.jreleaser.sdk.gitlab;
  * @since 0.1.0
  */
 public class GitlabException extends RuntimeException {
+    private static final long serialVersionUID = -1368377664217246582L;
+
     public GitlabException(String message) {
         super(message);
     }

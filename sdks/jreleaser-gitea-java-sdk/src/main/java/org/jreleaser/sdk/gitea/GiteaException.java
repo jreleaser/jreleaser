@@ -22,6 +22,8 @@ package org.jreleaser.sdk.gitea;
  * @since 0.1.0
  */
 public class GiteaException extends RuntimeException {
+    private static final long serialVersionUID = 4206932890702114136L;
+
     public GiteaException(String message) {
         super(message);
     }

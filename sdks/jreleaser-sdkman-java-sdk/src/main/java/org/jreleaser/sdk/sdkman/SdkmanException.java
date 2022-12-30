@@ -22,6 +22,8 @@ package org.jreleaser.sdk.sdkman;
  * @since 0.1.0
  */
 public class SdkmanException extends Exception {
+    private static final long serialVersionUID = 3518071848821652679L;
+
     public SdkmanException(String message) {
         super(message);
     }

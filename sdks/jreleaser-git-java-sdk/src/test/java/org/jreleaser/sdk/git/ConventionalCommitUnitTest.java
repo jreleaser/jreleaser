@@ -28,8 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ConventionalCommitUnitTest {
-
+class ConventionalCommitUnitTest {
     private ChangelogGenerator.Commit mockCommit(String commitBody) {
         RevCommit revCommit = mock(RevCommit.class);
         ObjectId objectId = mock(ObjectId.class);
@@ -57,7 +56,7 @@ public class ConventionalCommitUnitTest {
     }
 
     @Test
-    public void badlyFormattedCommitIsNotConventional() {
+    void badlyFormattedCommitIsNotConventional() {
         String commitBody = "featadd new feature";
 
         ChangelogGenerator.Commit c = mockCommit(commitBody);
@@ -68,7 +67,7 @@ public class ConventionalCommitUnitTest {
     }
 
     @Test
-    public void typeCanBeAnyWord() {
+    void typeCanBeAnyWord() {
         String commitBody = "whatever: correct spelling of CHANGELOG";
 
         ChangelogGenerator.Commit c = mockCommit(commitBody);
@@ -85,7 +84,7 @@ public class ConventionalCommitUnitTest {
     }
 
     @Test
-    public void bangIsBreakingChange() {
+    void bangIsBreakingChange() {
         String commitBody = "feat(scope)!: add new feature";
 
         ChangelogGenerator.Commit c = mockCommit(commitBody);
@@ -102,7 +101,7 @@ public class ConventionalCommitUnitTest {
     }
 
     @Test
-    public void singleLineBreakingChange() {
+    void singleLineBreakingChange() {
         String commitBody = "feat(scope): add new feature\n" +
             "\n" +
             "BREAKING CHANGE: single line breaking change";
@@ -121,7 +120,7 @@ public class ConventionalCommitUnitTest {
     }
 
     @Test
-    public void singleLineBreakingChangeWithDash() {
+    void singleLineBreakingChangeWithDash() {
         String commitBody = "feat(scope): add new feature\n" +
             "\n" +
             "BREAKING-CHANGE: single line breaking change";
@@ -140,7 +139,7 @@ public class ConventionalCommitUnitTest {
     }
 
     @Test
-    public void singleLineBreakingChangeLowerCase() {
+    void singleLineBreakingChangeLowerCase() {
         String commitBody = "feat(scope): add new feature\n" +
             "\n" +
             "breaking CHANGE: single line breaking change";
@@ -159,7 +158,7 @@ public class ConventionalCommitUnitTest {
     }
 
     @Test
-    public void multiLineBreakingChange() {
+    void multiLineBreakingChange() {
         String commitBody = "feat(scope): add new feature\n" +
             "\n" +
             "BREAKING CHANGE: multi line\n" +
@@ -179,7 +178,7 @@ public class ConventionalCommitUnitTest {
     }
 
     @Test
-    public void singleLineBreakingChangeFollowedByGitTrailer() {
+    void singleLineBreakingChangeFollowedByGitTrailer() {
         String commitBody = "feat(scope): add new feature\n" +
             "\n" +
             "BREAKING CHANGE: single line breaking change\n" +
@@ -198,7 +197,7 @@ public class ConventionalCommitUnitTest {
     }
 
     @Test
-    public void ccExample1() {
+    void ccExample1() {
         String commitBody = "feat: allow provided config object to extend other configs\n" +
             "\n" +
             "BREAKING CHANGE: `extends` key in config file is now used for extending other config files";
@@ -217,7 +216,7 @@ public class ConventionalCommitUnitTest {
     }
 
     @Test
-    public void ccExample2() {
+    void ccExample2() {
         String commitBody = "feat!: send an email to the customer when a product is shipped";
 
         ChangelogGenerator.Commit c = mockCommit(commitBody);
@@ -234,7 +233,7 @@ public class ConventionalCommitUnitTest {
     }
 
     @Test
-    public void ccExample3() {
+    void ccExample3() {
         String commitBody = "feat(api)!: send an email to the customer when a product is shipped";
 
         ChangelogGenerator.Commit c = mockCommit(commitBody);
@@ -260,7 +259,7 @@ public class ConventionalCommitUnitTest {
     }
 
     @Test
-    public void ccExample4() {
+    void ccExample4() {
         String commitBody = "chore!: drop support for Node 6\n" +
             "\n" +
             "BREAKING CHANGE: use JavaScript features not available in Node 6.";
@@ -288,7 +287,7 @@ public class ConventionalCommitUnitTest {
     }
 
     @Test
-    public void ccExample5() {
+    void ccExample5() {
         String commitBody = "docs: correct spelling of CHANGELOG";
 
         ChangelogGenerator.Commit c = mockCommit(commitBody);
@@ -305,7 +304,7 @@ public class ConventionalCommitUnitTest {
     }
 
     @Test
-    public void ccExample6() {
+    void ccExample6() {
         String commitBody = "feat(lang): add Polish language";
 
         ChangelogGenerator.Commit c = mockCommit(commitBody);
@@ -322,7 +321,7 @@ public class ConventionalCommitUnitTest {
     }
 
     @Test
-    public void ccExample7() {
+    void ccExample7() {
         String commitBody = "fix: prevent racing of requests\n" +
             "\n" +
             "Introduce a request id and a reference to latest request. Dismiss\n" +

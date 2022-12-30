@@ -22,7 +22,9 @@ package org.jreleaser.extensions.api.workflow;
  * @since 1.3.0
  */
 public class WorkflowListenerException extends Exception {
-    private final WorkflowListener listener;
+    private static final long serialVersionUID = 7213600573252214552L;
+
+    private final transient WorkflowListener listener;
 
     public WorkflowListenerException(WorkflowListener listener, RuntimeException cause) {
         super(cause);

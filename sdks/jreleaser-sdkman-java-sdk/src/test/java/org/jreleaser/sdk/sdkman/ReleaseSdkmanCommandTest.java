@@ -30,12 +30,12 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ReleaseSdkmanCommandTest {
+class ReleaseSdkmanCommandTest {
     @RegisterExtension
     WireMockExtension api = new WireMockExtension(options().dynamicPort());
 
     @Test
-    public void testSingleUniversalRelease() throws SdkmanException {
+    void testSingleUniversalRelease() throws SdkmanException {
         // given:
         stubFor(post(urlEqualTo(ApiEndpoints.RELEASE_ENDPOINT))
             .willReturn(okJson("{\"status\": 201, \"message\":\"success\"}")));
@@ -66,7 +66,7 @@ public class ReleaseSdkmanCommandTest {
     }
 
     @Test
-    public void testSinglePlatformRelease() throws SdkmanException {
+    void testSinglePlatformRelease() throws SdkmanException {
         // given:
         stubFor(post(urlEqualTo(ApiEndpoints.RELEASE_ENDPOINT))
             .willReturn(okJson("{\"status\": 201, \"message\":\"success\"}")));
@@ -97,7 +97,7 @@ public class ReleaseSdkmanCommandTest {
     }
 
     @Test
-    public void testMultiPlatformRelease() throws SdkmanException {
+    void testMultiPlatformRelease() throws SdkmanException {
         // given:
         stubFor(post(urlEqualTo(ApiEndpoints.RELEASE_ENDPOINT))
             .willReturn(okJson("{\"status\": 201, \"message\":\"success\"}")));
@@ -142,7 +142,7 @@ public class ReleaseSdkmanCommandTest {
     }
 
     @Test
-    public void testError() {
+    void testError() {
         // given:
         stubFor(post(urlEqualTo(ApiEndpoints.RELEASE_ENDPOINT))
             .willReturn(aResponse().withStatus(500)));

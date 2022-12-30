@@ -31,12 +31,12 @@ import static org.awaitility.Awaitility.await;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-public class MessageSmtpCommandTest {
+class MessageSmtpCommandTest {
     @RegisterExtension
     GreenMailExtension greenMail = new GreenMailExtension(ServerSetupTest.SMTP);
 
     @Test
-    public void testMessage() throws SmtpException, MessagingException {
+    void testMessage() throws SmtpException, MessagingException {
         // given:
         String sender = "test@acme.com";
         String receiver = "jreleaser@acme.com";
@@ -74,7 +74,7 @@ public class MessageSmtpCommandTest {
     }
 
     @Test
-    public void testDryRun() throws SmtpException, MessagingException {
+    void testDryRun() throws SmtpException, MessagingException {
         // given:
         String sender = "test@acme.com";
         String receiver = "jreleaser@acme.com";

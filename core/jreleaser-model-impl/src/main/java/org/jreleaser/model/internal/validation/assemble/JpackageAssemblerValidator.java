@@ -113,7 +113,7 @@ public abstract class JpackageAssemblerValidator extends Validator {
                 candidateRuntimeImages.add(Artifact.of(path, platform));
             }
 
-            if (jpackage.getRuntimeImages().size() > 0 && jpackage.getRuntimeImages().size() != candidateRuntimeImages.size()) {
+            if (!jpackage.getRuntimeImages().isEmpty() && jpackage.getRuntimeImages().size() != candidateRuntimeImages.size()) {
                 errors.configuration(RB.$("validation_jpackage_jlink_application", jpackage.getName()));
             }
 
@@ -128,7 +128,7 @@ public abstract class JpackageAssemblerValidator extends Validator {
                 }
             }
 
-            if (jpackage.getRuntimeImages().size() > 0 && count != candidateRuntimeImages.size()) {
+            if (!jpackage.getRuntimeImages().isEmpty() && count != candidateRuntimeImages.size()) {
                 errors.configuration(RB.$("validation_jpackage_jlink_application", jpackage.getName()));
             }
 
@@ -157,7 +157,7 @@ public abstract class JpackageAssemblerValidator extends Validator {
             jpackage.setExecutable(jpackage.getName());
         }
 
-        if (jpackage.getRuntimeImages().size() == 0) {
+        if (jpackage.getRuntimeImages().isEmpty()) {
             errors.configuration(RB.$("validation_jpackage_runtime_images_missing", jpackage.getName()));
             return;
         }

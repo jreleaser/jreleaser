@@ -38,8 +38,8 @@ public class Env {
     private static final String JRELEASER_SYS_PREFIX = "jreleaser.";
 
     public static String toVar(String str) {
-        return str.replaceAll(" ", "_")
-            .replaceAll("-", "_")
+        return str.replace(" ", "_")
+            .replace("-", "_")
             .replace(".", "_")
             .toUpperCase(Locale.ENGLISH);
     }

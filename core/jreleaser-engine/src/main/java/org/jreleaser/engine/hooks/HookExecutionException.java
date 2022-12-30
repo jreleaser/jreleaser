@@ -22,6 +22,8 @@ package org.jreleaser.engine.hooks;
  * @since 1.2.0
  */
 public class HookExecutionException extends Exception {
+    private static final long serialVersionUID = 4994699422435068757L;
+
     public HookExecutionException(String message) {
         super(message);
     }

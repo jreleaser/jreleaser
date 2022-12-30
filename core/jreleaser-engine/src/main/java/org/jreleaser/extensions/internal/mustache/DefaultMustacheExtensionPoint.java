@@ -42,6 +42,7 @@ import java.util.EnumSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.Files.readAllBytes;
@@ -94,7 +95,7 @@ public final class DefaultMustacheExtensionPoint implements MustacheExtensionPoi
         context.put("f_recursive_eval", new RecursiveEvalFunction(context));
     }
 
-    private static class TimeFormatFunction implements Function<String, String> {
+    private static class TimeFormatFunction implements UnaryOperator<String> {
         private final ZonedDateTime now;
 
         private TimeFormatFunction(ZonedDateTime now) {
@@ -108,14 +109,14 @@ public final class DefaultMustacheExtensionPoint implements MustacheExtensionPoi
         }
     }
 
-    private static class TrimFunction implements Function<String, String> {
+    private static class TrimFunction implements UnaryOperator<String> {
         @Override
         public String apply(String input) {
             return input.trim();
         }
     }
 
-    private static class UnderscoreFunction implements Function<String, String> {
+    private static class UnderscoreFunction implements UnaryOperator<String> {
         @Override
         public String apply(String input) {
             return input.replace(".", "_")
@@ -124,7 +125,7 @@ public final class DefaultMustacheExtensionPoint implements MustacheExtensionPoi
         }
     }
 
-    private static class DashFunction implements Function<String, String> {
+    private static class DashFunction implements UnaryOperator<String> {
         @Override
         public String apply(String input) {
             return input.replace(".", "-")
@@ -133,7 +134,7 @@ public final class DefaultMustacheExtensionPoint implements MustacheExtensionPoi
         }
     }
 
-    private static class SlashFunction implements Function<String, String> {
+    private static class SlashFunction implements UnaryOperator<String> {
         @Override
         public String apply(String input) {
             return input.replace(".", "/")
@@ -142,35 +143,35 @@ public final class DefaultMustacheExtensionPoint implements MustacheExtensionPoi
         }
     }
 
-    private static class UpperFunction implements Function<String, String> {
+    private static class UpperFunction implements UnaryOperator<String> {
         @Override
         public String apply(String input) {
             return input.toUpperCase(Locale.ENGLISH);
         }
     }
 
-    private static class LowerFunction implements Function<String, String> {
+    private static class LowerFunction implements UnaryOperator<String> {
         @Override
         public String apply(String input) {
             return input.toLowerCase(Locale.ENGLISH);
         }
     }
 
-    private static class CapitalizeFunction implements Function<String, String> {
+    private static class CapitalizeFunction implements UnaryOperator<String> {
         @Override
         public String apply(String input) {
             return StringUtils.capitalize(input);
         }
     }
 
-    private static class UncapitalizeFunction implements Function<String, String> {
+    private static class UncapitalizeFunction implements UnaryOperator<String> {
         @Override
         public String apply(String input) {
             return StringUtils.uncapitalize(input);
         }
     }
 
-    private static class MarkdownToHtmlFunction implements Function<String, String> {
+    private static class MarkdownToHtmlFunction implements UnaryOperator<String> {
         @Override
         public String apply(String input) {
             Parser parser = Parser.builder().build();
@@ -255,10 +256,10 @@ public final class DefaultMustacheExtensionPoint implements MustacheExtensionPoi
         }
     }
 
-    private static class DelegatingFunction implements Function<String, String> {
-        private final Function<String, String> delegate;
+    private static class DelegatingFunction implements UnaryOperator<String> {
+        private final UnaryOperator<String> delegate;
 
-        private DelegatingFunction(Function<String, String> delegate) {
+        private DelegatingFunction(UnaryOperator<String> delegate) {
             this.delegate = delegate;
         }
 
@@ -268,7 +269,7 @@ public final class DefaultMustacheExtensionPoint implements MustacheExtensionPoi
         }
     }
 
-    private static class RecursiveEvalFunction implements Function<String, String> {
+    private static class RecursiveEvalFunction implements UnaryOperator<String> {
         private final Map<String, Object> context;
 
         public RecursiveEvalFunction(Map<String, Object> context) {

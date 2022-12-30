@@ -38,7 +38,7 @@ import java.util.regex.Pattern;
  * @since 1.2.0
  */
 public class VersionUtils {
-    private final static UnparseableTags UNPARSEABLE_TAGS = new UnparseableTags();
+    private static final UnparseableTags UNPARSEABLE_TAGS = new UnparseableTags();
 
     public static Pattern resolveVersionPattern(JReleaserContext context) {
         BaseReleaser gitService = context.getModel().getRelease().getReleaser();

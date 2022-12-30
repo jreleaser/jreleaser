@@ -117,6 +117,7 @@ public class MessageSmtpCommand implements SmtpCommand {
                 }
                 if (!props.containsKey("mail.smtp.socketFactory.class")) {
                     props.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+                    props.put("mail.smtp.ssl.checkserveridentity", true);
                 }
             }
         }

@@ -46,5 +46,5 @@ public interface Extension {
      *
      * @return a non {@code null} collection.
      */
-    Set<? extends ExtensionPoint> provides();
+    Set<ExtensionPoint> provides();
 }

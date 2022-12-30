@@ -35,12 +35,12 @@ import static org.jreleaser.sdk.discourse.ApiEndpoints.CATEGORIES_ENDPOINT;
 import static org.jreleaser.sdk.discourse.ApiEndpoints.POSTS_ENDPOINT;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class DiscourseSdkTest {
+class DiscourseSdkTest {
     @RegisterExtension
     WireMockExtension api = new WireMockExtension(options().dynamicPort());
 
     @Test
-    public void testMessage() throws DiscourseException {
+    void testMessage() throws DiscourseException {
         // given:
         stubFor(post(urlEqualTo(POSTS_ENDPOINT))
             .willReturn(okJson("{\"topic_id\": 1, \"post_number\": 1}")));
@@ -68,7 +68,7 @@ public class DiscourseSdkTest {
     }
 
     @Test
-    public void testDryrun() throws DiscourseException {
+    void testDryrun() throws DiscourseException {
         // given:
         stubFor(post(urlEqualTo(POSTS_ENDPOINT))
             .willReturn(okJson("{\"topic_id\": 1, \"post_number\": 1}")));
@@ -89,11 +89,11 @@ public class DiscourseSdkTest {
 
         // then:
         assertThat(WireMock.findUnmatchedRequests())
-            .hasSize(0);
+            .isEmpty();
     }
 
     @Test
-    public void testError() {
+    void testError() {
         // given:
         stubFor(post(urlEqualTo(POSTS_ENDPOINT))
             .willReturn(aResponse().withStatus(400)));

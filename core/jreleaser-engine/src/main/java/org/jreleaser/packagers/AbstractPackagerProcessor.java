@@ -303,7 +303,7 @@ abstract class AbstractPackagerProcessor<T extends Packager<?>> implements Packa
             .filter(Artifact::isActive)
             .collect(toList());
 
-        if (activeArtifacts.size() == 0) {
+        if (activeArtifacts.isEmpty()) {
             // we can't proceed
             context.getLogger().warn(RB.$("packager.no.matching.artifacts"),
                 distribution.getName(), capitalize(packager.getType()));

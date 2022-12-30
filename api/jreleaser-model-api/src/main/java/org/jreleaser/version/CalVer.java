@@ -421,7 +421,7 @@ public class CalVer implements Version<CalVer> {
             }
         }
 
-        if (tokens.size() > 0 && tokens.get(tokens.size() - 1).endsWith(T_MODIFIER_OP2)) {
+        if (tokens.get(tokens.size() - 1).endsWith(T_MODIFIER_OP2)) {
             String sep = tokens.remove(tokens.size() - 2);
             String mod = "(?:" + sep + PATTERNS.get(T_MODIFIER_OP);
             tokens.set(tokens.size() - 1, mod);

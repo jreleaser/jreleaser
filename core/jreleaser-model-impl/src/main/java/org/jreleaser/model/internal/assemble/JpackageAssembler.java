@@ -52,7 +52,8 @@ import static org.jreleaser.util.CollectionUtils.setOf;
  * @author Andres Almiray
  * @since 0.10.0
  */
-public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssembler, org.jreleaser.model.api.assemble.JpackageAssembler> {
+public final class
+JpackageAssembler extends AbstractJavaAssembler<JpackageAssembler, org.jreleaser.model.api.assemble.JpackageAssembler> {
     private final Set<Artifact> runtimeImages = new LinkedHashSet<>();
 
     private final ApplicationPackage applicationPackage = new ApplicationPackage();
@@ -663,7 +664,7 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
         }
     }
 
-    public static abstract class AbstractPlatformPackager<S extends AbstractPlatformPackager<S>> extends AbstractModelObject<S> implements PlatformPackager {
+    public abstract static class AbstractPlatformPackager<S extends AbstractPlatformPackager<S>> extends AbstractModelObject<S> implements PlatformPackager {
         protected final Artifact jdk = new Artifact();
         protected final List<String> types = new ArrayList<>();
         protected final List<String> validTypes = new ArrayList<>();

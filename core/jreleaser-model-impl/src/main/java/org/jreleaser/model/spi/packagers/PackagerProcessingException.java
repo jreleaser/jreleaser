@@ -22,6 +22,8 @@ package org.jreleaser.model.spi.packagers;
  * @since 0.1.0
  */
 public class PackagerProcessingException extends Exception {
+    private static final long serialVersionUID = -4392070830055952293L;
+
     public PackagerProcessingException(String message) {
         super(message);
     }

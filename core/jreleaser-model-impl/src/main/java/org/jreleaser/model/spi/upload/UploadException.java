@@ -22,6 +22,8 @@ package org.jreleaser.model.spi.upload;
  * @since 0.3.0
  */
 public class UploadException extends Exception {
+    private static final long serialVersionUID = -7090188769189557344L;
+
     public UploadException(String message) {
         super(message);
     }

@@ -261,7 +261,7 @@ class JpackageAssemblerImpl extends AbstractJavaAssembler implements JpackageAss
     }
 
     @CompileStatic
-    private static abstract class AbstractPlatformPackager implements PlatformPackager {
+    private abstract static class AbstractPlatformPackager implements PlatformPackager {
         final Property<String> appName
         final RegularFileProperty icon
         final ListProperty<String> types

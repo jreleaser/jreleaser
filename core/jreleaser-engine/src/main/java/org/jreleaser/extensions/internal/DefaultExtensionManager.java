@@ -192,9 +192,9 @@ public final class DefaultExtensionManager implements ExtensionManager {
             String[] gav = extensionDef.getGav().split(":");
 
             String content = IOUtils.toString(template.getReader());
-            content = content.replaceAll("@groupId@", gav[0])
-                .replaceAll("@artifactId@", gav[1])
-                .replaceAll("@version@", gav[2]);
+            content = content.replace("@groupId@", gav[0])
+                .replace("@artifactId@", gav[1])
+                .replace("@version@", gav[2]);
 
             Files.write(pom, content.getBytes(UTF_8), WRITE, TRUNCATE_EXISTING);
 

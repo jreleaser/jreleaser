@@ -136,7 +136,7 @@ public class JbangPackagerProcessor extends AbstractRepositoryPackagerProcessor<
     }
 
     private String sanitizeScriptName(String scriptName) {
-        scriptName = scriptName.replaceAll("-", "_");
+        scriptName = scriptName.replace("-", "_");
         StringBuilder b = new StringBuilder();
         for (int i = 0; i < scriptName.length(); i++) {
             char ch = scriptName.charAt(i);

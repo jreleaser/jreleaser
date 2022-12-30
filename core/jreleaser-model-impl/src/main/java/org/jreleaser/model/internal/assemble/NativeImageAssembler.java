@@ -553,7 +553,7 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
         }
     }
 
-    private static abstract class AbstractPlatformCustomizer<S extends AbstractPlatformCustomizer<S>> extends AbstractModelObject<S> implements PlatformCustomizer {
+    private abstract static class AbstractPlatformCustomizer<S extends AbstractPlatformCustomizer<S>> extends AbstractModelObject<S> implements PlatformCustomizer {
         protected final List<String> args = new ArrayList<>();
         protected final String platform;
 

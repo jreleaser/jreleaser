@@ -23,9 +23,9 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ComparatorUtilsTest {
+class ComparatorUtilsTest {
     @Test
-    public void testComparators() {
+    void testComparators() {
         // given:
         Integer one = 1;
         Integer two = 2;

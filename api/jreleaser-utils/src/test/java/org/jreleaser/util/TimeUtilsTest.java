@@ -26,10 +26,10 @@ import java.util.stream.Stream;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-public class TimeUtilsTest {
+class TimeUtilsTest {
     @ParameterizedTest
     @MethodSource("time_factory")
-    public void testTimeFactory(String expected, double time) {
+    void testTimeFactory(String expected, double time) {
         // given:
         String actual = TimeUtils.formatDuration(time);
 

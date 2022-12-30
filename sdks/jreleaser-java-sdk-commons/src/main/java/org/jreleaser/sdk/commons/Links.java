@@ -124,6 +124,6 @@ public class Links {
     }
 
     public static Links of(Collection<String> input) {
-        return new Links(null != input && input.size() > 0 ? input.iterator().next() : "");
+        return new Links(null != input && !input.isEmpty() ? input.iterator().next() : "");
     }
 }

@@ -31,12 +31,12 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class DefaultSdkmanCommandTest {
+class DefaultSdkmanCommandTest {
     @RegisterExtension
     WireMockExtension api = new WireMockExtension(options().dynamicPort());
 
     @Test
-    public void testStructuredAnnouncement() throws SdkmanException {
+    void testStructuredAnnouncement() throws SdkmanException {
         // given:
         stubFor(put(urlEqualTo(ApiEndpoints.DEFAULT_ENDPOINT))
             .willReturn(okJson("{\"status\": 202, \"message\":\"success\"}")));
@@ -64,7 +64,7 @@ public class DefaultSdkmanCommandTest {
     }
 
     @Test
-    public void testError() {
+    void testError() {
         // given:
         stubFor(post(urlEqualTo(ApiEndpoints.DEFAULT_ENDPOINT))
             .willReturn(aResponse().withStatus(400)));

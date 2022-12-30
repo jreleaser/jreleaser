@@ -254,8 +254,8 @@ public final class SmtpAnnouncer extends AbstractAnnouncer<SmtpAnnouncer, org.jr
     }
 
     public void setTransport(String transport) {
-        this.transport = Mail.Transport.valueOf(transport.replaceAll(" ", "_")
-            .replaceAll("-", "_")
+        this.transport = Mail.Transport.valueOf(transport.replace(" ", "_")
+            .replace("-", "_")
             .toUpperCase(Locale.ENGLISH));
     }
 
@@ -368,8 +368,8 @@ public final class SmtpAnnouncer extends AbstractAnnouncer<SmtpAnnouncer, org.jr
     }
 
     public void setMimeType(String mimeType) {
-        this.mimeType = Mail.MimeType.valueOf(mimeType.replaceAll(" ", "_")
-            .replaceAll("-", "_")
+        this.mimeType = Mail.MimeType.valueOf(mimeType.replace(" ", "_")
+            .replace("-", "_")
             .toUpperCase(Locale.ENGLISH));
     }
 

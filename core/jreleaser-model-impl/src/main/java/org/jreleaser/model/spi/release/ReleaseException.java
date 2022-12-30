@@ -22,6 +22,8 @@ package org.jreleaser.model.spi.release;
  * @since 0.1.0
  */
 public class ReleaseException extends Exception {
+    private static final long serialVersionUID = -244933069390461155L;
+
     public ReleaseException(String message) {
         super(message);
     }

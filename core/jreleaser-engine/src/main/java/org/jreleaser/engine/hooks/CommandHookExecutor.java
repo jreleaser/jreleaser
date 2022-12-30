@@ -77,7 +77,7 @@ public final class CommandHookExecutor {
                 break;
         }
 
-        if (hooks.size() > 0) {
+        if (!hooks.isEmpty()) {
             context.getLogger().info(RB.$("hooks.execution"), event.getType().name().toLowerCase(Locale.ENGLISH), hooks.size());
         }
 

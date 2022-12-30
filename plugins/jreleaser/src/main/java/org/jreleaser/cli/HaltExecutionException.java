@@ -22,6 +22,8 @@ package org.jreleaser.cli;
  * @since 0.1.0
  */
 public class HaltExecutionException extends RuntimeException {
+    private static final long serialVersionUID = -1573540681826520844L;
+
     public HaltExecutionException() {
         super();
     }

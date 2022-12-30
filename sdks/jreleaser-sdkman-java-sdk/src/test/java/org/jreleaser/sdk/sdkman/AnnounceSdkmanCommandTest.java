@@ -32,12 +32,12 @@ import static org.jreleaser.sdk.sdkman.ApiEndpoints.ANNOUNCE_ENDPOINT;
 import static org.jreleaser.sdk.sdkman.Stubs.verifyPost;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class AnnounceSdkmanCommandTest {
+class AnnounceSdkmanCommandTest {
     @RegisterExtension
     WireMockExtension api = new WireMockExtension(options().dynamicPort());
 
     @Test
-    public void testStructuredAnnouncement() throws SdkmanException {
+    void testStructuredAnnouncement() throws SdkmanException {
         // given:
         stubFor(post(urlEqualTo(ANNOUNCE_ENDPOINT))
             .willReturn(okJson("{\"status\": 202, \"message\":\"success\"}")));
@@ -65,7 +65,7 @@ public class AnnounceSdkmanCommandTest {
     }
 
     @Test
-    public void testError() {
+    void testError() {
         // given:
         stubFor(post(urlEqualTo(ANNOUNCE_ENDPOINT))
             .willReturn(aResponse().withStatus(400)));

@@ -45,8 +45,8 @@ public class Distribution {
         public static DistributionType of(String str) {
             if (isBlank(str)) return null;
 
-            String value = str.replaceAll(" ", "_")
-                .replaceAll("-", "_")
+            String value = str.replace(" ", "_")
+                .replace("-", "_")
                 .toUpperCase(Locale.ENGLISH).trim();
 
             // try alias

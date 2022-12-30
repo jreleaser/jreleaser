@@ -43,6 +43,7 @@ import org.jreleaser.sdk.command.CommandException;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -137,18 +138,18 @@ public class SigningUtils {
                 pgpSigList = (Iterable<?>) obj;
             }
 
-            InputStream fileInputStream = new BufferedInputStream(new FileInputStream(filePair.inputFile.toFile()));
             PGPSignature sig = (PGPSignature) pgpSigList.iterator().next();
-            PGPPublicKey pubKey = keyring.readPublicKey();
-            sig.init(new JcaPGPContentVerifierBuilderProvider()
-                .setProvider(BouncyCastleProvider.PROVIDER_NAME), pubKey);
+            try (InputStream fileInputStream = new BufferedInputStream(new FileInputStream(filePair.inputFile.toFile()))) {
+                PGPPublicKey pubKey = keyring.readPublicKey();
+                sig.init(new JcaPGPContentVerifierBuilderProvider()
+                    .setProvider(BouncyCastleProvider.PROVIDER_NAME), pubKey);
 
-            int ch;
-            while ((ch = fileInputStream.read()) >= 0) {
-                sig.update((byte) ch);
+                int ch;
+                while ((ch = fileInputStream.read()) >= 0) {
+                    sig.update((byte) ch);
+                }
             }
 
-            fileInputStream.close();
             sigInputStream.close();
 
             return sig.verify();
@@ -234,18 +235,12 @@ public class SigningUtils {
     }
 
     public static void sign(JReleaserContext context, PGPSignatureGenerator signatureGenerator, Path input, Path output) throws SigningException {
-        try {
-            context.getLogger().info("{}", context.relativizeToBasedir(input));
+        context.getLogger().info("{}", context.relativizeToBasedir(input));
 
-            OutputStream out = new BufferedOutputStream(new FileOutputStream(output.toFile()));
-            if (context.getModel().getSigning().isArmored()) {
-                out = new ArmoredOutputStream(out);
-            }
-
-            PGPCompressedDataGenerator compressionStreamGenerator = new PGPCompressedDataGenerator(UNCOMPRESSED);
-            BCPGOutputStream bOut = new BCPGOutputStream(compressionStreamGenerator.open(out));
-
-            FileInputStream in = new FileInputStream(input.toFile());
+        PGPCompressedDataGenerator compressionStreamGenerator = new PGPCompressedDataGenerator(UNCOMPRESSED);
+        try (OutputStream out = createOutputStream(context, output);
+             BCPGOutputStream bOut = new BCPGOutputStream(compressionStreamGenerator.open(out));
+             FileInputStream in = new FileInputStream(input.toFile())) {
 
             byte[] buffer = new byte[8192];
             int length = 0;
@@ -254,15 +249,18 @@ public class SigningUtils {
             }
 
             signatureGenerator.generate().encode(bOut);
-
             compressionStreamGenerator.close();
-
-            in.close();
-            out.flush();
-            out.close();
         } catch (IOException | PGPException e) {
             throw new SigningException(RB.$("ERROR_unexpected_error_signing", input.toAbsolutePath()), e);
         }
+    }
+
+    private static OutputStream createOutputStream(JReleaserContext context, Path output) throws FileNotFoundException {
+        OutputStream out = new BufferedOutputStream(new FileOutputStream(output.toFile()));
+        if (context.getModel().getSigning().isArmored()) {
+            out = new ArmoredOutputStream(out);
+        }
+        return out;
     }
 
     public static boolean isValid(JReleaserContext context, FilePair pair) {

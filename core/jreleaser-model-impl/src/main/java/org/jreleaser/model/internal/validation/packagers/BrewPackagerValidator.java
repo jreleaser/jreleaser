@@ -88,7 +88,7 @@ public abstract class BrewPackagerValidator extends Validator {
 
         validateCask(context, distribution, packager, cask, errors);
         List<Artifact> candidateArtifacts = packager.resolveCandidateArtifacts(context, distribution);
-        if (candidateArtifacts.size() == 0) {
+        if (candidateArtifacts.isEmpty()) {
             packager.setActive(Active.NEVER);
             context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
             errors.warning(RB.$("WARNING.validation.packager.no.artifacts", distribution.getName(),

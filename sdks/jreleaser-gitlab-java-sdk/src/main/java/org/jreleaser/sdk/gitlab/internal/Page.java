@@ -85,7 +85,7 @@ public class Page<T> {
 
     private int resolveInt(Map<String, Collection<String>> headers, String key) {
         Collection<String> values = headers.get(key);
-        if (values != null && values.size() > 0) {
+        if (values != null && !values.isEmpty()) {
             try {
                 return Integer.parseInt(values.iterator().next());
             } catch (NumberFormatException e) {

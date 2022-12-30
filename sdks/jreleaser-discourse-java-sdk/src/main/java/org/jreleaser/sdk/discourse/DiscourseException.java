@@ -22,6 +22,8 @@ package org.jreleaser.sdk.discourse;
  * @since 1.3.0
  */
 public class DiscourseException extends Exception {
+    private static final long serialVersionUID = -8618724549146311636L;
+
     public DiscourseException(String message) {
         super(message);
     }

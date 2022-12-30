@@ -123,7 +123,7 @@ public class JReleaserGpgSigner extends GpgSigner implements GpgObjectSigner {
         void sign(ObjectBuilder object) throws SigningException;
     }
 
-    private static abstract class AbstractSigner implements Signer {
+    private abstract static class AbstractSigner implements Signer {
         protected final JReleaserContext context;
 
         protected AbstractSigner(JReleaserContext context) {

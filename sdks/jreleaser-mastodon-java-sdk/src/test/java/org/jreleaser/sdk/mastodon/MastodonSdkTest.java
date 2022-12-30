@@ -38,14 +38,14 @@ import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MastodonSdkTest {
+class MastodonSdkTest {
     private static final String API_V_1_STATUSES = "/api/v1/statuses";
 
     @RegisterExtension
     WireMockExtension api = new WireMockExtension(options().dynamicPort());
 
     @Test
-    public void testUpdateStatus() throws MastodonException {
+    void testUpdateStatus() throws MastodonException {
         // given:
         stubFor(post(urlEqualTo(API_V_1_STATUSES))
             .willReturn(okJson("{\"status\": 202, \"message\":\"success\"}")));
@@ -66,7 +66,7 @@ public class MastodonSdkTest {
     }
 
     @Test
-    public void testDryrun() throws MastodonException {
+    void testDryrun() throws MastodonException {
         // given:
         stubFor(post(urlEqualTo(API_V_1_STATUSES))
             .willReturn(okJson("{\"status\": 202, \"message\":\"success\"}")));
@@ -83,11 +83,11 @@ public class MastodonSdkTest {
 
         // then:
         assertThat(WireMock.findUnmatchedRequests())
-            .hasSize(0);
+            .isEmpty();
     }
 
     @Test
-    public void testUpdateStatuses() throws MastodonException {
+    void testUpdateStatuses() throws MastodonException {
         // given:
         stubFor(post(urlEqualTo(API_V_1_STATUSES))
             .willReturn(okJson("{\"id\": \"1234\", \"status\": 202, \"message\":\"success\"}")));

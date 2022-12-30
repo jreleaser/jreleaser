@@ -32,7 +32,7 @@ import static org.jreleaser.logging.SimpleJReleaserLoggerAdapter.Level.ERROR;
 import static org.jreleaser.logging.SimpleJReleaserLoggerAdapter.Level.INFO;
 import static org.jreleaser.logging.SimpleJReleaserLoggerAdapter.Level.WARN;
 
-public class SimpleJReleaserLoggerAdapterTest {
+class SimpleJReleaserLoggerAdapterTest {
     private static final String MESSAGE = "MESSAGE";
     private static final String ARGS = "ARGS {}";
     private static final String ARGS_ARGS = "ARGS args";
@@ -41,7 +41,7 @@ public class SimpleJReleaserLoggerAdapterTest {
 
     @ParameterizedTest
     @MethodSource("logging_values")
-    public void testLogging(SimpleJReleaserLoggerAdapter.Level currentLevel,
+    void testLogging(SimpleJReleaserLoggerAdapter.Level currentLevel,
                             SimpleJReleaserLoggerAdapter.Level activeLevel,
                             Consumer<JReleaserLogger> consumer, boolean active) {
         // given:

@@ -36,8 +36,7 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class CommitUnitTest {
-
+class CommitUnitTest {
     private final JReleaserContext defaultContext = mockContext("", "repo", "");
 
     private JReleaserContext mockContext(String issueTracker, String repo, String owner) {
@@ -85,7 +84,7 @@ public class CommitUnitTest {
     }
 
     @Test
-    public void closeFooterWithHash() {
+    void closeFooterWithHash() {
         String commitBody = "feat(scope): add new feature\n" +
             "\n" +
             "BREAKING CHANGE: single line breaking change\n" +
@@ -100,7 +99,7 @@ public class CommitUnitTest {
     }
 
     @Test
-    public void refsFooterWithDotsAndHash() {
+    void refsFooterWithDotsAndHash() {
         String commitBody = "fix: prevent racing of requests\n" +
             "\n" +
             "Introduce a request id and a reference to latest request. Dismiss\n" +
@@ -120,7 +119,7 @@ public class CommitUnitTest {
     }
 
     @Test
-    public void multipleHashes() {
+    void multipleHashes() {
         String commitBody = "a classic commit that fixes #46 (#47)";
 
         ChangelogGenerator.Commit c = mockCommit(commitBody).extractIssues(defaultContext);
@@ -131,7 +130,7 @@ public class CommitUnitTest {
     }
 
     @Test
-    public void multipleHashes2() {
+    void multipleHashes2() {
         String commitBody = "a classic commit\n" +
             "Closes: #1, #2, #3";
 
@@ -143,7 +142,7 @@ public class CommitUnitTest {
     }
 
     @Test
-    public void issueTracker() {
+    void issueTracker() {
         String commitBody = "a classic commit\n" +
             "Closes: https://github.com/owner/repo/issues/1, https://github.com/owner/repo/issues/2, #3";
 
@@ -157,7 +156,7 @@ public class CommitUnitTest {
     }
 
     @Test
-    public void repoOnly() {
+    void repoOnly() {
         String commitBody = "a classic commit\n" +
             "#1, repo#2, other#3";
 
@@ -169,7 +168,7 @@ public class CommitUnitTest {
     }
 
     @Test
-    public void repoWithOwner() {
+    void repoWithOwner() {
         String commitBody = "a classic commit\n" +
             "Closes: someone/repo#1, owner/repo#2, repo#3, (#4)";
 
@@ -183,7 +182,7 @@ public class CommitUnitTest {
     }
 
     @Test
-    public void otherNumbers() {
+    void otherNumbers() {
         String commitBody = "upgrade SQLite to 3.40.0\n" +
             "previously log() computed the natural logarithm, now it computes a base-10 logarithm";
 

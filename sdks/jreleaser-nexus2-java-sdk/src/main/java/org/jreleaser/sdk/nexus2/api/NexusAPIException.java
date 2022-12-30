@@ -26,6 +26,8 @@ import java.util.Map;
  * @since 1.3.0
  */
 public class NexusAPIException extends RuntimeException {
+    private static final long serialVersionUID = -6684289853549902181L;
+
     private final int status;
     private final String reason;
     private final Map<String, Collection<String>> headers;

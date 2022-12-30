@@ -34,12 +34,12 @@ import static org.jreleaser.sdk.zulip.ApiEndpoints.MESSAGES_ENDPOINT;
 import static org.jreleaser.test.WireMockStubs.verifyPostContains;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ZulipSdkTest {
+class ZulipSdkTest {
     @RegisterExtension
     WireMockExtension api = new WireMockExtension(options().dynamicPort());
 
     @Test
-    public void testMessage() throws ZulipException {
+    void testMessage() throws ZulipException {
         // given:
         stubFor(post(urlEqualTo(MESSAGES_ENDPOINT))
             .willReturn(okJson("{\"status\": 202, \"message\":\"success\"}")));
@@ -69,7 +69,7 @@ public class ZulipSdkTest {
     }
 
     @Test
-    public void testDryrun() throws ZulipException {
+    void testDryrun() throws ZulipException {
         // given:
         stubFor(post(urlEqualTo(MESSAGES_ENDPOINT))
             .willReturn(okJson("{\"status\": 202, \"message\":\"success\"}")));
@@ -89,11 +89,11 @@ public class ZulipSdkTest {
 
         // then:
         assertThat(WireMock.findUnmatchedRequests())
-            .hasSize(0);
+            .isEmpty();
     }
 
     @Test
-    public void testError() {
+    void testError() {
         // given:
         stubFor(post(urlEqualTo(MESSAGES_ENDPOINT))
             .willReturn(aResponse().withStatus(400)));

@@ -33,10 +33,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  * @author Andres Almiray
  * @since 1.0.0
  */
-public class ChronVerTest {
+class ChronVerTest {
     @ParameterizedTest
     @MethodSource("version_parsing")
-    public void testVersionParsing(String input, int year, int month, int day, String changeset,
+    void testVersionParsing(String input, int year, int month, int day, String changeset,
                                    int change1, String tag, int change2) {
         // given:
         ChronVer v = ChronVer.of(input);
@@ -61,14 +61,14 @@ public class ChronVerTest {
 
     @ParameterizedTest
     @MethodSource("version_invalid")
-    public void testVersionInvalid(String input) {
+    void testVersionInvalid(String input) {
         // expect:
         assertThrows(IllegalArgumentException.class, () -> ChronVer.of(input));
     }
 
     @ParameterizedTest
     @MethodSource("version_comparison")
-    public void testVersionComparison(String input1, String input2) {
+    void testVersionComparison(String input1, String input2) {
         // given:
         ChronVer v1 = ChronVer.of(input1);
         ChronVer v2 = ChronVer.of(input2);

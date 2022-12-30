@@ -36,7 +36,7 @@ public final class DefaultMustacheExtension implements Extension {
     }
 
     @Override
-    public Set<? extends ExtensionPoint> provides() {
+    public Set<ExtensionPoint> provides() {
         return Collections.singleton(new DefaultMustacheExtensionPoint());
     }
 }

@@ -63,6 +63,8 @@ public enum Algorithm {
                 return SHA_384;
             case "SHA512":
                 return SHA_512;
+            default:
+                // noop
         }
 
         return Algorithm.valueOf(value);

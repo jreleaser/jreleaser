@@ -34,14 +34,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * @author Andres Almiray
  * @since 1.0.0
  */
-public class FileUtilsTests {
+class FileUtilsTests {
     private static final ZonedDateTime TIMESTAMP = ZonedDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneId.of("UTC"));
 
     @ParameterizedTest
     @EnumSource(value = FileType.class,
         names = {"TAR", "TAR_BZ2", "TAR_GZ", "TAR_XZ", "TAR_ZST", "TBZ2", "TGZ", "TXZ", "ZIP"})
     @Platform(platform = "windows", match = false)
-    public void packAndUnpackArchive(FileType fileType) throws IOException {
+    void packAndUnpackArchive(FileType fileType) throws IOException {
         // given:
         Path resourcesDir = Paths.get(".")
             .resolve("src/test/resources")

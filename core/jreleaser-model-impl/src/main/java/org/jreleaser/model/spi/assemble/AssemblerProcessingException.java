@@ -22,6 +22,8 @@ package org.jreleaser.model.spi.assemble;
  * @since 0.2.0
  */
 public class AssemblerProcessingException extends Exception {
+    private static final long serialVersionUID = -5780385999973744325L;
+
     public AssemblerProcessingException(String message) {
         super(message);
     }

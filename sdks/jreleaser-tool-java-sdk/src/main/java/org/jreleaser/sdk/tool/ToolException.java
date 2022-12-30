@@ -22,6 +22,8 @@ package org.jreleaser.sdk.tool;
  * @since 1.0.0
  */
 public class ToolException extends RuntimeException {
+    private static final long serialVersionUID = 6170675490763762358L;
+
     public ToolException(String message) {
         super(message);
     }

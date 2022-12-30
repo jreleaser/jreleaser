@@ -41,8 +41,8 @@ public class VersionPattern {
 
         public static Type of(String str) {
             if (isBlank(str)) return null;
-            return Type.valueOf(str.replaceAll(" ", "_")
-                .replaceAll("-", "_")
+            return Type.valueOf(str.replace(" ", "_")
+                .replace("-", "_")
                 .toUpperCase(Locale.ENGLISH).trim());
         }
     }

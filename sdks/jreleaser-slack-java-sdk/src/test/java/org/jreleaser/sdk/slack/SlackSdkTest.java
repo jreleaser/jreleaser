@@ -34,12 +34,12 @@ import static org.jreleaser.sdk.slack.ApiEndpoints.MESSAGES_ENDPOINT;
 import static org.jreleaser.test.WireMockStubs.verifyPostContains;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class SlackSdkTest {
+class SlackSdkTest {
     @RegisterExtension
     WireMockExtension api = new WireMockExtension(options().dynamicPort());
 
     @Test
-    public void testMessage() throws SlackException {
+    void testMessage() throws SlackException {
         // given:
         stubFor(post(urlEqualTo(MESSAGES_ENDPOINT))
             .willReturn(okJson("{\"status\": 202, \"ok\":\"true\"}")));
@@ -64,7 +64,7 @@ public class SlackSdkTest {
     }
 
     @Test
-    public void testDryrun() throws SlackException {
+    void testDryrun() throws SlackException {
         // given:
         stubFor(post(urlEqualTo(MESSAGES_ENDPOINT))
             .willReturn(okJson("{\"status\": 202, \"ok\":\"true\"}")));
@@ -83,11 +83,11 @@ public class SlackSdkTest {
 
         // then:
         assertThat(WireMock.findUnmatchedRequests())
-            .hasSize(0);
+            .isEmpty();
     }
 
     @Test
-    public void testError() {
+    void testError() {
         // given:
         stubFor(post(urlEqualTo(MESSAGES_ENDPOINT))
             .willReturn(aResponse().withStatus(400)));

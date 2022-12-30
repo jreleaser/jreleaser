@@ -22,6 +22,8 @@ package org.jreleaser.model.spi.download;
  * @since 1.1.0
  */
 public class DownloadException extends Exception {
+    private static final long serialVersionUID = -7553790889391338192L;
+
     public DownloadException(String message) {
         super(message);
     }

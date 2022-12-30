@@ -65,7 +65,7 @@ public abstract class GofishPackagerValidator extends Validator {
         nag("Gofish is deprecated since 1.1.0 and will be removed in 2.0.0");
 
         List<Artifact> candidateArtifacts = packager.resolveCandidateArtifacts(context, distribution);
-        if (candidateArtifacts.size() == 0) {
+        if (candidateArtifacts.isEmpty()) {
             packager.setActive(Active.NEVER);
             context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
             errors.warning(RB.$("WARNING.validation.packager.no.artifacts", distribution.getName(),

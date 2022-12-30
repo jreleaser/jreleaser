@@ -21,7 +21,6 @@ import org.jreleaser.bundle.RB;
 
 import java.util.List;
 import java.util.ServiceLoader;
-import java.util.function.Supplier;
 import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.toList;
@@ -32,23 +31,24 @@ import static java.util.stream.Collectors.toList;
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
 public final class ExtensionManagerHolder {
-    private static final ThreadLocal<ExtensionManager> EXTENSION_MANAGER_THREAD_LOCAL = ThreadLocal.withInitial(new Supplier<ExtensionManager>() {
-        @Override
-        public ExtensionManager get() {
-            List<ExtensionManager> extensionManagers = StreamSupport
-                .stream(resolveServiceLoader().spliterator(), false)
-                .collect(toList());
+    private static final ThreadLocal<ExtensionManager> EXTENSION_MANAGER_THREAD_LOCAL = ThreadLocal.withInitial(() -> {
+        List<ExtensionManager> extensionManagers = StreamSupport
+            .stream(resolveServiceLoader().spliterator(), false)
+            .collect(toList());
 
-            if (extensionManagers.size() == 0) {
-                // Should never happen!
-                throw new IllegalStateException(RB.$("ERROR_extension_manager_load"));
-            } else if (extensionManagers.size() > 1) {
-                throw new IllegalStateException(RB.$("ERROR_extension_manager_multiple_instances", extensionManagers.size()));
-            }
-
-            return extensionManagers.get(0);
+        if (extensionManagers.isEmpty()) {
+            // Should never happen!
+            throw new IllegalStateException(RB.$("ERROR_extension_manager_load"));
+        } else if (extensionManagers.size() > 1) {
+            throw new IllegalStateException(RB.$("ERROR_extension_manager_multiple_instances", extensionManagers.size()));
         }
+
+        return extensionManagers.get(0);
     });
+
+    private ExtensionManagerHolder() {
+        // noop
+    }
 
     public static ExtensionManager get() {
         return EXTENSION_MANAGER_THREAD_LOCAL.get();

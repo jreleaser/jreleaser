@@ -22,6 +22,8 @@ package org.jreleaser.sdk.slack;
  * @since 0.1.0
  */
 public class SlackException extends Exception {
+    private static final long serialVersionUID = 8305261026545734923L;
+
     public SlackException(String message) {
         super(message);
     }

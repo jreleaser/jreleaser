@@ -221,7 +221,7 @@ public final class Environment extends AbstractModelObject<Environment> implemen
         Map<String, String> getProperties();
     }
 
-    public static abstract class AbstractPropertiesSource implements PropertiesSource {
+    public abstract static class AbstractPropertiesSource implements PropertiesSource {
         @Override
         public Map<String, String> getProperties() {
             Map<String, String> props = doGetProperties();

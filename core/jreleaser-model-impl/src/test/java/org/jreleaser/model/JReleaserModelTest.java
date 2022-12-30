@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * @since 1.2.0
  */
 @Disabled
-public class JReleaserModelTest {
+class JReleaserModelTest {
     @Test
     void shouldRenderProjectNameCapitalizedWithSpaces() {
         JReleaserModel model = new JReleaserModel();

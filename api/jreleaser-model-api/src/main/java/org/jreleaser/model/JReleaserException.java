@@ -22,6 +22,8 @@ package org.jreleaser.model;
  * @since 0.1.0
  */
 public class JReleaserException extends RuntimeException {
+    private static final long serialVersionUID = -3119921124179882553L;
+
     public JReleaserException(String message) {
         super(message);
     }

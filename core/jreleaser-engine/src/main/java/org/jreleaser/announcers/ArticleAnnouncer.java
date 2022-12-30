@@ -109,11 +109,12 @@ public class ArticleAnnouncer implements Announcer<org.jreleaser.model.api.annou
                     output = file.getResolvedPath(context, prepareDirectory, false);
                 }
 
-                Reader reader = Files.newBufferedReader(input);
-                context.getLogger().debug(RB.$("announcer.article.eval.template"), context.relativizeToBasedir(input));
-                String content = applyTemplate(reader, props);
-                context.getLogger().debug(RB.$("announcer.article.write.template"), context.relativizeToBasedir(input));
-                writeFile(content, output);
+                try (Reader reader = Files.newBufferedReader(input)) {
+                    context.getLogger().debug(RB.$("announcer.article.eval.template"), context.relativizeToBasedir(input));
+                    String content = applyTemplate(reader, props);
+                    context.getLogger().debug(RB.$("announcer.article.write.template"), context.relativizeToBasedir(input));
+                    writeFile(content, output);
+                }
             }
         } catch (JReleaserException e) {
             context.getLogger().warn(e.getMessage());

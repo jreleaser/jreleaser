@@ -24,9 +24,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class StringUtilsTest {
+class StringUtilsTest {
     @Test
-    public void testCapitalize() {
+    void testCapitalize() {
         assertEquals("", StringUtils.capitalize(""));
         assertEquals(" ", StringUtils.capitalize(" "));
         assertNull(StringUtils.capitalize(null));
@@ -35,7 +35,7 @@ public class StringUtilsTest {
     }
 
     @Test
-    public void testUncapitalize() {
+    void testUncapitalize() {
         assertEquals("", StringUtils.uncapitalize(""));
         assertEquals(" ", StringUtils.uncapitalize(" "));
         assertNull(StringUtils.uncapitalize(null));
@@ -44,30 +44,30 @@ public class StringUtilsTest {
     }
 
     @Test
-    public void testGetSetterName() {
+    void testGetSetterName() {
         assertEquals("setA", StringUtils.getSetterName("a"));
         assertEquals("setJreleaser", StringUtils.getSetterName("jreleaser"));
     }
 
     @Test
-    public void testGetGetterName() {
+    void testGetGetterName() {
         assertEquals("getA", StringUtils.getGetterName("a"));
         assertEquals("getJreleaser", StringUtils.getGetterName("jreleaser"));
     }
 
     @Test
-    public void testGetClassName() {
+    void testGetClassName() {
         assertEquals("PersonController", StringUtils.getClassName("person", "Controller"));
         assertEquals("Person", StringUtils.getClassName("person", ""));
     }
 
     @Test
-    public void testGetPropertyName() {
+    void testGetPropertyName() {
         assertEquals("foo", StringUtils.getPropertyName(Foo.class));
     }
 
     @Test
-    public void testGetPropertyNameRepresentation() {
+    void testGetPropertyNameRepresentation() {
         assertEquals("foo", StringUtils.getPropertyName("foo"));
         assertEquals("foo", StringUtils.getPropertyName("Foo"));
         assertEquals("foo", StringUtils.getPropertyName("jreleaser.util.Foo"));
@@ -75,13 +75,13 @@ public class StringUtilsTest {
     }
 
     @Test
-    public void testGetShortName() {
+    void testGetShortName() {
         assertEquals("Foo", StringUtils.getShortName("jreleaser.util.Foo"));
         assertEquals("Foo", StringUtils.getShortName(Foo.class));
     }
 
     @Test
-    public void testGetClassNameRepresentation() {
+    void testGetClassNameRepresentation() {
         assertEquals("MyClass", StringUtils.getClassNameRepresentation("my-class"));
         assertEquals("MyClass", StringUtils.getClassNameRepresentation("MyClass"));
         assertEquals("F", StringUtils.getClassNameRepresentation(".f"));
@@ -90,7 +90,7 @@ public class StringUtilsTest {
     }
 
     @Test
-    public void testGetNaturalName() {
+    void testGetNaturalName() {
         assertEquals("First Name", StringUtils.getNaturalName("firstName"));
         assertEquals("URL", StringUtils.getNaturalName("URL"));
         assertEquals("Local URL", StringUtils.getNaturalName("localURL"));
@@ -100,32 +100,32 @@ public class StringUtilsTest {
     }
 
     @Test
-    public void testGetLogicalName() {
+    void testGetLogicalName() {
         assertEquals("Test", StringUtils.getLogicalName("TestController", "Controller"));
         assertEquals("Test", StringUtils.getLogicalName("org.music.TestController", "Controller"));
     }
 
     @Test
-    public void testGetLogicalPropertyName() {
+    void testGetLogicalPropertyName() {
         assertEquals("myFunky", StringUtils.getLogicalPropertyName("MyFunkyController", "Controller"));
         assertEquals("HTML", StringUtils.getLogicalPropertyName("HTMLCodec", "Codec"));
         assertEquals("payRoll", StringUtils.getLogicalPropertyName("org.something.PayRollController", "Controller"));
     }
 
     @Test
-    public void testGetLogicalPropertyNameForArtefactWithSingleCharacterName() {
+    void testGetLogicalPropertyNameForArtefactWithSingleCharacterName() {
         assertEquals("a", StringUtils.getLogicalPropertyName("AController", "Controller"));
         assertEquals("b", StringUtils.getLogicalPropertyName("BService", "Service"));
     }
 
     @Test
-    public void testGetLogicalPropertyNameForArtefactWithAllUpperCaseName() {
+    void testGetLogicalPropertyNameForArtefactWithAllUpperCaseName() {
         assertEquals("ABC", StringUtils.getLogicalPropertyName("ABCController", "Controller"));
         assertEquals("BCD", StringUtils.getLogicalPropertyName("BCDService", "Service"));
     }
 
     @Test
-    public void testIsBlank() {
+    void testIsBlank() {
         assertTrue(StringUtils.isBlank(null), "'null' value should count as blank.");
         assertTrue(StringUtils.isBlank(""), "Empty string should count as blank.");
         assertTrue(StringUtils.isBlank("  "), "Spaces should count as blank.");
@@ -135,7 +135,7 @@ public class StringUtilsTest {
     }
 
     @Test
-    public void testIsNotBlank() {
+    void testIsNotBlank() {
         assertFalse(StringUtils.isNotBlank(null), "'null' value should count as blank.");
         assertFalse(StringUtils.isNotBlank(""), "Empty string should count as blank.");
         assertFalse(StringUtils.isNotBlank("  "), "Spaces should count as blank.");
@@ -145,7 +145,7 @@ public class StringUtilsTest {
     }
 
     @Test
-    public void testQuote() {
+    void testQuote() {
         assertEquals(" ", StringUtils.quote(" "));
         assertEquals("\" a\"", StringUtils.quote(" a"));
         assertEquals("\" a \"", StringUtils.quote(" a "));
@@ -153,7 +153,7 @@ public class StringUtilsTest {
     }
 
     @Test
-    public void testUnquote() {
+    void testUnquote() {
         assertEquals("", StringUtils.unquote(""));
         assertEquals(" ", StringUtils.unquote(" "));
         assertEquals("", StringUtils.unquote("\"\""));
@@ -169,13 +169,13 @@ public class StringUtilsTest {
     }
 
     @Test
-    public void testGetHyphenatedName() {
+    void testGetHyphenatedName() {
         assertEquals("string-utils", StringUtils.getHyphenatedName(StringUtils.class));
         assertEquals("string-utils", StringUtils.getHyphenatedName(StringUtils.class.getName()));
     }
 
     @Test
-    public void testGetClassNameForLowerCaseHyphenSeparatedName() {
+    void testGetClassNameForLowerCaseHyphenSeparatedName() {
         assertEquals("StringUtils", StringUtils.getClassNameForLowerCaseHyphenSeparatedName("string-utils"));
     }
 }

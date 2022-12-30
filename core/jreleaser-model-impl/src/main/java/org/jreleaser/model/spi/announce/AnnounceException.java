@@ -22,6 +22,8 @@ package org.jreleaser.model.spi.announce;
  * @since 0.1.0
  */
 public class AnnounceException extends Exception {
+    private static final long serialVersionUID = -1697152696458083459L;
+
     public AnnounceException(String message) {
         super(message);
     }

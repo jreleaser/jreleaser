@@ -30,10 +30,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ChecksumUtilsTest {
+class ChecksumUtilsTest {
     @ParameterizedTest
     @MethodSource("algorithm_factory")
-    public void testAlgorithmFactory(Algorithm expected, String input) {
+    void testAlgorithmFactory(Algorithm expected, String input) {
         // given:
         Algorithm actual = Algorithm.of(input);
 
@@ -53,7 +53,7 @@ public class ChecksumUtilsTest {
 
     @ParameterizedTest
     @MethodSource("checksums")
-    public void testChecksums(Algorithm algorithm, String expected) throws IOException {
+    void testChecksums(Algorithm algorithm, String expected) throws IOException {
         // given:
         String actual = ChecksumUtils.checksum(algorithm, "JRELEASER\n".getBytes(UTF_8));
 

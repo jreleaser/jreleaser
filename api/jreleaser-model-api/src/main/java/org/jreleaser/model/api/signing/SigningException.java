@@ -22,6 +22,8 @@ package org.jreleaser.model.api.signing;
  * @since 0.1.0
  */
 public class SigningException extends Exception {
+    private static final long serialVersionUID = -5439420290313016535L;
+
     public SigningException(String message) {
         super(message);
     }

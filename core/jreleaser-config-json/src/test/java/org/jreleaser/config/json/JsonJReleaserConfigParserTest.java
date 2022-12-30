@@ -28,7 +28,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class JsonJReleaserConfigParserTest {
+class JsonJReleaserConfigParserTest {
     @Test
     void support() {
         // given:
@@ -99,8 +99,7 @@ public class JsonJReleaserConfigParserTest {
 
         // then:
         assertThat(properties)
-            .isNotNull();
-        assertThat(properties)
+            .isNotNull()
             .containsKey("JRELEASER_GITHUB_TOKEN")
             .containsValue("A1234567890");
     }

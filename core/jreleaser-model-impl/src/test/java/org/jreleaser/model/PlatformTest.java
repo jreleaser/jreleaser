@@ -32,10 +32,10 @@ import static org.hamcrest.Matchers.equalTo;
  * @author Andres Almiray
  * @since 0.10.0
  */
-public class PlatformTest {
+class PlatformTest {
     @ParameterizedTest
     @MethodSource("platform_inputs")
-    public void testReplacements(String input, String output) {
+    void testReplacements(String input, String output) {
         // given:
         Platform platform = new Platform();
         platform.setReplacements(CollectionUtils.<String, String>map()

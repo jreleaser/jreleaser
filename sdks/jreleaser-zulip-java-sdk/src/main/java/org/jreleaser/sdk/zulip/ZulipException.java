@@ -22,6 +22,8 @@ package org.jreleaser.sdk.zulip;
  * @since 0.1.0
  */
 public class ZulipException extends Exception {
+    private static final long serialVersionUID = -1365555653188164825L;
+
     public ZulipException(String message) {
         super(message);
     }

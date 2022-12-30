@@ -22,6 +22,8 @@ package org.jreleaser.sdk.smtp;
  * @since 0.1.0
  */
 public class SmtpException extends Exception {
+    private static final long serialVersionUID = -7113634597387846169L;
+
     public SmtpException(String message) {
         super(message);
     }

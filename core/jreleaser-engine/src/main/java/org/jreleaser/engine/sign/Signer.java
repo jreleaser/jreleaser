@@ -240,18 +240,18 @@ public class Signer {
                 pgpSigList = (Iterable<?>) obj;
             }
 
-            InputStream fileInputStream = new BufferedInputStream(new FileInputStream(filePair.getInputFile().toFile()));
             PGPSignature sig = (PGPSignature) pgpSigList.iterator().next();
-            PGPPublicKey pubKey = keyring.readPublicKey();
-            sig.init(new JcaPGPContentVerifierBuilderProvider()
-                .setProvider(BouncyCastleProvider.PROVIDER_NAME), pubKey);
+            try (InputStream fileInputStream = new BufferedInputStream(new FileInputStream(filePair.getInputFile().toFile()))) {
+                PGPPublicKey pubKey = keyring.readPublicKey();
+                sig.init(new JcaPGPContentVerifierBuilderProvider()
+                    .setProvider(BouncyCastleProvider.PROVIDER_NAME), pubKey);
 
-            int ch;
-            while ((ch = fileInputStream.read()) >= 0) {
-                sig.update((byte) ch);
+                int ch;
+                while ((ch = fileInputStream.read()) >= 0) {
+                    sig.update((byte) ch);
+                }
             }
 
-            fileInputStream.close();
             sigInputStream.close();
 
             return sig.verify();

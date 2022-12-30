@@ -30,7 +30,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
-public class EnvTests {
+class EnvTests {
     @ParameterizedTest
     @MethodSource("variable_factory")
     @ReadsEnvironmentVariable
@@ -38,7 +38,7 @@ public class EnvTests {
     @SetEnvironmentVariable(key = "JRELEASER_FOO_BAR", value = "foobar-env")
     @ClearSystemProperty(key = "jreleaser.foo")
     @ClearSystemProperty(key = "jreleaser.foo.bar")
-    public void testVariableResolution(String expected, String key, String value, boolean setsys) {
+    void testVariableResolution(String expected, String key, String value, boolean setsys) {
         // given:
         if (setsys && isNotBlank(expected)) System.setProperty(Env.sysKey(key), expected);
 

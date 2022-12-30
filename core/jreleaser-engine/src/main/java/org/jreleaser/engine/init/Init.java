@@ -60,7 +60,7 @@ public class Init {
 
             String content = IOUtils.toString(template.getReader());
             LocalDate now = LocalDate.now();
-            content = content.replaceAll("@year@", now.getYear() + "");
+            content = content.replace("@year@", now.getYear() + "");
 
             logger.info($("jreleaser.init.TEXT_writing_file"), outputFile.toAbsolutePath());
 

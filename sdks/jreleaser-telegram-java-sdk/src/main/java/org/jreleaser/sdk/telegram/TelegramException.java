@@ -22,6 +22,8 @@ package org.jreleaser.sdk.telegram;
  * @since 0.8.0
  */
 public class TelegramException extends Exception {
+    private static final long serialVersionUID = -9170175710783727571L;
+
     public TelegramException(String message) {
         super(message);
     }

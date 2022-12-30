@@ -31,9 +31,9 @@ import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CollectionUtilsTest {
+class CollectionUtilsTest {
     @Test
-    public void testMapBuilderAdDelegate() {
+    void testMapBuilderAdDelegate() {
         // given:
         Map<String, String> delegate = new LinkedHashMap<>();
         Map<String, String> map = CollectionUtils.map(delegate);
@@ -66,7 +66,7 @@ public class CollectionUtilsTest {
     }
 
     @Test
-    public void testListBuilderAndDelegate() {
+    void testListBuilderAndDelegate() {
         // given:
         List<Object> delegate = new ArrayList<>();
         CollectionUtils.ListBuilder<Object> list = CollectionUtils.list(delegate);
@@ -102,7 +102,7 @@ public class CollectionUtilsTest {
     }
 
     @Test
-    public void testSetBuilderAndDelegate() {
+    void testSetBuilderAndDelegate() {
         // given:
         Set<Object> delegate = new LinkedHashSet<>();
         CollectionUtils.SetBuilder<Object> set = CollectionUtils.set(delegate);
@@ -138,7 +138,7 @@ public class CollectionUtilsTest {
     }
 
     @Test
-    public void testToPropertiesDeep() {
+    void testToPropertiesDeep() {
         // given:
         Map<String, Object> map1 = new LinkedHashMap<>(5);
         map1.put("singleKey", "singleValue");

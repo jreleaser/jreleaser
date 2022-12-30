@@ -42,71 +42,71 @@ public class WorkflowAdapter implements WorkflowListener {
 
     @Override
     public void onSessionStart(JReleaserContext context) {
-
+        // noop
     }
 
     @Override
     public void onSessionEnd(JReleaserContext context) {
-
+        // noop
     }
 
     @Override
     public void onWorkflowStep(ExecutionEvent event, JReleaserContext context) {
-
+        // noop
     }
 
     @Override
     public void onAnnounceStep(ExecutionEvent event, JReleaserContext context, Announcer announcer) {
-
+        // noop
     }
 
     @Override
     public void onAssembleStep(ExecutionEvent event, JReleaserContext context, Assembler assembler) {
-
+        // noop
     }
 
     @Override
     public void onDeployStep(ExecutionEvent event, JReleaserContext context, Deployer deployer) {
-
+        // noop
     }
 
     @Override
     public void onDownloadStep(ExecutionEvent event, JReleaserContext context, Downloader downloader) {
-
+        // noop
     }
 
     @Override
     public void onUploadStep(ExecutionEvent event, JReleaserContext context, Uploader uploader) {
-
+        // noop
     }
 
     @Override
     public void onReleaseStep(ExecutionEvent event, JReleaserContext context, Releaser releaser) {
-
+        // noop
     }
 
     @Override
     public void onPackagerPrepareStep(ExecutionEvent event, JReleaserContext context, Distribution distribution, Packager packager) {
-
+        // noop
     }
 
     @Override
     public void onPackagerPackageStep(ExecutionEvent event, JReleaserContext context, Distribution distribution, Packager packager) {
-
+        // noop
     }
 
     @Override
     public void onPackagerPublishStep(ExecutionEvent event, JReleaserContext context, Distribution distribution, Packager packager) {
-
+        // noop
     }
 
     @Override
     public void onDistributionStart(JReleaserContext context, Distribution distribution) {
-
+        // noop
     }
 
     @Override
     public void onDistributionEnd(JReleaserContext context, Distribution distribution) {
-
+        // noop
     }
 }

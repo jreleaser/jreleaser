@@ -36,12 +36,12 @@ import static org.jreleaser.sdk.sdkman.Stubs.verifyPost;
 import static org.jreleaser.sdk.sdkman.Stubs.verifyPut;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class MajorReleaseSdkmanCommandTest {
+class MajorReleaseSdkmanCommandTest {
     @RegisterExtension
     WireMockExtension api = new WireMockExtension(options().dynamicPort());
 
     @Test
-    public void testMajorReleaseWithAnnouncement() throws SdkmanException {
+    void testMajorReleaseWithAnnouncement() throws SdkmanException {
         // given:
         stubFor(post(urlEqualTo(RELEASE_ENDPOINT))
             .willReturn(okJson("{\"status\": 201, \"message\":\"success\"}")));
@@ -84,7 +84,7 @@ public class MajorReleaseSdkmanCommandTest {
     }
 
     @Test
-    public void testError() {
+    void testError() {
         // given:
         stubFor(post(urlEqualTo(RELEASE_ENDPOINT))
             .willReturn(aResponse().withStatus(500)));

@@ -22,6 +22,8 @@ package org.jreleaser.templates;
  * @since 0.1.0
  */
 public class TemplateGenerationException extends Exception {
+    private static final long serialVersionUID = -3122515007150410783L;
+
     public TemplateGenerationException(String message) {
         super(message);
     }

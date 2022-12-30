@@ -22,6 +22,8 @@ package org.jreleaser.model.spi.deploy;
  * @since 1.3.0
  */
 public class DeployException extends Exception {
+    private static final long serialVersionUID = 2015050951760506109L;
+
     public DeployException(String message) {
         super(message);
     }

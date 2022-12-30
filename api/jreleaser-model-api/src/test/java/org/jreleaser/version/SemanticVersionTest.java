@@ -32,10 +32,10 @@ import static org.hamcrest.Matchers.equalTo;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public class SemanticVersionTest {
+class SemanticVersionTest {
     @ParameterizedTest
     @MethodSource("version_parsing")
-    public void testVersionParsing(String input, int major, int minor, int patch, String tag, String build) {
+    void testVersionParsing(String input, int major, int minor, int patch, String tag, String build) {
         // given:
         SemanticVersion version = SemanticVersion.of(input);
 
@@ -50,7 +50,7 @@ public class SemanticVersionTest {
 
     @ParameterizedTest
     @MethodSource("same_version")
-    public void testVersionIdentity(String input) {
+    void testVersionIdentity(String input) {
         // given:
         SemanticVersion version = SemanticVersion.of(input);
 
@@ -64,7 +64,7 @@ public class SemanticVersionTest {
 
     @ParameterizedTest
     @MethodSource("version_comparison")
-    public void testVersionComparison(String input1, String input2) {
+    void testVersionComparison(String input1, String input2) {
         // given:
         SemanticVersion v1 = SemanticVersion.of(input1);
         SemanticVersion v2 = SemanticVersion.of(input2);

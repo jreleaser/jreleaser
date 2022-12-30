@@ -35,12 +35,12 @@ import static org.jreleaser.sdk.telegram.ApiEndpoints.SEND_MESSAGE_ENDPOINT;
 import static org.jreleaser.test.WireMockStubs.verifyPostContains;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class TelegramSdkTest {
+class TelegramSdkTest {
     @RegisterExtension
     WireMockExtension api = new WireMockExtension(options().dynamicPort());
 
     @Test
-    public void testMessage() throws TelegramException {
+    void testMessage() throws TelegramException {
         // given:
         stubFor(post(urlEqualTo(API_HOST_PREFIX + SEND_MESSAGE_ENDPOINT))
             .willReturn(okJson("{\"status\": 202, \"message\":\"success\"}")));
@@ -67,7 +67,7 @@ public class TelegramSdkTest {
     }
 
     @Test
-    public void testDryrun() throws TelegramException {
+    void testDryrun() throws TelegramException {
         // given:
         stubFor(post(urlEqualTo(API_HOST_PREFIX + SEND_MESSAGE_ENDPOINT))
             .willReturn(okJson("{\"status\": 202, \"message\":\"success\"}")));
@@ -86,11 +86,11 @@ public class TelegramSdkTest {
 
         // then:
         assertThat(WireMock.findUnmatchedRequests())
-            .hasSize(0);
+            .isEmpty();
     }
 
     @Test
-    public void testError() {
+    void testError() {
         // given:
         stubFor(post(urlEqualTo(API_HOST_PREFIX + SEND_MESSAGE_ENDPOINT))
             .willReturn(aResponse().withStatus(400)));

@@ -22,6 +22,8 @@ package org.jreleaser.sdk.nexus2;
  * @since 1.3.0
  */
 public class Nexus2Exception extends Exception {
+    private static final long serialVersionUID = -5584176258036677240L;
+
     public Nexus2Exception(String message) {
         super(message);
     }

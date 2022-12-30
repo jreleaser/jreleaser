@@ -73,7 +73,7 @@ import static org.mockito.Mockito.when;
 @Disabled("Test setup is too complex. Refactor")
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class ChangelogGeneratorUnitTest {
+class ChangelogGeneratorUnitTest {
     @Spy
     ChangelogGenerator changelogGenerator = new ChangelogGenerator();
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
@@ -102,7 +102,7 @@ public class ChangelogGeneratorUnitTest {
 
     @Test
     @DisplayName("When configured tag has no prefix and no matches if found then all commits from head must be used")
-    public void notParsable() throws GitAPIException, IOException {
+    void notParsable() throws GitAPIException, IOException {
         // given:
         String effectiveTagName = "2.2.0";
         String configuredTagName = "{{projectVersion}}";
@@ -123,7 +123,7 @@ public class ChangelogGeneratorUnitTest {
 
     @Test
     @DisplayName("Should exclude bot commits from changelog")
-    public void excludeBots() throws IOException {
+    void excludeBots() throws IOException {
         Changelog.Hide instance = new Changelog.Hide();
         Set<String> contributors = new HashSet<>();
         contributors.add("dependabot");
@@ -144,7 +144,7 @@ public class ChangelogGeneratorUnitTest {
 
     @Test
     @DisplayName("When no tag is found that match current configured tag name then all commits from head must be used")
-    public void tagThatNoMatches() throws GitAPIException, IOException {
+    void tagThatNoMatches() throws GitAPIException, IOException {
         // given:
         String effectiveTagName = "2.2.0";
         String configuredTagName = "release-{{projectVersion}}";
@@ -165,7 +165,7 @@ public class ChangelogGeneratorUnitTest {
 
     @Test
     @DisplayName("When skipMergeCommits property is true and formatted enabled skip merge commits in the changelog")
-    public void skipMergeCommitsFormatted() throws GitAPIException, IOException {
+    void skipMergeCommitsFormatted() throws GitAPIException, IOException {
         // given:
         setUpStaticMocks();
         RevCommit mergeCommit = getMockRevCommit(true, true);
@@ -181,7 +181,7 @@ public class ChangelogGeneratorUnitTest {
 
     @Test
     @DisplayName("When skipMergeCommits property is false and formatted enabled keep merge commits in the changelog")
-    public void keepMergeCommitsFormatted() throws GitAPIException, IOException {
+    void keepMergeCommitsFormatted() throws GitAPIException, IOException {
         // given:
         setUpStaticMocks();
         RevCommit mergeCommit = getMockRevCommit(false, true);
@@ -197,7 +197,7 @@ public class ChangelogGeneratorUnitTest {
 
     @Test
     @DisplayName("When skipMergeCommits property is true and formatted disabled skip merge commits in the changelog")
-    public void skipMergeCommits() throws GitAPIException, IOException {
+    void skipMergeCommits() throws GitAPIException, IOException {
         // given:
         setUpStaticMocks();
         RevCommit mergeCommit = getMockRevCommit(true, false);
@@ -215,7 +215,7 @@ public class ChangelogGeneratorUnitTest {
 
     @Test
     @DisplayName("When skipMergeCommits property is false and formatted disabled keep merge commits in the changelog")
-    public void keepMergeCommits() throws GitAPIException, IOException {
+    void keepMergeCommits() throws GitAPIException, IOException {
         // given:
         setUpStaticMocks();
         RevCommit mergeCommit = getMockRevCommit(false, false);
@@ -233,7 +233,7 @@ public class ChangelogGeneratorUnitTest {
 
     @Test
     @DisplayName("When commit contains body contains CR/LF and LF")
-    public void dependabotCommitMultipleLineEndings() {
+    void dependabotCommitMultipleLineEndings() {
 
         String commitBody = "Bump actions/setup-java from 2 to 3.5.1 (#123)\n" +
                 "\n" +

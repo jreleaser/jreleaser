@@ -22,6 +22,8 @@ package org.jreleaser.sdk.mastodon;
  * @since 0.4.0
  */
 public class MastodonException extends Exception {
+    private static final long serialVersionUID = -3233004732629558982L;
+
     public MastodonException(String message) {
         super(message);
     }
