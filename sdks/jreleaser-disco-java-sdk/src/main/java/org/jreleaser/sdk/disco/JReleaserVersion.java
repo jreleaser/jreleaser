@@ -28,6 +28,10 @@ public class JReleaserVersion {
     private static final ResourceBundle BUNDLE = ResourceBundle.getBundle(JReleaserVersion.class.getName());
     private static final String JRELEASER_VERSION = BUNDLE.getString("jreleaser_version");
 
+    private JReleaserVersion() {
+        // noop
+    }
+
     public static String getPlainVersion() {
         return JRELEASER_VERSION;
     }

@@ -33,7 +33,11 @@ import java.util.stream.StreamSupport;
  * @author Andres Almiray
  * @since 0.3.0
  */
-public class ArtifactUploaders {
+public final class ArtifactUploaders {
+    private ArtifactUploaders() {
+        // noop
+    }
+
     public static <A extends org.jreleaser.model.api.upload.Uploader, U extends Uploader<A>> ArtifactUploader<A, U> findUploader(JReleaserContext context, U uploader) {
         Map<String, ArtifactUploader<?, ?>> uploaders = StreamSupport.stream(ServiceLoader.load(ArtifactUploaderFactory.class,
                 ArtifactUploaders.class.getClassLoader()).spliterator(), false)

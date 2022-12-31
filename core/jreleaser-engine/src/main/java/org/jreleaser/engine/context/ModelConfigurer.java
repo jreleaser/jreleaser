@@ -39,7 +39,11 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public class ModelConfigurer {
+public final class ModelConfigurer {
+    private ModelConfigurer() {
+        // noop
+    }
+
     public static void configure(JReleaserContext context) {
         try {
             Commit head = GitSdk.of(context).head();
@@ -84,7 +88,7 @@ public class ModelConfigurer {
     }
 
     private static void autoConfigureGithub(JReleaserContext context, Repository repository) {
-        BaseReleaser service = context.getModel().getRelease().getReleaser();
+        BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
 
         if (service != null) {
             if (!(service instanceof GithubReleaser)) {
@@ -101,7 +105,7 @@ public class ModelConfigurer {
     }
 
     private static void autoConfigureGitlab(JReleaserContext context, Repository repository) {
-        BaseReleaser service = context.getModel().getRelease().getReleaser();
+        BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
 
         if (service != null) {
             if (!(service instanceof GitlabReleaser)) {
@@ -118,7 +122,7 @@ public class ModelConfigurer {
     }
 
     private static void autoConfigureCodeberg(JReleaserContext context, Repository repository) {
-        BaseReleaser service = context.getModel().getRelease().getReleaser();
+        BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
 
         if (service != null) {
             if (!(service instanceof CodebergReleaser)) {
@@ -135,14 +139,14 @@ public class ModelConfigurer {
     }
 
     private static void autoConfigureOther(JReleaserContext context, Repository repository) {
-        BaseReleaser service = context.getModel().getRelease().getReleaser();
+        BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
 
         if (service != null) {
             fillGitProperties(context.getLogger(), service, repository, context.getModel().getCommit());
         }
     }
 
-    private static void fillGitProperties(JReleaserLogger logger, BaseReleaser service, Repository repository, JReleaserModel.Commit head) {
+    private static void fillGitProperties(JReleaserLogger logger, BaseReleaser<?, ?> service, Repository repository, JReleaserModel.Commit head) {
         if (isBlank(service.getOwner())) {
             service.setOwner(repository.getOwner());
         }

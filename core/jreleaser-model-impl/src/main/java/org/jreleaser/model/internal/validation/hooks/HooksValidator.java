@@ -18,7 +18,6 @@
 package org.jreleaser.model.internal.validation.hooks;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.hooks.Hooks;
 import org.jreleaser.model.internal.validation.common.Validator;
@@ -31,7 +30,7 @@ import static org.jreleaser.model.internal.validation.hooks.CommandHooksValidato
  * @since 1.2.0
  */
 public abstract class HooksValidator extends Validator {
-    public static void validateHooks(JReleaserContext context, Mode mode, Errors errors) {
+    public static void validateHooks(JReleaserContext context, Errors errors) {
         context.getLogger().debug("hooks");
 
         Hooks hooks = context.getModel().getHooks();

@@ -27,44 +27,44 @@ import java.util.List;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Category {
-    public int id;
-    public String name;
-    public String color;
-    public String text_color;
-    public String slug;
-    public int topic_count;
-    public int post_count;
-    public int position;
-    public String description;
-    public String description_text;
-    public String description_excerpt;
-    public String topic_url;
-    public boolean read_restricted;
-    public int permission;
-    public int notification_level;
-    public boolean can_edit;
-    public String topic_template;
-    public boolean has_children;
-    public String sort_order;
-    public String sort_ascending;
-    public boolean show_subcategory_list;
-    public int num_featured_topics;
-    public String default_view;
-    public String subcategory_list_style;
-    public String default_top_period;
-    public String default_list_filter;
-    public int minimum_required_tags;
-    public boolean navigate_to_first_post_after_read;
-    public int topics_day;
-    public int topics_week;
-    public int topics_month;
-    public int topics_year;
-    public int topics_all_time;
-    public boolean is_uncategorized;
-    public List<Object> subcategory_ids;
-    public List<Object> subcategory_list;
-    public String uploaded_logo;
-    public String uploaded_background;
+    private int id;
+    private String name;
+    private String color;
+    private String textColor;
+    private String slug;
+    private int topicCount;
+    private int postCount;
+    private int position;
+    private String description;
+    private String descriptionText;
+    private String descriptionExcerpt;
+    private String topicUrl;
+    private boolean readRestricted;
+    private int permission;
+    private int notificationLevel;
+    private boolean canEdit;
+    private String topicTemplate;
+    private boolean hasChildren;
+    private String sortOrder;
+    private String sortAscending;
+    private boolean showSubcategoryList;
+    private int numFeaturedTopics;
+    private String defaultView;
+    private String subcategoryListStyle;
+    private String defaultTopPeriod;
+    private String defaultListFilter;
+    private int minimumRequiredTags;
+    private boolean navigateToFirstPostAfterRead;
+    private int topicsDay;
+    private int topicsWeek;
+    private int topicsMonth;
+    private int topicsYear;
+    private int topicsAllTime;
+    private boolean isUncategorized;
+    private List<Object> subcategoryIds;
+    private List<Object> subcategoryList;
+    private String uploadedLogo;
+    private String uploadedBackground;
 
     public int getId() {
         return id;
@@ -90,12 +90,12 @@ public class Category {
         this.color = color;
     }
 
-    public String getText_color() {
-        return text_color;
+    public String getTextColor() {
+        return textColor;
     }
 
-    public void setText_color(String text_color) {
-        this.text_color = text_color;
+    public void setTextColor(String textColor) {
+        this.textColor = textColor;
     }
 
     public String getSlug() {
@@ -106,20 +106,20 @@ public class Category {
         this.slug = slug;
     }
 
-    public int getTopic_count() {
-        return topic_count;
+    public int getTopicCount() {
+        return topicCount;
     }
 
-    public void setTopic_count(int topic_count) {
-        this.topic_count = topic_count;
+    public void setTopicCount(int topicCount) {
+        this.topicCount = topicCount;
     }
 
-    public int getPost_count() {
-        return post_count;
+    public int getPostCount() {
+        return postCount;
     }
 
-    public void setPost_count(int post_count) {
-        this.post_count = post_count;
+    public void setPostCount(int postCount) {
+        this.postCount = postCount;
     }
 
     public int getPosition() {
@@ -138,36 +138,36 @@ public class Category {
         this.description = description;
     }
 
-    public String getDescription_text() {
-        return description_text;
+    public String getDescriptionText() {
+        return descriptionText;
     }
 
-    public void setDescription_text(String description_text) {
-        this.description_text = description_text;
+    public void setDescriptionText(String descriptionText) {
+        this.descriptionText = descriptionText;
     }
 
-    public String getDescription_excerpt() {
-        return description_excerpt;
+    public String getDescriptionExcerpt() {
+        return descriptionExcerpt;
     }
 
-    public void setDescription_excerpt(String description_excerpt) {
-        this.description_excerpt = description_excerpt;
+    public void setDescriptionExcerpt(String descriptionExcerpt) {
+        this.descriptionExcerpt = descriptionExcerpt;
     }
 
-    public String getTopic_url() {
-        return topic_url;
+    public String getTopicUrl() {
+        return topicUrl;
     }
 
-    public void setTopic_url(String topic_url) {
-        this.topic_url = topic_url;
+    public void setTopicUrl(String topicUrl) {
+        this.topicUrl = topicUrl;
     }
 
-    public boolean isRead_restricted() {
-        return read_restricted;
+    public boolean isReadRestricted() {
+        return readRestricted;
     }
 
-    public void setRead_restricted(boolean read_restricted) {
-        this.read_restricted = read_restricted;
+    public void setReadRestricted(boolean readRestricted) {
+        this.readRestricted = readRestricted;
     }
 
     public int getPermission() {
@@ -178,196 +178,196 @@ public class Category {
         this.permission = permission;
     }
 
-    public int getNotification_level() {
-        return notification_level;
+    public int getNotificationLevel() {
+        return notificationLevel;
     }
 
-    public void setNotification_level(int notification_level) {
-        this.notification_level = notification_level;
+    public void setNotificationLevel(int notificationLevel) {
+        this.notificationLevel = notificationLevel;
     }
 
-    public boolean isCan_edit() {
-        return can_edit;
+    public boolean isCanEdit() {
+        return canEdit;
     }
 
-    public void setCan_edit(boolean can_edit) {
-        this.can_edit = can_edit;
+    public void setCanEdit(boolean canEdit) {
+        this.canEdit = canEdit;
     }
 
-    public String getTopic_template() {
-        return topic_template;
+    public String getTopicTemplate() {
+        return topicTemplate;
     }
 
-    public void setTopic_template(String topic_template) {
-        this.topic_template = topic_template;
+    public void setTopicTemplate(String topicTemplate) {
+        this.topicTemplate = topicTemplate;
     }
 
-    public boolean isHas_children() {
-        return has_children;
+    public boolean isHasChildren() {
+        return hasChildren;
     }
 
-    public void setHas_children(boolean has_children) {
-        this.has_children = has_children;
+    public void setHasChildren(boolean hasChildren) {
+        this.hasChildren = hasChildren;
     }
 
-    public String getSort_order() {
-        return sort_order;
+    public String getSortOrder() {
+        return sortOrder;
     }
 
-    public void setSort_order(String sort_order) {
-        this.sort_order = sort_order;
+    public void setSortOrder(String sortOrder) {
+        this.sortOrder = sortOrder;
     }
 
-    public String getSort_ascending() {
-        return sort_ascending;
+    public String getSortAscending() {
+        return sortAscending;
     }
 
-    public void setSort_ascending(String sort_ascending) {
-        this.sort_ascending = sort_ascending;
+    public void setSortAscending(String sortAscending) {
+        this.sortAscending = sortAscending;
     }
 
-    public boolean isShow_subcategory_list() {
-        return show_subcategory_list;
+    public boolean isShowSubcategoryList() {
+        return showSubcategoryList;
     }
 
-    public void setShow_subcategory_list(boolean show_subcategory_list) {
-        this.show_subcategory_list = show_subcategory_list;
+    public void setShowSubcategoryList(boolean showSubcategoryList) {
+        this.showSubcategoryList = showSubcategoryList;
     }
 
-    public int getNum_featured_topics() {
-        return num_featured_topics;
+    public int getNumFeaturedTopics() {
+        return numFeaturedTopics;
     }
 
-    public void setNum_featured_topics(int num_featured_topics) {
-        this.num_featured_topics = num_featured_topics;
+    public void setNumFeaturedTopics(int numFeaturedTopics) {
+        this.numFeaturedTopics = numFeaturedTopics;
     }
 
-    public String getDefault_view() {
-        return default_view;
+    public String getDefaultView() {
+        return defaultView;
     }
 
-    public void setDefault_view(String default_view) {
-        this.default_view = default_view;
+    public void setDefaultView(String defaultView) {
+        this.defaultView = defaultView;
     }
 
-    public String getSubcategory_list_style() {
-        return subcategory_list_style;
+    public String getSubcategoryListStyle() {
+        return subcategoryListStyle;
     }
 
-    public void setSubcategory_list_style(String subcategory_list_style) {
-        this.subcategory_list_style = subcategory_list_style;
+    public void setSubcategoryListStyle(String subcategoryListStyle) {
+        this.subcategoryListStyle = subcategoryListStyle;
     }
 
-    public String getDefault_top_period() {
-        return default_top_period;
+    public String getDefaultTopPeriod() {
+        return defaultTopPeriod;
     }
 
-    public void setDefault_top_period(String default_top_period) {
-        this.default_top_period = default_top_period;
+    public void setDefaultTopPeriod(String defaultTopPeriod) {
+        this.defaultTopPeriod = defaultTopPeriod;
     }
 
-    public String getDefault_list_filter() {
-        return default_list_filter;
+    public String getDefaultListFilter() {
+        return defaultListFilter;
     }
 
-    public void setDefault_list_filter(String default_list_filter) {
-        this.default_list_filter = default_list_filter;
+    public void setDefaultListFilter(String defaultListFilter) {
+        this.defaultListFilter = defaultListFilter;
     }
 
-    public int getMinimum_required_tags() {
-        return minimum_required_tags;
+    public int getMinimumRequiredTags() {
+        return minimumRequiredTags;
     }
 
-    public void setMinimum_required_tags(int minimum_required_tags) {
-        this.minimum_required_tags = minimum_required_tags;
+    public void setMinimumRequiredTags(int minimumRequiredTags) {
+        this.minimumRequiredTags = minimumRequiredTags;
     }
 
-    public boolean isNavigate_to_first_post_after_read() {
-        return navigate_to_first_post_after_read;
+    public boolean isNavigateToFirstPostAfterRead() {
+        return navigateToFirstPostAfterRead;
     }
 
-    public void setNavigate_to_first_post_after_read(boolean navigate_to_first_post_after_read) {
-        this.navigate_to_first_post_after_read = navigate_to_first_post_after_read;
+    public void setNavigateToFirstPostAfterRead(boolean navigateToFirstPostAfterRead) {
+        this.navigateToFirstPostAfterRead = navigateToFirstPostAfterRead;
     }
 
-    public int getTopics_day() {
-        return topics_day;
+    public int getTopicsDay() {
+        return topicsDay;
     }
 
-    public void setTopics_day(int topics_day) {
-        this.topics_day = topics_day;
+    public void setTopicsDay(int topicsDay) {
+        this.topicsDay = topicsDay;
     }
 
-    public int getTopics_week() {
-        return topics_week;
+    public int getTopicsWeek() {
+        return topicsWeek;
     }
 
-    public void setTopics_week(int topics_week) {
-        this.topics_week = topics_week;
+    public void setTopicsWeek(int topicsWeek) {
+        this.topicsWeek = topicsWeek;
     }
 
-    public int getTopics_month() {
-        return topics_month;
+    public int getTopicsMonth() {
+        return topicsMonth;
     }
 
-    public void setTopics_month(int topics_month) {
-        this.topics_month = topics_month;
+    public void setTopicsMonth(int topicsMonth) {
+        this.topicsMonth = topicsMonth;
     }
 
-    public int getTopics_year() {
-        return topics_year;
+    public int getTopicsYear() {
+        return topicsYear;
     }
 
-    public void setTopics_year(int topics_year) {
-        this.topics_year = topics_year;
+    public void setTopicsYear(int topicsYear) {
+        this.topicsYear = topicsYear;
     }
 
-    public int getTopics_all_time() {
-        return topics_all_time;
+    public int getTopicsAllTime() {
+        return topicsAllTime;
     }
 
-    public void setTopics_all_time(int topics_all_time) {
-        this.topics_all_time = topics_all_time;
+    public void setTopicsAllTime(int topicsAllTime) {
+        this.topicsAllTime = topicsAllTime;
     }
 
-    public boolean isIs_uncategorized() {
-        return is_uncategorized;
+    public boolean isUncategorized() {
+        return isUncategorized;
     }
 
-    public void setIs_uncategorized(boolean is_uncategorized) {
-        this.is_uncategorized = is_uncategorized;
+    public void setUncategorized(boolean uncategorized) {
+        isUncategorized = uncategorized;
     }
 
-    public List<Object> getSubcategory_ids() {
-        return subcategory_ids;
+    public List<Object> getSubcategoryIds() {
+        return subcategoryIds;
     }
 
-    public void setSubcategory_ids(List<Object> subcategory_ids) {
-        this.subcategory_ids = subcategory_ids;
+    public void setSubcategoryIds(List<Object> subcategoryIds) {
+        this.subcategoryIds = subcategoryIds;
     }
 
-    public List<Object> getSubcategory_list() {
-        return subcategory_list;
+    public List<Object> getSubcategoryList() {
+        return subcategoryList;
     }
 
-    public void setSubcategory_list(List<Object> subcategory_list) {
-        this.subcategory_list = subcategory_list;
+    public void setSubcategoryList(List<Object> subcategoryList) {
+        this.subcategoryList = subcategoryList;
     }
 
-    public String getUploaded_logo() {
-        return uploaded_logo;
+    public String getUploadedLogo() {
+        return uploadedLogo;
     }
 
-    public void setUploaded_logo(String uploaded_logo) {
-        this.uploaded_logo = uploaded_logo;
+    public void setUploadedLogo(String uploadedLogo) {
+        this.uploadedLogo = uploadedLogo;
     }
 
-    public String getUploaded_background() {
-        return uploaded_background;
+    public String getUploadedBackground() {
+        return uploadedBackground;
     }
 
-    public void setUploaded_background(String uploaded_background) {
-        this.uploaded_background = uploaded_background;
+    public void setUploadedBackground(String uploadedBackground) {
+        this.uploadedBackground = uploadedBackground;
     }
 
     public static Category empty() {

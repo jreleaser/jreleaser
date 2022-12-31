@@ -27,8 +27,12 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public class ObjectUtils {
+public final class ObjectUtils {
     private static final String MESSAGE = "message";
+
+    private ObjectUtils() {
+        // noop
+    }
 
     /**
      * Checks that the specified condition is met. This method is designed

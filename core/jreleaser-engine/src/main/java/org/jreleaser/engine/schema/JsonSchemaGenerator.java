@@ -52,7 +52,11 @@ import static org.jreleaser.bundle.RB.$;
  * @author Andres Almiray
  * @since 1.4.0
  */
-public class JsonSchemaGenerator {
+public final class JsonSchemaGenerator {
+    private JsonSchemaGenerator() {
+        // noop
+    }
+
     public static void generate(PrintWriter out) {
         Map<String, String> mappings = new LinkedHashMap<>();
         mappings.put("Map<String, Object>", "Properties");

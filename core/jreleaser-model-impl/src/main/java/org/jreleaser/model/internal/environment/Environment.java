@@ -264,9 +264,9 @@ public final class Environment extends AbstractModelObject<Environment> implemen
     }
 
     public static class MapPropertiesSource extends AbstractPropertiesSource {
-        private static final long serialVersionUID = 6643212572356054605L;
+        private static final long serialVersionUID = 4129599191335591380L;
 
-        private final Map<String, ?> properties;
+        private final transient Map<String, ?> properties;
 
         public MapPropertiesSource(Map<String, ?> properties) {
             this.properties = properties;

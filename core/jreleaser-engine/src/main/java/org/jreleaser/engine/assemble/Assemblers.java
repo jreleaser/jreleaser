@@ -35,7 +35,11 @@ import static org.jreleaser.model.internal.JReleaserSupport.supportedAssemblers;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public class Assemblers {
+public final class Assemblers {
+    private Assemblers() {
+        // noop
+    }
+
     public static void assemble(JReleaserContext context) {
         Assemble assemble = context.getModel().getAssemble();
         if (!assemble.isEnabled()) {

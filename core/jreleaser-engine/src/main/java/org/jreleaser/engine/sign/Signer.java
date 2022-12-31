@@ -59,7 +59,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Signer {
+public final class Signer {
+    private Signer() {
+        // noop
+    }
+
     public static void sign(JReleaserContext context) throws SigningException {
         context.getLogger().info(RB.$("signing.header"));
         context.getLogger().increaseIndent();

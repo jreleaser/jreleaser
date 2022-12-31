@@ -36,7 +36,7 @@ import static java.util.stream.Collectors.joining;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class StringUtils {
+public final class StringUtils {
     private static final String PROPERTY_SET_PREFIX = "set";
     private static final String PROPERTY_GET_PREFIX = "get";
     private static final Pattern GETTER_PATTERN_1 = Pattern.compile("^get[A-Z][\\w]*$");
@@ -44,6 +44,10 @@ public class StringUtils {
     private static final Pattern SETTER_PATTERN = Pattern.compile("^set[A-Z][\\w]*$");
     private static final String ERROR_METHOD_NULL = "Argument 'method' must not be null";
     private static final Pattern REGEX_CHARS = Pattern.compile("[{}()\\[\\].+*?^$\\\\|/]");
+
+    private StringUtils() {
+        // noop
+    }
 
     /**
      * Capitalizes a String (makes the first char uppercase) taking care

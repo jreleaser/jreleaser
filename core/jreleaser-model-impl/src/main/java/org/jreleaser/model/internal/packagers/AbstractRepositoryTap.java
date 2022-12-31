@@ -35,7 +35,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> extends AbstractModelObject<S> implements RepositoryTap {
-    private static final long serialVersionUID = 7482877906064145508L;
+    private static final long serialVersionUID = 998702813944708111L;
 
     protected Active active;
     @JsonIgnore
@@ -52,7 +52,7 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
     protected String token;
     protected String commitMessage;
 
-    public AbstractRepositoryTap(String basename, String tapName) {
+    protected AbstractRepositoryTap(String basename, String tapName) {
         this.basename = basename;
         this.tapName = tapName;
     }

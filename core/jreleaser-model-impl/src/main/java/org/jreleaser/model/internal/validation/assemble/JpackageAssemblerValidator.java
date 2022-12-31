@@ -67,7 +67,7 @@ public abstract class JpackageAssemblerValidator extends Validator {
         Map<String, JpackageAssembler> jpackage = context.getModel().getAssemble().getJpackage();
 
         for (Map.Entry<String, JpackageAssembler> e : jpackage.entrySet()) {
-            postValidateJpackage(context, mode, e.getValue(), errors);
+            postValidateJpackage(context, e.getValue());
         }
     }
 
@@ -331,7 +331,7 @@ public abstract class JpackageAssemblerValidator extends Validator {
         }
     }
 
-    private static void postValidateJpackage(JReleaserContext context, Mode mode, JpackageAssembler jpackage, Errors errors) {
+    private static void postValidateJpackage(JReleaserContext context, JpackageAssembler jpackage) {
         Project project = context.getModel().getProject();
         if (!jpackage.resolveEnabled(project)) return;
 

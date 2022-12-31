@@ -22,13 +22,13 @@ package org.jreleaser.sdk.discourse.api;
  * @since 1.3.0
  */
 public class CategoryResponse {
-    public CategoryList getCategory_list() {
-        return category_list;
+    private CategoryList categoryList;
+
+    public CategoryList getCategoryList() {
+        return categoryList;
     }
 
-    public void setCategory_list(CategoryList category_list) {
-        this.category_list = category_list;
+    public void setCategoryList(CategoryList categoryList) {
+        this.categoryList = categoryList;
     }
-
-    public CategoryList category_list;
 }

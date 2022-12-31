@@ -34,7 +34,11 @@ import static java.util.stream.Collectors.toMap;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class PackagerProcessors {
+public final class PackagerProcessors {
+    private PackagerProcessors() {
+        // noop
+    }
+
     public static <T extends Packager> PackagerProcessor<T> findProcessor(JReleaserContext context, T packager) {
         Map<String, PackagerProcessor> processors = StreamSupport.stream(ServiceLoader.load(PackagerProcessorFactory.class,
                 PackagerProcessors.class.getClassLoader()).spliterator(), false)

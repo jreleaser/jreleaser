@@ -237,7 +237,7 @@ public final class Upload extends AbstractModelObject<Upload> implements Domain,
         return active != null;
     }
 
-    public Optional<? extends Uploader> getUploader(String type, String name) {
+    public Optional<? extends Uploader<?>> getUploader(String type, String name) {
         switch (type) {
             case org.jreleaser.model.api.upload.ArtifactoryUploader.TYPE:
                 return Optional.ofNullable(artifactory.get(name));
@@ -255,12 +255,12 @@ public final class Upload extends AbstractModelObject<Upload> implements Domain,
                 return Optional.ofNullable(scp.get(name));
             case org.jreleaser.model.api.upload.SftpUploader.TYPE:
                 return Optional.ofNullable(sftp.get(name));
+            default:
+                return Optional.empty();
         }
-
-        return Optional.empty();
     }
 
-    public Optional<? extends Uploader> getActiveUploader(String type, String name) {
+    public Optional<? extends Uploader<?>> getActiveUploader(String type, String name) {
         switch (type) {
             case org.jreleaser.model.api.upload.ArtifactoryUploader.TYPE:
                 return getActiveArtifactory(name);
@@ -278,9 +278,9 @@ public final class Upload extends AbstractModelObject<Upload> implements Domain,
                 return getActiveScp(name);
             case org.jreleaser.model.api.upload.SftpUploader.TYPE:
                 return getActiveSftp(name);
+            default:
+                return Optional.empty();
         }
-
-        return Optional.empty();
     }
 
     public Optional<ArtifactoryUploader> getActiveArtifactory(String name) {

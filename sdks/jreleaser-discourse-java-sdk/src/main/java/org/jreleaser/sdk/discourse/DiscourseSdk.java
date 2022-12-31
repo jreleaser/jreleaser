@@ -98,7 +98,7 @@ public class DiscourseSdk {
     }
 
     public Category findCategoryByName(String categoryName) throws DiscourseException {
-        CategoryList categoryList = api.getCategories().getCategory_list();
+        CategoryList categoryList = api.getCategories().getCategoryList();
 
         return categoryList.getCategories().stream()
             .filter(category -> category.getName().equals(categoryName))

@@ -60,13 +60,17 @@ import static org.bouncycastle.bcpg.CompressionAlgorithmTags.UNCOMPRESSED;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class SigningUtils {
+public final class SigningUtils {
     static {
         // replace BC provider with our version
         Provider bcProvider = Security.getProvider("BC");
         Security.removeProvider("BC");
         Security.setProperty("crypto.policy", "unlimited");
         Security.addProvider(bcProvider != null ? bcProvider : new BouncyCastleProvider());
+    }
+
+    private SigningUtils() {
+        // noop
     }
 
     public static void sign(JReleaserContext context, Path file) throws SigningException {

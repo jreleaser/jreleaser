@@ -138,7 +138,7 @@ public final class GiteaMavenDeployer extends AbstractMavenDeployer<GiteaMavenDe
 
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
-
+        // noop
     }
 
     @Override

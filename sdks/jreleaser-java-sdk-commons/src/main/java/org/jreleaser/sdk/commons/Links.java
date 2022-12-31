@@ -55,6 +55,8 @@ public class Links {
                         case "last":
                             last = normalize(parts[0]);
                             break;
+                        default:
+                            // noop
                     }
                 }
             }

@@ -25,7 +25,7 @@ import org.jreleaser.model.internal.JReleaserContext;
  * @author Andres Almiray
  * @since 1.2.0
  */
-abstract class AbstractWorkflowItem implements WorkflowItem {
+public abstract class AbstractWorkflowItem implements WorkflowItem {
     private final JReleaserCommand command;
 
     protected AbstractWorkflowItem(JReleaserCommand command) {

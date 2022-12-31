@@ -29,7 +29,11 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.10.0
  */
-public class Templates {
+public final class Templates {
+    private Templates() {
+        // noop
+    }
+
     public static String resolveTemplate(String input, Map<String, Object> props) {
         if (isBlank(input)) return input;
 

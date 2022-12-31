@@ -37,7 +37,11 @@ import static org.jreleaser.model.internal.JReleaserSupport.supportedUploaders;
  * @author Andres Almiray
  * @since 0.3.0
  */
-public class Uploaders {
+public final class Uploaders {
+    private Uploaders() {
+        // noop
+    }
+
     public static void upload(JReleaserContext context) {
         Upload upload = context.getModel().getUpload();
         if (!upload.isEnabled()) {

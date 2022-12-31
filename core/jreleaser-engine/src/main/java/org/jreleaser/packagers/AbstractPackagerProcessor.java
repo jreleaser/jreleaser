@@ -86,7 +86,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-abstract class AbstractPackagerProcessor<T extends Packager<?>> implements PackagerProcessor<T> {
+public abstract class AbstractPackagerProcessor<T extends Packager<?>> implements PackagerProcessor<T> {
     private static final String ARTIFACT = "artifact";
     private static final String DISTRIBUTION = "distribution";
     private static final String NAME = "Name";

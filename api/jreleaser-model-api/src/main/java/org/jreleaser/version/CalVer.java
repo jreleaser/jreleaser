@@ -125,11 +125,9 @@ public class CalVer implements Version<CalVer> {
         this.minorAsInt = isBlank(this.minor) ? -1 : parseInt(this.minor);
         this.microAsInt = isBlank(this.micro) ? -1 : parseInt(this.micro);
 
-        if (yearAsInt != -1 && monthAsInt != -1 && dayAsInt != -1) {
-            // validate num of days per month
-            if (dayAsInt > YearMonth.of(yearAsInt, monthAsInt).lengthOfMonth()) {
-                throw new IllegalArgumentException(RB.$("ERROR_version_parse", this));
-            }
+        // validate num of days per month
+        if (yearAsInt != -1 && monthAsInt != -1 && dayAsInt != -1 && dayAsInt > YearMonth.of(yearAsInt, monthAsInt).lengthOfMonth()) {
+            throw new IllegalArgumentException(RB.$("ERROR_version_parse", this));
         }
     }
 

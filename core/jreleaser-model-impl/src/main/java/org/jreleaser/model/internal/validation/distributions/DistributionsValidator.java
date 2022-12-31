@@ -74,7 +74,7 @@ public abstract class DistributionsValidator extends Validator {
             }
             if (context.isDistributionIncluded(distribution)) {
                 if (mode.validateConfig()) {
-                    validateDistribution(context, mode, distribution, errors);
+                    validateDistribution(context, distribution, errors);
                 }
             } else {
                 distribution.setActive(Active.NEVER);
@@ -89,7 +89,7 @@ public abstract class DistributionsValidator extends Validator {
         }
     }
 
-    private static void validateDistribution(JReleaserContext context, Mode mode, Distribution distribution, Errors errors) {
+    private static void validateDistribution(JReleaserContext context, Distribution distribution, Errors errors) {
         context.getLogger().debug("distribution.{}", distribution.getName());
 
         if (!distribution.isActiveSet()) {

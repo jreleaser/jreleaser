@@ -37,7 +37,11 @@ import static org.jreleaser.model.internal.JReleaserSupport.supportedDownloaders
  * @author Andres Almiray
  * @since 1.1.0
  */
-public class Downloaders {
+public final class Downloaders {
+    private Downloaders() {
+        // noop
+    }
+
     public static void download(JReleaserContext context) {
         Download download = context.getModel().getDownload();
         if (!download.isEnabled()) {

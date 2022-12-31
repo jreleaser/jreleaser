@@ -46,7 +46,11 @@ import static org.jreleaser.bundle.RB.$;
  * @author Andres Almiray
  * @since 1.4.0
  */
-public class Init {
+public final class Init {
+    private Init() {
+        // noop
+    }
+
     public static void execute(JReleaserLogger logger, String format, boolean overwrite, Path outputDirectory) {
         try {
             if (!getSupportedConfigFormats().contains(format)) {

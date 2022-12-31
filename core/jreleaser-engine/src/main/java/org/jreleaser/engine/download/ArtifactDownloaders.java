@@ -33,7 +33,11 @@ import java.util.stream.StreamSupport;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public class ArtifactDownloaders {
+public final class ArtifactDownloaders {
+    private ArtifactDownloaders() {
+        // noop
+    }
+
     public static <A extends org.jreleaser.model.api.download.Downloader, D extends Downloader<A>> ArtifactDownloader<A, D> findDownloader(JReleaserContext context, D downloader) {
         Map<String, ArtifactDownloader<?, ?>> downloaders = StreamSupport.stream(ServiceLoader.load(ArtifactDownloaderFactory.class,
                 ArtifactDownloaders.class.getClassLoader()).spliterator(), false)

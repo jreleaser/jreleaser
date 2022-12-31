@@ -33,7 +33,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 1.1.0
  */
 public abstract class AbstractSshUploader<A extends org.jreleaser.model.api.upload.SshUploader, S extends AbstractSshUploader<A, S>> extends AbstractUploader<A, S> implements SshUploader<A> {
-    private static final long serialVersionUID = -3889860906318944623L;
+    private static final long serialVersionUID = -4963443885227987424L;
 
     protected String username;
     protected String password;
@@ -47,7 +47,7 @@ public abstract class AbstractSshUploader<A extends org.jreleaser.model.api.uplo
     protected String path;
     protected String downloadUrl;
 
-    public AbstractSshUploader(String type) {
+    protected AbstractSshUploader(String type) {
         super(type);
     }
 

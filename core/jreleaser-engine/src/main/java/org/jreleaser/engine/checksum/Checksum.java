@@ -42,7 +42,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Checksum {
+public final class Checksum {
+    private Checksum() {
+        // noop
+    }
+
     public static void collectAndWriteChecksums(JReleaserContext context) throws JReleaserException {
         context.getLogger().info(RB.$("checksum.header"));
         context.getLogger().increaseIndent();

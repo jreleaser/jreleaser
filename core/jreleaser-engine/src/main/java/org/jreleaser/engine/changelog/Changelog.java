@@ -32,7 +32,11 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Changelog {
+public final class Changelog {
+    private Changelog() {
+        // noop
+    }
+
     public static String createChangelog(JReleaserContext context) {
         try {
             return Releasers.releaserFor(context).generateReleaseNotes();

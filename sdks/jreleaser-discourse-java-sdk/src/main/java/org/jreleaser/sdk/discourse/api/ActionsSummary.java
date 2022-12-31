@@ -25,6 +25,22 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ActionsSummary {
-    public int id;
-    public boolean can_act;
+    private int id;
+    private boolean canAct;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public boolean isCanAct() {
+        return canAct;
+    }
+
+    public void setCanAct(boolean canAct) {
+        this.canAct = canAct;
+    }
 }

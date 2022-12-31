@@ -37,7 +37,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 1.0.0
  */
-public class ModelValidator {
+public final class ModelValidator {
+    private ModelValidator() {
+        // noop
+    }
+
     public static void validate(JReleaserContext context) {
         try {
             Errors errors = context.validateModel();

@@ -17,7 +17,6 @@
  */
 package org.jreleaser.graalvm.sdk.signing;
 
-import com.oracle.svm.core.annotate.AutomaticFeature;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.graalvm.nativeimage.hosted.Feature;
 import org.graalvm.nativeimage.hosted.RuntimeClassInitialization;
@@ -28,7 +27,6 @@ import java.security.Security;
  * @author Andres Almiray
  * @since 1.0.0
  */
-@AutomaticFeature
 public class BouncyCastleFeature implements Feature {
     @Override
     public void afterRegistration(AfterRegistrationAccess access) {

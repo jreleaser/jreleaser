@@ -67,7 +67,7 @@ final class Banner {
             File parent = new File(System.getProperty("user.home"), "/.m2/caches");
             File markerFile = getMarkerFile(parent, INSTANCE);
             if (!markerFile.exists()) {
-                if (!quiet) System.out.println(INSTANCE.banner);
+                if (!quiet) log.info(INSTANCE.banner);
                 markerFile.getParentFile().mkdirs();
                 PrintStream out = newPrintStream(new FileOutputStream(markerFile));
                 out.println("1");
@@ -76,11 +76,11 @@ final class Banner {
             } else {
                 try {
                     int count = Integer.parseInt(readQuietly(markerFile));
-                    if (count < 3 && !quiet) System.out.println(INSTANCE.banner);
+                    if (count < 3 && !quiet) log.info(INSTANCE.banner);
                     writeQuietly(markerFile, (count + 1) + "");
                 } catch (NumberFormatException e) {
                     writeQuietly(markerFile, "1");
-                    if (!quiet) System.out.println(INSTANCE.banner);
+                    if (!quiet) log.info(INSTANCE.banner);
                 }
             }
         } catch (IOException ignored) {

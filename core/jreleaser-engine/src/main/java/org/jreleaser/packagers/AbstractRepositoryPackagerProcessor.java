@@ -44,7 +44,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-abstract class AbstractRepositoryPackagerProcessor<T extends RepositoryPackager<?>> extends AbstractTemplatePackagerProcessor<T> {
+public abstract class AbstractRepositoryPackagerProcessor<T extends RepositoryPackager<?>> extends AbstractTemplatePackagerProcessor<T> {
     protected AbstractRepositoryPackagerProcessor(JReleaserContext context) {
         super(context);
     }

@@ -41,7 +41,7 @@ import static org.jreleaser.templates.TemplateUtils.resolveAndMergeTemplates;
  * @author Andres Almiray
  * @since 0.8.0
  */
-abstract class AbstractJavaAssemblerProcessor<A extends org.jreleaser.model.api.assemble.Assembler, S extends JavaAssembler<A>> extends AbstractAssemblerProcessor<A, S> {
+public abstract class AbstractJavaAssemblerProcessor<A extends org.jreleaser.model.api.assemble.Assembler, S extends JavaAssembler<A>> extends AbstractAssemblerProcessor<A, S> {
     protected AbstractJavaAssemblerProcessor(JReleaserContext context) {
         super(context);
     }

@@ -34,7 +34,11 @@ import java.util.List;
  * @since 0.1.0
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
-public class ContextCreator {
+public final class ContextCreator {
+    private ContextCreator() {
+        // noop
+    }
+
     public static JReleaserContext create(JReleaserLogger logger,
                                           JReleaserContext.Configurer configurer,
                                           Mode mode,

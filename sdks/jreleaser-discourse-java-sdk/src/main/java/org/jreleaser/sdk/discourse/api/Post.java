@@ -19,7 +19,7 @@ package org.jreleaser.sdk.discourse.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author shblue21
@@ -27,55 +27,55 @@ import java.util.ArrayList;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Post {
-    public int id;
-    public String name;
-    public String username;
-    public String avatar_template;
-    public String created_at;
-    public String raw;
-    public String cooked;
-    public int post_number;
-    public int post_type;
-    public String updated_at;
-    public int reply_count;
-    public String reply_to_post_number;
-    public int quote_count;
-    public int incoming_link_count;
-    public int reads;
-    public int readers_count;
-    public int score;
-    public boolean yours;
-    public int topic_id;
-    public String topic_slug;
-    public String display_username;
-    public String primary_group_name;
-    public String flair_name;
-    public String flair_url;
-    public String flair_bg_color;
-    public String flair_color;
-    public int version;
-    public boolean can_edit;
-    public boolean can_delete;
-    public boolean can_recover;
-    public boolean can_wiki;
-    public String user_title;
-    public boolean bookmarked;
-    public ArrayList<ActionsSummary> actions_summary;
-    public boolean moderator;
-    public boolean admin;
-    public boolean staff;
-    public int user_id;
-    public int draft_sequence;
-    public boolean hidden;
-    public int trust_level;
-    public String deleted_at;
-    public boolean user_deleted;
-    public String edit_reason;
-    public boolean can_view_edit_history;
-    public boolean wiki;
-    public String reviewable_id;
-    public int reviewable_score_count;
-    public int reviewable_score_pending_count;
+    private int id;
+    private String name;
+    private String username;
+    private String avatarTemplate;
+    private String createdAt;
+    private String raw;
+    private String cooked;
+    private int postNumber;
+    private int postType;
+    private String updatedAt;
+    private int replyCount;
+    private String replyToPostNumber;
+    private int quoteCount;
+    private int incomingLinkCount;
+    private int reads;
+    private int readersCount;
+    private int score;
+    private boolean yours;
+    private int topicId;
+    private String topicSlug;
+    private String displayUsername;
+    private String primaryGroupName;
+    private String flairName;
+    private String flairUrl;
+    private String flairBgColor;
+    private String flairColor;
+    private int version;
+    private boolean canEdit;
+    private boolean canDelete;
+    private boolean canRecover;
+    private boolean canWiki;
+    private String userTitle;
+    private boolean bookmarked;
+    private List<ActionsSummary> actionsSummary;
+    private boolean moderator;
+    private boolean admin;
+    private boolean staff;
+    private int userId;
+    private int draftSequence;
+    private boolean hidden;
+    private int trustLevel;
+    private String deletedAt;
+    private boolean userDeleted;
+    private String editReason;
+    private boolean canViewEditHistory;
+    private boolean wiki;
+    private String reviewableId;
+    private int reviewableScoreCount;
+    private int reviewableScorePendingCount;
 
     public int getId() {
         return id;
@@ -101,20 +101,20 @@ public class Post {
         this.username = username;
     }
 
-    public String getAvatar_template() {
-        return avatar_template;
+    public String getAvatarTemplate() {
+        return avatarTemplate;
     }
 
-    public void setAvatar_template(String avatar_template) {
-        this.avatar_template = avatar_template;
+    public void setAvatarTemplate(String avatarTemplate) {
+        this.avatarTemplate = avatarTemplate;
     }
 
-    public String getCreated_at() {
-        return created_at;
+    public String getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreated_at(String created_at) {
-        this.created_at = created_at;
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
     }
 
     public String getRaw() {
@@ -133,60 +133,60 @@ public class Post {
         this.cooked = cooked;
     }
 
-    public int getPost_number() {
-        return post_number;
+    public int getPostNumber() {
+        return postNumber;
     }
 
-    public void setPost_number(int post_number) {
-        this.post_number = post_number;
+    public void setPostNumber(int postNumber) {
+        this.postNumber = postNumber;
     }
 
-    public int getPost_type() {
-        return post_type;
+    public int getPostType() {
+        return postType;
     }
 
-    public void setPost_type(int post_type) {
-        this.post_type = post_type;
+    public void setPostType(int postType) {
+        this.postType = postType;
     }
 
-    public String getUpdated_at() {
-        return updated_at;
+    public String getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setUpdated_at(String updated_at) {
-        this.updated_at = updated_at;
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
-    public int getReply_count() {
-        return reply_count;
+    public int getReplyCount() {
+        return replyCount;
     }
 
-    public void setReply_count(int reply_count) {
-        this.reply_count = reply_count;
+    public void setReplyCount(int replyCount) {
+        this.replyCount = replyCount;
     }
 
-    public String getReply_to_post_number() {
-        return reply_to_post_number;
+    public String getReplyToPostNumber() {
+        return replyToPostNumber;
     }
 
-    public void setReply_to_post_number(String reply_to_post_number) {
-        this.reply_to_post_number = reply_to_post_number;
+    public void setReplyToPostNumber(String replyToPostNumber) {
+        this.replyToPostNumber = replyToPostNumber;
     }
 
-    public int getQuote_count() {
-        return quote_count;
+    public int getQuoteCount() {
+        return quoteCount;
     }
 
-    public void setQuote_count(int quote_count) {
-        this.quote_count = quote_count;
+    public void setQuoteCount(int quoteCount) {
+        this.quoteCount = quoteCount;
     }
 
-    public int getIncoming_link_count() {
-        return incoming_link_count;
+    public int getIncomingLinkCount() {
+        return incomingLinkCount;
     }
 
-    public void setIncoming_link_count(int incoming_link_count) {
-        this.incoming_link_count = incoming_link_count;
+    public void setIncomingLinkCount(int incomingLinkCount) {
+        this.incomingLinkCount = incomingLinkCount;
     }
 
     public int getReads() {
@@ -197,12 +197,12 @@ public class Post {
         this.reads = reads;
     }
 
-    public int getReaders_count() {
-        return readers_count;
+    public int getReadersCount() {
+        return readersCount;
     }
 
-    public void setReaders_count(int readers_count) {
-        this.readers_count = readers_count;
+    public void setReadersCount(int readersCount) {
+        this.readersCount = readersCount;
     }
 
     public int getScore() {
@@ -221,68 +221,68 @@ public class Post {
         this.yours = yours;
     }
 
-    public int getTopic_id() {
-        return topic_id;
+    public int getTopicId() {
+        return topicId;
     }
 
-    public void setTopic_id(int topic_id) {
-        this.topic_id = topic_id;
+    public void setTopicId(int topicId) {
+        this.topicId = topicId;
     }
 
-    public String getTopic_slug() {
-        return topic_slug;
+    public String getTopicSlug() {
+        return topicSlug;
     }
 
-    public void setTopic_slug(String topic_slug) {
-        this.topic_slug = topic_slug;
+    public void setTopicSlug(String topicSlug) {
+        this.topicSlug = topicSlug;
     }
 
-    public String getDisplay_username() {
-        return display_username;
+    public String getDisplayUsername() {
+        return displayUsername;
     }
 
-    public void setDisplay_username(String display_username) {
-        this.display_username = display_username;
+    public void setDisplayUsername(String displayUsername) {
+        this.displayUsername = displayUsername;
     }
 
-    public String getPrimary_group_name() {
-        return primary_group_name;
+    public String getPrimaryGroupName() {
+        return primaryGroupName;
     }
 
-    public void setPrimary_group_name(String primary_group_name) {
-        this.primary_group_name = primary_group_name;
+    public void setPrimaryGroupName(String primaryGroupName) {
+        this.primaryGroupName = primaryGroupName;
     }
 
-    public String getFlair_name() {
-        return flair_name;
+    public String getFlairName() {
+        return flairName;
     }
 
-    public void setFlair_name(String flair_name) {
-        this.flair_name = flair_name;
+    public void setFlairName(String flairName) {
+        this.flairName = flairName;
     }
 
-    public String getFlair_url() {
-        return flair_url;
+    public String getFlairUrl() {
+        return flairUrl;
     }
 
-    public void setFlair_url(String flair_url) {
-        this.flair_url = flair_url;
+    public void setFlairUrl(String flairUrl) {
+        this.flairUrl = flairUrl;
     }
 
-    public String getFlair_bg_color() {
-        return flair_bg_color;
+    public String getFlairBgColor() {
+        return flairBgColor;
     }
 
-    public void setFlair_bg_color(String flair_bg_color) {
-        this.flair_bg_color = flair_bg_color;
+    public void setFlairBgColor(String flairBgColor) {
+        this.flairBgColor = flairBgColor;
     }
 
-    public String getFlair_color() {
-        return flair_color;
+    public String getFlairColor() {
+        return flairColor;
     }
 
-    public void setFlair_color(String flair_color) {
-        this.flair_color = flair_color;
+    public void setFlairColor(String flairColor) {
+        this.flairColor = flairColor;
     }
 
     public int getVersion() {
@@ -293,44 +293,44 @@ public class Post {
         this.version = version;
     }
 
-    public boolean isCan_edit() {
-        return can_edit;
+    public boolean isCanEdit() {
+        return canEdit;
     }
 
-    public void setCan_edit(boolean can_edit) {
-        this.can_edit = can_edit;
+    public void setCanEdit(boolean canEdit) {
+        this.canEdit = canEdit;
     }
 
-    public boolean isCan_delete() {
-        return can_delete;
+    public boolean isCanDelete() {
+        return canDelete;
     }
 
-    public void setCan_delete(boolean can_delete) {
-        this.can_delete = can_delete;
+    public void setCanDelete(boolean canDelete) {
+        this.canDelete = canDelete;
     }
 
-    public boolean isCan_recover() {
-        return can_recover;
+    public boolean isCanRecover() {
+        return canRecover;
     }
 
-    public void setCan_recover(boolean can_recover) {
-        this.can_recover = can_recover;
+    public void setCanRecover(boolean canRecover) {
+        this.canRecover = canRecover;
     }
 
-    public boolean isCan_wiki() {
-        return can_wiki;
+    public boolean isCanWiki() {
+        return canWiki;
     }
 
-    public void setCan_wiki(boolean can_wiki) {
-        this.can_wiki = can_wiki;
+    public void setCanWiki(boolean canWiki) {
+        this.canWiki = canWiki;
     }
 
-    public String getUser_title() {
-        return user_title;
+    public String getUserTitle() {
+        return userTitle;
     }
 
-    public void setUser_title(String user_title) {
-        this.user_title = user_title;
+    public void setUserTitle(String userTitle) {
+        this.userTitle = userTitle;
     }
 
     public boolean isBookmarked() {
@@ -341,12 +341,12 @@ public class Post {
         this.bookmarked = bookmarked;
     }
 
-    public ArrayList<ActionsSummary> getActions_summary() {
-        return actions_summary;
+    public List<ActionsSummary> getActionsSummary() {
+        return actionsSummary;
     }
 
-    public void setActions_summary(ArrayList<ActionsSummary> actions_summary) {
-        this.actions_summary = actions_summary;
+    public void setActionsSummary(List<ActionsSummary> actionsSummary) {
+        this.actionsSummary = actionsSummary;
     }
 
     public boolean isModerator() {
@@ -373,20 +373,20 @@ public class Post {
         this.staff = staff;
     }
 
-    public int getUser_id() {
-        return user_id;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setUser_id(int user_id) {
-        this.user_id = user_id;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
-    public int getDraft_sequence() {
-        return draft_sequence;
+    public int getDraftSequence() {
+        return draftSequence;
     }
 
-    public void setDraft_sequence(int draft_sequence) {
-        this.draft_sequence = draft_sequence;
+    public void setDraftSequence(int draftSequence) {
+        this.draftSequence = draftSequence;
     }
 
     public boolean isHidden() {
@@ -397,44 +397,44 @@ public class Post {
         this.hidden = hidden;
     }
 
-    public int getTrust_level() {
-        return trust_level;
+    public int getTrustLevel() {
+        return trustLevel;
     }
 
-    public void setTrust_level(int trust_level) {
-        this.trust_level = trust_level;
+    public void setTrustLevel(int trustLevel) {
+        this.trustLevel = trustLevel;
     }
 
-    public String getDeleted_at() {
-        return deleted_at;
+    public String getDeletedAt() {
+        return deletedAt;
     }
 
-    public void setDeleted_at(String deleted_at) {
-        this.deleted_at = deleted_at;
+    public void setDeletedAt(String deletedAt) {
+        this.deletedAt = deletedAt;
     }
 
-    public boolean isUser_deleted() {
-        return user_deleted;
+    public boolean isUserDeleted() {
+        return userDeleted;
     }
 
-    public void setUser_deleted(boolean user_deleted) {
-        this.user_deleted = user_deleted;
+    public void setUserDeleted(boolean userDeleted) {
+        this.userDeleted = userDeleted;
     }
 
-    public String getEdit_reason() {
-        return edit_reason;
+    public String getEditReason() {
+        return editReason;
     }
 
-    public void setEdit_reason(String edit_reason) {
-        this.edit_reason = edit_reason;
+    public void setEditReason(String editReason) {
+        this.editReason = editReason;
     }
 
-    public boolean isCan_view_edit_history() {
-        return can_view_edit_history;
+    public boolean isCanViewEditHistory() {
+        return canViewEditHistory;
     }
 
-    public void setCan_view_edit_history(boolean can_view_edit_history) {
-        this.can_view_edit_history = can_view_edit_history;
+    public void setCanViewEditHistory(boolean canViewEditHistory) {
+        this.canViewEditHistory = canViewEditHistory;
     }
 
     public boolean isWiki() {
@@ -445,82 +445,27 @@ public class Post {
         this.wiki = wiki;
     }
 
-    public String getReviewable_id() {
-        return reviewable_id;
+    public String getReviewableId() {
+        return reviewableId;
     }
 
-    public void setReviewable_id(String reviewable_id) {
-        this.reviewable_id = reviewable_id;
+    public void setReviewableId(String reviewableId) {
+        this.reviewableId = reviewableId;
     }
 
-    public int getReviewable_score_count() {
-        return reviewable_score_count;
+    public int getReviewableScoreCount() {
+        return reviewableScoreCount;
     }
 
-    public void setReviewable_score_count(int reviewable_score_count) {
-        this.reviewable_score_count = reviewable_score_count;
+    public void setReviewableScoreCount(int reviewableScoreCount) {
+        this.reviewableScoreCount = reviewableScoreCount;
     }
 
-    public int getReviewable_score_pending_count() {
-        return reviewable_score_pending_count;
+    public int getReviewableScorePendingCount() {
+        return reviewableScorePendingCount;
     }
 
-    public void setReviewable_score_pending_count(int reviewable_score_pending_count) {
-        this.reviewable_score_pending_count = reviewable_score_pending_count;
-    }
-
-    @Override
-    public String toString() {
-        return "Post{" +
-            "id=" + id +
-            ", name='" + name + '\'' +
-            ", username='" + username + '\'' +
-            ", avatar_template='" + avatar_template + '\'' +
-            ", created_at='" + created_at + '\'' +
-            ", raw='" + raw + '\'' +
-            ", cooked='" + cooked + '\'' +
-            ", post_number=" + post_number +
-            ", post_type=" + post_type +
-            ", updated_at='" + updated_at + '\'' +
-            ", reply_count=" + reply_count +
-            ", reply_to_post_number='" + reply_to_post_number + '\'' +
-            ", quote_count=" + quote_count +
-            ", incoming_link_count=" + incoming_link_count +
-            ", reads=" + reads +
-            ", readers_count=" + readers_count +
-            ", score=" + score +
-            ", yours=" + yours +
-            ", topic_id=" + topic_id +
-            ", topic_slug='" + topic_slug + '\'' +
-            ", display_username='" + display_username + '\'' +
-            ", primary_group_name='" + primary_group_name + '\'' +
-            ", flair_name='" + flair_name + '\'' +
-            ", flair_url='" + flair_url + '\'' +
-            ", flair_bg_color='" + flair_bg_color + '\'' +
-            ", flair_color='" + flair_color + '\'' +
-            ", version=" + version +
-            ", can_edit=" + can_edit +
-            ", can_delete=" + can_delete +
-            ", can_recover=" + can_recover +
-            ", can_wiki=" + can_wiki +
-            ", user_title='" + user_title + '\'' +
-            ", bookmarked=" + bookmarked +
-            ", actions_summary=" + actions_summary +
-            ", moderator=" + moderator +
-            ", admin=" + admin +
-            ", staff=" + staff +
-            ", user_id=" + user_id +
-            ", draft_sequence=" + draft_sequence +
-            ", hidden=" + hidden +
-            ", trust_level=" + trust_level +
-            ", deleted_at='" + deleted_at + '\'' +
-            ", user_deleted=" + user_deleted +
-            ", edit_reason='" + edit_reason + '\'' +
-            ", can_view_edit_history=" + can_view_edit_history +
-            ", wiki=" + wiki +
-            ", reviewable_id='" + reviewable_id + '\'' +
-            ", reviewable_score_count=" + reviewable_score_count +
-            ", reviewable_score_pending_count=" + reviewable_score_pending_count +
-            '}';
+    public void setReviewableScorePendingCount(int reviewableScorePendingCount) {
+        this.reviewableScorePendingCount = reviewableScorePendingCount;
     }
 }

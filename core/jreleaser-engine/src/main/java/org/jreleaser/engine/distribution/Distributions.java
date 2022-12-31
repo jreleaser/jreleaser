@@ -36,7 +36,11 @@ import static org.jreleaser.model.internal.JReleaserSupport.supportedPackagers;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Distributions {
+public final class Distributions {
+    private Distributions() {
+        // noop
+    }
+
     public static void process(JReleaserContext context, DistributionProcessor.PackagingAction action) {
         List<Distribution> activeDistributions = context.getModel().getActiveDistributions();
 

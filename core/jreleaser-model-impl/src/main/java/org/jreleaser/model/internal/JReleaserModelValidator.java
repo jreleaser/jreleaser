@@ -61,7 +61,7 @@ public final class JReleaserModelValidator {
 
     private static void validateModel(JReleaserContext context, Mode mode, Errors errors) {
         validateExtensions(context, errors);
-        validateHooks(context, mode, errors);
+        validateHooks(context, errors);
         validateProject(context, mode, errors);
         validateDownloaders(context, mode, errors);
         validateAssemblers(context, mode, errors);
@@ -70,7 +70,7 @@ public final class JReleaserModelValidator {
             validateRelease(context, mode, errors);
         }
 
-        validateChecksum(context, mode, errors);
+        validateChecksum(context);
         validateDeploy(context, mode, errors);
         validateUploaders(context, mode, errors);
         validatePackagers(context, mode, errors);

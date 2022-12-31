@@ -17,12 +17,10 @@
  */
 package org.jreleaser.model.internal.validation.checksum;
 
-import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.checksum.Checksum;
 import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Algorithm;
-import org.jreleaser.util.Errors;
 
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -31,7 +29,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.4.0
  */
 public abstract class ChecksumValidator extends Validator {
-    public static void validateChecksum(JReleaserContext context, Mode mode, Errors errors) {
+    public static void validateChecksum(JReleaserContext context) {
         context.getLogger().debug("checksum");
         Checksum checksum = context.getModel().getChecksum();
 

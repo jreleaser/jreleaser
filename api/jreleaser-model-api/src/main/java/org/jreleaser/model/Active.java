@@ -46,11 +46,7 @@ public enum Active {
 
     public boolean check(Releaseable project, Prereleaseable service) {
         boolean p = this.test.test(project);
-        if (p) {
-            if (this == PRERELEASE || this == RELEASE_PRERELEASE) {
-                return service.isPrerelease();
-            }
-        }
+        if (p && (this == PRERELEASE || this == RELEASE_PRERELEASE)) return service.isPrerelease();
         return p;
     }
 

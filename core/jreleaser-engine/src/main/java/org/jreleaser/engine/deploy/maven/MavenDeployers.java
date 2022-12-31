@@ -37,7 +37,11 @@ import static org.jreleaser.model.internal.JReleaserSupport.supportedMavenDeploy
  * @author Andres Almiray
  * @since 1.3.0
  */
-public class MavenDeployers {
+public final class MavenDeployers {
+    private MavenDeployers() {
+        // noop
+    }
+
     public static void deploy(JReleaserContext context) {
         Maven maven = context.getModel().getDeploy().getMaven();
         if (!maven.isEnabled()) {

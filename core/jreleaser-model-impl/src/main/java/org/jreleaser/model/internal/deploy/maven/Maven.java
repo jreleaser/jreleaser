@@ -42,7 +42,7 @@ import static java.util.stream.Collectors.toMap;
  * @since 1.3.0
  */
 public final class Maven extends AbstractModelObject<Maven> implements Domain, Activatable {
-    private static final long serialVersionUID = 5134111041215252245L;
+    private static final long serialVersionUID = -2000338943730503826L;
 
     private final Map<String, ArtifactoryMavenDeployer> artifactory = new LinkedHashMap<>();
     private final Map<String, GiteaMavenDeployer> gitea = new LinkedHashMap<>();
@@ -189,40 +189,6 @@ public final class Maven extends AbstractModelObject<Maven> implements Domain, A
     @Override
     public boolean isActiveSet() {
         return active != null;
-    }
-
-    public Optional<? extends MavenDeployer> getMavenDeployer(String type, String name) {
-        switch (type) {
-            case org.jreleaser.model.api.deploy.maven.ArtifactoryMavenDeployer.TYPE:
-                return Optional.ofNullable(artifactory.get(name));
-            case org.jreleaser.model.api.deploy.maven.GiteaMavenDeployer.TYPE:
-                return Optional.ofNullable(gitea.get(name));
-            case org.jreleaser.model.api.deploy.maven.GithubMavenDeployer.TYPE:
-                return Optional.ofNullable(github.get(name));
-            case org.jreleaser.model.api.deploy.maven.GitlabMavenDeployer.TYPE:
-                return Optional.ofNullable(gitlab.get(name));
-            case org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.TYPE:
-                return Optional.ofNullable(nexus2.get(name));
-        }
-
-        return Optional.empty();
-    }
-
-    public Optional<? extends MavenDeployer> getActiveMavenDeployer(String type, String name) {
-        switch (type) {
-            case org.jreleaser.model.api.deploy.maven.ArtifactoryMavenDeployer.TYPE:
-                return getActiveArtifactory(name);
-            case org.jreleaser.model.api.deploy.maven.GiteaMavenDeployer.TYPE:
-                return getActiveGitea(name);
-            case org.jreleaser.model.api.deploy.maven.GithubMavenDeployer.TYPE:
-                return getActiveGithub(name);
-            case org.jreleaser.model.api.deploy.maven.GitlabMavenDeployer.TYPE:
-                return getActiveGitlab(name);
-            case org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.TYPE:
-                return getActiveNexus2(name);
-        }
-
-        return Optional.empty();
     }
 
     public Optional<ArtifactoryMavenDeployer> getActiveArtifactory(String name) {

@@ -40,7 +40,11 @@ import static org.jreleaser.model.internal.JReleaserSupport.supportedAnnouncers;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Announcers {
+public final class Announcers {
+    private Announcers() {
+        // noop
+    }
+
     public static void announce(JReleaserContext context) throws AnnounceException {
         context.getLogger().info(RB.$("announcers.header"));
         if (!context.getModel().getAnnounce().isEnabled()) {

@@ -42,7 +42,11 @@ import java.util.stream.StreamSupport;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Releasers {
+public final class Releasers {
+    private Releasers() {
+        // noop
+    }
+
     public static void release(JReleaserContext context) throws ReleaseException {
         org.jreleaser.model.api.release.Releaser releaser = context.getModel().getRelease().releaser();
 

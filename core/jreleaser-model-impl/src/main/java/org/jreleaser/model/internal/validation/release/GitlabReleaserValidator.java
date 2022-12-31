@@ -40,7 +40,7 @@ public abstract class GitlabReleaserValidator extends BaseReleaserValidator {
         gitlab.getPrerelease().disable();
 
         for (Map.Entry<String, String> e : gitlab.getUploadLinks().entrySet()) {
-            Optional<? extends Uploader> uploader = context.getModel().getUpload().getUploader(e.getKey(), e.getValue());
+            Optional<? extends Uploader<?>> uploader = context.getModel().getUpload().getUploader(e.getKey(), e.getValue());
             if (!uploader.isPresent()) {
                 errors.configuration(RB.$("validation_gitlab_non_matching_uploader", e.getKey(), e.getValue()));
             }

@@ -50,7 +50,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.3.0
  */
-public class ModelAutoConfigurer {
+public final class ModelAutoConfigurer {
     private static final String GLOB_PREFIX = "glob:";
     private static final String REGEX_PREFIX = "regex:";
 
@@ -95,6 +95,10 @@ public class ModelAutoConfigurer {
     private String commitAuthorEmail;
     private boolean signing;
     private boolean armored;
+
+    private ModelAutoConfigurer() {
+        // noop
+    }
 
     public ModelAutoConfigurer logger(JReleaserLogger logger) {
         this.logger = logger;
@@ -395,7 +399,7 @@ public class ModelAutoConfigurer {
             rejectedPlatforms);
     }
 
-    protected boolean resolveBoolean(String key, Boolean value) {
+    private boolean resolveBoolean(String key, Boolean value) {
         if (null != value) return value;
         String resolvedValue = Env.resolve(key, "");
         return isNotBlank(resolvedValue) && Boolean.parseBoolean(resolvedValue);
@@ -476,7 +480,7 @@ public class ModelAutoConfigurer {
         try {
             boolean grs = resolveBoolean(org.jreleaser.model.api.JReleaserContext.GIT_ROOT_SEARCH, gitRootSearch);
             Repository repository = GitSdk.of(basedir, grs).getRemote();
-            BaseReleaser service = null;
+            BaseReleaser<?, ?> service = null;
             switch (repository.getKind()) {
                 case GITHUB:
                     service = new GithubReleaser();

@@ -25,24 +25,24 @@ import java.util.List;
  * @since 1.3.0
  */
 public class CategoryList {
-    public boolean can_create_category;
-    public boolean can_create_topic;
-    public List<Category> categories;
+    private boolean canCreateCategory;
+    private boolean canCreateTopic;
+    private List<Category> categories;
 
-    public boolean isCan_create_category() {
-        return can_create_category;
+    public boolean isCanCreateCategory() {
+        return canCreateCategory;
     }
 
-    public void setCan_create_category(boolean can_create_category) {
-        this.can_create_category = can_create_category;
+    public void setCanCreateCategory(boolean canCreateCategory) {
+        this.canCreateCategory = canCreateCategory;
     }
 
-    public boolean isCan_create_topic() {
-        return can_create_topic;
+    public boolean isCanCreateTopic() {
+        return canCreateTopic;
     }
 
-    public void setCan_create_topic(boolean can_create_topic) {
-        this.can_create_topic = can_create_topic;
+    public void setCanCreateTopic(boolean canCreateTopic) {
+        this.canCreateTopic = canCreateTopic;
     }
 
     public List<Category> getCategories() {

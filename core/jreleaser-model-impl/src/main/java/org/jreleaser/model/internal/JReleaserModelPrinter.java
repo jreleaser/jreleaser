@@ -38,7 +38,7 @@ public abstract class JReleaserModelPrinter {
 
     private final PrintWriter out;
 
-    public JReleaserModelPrinter(PrintWriter out) {
+    protected JReleaserModelPrinter(PrintWriter out) {
         this.out = out;
     }
 
@@ -59,10 +59,6 @@ public abstract class JReleaserModelPrinter {
                 doPrintElement(value, offset);
             }
         }
-    }
-
-    private void print(String value, int offset) {
-        doPrintElement(value, offset);
     }
 
     private void doPrintMap(Map<String, ?> map, final int offset) {
@@ -248,16 +244,6 @@ public abstract class JReleaserModelPrinter {
         }
     }
 
-    public static boolean isSecret(String key) {
-        String lower = key.toLowerCase(Locale.ENGLISH);
-
-        for (String keyword : SECRET_KEYWORDS.split(",")) {
-            if (lower.contains(keyword.trim().toLowerCase(Locale.ENGLISH))) return true;
-        }
-
-        return false;
-    }
-
     private String cyan(String s) {
         return color("cyan", s);
     }
@@ -279,6 +265,16 @@ public abstract class JReleaserModelPrinter {
     }
 
     protected abstract String color(String color, String input);
+
+    public static boolean isSecret(String key) {
+        String lower = key.toLowerCase(Locale.ENGLISH);
+
+        for (String keyword : SECRET_KEYWORDS.split(",")) {
+            if (lower.contains(keyword.trim().toLowerCase(Locale.ENGLISH))) return true;
+        }
+
+        return false;
+    }
 
     private static String multiply(CharSequence self, Number factor) {
         int size = factor.intValue();

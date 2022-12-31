@@ -138,7 +138,7 @@ public final class ArtifactoryMavenDeployer extends AbstractMavenDeployer<Artifa
 
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
-
+        // noop
     }
 
     @Override

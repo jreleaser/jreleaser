@@ -34,6 +34,10 @@ public class JReleaserVersion {
     private static final String SEPARATOR = "------------------------------------------------------------";
     private static final String JRELEASER_FORMAT = "jreleaser %s%n";
 
+    private JReleaserVersion() {
+        // noop
+    }
+
     public static String getPlainVersion() {
         return JRELEASER_VERSION;
     }
