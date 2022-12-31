@@ -17,6 +17,7 @@
  */
 package org.jreleaser.sdk.discourse.api;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.List;
 
@@ -24,26 +25,9 @@ import java.util.List;
  * @author shblue21
  * @since 1.3.0
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CategoryList {
-    private boolean canCreateCategory;
-    private boolean canCreateTopic;
     private List<Category> categories;
-
-    public boolean isCanCreateCategory() {
-        return canCreateCategory;
-    }
-
-    public void setCanCreateCategory(boolean canCreateCategory) {
-        this.canCreateCategory = canCreateCategory;
-    }
-
-    public boolean isCanCreateTopic() {
-        return canCreateTopic;
-    }
-
-    public void setCanCreateTopic(boolean canCreateTopic) {
-        this.canCreateTopic = canCreateTopic;
-    }
 
     public List<Category> getCategories() {
         return categories;

@@ -31,7 +31,7 @@ import java.util.Map;
 public interface DiscourseAPI {
     @RequestLine("POST /posts.json")
     @Headers("Content-Type: application/json")
-    Post createPost(Map<String, String> params);
+    void createPost(Map<String, String> params);
 
     @RequestLine("GET /categories.json")
     @Headers("Content-Type: application/json")

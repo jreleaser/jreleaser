@@ -62,7 +62,7 @@ public abstract class JpackageAssemblerValidator extends Validator {
         }
     }
 
-    public static void postValidateJpackage(JReleaserContext context, Mode mode, Errors errors) {
+    public static void postValidateJpackage(JReleaserContext context) {
         context.getLogger().debug("assemble.jpackage");
         Map<String, JpackageAssembler> jpackage = context.getModel().getAssemble().getJpackage();
 

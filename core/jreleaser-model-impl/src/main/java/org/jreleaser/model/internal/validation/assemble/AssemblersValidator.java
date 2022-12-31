@@ -111,6 +111,6 @@ public abstract class AssemblersValidator extends Validator {
     public static void postValidateAssemblers(JReleaserContext context, Mode mode, Errors errors) {
         context.getLogger().debug("assemble");
 
-        postValidateJpackage(context, mode, errors);
+        postValidateJpackage(context);
     }
 }

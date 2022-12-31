@@ -17,10 +17,13 @@
  */
 package org.jreleaser.sdk.discourse.api;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * @author shblue21
  * @since 1.3.0
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CategoryResponse {
     private CategoryList categoryList;
 
