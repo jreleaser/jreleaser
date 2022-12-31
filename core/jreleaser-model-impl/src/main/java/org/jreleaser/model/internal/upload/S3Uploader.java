@@ -101,12 +101,12 @@ public final class S3Uploader extends AbstractUploader<org.jreleaser.model.api.u
 
         @Override
         public String getType() {
-            return type;
+            return S3Uploader.this.getType();
         }
 
         @Override
         public String getName() {
-            return name;
+            return S3Uploader.this.getName();
         }
 
         @Override
@@ -136,7 +136,7 @@ public final class S3Uploader extends AbstractUploader<org.jreleaser.model.api.u
 
         @Override
         public Active getActive() {
-            return active;
+            return S3Uploader.this.getActive();
         }
 
         @Override
@@ -156,17 +156,17 @@ public final class S3Uploader extends AbstractUploader<org.jreleaser.model.api.u
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(S3Uploader.this.getExtraProperties());
         }
 
         @Override
         public Integer getConnectTimeout() {
-            return connectTimeout;
+            return S3Uploader.this.getConnectTimeout();
         }
 
         @Override
         public Integer getReadTimeout() {
-            return readTimeout;
+            return S3Uploader.this.getReadTimeout();
         }
     };
 

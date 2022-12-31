@@ -51,55 +51,55 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Releaser, S extends BaseReleaser<A, S>> extends AbstractModelObject<S> implements Releaser<A> {
-    private static final long serialVersionUID = 8252794656914924803L;
+    private static final long serialVersionUID = 655832984022101746L;
 
     @JsonIgnore
-    protected final String serviceName;
-    protected final Changelog changelog = new Changelog();
-    protected final Milestone milestone = new Milestone();
-    protected final Issues issues = new Issues();
-    protected final CommitAuthor commitAuthor = new CommitAuthor();
-    protected final Update update = new Update();
-    protected final Prerelease prerelease = new Prerelease();
+    private final String serviceName;
+    private final Changelog changelog = new Changelog();
+    private final Milestone milestone = new Milestone();
+    private final Issues issues = new Issues();
+    private final CommitAuthor commitAuthor = new CommitAuthor();
+    private final Update update = new Update();
+    private final Prerelease prerelease = new Prerelease();
     @JsonIgnore
-    protected final boolean releaseSupported;
+    private final boolean releaseSupported;
     @JsonIgnore
-    protected boolean match = true;
-    protected Boolean enabled;
-    protected String host;
-    protected String owner;
-    protected String name;
-    protected String repoUrl;
-    protected String repoCloneUrl;
-    protected String commitUrl;
-    protected String srcUrl;
-    protected String downloadUrl;
-    protected String releaseNotesUrl;
-    protected String latestReleaseUrl;
-    protected String issueTrackerUrl;
-    protected String username;
-    protected String token;
-    protected String tagName;
-    protected String previousTagName;
-    protected String releaseName;
-    protected String branch;
-    protected Boolean sign;
-    protected Boolean skipTag;
-    protected Boolean skipRelease;
-    protected Boolean overwrite;
-    protected String apiEndpoint;
-    protected int connectTimeout;
-    protected int readTimeout;
-    protected Boolean artifacts;
-    protected Boolean files;
-    protected Boolean checksums;
-    protected Boolean signatures;
-    protected Active uploadAssets;
-    protected Boolean uploadAssetsEnabled;
+    private boolean match = true;
+    private Boolean enabled;
+    private String host;
+    private String owner;
+    private String name;
+    private String repoUrl;
+    private String repoCloneUrl;
+    private String commitUrl;
+    private String srcUrl;
+    private String downloadUrl;
+    private String releaseNotesUrl;
+    private String latestReleaseUrl;
+    private String issueTrackerUrl;
+    private String username;
+    private String token;
+    private String tagName;
+    private String previousTagName;
+    private String releaseName;
+    private String branch;
+    private Boolean sign;
+    private Boolean skipTag;
+    private Boolean skipRelease;
+    private Boolean overwrite;
+    private String apiEndpoint;
+    private int connectTimeout;
+    private int readTimeout;
+    private Boolean artifacts;
+    private Boolean files;
+    private Boolean checksums;
+    private Boolean signatures;
+    private Active uploadAssets;
+    private Boolean uploadAssetsEnabled;
     @JsonIgnore
-    protected String cachedTagName;
+    private String cachedTagName;
     @JsonIgnore
-    protected String cachedReleaseName;
+    private String cachedReleaseName;
 
     protected BaseReleaser(String serviceName, boolean releaseSupported) {
         this.serviceName = serviceName;
@@ -118,44 +118,48 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
 
     @Override
     public void merge(S source) {
-        this.match = source.match;
-        this.enabled = merge(this.enabled, source.enabled);
-        this.host = merge(this.host, source.host);
-        this.owner = merge(this.owner, source.owner);
-        this.name = merge(this.name, source.name);
-        this.repoUrl = merge(this.repoUrl, source.repoUrl);
-        this.repoCloneUrl = merge(this.repoCloneUrl, source.repoCloneUrl);
-        this.commitUrl = merge(this.commitUrl, source.commitUrl);
-        this.srcUrl = merge(this.srcUrl, source.srcUrl);
-        this.downloadUrl = merge(this.downloadUrl, source.downloadUrl);
-        this.releaseNotesUrl = merge(this.releaseNotesUrl, source.releaseNotesUrl);
-        this.latestReleaseUrl = merge(this.latestReleaseUrl, source.latestReleaseUrl);
-        this.issueTrackerUrl = merge(this.issueTrackerUrl, source.issueTrackerUrl);
-        this.username = merge(this.username, source.username);
-        this.token = merge(this.token, source.token);
-        this.tagName = merge(this.tagName, source.tagName);
-        this.previousTagName = merge(this.previousTagName, source.previousTagName);
-        this.releaseName = merge(this.releaseName, source.releaseName);
-        this.branch = merge(this.branch, source.branch);
-        this.sign = merge(this.sign, source.sign);
-        this.skipTag = merge(this.skipTag, source.skipTag);
-        this.skipRelease = merge(this.skipRelease, source.skipRelease);
-        this.overwrite = merge(this.overwrite, source.overwrite);
-        this.apiEndpoint = merge(this.apiEndpoint, source.apiEndpoint);
-        this.connectTimeout = merge(this.connectTimeout, source.connectTimeout);
-        this.readTimeout = merge(this.readTimeout, source.readTimeout);
-        this.artifacts = merge(this.artifacts, source.artifacts);
-        this.files = merge(this.files, source.files);
-        this.checksums = merge(this.checksums, source.checksums);
-        this.signatures = merge(this.signatures, source.signatures);
-        this.uploadAssets = merge(this.uploadAssets, source.uploadAssets);
-        this.uploadAssetsEnabled = merge(this.uploadAssetsEnabled, source.uploadAssetsEnabled);
-        setCommitAuthor(source.commitAuthor);
-        setUpdate(source.update);
-        setPrerelease(source.prerelease);
-        setChangelog(source.changelog);
-        setMilestone(source.milestone);
-        setIssues(source.issues);
+        this.match = source.isMatch();
+        this.enabled = merge(this.enabled, source.isEnabled());
+        this.host = merge(this.host, source.getHost());
+        this.owner = merge(this.owner, source.getOwner());
+        this.name = merge(this.name, source.getName());
+        this.repoUrl = merge(this.repoUrl, source.getRepoUrl());
+        this.repoCloneUrl = merge(this.repoCloneUrl, source.getRepoCloneUrl());
+        this.commitUrl = merge(this.commitUrl, source.getCommitUrl());
+        this.srcUrl = merge(this.srcUrl, source.getSrcUrl());
+        this.downloadUrl = merge(this.downloadUrl, source.getDownloadUrl());
+        this.releaseNotesUrl = merge(this.releaseNotesUrl, source.getReleaseNotesUrl());
+        this.latestReleaseUrl = merge(this.latestReleaseUrl, source.getLatestReleaseUrl());
+        this.issueTrackerUrl = merge(this.issueTrackerUrl, source.getIssueTrackerUrl());
+        this.username = merge(this.username, source.getUsername());
+        this.token = merge(this.token, source.getToken());
+        this.tagName = merge(this.tagName, source.getTagName());
+        this.previousTagName = merge(this.previousTagName, source.getPreviousTagName());
+        this.releaseName = merge(this.releaseName, source.getReleaseName());
+        this.branch = merge(this.branch, source.getBranch());
+        this.sign = merge(this.sign, source.isSign());
+        this.skipTag = merge(this.skipTag, source.isSkipTag());
+        this.skipRelease = merge(this.skipRelease, source.isSkipRelease());
+        this.overwrite = merge(this.overwrite, source.isOverwrite());
+        this.apiEndpoint = merge(this.apiEndpoint, source.getApiEndpoint());
+        this.connectTimeout = merge(this.getConnectTimeout(), source.getConnectTimeout());
+        this.readTimeout = merge(this.getReadTimeout(), source.getReadTimeout());
+        this.artifacts = merge(this.artifacts, source.isArtifacts());
+        this.files = merge(this.files, source.isFiles());
+        this.checksums = merge(this.checksums, source.isChecksums());
+        this.signatures = merge(this.signatures, source.isSignatures());
+        this.uploadAssets = merge(this.uploadAssets, source.getUploadAssets());
+        this.uploadAssetsEnabled = merge(this.uploadAssetsEnabled, source.getUploadAssetsEnabled());
+        setCommitAuthor(source.getCommitAuthor());
+        setUpdate(source.getUpdate());
+        setPrerelease(source.getPrerelease());
+        setChangelog(source.getChangelog());
+        setMilestone(source.getMilestone());
+        setIssues(source.getIssues());
+    }
+
+    protected Boolean getUploadAssetsEnabled() {
+        return uploadAssetsEnabled;
     }
 
     public abstract String getReverseRepoHost();

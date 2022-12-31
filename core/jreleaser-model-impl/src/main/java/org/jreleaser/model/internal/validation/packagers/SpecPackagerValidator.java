@@ -25,7 +25,6 @@ import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.SpecPackager;
 import org.jreleaser.model.internal.release.Releaser;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 
 import java.util.Collections;
@@ -34,6 +33,9 @@ import java.util.List;
 import static java.util.stream.Collectors.toList;
 import static org.jreleaser.model.internal.validation.common.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.internal.validation.common.TemplateValidator.validateTemplate;
+import static org.jreleaser.model.internal.validation.common.Validator.validateCommitAuthor;
+import static org.jreleaser.model.internal.validation.common.Validator.validateContinueOnError;
+import static org.jreleaser.model.internal.validation.common.Validator.validateTap;
 import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -41,7 +43,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.9.1
  */
-public abstract class SpecPackagerValidator extends Validator {
+public abstract class SpecPackagerValidator {
     public static void validateSpec(JReleaserContext context, Distribution distribution, SpecPackager packager, Errors errors) {
         context.getLogger().debug("distribution.{}.spec", distribution.getName());
         JReleaserModel model = context.getModel();

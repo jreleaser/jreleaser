@@ -51,22 +51,22 @@ public final class GithubMavenDeployer extends AbstractMavenDeployer<GithubMaven
 
         @Override
         public String getUrl() {
-            return url;
+            return GithubMavenDeployer.this.getUrl();
         }
 
         @Override
         public String getUsername() {
-            return username;
+            return GithubMavenDeployer.this.getUsername();
         }
 
         @Override
         public String getPassword() {
-            return password;
+            return GithubMavenDeployer.this.getPassword();
         }
 
         @Override
         public Http.Authorization getAuthorization() {
-            return authorization;
+            return GithubMavenDeployer.this.getAuthorization();
         }
 
         @Override
@@ -86,22 +86,22 @@ public final class GithubMavenDeployer extends AbstractMavenDeployer<GithubMaven
 
         @Override
         public List<String> getStagingRepositories() {
-            return unmodifiableList(stagingRepositories);
+            return unmodifiableList(GithubMavenDeployer.this.getStagingRepositories());
         }
 
         @Override
         public String getType() {
-            return type;
+            return GithubMavenDeployer.this.getType();
         }
 
         @Override
         public String getName() {
-            return name;
+            return GithubMavenDeployer.this.getName();
         }
 
         @Override
         public Active getActive() {
-            return active;
+            return GithubMavenDeployer.this.getActive();
         }
 
         @Override
@@ -121,17 +121,17 @@ public final class GithubMavenDeployer extends AbstractMavenDeployer<GithubMaven
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(GithubMavenDeployer.this.getExtraProperties());
         }
 
         @Override
         public Integer getConnectTimeout() {
-            return connectTimeout;
+            return GithubMavenDeployer.this.getConnectTimeout();
         }
 
         @Override
         public Integer getReadTimeout() {
-            return readTimeout;
+            return GithubMavenDeployer.this.getReadTimeout();
         }
     };
 
@@ -165,16 +165,16 @@ public final class GithubMavenDeployer extends AbstractMavenDeployer<GithubMaven
 
     @Override
     public String getResolvedUrl(Map<String, Object> props) {
-        props.put("username", username);
-        props.put("owner", username);
+        props.put("username", getUsername());
+        props.put("owner", getUsername());
         props.put("repository", repository);
         props.putAll(getExtraProperties());
-        return resolveTemplate(url, props);
+        return resolveTemplate(getUrl(), props);
     }
 
     @Override
     public Http.Authorization resolveAuthorization() {
-        authorization = Http.Authorization.BEARER;
-        return authorization;
+        setAuthorization(Http.Authorization.BEARER);
+        return getAuthorization();
     }
 }

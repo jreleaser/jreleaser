@@ -28,17 +28,20 @@ import org.jreleaser.model.internal.packagers.SdkmanPackager;
 import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.internal.release.BaseReleaser;
 import org.jreleaser.model.internal.release.Releaser;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
+import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.validateCommitAuthor;
+import static org.jreleaser.model.internal.validation.common.Validator.validateOwner;
+import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class PackagersValidator extends Validator {
+public abstract class PackagersValidator {
     public static void validatePackagers(JReleaserContext context, Mode mode, Errors errors) {
         if (!mode.validateConfig()) {
             return;

@@ -21,7 +21,6 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.upload.Upload;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.internal.validation.upload.ArtifactoryUploaderValidator.validateArtifactory;
@@ -37,7 +36,7 @@ import static org.jreleaser.model.internal.validation.upload.SftpUploaderValidat
  * @author Andres Almiray
  * @since 0.3.0
  */
-public abstract class UploadersValidator extends Validator {
+public abstract class UploadersValidator {
     public static void validateUploaders(JReleaserContext context, Mode mode, Errors errors) {
         Upload upload = context.getModel().getUpload();
         context.getLogger().debug("upload");

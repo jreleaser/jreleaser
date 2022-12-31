@@ -25,12 +25,13 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.JavaArchiveAssembler;
 import org.jreleaser.model.internal.common.FileSet;
 import org.jreleaser.model.internal.project.Project;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 
 import java.nio.file.Files;
 import java.util.Map;
 
+import static org.jreleaser.model.internal.validation.common.Validator.validateFileSet;
+import static org.jreleaser.model.internal.validation.common.Validator.validateGlobs;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -38,7 +39,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 1.4.0
  */
-public abstract class JavaArchiveAssemblerValidator extends Validator {
+public abstract class JavaArchiveAssemblerValidator {
     public static void validateJavaArchive(JReleaserContext context, Mode mode, Errors errors) {
         Map<String, JavaArchiveAssembler> archive = context.getModel().getAssemble().getJavaArchive();
         if (!archive.isEmpty()) context.getLogger().debug("assemble.java-archive");

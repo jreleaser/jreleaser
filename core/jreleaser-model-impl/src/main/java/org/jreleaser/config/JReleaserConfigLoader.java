@@ -31,7 +31,11 @@ import java.util.ServiceLoader;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class JReleaserConfigLoader {
+public final class JReleaserConfigLoader {
+    private JReleaserConfigLoader() {
+        // noop
+    }
+
     public static JReleaserModel loadConfig(Path configFile) {
         ServiceLoader<JReleaserConfigParser> parsers = ServiceLoader.load(JReleaserConfigParser.class, JReleaserConfigParser.class.getClassLoader());
 

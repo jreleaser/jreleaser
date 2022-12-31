@@ -70,18 +70,18 @@ public final class HttpDownloader extends AbstractDownloader<org.jreleaser.model
 
         @Override
         public String getType() {
-            return type;
+            return HttpDownloader.this.getType();
         }
 
         @Override
         public String getName() {
-            return name;
+            return HttpDownloader.this.getName();
         }
 
         @Override
         public List<? extends Asset> getAssets() {
             if (null == assets) {
-                assets = HttpDownloader.this.assets.stream()
+                assets = HttpDownloader.this.getAssets().stream()
                     .map(Downloader.Asset::asImmutable)
                     .collect(toList());
             }
@@ -90,7 +90,7 @@ public final class HttpDownloader extends AbstractDownloader<org.jreleaser.model
 
         @Override
         public Active getActive() {
-            return active;
+            return HttpDownloader.this.getActive();
         }
 
         @Override
@@ -110,17 +110,17 @@ public final class HttpDownloader extends AbstractDownloader<org.jreleaser.model
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(HttpDownloader.this.getExtraProperties());
         }
 
         @Override
         public Integer getConnectTimeout() {
-            return connectTimeout;
+            return HttpDownloader.this.getConnectTimeout();
         }
 
         @Override
         public Integer getReadTimeout() {
-            return readTimeout;
+            return HttpDownloader.this.getReadTimeout();
         }
     };
 

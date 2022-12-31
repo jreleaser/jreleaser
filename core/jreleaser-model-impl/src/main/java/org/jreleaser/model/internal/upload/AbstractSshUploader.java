@@ -33,19 +33,19 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 1.1.0
  */
 public abstract class AbstractSshUploader<A extends org.jreleaser.model.api.upload.SshUploader, S extends AbstractSshUploader<A, S>> extends AbstractUploader<A, S> implements SshUploader<A> {
-    private static final long serialVersionUID = -4963443885227987424L;
+    private static final long serialVersionUID = 2225817647231175984L;
 
-    protected String username;
-    protected String password;
-    protected String host;
-    protected Integer port;
-    protected String knownHostsFile;
-    protected String publicKey;
-    protected String privateKey;
-    protected String passphrase;
-    protected String fingerprint;
-    protected String path;
-    protected String downloadUrl;
+    private String username;
+    private String password;
+    private String host;
+    private Integer port;
+    private String knownHostsFile;
+    private String publicKey;
+    private String privateKey;
+    private String passphrase;
+    private String fingerprint;
+    private String path;
+    private String downloadUrl;
 
     protected AbstractSshUploader(String type) {
         super(type);
@@ -54,17 +54,17 @@ public abstract class AbstractSshUploader<A extends org.jreleaser.model.api.uplo
     @Override
     public void merge(S source) {
         super.merge(source);
-        this.username = merge(this.username, source.username);
-        this.password = merge(this.password, source.password);
-        this.host = merge(this.host, source.host);
-        this.port = merge(this.port, source.port);
-        this.knownHostsFile = merge(this.knownHostsFile, source.knownHostsFile);
-        this.publicKey = merge(this.publicKey, source.publicKey);
-        this.privateKey = merge(this.privateKey, source.privateKey);
-        this.passphrase = merge(this.passphrase, source.passphrase);
-        this.fingerprint = merge(this.fingerprint, source.fingerprint);
-        this.path = merge(this.path, source.path);
-        this.downloadUrl = merge(this.downloadUrl, source.downloadUrl);
+        this.username = merge(this.username, source.getUsername());
+        this.password = merge(this.password, source.getPassword());
+        this.host = merge(this.host, source.getHost());
+        this.port = merge(this.port, source.getPort());
+        this.knownHostsFile = merge(this.knownHostsFile, source.getKnownHostsFile());
+        this.publicKey = merge(this.publicKey, source.getPublicKey());
+        this.privateKey = merge(this.privateKey, source.getPrivateKey());
+        this.passphrase = merge(this.passphrase, source.getPassphrase());
+        this.fingerprint = merge(this.fingerprint, source.getFingerprint());
+        this.path = merge(this.path, source.getPath());
+        this.downloadUrl = merge(this.downloadUrl, source.getDownloadUrl());
     }
 
     @Override

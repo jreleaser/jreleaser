@@ -29,7 +29,6 @@ import org.jreleaser.model.internal.release.BaseReleaser;
 import org.jreleaser.model.internal.release.Changelog;
 import org.jreleaser.model.internal.release.GenericGitReleaser;
 import org.jreleaser.model.internal.release.GithubReleaser;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 
 import java.io.IOException;
@@ -52,6 +51,8 @@ import static org.jreleaser.model.api.release.Releaser.SKIP_RELEASE;
 import static org.jreleaser.model.api.release.Releaser.SKIP_TAG;
 import static org.jreleaser.model.api.release.Releaser.TAG_NAME;
 import static org.jreleaser.model.api.release.Releaser.UPDATE;
+import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -59,7 +60,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class BaseReleaserValidator extends Validator {
+public abstract class BaseReleaserValidator {
     private static final String DEFAULT_CHANGELOG_TPL = "src/jreleaser/templates/changelog.tpl";
     private static final String DEFAULT_APPEND_CHANGELOG_TPL = "src/jreleaser/templates/append-changelog.tpl";
 
@@ -425,7 +426,7 @@ public abstract class BaseReleaserValidator extends Validator {
             if (null != inputStream) {
                 Changelog loaded = JReleaserConfigLoader.load(Changelog.class, presetFileName, inputStream);
 
-                if(isBlank(changelog.getFormat())) {
+                if (isBlank(changelog.getFormat())) {
                     changelog.setFormat(loaded.getFormat());
                 }
 

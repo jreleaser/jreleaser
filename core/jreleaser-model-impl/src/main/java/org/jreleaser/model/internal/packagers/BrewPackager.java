@@ -122,27 +122,27 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
 
         @Override
         public org.jreleaser.model.api.common.CommitAuthor getCommitAuthor() {
-            return commitAuthor.asImmutable();
+            return BrewPackager.this.getCommitAuthor().asImmutable();
         }
 
         @Override
         public String getTemplateDirectory() {
-            return templateDirectory;
+            return BrewPackager.this.getTemplateDirectory();
         }
 
         @Override
         public List<String> getSkipTemplates() {
-            return unmodifiableList(skipTemplates);
+            return unmodifiableList(BrewPackager.this.getSkipTemplates());
         }
 
         @Override
         public String getType() {
-            return type;
+            return BrewPackager.this.getType();
         }
 
         @Override
         public String getDownloadUrl() {
-            return downloadUrl;
+            return BrewPackager.this.getDownloadUrl();
         }
 
         @Override
@@ -177,7 +177,7 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
 
         @Override
         public Active getActive() {
-            return active;
+            return BrewPackager.this.getActive();
         }
 
         @Override
@@ -197,7 +197,7 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(BrewPackager.this.getExtraProperties());
         }
     };
 

@@ -26,7 +26,11 @@ import java.net.URLEncoder;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class UrlEncoder {
+public final class UrlEncoder {
+    private UrlEncoder() {
+        // noop
+    }
+
     public static String urlEncode(String s) throws GitlabException {
         try {
             return URLEncoder.encode(s, "UTF-8");

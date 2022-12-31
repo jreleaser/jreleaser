@@ -86,7 +86,7 @@ public final class MastodonAnnouncer extends AbstractAnnouncer<MastodonAnnouncer
 
         @Override
         public String getName() {
-            return name;
+            return MastodonAnnouncer.this.getName();
         }
 
         @Override
@@ -96,7 +96,7 @@ public final class MastodonAnnouncer extends AbstractAnnouncer<MastodonAnnouncer
 
         @Override
         public Active getActive() {
-            return active;
+            return MastodonAnnouncer.this.getActive();
         }
 
         @Override
@@ -116,17 +116,17 @@ public final class MastodonAnnouncer extends AbstractAnnouncer<MastodonAnnouncer
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(MastodonAnnouncer.this.getExtraProperties());
         }
 
         @Override
         public Integer getConnectTimeout() {
-            return connectTimeout;
+            return MastodonAnnouncer.this.getConnectTimeout();
         }
 
         @Override
         public Integer getReadTimeout() {
-            return readTimeout;
+            return MastodonAnnouncer.this.getReadTimeout();
         }
     };
 

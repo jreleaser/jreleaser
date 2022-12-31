@@ -47,9 +47,13 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class ChangelogProvider {
+public final class ChangelogProvider {
     public static final String ISSUES_FILE = "issues.txt";
     public static final String CHANGELOG_FILE = "CHANGELOG.md";
+
+    private ChangelogProvider() {
+        // noop
+    }
 
     public static String getChangelog(JReleaserContext context) throws IOException {
         Changelog changelog = context.getModel().getRelease().getReleaser().getChangelog();

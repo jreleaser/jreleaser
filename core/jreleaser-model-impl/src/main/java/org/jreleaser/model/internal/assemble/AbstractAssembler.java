@@ -43,21 +43,21 @@ import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
  * @since 0.2.0
  */
 public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A extends org.jreleaser.model.api.assemble.Assembler> extends AbstractModelObject<S> implements Assembler<A> {
-    private static final long serialVersionUID = 1214090599346471565L;
+    private static final long serialVersionUID = -6289912910924286903L;
 
     @JsonIgnore
-    protected final transient Set<Artifact> outputs = new LinkedHashSet<>();
-    protected final Map<String, Object> extraProperties = new LinkedHashMap<>();
-    protected final List<FileSet> fileSets = new ArrayList<>();
-    protected final Platform platform = new Platform();
+    private final Set<Artifact> outputs = new LinkedHashSet<>();
+    private final Map<String, Object> extraProperties = new LinkedHashMap<>();
+    private final List<FileSet> fileSets = new ArrayList<>();
+    private final Platform platform = new Platform();
     @JsonIgnore
-    protected final String type;
+    private final String type;
     @JsonIgnore
-    protected String name;
+    private String name;
     @JsonIgnore
-    protected boolean enabled;
-    protected Active active;
-    protected Boolean exported;
+    private boolean enabled;
+    private Active active;
+    private Boolean exported;
     private Stereotype stereotype;
 
     protected AbstractAssembler(String type) {
@@ -66,15 +66,15 @@ public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A ext
 
     @Override
     public void merge(S source) {
-        this.active = merge(this.active, source.active);
-        this.enabled = merge(this.enabled, source.enabled);
-        this.exported = merge(this.exported, source.exported);
-        this.name = merge(this.name, source.name);
-        this.platform.merge(source.platform);
+        this.active = merge(this.active, source.getActive());
+        this.enabled = merge(this.enabled, source.isEnabled());
+        this.exported = merge(this.exported, source.isExported());
+        this.name = merge(this.name, source.getName());
+        this.platform.merge(source.getPlatform());
         this.stereotype = merge(this.stereotype, source.getStereotype());
-        setOutputs(merge(this.outputs, source.outputs));
-        setFileSets(merge(this.fileSets, source.fileSets));
-        setExtraProperties(merge(this.extraProperties, source.extraProperties));
+        setOutputs(merge(this.outputs, source.getOutputs()));
+        setFileSets(merge(this.fileSets, source.getFileSets()));
+        setExtraProperties(merge(this.extraProperties, source.getExtraProperties()));
     }
 
     @Override

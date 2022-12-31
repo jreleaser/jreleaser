@@ -71,7 +71,7 @@ public final class GitterAnnouncer extends AbstractAnnouncer<GitterAnnouncer, or
 
         @Override
         public String getName() {
-            return name;
+            return GitterAnnouncer.this.getName();
         }
 
         @Override
@@ -81,7 +81,7 @@ public final class GitterAnnouncer extends AbstractAnnouncer<GitterAnnouncer, or
 
         @Override
         public Active getActive() {
-            return active;
+            return GitterAnnouncer.this.getActive();
         }
 
         @Override
@@ -101,17 +101,17 @@ public final class GitterAnnouncer extends AbstractAnnouncer<GitterAnnouncer, or
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(GitterAnnouncer.this.getExtraProperties());
         }
 
         @Override
         public Integer getConnectTimeout() {
-            return connectTimeout;
+            return GitterAnnouncer.this.getConnectTimeout();
         }
 
         @Override
         public Integer getReadTimeout() {
-            return readTimeout;
+            return GitterAnnouncer.this.getReadTimeout();
         }
     };
 

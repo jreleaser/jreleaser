@@ -21,13 +21,13 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.deploy.maven.Nexus2MavenDeployer;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
 import java.util.Locale;
 import java.util.Map;
 
+import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
 import static org.jreleaser.model.internal.validation.deploy.maven.MavenDeployersValidator.validateMavenDeployer;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -36,7 +36,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 1.3.0
  */
-public abstract class Nexus2MavenDeployerValidator extends Validator {
+public abstract class Nexus2MavenDeployerValidator {
     public static void validateNexus2MavenDeployer(JReleaserContext context, Mode mode, Errors errors) {
         Map<String, Nexus2MavenDeployer> nexus2 = context.getModel().getDeploy().getMaven().getNexus2();
         if (!nexus2.isEmpty()) context.getLogger().debug("deploy.maven.nexus2");

@@ -114,12 +114,12 @@ public final class SdkmanPackager extends AbstractPackager<org.jreleaser.model.a
 
         @Override
         public String getType() {
-            return type;
+            return SdkmanPackager.this.getType();
         }
 
         @Override
         public String getDownloadUrl() {
-            return downloadUrl;
+            return SdkmanPackager.this.getDownloadUrl();
         }
 
         @Override
@@ -154,7 +154,7 @@ public final class SdkmanPackager extends AbstractPackager<org.jreleaser.model.a
 
         @Override
         public Active getActive() {
-            return active;
+            return SdkmanPackager.this.getActive();
         }
 
         @Override
@@ -174,7 +174,7 @@ public final class SdkmanPackager extends AbstractPackager<org.jreleaser.model.a
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(SdkmanPackager.this.getExtraProperties());
         }
     };
 

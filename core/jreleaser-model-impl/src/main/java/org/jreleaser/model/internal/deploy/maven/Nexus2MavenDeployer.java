@@ -33,7 +33,7 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
  */
 public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2MavenDeployer, org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer> {
     private static final long serialVersionUID = 5345438040625249900L;
-    
+
     private String snapshotUrl;
     private Boolean closeRepository;
     private Boolean releaseRepository;
@@ -55,22 +55,22 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
 
         @Override
         public String getUrl() {
-            return url;
+            return Nexus2MavenDeployer.this.getUrl();
         }
 
         @Override
         public String getUsername() {
-            return username;
+            return Nexus2MavenDeployer.this.getUsername();
         }
 
         @Override
         public String getPassword() {
-            return password;
+            return Nexus2MavenDeployer.this.getPassword();
         }
 
         @Override
         public Http.Authorization getAuthorization() {
-            return authorization;
+            return Nexus2MavenDeployer.this.getAuthorization();
         }
 
         @Override
@@ -100,22 +100,22 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
 
         @Override
         public List<String> getStagingRepositories() {
-            return unmodifiableList(stagingRepositories);
+            return unmodifiableList(Nexus2MavenDeployer.this.getStagingRepositories());
         }
 
         @Override
         public String getType() {
-            return type;
+            return Nexus2MavenDeployer.this.getType();
         }
 
         @Override
         public String getName() {
-            return name;
+            return Nexus2MavenDeployer.this.getName();
         }
 
         @Override
         public Active getActive() {
-            return active;
+            return Nexus2MavenDeployer.this.getActive();
         }
 
         @Override
@@ -135,17 +135,17 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(Nexus2MavenDeployer.this.getExtraProperties());
         }
 
         @Override
         public Integer getConnectTimeout() {
-            return connectTimeout;
+            return Nexus2MavenDeployer.this.getConnectTimeout();
         }
 
         @Override
         public Integer getReadTimeout() {
-            return readTimeout;
+            return Nexus2MavenDeployer.this.getReadTimeout();
         }
 
         @Override
@@ -232,8 +232,8 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
     }
 
     public String getResolvedSnapshotUrl(Map<String, Object> props) {
-        props.put("username", username);
-        props.put("owner", username);
+        props.put("username", getUsername());
+        props.put("owner", getUsername());
         props.putAll(getExtraProperties());
         return resolveTemplate(snapshotUrl, props);
     }

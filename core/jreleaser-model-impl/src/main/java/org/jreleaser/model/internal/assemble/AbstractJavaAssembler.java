@@ -36,15 +36,15 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.8.0
  */
 public abstract class AbstractJavaAssembler<S extends AbstractJavaAssembler<S, A>, A extends org.jreleaser.model.api.assemble.Assembler> extends AbstractAssembler<S, A> implements JavaAssembler<A> {
-    private static final long serialVersionUID = 6300433844782693980L;
+    private static final long serialVersionUID = 3050290416625742135L;
 
-    protected final Artifact mainJar = new Artifact();
-    protected final List<Glob> jars = new ArrayList<>();
-    protected final List<Glob> files = new ArrayList<>();
-    protected final Java java = new Java();
+    private final Artifact mainJar = new Artifact();
+    private final List<Glob> jars = new ArrayList<>();
+    private final List<Glob> files = new ArrayList<>();
+    private final Java java = new Java();
 
-    protected String executable;
-    protected String templateDirectory;
+    private String executable;
+    private String templateDirectory;
 
     protected AbstractJavaAssembler(String type) {
         super(type);
@@ -53,12 +53,12 @@ public abstract class AbstractJavaAssembler<S extends AbstractJavaAssembler<S, A
     @Override
     public void merge(S source) {
         super.merge(source);
-        this.executable = merge(this.executable, source.executable);
-        this.templateDirectory = merge(this.templateDirectory, source.templateDirectory);
-        setJava(source.java);
-        setMainJar(source.mainJar);
-        setJars(merge(this.jars, source.jars));
-        setFiles(merge(this.files, source.files));
+        this.executable = merge(this.executable, source.getExecutable());
+        this.templateDirectory = merge(this.templateDirectory, source.getTemplateDirectory());
+        setJava(source.getJava());
+        setMainJar(source.getMainJar());
+        setJars(merge(this.jars, source.getJars()));
+        setFiles(merge(this.files, source.getFiles()));
     }
 
     @Override

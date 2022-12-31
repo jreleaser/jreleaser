@@ -22,7 +22,6 @@ import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.hooks.CommandHook;
 import org.jreleaser.model.internal.hooks.CommandHooks;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -31,7 +30,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 1.2.0
  */
-public abstract class CommandHooksValidator extends Validator {
+public abstract class CommandHooksValidator {
     public static void validateCommandHooks(JReleaserContext context, Errors errors) {
         context.getLogger().debug("hooks.command");
 

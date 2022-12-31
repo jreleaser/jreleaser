@@ -65,48 +65,48 @@ public final class DockerSpec extends AbstractDockerConfiguration<DockerSpec> im
 
         @Override
         public String getTemplateDirectory() {
-            return templateDirectory;
+            return DockerSpec.this.getTemplateDirectory();
         }
 
         @Override
         public List<String> getSkipTemplates() {
-            return unmodifiableList(skipTemplates);
+            return unmodifiableList(DockerSpec.this.getSkipTemplates());
         }
 
         @Override
         public String getBaseImage() {
-            return baseImage;
+            return DockerSpec.this.getBaseImage();
         }
 
         @Override
         public Map<String, String> getLabels() {
-            return unmodifiableMap(labels);
+            return unmodifiableMap(DockerSpec.this.getLabels());
         }
 
         @Override
         public Set<String> getImageNames() {
-            return unmodifiableSet(imageNames);
+            return unmodifiableSet(DockerSpec.this.getImageNames());
         }
 
         @Override
         public List<String> getBuildArgs() {
-            return unmodifiableList(buildArgs);
+            return unmodifiableList(DockerSpec.this.getBuildArgs());
         }
 
         @Override
         public List<String> getPreCommands() {
-            return unmodifiableList(preCommands);
+            return unmodifiableList(DockerSpec.this.getPreCommands());
         }
 
         @Override
         public List<String> getPostCommands() {
-            return unmodifiableList(postCommands);
+            return unmodifiableList(DockerSpec.this.getPostCommands());
         }
 
         @Override
         public Set<? extends org.jreleaser.model.api.packagers.DockerPackager.Registry> getRegistries() {
             if (null == registries) {
-                registries = DockerSpec.this.registries.stream()
+                registries = DockerSpec.this.getRegistries().stream()
                     .map(DockerConfiguration.Registry::asImmutable)
                     .collect(toSet());
             }
@@ -120,7 +120,7 @@ public final class DockerSpec extends AbstractDockerConfiguration<DockerSpec> im
 
         @Override
         public Active getActive() {
-            return active;
+            return DockerSpec.this.getActive();
         }
 
         @Override
@@ -145,7 +145,7 @@ public final class DockerSpec extends AbstractDockerConfiguration<DockerSpec> im
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(DockerSpec.this.getExtraProperties());
         }
     };
 

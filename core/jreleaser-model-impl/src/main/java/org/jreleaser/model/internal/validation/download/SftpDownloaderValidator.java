@@ -23,19 +23,19 @@ import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.download.Downloader;
 import org.jreleaser.model.internal.download.SftpDownloader;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 
 import java.util.Map;
 
 import static org.jreleaser.model.internal.validation.common.SshValidator.validateSsh;
+import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
  * @since 1.1.0
  */
-public abstract class SftpDownloaderValidator extends Validator {
+public abstract class SftpDownloaderValidator {
     public static void validateSftpDownloader(JReleaserContext context, Mode mode, Errors errors) {
         Map<String, SftpDownloader> sftp = context.getModel().getDownload().getSftp();
         if (!sftp.isEmpty()) context.getLogger().debug("download.sftp");

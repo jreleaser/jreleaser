@@ -51,12 +51,12 @@ public final class HttpUploader extends AbstractWebUploader<org.jreleaser.model.
 
         @Override
         public String getUploadUrl() {
-            return uploadUrl;
+            return HttpUploader.this.getUploadUrl();
         }
 
         @Override
         public String getDownloadUrl() {
-            return downloadUrl;
+            return HttpUploader.this.getDownloadUrl();
         }
 
         @Override
@@ -81,12 +81,12 @@ public final class HttpUploader extends AbstractWebUploader<org.jreleaser.model.
 
         @Override
         public String getType() {
-            return type;
+            return HttpUploader.this.getType();
         }
 
         @Override
         public String getName() {
-            return name;
+            return HttpUploader.this.getName();
         }
 
         @Override
@@ -116,7 +116,7 @@ public final class HttpUploader extends AbstractWebUploader<org.jreleaser.model.
 
         @Override
         public Active getActive() {
-            return active;
+            return HttpUploader.this.getActive();
         }
 
         @Override
@@ -136,17 +136,17 @@ public final class HttpUploader extends AbstractWebUploader<org.jreleaser.model.
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(HttpUploader.this.getExtraProperties());
         }
 
         @Override
         public Integer getConnectTimeout() {
-            return connectTimeout;
+            return HttpUploader.this.getConnectTimeout();
         }
 
         @Override
         public Integer getReadTimeout() {
-            return readTimeout;
+            return HttpUploader.this.getReadTimeout();
         }
     };
 

@@ -99,7 +99,7 @@ public final class TwitterAnnouncer extends AbstractAnnouncer<TwitterAnnouncer, 
 
         @Override
         public String getName() {
-            return name;
+            return TwitterAnnouncer.this.getName();
         }
 
         @Override
@@ -109,7 +109,7 @@ public final class TwitterAnnouncer extends AbstractAnnouncer<TwitterAnnouncer, 
 
         @Override
         public Active getActive() {
-            return active;
+            return TwitterAnnouncer.this.getActive();
         }
 
         @Override
@@ -129,17 +129,17 @@ public final class TwitterAnnouncer extends AbstractAnnouncer<TwitterAnnouncer, 
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(TwitterAnnouncer.this.getExtraProperties());
         }
 
         @Override
         public Integer getConnectTimeout() {
-            return connectTimeout;
+            return TwitterAnnouncer.this.getConnectTimeout();
         }
 
         @Override
         public Integer getReadTimeout() {
-            return readTimeout;
+            return TwitterAnnouncer.this.getReadTimeout();
         }
     };
 

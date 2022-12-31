@@ -79,7 +79,7 @@ public final class TelegramAnnouncer extends AbstractAnnouncer<TelegramAnnouncer
 
         @Override
         public String getName() {
-            return name;
+            return TelegramAnnouncer.this.getName();
         }
 
         @Override
@@ -89,7 +89,7 @@ public final class TelegramAnnouncer extends AbstractAnnouncer<TelegramAnnouncer
 
         @Override
         public Active getActive() {
-            return active;
+            return TelegramAnnouncer.this.getActive();
         }
 
         @Override
@@ -109,17 +109,17 @@ public final class TelegramAnnouncer extends AbstractAnnouncer<TelegramAnnouncer
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(TelegramAnnouncer.this.getExtraProperties());
         }
 
         @Override
         public Integer getConnectTimeout() {
-            return connectTimeout;
+            return TelegramAnnouncer.this.getConnectTimeout();
         }
 
         @Override
         public Integer getReadTimeout() {
-            return readTimeout;
+            return TelegramAnnouncer.this.getReadTimeout();
         }
     };
 

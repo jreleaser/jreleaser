@@ -23,10 +23,10 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static java.util.Collections.unmodifiableMap;
 import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static org.jreleaser.model.api.announce.HttpAnnouncers.TYPE;
 
@@ -61,7 +61,7 @@ public final class HttpAnnouncers extends AbstractAnnouncer<HttpAnnouncers, org.
 
         @Override
         public String getName() {
-            return name;
+            return HttpAnnouncers.this.getName();
         }
 
         @Override
@@ -71,7 +71,7 @@ public final class HttpAnnouncers extends AbstractAnnouncer<HttpAnnouncers, org.
 
         @Override
         public Active getActive() {
-            return active;
+            return HttpAnnouncers.this.getActive();
         }
 
         @Override
@@ -91,17 +91,17 @@ public final class HttpAnnouncers extends AbstractAnnouncer<HttpAnnouncers, org.
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(HttpAnnouncers.this.getExtraProperties());
         }
 
         @Override
         public Integer getConnectTimeout() {
-            return connectTimeout;
+            return HttpAnnouncers.this.getConnectTimeout();
         }
 
         @Override
         public Integer getReadTimeout() {
-            return readTimeout;
+            return HttpAnnouncers.this.getReadTimeout();
         }
     };
 
@@ -123,7 +123,7 @@ public final class HttpAnnouncers extends AbstractAnnouncer<HttpAnnouncers, org.
     public List<HttpAnnouncer> getActiveHttpAnnouncers() {
         return httpAnnouncers.values().stream()
             .filter(HttpAnnouncer::isEnabled)
-            .collect(Collectors.toList());
+            .collect(toList());
     }
 
     public Map<String, HttpAnnouncer> getHttpAnnouncers() {

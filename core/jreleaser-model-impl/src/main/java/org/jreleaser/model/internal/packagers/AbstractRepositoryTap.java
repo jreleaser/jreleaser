@@ -35,22 +35,22 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> extends AbstractModelObject<S> implements RepositoryTap {
-    private static final long serialVersionUID = 998702813944708111L;
+    private static final long serialVersionUID = -561174331408057874L;
 
-    protected Active active;
+    private Active active;
     @JsonIgnore
-    protected boolean enabled;
+    private boolean enabled;
     @JsonIgnore
-    protected String basename;
+    private String basename;
     @JsonIgnore
-    protected String tapName;
-    protected String owner;
-    protected String name;
-    protected String tagName;
-    protected String branch;
-    protected String username;
-    protected String token;
-    protected String commitMessage;
+    private String tapName;
+    private String owner;
+    private String name;
+    private String tagName;
+    private String branch;
+    private String username;
+    private String token;
+    private String commitMessage;
 
     protected AbstractRepositoryTap(String basename, String tapName) {
         this.basename = basename;
@@ -66,17 +66,21 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
         this.tapName = tapName;
     }
 
+    protected String getTapName() {
+        return tapName;
+    }
+
     @Override
     public void merge(S source) {
-        this.active = merge(this.active, source.active);
-        this.enabled = merge(this.enabled, source.enabled);
-        this.owner = merge(this.owner, source.owner);
-        this.name = merge(this.name, source.name);
-        this.tagName = merge(this.tagName, source.tagName);
-        this.branch = merge(this.branch, source.branch);
-        this.username = merge(this.username, source.username);
-        this.token = merge(this.token, source.token);
-        this.commitMessage = merge(this.commitMessage, source.commitMessage);
+        this.active = merge(this.active, source.getActive());
+        this.enabled = merge(this.enabled, source.isEnabled());
+        this.owner = merge(this.owner, source.getOwner());
+        this.name = merge(this.name, source.getName());
+        this.tagName = merge(this.tagName, source.getTagName());
+        this.branch = merge(this.branch, source.getBranch());
+        this.username = merge(this.username, source.getUsername());
+        this.token = merge(this.token, source.getToken());
+        this.commitMessage = merge(this.commitMessage, source.getCommitMessage());
     }
 
     @Override
@@ -96,6 +100,10 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
         }
         enabled = active.check(project);
         return enabled;
+    }
+
+    protected void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     @Override

@@ -74,12 +74,12 @@ public final class GiteaUploader extends AbstractUploader<org.jreleaser.model.ap
 
         @Override
         public String getType() {
-            return type;
+            return GiteaUploader.this.getType();
         }
 
         @Override
         public String getName() {
-            return name;
+            return GiteaUploader.this.getName();
         }
 
         @Override
@@ -109,7 +109,7 @@ public final class GiteaUploader extends AbstractUploader<org.jreleaser.model.ap
 
         @Override
         public Active getActive() {
-            return active;
+            return GiteaUploader.this.getActive();
         }
 
         @Override
@@ -129,17 +129,17 @@ public final class GiteaUploader extends AbstractUploader<org.jreleaser.model.ap
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(GiteaUploader.this.getExtraProperties());
         }
 
         @Override
         public Integer getConnectTimeout() {
-            return connectTimeout;
+            return GiteaUploader.this.getConnectTimeout();
         }
 
         @Override
         public Integer getReadTimeout() {
-            return readTimeout;
+            return GiteaUploader.this.getReadTimeout();
         }
     };
 

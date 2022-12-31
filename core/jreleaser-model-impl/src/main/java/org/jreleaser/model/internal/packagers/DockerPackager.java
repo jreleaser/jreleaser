@@ -111,48 +111,48 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
 
         @Override
         public String getTemplateDirectory() {
-            return templateDirectory;
+            return DockerPackager.this.getTemplateDirectory();
         }
 
         @Override
         public List<String> getSkipTemplates() {
-            return unmodifiableList(skipTemplates);
+            return unmodifiableList(DockerPackager.this.getSkipTemplates());
         }
 
         @Override
         public String getBaseImage() {
-            return baseImage;
+            return DockerPackager.this.getBaseImage();
         }
 
         @Override
         public Map<String, String> getLabels() {
-            return unmodifiableMap(labels);
+            return unmodifiableMap(DockerPackager.this.getLabels());
         }
 
         @Override
         public Set<String> getImageNames() {
-            return unmodifiableSet(imageNames);
+            return unmodifiableSet(DockerPackager.this.getImageNames());
         }
 
         @Override
         public List<String> getBuildArgs() {
-            return unmodifiableList(buildArgs);
+            return unmodifiableList(DockerPackager.this.getBuildArgs());
         }
 
         @Override
         public List<String> getPreCommands() {
-            return unmodifiableList(preCommands);
+            return unmodifiableList(DockerPackager.this.getPreCommands());
         }
 
         @Override
         public List<String> getPostCommands() {
-            return unmodifiableList(postCommands);
+            return unmodifiableList(DockerPackager.this.getPostCommands());
         }
 
         @Override
         public Set<? extends org.jreleaser.model.api.packagers.DockerConfiguration.Registry> getRegistries() {
             if (null == registries) {
-                registries = DockerPackager.this.registries.stream()
+                registries = DockerPackager.this.getRegistries().stream()
                     .map(DockerConfiguration.Registry::asImmutable)
                     .collect(toSet());
             }
@@ -211,7 +211,7 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
 
         @Override
         public Active getActive() {
-            return active;
+            return DockerPackager.this.getActive();
         }
 
         @Override
@@ -236,7 +236,7 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(DockerPackager.this.getExtraProperties());
         }
     };
 
@@ -438,7 +438,7 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
 
             @Override
             public String getBasename() {
-                return basename;
+                return DockerRepository.this.getBasename();
             }
 
             @Override
@@ -448,37 +448,37 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
 
             @Override
             public String getName() {
-                return name;
+                return DockerRepository.this.getName();
             }
 
             @Override
             public String getTagName() {
-                return tagName;
+                return DockerRepository.this.getTagName();
             }
 
             @Override
             public String getBranch() {
-                return branch;
+                return DockerRepository.this.getBranch();
             }
 
             @Override
             public String getUsername() {
-                return username;
+                return DockerRepository.this.getUsername();
             }
 
             @Override
             public String getToken() {
-                return token;
+                return DockerRepository.this.getToken();
             }
 
             @Override
             public String getCommitMessage() {
-                return commitMessage;
+                return DockerRepository.this.getCommitMessage();
             }
 
             @Override
             public Active getActive() {
-                return active;
+                return DockerRepository.this.getActive();
             }
 
             @Override
@@ -493,7 +493,7 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
 
             @Override
             public String getOwner() {
-                return owner;
+                return DockerRepository.this.getOwner();
             }
         };
 

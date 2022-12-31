@@ -30,6 +30,10 @@ import java.io.Writer;
  * @since 1.0.0
  */
 public final class ProcessorUtil {
+    private ProcessorUtil() {
+        // noop
+    }
+
     static void generate(Location location, String fileName, String content, Context context) throws IOException {
         if (content == null || content.isEmpty()) return;
 

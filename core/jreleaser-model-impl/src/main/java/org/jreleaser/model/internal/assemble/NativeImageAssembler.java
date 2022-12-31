@@ -140,28 +140,28 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
 
         @Override
         public String getExecutable() {
-            return executable;
+            return NativeImageAssembler.this.getExecutable();
         }
 
         @Override
         public String getTemplateDirectory() {
-            return templateDirectory;
+            return NativeImageAssembler.this.getTemplateDirectory();
         }
 
         @Override
         public org.jreleaser.model.api.common.Java getJava() {
-            return java.asImmutable();
+            return NativeImageAssembler.this.getJava().asImmutable();
         }
 
         @Override
         public org.jreleaser.model.api.common.Artifact getMainJar() {
-            return mainJar.asImmutable();
+            return NativeImageAssembler.this.getMainJar().asImmutable();
         }
 
         @Override
         public List<? extends org.jreleaser.model.api.common.Glob> getJars() {
             if (null == jars) {
-                jars = NativeImageAssembler.this.jars.stream()
+                jars = NativeImageAssembler.this.getJars().stream()
                     .map(Glob::asImmutable)
                     .collect(toList());
             }
@@ -171,7 +171,7 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
         @Override
         public List<? extends org.jreleaser.model.api.common.Glob> getFiles() {
             if (null == files) {
-                files = NativeImageAssembler.this.files.stream()
+                files = NativeImageAssembler.this.getFiles().stream()
                     .map(Glob::asImmutable)
                     .collect(toList());
             }
@@ -180,7 +180,7 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
 
         @Override
         public org.jreleaser.model.api.platform.Platform getPlatform() {
-            return platform.asImmutable();
+            return NativeImageAssembler.this.getPlatform().asImmutable();
         }
 
         @Override
@@ -190,7 +190,7 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
 
         @Override
         public String getType() {
-            return type;
+            return NativeImageAssembler.this.getType();
         }
 
         @Override
@@ -205,13 +205,13 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
 
         @Override
         public String getName() {
-            return name;
+            return NativeImageAssembler.this.getName();
         }
 
         @Override
         public List<? extends org.jreleaser.model.api.common.FileSet> getFileSets() {
             if (null == fileSets) {
-                fileSets = NativeImageAssembler.this.fileSets.stream()
+                fileSets = NativeImageAssembler.this.getFileSets().stream()
                     .map(FileSet::asImmutable)
                     .collect(toList());
             }
@@ -221,7 +221,7 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
         @Override
         public Set<? extends org.jreleaser.model.api.common.Artifact> getOutputs() {
             if (null == outputs) {
-                outputs = NativeImageAssembler.this.outputs.stream()
+                outputs = NativeImageAssembler.this.getOutputs().stream()
                     .map(Artifact::asImmutable)
                     .collect(toSet());
             }
@@ -230,7 +230,7 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
 
         @Override
         public Active getActive() {
-            return active;
+            return NativeImageAssembler.this.getActive();
         }
 
         @Override
@@ -250,7 +250,7 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(NativeImageAssembler.this.getExtraProperties());
         }
     };
 
@@ -562,10 +562,10 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
     }
 
     private abstract static class AbstractPlatformCustomizer<S extends AbstractPlatformCustomizer<S>> extends AbstractModelObject<S> implements PlatformCustomizer {
-        private static final long serialVersionUID = -8914682170245234087L;
+        private static final long serialVersionUID = 8640931163688760790L;
 
-        protected final List<String> args = new ArrayList<>();
-        protected final String platform;
+        private final List<String> args = new ArrayList<>();
+        private final String platform;
 
         protected AbstractPlatformCustomizer(String platform) {
             this.platform = platform;
@@ -573,7 +573,7 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
 
         @Override
         public void merge(S source) {
-            setArgs(merge(this.args, source.args));
+            setArgs(merge(this.args, source.getArgs()));
         }
 
         @Override
@@ -611,12 +611,12 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
 
             @Override
             public String getPlatform() {
-                return platform;
+                return Linux.this.getPlatform();
             }
 
             @Override
             public List<String> getArgs() {
-                return unmodifiableList(args);
+                return unmodifiableList(Linux.this.getArgs());
             }
 
             @Override
@@ -642,12 +642,12 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
 
             @Override
             public String getPlatform() {
-                return platform;
+                return Windows.this.getPlatform();
             }
 
             @Override
             public List<String> getArgs() {
-                return unmodifiableList(args);
+                return unmodifiableList(Windows.this.getArgs());
             }
 
             @Override
@@ -673,12 +673,12 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
 
             @Override
             public String getPlatform() {
-                return platform;
+                return Osx.this.getPlatform();
             }
 
             @Override
             public List<String> getArgs() {
-                return unmodifiableList(args);
+                return unmodifiableList(Osx.this.getArgs());
             }
 
             @Override

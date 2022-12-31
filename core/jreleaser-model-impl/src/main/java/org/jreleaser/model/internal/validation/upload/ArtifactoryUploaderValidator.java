@@ -22,17 +22,19 @@ import org.jreleaser.model.Active;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.upload.ArtifactoryUploader;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
 import java.util.Map;
 
+import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
+
 /**
  * @author Andres Almiray
  * @since 0.3.0
  */
-public abstract class ArtifactoryUploaderValidator extends Validator {
+public abstract class ArtifactoryUploaderValidator {
     public static void validateArtifactory(JReleaserContext context, Mode mode, Errors errors) {
         Map<String, ArtifactoryUploader> artifactory = context.getModel().getUpload().getArtifactory();
         if (!artifactory.isEmpty()) context.getLogger().debug("upload.artifactory");

@@ -23,19 +23,20 @@ import org.jreleaser.model.Http;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.upload.HttpUploader;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
 import java.util.Map;
 
+import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
  * @since 0.4.0
  */
-public abstract class HttpUploaderValidator extends Validator {
+public abstract class HttpUploaderValidator {
     public static void validateHttpUploader(JReleaserContext context, Mode mode, Errors errors) {
         Map<String, HttpUploader> http = context.getModel().getUpload().getHttp();
         if (!http.isEmpty()) context.getLogger().debug("upload.http");

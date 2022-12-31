@@ -21,7 +21,6 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.NativeImageAssembler;
 import org.jreleaser.model.internal.common.Artifact;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 
 import java.nio.file.Files;
@@ -34,7 +33,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public abstract class NativeImageAssemblerResolver extends Validator {
+public abstract class NativeImageAssemblerResolver {
     public static void resolveNativeImageOutputs(JReleaserContext context, Errors errors) {
         List<NativeImageAssembler> activeNativeImages = context.getModel().getAssemble().getActiveNativeImages();
         if (!activeNativeImages.isEmpty()) context.getLogger().debug("assemble.nativeImage");

@@ -64,7 +64,7 @@ public final class TeamsAnnouncer extends AbstractAnnouncer<TeamsAnnouncer, org.
 
         @Override
         public String getName() {
-            return name;
+            return TeamsAnnouncer.this.getName();
         }
 
         @Override
@@ -74,7 +74,7 @@ public final class TeamsAnnouncer extends AbstractAnnouncer<TeamsAnnouncer, org.
 
         @Override
         public Active getActive() {
-            return active;
+            return TeamsAnnouncer.this.getActive();
         }
 
         @Override
@@ -94,17 +94,17 @@ public final class TeamsAnnouncer extends AbstractAnnouncer<TeamsAnnouncer, org.
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(TeamsAnnouncer.this.getExtraProperties());
         }
 
         @Override
         public Integer getConnectTimeout() {
-            return connectTimeout;
+            return TeamsAnnouncer.this.getConnectTimeout();
         }
 
         @Override
         public Integer getReadTimeout() {
-            return readTimeout;
+            return TeamsAnnouncer.this.getReadTimeout();
         }
     };
 

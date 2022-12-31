@@ -21,7 +21,6 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.deploy.Deploy;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.internal.validation.deploy.maven.MavenDeployersValidator.validateMavenDeployers;
@@ -30,7 +29,7 @@ import static org.jreleaser.model.internal.validation.deploy.maven.MavenDeployer
  * @author Andres Almiray
  * @since 1.3.0
  */
-public abstract class DeployValidator extends Validator {
+public abstract class DeployValidator {
     public static void validateDeploy(JReleaserContext context, Mode mode, Errors errors) {
         context.getLogger().debug("deploy");
 

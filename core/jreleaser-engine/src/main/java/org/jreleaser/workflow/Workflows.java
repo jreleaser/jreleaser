@@ -27,7 +27,11 @@ import static java.util.Collections.singletonList;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Workflows {
+public final class Workflows {
+    private Workflows() {
+        // noop
+    }
+
     public static Workflow download(JReleaserContext context) {
         context.setCommand(JReleaserCommand.DOWNLOAD);
         return new WorkflowImpl(context, singletonList(

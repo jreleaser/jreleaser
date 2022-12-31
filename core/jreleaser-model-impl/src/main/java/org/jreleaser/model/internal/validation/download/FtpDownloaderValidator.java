@@ -23,19 +23,20 @@ import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.download.Downloader;
 import org.jreleaser.model.internal.download.FtpDownloader;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
 import java.util.Map;
 
+import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
  * @since 1.1.0
  */
-public abstract class FtpDownloaderValidator extends Validator {
+public abstract class FtpDownloaderValidator {
     public static void validateFtpDownloader(JReleaserContext context, Mode mode, Errors errors) {
         Map<String, FtpDownloader> ftp = context.getModel().getDownload().getFtp();
         if (!ftp.isEmpty()) context.getLogger().debug("download.ftp");

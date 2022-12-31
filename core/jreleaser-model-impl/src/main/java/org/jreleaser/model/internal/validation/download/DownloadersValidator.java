@@ -21,7 +21,6 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.download.Download;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.internal.validation.download.FtpDownloaderValidator.validateFtpDownloader;
@@ -33,7 +32,7 @@ import static org.jreleaser.model.internal.validation.download.SftpDownloaderVal
  * @author Andres Almiray
  * @since 1.1.0
  */
-public abstract class DownloadersValidator extends Validator {
+public abstract class DownloadersValidator {
     public static void validateDownloaders(JReleaserContext context, Mode mode, Errors errors) {
         Download download = context.getModel().getDownload();
         context.getLogger().debug("download");

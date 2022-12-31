@@ -49,18 +49,18 @@ public final class FtpDownloader extends AbstractDownloader<org.jreleaser.model.
 
         @Override
         public String getType() {
-            return type;
+            return FtpDownloader.this.getType();
         }
 
         @Override
         public String getName() {
-            return name;
+            return FtpDownloader.this.getName();
         }
 
         @Override
         public List<? extends org.jreleaser.model.api.download.Downloader.Asset> getAssets() {
             if (null == assets) {
-                assets = FtpDownloader.this.assets.stream()
+                assets = FtpDownloader.this.getAssets().stream()
                     .map(Downloader.Asset::asImmutable)
                     .collect(toList());
             }
@@ -69,7 +69,7 @@ public final class FtpDownloader extends AbstractDownloader<org.jreleaser.model.
 
         @Override
         public Active getActive() {
-            return active;
+            return FtpDownloader.this.getActive();
         }
 
         @Override
@@ -89,7 +89,17 @@ public final class FtpDownloader extends AbstractDownloader<org.jreleaser.model.
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(FtpDownloader.this.getExtraProperties());
+        }
+
+        @Override
+        public Integer getConnectTimeout() {
+            return FtpDownloader.this.getConnectTimeout();
+        }
+
+        @Override
+        public Integer getReadTimeout() {
+            return FtpDownloader.this.getReadTimeout();
         }
 
         @Override
@@ -112,15 +122,6 @@ public final class FtpDownloader extends AbstractDownloader<org.jreleaser.model.
             return port;
         }
 
-        @Override
-        public Integer getConnectTimeout() {
-            return connectTimeout;
-        }
-
-        @Override
-        public Integer getReadTimeout() {
-            return readTimeout;
-        }
     };
 
     public FtpDownloader() {

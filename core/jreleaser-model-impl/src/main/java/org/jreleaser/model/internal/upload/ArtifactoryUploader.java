@@ -94,12 +94,12 @@ public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.mo
 
         @Override
         public String getType() {
-            return type;
+            return ArtifactoryUploader.this.getType();
         }
 
         @Override
         public String getName() {
-            return name;
+            return ArtifactoryUploader.this.getName();
         }
 
         @Override
@@ -129,7 +129,7 @@ public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.mo
 
         @Override
         public Active getActive() {
-            return active;
+            return ArtifactoryUploader.this.getActive();
         }
 
         @Override
@@ -149,17 +149,17 @@ public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.mo
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(ArtifactoryUploader.this.getExtraProperties());
         }
 
         @Override
         public Integer getConnectTimeout() {
-            return connectTimeout;
+            return ArtifactoryUploader.this.getConnectTimeout();
         }
 
         @Override
         public Integer getReadTimeout() {
-            return readTimeout;
+            return ArtifactoryUploader.this.getReadTimeout();
         }
     };
 

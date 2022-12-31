@@ -41,41 +41,41 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfiguration<S>> extends AbstractModelObject<S>
     implements DockerConfiguration, ExtraProperties, Activatable {
-    private static final long serialVersionUID = 7661138924685710150L;
+    private static final long serialVersionUID = 6814437516100086960L;
 
-    protected final Map<String, Object> extraProperties = new LinkedHashMap<>();
-    protected final Map<String, String> labels = new LinkedHashMap<>();
-    protected final Set<String> imageNames = new LinkedHashSet<>();
-    protected final List<String> buildArgs = new ArrayList<>();
-    protected final List<String> preCommands = new ArrayList<>();
-    protected final List<String> postCommands = new ArrayList<>();
-    protected final Set<Registry> registries = new LinkedHashSet<>();
-    protected final List<String> skipTemplates = new ArrayList<>();
-    protected final Buildx buildx = new Buildx();
+    private final Map<String, Object> extraProperties = new LinkedHashMap<>();
+    private final Map<String, String> labels = new LinkedHashMap<>();
+    private final Set<String> imageNames = new LinkedHashSet<>();
+    private final List<String> buildArgs = new ArrayList<>();
+    private final List<String> preCommands = new ArrayList<>();
+    private final List<String> postCommands = new ArrayList<>();
+    private final Set<Registry> registries = new LinkedHashSet<>();
+    private final List<String> skipTemplates = new ArrayList<>();
+    private final Buildx buildx = new Buildx();
 
     @JsonIgnore
-    protected boolean enabled;
-    protected Active active;
-    protected String templateDirectory;
-    protected Boolean useLocalArtifact;
-    protected String baseImage;
+    private boolean enabled;
+    private Active active;
+    private String templateDirectory;
+    private Boolean useLocalArtifact;
+    private String baseImage;
 
     @Override
     public void merge(S source) {
-        this.active = merge(this.active, source.active);
-        this.enabled = merge(this.enabled, source.enabled);
-        this.templateDirectory = merge(this.templateDirectory, source.templateDirectory);
-        setSkipTemplates(merge(this.skipTemplates, source.skipTemplates));
-        setExtraProperties(merge(this.extraProperties, source.extraProperties));
-        this.baseImage = merge(this.baseImage, source.baseImage);
-        this.useLocalArtifact = merge(this.useLocalArtifact, source.useLocalArtifact);
-        setImageNames(merge(this.imageNames, source.imageNames));
-        setBuildArgs(merge(this.buildArgs, source.buildArgs));
-        setPreCommands(merge(this.preCommands, source.preCommands));
-        setPostCommands(merge(this.postCommands, source.postCommands));
-        setLabels(merge(this.labels, source.labels));
-        setRegistries(merge(this.registries, source.registries));
-        setBuildx(source.buildx);
+        this.active = merge(this.active, source.getActive());
+        this.enabled = merge(this.enabled, source.isEnabled());
+        this.templateDirectory = merge(this.templateDirectory, source.getTemplateDirectory());
+        setSkipTemplates(merge(this.skipTemplates, source.getSkipTemplates()));
+        setExtraProperties(merge(this.extraProperties, source.getExtraProperties()));
+        this.baseImage = merge(this.baseImage, source.getBaseImage());
+        this.useLocalArtifact = merge(this.useLocalArtifact, source.isUseLocalArtifact());
+        setImageNames(merge(this.imageNames, source.getImageNames()));
+        setBuildArgs(merge(this.buildArgs, source.getBuildArgs()));
+        setPreCommands(merge(this.preCommands, source.getPreCommands()));
+        setPostCommands(merge(this.postCommands, source.getPostCommands()));
+        setLabels(merge(this.labels, source.getLabels()));
+        setRegistries(merge(this.registries, source.getRegistries()));
+        setBuildx(source.getBuildx());
     }
 
     @Override

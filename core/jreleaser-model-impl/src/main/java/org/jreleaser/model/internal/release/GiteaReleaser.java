@@ -72,87 +72,87 @@ public class GiteaReleaser extends BaseReleaser<org.jreleaser.model.api.release.
 
         @Override
         public String getHost() {
-            return host;
+            return GiteaReleaser.this.getHost();
         }
 
         @Override
         public String getName() {
-            return name;
+            return GiteaReleaser.this.getName();
         }
 
         @Override
         public String getRepoUrl() {
-            return repoUrl;
+            return GiteaReleaser.this.getRepoUrl();
         }
 
         @Override
         public String getRepoCloneUrl() {
-            return repoCloneUrl;
+            return GiteaReleaser.this.getRepoCloneUrl();
         }
 
         @Override
         public String getCommitUrl() {
-            return commitUrl;
+            return GiteaReleaser.this.getCommitUrl();
         }
 
         @Override
         public String getSrcUrl() {
-            return srcUrl;
+            return GiteaReleaser.this.getSrcUrl();
         }
 
         @Override
         public String getDownloadUrl() {
-            return downloadUrl;
+            return GiteaReleaser.this.getDownloadUrl();
         }
 
         @Override
         public String getReleaseNotesUrl() {
-            return releaseNotesUrl;
+            return GiteaReleaser.this.getReleaseNotesUrl();
         }
 
         @Override
         public String getLatestReleaseUrl() {
-            return latestReleaseUrl;
+            return GiteaReleaser.this.getLatestReleaseUrl();
         }
 
         @Override
         public String getIssueTrackerUrl() {
-            return issueTrackerUrl;
+            return GiteaReleaser.this.getIssueTrackerUrl();
         }
 
         @Override
         public String getUsername() {
-            return username;
+            return GiteaReleaser.this.getUsername();
         }
 
         @Override
         public String getToken() {
-            return token;
+            return GiteaReleaser.this.getToken();
         }
 
         @Override
         public String getTagName() {
-            return tagName;
+            return GiteaReleaser.this.getTagName();
         }
 
         @Override
         public String getPreviousTagName() {
-            return previousTagName;
+            return GiteaReleaser.this.getPreviousTagName();
         }
 
         @Override
         public String getReleaseName() {
-            return releaseName;
+            return GiteaReleaser.this.getReleaseName();
         }
 
         @Override
         public String getBranch() {
-            return branch;
+            return GiteaReleaser.this.getBranch();
         }
 
         @Override
         public Prerelease getPrerelease() {
-            return prerelease.asImmutable();
+            return GiteaReleaser.this.getPrerelease().asImmutable();
         }
 
         @Override
@@ -162,17 +162,17 @@ public class GiteaReleaser extends BaseReleaser<org.jreleaser.model.api.release.
 
         @Override
         public org.jreleaser.model.api.release.Changelog getChangelog() {
-            return changelog.asImmutable();
+            return GiteaReleaser.this.getChangelog().asImmutable();
         }
 
         @Override
         public Milestone getMilestone() {
-            return milestone.asImmutable();
+            return GiteaReleaser.this.getMilestone().asImmutable();
         }
 
         @Override
         public Issues getIssues() {
-            return issues.asImmutable();
+            return GiteaReleaser.this.getIssues().asImmutable();
         }
 
         @Override
@@ -192,12 +192,12 @@ public class GiteaReleaser extends BaseReleaser<org.jreleaser.model.api.release.
 
         @Override
         public Update getUpdate() {
-            return update.asImmutable();
+            return GiteaReleaser.this.getUpdate().asImmutable();
         }
 
         @Override
         public String getApiEndpoint() {
-            return apiEndpoint;
+            return GiteaReleaser.this.getApiEndpoint();
         }
 
         @Override
@@ -222,12 +222,12 @@ public class GiteaReleaser extends BaseReleaser<org.jreleaser.model.api.release.
 
         @Override
         public Active getUploadAssets() {
-            return uploadAssets;
+            return GiteaReleaser.this.getUploadAssets();
         }
 
         @Override
         public org.jreleaser.model.api.common.CommitAuthor getCommitAuthor() {
-            return commitAuthor.asImmutable();
+            return GiteaReleaser.this.getCommitAuthor().asImmutable();
         }
 
         @Override
@@ -242,17 +242,17 @@ public class GiteaReleaser extends BaseReleaser<org.jreleaser.model.api.release.
 
         @Override
         public String getOwner() {
-            return owner;
+            return GiteaReleaser.this.getOwner();
         }
 
         @Override
         public Integer getConnectTimeout() {
-            return connectTimeout;
+            return GiteaReleaser.this.getConnectTimeout();
         }
 
         @Override
         public Integer getReadTimeout() {
-            return readTimeout;
+            return GiteaReleaser.this.getReadTimeout();
         }
     };
 

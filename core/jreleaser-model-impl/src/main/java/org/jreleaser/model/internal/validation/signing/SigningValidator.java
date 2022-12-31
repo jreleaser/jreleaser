@@ -21,7 +21,6 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.signing.Signing;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.PlatformUtils;
 
@@ -35,13 +34,14 @@ import static org.jreleaser.model.api.signing.Signing.GPG_PASSPHRASE;
 import static org.jreleaser.model.api.signing.Signing.GPG_PUBLIC_KEY;
 import static org.jreleaser.model.api.signing.Signing.GPG_PUBLIC_KEYRING;
 import static org.jreleaser.model.api.signing.Signing.GPG_SECRET_KEY;
+import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class SigningValidator extends Validator {
+public abstract class SigningValidator {
     public static void validateSigning(JReleaserContext context, Mode mode, Errors errors) {
         if (!mode.validateConfig()) {
             errors = new Errors();

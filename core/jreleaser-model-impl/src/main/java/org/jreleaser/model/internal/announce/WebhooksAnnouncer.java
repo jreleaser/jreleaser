@@ -61,7 +61,7 @@ public final class WebhooksAnnouncer extends AbstractAnnouncer<WebhooksAnnouncer
 
         @Override
         public String getName() {
-            return name;
+            return WebhooksAnnouncer.this.getName();
         }
 
         @Override
@@ -71,7 +71,7 @@ public final class WebhooksAnnouncer extends AbstractAnnouncer<WebhooksAnnouncer
 
         @Override
         public Active getActive() {
-            return active;
+            return WebhooksAnnouncer.this.getActive();
         }
 
         @Override
@@ -91,17 +91,17 @@ public final class WebhooksAnnouncer extends AbstractAnnouncer<WebhooksAnnouncer
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(WebhooksAnnouncer.this.getExtraProperties());
         }
 
         @Override
         public Integer getConnectTimeout() {
-            return connectTimeout;
+            return WebhooksAnnouncer.this.getConnectTimeout();
         }
 
         @Override
         public Integer getReadTimeout() {
-            return readTimeout;
+            return WebhooksAnnouncer.this.getReadTimeout();
         }
     };
 

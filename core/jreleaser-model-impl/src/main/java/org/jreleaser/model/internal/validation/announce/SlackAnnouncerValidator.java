@@ -20,13 +20,14 @@ package org.jreleaser.model.internal.validation.announce;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.announce.SlackAnnouncer;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 
 import java.nio.file.Files;
 
 import static org.jreleaser.model.api.announce.SlackAnnouncer.SLACK_TOKEN;
 import static org.jreleaser.model.api.announce.SlackAnnouncer.SLACK_WEBHOOK;
+import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -34,7 +35,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class SlackAnnouncerValidator extends Validator {
+public abstract class SlackAnnouncerValidator {
     private static final String DEFAULT_SLACK_TPL = "src/jreleaser/templates/slack.tpl";
 
     public static void validateSlack(JReleaserContext context, SlackAnnouncer slack, Errors errors) {

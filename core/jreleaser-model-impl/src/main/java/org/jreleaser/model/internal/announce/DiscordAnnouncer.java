@@ -71,7 +71,7 @@ public final class DiscordAnnouncer extends AbstractAnnouncer<DiscordAnnouncer, 
 
         @Override
         public String getName() {
-            return name;
+            return DiscordAnnouncer.this.getName();
         }
 
         @Override
@@ -81,7 +81,7 @@ public final class DiscordAnnouncer extends AbstractAnnouncer<DiscordAnnouncer, 
 
         @Override
         public Active getActive() {
-            return active;
+            return DiscordAnnouncer.this.getActive();
         }
 
         @Override
@@ -101,17 +101,17 @@ public final class DiscordAnnouncer extends AbstractAnnouncer<DiscordAnnouncer, 
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(DiscordAnnouncer.this.getExtraProperties());
         }
 
         @Override
         public Integer getConnectTimeout() {
-            return connectTimeout;
+            return DiscordAnnouncer.this.getConnectTimeout();
         }
 
         @Override
         public Integer getReadTimeout() {
-            return readTimeout;
+            return DiscordAnnouncer.this.getReadTimeout();
         }
     };
 

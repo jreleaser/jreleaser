@@ -25,7 +25,6 @@ import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.ScoopPackager;
 import org.jreleaser.model.internal.release.BaseReleaser;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 
 import java.util.List;
@@ -34,6 +33,9 @@ import static java.util.stream.Collectors.toList;
 import static org.jreleaser.model.api.checksum.Checksum.INDIVIDUAL_CHECKSUM;
 import static org.jreleaser.model.internal.validation.common.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.internal.validation.common.TemplateValidator.validateTemplate;
+import static org.jreleaser.model.internal.validation.common.Validator.validateCommitAuthor;
+import static org.jreleaser.model.internal.validation.common.Validator.validateContinueOnError;
+import static org.jreleaser.model.internal.validation.common.Validator.validateTap;
 import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -41,7 +43,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class ScoopPackagerValidator extends Validator {
+public abstract class ScoopPackagerValidator {
     public static void validateScoop(JReleaserContext context, Distribution distribution, ScoopPackager packager, Errors errors) {
         context.getLogger().debug("distribution.{}.scoop", distribution.getName());
         JReleaserModel model = context.getModel();

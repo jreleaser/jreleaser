@@ -104,27 +104,27 @@ public final class ScoopPackager extends AbstractRepositoryPackager<org.jrelease
 
         @Override
         public org.jreleaser.model.api.common.CommitAuthor getCommitAuthor() {
-            return commitAuthor.asImmutable();
+            return ScoopPackager.this.getCommitAuthor().asImmutable();
         }
 
         @Override
         public String getTemplateDirectory() {
-            return templateDirectory;
+            return ScoopPackager.this.getTemplateDirectory();
         }
 
         @Override
         public List<String> getSkipTemplates() {
-            return unmodifiableList(skipTemplates);
+            return unmodifiableList(ScoopPackager.this.getSkipTemplates());
         }
 
         @Override
         public String getType() {
-            return type;
+            return ScoopPackager.this.getType();
         }
 
         @Override
         public String getDownloadUrl() {
-            return downloadUrl;
+            return ScoopPackager.this.getDownloadUrl();
         }
 
         @Override
@@ -159,7 +159,7 @@ public final class ScoopPackager extends AbstractRepositoryPackager<org.jrelease
 
         @Override
         public Active getActive() {
-            return active;
+            return ScoopPackager.this.getActive();
         }
 
         @Override
@@ -179,7 +179,7 @@ public final class ScoopPackager extends AbstractRepositoryPackager<org.jrelease
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(ScoopPackager.this.getExtraProperties());
         }
     };
 

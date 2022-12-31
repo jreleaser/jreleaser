@@ -26,7 +26,6 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.internal.release.BaseReleaser;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.api.project.Project.DEFAULT_SNAPSHOT_LABEL;
@@ -37,6 +36,9 @@ import static org.jreleaser.model.api.project.Project.PROJECT_SNAPSHOT_LABEL;
 import static org.jreleaser.model.api.project.Project.PROJECT_SNAPSHOT_PATTERN;
 import static org.jreleaser.model.api.project.Project.PROJECT_VERSION;
 import static org.jreleaser.model.api.project.Project.PROJECT_VERSION_PATTERN;
+import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.validateIcons;
+import static org.jreleaser.model.internal.validation.common.Validator.validateScreenshots;
 import static org.jreleaser.util.FileUtils.findLicenseFile;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -46,7 +48,7 @@ import static org.jreleaser.util.StringUtils.isTrue;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class ProjectValidator extends Validator {
+public abstract class ProjectValidator {
     public static void validateProject(JReleaserContext context, Mode mode, Errors errors) {
         context.getLogger().debug("project");
         Project project = context.getModel().getProject();

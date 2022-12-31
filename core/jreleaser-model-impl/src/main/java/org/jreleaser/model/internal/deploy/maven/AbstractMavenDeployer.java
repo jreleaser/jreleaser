@@ -40,26 +40,26 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 1.3.0
  */
 public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A>, A extends org.jreleaser.model.api.deploy.maven.MavenDeployer> extends AbstractModelObject<S> implements MavenDeployer<A>, ExtraProperties {
-    private static final long serialVersionUID = -3103071748607518937L;
+    private static final long serialVersionUID = 3587064586626120587L;
 
     @JsonIgnore
-    protected final String type;
-    protected final Map<String, Object> extraProperties = new LinkedHashMap<>();
-    protected final List<String> stagingRepositories = new ArrayList<>();
+    private final String type;
+    private final Map<String, Object> extraProperties = new LinkedHashMap<>();
+    private final List<String> stagingRepositories = new ArrayList<>();
     @JsonIgnore
-    protected String name;
+    private String name;
     @JsonIgnore
-    protected boolean enabled;
-    protected Active active;
-    protected int connectTimeout;
-    protected int readTimeout;
-    protected Boolean sign;
-    protected Boolean verifyPom;
-    protected Boolean applyMavenCentralRules;
-    protected String url;
-    protected String username;
-    protected String password;
-    protected Http.Authorization authorization;
+    private boolean enabled;
+    private Active active;
+    private int connectTimeout;
+    private int readTimeout;
+    private Boolean sign;
+    private Boolean verifyPom;
+    private Boolean applyMavenCentralRules;
+    private String url;
+    private String username;
+    private String password;
+    private Http.Authorization authorization;
 
     protected AbstractMavenDeployer(String type) {
         this.type = type;
@@ -67,20 +67,20 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
 
     @Override
     public void merge(S source) {
-        this.active = merge(this.active, source.active);
-        this.enabled = merge(this.enabled, source.enabled);
-        this.name = merge(this.name, source.name);
-        this.connectTimeout = merge(this.connectTimeout, source.connectTimeout);
-        this.readTimeout = merge(this.readTimeout, source.readTimeout);
-        this.sign = merge(this.sign, source.sign);
-        this.verifyPom = merge(this.verifyPom, source.verifyPom);
-        this.applyMavenCentralRules = merge(this.applyMavenCentralRules, source.applyMavenCentralRules);
-        this.url = merge(this.url, source.url);
-        this.username = merge(this.username, source.username);
-        this.password = merge(this.password, source.password);
-        this.authorization = merge(this.authorization, source.authorization);
-        setExtraProperties(merge(this.extraProperties, source.extraProperties));
-        setStagingRepositories(merge(this.stagingRepositories, source.stagingRepositories));
+        this.active = merge(this.active, source.getActive());
+        this.enabled = merge(this.enabled, source.isEnabled());
+        this.name = merge(this.name, source.getName());
+        this.connectTimeout = merge(this.getConnectTimeout(), source.getConnectTimeout());
+        this.readTimeout = merge(this.getReadTimeout(), source.getReadTimeout());
+        this.sign = merge(this.sign, source.isSign());
+        this.verifyPom = merge(this.verifyPom, source.isVerifyPom());
+        this.applyMavenCentralRules = merge(this.applyMavenCentralRules, source.isApplyMavenCentralRules());
+        this.url = merge(this.url, source.getUrl());
+        this.username = merge(this.username, source.getUsername());
+        this.password = merge(this.password, source.getPassword());
+        this.authorization = merge(this.authorization, source.getAuthorization());
+        setExtraProperties(merge(this.extraProperties, source.getExtraProperties()));
+        setStagingRepositories(merge(this.stagingRepositories, source.getStagingRepositories()));
     }
 
     @Override

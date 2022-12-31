@@ -23,13 +23,14 @@ import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.announce.WebhookAnnouncer;
 import org.jreleaser.model.internal.announce.WebhooksAnnouncer;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
 import java.nio.file.Files;
 import java.util.Map;
 
+import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -37,7 +38,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.5.0
  */
-public abstract class WebhooksAnnouncerValidator extends Validator {
+public abstract class WebhooksAnnouncerValidator {
     private static final String DEFAULT_TPL = "src/jreleaser/templates/";
 
     public static void validateWebhooks(JReleaserContext context, Mode mode, WebhooksAnnouncer webhooks, Errors errors) {

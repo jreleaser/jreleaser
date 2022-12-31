@@ -20,7 +20,6 @@ package org.jreleaser.model.internal.validation.deploy.maven;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.deploy.maven.ArtifactoryMavenDeployer;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 
 import java.util.Map;
@@ -31,7 +30,7 @@ import static org.jreleaser.model.internal.validation.deploy.maven.MavenDeployer
  * @author Andres Almiray
  * @since 1.3.0
  */
-public abstract class ArtifactoryMavenDeployerValidator extends Validator {
+public abstract class ArtifactoryMavenDeployerValidator {
     public static void validateArtifactoryMavenDeployer(JReleaserContext context, Mode mode, Errors errors) {
         Map<String, ArtifactoryMavenDeployer> artifactory = context.getModel().getDeploy().getMaven().getArtifactory();
         if (!artifactory.isEmpty()) context.getLogger().debug("deploy.maven.artifactory");

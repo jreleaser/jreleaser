@@ -28,10 +28,10 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.6.0
  */
 public abstract class AbstractTemplatePackager<A extends org.jreleaser.model.api.packagers.TemplatePackager, S extends AbstractTemplatePackager<A, S>> extends AbstractPackager<A, S> implements TemplatePackager<A> {
-    private static final long serialVersionUID = -8446580540897795402L;
+    private static final long serialVersionUID = 6214198928502949248L;
 
-    protected final List<String> skipTemplates = new ArrayList<>();
-    protected String templateDirectory;
+    private final List<String> skipTemplates = new ArrayList<>();
+    private String templateDirectory;
 
     protected AbstractTemplatePackager(String type) {
         super(type);
@@ -40,8 +40,8 @@ public abstract class AbstractTemplatePackager<A extends org.jreleaser.model.api
     @Override
     public void merge(S source) {
         super.merge(source);
-        this.templateDirectory = merge(this.templateDirectory, source.templateDirectory);
-        setSkipTemplates(merge(this.skipTemplates, source.skipTemplates));
+        this.templateDirectory = merge(this.templateDirectory, source.getTemplateDirectory());
+        setSkipTemplates(merge(this.skipTemplates, source.getSkipTemplates()));
     }
 
     @Override

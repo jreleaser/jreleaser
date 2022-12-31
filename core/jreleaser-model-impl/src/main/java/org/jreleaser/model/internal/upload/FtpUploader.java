@@ -81,12 +81,12 @@ public final class FtpUploader extends AbstractUploader<org.jreleaser.model.api.
 
         @Override
         public String getType() {
-            return type;
+            return FtpUploader.this.getType();
         }
 
         @Override
         public String getName() {
-            return name;
+            return FtpUploader.this.getName();
         }
 
         @Override
@@ -116,7 +116,7 @@ public final class FtpUploader extends AbstractUploader<org.jreleaser.model.api.
 
         @Override
         public Active getActive() {
-            return active;
+            return FtpUploader.this.getActive();
         }
 
         @Override
@@ -136,17 +136,17 @@ public final class FtpUploader extends AbstractUploader<org.jreleaser.model.api.
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(FtpUploader.this.getExtraProperties());
         }
 
         @Override
         public Integer getConnectTimeout() {
-            return connectTimeout;
+            return FtpUploader.this.getConnectTimeout();
         }
 
         @Override
         public Integer getReadTimeout() {
-            return readTimeout;
+            return FtpUploader.this.getReadTimeout();
         }
     };
 

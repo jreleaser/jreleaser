@@ -47,7 +47,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Validator {
+public abstract class Validator {
     public static String checkProperty(JReleaserContext context, String key, String property, String value, Errors errors) {
         if (isNotBlank(value)) return value;
         Environment environment = context.getModel().getEnvironment();

@@ -22,14 +22,15 @@ import org.jreleaser.model.Active;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.files.Files;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
+
+import static org.jreleaser.model.internal.validation.common.Validator.validateGlobs;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class FilesValidator extends Validator {
+public abstract class FilesValidator {
     public static void validateFiles(JReleaserContext context, Mode mode, Errors errors) {
         if (!mode.validateConfig()) {
             return;

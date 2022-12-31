@@ -33,19 +33,19 @@ import java.util.Map;
  * @since 1.1.0
  */
 public abstract class AbstractDownloader<A extends org.jreleaser.model.api.download.Downloader, S extends AbstractDownloader<A, S>> extends AbstractModelObject<S> implements Downloader<A> {
-    private static final long serialVersionUID = -5506209794302097933L;
+    private static final long serialVersionUID = 1444643272006843006L;
 
     @JsonIgnore
-    protected final String type;
-    protected final Map<String, Object> extraProperties = new LinkedHashMap<>();
-    protected final List<Asset> assets = new ArrayList<>();
+    private final String type;
+    private final Map<String, Object> extraProperties = new LinkedHashMap<>();
+    private final List<Asset> assets = new ArrayList<>();
     @JsonIgnore
-    protected String name;
+    private String name;
     @JsonIgnore
-    protected boolean enabled;
-    protected Active active;
-    protected Integer connectTimeout;
-    protected Integer readTimeout;
+    private boolean enabled;
+    private Active active;
+    private Integer connectTimeout;
+    private Integer readTimeout;
 
     protected AbstractDownloader(String type) {
         this.type = type;
@@ -53,13 +53,13 @@ public abstract class AbstractDownloader<A extends org.jreleaser.model.api.downl
 
     @Override
     public void merge(S source) {
-        this.name = merge(this.name, source.name);
-        this.active = merge(this.active, source.active);
-        this.enabled = merge(this.enabled, source.enabled);
-        this.connectTimeout = merge(this.connectTimeout, source.connectTimeout);
-        this.readTimeout = merge(this.readTimeout, source.readTimeout);
-        setExtraProperties(merge(this.extraProperties, source.extraProperties));
-        setAssets(merge(this.assets, source.assets));
+        this.name = merge(this.name, source.getName());
+        this.active = merge(this.active, source.getActive());
+        this.enabled = merge(this.enabled, source.isEnabled());
+        this.connectTimeout = merge(this.connectTimeout, source.getConnectTimeout());
+        this.readTimeout = merge(this.readTimeout, source.getReadTimeout());
+        setExtraProperties(merge(this.extraProperties, source.getExtraProperties()));
+        setAssets(merge(this.assets, source.getAssets()));
     }
 
     @Override

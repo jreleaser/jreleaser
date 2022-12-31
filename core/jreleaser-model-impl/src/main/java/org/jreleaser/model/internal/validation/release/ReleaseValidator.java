@@ -21,7 +21,6 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.release.Release;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.internal.validation.release.CodebergReleaserValidator.validateCodeberg;
@@ -34,7 +33,7 @@ import static org.jreleaser.model.internal.validation.release.GitlabReleaserVali
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class ReleaseValidator extends Validator {
+public abstract class ReleaseValidator {
     public static void validateRelease(JReleaserContext context, Mode mode, Errors errors) {
         context.getLogger().debug("release");
         Release release = context.getModel().getRelease();

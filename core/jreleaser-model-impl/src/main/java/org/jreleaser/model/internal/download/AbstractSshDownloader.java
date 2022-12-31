@@ -28,17 +28,17 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 1.1.0
  */
 public abstract class AbstractSshDownloader<A extends org.jreleaser.model.api.download.Downloader, S extends AbstractSshDownloader<A, S>> extends AbstractDownloader<A, S> implements SshDownloader<A> {
-    private static final long serialVersionUID = 2868757764361200464L;
+    private static final long serialVersionUID = 5336970029647112544L;
 
-    protected String username;
-    protected String password;
-    protected String host;
-    protected Integer port;
-    protected String knownHostsFile;
-    protected String publicKey;
-    protected String privateKey;
-    protected String passphrase;
-    protected String fingerprint;
+    private String username;
+    private String password;
+    private String host;
+    private Integer port;
+    private String knownHostsFile;
+    private String publicKey;
+    private String privateKey;
+    private String passphrase;
+    private String fingerprint;
 
     protected AbstractSshDownloader(String type) {
         super(type);
@@ -47,15 +47,15 @@ public abstract class AbstractSshDownloader<A extends org.jreleaser.model.api.do
     @Override
     public void merge(S source) {
         super.merge(source);
-        this.username = merge(this.username, source.username);
-        this.password = merge(this.password, source.password);
-        this.host = merge(this.host, source.host);
-        this.port = merge(this.port, source.port);
-        this.knownHostsFile = merge(this.knownHostsFile, source.knownHostsFile);
-        this.publicKey = merge(this.publicKey, source.publicKey);
-        this.privateKey = merge(this.privateKey, source.privateKey);
-        this.passphrase = merge(this.passphrase, source.passphrase);
-        this.fingerprint = merge(this.fingerprint, source.fingerprint);
+        this.username = merge(this.username, source.getUsername());
+        this.password = merge(this.password, source.getPassword());
+        this.host = merge(this.host, source.getHost());
+        this.port = merge(this.port, source.getPort());
+        this.knownHostsFile = merge(this.knownHostsFile, source.getKnownHostsFile());
+        this.publicKey = merge(this.publicKey, source.getPublicKey());
+        this.privateKey = merge(this.privateKey, source.getPrivateKey());
+        this.passphrase = merge(this.passphrase, source.getPassphrase());
+        this.fingerprint = merge(this.fingerprint, source.getFingerprint());
     }
 
     @Override

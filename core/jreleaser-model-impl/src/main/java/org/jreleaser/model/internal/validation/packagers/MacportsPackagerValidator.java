@@ -25,7 +25,6 @@ import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.MacportsPackager;
 import org.jreleaser.model.internal.release.Releaser;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Algorithm;
 import org.jreleaser.util.Errors;
 
@@ -36,6 +35,9 @@ import static java.util.stream.Collectors.toList;
 import static org.jreleaser.model.api.packagers.MacportsPackager.APP_NAME;
 import static org.jreleaser.model.internal.validation.common.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.internal.validation.common.TemplateValidator.validateTemplate;
+import static org.jreleaser.model.internal.validation.common.Validator.validateCommitAuthor;
+import static org.jreleaser.model.internal.validation.common.Validator.validateContinueOnError;
+import static org.jreleaser.model.internal.validation.common.Validator.validateTap;
 import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -43,7 +45,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.9.0
  */
-public abstract class MacportsPackagerValidator extends Validator {
+public abstract class MacportsPackagerValidator {
     public static void validateMacports(JReleaserContext context, Distribution distribution, MacportsPackager packager, Errors errors) {
         context.getLogger().debug("distribution.{}.macports", distribution.getName());
         JReleaserModel model = context.getModel();

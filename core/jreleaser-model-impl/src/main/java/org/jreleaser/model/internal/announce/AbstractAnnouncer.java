@@ -31,14 +31,16 @@ import java.util.Map;
  * @since 0.1.0
  */
 public abstract class AbstractAnnouncer<S extends AbstractAnnouncer<S, A>, A extends org.jreleaser.model.api.announce.Announcer> extends AbstractModelObject<S> implements Announcer<A> {
-    protected final Map<String, Object> extraProperties = new LinkedHashMap<>();
+    private static final long serialVersionUID = 3953189533357675271L;
+
+    private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     @JsonIgnore
-    protected String name;
+    private String name;
     @JsonIgnore
-    protected boolean enabled;
-    protected Active active;
-    protected Integer connectTimeout;
-    protected Integer readTimeout;
+    private boolean enabled;
+    private Active active;
+    private Integer connectTimeout;
+    private Integer readTimeout;
 
     protected AbstractAnnouncer(String name) {
         this.name = name;
@@ -46,11 +48,15 @@ public abstract class AbstractAnnouncer<S extends AbstractAnnouncer<S, A>, A ext
 
     @Override
     public void merge(S source) {
-        this.active = merge(this.active, source.active);
-        this.enabled = merge(this.enabled, source.enabled);
-        this.connectTimeout = merge(this.connectTimeout, source.connectTimeout);
-        this.readTimeout = merge(this.readTimeout, source.readTimeout);
-        setExtraProperties(merge(this.extraProperties, source.extraProperties));
+        this.active = merge(this.active, source.getActive());
+        this.enabled = merge(this.enabled, source.isEnabled());
+        this.connectTimeout = merge(this.connectTimeout, source.getConnectTimeout());
+        this.readTimeout = merge(this.readTimeout, source.getReadTimeout());
+        setExtraProperties(merge(this.extraProperties, source.getExtraProperties()));
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     protected boolean isSet() {

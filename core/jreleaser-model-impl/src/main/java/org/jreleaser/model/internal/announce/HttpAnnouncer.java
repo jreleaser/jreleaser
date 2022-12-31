@@ -43,7 +43,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 1.3.0
  */
 public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer, org.jreleaser.model.api.announce.HttpAnnouncer> implements Http {
-    private static final long serialVersionUID = -3188665586953395325L;
+    private static final long serialVersionUID = 5967843162096874445L;
 
     private final Map<String, String> headers = new LinkedHashMap<>();
     private String url;
@@ -110,7 +110,7 @@ public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer, org.jr
 
         @Override
         public String getName() {
-            return name;
+            return HttpAnnouncer.this.getName();
         }
 
         @Override
@@ -120,7 +120,7 @@ public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer, org.jr
 
         @Override
         public Active getActive() {
-            return active;
+            return HttpAnnouncer.this.getActive();
         }
 
         @Override
@@ -140,17 +140,17 @@ public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer, org.jr
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(HttpAnnouncer.this.getExtraProperties());
         }
 
         @Override
         public Integer getConnectTimeout() {
-            return connectTimeout;
+            return HttpAnnouncer.this.getConnectTimeout();
         }
 
         @Override
         public Integer getReadTimeout() {
-            return readTimeout;
+            return HttpAnnouncer.this.getReadTimeout();
         }
     };
 
@@ -217,10 +217,6 @@ public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer, org.jr
             throw new JReleaserException(RB.$("ERROR_unexpected_error_reading_template",
                 context.relativizeToBasedir(templatePath)));
         }
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     @Override

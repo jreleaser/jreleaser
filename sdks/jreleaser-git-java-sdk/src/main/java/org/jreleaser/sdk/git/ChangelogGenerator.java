@@ -81,10 +81,6 @@ public class ChangelogGenerator {
     private static final String UNCATEGORIZED = "<<UNCATEGORIZED>>";
     private static final String REGEX_PREFIX = "regex:";
 
-    public ChangelogGenerator() {
-
-    }
-
     protected String createChangelog(JReleaserContext context) throws IOException {
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
         Changelog changelog = releaser.getChangelog();

@@ -29,7 +29,6 @@ import org.jreleaser.model.internal.packagers.DockerPackager;
 import org.jreleaser.model.internal.packagers.DockerSpec;
 import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.internal.release.BaseReleaser;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.PlatformUtils;
@@ -51,6 +50,10 @@ import static org.jreleaser.model.internal.packagers.DockerPackager.LABEL_OCI_IM
 import static org.jreleaser.model.internal.packagers.DockerPackager.LABEL_OCI_IMAGE_VERSION;
 import static org.jreleaser.model.internal.validation.common.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.internal.validation.common.TemplateValidator.validateTemplate;
+import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.validateCommitAuthor;
+import static org.jreleaser.model.internal.validation.common.Validator.validateContinueOnError;
+import static org.jreleaser.model.internal.validation.common.Validator.validateTap;
 import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -59,7 +62,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class DockerPackagerValidator extends Validator {
+public abstract class DockerPackagerValidator {
     public static void validateDocker(JReleaserContext context, Distribution distribution, DockerPackager packager, Errors errors) {
         String element = "distribution." + distribution.getName() + ".docker";
         context.getLogger().debug(element);

@@ -41,7 +41,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.5.0
  */
 public final class WebhookAnnouncer extends AbstractAnnouncer<WebhookAnnouncer, org.jreleaser.model.api.announce.WebhookAnnouncer> {
-    private static final long serialVersionUID = 5440853994806591898L;
+    private static final long serialVersionUID = 3768821724964181104L;
 
     private String webhook;
     private String message;
@@ -84,7 +84,7 @@ public final class WebhookAnnouncer extends AbstractAnnouncer<WebhookAnnouncer, 
 
         @Override
         public String getName() {
-            return name;
+            return WebhookAnnouncer.this.getName();
         }
 
         @Override
@@ -94,7 +94,7 @@ public final class WebhookAnnouncer extends AbstractAnnouncer<WebhookAnnouncer, 
 
         @Override
         public Active getActive() {
-            return active;
+            return WebhookAnnouncer.this.getActive();
         }
 
         @Override
@@ -114,17 +114,17 @@ public final class WebhookAnnouncer extends AbstractAnnouncer<WebhookAnnouncer, 
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(WebhookAnnouncer.this.getExtraProperties());
         }
 
         @Override
         public Integer getConnectTimeout() {
-            return connectTimeout;
+            return WebhookAnnouncer.this.getConnectTimeout();
         }
 
         @Override
         public Integer getReadTimeout() {
-            return readTimeout;
+            return WebhookAnnouncer.this.getReadTimeout();
         }
     };
 
@@ -140,7 +140,7 @@ public final class WebhookAnnouncer extends AbstractAnnouncer<WebhookAnnouncer, 
     @Override
     public void merge(WebhookAnnouncer source) {
         super.merge(source);
-        this.name = merge(this.name, source.name);
+        setName(merge(this.getName(), source.getName()));
         this.webhook = merge(this.webhook, source.webhook);
         this.message = merge(this.message, source.message);
         this.messageTemplate = merge(this.messageTemplate, source.messageTemplate);
@@ -174,10 +174,6 @@ public final class WebhookAnnouncer extends AbstractAnnouncer<WebhookAnnouncer, 
     @Override
     public String getPrefix() {
         return "webhook";
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getWebhook() {

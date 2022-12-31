@@ -130,27 +130,27 @@ public final class ChocolateyPackager extends AbstractRepositoryPackager<org.jre
 
         @Override
         public org.jreleaser.model.api.common.CommitAuthor getCommitAuthor() {
-            return commitAuthor.asImmutable();
+            return ChocolateyPackager.this.getCommitAuthor().asImmutable();
         }
 
         @Override
         public String getTemplateDirectory() {
-            return templateDirectory;
+            return ChocolateyPackager.this.getTemplateDirectory();
         }
 
         @Override
         public List<String> getSkipTemplates() {
-            return unmodifiableList(skipTemplates);
+            return unmodifiableList(ChocolateyPackager.this.getSkipTemplates());
         }
 
         @Override
         public String getType() {
-            return type;
+            return ChocolateyPackager.this.getType();
         }
 
         @Override
         public String getDownloadUrl() {
-            return downloadUrl;
+            return ChocolateyPackager.this.getDownloadUrl();
         }
 
         @Override
@@ -185,7 +185,7 @@ public final class ChocolateyPackager extends AbstractRepositoryPackager<org.jre
 
         @Override
         public Active getActive() {
-            return active;
+            return ChocolateyPackager.this.getActive();
         }
 
         @Override
@@ -205,7 +205,7 @@ public final class ChocolateyPackager extends AbstractRepositoryPackager<org.jre
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(ChocolateyPackager.this.getExtraProperties());
         }
     };
 

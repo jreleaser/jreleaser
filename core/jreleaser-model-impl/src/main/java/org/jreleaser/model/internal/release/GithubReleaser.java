@@ -88,87 +88,87 @@ public final class GithubReleaser extends BaseReleaser<org.jreleaser.model.api.r
 
         @Override
         public String getHost() {
-            return host;
+            return GithubReleaser.this.getHost();
         }
 
         @Override
         public String getName() {
-            return name;
+            return GithubReleaser.this.getName();
         }
 
         @Override
         public String getRepoUrl() {
-            return repoUrl;
+            return GithubReleaser.this.getRepoUrl();
         }
 
         @Override
         public String getRepoCloneUrl() {
-            return repoCloneUrl;
+            return GithubReleaser.this.getRepoCloneUrl();
         }
 
         @Override
         public String getCommitUrl() {
-            return commitUrl;
+            return GithubReleaser.this.getCommitUrl();
         }
 
         @Override
         public String getSrcUrl() {
-            return srcUrl;
+            return GithubReleaser.this.getSrcUrl();
         }
 
         @Override
         public String getDownloadUrl() {
-            return downloadUrl;
+            return GithubReleaser.this.getDownloadUrl();
         }
 
         @Override
         public String getReleaseNotesUrl() {
-            return releaseNotesUrl;
+            return GithubReleaser.this.getReleaseNotesUrl();
         }
 
         @Override
         public String getLatestReleaseUrl() {
-            return latestReleaseUrl;
+            return GithubReleaser.this.getLatestReleaseUrl();
         }
 
         @Override
         public String getIssueTrackerUrl() {
-            return issueTrackerUrl;
+            return GithubReleaser.this.getIssueTrackerUrl();
         }
 
         @Override
         public String getUsername() {
-            return username;
+            return GithubReleaser.this.getUsername();
         }
 
         @Override
         public String getToken() {
-            return token;
+            return GithubReleaser.this.getToken();
         }
 
         @Override
         public String getTagName() {
-            return tagName;
+            return GithubReleaser.this.getTagName();
         }
 
         @Override
         public String getPreviousTagName() {
-            return previousTagName;
+            return GithubReleaser.this.getPreviousTagName();
         }
 
         @Override
         public String getReleaseName() {
-            return releaseName;
+            return GithubReleaser.this.getReleaseName();
         }
 
         @Override
         public String getBranch() {
-            return branch;
+            return GithubReleaser.this.getBranch();
         }
 
         @Override
         public Prerelease getPrerelease() {
-            return prerelease.asImmutable();
+            return GithubReleaser.this.getPrerelease().asImmutable();
         }
 
         @Override
@@ -178,17 +178,17 @@ public final class GithubReleaser extends BaseReleaser<org.jreleaser.model.api.r
 
         @Override
         public org.jreleaser.model.api.release.Changelog getChangelog() {
-            return changelog.asImmutable();
+            return GithubReleaser.this.getChangelog().asImmutable();
         }
 
         @Override
         public Milestone getMilestone() {
-            return milestone.asImmutable();
+            return GithubReleaser.this.getMilestone().asImmutable();
         }
 
         @Override
         public Issues getIssues() {
-            return issues.asImmutable();
+            return GithubReleaser.this.getIssues().asImmutable();
         }
 
         @Override
@@ -208,12 +208,12 @@ public final class GithubReleaser extends BaseReleaser<org.jreleaser.model.api.r
 
         @Override
         public Update getUpdate() {
-            return update.asImmutable();
+            return GithubReleaser.this.getUpdate().asImmutable();
         }
 
         @Override
         public String getApiEndpoint() {
-            return apiEndpoint;
+            return GithubReleaser.this.getApiEndpoint();
         }
 
         @Override
@@ -238,12 +238,12 @@ public final class GithubReleaser extends BaseReleaser<org.jreleaser.model.api.r
 
         @Override
         public Active getUploadAssets() {
-            return uploadAssets;
+            return GithubReleaser.this.getUploadAssets();
         }
 
         @Override
         public org.jreleaser.model.api.common.CommitAuthor getCommitAuthor() {
-            return commitAuthor.asImmutable();
+            return GithubReleaser.this.getCommitAuthor().asImmutable();
         }
 
         @Override
@@ -258,17 +258,17 @@ public final class GithubReleaser extends BaseReleaser<org.jreleaser.model.api.r
 
         @Override
         public String getOwner() {
-            return owner;
+            return GithubReleaser.this.getOwner();
         }
 
         @Override
         public Integer getConnectTimeout() {
-            return connectTimeout;
+            return GithubReleaser.this.getConnectTimeout();
         }
 
         @Override
         public Integer getReadTimeout() {
-            return readTimeout;
+            return GithubReleaser.this.getReadTimeout();
         }
     };
 

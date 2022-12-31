@@ -118,28 +118,28 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
 
         @Override
         public String getExecutable() {
-            return executable;
+            return JlinkAssembler.this.getExecutable();
         }
 
         @Override
         public String getTemplateDirectory() {
-            return templateDirectory;
+            return JlinkAssembler.this.getTemplateDirectory();
         }
 
         @Override
         public org.jreleaser.model.api.common.Java getJava() {
-            return java.asImmutable();
+            return JlinkAssembler.this.getJava().asImmutable();
         }
 
         @Override
         public org.jreleaser.model.api.common.Artifact getMainJar() {
-            return mainJar.asImmutable();
+            return JlinkAssembler.this.getMainJar().asImmutable();
         }
 
         @Override
         public List<? extends org.jreleaser.model.api.common.Glob> getJars() {
             if (null == jars) {
-                jars = JlinkAssembler.this.jars.stream()
+                jars = JlinkAssembler.this.getJars().stream()
                     .map(Glob::asImmutable)
                     .collect(toList());
             }
@@ -149,7 +149,7 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
         @Override
         public List<? extends org.jreleaser.model.api.common.Glob> getFiles() {
             if (null == files) {
-                files = JlinkAssembler.this.files.stream()
+                files = JlinkAssembler.this.getFiles().stream()
                     .map(Glob::asImmutable)
                     .collect(toList());
             }
@@ -158,7 +158,7 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
 
         @Override
         public org.jreleaser.model.api.platform.Platform getPlatform() {
-            return platform.asImmutable();
+            return JlinkAssembler.this.getPlatform().asImmutable();
         }
 
         @Override
@@ -168,7 +168,7 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
 
         @Override
         public String getType() {
-            return type;
+            return JlinkAssembler.this.getType();
         }
 
         @Override
@@ -183,13 +183,13 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
 
         @Override
         public String getName() {
-            return name;
+            return JlinkAssembler.this.getName();
         }
 
         @Override
         public List<? extends org.jreleaser.model.api.common.FileSet> getFileSets() {
             if (null == fileSets) {
-                fileSets = JlinkAssembler.this.fileSets.stream()
+                fileSets = JlinkAssembler.this.getFileSets().stream()
                     .map(FileSet::asImmutable)
                     .collect(toList());
             }
@@ -199,7 +199,7 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
         @Override
         public Set<? extends org.jreleaser.model.api.common.Artifact> getOutputs() {
             if (null == outputs) {
-                outputs = JlinkAssembler.this.outputs.stream()
+                outputs = JlinkAssembler.this.getOutputs().stream()
                     .map(Artifact::asImmutable)
                     .collect(toSet());
             }
@@ -208,7 +208,7 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
 
         @Override
         public Active getActive() {
-            return active;
+            return JlinkAssembler.this.getActive();
         }
 
         @Override
@@ -228,7 +228,7 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(JlinkAssembler.this.getExtraProperties());
         }
     };
 

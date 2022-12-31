@@ -26,7 +26,6 @@ import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.ChocolateyPackager;
 import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.internal.release.Releaser;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 import org.jreleaser.version.ChronVer;
 import org.jreleaser.version.JavaModuleVersion;
@@ -42,6 +41,10 @@ import static org.jreleaser.model.api.packagers.ChocolateyPackager.CHOCOLATEY_AP
 import static org.jreleaser.model.api.packagers.ChocolateyPackager.DEFAULT_CHOCOLATEY_PUSH_URL;
 import static org.jreleaser.model.internal.validation.common.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.internal.validation.common.TemplateValidator.validateTemplate;
+import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.validateCommitAuthor;
+import static org.jreleaser.model.internal.validation.common.Validator.validateContinueOnError;
+import static org.jreleaser.model.internal.validation.common.Validator.validateTap;
 import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -50,7 +53,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class ChocolateyPackagerValidator extends Validator {
+public abstract class ChocolateyPackagerValidator {
     public static void validateChocolatey(JReleaserContext context, Distribution distribution, ChocolateyPackager packager, Errors errors) {
         context.getLogger().debug("distribution.{}.chocolatey", distribution.getName());
         JReleaserModel model = context.getModel();

@@ -33,7 +33,7 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
  */
 public final class GitlabMavenDeployer extends AbstractMavenDeployer<GitlabMavenDeployer, org.jreleaser.model.api.deploy.maven.GitlabMavenDeployer> {
     private static final long serialVersionUID = -8939160558633337196L;
-    
+
     private String projectIdentifier;
 
     private final org.jreleaser.model.api.deploy.maven.GitlabMavenDeployer immutable = new org.jreleaser.model.api.deploy.maven.GitlabMavenDeployer() {
@@ -51,22 +51,22 @@ public final class GitlabMavenDeployer extends AbstractMavenDeployer<GitlabMaven
 
         @Override
         public String getUrl() {
-            return url;
+            return GitlabMavenDeployer.this.getUrl();
         }
 
         @Override
         public String getUsername() {
-            return username;
+            return GitlabMavenDeployer.this.getUsername();
         }
 
         @Override
         public String getPassword() {
-            return password;
+            return GitlabMavenDeployer.this.getPassword();
         }
 
         @Override
         public Http.Authorization getAuthorization() {
-            return authorization;
+            return GitlabMavenDeployer.this.getAuthorization();
         }
 
         @Override
@@ -86,22 +86,22 @@ public final class GitlabMavenDeployer extends AbstractMavenDeployer<GitlabMaven
 
         @Override
         public List<String> getStagingRepositories() {
-            return unmodifiableList(stagingRepositories);
+            return unmodifiableList(GitlabMavenDeployer.this.getStagingRepositories());
         }
 
         @Override
         public String getType() {
-            return type;
+            return GitlabMavenDeployer.this.getType();
         }
 
         @Override
         public String getName() {
-            return name;
+            return GitlabMavenDeployer.this.getName();
         }
 
         @Override
         public Active getActive() {
-            return active;
+            return GitlabMavenDeployer.this.getActive();
         }
 
         @Override
@@ -121,17 +121,17 @@ public final class GitlabMavenDeployer extends AbstractMavenDeployer<GitlabMaven
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(GitlabMavenDeployer.this.getExtraProperties());
         }
 
         @Override
         public Integer getConnectTimeout() {
-            return connectTimeout;
+            return GitlabMavenDeployer.this.getConnectTimeout();
         }
 
         @Override
         public Integer getReadTimeout() {
-            return readTimeout;
+            return GitlabMavenDeployer.this.getReadTimeout();
         }
     };
 
@@ -165,16 +165,16 @@ public final class GitlabMavenDeployer extends AbstractMavenDeployer<GitlabMaven
 
     @Override
     public String getResolvedUrl(Map<String, Object> props) {
-        props.put("username", username);
-        props.put("owner", username);
+        props.put("username", getUsername());
+        props.put("owner", getUsername());
         props.put("projectIdentifier", projectIdentifier);
         props.putAll(getExtraProperties());
-        return resolveTemplate(url, props);
+        return resolveTemplate(getUrl(), props);
     }
 
     @Override
     public Http.Authorization resolveAuthorization() {
-        authorization = Http.Authorization.BEARER;
-        return authorization;
+        setAuthorization(Http.Authorization.BEARER);
+        return getAuthorization();
     }
 }

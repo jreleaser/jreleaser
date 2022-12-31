@@ -95,27 +95,27 @@ public final class AsdfPackager extends AbstractRepositoryPackager<org.jreleaser
 
         @Override
         public org.jreleaser.model.api.common.CommitAuthor getCommitAuthor() {
-            return commitAuthor.asImmutable();
+            return AsdfPackager.this.getCommitAuthor().asImmutable();
         }
 
         @Override
         public String getTemplateDirectory() {
-            return templateDirectory;
+            return AsdfPackager.this.getTemplateDirectory();
         }
 
         @Override
         public List<String> getSkipTemplates() {
-            return Collections.unmodifiableList(skipTemplates);
+            return Collections.unmodifiableList(AsdfPackager.this.getSkipTemplates());
         }
 
         @Override
         public String getType() {
-            return type;
+            return AsdfPackager.this.getType();
         }
 
         @Override
         public String getDownloadUrl() {
-            return downloadUrl;
+            return AsdfPackager.this.getDownloadUrl();
         }
 
         @Override
@@ -150,7 +150,7 @@ public final class AsdfPackager extends AbstractRepositoryPackager<org.jreleaser
 
         @Override
         public Active getActive() {
-            return active;
+            return AsdfPackager.this.getActive();
         }
 
         @Override
@@ -170,7 +170,7 @@ public final class AsdfPackager extends AbstractRepositoryPackager<org.jreleaser
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(AsdfPackager.this.getExtraProperties());
         }
     };
 

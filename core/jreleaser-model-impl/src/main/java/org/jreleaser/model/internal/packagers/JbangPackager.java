@@ -74,27 +74,27 @@ public final class JbangPackager extends AbstractRepositoryPackager<org.jrelease
 
         @Override
         public org.jreleaser.model.api.common.CommitAuthor getCommitAuthor() {
-            return commitAuthor.asImmutable();
+            return JbangPackager.this.getCommitAuthor().asImmutable();
         }
 
         @Override
         public String getTemplateDirectory() {
-            return templateDirectory;
+            return JbangPackager.this.getTemplateDirectory();
         }
 
         @Override
         public List<String> getSkipTemplates() {
-            return unmodifiableList(skipTemplates);
+            return unmodifiableList(JbangPackager.this.getSkipTemplates());
         }
 
         @Override
         public String getType() {
-            return type;
+            return JbangPackager.this.getType();
         }
 
         @Override
         public String getDownloadUrl() {
-            return downloadUrl;
+            return JbangPackager.this.getDownloadUrl();
         }
 
         @Override
@@ -129,7 +129,7 @@ public final class JbangPackager extends AbstractRepositoryPackager<org.jrelease
 
         @Override
         public Active getActive() {
-            return active;
+            return JbangPackager.this.getActive();
         }
 
         @Override
@@ -149,7 +149,7 @@ public final class JbangPackager extends AbstractRepositoryPackager<org.jrelease
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(JbangPackager.this.getExtraProperties());
         }
     };
 
@@ -235,16 +235,16 @@ public final class JbangPackager extends AbstractRepositoryPackager<org.jrelease
 
         @Override
         public String getResolvedName() {
-            return tapName;
+            return getTapName();
         }
 
         @Override
         public boolean resolveEnabled(Project project) {
-            if (null == active) {
-                active = Active.ALWAYS;
+            if (null == getActive()) {
+                setActive(Active.ALWAYS);
             }
-            enabled = active.check(project);
-            return enabled;
+            setEnabled(getActive().check(project));
+            return isEnabled();
         }
     }
 }

@@ -22,12 +22,13 @@ import org.jreleaser.model.Active;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.upload.S3Uploader;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
 import java.util.Map;
 
+import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -35,7 +36,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.3.0
  */
-public abstract class S3UploaderValidator extends Validator {
+public abstract class S3UploaderValidator {
     public static void validateS3(JReleaserContext context, Mode mode, Errors errors) {
         Map<String, S3Uploader> s3 = context.getModel().getUpload().getS3();
         if (!s3.isEmpty()) context.getLogger().debug("upload.s3");

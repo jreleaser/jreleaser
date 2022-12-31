@@ -84,10 +84,14 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Artifacts {
+public final class Artifacts {
     private static final String DOWNLOAD_URL_SUFFIX = "DownloadUrl";
     private static final String DOWNLOAD_URL_KEY = "downloadUrl";
     private static final String DOWNLOAD_URL_FROM_KEY = "downloadUrlFrom";
+
+    private Artifacts() {
+        // noop
+    }
 
     public static String resolveForArtifact(String input, JReleaserContext context) {
         return resolveTemplate(input, context.fullProps());

@@ -43,22 +43,22 @@ public final class ArtifactoryMavenDeployer extends AbstractMavenDeployer<Artifa
 
         @Override
         public String getUrl() {
-            return url;
+            return ArtifactoryMavenDeployer.this.getUrl();
         }
 
         @Override
         public String getUsername() {
-            return username;
+            return ArtifactoryMavenDeployer.this.getUsername();
         }
 
         @Override
         public String getPassword() {
-            return password;
+            return ArtifactoryMavenDeployer.this.getPassword();
         }
 
         @Override
         public Http.Authorization getAuthorization() {
-            return authorization;
+            return ArtifactoryMavenDeployer.this.getAuthorization();
         }
 
         @Override
@@ -78,22 +78,22 @@ public final class ArtifactoryMavenDeployer extends AbstractMavenDeployer<Artifa
 
         @Override
         public List<String> getStagingRepositories() {
-            return unmodifiableList(stagingRepositories);
+            return unmodifiableList(ArtifactoryMavenDeployer.this.getStagingRepositories());
         }
 
         @Override
         public String getType() {
-            return type;
+            return ArtifactoryMavenDeployer.this.getType();
         }
 
         @Override
         public String getName() {
-            return name;
+            return ArtifactoryMavenDeployer.this.getName();
         }
 
         @Override
         public Active getActive() {
-            return active;
+            return ArtifactoryMavenDeployer.this.getActive();
         }
 
         @Override
@@ -113,17 +113,17 @@ public final class ArtifactoryMavenDeployer extends AbstractMavenDeployer<Artifa
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(ArtifactoryMavenDeployer.this.getExtraProperties());
         }
 
         @Override
         public Integer getConnectTimeout() {
-            return connectTimeout;
+            return ArtifactoryMavenDeployer.this.getConnectTimeout();
         }
 
         @Override
         public Integer getReadTimeout() {
-            return readTimeout;
+            return ArtifactoryMavenDeployer.this.getReadTimeout();
         }
     };
 
@@ -143,10 +143,10 @@ public final class ArtifactoryMavenDeployer extends AbstractMavenDeployer<Artifa
 
     @Override
     public Http.Authorization resolveAuthorization() {
-        if (null == authorization) {
-            authorization = Http.Authorization.BEARER;
+        if (null == getAuthorization()) {
+            setAuthorization(Http.Authorization.BEARER);
         }
 
-        return authorization;
+        return getAuthorization();
     }
 }

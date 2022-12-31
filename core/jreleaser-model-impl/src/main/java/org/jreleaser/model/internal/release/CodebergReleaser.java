@@ -72,87 +72,87 @@ public class CodebergReleaser extends BaseReleaser<org.jreleaser.model.api.relea
 
         @Override
         public String getHost() {
-            return host;
+            return CodebergReleaser.this.getHost();
         }
 
         @Override
         public String getName() {
-            return name;
+            return CodebergReleaser.this.getName();
         }
 
         @Override
         public String getRepoUrl() {
-            return repoUrl;
+            return CodebergReleaser.this.getRepoUrl();
         }
 
         @Override
         public String getRepoCloneUrl() {
-            return repoCloneUrl;
+            return CodebergReleaser.this.getRepoCloneUrl();
         }
 
         @Override
         public String getCommitUrl() {
-            return commitUrl;
+            return CodebergReleaser.this.getCommitUrl();
         }
 
         @Override
         public String getSrcUrl() {
-            return srcUrl;
+            return CodebergReleaser.this.getSrcUrl();
         }
 
         @Override
         public String getDownloadUrl() {
-            return downloadUrl;
+            return CodebergReleaser.this.getDownloadUrl();
         }
 
         @Override
         public String getReleaseNotesUrl() {
-            return releaseNotesUrl;
+            return CodebergReleaser.this.getReleaseNotesUrl();
         }
 
         @Override
         public String getLatestReleaseUrl() {
-            return latestReleaseUrl;
+            return CodebergReleaser.this.getLatestReleaseUrl();
         }
 
         @Override
         public String getIssueTrackerUrl() {
-            return issueTrackerUrl;
+            return CodebergReleaser.this.getIssueTrackerUrl();
         }
 
         @Override
         public String getUsername() {
-            return username;
+            return CodebergReleaser.this.getUsername();
         }
 
         @Override
         public String getToken() {
-            return token;
+            return CodebergReleaser.this.getToken();
         }
 
         @Override
         public String getTagName() {
-            return tagName;
+            return CodebergReleaser.this.getTagName();
         }
 
         @Override
         public String getPreviousTagName() {
-            return previousTagName;
+            return CodebergReleaser.this.getPreviousTagName();
         }
 
         @Override
         public String getReleaseName() {
-            return releaseName;
+            return CodebergReleaser.this.getReleaseName();
         }
 
         @Override
         public String getBranch() {
-            return branch;
+            return CodebergReleaser.this.getBranch();
         }
 
         @Override
         public Prerelease getPrerelease() {
-            return prerelease.asImmutable();
+            return CodebergReleaser.this.getPrerelease().asImmutable();
         }
 
         @Override
@@ -162,17 +162,17 @@ public class CodebergReleaser extends BaseReleaser<org.jreleaser.model.api.relea
 
         @Override
         public org.jreleaser.model.api.release.Changelog getChangelog() {
-            return changelog.asImmutable();
+            return CodebergReleaser.this.getChangelog().asImmutable();
         }
 
         @Override
         public Milestone getMilestone() {
-            return milestone.asImmutable();
+            return CodebergReleaser.this.getMilestone().asImmutable();
         }
 
         @Override
         public Issues getIssues() {
-            return issues.asImmutable();
+            return CodebergReleaser.this.getIssues().asImmutable();
         }
 
         @Override
@@ -192,12 +192,12 @@ public class CodebergReleaser extends BaseReleaser<org.jreleaser.model.api.relea
 
         @Override
         public Update getUpdate() {
-            return update.asImmutable();
+            return CodebergReleaser.this.getUpdate().asImmutable();
         }
 
         @Override
         public String getApiEndpoint() {
-            return apiEndpoint;
+            return CodebergReleaser.this.getApiEndpoint();
         }
 
         @Override
@@ -222,12 +222,12 @@ public class CodebergReleaser extends BaseReleaser<org.jreleaser.model.api.relea
 
         @Override
         public Active getUploadAssets() {
-            return uploadAssets;
+            return CodebergReleaser.this.getUploadAssets();
         }
 
         @Override
         public org.jreleaser.model.api.common.CommitAuthor getCommitAuthor() {
-            return commitAuthor.asImmutable();
+            return CodebergReleaser.this.getCommitAuthor().asImmutable();
         }
 
         @Override
@@ -242,17 +242,17 @@ public class CodebergReleaser extends BaseReleaser<org.jreleaser.model.api.relea
 
         @Override
         public String getOwner() {
-            return owner;
+            return CodebergReleaser.this.getOwner();
         }
 
         @Override
         public Integer getConnectTimeout() {
-            return connectTimeout;
+            return CodebergReleaser.this.getConnectTimeout();
         }
 
         @Override
         public Integer getReadTimeout() {
-            return readTimeout;
+            return CodebergReleaser.this.getReadTimeout();
         }
     };
 

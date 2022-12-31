@@ -97,7 +97,7 @@ public final class DiscourseAnnouncer extends AbstractAnnouncer<DiscourseAnnounc
 
         @Override
         public String getName() {
-            return name;
+            return DiscourseAnnouncer.this.getName();
         }
 
         @Override
@@ -107,7 +107,7 @@ public final class DiscourseAnnouncer extends AbstractAnnouncer<DiscourseAnnounc
 
         @Override
         public Active getActive() {
-            return active;
+            return DiscourseAnnouncer.this.getActive();
         }
 
         @Override
@@ -127,17 +127,17 @@ public final class DiscourseAnnouncer extends AbstractAnnouncer<DiscourseAnnounc
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(DiscourseAnnouncer.this.getExtraProperties());
         }
 
         @Override
         public Integer getConnectTimeout() {
-            return connectTimeout;
+            return DiscourseAnnouncer.this.getConnectTimeout();
         }
 
         @Override
         public Integer getReadTimeout() {
-            return readTimeout;
+            return DiscourseAnnouncer.this.getReadTimeout();
         }
     };
 

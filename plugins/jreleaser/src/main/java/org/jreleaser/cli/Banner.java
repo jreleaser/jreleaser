@@ -42,7 +42,7 @@ final class Banner {
     private final String productVersion = bundle.getString("product.version");
     private final String productId = bundle.getString("product.id");
     private final String productName = bundle.getString("product.name");
-    private final String banner = MessageFormat.format(bundle.getString("product.banner"), productName, productVersion);
+    private final String message = MessageFormat.format(bundle.getString("product.banner"), productName, productVersion);
 
     private Banner() {
         // noop
@@ -62,7 +62,7 @@ final class Banner {
             File parent = new File(jreleaserDir, "/.jreleaser/caches");
             File markerFile = getMarkerFile(parent, INSTANCE);
             if (!markerFile.exists()) {
-                if (!JReleaserOutput.isQuiet()) out.println(INSTANCE.banner);
+                if (!JReleaserOutput.isQuiet()) out.println(INSTANCE.message);
                 markerFile.getParentFile().mkdirs();
                 PrintStream fout = newPrintStream(new FileOutputStream(markerFile));
                 fout.println("1");
@@ -72,12 +72,12 @@ final class Banner {
                 try {
                     int count = Integer.parseInt(readQuietly(markerFile));
                     if (count < 3) {
-                        if (!JReleaserOutput.isQuiet()) out.println(INSTANCE.banner);
+                        if (!JReleaserOutput.isQuiet()) out.println(INSTANCE.message);
                     }
                     writeQuietly(markerFile, (count + 1) + "");
                 } catch (NumberFormatException e) {
                     writeQuietly(markerFile, "1");
-                    if (!JReleaserOutput.isQuiet()) out.println(INSTANCE.banner);
+                    if (!JReleaserOutput.isQuiet()) out.println(INSTANCE.message);
                 }
             }
         } catch (IOException ignored) {

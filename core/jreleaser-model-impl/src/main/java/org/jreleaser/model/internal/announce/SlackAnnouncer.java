@@ -85,7 +85,7 @@ public final class SlackAnnouncer extends AbstractAnnouncer<SlackAnnouncer, org.
 
         @Override
         public String getName() {
-            return name;
+            return SlackAnnouncer.this.getName();
         }
 
         @Override
@@ -95,7 +95,7 @@ public final class SlackAnnouncer extends AbstractAnnouncer<SlackAnnouncer, org.
 
         @Override
         public Active getActive() {
-            return active;
+            return SlackAnnouncer.this.getActive();
         }
 
         @Override
@@ -115,17 +115,17 @@ public final class SlackAnnouncer extends AbstractAnnouncer<SlackAnnouncer, org.
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(SlackAnnouncer.this.getExtraProperties());
         }
 
         @Override
         public Integer getConnectTimeout() {
-            return connectTimeout;
+            return SlackAnnouncer.this.getConnectTimeout();
         }
 
         @Override
         public Integer getReadTimeout() {
-            return readTimeout;
+            return SlackAnnouncer.this.getReadTimeout();
         }
     };
 

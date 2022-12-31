@@ -44,18 +44,18 @@ import static org.jreleaser.model.Distribution.DistributionType.FLAT_BINARY;
  * @since 0.1.0
  */
 public abstract class AbstractPackager<A extends org.jreleaser.model.api.packagers.Packager, S extends AbstractPackager<A, S>> extends AbstractModelObject<S> implements Packager<A> {
-    private static final long serialVersionUID = -5096983259019667436L;
+    private static final long serialVersionUID = -4463822744538116865L;
 
     @JsonIgnore
-    protected final String type;
-    protected final Map<String, Object> extraProperties = new LinkedHashMap<>();
+    private final String type;
+    private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     @JsonIgnore
-    protected boolean enabled;
-    protected Active active;
-    protected Boolean continueOnError;
-    protected String downloadUrl;
+    private boolean enabled;
+    private Active active;
+    private Boolean continueOnError;
+    private String downloadUrl;
     @JsonIgnore
-    protected boolean failed;
+    private boolean failed;
 
     protected AbstractPackager(String type) {
         this.type = type;
@@ -63,12 +63,12 @@ public abstract class AbstractPackager<A extends org.jreleaser.model.api.package
 
     @Override
     public void merge(S source) {
-        this.active = merge(this.active, source.active);
-        this.enabled = merge(this.enabled, source.enabled);
-        this.continueOnError = merge(this.continueOnError, source.continueOnError);
-        this.downloadUrl = merge(this.downloadUrl, source.downloadUrl);
-        this.failed = source.failed;
-        setExtraProperties(merge(this.extraProperties, source.extraProperties));
+        this.active = merge(this.active, source.getActive());
+        this.enabled = merge(this.enabled, source.isEnabled());
+        this.continueOnError = merge(this.continueOnError, source.isContinueOnError());
+        this.downloadUrl = merge(this.downloadUrl, source.getDownloadUrl());
+        this.failed = source.isFailed();
+        setExtraProperties(merge(this.extraProperties, source.getExtraProperties()));
     }
 
     @Override

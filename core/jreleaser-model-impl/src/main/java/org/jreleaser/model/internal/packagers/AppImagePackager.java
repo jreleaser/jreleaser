@@ -151,27 +151,27 @@ public final class AppImagePackager extends AbstractRepositoryPackager<org.jrele
 
         @Override
         public org.jreleaser.model.api.common.CommitAuthor getCommitAuthor() {
-            return commitAuthor.asImmutable();
+            return AppImagePackager.this.getCommitAuthor().asImmutable();
         }
 
         @Override
         public String getTemplateDirectory() {
-            return templateDirectory;
+            return AppImagePackager.this.getTemplateDirectory();
         }
 
         @Override
         public List<String> getSkipTemplates() {
-            return unmodifiableList(skipTemplates);
+            return unmodifiableList(AppImagePackager.this.getSkipTemplates());
         }
 
         @Override
         public String getType() {
-            return type;
+            return AppImagePackager.this.getType();
         }
 
         @Override
         public String getDownloadUrl() {
-            return downloadUrl;
+            return AppImagePackager.this.getDownloadUrl();
         }
 
         @Override
@@ -206,7 +206,7 @@ public final class AppImagePackager extends AbstractRepositoryPackager<org.jrele
 
         @Override
         public Active getActive() {
-            return active;
+            return AppImagePackager.this.getActive();
         }
 
         @Override
@@ -226,7 +226,7 @@ public final class AppImagePackager extends AbstractRepositoryPackager<org.jrele
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(AppImagePackager.this.getExtraProperties());
         }
     };
 

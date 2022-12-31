@@ -26,18 +26,22 @@ import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 
-public class WireMockStubs {
+public final class WireMockStubs {
+    private WireMockStubs() {
+        // noop
+    }
+
     public static void verifyPostContains(String endpoint, String maybeJson) {
         verifyRequestContains(postRequestedFor(urlEqualTo(endpoint)), maybeJson);
     }
 
-    private static void verifyRequest(RequestPatternBuilder builder, String maybeJson) {
+    public static void verifyRequest(RequestPatternBuilder builder, String maybeJson) {
         verify(builder.withHeader("Content-Type", containing("application/x-www-form-urlencoded"))
             .withHeader("Accept", equalTo("*/*"))
             .withRequestBody(maybeJson.startsWith("{") ? equalToJson(maybeJson) : equalTo(maybeJson)));
     }
 
-    private static void verifyRequestContains(RequestPatternBuilder builder, String maybeJson) {
+    public static void verifyRequestContains(RequestPatternBuilder builder, String maybeJson) {
         verify(builder.withHeader("Content-Type", containing("application/x-www-form-urlencoded"))
             .withHeader("Accept", equalTo("*/*"))
             .withRequestBody(maybeJson.startsWith("{") ? containing(maybeJson.substring(1, maybeJson.length() - 1)) : containing(maybeJson)));

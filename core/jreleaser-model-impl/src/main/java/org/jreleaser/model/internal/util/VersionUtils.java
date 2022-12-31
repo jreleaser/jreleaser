@@ -37,11 +37,14 @@ import java.util.regex.Pattern;
  * @author Andres Almiray
  * @since 1.2.0
  */
-public class VersionUtils {
+public final class VersionUtils {
     private static final UnparseableTags UNPARSEABLE_TAGS = new UnparseableTags();
 
+    private VersionUtils() {
+        // noop
+    }
     public static Pattern resolveVersionPattern(JReleaserContext context) {
-        BaseReleaser gitService = context.getModel().getRelease().getReleaser();
+        BaseReleaser<?, ?> gitService = context.getModel().getRelease().getReleaser();
         String tagName = gitService.getConfiguredTagName();
         Pattern vp = Pattern.compile(tagName.replaceAll("\\{\\{.*}}", "\\(\\.\\*\\)"));
         if (!tagName.contains("{{")) {
@@ -55,11 +58,11 @@ public class VersionUtils {
         UNPARSEABLE_TAGS.clear();
     }
 
-    public static Version version(JReleaserContext context, String tagName, Pattern versionPattern) {
+    public static Version<?> version(JReleaserContext context, String tagName, Pattern versionPattern) {
         return version(context, tagName, versionPattern, false);
     }
 
-    public static Version version(JReleaserContext context, String tagName, Pattern versionPattern, boolean strict) {
+    public static Version<?> version(JReleaserContext context, String tagName, Pattern versionPattern, boolean strict) {
         switch (context.getModel().getProject().versionPattern().getType()) {
             case SEMVER:
                 return semverOf(context.getLogger(), tagName, versionPattern, strict);
@@ -77,7 +80,7 @@ public class VersionUtils {
         }
     }
 
-    public static Version defaultVersion(JReleaserContext context) {
+    public static Version<?> defaultVersion(JReleaserContext context) {
         switch (context.getModel().getProject().versionPattern().getType()) {
             case SEMVER:
                 return SemanticVersion.defaultOf();

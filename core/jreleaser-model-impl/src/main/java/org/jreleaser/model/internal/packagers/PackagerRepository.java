@@ -35,7 +35,7 @@ public class PackagerRepository extends AbstractRepositoryTap<PackagerRepository
 
         @Override
         public String getBasename() {
-            return basename;
+            return PackagerRepository.this.getBasename();
         }
 
         @Override
@@ -45,37 +45,37 @@ public class PackagerRepository extends AbstractRepositoryTap<PackagerRepository
 
         @Override
         public String getName() {
-            return name;
+            return PackagerRepository.this.getName();
         }
 
         @Override
         public String getTagName() {
-            return tagName;
+            return PackagerRepository.this.getTagName();
         }
 
         @Override
         public String getBranch() {
-            return branch;
+            return PackagerRepository.this.getBranch();
         }
 
         @Override
         public String getUsername() {
-            return username;
+            return PackagerRepository.this.getUsername();
         }
 
         @Override
         public String getToken() {
-            return token;
+            return PackagerRepository.this.getToken();
         }
 
         @Override
         public String getCommitMessage() {
-            return commitMessage;
+            return PackagerRepository.this.getCommitMessage();
         }
 
         @Override
         public Active getActive() {
-            return active;
+            return PackagerRepository.this.getActive();
         }
 
         @Override
@@ -90,7 +90,7 @@ public class PackagerRepository extends AbstractRepositoryTap<PackagerRepository
 
         @Override
         public String getOwner() {
-            return owner;
+            return PackagerRepository.this.getOwner();
         }
     };
 

@@ -80,14 +80,14 @@ public class DistributionAssembler {
 
     public static class DistributionAssemblerBuilder {
         private JReleaserContext context;
-        private Assembler assembler;
+        private Assembler<?> assembler;
 
         public DistributionAssemblerBuilder context(JReleaserContext context) {
             this.context = requireNonNull(context, "'context' must not be null");
             return this;
         }
 
-        public DistributionAssemblerBuilder assembler(Assembler assembler) {
+        public DistributionAssemblerBuilder assembler(Assembler<?> assembler) {
             this.assembler = requireNonNull(assembler, "'assembler' must not be null");
             return this;
         }

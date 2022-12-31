@@ -88,87 +88,87 @@ public final class GitlabReleaser extends BaseReleaser<org.jreleaser.model.api.r
 
         @Override
         public String getHost() {
-            return host;
+            return GitlabReleaser.this.getHost();
         }
 
         @Override
         public String getName() {
-            return name;
+            return GitlabReleaser.this.getName();
         }
 
         @Override
         public String getRepoUrl() {
-            return repoUrl;
+            return GitlabReleaser.this.getRepoUrl();
         }
 
         @Override
         public String getRepoCloneUrl() {
-            return repoCloneUrl;
+            return GitlabReleaser.this.getRepoCloneUrl();
         }
 
         @Override
         public String getCommitUrl() {
-            return commitUrl;
+            return GitlabReleaser.this.getCommitUrl();
         }
 
         @Override
         public String getSrcUrl() {
-            return srcUrl;
+            return GitlabReleaser.this.getSrcUrl();
         }
 
         @Override
         public String getDownloadUrl() {
-            return downloadUrl;
+            return GitlabReleaser.this.getDownloadUrl();
         }
 
         @Override
         public String getReleaseNotesUrl() {
-            return releaseNotesUrl;
+            return GitlabReleaser.this.getReleaseNotesUrl();
         }
 
         @Override
         public String getLatestReleaseUrl() {
-            return latestReleaseUrl;
+            return GitlabReleaser.this.getLatestReleaseUrl();
         }
 
         @Override
         public String getIssueTrackerUrl() {
-            return issueTrackerUrl;
+            return GitlabReleaser.this.getIssueTrackerUrl();
         }
 
         @Override
         public String getUsername() {
-            return username;
+            return GitlabReleaser.this.getUsername();
         }
 
         @Override
         public String getToken() {
-            return token;
+            return GitlabReleaser.this.getToken();
         }
 
         @Override
         public String getTagName() {
-            return tagName;
+            return GitlabReleaser.this.getTagName();
         }
 
         @Override
         public String getPreviousTagName() {
-            return previousTagName;
+            return GitlabReleaser.this.getPreviousTagName();
         }
 
         @Override
         public String getReleaseName() {
-            return releaseName;
+            return GitlabReleaser.this.getReleaseName();
         }
 
         @Override
         public String getBranch() {
-            return branch;
+            return GitlabReleaser.this.getBranch();
         }
 
         @Override
         public Prerelease getPrerelease() {
-            return prerelease.asImmutable();
+            return GitlabReleaser.this.getPrerelease().asImmutable();
         }
 
         @Override
@@ -178,17 +178,17 @@ public final class GitlabReleaser extends BaseReleaser<org.jreleaser.model.api.r
 
         @Override
         public org.jreleaser.model.api.release.Changelog getChangelog() {
-            return changelog.asImmutable();
+            return GitlabReleaser.this.getChangelog().asImmutable();
         }
 
         @Override
         public Milestone getMilestone() {
-            return milestone.asImmutable();
+            return GitlabReleaser.this.getMilestone().asImmutable();
         }
 
         @Override
         public Issues getIssues() {
-            return issues.asImmutable();
+            return GitlabReleaser.this.getIssues().asImmutable();
         }
 
         @Override
@@ -208,12 +208,12 @@ public final class GitlabReleaser extends BaseReleaser<org.jreleaser.model.api.r
 
         @Override
         public Update getUpdate() {
-            return update.asImmutable();
+            return GitlabReleaser.this.getUpdate().asImmutable();
         }
 
         @Override
         public String getApiEndpoint() {
-            return apiEndpoint;
+            return GitlabReleaser.this.getApiEndpoint();
         }
 
         @Override
@@ -238,12 +238,12 @@ public final class GitlabReleaser extends BaseReleaser<org.jreleaser.model.api.r
 
         @Override
         public Active getUploadAssets() {
-            return uploadAssets;
+            return GitlabReleaser.this.getUploadAssets();
         }
 
         @Override
         public org.jreleaser.model.api.common.CommitAuthor getCommitAuthor() {
-            return commitAuthor.asImmutable();
+            return GitlabReleaser.this.getCommitAuthor().asImmutable();
         }
 
         @Override
@@ -258,17 +258,17 @@ public final class GitlabReleaser extends BaseReleaser<org.jreleaser.model.api.r
 
         @Override
         public String getOwner() {
-            return owner;
+            return GitlabReleaser.this.getOwner();
         }
 
         @Override
         public Integer getConnectTimeout() {
-            return connectTimeout;
+            return GitlabReleaser.this.getConnectTimeout();
         }
 
         @Override
         public Integer getReadTimeout() {
-            return readTimeout;
+            return GitlabReleaser.this.getReadTimeout();
         }
     };
 

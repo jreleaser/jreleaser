@@ -27,7 +27,6 @@ import org.jreleaser.model.internal.common.Icon;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.FlatpakPackager;
 import org.jreleaser.model.internal.release.Releaser;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 
 import java.util.List;
@@ -37,6 +36,11 @@ import static org.jreleaser.model.Constants.SKIP_OPENJDK;
 import static org.jreleaser.model.api.packagers.FlatpakPackager.SKIP_FLATPAK;
 import static org.jreleaser.model.internal.validation.common.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.internal.validation.common.TemplateValidator.validateTemplate;
+import static org.jreleaser.model.internal.validation.common.Validator.validateCommitAuthor;
+import static org.jreleaser.model.internal.validation.common.Validator.validateContinueOnError;
+import static org.jreleaser.model.internal.validation.common.Validator.validateIcons;
+import static org.jreleaser.model.internal.validation.common.Validator.validateScreenshots;
+import static org.jreleaser.model.internal.validation.common.Validator.validateTap;
 import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -48,7 +52,7 @@ import static org.jreleaser.util.StringUtils.isTrue;
  * @author Andres Almiray
  * @since 1.2.0
  */
-public abstract class FlatpakPackagerValidator extends Validator {
+public abstract class FlatpakPackagerValidator {
     public static void validateFlatpak(JReleaserContext context, Distribution distribution, FlatpakPackager packager, Errors errors) {
         context.getLogger().debug("distribution.{}.flatpak", distribution.getName());
         JReleaserModel model = context.getModel();

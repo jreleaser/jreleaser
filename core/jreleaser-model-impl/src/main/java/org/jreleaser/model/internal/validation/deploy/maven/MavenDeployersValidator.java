@@ -23,12 +23,13 @@ import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.deploy.maven.Maven;
 import org.jreleaser.model.internal.deploy.maven.MavenDeployer;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
 import java.util.Locale;
 
+import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
 import static org.jreleaser.model.internal.validation.deploy.maven.ArtifactoryMavenDeployerValidator.validateArtifactoryMavenDeployer;
 import static org.jreleaser.model.internal.validation.deploy.maven.GiteaMavenDeployerValidator.validateGiteaMavenDeployer;
 import static org.jreleaser.model.internal.validation.deploy.maven.GithubMavenDeployerValidator.validateGithubMavenDeployer;
@@ -41,7 +42,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 1.3.0
  */
-public abstract class MavenDeployersValidator extends Validator {
+public abstract class MavenDeployersValidator {
     public static void validateMavenDeployers(JReleaserContext context, Mode mode, Errors errors) {
         Maven maven = context.getModel().getDeploy().getMaven();
         context.getLogger().debug("deploy.maven");
@@ -88,7 +89,7 @@ public abstract class MavenDeployersValidator extends Validator {
         mavenDeployer.setUrl(
             checkProperty(context,
                 baseEnvKey + "_" + Env.toVar(mavenDeployer.getName()) + "_URL",
-                "maven.deploy." + mavenDeployer.getType() + "." + mavenDeployer.getName()+ ".url",
+                "maven.deploy." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".url",
                 mavenDeployer.getUrl(),
                 errors));
 

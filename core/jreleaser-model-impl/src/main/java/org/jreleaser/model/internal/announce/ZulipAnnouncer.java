@@ -97,7 +97,7 @@ public final class ZulipAnnouncer extends AbstractAnnouncer<ZulipAnnouncer, org.
 
         @Override
         public String getName() {
-            return name;
+            return ZulipAnnouncer.this.getName();
         }
 
         @Override
@@ -107,7 +107,7 @@ public final class ZulipAnnouncer extends AbstractAnnouncer<ZulipAnnouncer, org.
 
         @Override
         public Active getActive() {
-            return active;
+            return ZulipAnnouncer.this.getActive();
         }
 
         @Override
@@ -127,17 +127,17 @@ public final class ZulipAnnouncer extends AbstractAnnouncer<ZulipAnnouncer, org.
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(ZulipAnnouncer.this.getExtraProperties());
         }
 
         @Override
         public Integer getConnectTimeout() {
-            return connectTimeout;
+            return ZulipAnnouncer.this.getConnectTimeout();
         }
 
         @Override
         public Integer getReadTimeout() {
-            return readTimeout;
+            return ZulipAnnouncer.this.getReadTimeout();
         }
     };
 

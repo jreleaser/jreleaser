@@ -574,9 +574,9 @@ public final class Upload extends AbstractModelObject<Upload> implements Domain,
                 return (Map<String, A>) scp;
             case org.jreleaser.model.api.upload.SftpUploader.TYPE:
                 return (Map<String, A>) sftp;
+            default:
+                return Collections.emptyMap();
         }
-
-        return Collections.emptyMap();
     }
 
     public <A extends Uploader<?>> List<A> findAllActiveUploaders() {

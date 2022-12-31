@@ -20,6 +20,7 @@ package org.jreleaser.model.internal.hooks;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.common.AbstractModelObject;
+import org.jreleaser.model.internal.project.Project;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -29,20 +30,88 @@ import java.util.Map;
  * @since 1.2.0
  */
 public abstract class AbstractHook<S extends AbstractHook<S>> extends AbstractModelObject<S> implements Hook {
-    private static final long serialVersionUID = 3623478287829766322L;
+    private static final long serialVersionUID = -3265357320500610025L;
 
-    protected final Filter filter = new Filter();
-    protected Boolean continueOnError;
-    protected Active active;
+    private final Filter filter = new Filter();
+    private Boolean continueOnError;
+    private Active active;
     @JsonIgnore
-    protected boolean enabled;
+    private boolean enabled;
 
     @Override
     public void merge(S source) {
-        this.active = merge(this.active, source.active);
-        this.enabled = merge(this.enabled, source.enabled);
-        this.continueOnError = merge(this.continueOnError, source.continueOnError);
-        setFilter(source.filter);
+        this.active = merge(this.active, source.getActive());
+        this.enabled = merge(this.enabled, source.isEnabled());
+        this.continueOnError = merge(this.continueOnError, source.isContinueOnError());
+        setFilter(source.getFilter());
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    protected void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public boolean resolveEnabled(Project project) {
+        if (null == active) {
+            active = Active.ALWAYS;
+        }
+        enabled = active.check(project);
+        return enabled;
+    }
+
+    @Override
+    public void disable() {
+        active = Active.NEVER;
+        enabled = false;
+    }
+
+    @Override
+    public Active getActive() {
+        return active;
+    }
+
+    @Override
+    public void setActive(Active active) {
+        this.active = active;
+    }
+
+    @Override
+    public void setActive(String str) {
+        setActive(Active.of(str));
+    }
+
+    @Override
+    public boolean isActiveSet() {
+        return active != null;
+    }
+
+    @Override
+    public boolean isContinueOnError() {
+        return continueOnError != null && continueOnError;
+    }
+
+    @Override
+    public void setContinueOnError(Boolean continueOnError) {
+        this.continueOnError = continueOnError;
+    }
+
+    @Override
+    public boolean isContinueOnErrorSet() {
+        return continueOnError != null;
+    }
+
+    @Override
+    public Filter getFilter() {
+        return filter;
+    }
+
+    @Override
+    public void setFilter(Filter filter) {
+        this.filter.merge(filter);
     }
 
     @Override

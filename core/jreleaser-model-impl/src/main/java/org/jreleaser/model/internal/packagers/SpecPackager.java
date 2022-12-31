@@ -112,27 +112,27 @@ public final class SpecPackager extends AbstractRepositoryPackager<org.jreleaser
 
         @Override
         public org.jreleaser.model.api.common.CommitAuthor getCommitAuthor() {
-            return commitAuthor.asImmutable();
+            return SpecPackager.this.getCommitAuthor().asImmutable();
         }
 
         @Override
         public String getTemplateDirectory() {
-            return templateDirectory;
+            return SpecPackager.this.getTemplateDirectory();
         }
 
         @Override
         public List<String> getSkipTemplates() {
-            return unmodifiableList(skipTemplates);
+            return unmodifiableList(SpecPackager.this.getSkipTemplates());
         }
 
         @Override
         public String getType() {
-            return type;
+            return SpecPackager.this.getType();
         }
 
         @Override
         public String getDownloadUrl() {
-            return downloadUrl;
+            return SpecPackager.this.getDownloadUrl();
         }
 
         @Override
@@ -167,7 +167,7 @@ public final class SpecPackager extends AbstractRepositoryPackager<org.jreleaser
 
         @Override
         public Active getActive() {
-            return active;
+            return SpecPackager.this.getActive();
         }
 
         @Override
@@ -187,7 +187,7 @@ public final class SpecPackager extends AbstractRepositoryPackager<org.jreleaser
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(SpecPackager.this.getExtraProperties());
         }
     };
 

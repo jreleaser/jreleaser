@@ -22,12 +22,13 @@ import org.jreleaser.model.Active;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.upload.GiteaUploader;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
 import java.util.Map;
 
+import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
 import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -35,7 +36,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 1.2.0
  */
-public abstract class GiteaUploaderValidator extends Validator {
+public abstract class GiteaUploaderValidator {
     public static void validateGiteaUploader(JReleaserContext context, Mode mode, Errors errors) {
         Map<String, GiteaUploader> gitea = context.getModel().getUpload().getGitea();
         if (!gitea.isEmpty()) context.getLogger().debug("upload.gitea");

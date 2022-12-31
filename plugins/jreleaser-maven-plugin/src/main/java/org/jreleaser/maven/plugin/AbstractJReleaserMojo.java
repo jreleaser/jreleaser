@@ -192,9 +192,10 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
                 return JReleaserContext.Configurer.CLI_TOML;
             case "json":
                 return JReleaserContext.Configurer.CLI_JSON;
+            default:
+                // should not happen!
+                throw new IllegalArgumentException("Invalid configuration format: " + configFile.getName());
         }
-        // should not happen!
-        throw new IllegalArgumentException("Invalid configuration format: " + configFile.getName());
     }
 
     protected Mode getMode() {

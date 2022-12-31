@@ -77,7 +77,7 @@ public final class MattermostAnnouncer extends AbstractAnnouncer<MattermostAnnou
 
         @Override
         public String getName() {
-            return name;
+            return MattermostAnnouncer.this.getName();
         }
 
         @Override
@@ -87,7 +87,7 @@ public final class MattermostAnnouncer extends AbstractAnnouncer<MattermostAnnou
 
         @Override
         public Active getActive() {
-            return active;
+            return MattermostAnnouncer.this.getActive();
         }
 
         @Override
@@ -107,17 +107,17 @@ public final class MattermostAnnouncer extends AbstractAnnouncer<MattermostAnnou
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(MattermostAnnouncer.this.getExtraProperties());
         }
 
         @Override
         public Integer getConnectTimeout() {
-            return connectTimeout;
+            return MattermostAnnouncer.this.getConnectTimeout();
         }
 
         @Override
         public Integer getReadTimeout() {
-            return readTimeout;
+            return MattermostAnnouncer.this.getReadTimeout();
         }
     };
 

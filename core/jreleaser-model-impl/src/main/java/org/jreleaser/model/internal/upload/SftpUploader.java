@@ -36,67 +36,67 @@ public final class SftpUploader extends AbstractSshUploader<org.jreleaser.model.
 
         @Override
         public String getPath() {
-            return path;
+            return SftpUploader.this.getPath();
         }
 
         @Override
         public String getDownloadUrl() {
-            return downloadUrl;
+            return SftpUploader.this.getDownloadUrl();
         }
 
         @Override
         public String getUsername() {
-            return username;
+            return SftpUploader.this.getUsername();
         }
 
         @Override
         public String getPassword() {
-            return password;
+            return SftpUploader.this.getPassword();
         }
 
         @Override
         public String getHost() {
-            return host;
+            return SftpUploader.this.getHost();
         }
 
         @Override
         public Integer getPort() {
-            return port;
+            return SftpUploader.this.getPort();
         }
 
         @Override
         public String getKnownHostsFile() {
-            return knownHostsFile;
+            return SftpUploader.this.getKnownHostsFile();
         }
 
         @Override
         public String getPublicKey() {
-            return publicKey;
+            return SftpUploader.this.getPublicKey();
         }
 
         @Override
         public String getPrivateKey() {
-            return privateKey;
+            return SftpUploader.this.getPrivateKey();
         }
 
         @Override
         public String getPassphrase() {
-            return passphrase;
+            return SftpUploader.this.getPassphrase();
         }
 
         @Override
         public String getFingerprint() {
-            return fingerprint;
+            return SftpUploader.this.getFingerprint();
         }
 
         @Override
         public String getType() {
-            return type;
+            return SftpUploader.this.getType();
         }
 
         @Override
         public String getName() {
-            return name;
+            return SftpUploader.this.getName();
         }
 
         @Override
@@ -126,7 +126,7 @@ public final class SftpUploader extends AbstractSshUploader<org.jreleaser.model.
 
         @Override
         public Active getActive() {
-            return active;
+            return SftpUploader.this.getActive();
         }
 
         @Override
@@ -146,17 +146,17 @@ public final class SftpUploader extends AbstractSshUploader<org.jreleaser.model.
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(SftpUploader.this.getExtraProperties());
         }
 
         @Override
         public Integer getConnectTimeout() {
-            return connectTimeout;
+            return SftpUploader.this.getConnectTimeout();
         }
 
         @Override
         public Integer getReadTimeout() {
-            return readTimeout;
+            return SftpUploader.this.getReadTimeout();
         }
     };
 

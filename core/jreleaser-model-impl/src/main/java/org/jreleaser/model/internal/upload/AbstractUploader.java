@@ -43,22 +43,22 @@ import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSepar
  * @since 0.3.0
  */
 public abstract class AbstractUploader<A extends org.jreleaser.model.api.upload.Uploader, S extends AbstractUploader<A, S>> extends AbstractModelObject<S> implements Uploader<A>, ExtraProperties {
-    private static final long serialVersionUID = 5571580999109547757L;
+    private static final long serialVersionUID = -8631531179588203881L;
 
     @JsonIgnore
-    protected final String type;
-    protected final Map<String, Object> extraProperties = new LinkedHashMap<>();
+    private final String type;
+    private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     @JsonIgnore
-    protected String name;
+    private String name;
     @JsonIgnore
-    protected boolean enabled;
-    protected Active active;
-    protected int connectTimeout;
-    protected int readTimeout;
-    protected Boolean artifacts;
-    protected Boolean files;
-    protected Boolean signatures;
-    protected Boolean checksums;
+    private boolean enabled;
+    private Active active;
+    private int connectTimeout;
+    private int readTimeout;
+    private Boolean artifacts;
+    private Boolean files;
+    private Boolean signatures;
+    private Boolean checksums;
 
     protected AbstractUploader(String type) {
         this.type = type;
@@ -66,16 +66,16 @@ public abstract class AbstractUploader<A extends org.jreleaser.model.api.upload.
 
     @Override
     public void merge(S source) {
-        this.active = merge(this.active, source.active);
-        this.enabled = merge(this.enabled, source.enabled);
-        this.name = merge(this.name, source.name);
-        this.connectTimeout = merge(this.connectTimeout, source.connectTimeout);
-        this.readTimeout = merge(this.readTimeout, source.readTimeout);
-        this.artifacts = merge(this.artifacts, source.artifacts);
-        this.files = merge(this.files, source.files);
-        this.signatures = merge(this.signatures, source.signatures);
-        this.checksums = merge(this.checksums, source.checksums);
-        setExtraProperties(merge(this.extraProperties, source.extraProperties));
+        this.active = merge(this.active, source.getActive());
+        this.enabled = merge(this.enabled, source.isEnabled());
+        this.name = merge(this.name, source.getName());
+        this.connectTimeout = merge(this.getConnectTimeout(), source.getConnectTimeout());
+        this.readTimeout = merge(this.getReadTimeout(), source.getReadTimeout());
+        this.artifacts = merge(this.artifacts, source.isArtifacts());
+        this.files = merge(this.files, source.isFiles());
+        this.signatures = merge(this.signatures, source.isSignatures());
+        this.checksums = merge(this.checksums, source.isChecksums());
+        setExtraProperties(merge(this.extraProperties, source.getExtraProperties()));
     }
 
     @Override

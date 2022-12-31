@@ -30,10 +30,10 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
  * @since 0.8.0
  */
 public abstract class AbstractWebUploader<A extends org.jreleaser.model.api.upload.WebUploader, S extends AbstractWebUploader<A, S>> extends AbstractUploader<A, S> implements WebUploader<A> {
-    private static final long serialVersionUID = 1665562727206771947L;
+    private static final long serialVersionUID = 7045667920984330826L;
 
-    protected String uploadUrl;
-    protected String downloadUrl;
+    private String uploadUrl;
+    private String downloadUrl;
 
     protected AbstractWebUploader(String type) {
         super(type);
@@ -42,8 +42,8 @@ public abstract class AbstractWebUploader<A extends org.jreleaser.model.api.uplo
     @Override
     public void merge(S source) {
         super.merge(source);
-        this.uploadUrl = merge(this.uploadUrl, source.uploadUrl);
-        this.downloadUrl = merge(this.downloadUrl, source.downloadUrl);
+        this.uploadUrl = merge(this.uploadUrl, source.getUploadUrl());
+        this.downloadUrl = merge(this.downloadUrl, source.getDownloadUrl());
     }
 
     @Override

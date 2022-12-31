@@ -898,7 +898,7 @@ public class JReleaserContext {
         props.put(KEY_PROJECT_VERSION, project.getVersion());
         props.put(KEY_PROJECT_SNAPSHOT, String.valueOf(project.isSnapshot()));
         if (model.getCommit() != null) {
-            BaseReleaser releaser = model.getRelease().getReleaser();
+            BaseReleaser<?, ?> releaser = model.getRelease().getReleaser();
             props.put(KEY_TAG_NAME, releaser.getEffectiveTagName(model));
             props.put("releaseBranch", releaser.getBranch());
             if (releaser.isReleaseSupported()) {
@@ -1135,6 +1135,8 @@ public class JReleaserContext {
     }
 
     private static class SortedProperties extends Properties {
+        private static final long serialVersionUID = 8794541421003888869L;
+
         // Java 11 calls entrySet() when storing properties
         @Override
         public Set<Map.Entry<Object, Object>> entrySet() {

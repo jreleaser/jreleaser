@@ -82,7 +82,7 @@ public final class DiscussionsAnnouncer extends AbstractAnnouncer<DiscussionsAnn
 
         @Override
         public String getName() {
-            return name;
+            return DiscussionsAnnouncer.this.getName();
         }
 
         @Override
@@ -92,7 +92,7 @@ public final class DiscussionsAnnouncer extends AbstractAnnouncer<DiscussionsAnn
 
         @Override
         public Active getActive() {
-            return active;
+            return DiscussionsAnnouncer.this.getActive();
         }
 
         @Override
@@ -112,17 +112,17 @@ public final class DiscussionsAnnouncer extends AbstractAnnouncer<DiscussionsAnn
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(DiscussionsAnnouncer.this.getExtraProperties());
         }
 
         @Override
         public Integer getConnectTimeout() {
-            return connectTimeout;
+            return DiscussionsAnnouncer.this.getConnectTimeout();
         }
 
         @Override
         public Integer getReadTimeout() {
-            return readTimeout;
+            return DiscussionsAnnouncer.this.getReadTimeout();
         }
     };
 

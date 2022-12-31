@@ -25,6 +25,7 @@ import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.api.release.Releaser.DRAFT;
 import static org.jreleaser.model.api.release.Releaser.PRERELEASE_PATTERN;
+import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**

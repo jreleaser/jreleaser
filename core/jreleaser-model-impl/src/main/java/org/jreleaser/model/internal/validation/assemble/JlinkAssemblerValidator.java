@@ -25,7 +25,6 @@ import org.jreleaser.model.internal.assemble.JlinkAssembler;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.FileSet;
 import org.jreleaser.model.internal.project.Project;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.PlatformUtils;
 
@@ -35,6 +34,8 @@ import java.util.Optional;
 
 import static java.util.stream.Collectors.groupingBy;
 import static org.jreleaser.model.internal.validation.common.TemplateValidator.validateTemplate;
+import static org.jreleaser.model.internal.validation.common.Validator.validateFileSet;
+import static org.jreleaser.model.internal.validation.common.Validator.validateGlobs;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -42,7 +43,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public abstract class JlinkAssemblerValidator extends Validator {
+public abstract class JlinkAssemblerValidator {
     public static void validateJlink(JReleaserContext context, Mode mode, Errors errors) {
         Map<String, JlinkAssembler> jlink = context.getModel().getAssemble().getJlink();
         if (!jlink.isEmpty()) context.getLogger().debug("assemble.jlink");

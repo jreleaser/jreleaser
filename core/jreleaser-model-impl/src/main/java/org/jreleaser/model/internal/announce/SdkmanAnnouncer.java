@@ -87,7 +87,7 @@ public final class SdkmanAnnouncer extends AbstractAnnouncer<SdkmanAnnouncer, or
 
         @Override
         public String getName() {
-            return name;
+            return SdkmanAnnouncer.this.getName();
         }
 
         @Override
@@ -97,7 +97,7 @@ public final class SdkmanAnnouncer extends AbstractAnnouncer<SdkmanAnnouncer, or
 
         @Override
         public Active getActive() {
-            return active;
+            return SdkmanAnnouncer.this.getActive();
         }
 
         @Override
@@ -117,17 +117,17 @@ public final class SdkmanAnnouncer extends AbstractAnnouncer<SdkmanAnnouncer, or
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(SdkmanAnnouncer.this.getExtraProperties());
         }
 
         @Override
         public Integer getConnectTimeout() {
-            return connectTimeout;
+            return SdkmanAnnouncer.this.getConnectTimeout();
         }
 
         @Override
         public Integer getReadTimeout() {
-            return readTimeout;
+            return SdkmanAnnouncer.this.getReadTimeout();
         }
     };
 

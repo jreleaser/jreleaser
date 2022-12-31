@@ -22,7 +22,6 @@ import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.JpackageAssembler;
 import org.jreleaser.model.internal.common.Artifact;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 
 import java.io.IOException;
@@ -36,7 +35,7 @@ import static org.jreleaser.util.FileUtils.listFilesAndProcess;
  * @author Andres Almiray
  * @since 0.10.0
  */
-public abstract class JpackageAssemblerResolver extends Validator {
+public abstract class JpackageAssemblerResolver {
     public static void resolveJpackageOutputs(JReleaserContext context, Errors errors) {
         List<JpackageAssembler> activeJpackages = context.getModel().getAssemble().getActiveJpackages();
         if (!activeJpackages.isEmpty()) context.getLogger().debug("assemble.jpackage");

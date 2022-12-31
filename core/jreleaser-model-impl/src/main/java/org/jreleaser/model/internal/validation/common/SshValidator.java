@@ -22,13 +22,14 @@ import org.jreleaser.model.internal.common.Ssh;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
+import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
 import static org.jreleaser.util.CollectionUtils.listOf;
 
 /**
  * @author Andres Almiray
  * @since 1.1.0
  */
-public abstract class SshValidator extends Validator {
+public abstract class SshValidator {
     public static void validateSsh(JReleaserContext context, Ssh ssh, String name,
                                    String envPrefix, String propPrefix, Errors errors) {
         ssh.setUsername(

@@ -21,7 +21,6 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.announce.Announce;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.internal.validation.announce.ArticleAnnouncerValidator.validateArticle;
@@ -46,7 +45,7 @@ import static org.jreleaser.model.internal.validation.announce.ZulipAnnouncerVal
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class AnnouncersValidator extends Validator {
+public abstract class AnnouncersValidator {
     public static void validateAnnouncers(JReleaserContext context, Mode mode, Errors errors) {
         Announce announce = context.getModel().getAnnounce();
         context.getLogger().debug("announce");

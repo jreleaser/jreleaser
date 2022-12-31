@@ -71,7 +71,7 @@ public final class GoogleChatAnnouncer extends AbstractAnnouncer<GoogleChatAnnou
 
         @Override
         public String getName() {
-            return name;
+            return GoogleChatAnnouncer.this.getName();
         }
 
         @Override
@@ -81,7 +81,7 @@ public final class GoogleChatAnnouncer extends AbstractAnnouncer<GoogleChatAnnou
 
         @Override
         public Active getActive() {
-            return active;
+            return GoogleChatAnnouncer.this.getActive();
         }
 
         @Override
@@ -101,17 +101,17 @@ public final class GoogleChatAnnouncer extends AbstractAnnouncer<GoogleChatAnnou
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(GoogleChatAnnouncer.this.getExtraProperties());
         }
 
         @Override
         public Integer getConnectTimeout() {
-            return connectTimeout;
+            return GoogleChatAnnouncer.this.getConnectTimeout();
         }
 
         @Override
         public Integer getReadTimeout() {
-            return readTimeout;
+            return GoogleChatAnnouncer.this.getReadTimeout();
         }
     };
 

@@ -149,7 +149,7 @@ public final class SmtpAnnouncer extends AbstractAnnouncer<SmtpAnnouncer, org.jr
 
         @Override
         public String getName() {
-            return name;
+            return SmtpAnnouncer.this.getName();
         }
 
         @Override
@@ -159,7 +159,7 @@ public final class SmtpAnnouncer extends AbstractAnnouncer<SmtpAnnouncer, org.jr
 
         @Override
         public Active getActive() {
-            return active;
+            return SmtpAnnouncer.this.getActive();
         }
 
         @Override
@@ -179,17 +179,17 @@ public final class SmtpAnnouncer extends AbstractAnnouncer<SmtpAnnouncer, org.jr
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(SmtpAnnouncer.this.getExtraProperties());
         }
 
         @Override
         public Integer getConnectTimeout() {
-            return connectTimeout;
+            return SmtpAnnouncer.this.getConnectTimeout();
         }
 
         @Override
         public Integer getReadTimeout() {
-            return readTimeout;
+            return SmtpAnnouncer.this.getReadTimeout();
         }
     };
 

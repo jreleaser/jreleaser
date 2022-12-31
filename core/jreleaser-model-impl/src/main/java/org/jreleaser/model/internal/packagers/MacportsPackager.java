@@ -108,27 +108,27 @@ public final class MacportsPackager extends AbstractRepositoryPackager<org.jrele
 
         @Override
         public org.jreleaser.model.api.common.CommitAuthor getCommitAuthor() {
-            return commitAuthor.asImmutable();
+            return MacportsPackager.this.getCommitAuthor().asImmutable();
         }
 
         @Override
         public String getTemplateDirectory() {
-            return templateDirectory;
+            return MacportsPackager.this.getTemplateDirectory();
         }
 
         @Override
         public List<String> getSkipTemplates() {
-            return unmodifiableList(skipTemplates);
+            return unmodifiableList(MacportsPackager.this.getSkipTemplates());
         }
 
         @Override
         public String getType() {
-            return type;
+            return MacportsPackager.this.getType();
         }
 
         @Override
         public String getDownloadUrl() {
-            return downloadUrl;
+            return MacportsPackager.this.getDownloadUrl();
         }
 
         @Override
@@ -163,7 +163,7 @@ public final class MacportsPackager extends AbstractRepositoryPackager<org.jrele
 
         @Override
         public Active getActive() {
-            return active;
+            return MacportsPackager.this.getActive();
         }
 
         @Override
@@ -183,7 +183,7 @@ public final class MacportsPackager extends AbstractRepositoryPackager<org.jrele
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(MacportsPackager.this.getExtraProperties());
         }
     };
 

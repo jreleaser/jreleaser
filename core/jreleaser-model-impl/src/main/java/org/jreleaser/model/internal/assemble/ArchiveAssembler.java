@@ -74,7 +74,7 @@ public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, 
 
         @Override
         public org.jreleaser.model.api.platform.Platform getPlatform() {
-            return platform.asImmutable();
+            return ArchiveAssembler.this.getPlatform().asImmutable();
         }
 
         @Override
@@ -84,7 +84,7 @@ public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, 
 
         @Override
         public String getType() {
-            return type;
+            return ArchiveAssembler.this.getType();
         }
 
         @Override
@@ -99,13 +99,13 @@ public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, 
 
         @Override
         public String getName() {
-            return name;
+            return ArchiveAssembler.this.getName();
         }
 
         @Override
         public List<? extends org.jreleaser.model.api.common.FileSet> getFileSets() {
             if (null == fileSets) {
-                fileSets = ArchiveAssembler.this.fileSets.stream()
+                fileSets = ArchiveAssembler.this.getFileSets().stream()
                     .map(FileSet::asImmutable)
                     .collect(toList());
             }
@@ -115,7 +115,7 @@ public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, 
         @Override
         public Set<? extends org.jreleaser.model.api.common.Artifact> getOutputs() {
             if (null == outputs) {
-                outputs = ArchiveAssembler.this.outputs.stream()
+                outputs = ArchiveAssembler.this.getOutputs().stream()
                     .map(Artifact::asImmutable)
                     .collect(toSet());
             }
@@ -124,7 +124,7 @@ public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, 
 
         @Override
         public Active getActive() {
-            return active;
+            return ArchiveAssembler.this.getActive();
         }
 
         @Override
@@ -144,7 +144,7 @@ public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, 
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(ArchiveAssembler.this.getExtraProperties());
         }
     };
 

@@ -21,7 +21,6 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.JavaArchiveAssembler;
 import org.jreleaser.model.internal.common.Artifact;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 
 import java.nio.file.Files;
@@ -32,7 +31,7 @@ import java.util.List;
  * @author Andres Almiray
  * @since 1.4.0
  */
-public abstract class JavaArchiveAssemblerResolver extends Validator {
+public abstract class JavaArchiveAssemblerResolver {
     public static void resolveJavaArchiveOutputs(JReleaserContext context, Errors errors) {
         List<JavaArchiveAssembler> activeArchives = context.getModel().getAssemble().getActiveJavaArchives();
         if (!activeArchives.isEmpty()) context.getLogger().debug("assemble.java-archive");

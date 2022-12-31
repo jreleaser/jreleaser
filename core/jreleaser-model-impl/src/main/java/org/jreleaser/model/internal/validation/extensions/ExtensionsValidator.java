@@ -20,7 +20,6 @@ package org.jreleaser.model.internal.validation.extensions;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.extensions.Extension;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 
 import java.nio.file.Files;
@@ -33,7 +32,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 1.3.0
  */
-public abstract class ExtensionsValidator extends Validator {
+public abstract class ExtensionsValidator {
     public static void validateExtensions(JReleaserContext context, Errors errors) {
         Map<String, Extension> extensions = context.getModel().getExtensions();
         if (!extensions.isEmpty()) context.getLogger().debug("extensions");

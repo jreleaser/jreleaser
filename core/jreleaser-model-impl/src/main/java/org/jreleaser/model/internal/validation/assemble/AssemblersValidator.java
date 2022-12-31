@@ -26,7 +26,6 @@ import org.jreleaser.model.internal.assemble.JavaArchiveAssembler;
 import org.jreleaser.model.internal.assemble.JlinkAssembler;
 import org.jreleaser.model.internal.assemble.JpackageAssembler;
 import org.jreleaser.model.internal.assemble.NativeImageAssembler;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 
 import java.util.ArrayList;
@@ -45,7 +44,7 @@ import static org.jreleaser.model.internal.validation.assemble.NativeImageAssemb
  * @author Andres Almiray
  * @since 0.2.0
  */
-public abstract class AssemblersValidator extends Validator {
+public abstract class AssemblersValidator {
     public static void validateAssemblers(JReleaserContext context, Mode mode, Errors errors) {
         Assemble assemble = context.getModel().getAssemble();
         context.getLogger().debug("assemble");

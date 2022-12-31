@@ -22,19 +22,19 @@ import org.jreleaser.model.Active;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.upload.ScpUploader;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 
 import java.util.Map;
 
 import static org.jreleaser.model.internal.validation.common.SshValidator.validateSsh;
+import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
  * @since 1.1.0
  */
-public abstract class ScpUploaderValidator extends Validator {
+public abstract class ScpUploaderValidator {
     public static void validateScpUploader(JReleaserContext context, Mode mode, Errors errors) {
         Map<String, ScpUploader> scp = context.getModel().getUpload().getScp();
         if (!scp.isEmpty()) context.getLogger().debug("upload.scp");

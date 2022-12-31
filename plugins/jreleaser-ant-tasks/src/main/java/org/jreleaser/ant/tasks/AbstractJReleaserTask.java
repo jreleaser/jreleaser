@@ -157,7 +157,7 @@ abstract class AbstractJReleaserTask extends Task {
         try {
             Files.createDirectories(getOutputDirectory());
             return newPrintWriter(new FileOutputStream(
-                    getOutputDirectory().resolve("trace.log").toFile()));
+                getOutputDirectory().resolve("trace.log").toFile()));
         } catch (IOException e) {
             throw new IllegalStateException("Could not initialize trace file", e);
         }
@@ -207,9 +207,10 @@ abstract class AbstractJReleaserTask extends Task {
                 return JReleaserContext.Configurer.CLI_TOML;
             case "json":
                 return JReleaserContext.Configurer.CLI_JSON;
+            default:
+                // should not happen!
+                throw new IllegalArgumentException("Invalid configuration format: " + configFile.getFileName());
         }
-        // should not happen!
-        throw new IllegalArgumentException("Invalid configuration format: " + configFile.getFileName());
     }
 
     private Set<String> getSupportedConfigFormats() {

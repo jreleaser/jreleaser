@@ -44,7 +44,7 @@ final class Banner {
     private final String productVersion = bundle.getString("product.version");
     private final String productId = bundle.getString("product.id");
     private final String productName = bundle.getString("product.name");
-    private final String banner = MessageFormat.format(bundle.getString("product.banner"), productName, productVersion);
+    private final String message = MessageFormat.format(bundle.getString("product.banner"), productName, productVersion);
     private final List<String> visited = new ArrayList<>();
 
     private Banner() {
@@ -67,7 +67,7 @@ final class Banner {
             File parent = new File(System.getProperty("user.home"), "/.m2/caches");
             File markerFile = getMarkerFile(parent, INSTANCE);
             if (!markerFile.exists()) {
-                if (!quiet) log.info(INSTANCE.banner);
+                if (!quiet) log.info(INSTANCE.message);
                 markerFile.getParentFile().mkdirs();
                 PrintStream out = newPrintStream(new FileOutputStream(markerFile));
                 out.println("1");
@@ -76,11 +76,11 @@ final class Banner {
             } else {
                 try {
                     int count = Integer.parseInt(readQuietly(markerFile));
-                    if (count < 3 && !quiet) log.info(INSTANCE.banner);
+                    if (count < 3 && !quiet) log.info(INSTANCE.message);
                     writeQuietly(markerFile, (count + 1) + "");
                 } catch (NumberFormatException e) {
                     writeQuietly(markerFile, "1");
-                    if (!quiet) log.info(INSTANCE.banner);
+                    if (!quiet) log.info(INSTANCE.message);
                 }
             }
         } catch (IOException ignored) {

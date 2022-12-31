@@ -167,27 +167,27 @@ public final class FlatpakPackager extends AbstractRepositoryPackager<org.jrelea
 
         @Override
         public org.jreleaser.model.api.common.CommitAuthor getCommitAuthor() {
-            return commitAuthor.asImmutable();
+            return FlatpakPackager.this.getCommitAuthor().asImmutable();
         }
 
         @Override
         public String getTemplateDirectory() {
-            return templateDirectory;
+            return FlatpakPackager.this.getTemplateDirectory();
         }
 
         @Override
         public List<String> getSkipTemplates() {
-            return unmodifiableList(skipTemplates);
+            return unmodifiableList(FlatpakPackager.this.getSkipTemplates());
         }
 
         @Override
         public String getType() {
-            return type;
+            return FlatpakPackager.this.getType();
         }
 
         @Override
         public String getDownloadUrl() {
-            return downloadUrl;
+            return FlatpakPackager.this.getDownloadUrl();
         }
 
         @Override
@@ -222,7 +222,7 @@ public final class FlatpakPackager extends AbstractRepositoryPackager<org.jrelea
 
         @Override
         public Active getActive() {
-            return active;
+            return FlatpakPackager.this.getActive();
         }
 
         @Override
@@ -242,7 +242,7 @@ public final class FlatpakPackager extends AbstractRepositoryPackager<org.jrelea
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(FlatpakPackager.this.getExtraProperties());
         }
     };
 

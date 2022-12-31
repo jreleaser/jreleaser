@@ -292,9 +292,10 @@ public final class Download extends AbstractModelObject<Download> implements Dom
                 return (Map<String, A>) scp;
             case org.jreleaser.model.api.download.SftpDownloader.TYPE:
                 return (Map<String, A>) sftp;
+            default:
+                return Collections.emptyMap();
         }
 
-        return Collections.emptyMap();
     }
 
     public <A extends Downloader<?>> List<A> findAllActiveDownloaders() {

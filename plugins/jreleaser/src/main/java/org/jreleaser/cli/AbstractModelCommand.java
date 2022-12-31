@@ -188,9 +188,10 @@ public abstract class AbstractModelCommand extends AbstractLoggingCommand {
                 return JReleaserContext.Configurer.CLI_TOML;
             case "json":
                 return JReleaserContext.Configurer.CLI_JSON;
+            default:
+                // should not happen!
+                throw new IllegalArgumentException($("ERROR_invalid_config_format", configFile.getFileName()));
         }
-        // should not happen!
-        throw new IllegalArgumentException($("ERROR_invalid_config_format", configFile.getFileName()));
     }
 
     @Override

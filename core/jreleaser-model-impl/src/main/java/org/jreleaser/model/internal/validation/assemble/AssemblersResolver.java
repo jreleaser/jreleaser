@@ -19,7 +19,6 @@ package org.jreleaser.model.internal.validation.assemble;
 
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.environment.Environment;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.internal.validation.assemble.ArchiveAssemblerResolver.resolveArchiveOutputs;
@@ -32,7 +31,7 @@ import static org.jreleaser.model.internal.validation.assemble.NativeImageAssemb
  * @author Andres Almiray
  * @since 0.2.0
  */
-public abstract class AssemblersResolver extends Validator {
+public abstract class AssemblersResolver {
     public static void resolveAssemblers(JReleaserContext context, Errors errors) {
         Environment environment = context.getModel().getEnvironment();
         if (environment.getBooleanProperty("skipAssembleResolvers")) return;

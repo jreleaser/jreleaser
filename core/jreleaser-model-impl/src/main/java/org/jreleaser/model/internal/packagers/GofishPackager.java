@@ -83,27 +83,27 @@ public final class GofishPackager extends AbstractRepositoryPackager<org.jreleas
 
         @Override
         public org.jreleaser.model.api.common.CommitAuthor getCommitAuthor() {
-            return commitAuthor.asImmutable();
+            return GofishPackager.this.getCommitAuthor().asImmutable();
         }
 
         @Override
         public String getTemplateDirectory() {
-            return templateDirectory;
+            return GofishPackager.this.getTemplateDirectory();
         }
 
         @Override
         public List<String> getSkipTemplates() {
-            return unmodifiableList(skipTemplates);
+            return unmodifiableList(GofishPackager.this.getSkipTemplates());
         }
 
         @Override
         public String getType() {
-            return type;
+            return GofishPackager.this.getType();
         }
 
         @Override
         public String getDownloadUrl() {
-            return downloadUrl;
+            return GofishPackager.this.getDownloadUrl();
         }
 
         @Override
@@ -138,7 +138,7 @@ public final class GofishPackager extends AbstractRepositoryPackager<org.jreleas
 
         @Override
         public Active getActive() {
-            return active;
+            return GofishPackager.this.getActive();
         }
 
         @Override
@@ -158,7 +158,7 @@ public final class GofishPackager extends AbstractRepositoryPackager<org.jreleas
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(GofishPackager.this.getExtraProperties());
         }
     };
 
@@ -224,6 +224,8 @@ public final class GofishPackager extends AbstractRepositoryPackager<org.jreleas
     }
 
     public static final class GofishRepository extends PackagerRepository {
+        private static final long serialVersionUID = 2534363121328369670L;
+
         public GofishRepository() {
             super("gofish", "fish-food");
         }

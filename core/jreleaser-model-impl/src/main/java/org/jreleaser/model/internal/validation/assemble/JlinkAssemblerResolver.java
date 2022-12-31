@@ -22,7 +22,6 @@ import org.jreleaser.model.Archive;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.JlinkAssembler;
 import org.jreleaser.model.internal.common.Artifact;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 
 import java.nio.file.Files;
@@ -35,7 +34,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public abstract class JlinkAssemblerResolver extends Validator {
+public abstract class JlinkAssemblerResolver {
     public static void resolveJlinkOutputs(JReleaserContext context, Errors errors) {
         List<JlinkAssembler> activeJlinks = context.getModel().getAssemble().getActiveJlinks();
         if (!activeJlinks.isEmpty()) context.getLogger().debug("assemble.jlink");

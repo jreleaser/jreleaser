@@ -25,7 +25,6 @@ import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.Packager;
 import org.jreleaser.model.internal.project.Project;
-import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.FileType;
 import org.jreleaser.util.PlatformUtils;
@@ -62,7 +61,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class DistributionsValidator extends Validator {
+public abstract class DistributionsValidator {
     public static void validateDistributions(JReleaserContext context, Mode mode, Errors errors) {
         Map<String, Distribution> distributions = context.getModel().getDistributions();
         if (!distributions.isEmpty()) context.getLogger().debug("distributions");

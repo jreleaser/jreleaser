@@ -75,12 +75,12 @@ public final class GitlabUploader extends AbstractUploader<org.jreleaser.model.a
 
         @Override
         public String getType() {
-            return type;
+            return GitlabUploader.this.getType();
         }
 
         @Override
         public String getName() {
-            return name;
+            return GitlabUploader.this.getName();
         }
 
         @Override
@@ -110,7 +110,7 @@ public final class GitlabUploader extends AbstractUploader<org.jreleaser.model.a
 
         @Override
         public Active getActive() {
-            return active;
+            return GitlabUploader.this.getActive();
         }
 
         @Override
@@ -130,17 +130,17 @@ public final class GitlabUploader extends AbstractUploader<org.jreleaser.model.a
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(GitlabUploader.this.getExtraProperties());
         }
 
         @Override
         public Integer getConnectTimeout() {
-            return connectTimeout;
+            return GitlabUploader.this.getConnectTimeout();
         }
 
         @Override
         public Integer getReadTimeout() {
-            return readTimeout;
+            return GitlabUploader.this.getReadTimeout();
         }
     };
 
