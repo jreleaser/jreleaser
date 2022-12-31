@@ -28,9 +28,7 @@ import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.internal.release.Releaser;
 import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
-import org.jreleaser.version.CalVer;
 import org.jreleaser.version.ChronVer;
-import org.jreleaser.version.CustomVersion;
 import org.jreleaser.version.JavaModuleVersion;
 import org.jreleaser.version.JavaRuntimeVersion;
 import org.jreleaser.version.SemanticVersion;
@@ -66,7 +64,7 @@ public abstract class ChocolateyPackagerValidator extends Validator {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
-        Releaser service = model.getRelease().getReleaser();
+        Releaser<?> service = model.getRelease().getReleaser();
         if (!service.isReleaseSupported()) {
             context.getLogger().debug(RB.$("validation.disabled.release"));
             packager.disable();
@@ -167,20 +165,18 @@ public abstract class ChocolateyPackagerValidator extends Validator {
                     checkSemver(SemanticVersion.of(packageVersion));
                     break;
                 case JAVA_RUNTIME:
-                    checkJavaRuntime(context, distribution, packager, JavaRuntimeVersion.of(packageVersion), errors);
+                    checkJavaRuntime(JavaRuntimeVersion.of(packageVersion));
                     break;
                 case JAVA_MODULE:
-                    checkJavaModule(context, distribution, packager, JavaModuleVersion.of(packageVersion), errors);
-                    break;
-                case CALVER:
-                    checkCalVer(context, distribution, packager, CalVer.of(project.versionPattern().getFormat(), packageVersion), errors);
+                    checkJavaModule(JavaModuleVersion.of(packageVersion));
                     break;
                 case CHRONVER:
-                    checkChronVer(context, distribution, packager, ChronVer.of(packageVersion), errors);
+                    checkChronVer(ChronVer.of(packageVersion));
                     break;
+                case CALVER:
                 case CUSTOM:
                 default:
-                    checkCustomVersion(context, distribution, packager, CustomVersion.of(packageVersion), errors);
+                    // noop
             }
         } catch (IllegalArgumentException e) {
             // invalid
@@ -223,7 +219,7 @@ public abstract class ChocolateyPackagerValidator extends Validator {
         }
     }
 
-    private static void checkJavaRuntime(JReleaserContext context, Distribution distribution, ChocolateyPackager packager, JavaRuntimeVersion version, Errors errors) {
+    private static void checkJavaRuntime(JavaRuntimeVersion version) {
         if (version.hasBuild()) {
             throw new IllegalArgumentException();
         }
@@ -233,27 +229,19 @@ public abstract class ChocolateyPackagerValidator extends Validator {
         }
     }
 
-    private static void checkJavaModule(JReleaserContext context, Distribution distribution, ChocolateyPackager packager, JavaModuleVersion version, Errors errors) {
+    private static void checkJavaModule(JavaModuleVersion version) {
         if (version.hasBuild()) {
             throw new IllegalArgumentException();
         }
     }
 
-    private static void checkCalVer(JReleaserContext context, Distribution distribution, ChocolateyPackager packager, CalVer version, Errors errors) {
-
-    }
-
-    private static void checkChronVer(JReleaserContext context, Distribution distribution, ChocolateyPackager packager, ChronVer version, Errors errors) {
+    private static void checkChronVer(ChronVer version) {
         if (version.hasChangeset()) {
             ChronVer.Changeset changeset = version.getChangeset();
             if (changeset.hasTag() || changeset.hasChange2()) {
                 throw new IllegalArgumentException();
             }
         }
-    }
-
-    private static void checkCustomVersion(JReleaserContext context, Distribution distribution, ChocolateyPackager packager, CustomVersion version, Errors errors) {
-
     }
 
     public static void postValidateChocolatey(JReleaserContext context, Distribution distribution, ChocolateyPackager packager, Errors errors) {

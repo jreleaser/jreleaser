@@ -56,10 +56,14 @@ public interface Downloader<A extends org.jreleaser.model.api.download.Downloade
     A asImmutable();
 
     class Unpack extends AbstractModelObject<Unpack> implements Domain, EnabledAware {
+        private static final long serialVersionUID = -5735907573642807009L;
+
         private Boolean enabled;
         private Boolean skipRootEntry;
 
         public final org.jreleaser.model.api.download.Downloader.Unpack immutable = new org.jreleaser.model.api.download.Downloader.Unpack() {
+            private static final long serialVersionUID = -6271748744186223250L;
+
             @Override
             public boolean isSkipRootEntry() {
                 return Downloader.Unpack.this.isSkipRootEntry();
@@ -126,11 +130,15 @@ public interface Downloader<A extends org.jreleaser.model.api.download.Downloade
     }
 
     class Asset extends AbstractModelObject<Asset> implements Domain {
+        private static final long serialVersionUID = -2850050928704465633L;
+
         private final Unpack unpack = new Unpack();
         private String input;
         private String output;
 
         private final org.jreleaser.model.api.download.Downloader.Asset immutable = new org.jreleaser.model.api.download.Downloader.Asset() {
+            private static final long serialVersionUID = 2845138939915499623L;
+
             @Override
             public String getInput() {
                 return input;
@@ -163,14 +171,14 @@ public interface Downloader<A extends org.jreleaser.model.api.download.Downloade
             setUnpack(source.unpack);
         }
 
-        public String getResolvedInput(JReleaserContext context, Downloader downloader) {
+        public String getResolvedInput(JReleaserContext context, Downloader<?> downloader) {
             Map<String, Object> p = context.getModel().props();
             p.putAll(downloader.getResolvedExtraProperties());
             p.put(KEY_DOWNLOADER_NAME, downloader.getName());
             return resolveTemplate(input, p);
         }
 
-        public String getResolvedOutput(JReleaserContext context, Downloader downloader, String artifactFile) {
+        public String getResolvedOutput(JReleaserContext context, Downloader<?> downloader, String artifactFile) {
             if (isBlank(output)) return output;
             Map<String, Object> p = context.getModel().props();
             p.putAll(downloader.getResolvedExtraProperties());

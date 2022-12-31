@@ -42,12 +42,12 @@ public abstract class GiteaMavenDeployerValidator extends Validator {
         for (Map.Entry<String, GiteaMavenDeployer> e : gitea.entrySet()) {
             e.getValue().setName(e.getKey());
             if (mode.validateDeploy() || mode.validateConfig()) {
-                validateGiteaMavenDeployer(context, mode, e.getValue(), errors);
+                validateGiteaMavenDeployer(context, e.getValue(), errors);
             }
         }
     }
 
-    private static void validateGiteaMavenDeployer(JReleaserContext context, Mode mode, GiteaMavenDeployer mavenDeployer, Errors errors) {
+    private static void validateGiteaMavenDeployer(JReleaserContext context, GiteaMavenDeployer mavenDeployer, Errors errors) {
         validateMavenDeployer(context, mavenDeployer, errors);
         if (!mavenDeployer.isEnabled()) return;
 

@@ -57,7 +57,7 @@ public abstract class MacportsPackagerValidator extends Validator {
             packager.disable();
             return;
         }
-        Releaser service = model.getRelease().getReleaser();
+        Releaser<?> service = model.getRelease().getReleaser();
         if (!service.isReleaseSupported()) {
             context.getLogger().debug(RB.$("validation.disabled.release"));
             packager.disable();

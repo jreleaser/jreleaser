@@ -18,7 +18,6 @@
 package org.jreleaser.model.internal.validation.extensions;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.extensions.Extension;
 import org.jreleaser.model.internal.validation.common.Validator;
@@ -35,7 +34,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 1.3.0
  */
 public abstract class ExtensionsValidator extends Validator {
-    public static void validateExtensions(JReleaserContext context, Mode mode, Errors errors) {
+    public static void validateExtensions(JReleaserContext context, Errors errors) {
         Map<String, Extension> extensions = context.getModel().getExtensions();
         if (!extensions.isEmpty()) context.getLogger().debug("extensions");
 

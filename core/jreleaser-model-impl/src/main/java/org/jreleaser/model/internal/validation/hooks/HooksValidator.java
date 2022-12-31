@@ -35,7 +35,7 @@ public abstract class HooksValidator extends Validator {
         context.getLogger().debug("hooks");
 
         Hooks hooks = context.getModel().getHooks();
-        validateCommandHooks(context, mode, errors);
+        validateCommandHooks(context, errors);
 
         boolean activeSet = hooks.isActiveSet();
         hooks.resolveEnabled(context.getModel().getProject());

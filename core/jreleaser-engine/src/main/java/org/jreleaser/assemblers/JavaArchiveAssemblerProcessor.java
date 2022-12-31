@@ -24,7 +24,6 @@ import org.jreleaser.model.Constants;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.JavaArchiveAssembler;
 import org.jreleaser.model.internal.common.Glob;
-import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.spi.assemble.AssemblerProcessingException;
 import org.jreleaser.templates.TemplateResource;
 import org.jreleaser.util.FileUtils;
@@ -86,10 +85,10 @@ public class JavaArchiveAssemblerProcessor extends AbstractAssemblerProcessor<or
                     context.getLogger().debug(RB.$("packager.evaluate.template"), key, assembler.getName(), assembler.getType());
                     String content = applyTemplate(value.getReader(), props, key);
                     context.getLogger().debug(RB.$("packager.write.template"), key, assembler.getName(), assembler.getType());
-                    writeFile(context.getModel().getProject(), content, props, key);
+                    writeFile(content, props, key);
                 } else {
                     context.getLogger().debug(RB.$("packager.write.template"), key, assembler.getName(), assembler.getType());
-                    writeFile(context.getModel().getProject(), IOUtils.toByteArray(value.getInputStream()), props, key);
+                    writeFile(IOUtils.toByteArray(value.getInputStream()), props, key);
                 }
             }
         } catch (IllegalArgumentException | IOException e) {
@@ -183,7 +182,7 @@ public class JavaArchiveAssemblerProcessor extends AbstractAssemblerProcessor<or
         return paths;
     }
 
-    private void writeFile(Project project, String content, Map<String, Object> props, String fileName)
+    private void writeFile(String content, Map<String, Object> props, String fileName)
         throws AssemblerProcessingException {
         fileName = trimTplExtension(fileName);
 
@@ -206,7 +205,7 @@ public class JavaArchiveAssemblerProcessor extends AbstractAssemblerProcessor<or
         writeFile(content, outputFile);
     }
 
-    private void writeFile(Project project, byte[] content, Map<String, Object> props, String fileName) throws AssemblerProcessingException {
+    private void writeFile(byte[] content, Map<String, Object> props, String fileName) throws AssemblerProcessingException {
         Path outputDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
         Path inputsDirectory = outputDirectory.resolve("inputs");
         try {

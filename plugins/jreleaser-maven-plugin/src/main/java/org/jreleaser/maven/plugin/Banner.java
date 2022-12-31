@@ -76,9 +76,7 @@ final class Banner {
             } else {
                 try {
                     int count = Integer.parseInt(readQuietly(markerFile));
-                    if (count < 3) {
-                        if (!quiet) System.out.println(INSTANCE.banner);
-                    }
+                    if (count < 3 && !quiet) System.out.println(INSTANCE.banner);
                     writeQuietly(markerFile, (count + 1) + "");
                 } catch (NumberFormatException e) {
                     writeQuietly(markerFile, "1");

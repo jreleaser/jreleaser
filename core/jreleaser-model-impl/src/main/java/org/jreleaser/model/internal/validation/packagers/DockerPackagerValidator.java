@@ -366,7 +366,7 @@ public abstract class DockerPackagerValidator extends Validator {
         self.setRegistries(registries);
 
         for (AbstractDockerConfiguration.Registry registry : registries) {
-            BaseReleaser service = model.getRelease().getReleaser();
+            BaseReleaser<?, ?> service = model.getRelease().getReleaser();
             String serverName = registry.getServerName();
 
             registry.setUsername(

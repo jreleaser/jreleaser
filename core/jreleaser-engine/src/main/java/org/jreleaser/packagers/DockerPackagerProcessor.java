@@ -135,7 +135,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         List<Artifact> artifacts = singletonList(spec.getArtifact());
         Map<String, Object> newProps = fillProps(distribution, props);
         newProps.put(KEY_DOCKER_SPEC_NAME, spec.getName());
-        fillDockerProperties(newProps, distribution, spec);
+        fillDockerProperties(newProps, spec);
         verifyAndAddArtifacts(newProps, distribution, artifacts);
         Path prepareDirectory = (Path) newProps.get(KEY_DISTRIBUTION_PREPARE_DIRECTORY);
         newProps.put(KEY_DISTRIBUTION_PREPARE_DIRECTORY, prepareDirectory.resolve(spec.getName()));
@@ -145,8 +145,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
     }
 
     @Override
-    protected boolean verifyAndAddArtifacts(Map<String, Object> props,
-                                            Distribution distribution) throws PackagerProcessingException {
+    protected boolean verifyAndAddArtifacts(Map<String, Object> props, Distribution distribution) {
         if (packager.getActiveSpecs().isEmpty()) {
             return super.verifyAndAddArtifacts(props, distribution);
         }
@@ -506,13 +505,11 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
     }
 
     @Override
-    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) throws PackagerProcessingException {
-        fillDockerProperties(props, distribution, getPackager());
+    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) {
+        fillDockerProperties(props, getPackager());
     }
 
-    protected void fillDockerProperties(Map<String, Object> props,
-                                        Distribution distribution,
-                                        DockerConfiguration docker) throws PackagerProcessingException {
+    protected void fillDockerProperties(Map<String, Object> props, DockerConfiguration docker) {
         props.put(KEY_DOCKER_BASE_IMAGE,
             resolveTemplate(docker.getBaseImage(), props));
 

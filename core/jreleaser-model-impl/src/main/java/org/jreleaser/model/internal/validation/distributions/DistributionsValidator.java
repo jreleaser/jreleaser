@@ -195,12 +195,12 @@ public abstract class DistributionsValidator extends Validator {
                 });
         });
 
-        validateAppImage(context, mode, distribution, distribution.getAppImage(), errors);
+        validateAppImage(context, distribution, distribution.getAppImage(), errors);
         validateAsdf(context, distribution, distribution.getAsdf(), errors);
         validateBrew(context, distribution, distribution.getBrew(), errors);
         validateChocolatey(context, distribution, distribution.getChocolatey(), errors);
         validateDocker(context, distribution, distribution.getDocker(), errors);
-        validateFlatpak(context, mode, distribution, distribution.getFlatpak(), errors);
+        validateFlatpak(context, distribution, distribution.getFlatpak(), errors);
         validateGofish(context, distribution, distribution.getGofish(), errors);
         validateJbang(context, distribution, distribution.getJbang(), errors);
         validateMacports(context, distribution, distribution.getMacports(), errors);

@@ -62,7 +62,7 @@ public abstract class DiscussionsAnnouncerValidator extends Validator {
         }
 
         if (isBlank(discussions.getMessage()) && isBlank(discussions.getMessageTemplate())) {
-            discussions.setMessageTemplate("src/jreleaser/templates/discussions.tpl");
+            discussions.setMessageTemplate(DEFAULT_DISCUSSIONS_TPL);
         }
 
         if (isBlank(discussions.getMessage()) && isBlank(discussions.getMessageTemplate())) {

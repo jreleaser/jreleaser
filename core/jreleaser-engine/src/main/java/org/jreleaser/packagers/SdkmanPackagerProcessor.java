@@ -18,6 +18,7 @@
 package org.jreleaser.packagers;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.model.Sdkman;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.SdkmanPackager;
@@ -66,39 +67,36 @@ public class SdkmanPackagerProcessor extends AbstractPackagerProcessor<SdkmanPac
             String candidate = isNotBlank(sdkman.getCandidate()) ? sdkman.getCandidate().trim() : context.getModel().getProject().getName();
             String releaseNotesUrl = resolveTemplate(sdkman.getReleaseNotesUrl(), props);
 
-            switch (sdkman.getCommand()) {
-                case MAJOR:
-                    context.getLogger().info(RB.$("sdkman.publish.major"), candidate);
-                    MajorReleaseSdkmanCommand.builder(context.getLogger())
-                        .connectTimeout(sdkman.getConnectTimeout())
-                        .readTimeout(sdkman.getReadTimeout())
-                        .consumerKey(context.isDryrun() ? "**UNDEFINED**" : sdkman.getConsumerKey())
-                        .consumerToken(context.isDryrun() ? "**UNDEFINED**" : sdkman.getConsumerToken())
-                        .candidate(candidate)
-                        .version(context.getModel().getProject().getVersion())
-                        .platforms(platforms)
-                        .releaseNotesUrl(releaseNotesUrl)
-                        .dryrun(context.isDryrun())
-                        .skipAnnounce(true)
-                        .build()
-                        .execute();
-                    break;
-                case MINOR:
-                    context.getLogger().info(RB.$("sdkman.publish.minor"), candidate);
-                    MinorReleaseSdkmanCommand.builder(context.getLogger())
-                        .connectTimeout(sdkman.getConnectTimeout())
-                        .readTimeout(sdkman.getReadTimeout())
-                        .consumerKey(context.isDryrun() ? "**UNDEFINED**" : sdkman.getConsumerKey())
-                        .consumerToken(context.isDryrun() ? "**UNDEFINED**" : sdkman.getConsumerToken())
-                        .candidate(candidate)
-                        .version(context.getModel().getProject().getVersion())
-                        .platforms(platforms)
-                        .releaseNotesUrl(releaseNotesUrl)
-                        .dryrun(context.isDryrun())
-                        .skipAnnounce(true)
-                        .build()
-                        .execute();
-                    break;
+            if (sdkman.getCommand() == Sdkman.Command.MAJOR) {
+                context.getLogger().info(RB.$("sdkman.publish.major"), candidate);
+                MajorReleaseSdkmanCommand.builder(context.getLogger())
+                    .connectTimeout(sdkman.getConnectTimeout())
+                    .readTimeout(sdkman.getReadTimeout())
+                    .consumerKey(context.isDryrun() ? "**UNDEFINED**" : sdkman.getConsumerKey())
+                    .consumerToken(context.isDryrun() ? "**UNDEFINED**" : sdkman.getConsumerToken())
+                    .candidate(candidate)
+                    .version(context.getModel().getProject().getVersion())
+                    .platforms(platforms)
+                    .releaseNotesUrl(releaseNotesUrl)
+                    .dryrun(context.isDryrun())
+                    .skipAnnounce(true)
+                    .build()
+                    .execute();
+            } else if (sdkman.getCommand() == Sdkman.Command.MINOR) {
+                context.getLogger().info(RB.$("sdkman.publish.minor"), candidate);
+                MinorReleaseSdkmanCommand.builder(context.getLogger())
+                    .connectTimeout(sdkman.getConnectTimeout())
+                    .readTimeout(sdkman.getReadTimeout())
+                    .consumerKey(context.isDryrun() ? "**UNDEFINED**" : sdkman.getConsumerKey())
+                    .consumerToken(context.isDryrun() ? "**UNDEFINED**" : sdkman.getConsumerToken())
+                    .candidate(candidate)
+                    .version(context.getModel().getProject().getVersion())
+                    .platforms(platforms)
+                    .releaseNotesUrl(releaseNotesUrl)
+                    .dryrun(context.isDryrun())
+                    .skipAnnounce(true)
+                    .build()
+                    .execute();
             }
 
             sdkman.setPublished(true);

@@ -292,13 +292,13 @@ abstract class AbstractPackagerProcessor<T extends Packager<?>> implements Packa
     }
 
     protected boolean verifyAndAddArtifacts(Map<String, Object> props,
-                                            Distribution distribution) throws PackagerProcessingException {
+                                            Distribution distribution) {
         return verifyAndAddArtifacts(props, distribution, collectArtifacts(distribution));
     }
 
     protected boolean verifyAndAddArtifacts(Map<String, Object> props,
                                             Distribution distribution,
-                                            List<Artifact> artifacts) throws PackagerProcessingException {
+                                            List<Artifact> artifacts) {
         List<Artifact> activeArtifacts = artifacts.stream()
             .filter(Artifact::isActive)
             .collect(toList());

@@ -30,15 +30,15 @@ import static java.util.Objects.requireNonNull;
  */
 public class ProjectMavenDeployer {
     private final JReleaserContext context;
-    private final org.jreleaser.model.internal.deploy.maven.MavenDeployer deployer;
+    private final org.jreleaser.model.internal.deploy.maven.MavenDeployer<?> deployer;
 
     private ProjectMavenDeployer(JReleaserContext context,
-                                 org.jreleaser.model.internal.deploy.maven.MavenDeployer deployer) {
+                                 org.jreleaser.model.internal.deploy.maven.MavenDeployer<?> deployer) {
         this.context = context;
         this.deployer = deployer;
     }
 
-    public org.jreleaser.model.internal.deploy.maven.MavenDeployer getMavenDeployer() {
+    public org.jreleaser.model.internal.deploy.maven.MavenDeployer<?> getMavenDeployer() {
         return deployer;
     }
 
@@ -48,7 +48,7 @@ public class ProjectMavenDeployer {
             return;
         }
 
-        MavenDeployer artifactMavenDeployer = ArtifactDeployers.findMavenDeployer(context, deployer);
+        MavenDeployer<?, ?> artifactMavenDeployer = ArtifactDeployers.findMavenDeployer(context, deployer);
 
         context.getLogger().info(RB.$("deployers.deploy.to"), deployer.getName());
 
@@ -61,14 +61,14 @@ public class ProjectMavenDeployer {
 
     public static class ProjectMavenDeployerBuilder {
         private JReleaserContext context;
-        private org.jreleaser.model.internal.deploy.maven.MavenDeployer deployer;
+        private org.jreleaser.model.internal.deploy.maven.MavenDeployer<?> deployer;
 
         public ProjectMavenDeployerBuilder context(JReleaserContext context) {
             this.context = requireNonNull(context, "'context' must not be null");
             return this;
         }
 
-        public ProjectMavenDeployerBuilder deployer(org.jreleaser.model.internal.deploy.maven.MavenDeployer deployer) {
+        public ProjectMavenDeployerBuilder deployer(org.jreleaser.model.internal.deploy.maven.MavenDeployer<?> deployer) {
             this.deployer = requireNonNull(deployer, "'deployer' must not be null");
             return this;
         }

@@ -71,7 +71,7 @@ public abstract class MavenDeployersValidator extends Validator {
         }
     }
 
-    static void validateMavenDeployer(JReleaserContext context, MavenDeployer mavenDeployer, Errors errors) {
+    static void validateMavenDeployer(JReleaserContext context, MavenDeployer<?> mavenDeployer, Errors errors) {
         context.getLogger().debug("deploy.maven.{}.{}", mavenDeployer.getType(), mavenDeployer.getName());
 
         if (!mavenDeployer.isActiveSet()) {

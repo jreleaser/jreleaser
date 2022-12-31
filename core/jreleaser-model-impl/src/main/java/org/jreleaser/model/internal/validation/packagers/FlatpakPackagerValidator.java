@@ -20,7 +20,6 @@ package org.jreleaser.model.internal.validation.packagers;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Stereotype;
-import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.JReleaserModel;
 import org.jreleaser.model.internal.common.Artifact;
@@ -50,7 +49,7 @@ import static org.jreleaser.util.StringUtils.isTrue;
  * @since 1.2.0
  */
 public abstract class FlatpakPackagerValidator extends Validator {
-    public static void validateFlatpak(JReleaserContext context, Mode mode, Distribution distribution, FlatpakPackager packager, Errors errors) {
+    public static void validateFlatpak(JReleaserContext context, Distribution distribution, FlatpakPackager packager, Errors errors) {
         context.getLogger().debug("distribution.{}.flatpak", distribution.getName());
         JReleaserModel model = context.getModel();
         FlatpakPackager parentPackager = model.getPackagers().getFlatpak();
@@ -63,7 +62,7 @@ public abstract class FlatpakPackagerValidator extends Validator {
             packager.disable();
             return;
         }
-        Releaser service = model.getRelease().getReleaser();
+        Releaser<?> service = model.getRelease().getReleaser();
         if (!service.isReleaseSupported()) {
             context.getLogger().debug(RB.$("validation.disabled.release"));
             packager.disable();

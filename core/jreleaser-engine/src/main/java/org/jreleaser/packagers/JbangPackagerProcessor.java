@@ -63,8 +63,7 @@ public class JbangPackagerProcessor extends AbstractRepositoryPackagerProcessor<
     }
 
     @Override
-    protected boolean verifyAndAddArtifacts(Map<String, Object> props,
-                                            Distribution distribution) throws PackagerProcessingException {
+    protected boolean verifyAndAddArtifacts(Map<String, Object> props, Distribution distribution) {
         return true;
     }
 

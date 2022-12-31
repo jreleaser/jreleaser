@@ -30,7 +30,7 @@ import org.kordamp.jipsy.annotations.ServiceProviderFor;
 public class DockerPackagerProcessorFactory implements PackagerProcessorFactory<DockerPackager, DockerPackagerProcessor> {
     @Override
     public String getName() {
-        return org.jreleaser.model.api.packagers.DockerPackager.TYPE;
+        return org.jreleaser.model.api.packagers.DockerConfiguration.TYPE;
     }
 
     @Override

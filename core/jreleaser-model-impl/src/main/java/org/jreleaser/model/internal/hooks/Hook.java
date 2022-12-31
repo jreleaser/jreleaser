@@ -46,10 +46,14 @@ public interface Hook extends Domain, Activatable {
     boolean isContinueOnErrorSet();
 
     class Filter extends AbstractModelObject<Filter> implements Domain {
+        private static final long serialVersionUID = 8811064830998012126L;
+
         private final Set<String> includes = new LinkedHashSet<>();
         private final Set<String> excludes = new LinkedHashSet<>();
 
         private final org.jreleaser.model.api.hooks.Hook.Filter immutable = new org.jreleaser.model.api.hooks.Hook.Filter() {
+            private static final long serialVersionUID = -6995455963355646704L;
+
             @Override
             public Set<String> getIncludes() {
                 return unmodifiableSet(includes);

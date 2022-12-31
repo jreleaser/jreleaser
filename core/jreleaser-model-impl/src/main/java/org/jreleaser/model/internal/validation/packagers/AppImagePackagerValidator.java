@@ -20,7 +20,6 @@ package org.jreleaser.model.internal.validation.packagers;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Stereotype;
-import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.JReleaserModel;
 import org.jreleaser.model.internal.common.Artifact;
@@ -48,7 +47,7 @@ import static org.jreleaser.util.StringUtils.isTrue;
  * @since 1.2.0
  */
 public abstract class AppImagePackagerValidator extends Validator {
-    public static void validateAppImage(JReleaserContext context, Mode mode, Distribution distribution, AppImagePackager packager, Errors errors) {
+    public static void validateAppImage(JReleaserContext context, Distribution distribution, AppImagePackager packager, Errors errors) {
         context.getLogger().debug("distribution.{}.appImage", distribution.getName());
         JReleaserModel model = context.getModel();
         AppImagePackager parentPackager = model.getPackagers().getAppImage();
@@ -60,7 +59,7 @@ public abstract class AppImagePackagerValidator extends Validator {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
-        Releaser service = model.getRelease().getReleaser();
+        Releaser<?> service = model.getRelease().getReleaser();
         if (!service.isReleaseSupported()) {
             context.getLogger().debug(RB.$("validation.disabled.release"));
             packager.disable();

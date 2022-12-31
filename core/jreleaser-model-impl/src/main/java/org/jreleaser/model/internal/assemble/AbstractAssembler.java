@@ -43,10 +43,10 @@ import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
  * @since 0.2.0
  */
 public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A extends org.jreleaser.model.api.assemble.Assembler> extends AbstractModelObject<S> implements Assembler<A> {
-    private static final long serialVersionUID = 6331934746743414220L;
+    private static final long serialVersionUID = 1214090599346471565L;
 
     @JsonIgnore
-    protected final Set<Artifact> outputs = new LinkedHashSet<>();
+    protected final transient Set<Artifact> outputs = new LinkedHashSet<>();
     protected final Map<String, Object> extraProperties = new LinkedHashMap<>();
     protected final List<FileSet> fileSets = new ArrayList<>();
     protected final Platform platform = new Platform();

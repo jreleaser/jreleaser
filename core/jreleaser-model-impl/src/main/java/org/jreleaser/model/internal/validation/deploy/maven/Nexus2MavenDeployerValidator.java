@@ -44,12 +44,12 @@ public abstract class Nexus2MavenDeployerValidator extends Validator {
         for (Map.Entry<String, Nexus2MavenDeployer> e : nexus2.entrySet()) {
             e.getValue().setName(e.getKey());
             if (mode.validateDeploy() || mode.validateConfig()) {
-                validateNexus2MavenDeployer(context, mode, e.getValue(), errors);
+                validateNexus2MavenDeployer(context, e.getValue(), errors);
             }
         }
     }
 
-    private static void validateNexus2MavenDeployer(JReleaserContext context, Mode mode, Nexus2MavenDeployer mavenDeployer, Errors errors) {
+    private static void validateNexus2MavenDeployer(JReleaserContext context, Nexus2MavenDeployer mavenDeployer, Errors errors) {
         if (isNotBlank(mavenDeployer.getUrl()) &&
             mavenDeployer.getUrl().contains("oss.sonatype.org") &&
             !mavenDeployer.isApplyMavenCentralRulesSet()) {

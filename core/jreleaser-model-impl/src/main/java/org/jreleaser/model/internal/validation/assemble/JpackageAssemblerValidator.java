@@ -272,7 +272,7 @@ public abstract class JpackageAssemblerValidator extends Validator {
     }
 
     private static void validateWindows(JReleaserContext context, JpackageAssembler jpackage, JpackageAssembler.Windows packager, Errors errors) {
-
+        // noop
     }
 
     private static boolean validateJava(JReleaserContext context, JpackageAssembler jpackage, Errors errors) {

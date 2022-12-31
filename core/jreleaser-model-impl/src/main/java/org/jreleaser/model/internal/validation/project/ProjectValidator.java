@@ -148,7 +148,7 @@ public abstract class ProjectValidator extends Validator {
         if (isBlank(project.getLinks().getLicense()) && context.getModel().getCommit() != null) {
             findLicenseFile(context.getBasedir())
                 .ifPresent(path -> {
-                    BaseReleaser service = context.getModel().getRelease().getReleaser();
+                    BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
                     String srcUrl = service.getResolvedSrcUrl(context.getModel());
                     if (!srcUrl.endsWith("/")) srcUrl += "/";
                     srcUrl += path.getFileName().toString();

@@ -43,12 +43,12 @@ public abstract class GitlabMavenDeployerValidator extends Validator {
         for (Map.Entry<String, GitlabMavenDeployer> e : gitlab.entrySet()) {
             e.getValue().setName(e.getKey());
             if (mode.validateDeploy() || mode.validateConfig()) {
-                validateGitlabMavenDeployer(context, mode, e.getValue(), errors);
+                validateGitlabMavenDeployer(context, e.getValue(), errors);
             }
         }
     }
 
-    private static void validateGitlabMavenDeployer(JReleaserContext context, Mode mode, GitlabMavenDeployer mavenDeployer, Errors errors) {
+    private static void validateGitlabMavenDeployer(JReleaserContext context, GitlabMavenDeployer mavenDeployer, Errors errors) {
         validateMavenDeployer(context, mavenDeployer, errors);
         if (!mavenDeployer.isEnabled()) return;
 

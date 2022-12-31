@@ -55,9 +55,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -77,18 +75,16 @@ class ChangelogGeneratorUnitTest {
     @Spy
     ChangelogGenerator changelogGenerator = new ChangelogGenerator();
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
-    private Git git;
-    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
-    private JReleaserContext context;
-    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     BaseReleaser releaser;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     Changelog changelog;
-
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    private Git git;
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    private JReleaserContext context;
     private MockedStatic<GitSdk> gitSdkMockedStatic;
 
     private MockedStatic<ChangelogGenerator.Commit> commitMockedStatic;
-
 
     void cleanUpStaticMocks() {
         gitSdkMockedStatic.close();
@@ -119,27 +115,6 @@ class ChangelogGeneratorUnitTest {
 
         // then:
         verify(logCommand).add(headId);
-    }
-
-    @Test
-    @DisplayName("Should exclude bot commits from changelog")
-    void excludeBots() throws IOException {
-        Changelog.Hide instance = new Changelog.Hide();
-        Set<String> contributors = new HashSet<>();
-        contributors.add("dependabot");
-        contributors.add("liquibot");
-        contributors.add("randombot");
-        contributors.add("aalmiray");
-        contributors.add("sironheart");
-        instance.addContributors(contributors);
-
-        if (instance.containsContributor("depend") ||
-                instance.containsContributor("bot") ||
-                instance.containsContributor("random") ||
-                instance.containsContributor("liqui")
-        ) {
-            throw new IOException("Should exclude bots");
-        }
     }
 
     @Test
@@ -236,10 +211,10 @@ class ChangelogGeneratorUnitTest {
     void dependabotCommitMultipleLineEndings() {
 
         String commitBody = "Bump actions/setup-java from 2 to 3.5.1 (#123)\n" +
-                "\n" +
-                "Bumps [actions/setup-java](https://github.com/actions/setup-java) from 2 to 3.5.1.\r\n" +
-                "- [Release notes](https://github.com/actions/setup-java/releases)\r\n" +
-                "- [Commits](https://github.com/actions/setup-java/compare/v2...v3.5.1)\r\n";
+            "\n" +
+            "Bumps [actions/setup-java](https://github.com/actions/setup-java) from 2 to 3.5.1.\r\n" +
+            "- [Release notes](https://github.com/actions/setup-java/releases)\r\n" +
+            "- [Commits](https://github.com/actions/setup-java/compare/v2...v3.5.1)\r\n";
 
         RevCommit revCommit = mock(RevCommit.class);
         ObjectId objectId = mock(ObjectId.class);
@@ -263,13 +238,13 @@ class ChangelogGeneratorUnitTest {
 
         Commit result = Commit.of(revCommit);
         assertThat(result)
-                .hasFieldOrPropertyWithValue("fullHash", "full-hash")
-                .hasFieldOrPropertyWithValue("shortHash", "short-hash")
-                .hasFieldOrPropertyWithValue("title", "Bump actions/setup-java from 2 to 3.5.1 (#123)")
-                .hasFieldOrPropertyWithValue("body", commitBody)
-                .hasFieldOrPropertyWithValue("author.name", "author-name")
-                .hasFieldOrPropertyWithValue("author.email", "author@example.com")
-                .hasFieldOrPropertyWithValue("time", time);
+            .hasFieldOrPropertyWithValue("fullHash", "full-hash")
+            .hasFieldOrPropertyWithValue("shortHash", "short-hash")
+            .hasFieldOrPropertyWithValue("title", "Bump actions/setup-java from 2 to 3.5.1 (#123)")
+            .hasFieldOrPropertyWithValue("body", commitBody)
+            .hasFieldOrPropertyWithValue("author.name", "author-name")
+            .hasFieldOrPropertyWithValue("author.email", "author@example.com")
+            .hasFieldOrPropertyWithValue("time", time);
     }
 
     private RevCommit getMockRevCommit(boolean skipMergeCommits, boolean formatted) throws GitAPIException, IOException {

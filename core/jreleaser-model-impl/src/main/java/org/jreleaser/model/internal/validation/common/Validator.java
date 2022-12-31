@@ -212,7 +212,7 @@ public class Validator {
             tap.setToken(parentTap.getToken());
         }
 
-        BaseReleaser service = context.getModel().getRelease().getReleaser();
+        BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
 
         tap.setUsername(
             checkProperty(context,

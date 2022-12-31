@@ -42,7 +42,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
 public class CommandExecutor {
     private final JReleaserLogger logger;
     private final boolean quiet;
-    private final Map<String, String> environment = new LinkedHashMap<String, String>();
+    private final Map<String, String> environment = new LinkedHashMap<>();
 
     public CommandExecutor(JReleaserLogger logger) {
         this(logger, false);

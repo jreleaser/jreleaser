@@ -42,12 +42,12 @@ public abstract class GithubMavenDeployerValidator extends Validator {
         for (Map.Entry<String, GithubMavenDeployer> e : github.entrySet()) {
             e.getValue().setName(e.getKey());
             if (mode.validateDeploy() || mode.validateConfig()) {
-                validateGithubMavenDeployer(context, mode, e.getValue(), errors);
+                validateGithubMavenDeployer(context, e.getValue(), errors);
             }
         }
     }
 
-    private static void validateGithubMavenDeployer(JReleaserContext context, Mode mode, GithubMavenDeployer mavenDeployer, Errors errors) {
+    private static void validateGithubMavenDeployer(JReleaserContext context, GithubMavenDeployer mavenDeployer, Errors errors) {
         if (isBlank(mavenDeployer.getUrl())) {
             mavenDeployer.setUrl("https://maven.pkg.github.com/{{owner}}/{{repository}}");
         }

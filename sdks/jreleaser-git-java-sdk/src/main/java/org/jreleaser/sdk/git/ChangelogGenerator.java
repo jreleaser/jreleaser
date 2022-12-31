@@ -86,7 +86,7 @@ public class ChangelogGenerator {
     }
 
     protected String createChangelog(JReleaserContext context) throws IOException {
-        BaseReleaser releaser = context.getModel().getRelease().getReleaser();
+        BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
         Changelog changelog = releaser.getChangelog();
 
         String separator = lineSeparator();
@@ -176,7 +176,7 @@ public class ChangelogGenerator {
 
         List<Ref> tags = git.tagList().call();
 
-        BaseReleaser releaser = context.getModel().getRelease().getReleaser();
+        BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
         String effectiveTagName = releaser.getEffectiveTagName(context.getModel());
         String tagName = releaser.getConfiguredTagName();
         String tagPattern = tagName.replaceAll("\\{\\{.*}}", "\\.\\*");
@@ -302,7 +302,7 @@ public class ChangelogGenerator {
 
     protected Iterable<RevCommit> resolveCommits(Git git, JReleaserContext context) throws GitAPIException, IOException {
         Tags tags = resolveTags(git, context);
-        BaseReleaser releaser = context.getModel().getRelease().getReleaser();
+        BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
 
         ObjectId head = git.getRepository().resolve(Constants.HEAD);
 
@@ -375,7 +375,7 @@ public class ChangelogGenerator {
                 .computeIfAbsent(categorize(commit, changelog), k -> new ArrayList<>())
                 .add(commit));
 
-        BaseReleaser releaser = context.getModel().getRelease().getReleaser();
+        BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
         String commitsUrl = releaser.getResolvedCommitUrl(context.getModel());
         String issueTracker = releaser.getResolvedIssueTrackerUrl(context.getModel(), true);
 
@@ -542,20 +542,20 @@ public class ChangelogGenerator {
     }
 
     public static class Tags {
-        private final Optional<Ref> current;
-        private final Optional<Ref> previous;
+        private final Ref current;
+        private final Ref previous;
 
         private Tags(Ref current, Ref previous) {
-            this.current = Optional.ofNullable(current);
-            this.previous = Optional.ofNullable(previous);
+            this.current = current;
+            this.previous = previous;
         }
 
         public Optional<Ref> getCurrent() {
-            return current;
+            return Optional.ofNullable(current);
         }
 
         public Optional<Ref> getPrevious() {
-            return previous;
+            return Optional.ofNullable(previous);
         }
 
         private static Tags empty() {
@@ -835,11 +835,6 @@ public class ChangelogGenerator {
         private Contributor(Author author) {
             this.name = author.name;
             this.email = author.email;
-        }
-
-        private Contributor(String name, String email) {
-            this.name = name;
-            this.email = email;
         }
 
         public String getName() {

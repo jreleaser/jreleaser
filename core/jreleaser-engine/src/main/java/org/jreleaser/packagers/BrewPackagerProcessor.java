@@ -290,23 +290,20 @@ BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> 
 
         if (packager.getCask().isEnabled()) {
             if (FORMULA_RB.equals(fileName) || FORMULA_MULTI_RB.equals(fileName)) return;
-            Path outputFile = CASK_RB.equals(fileName) ?
+            writeFile(content, CASK_RB.equals(fileName) ?
                 outputDirectory.resolve(CASKS).resolve(packager.getCask().getResolvedCaskName(props).concat(RB)) :
-                outputDirectory.resolve(fileName);
-            writeFile(content, outputFile);
+                outputDirectory.resolve(fileName));
         } else if (packager.isMultiPlatform()) {
             if (CASK_RB.equals(fileName) || FORMULA_RB.equals(fileName)) return;
-            Path outputFile = FORMULA_MULTI_RB.equals(fileName) ?
+            writeFile(content, FORMULA_MULTI_RB.equals(fileName) ?
                 outputDirectory.resolve(FORMULA).resolve(distribution.getExecutable().getName().concat(RB)) :
-                outputDirectory.resolve(fileName);
-            writeFile(content, outputFile);
+                outputDirectory.resolve(fileName));
         } else {
             if (CASK_RB.equals(fileName) || FORMULA_MULTI_RB.equals(fileName)) return;
-            Path outputFile = FORMULA_RB.equals(fileName) ?
+            writeFile(content, FORMULA_RB.equals(fileName) ?
                 outputDirectory.resolve(FORMULA)
                     .resolve(getHyphenatedName(packager.getFormulaName()).concat(RB)) :
-                outputDirectory.resolve(fileName);
-            writeFile(content, outputFile);
+                outputDirectory.resolve(fileName));
         }
     }
 }

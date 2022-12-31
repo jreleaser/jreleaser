@@ -34,7 +34,6 @@ import org.jreleaser.sdk.disco.api.EphemeralId;
 import org.jreleaser.util.Errors;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
@@ -107,7 +106,7 @@ public class SetupDiscoMojo extends AbstractMojo {
     private Disco initializeDisco() throws MojoExecutionException {
         try {
             return new Disco(new JReleaserLoggerAdapter(getLog()), connectTimeout, readTimeout);
-        } catch (IOException e) {
+        } catch (RuntimeException e) {
             throw new MojoExecutionException("Could not initialize Disco client", e);
         }
     }

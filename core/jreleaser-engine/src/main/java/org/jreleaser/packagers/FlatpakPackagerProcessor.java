@@ -257,16 +257,13 @@ public class FlatpakPackagerProcessor extends AbstractRepositoryPackagerProcesso
 
         Path outputFile = outputDirectory.resolve(fileName);
 
-        switch (fileName) {
-            case "app.yml":
-                outputFile = outputDirectory.resolve(getPackager().getComponentId() + ".yml");
-                break;
-            case "app.desktop":
-                outputFile = outputDirectory.resolve(getPackager().getComponentId() + ".desktop");
-                break;
-            case "metainfo.xml":
-                outputFile = outputDirectory.resolve(getPackager().getComponentId() + ".metainfo.xml");
-                break;
+        // noop
+        if ("app.yml".equals(fileName)) {
+            outputFile = outputDirectory.resolve(getPackager().getComponentId() + ".yml");
+        } else if ("app.desktop".equals(fileName)) {
+            outputFile = outputDirectory.resolve(getPackager().getComponentId() + ".desktop");
+        } else if ("metainfo.xml".equals(fileName)) {
+            outputFile = outputDirectory.resolve(getPackager().getComponentId() + ".metainfo.xml");
         }
 
         writeFile(content, outputFile);

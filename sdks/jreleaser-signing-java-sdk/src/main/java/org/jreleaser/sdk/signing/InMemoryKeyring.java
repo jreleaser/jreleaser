@@ -38,12 +38,12 @@ public final class InMemoryKeyring extends Keyring {
     }
 
     @Override
-    protected InputStream getPublicKeyRingStream() throws IOException {
+    protected InputStream getPublicKeyRingStream() {
         return new ByteArrayInputStream(encodedPublicKey);
     }
 
     @Override
-    protected InputStream getSecretKeyRingStream() throws IOException {
+    protected InputStream getSecretKeyRingStream() {
         return new ByteArrayInputStream(encodedPrivateKey);
     }
 }

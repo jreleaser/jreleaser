@@ -19,7 +19,6 @@ package org.jreleaser.model.internal.validation.hooks;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
-import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.hooks.CommandHook;
 import org.jreleaser.model.internal.hooks.CommandHooks;
@@ -33,7 +32,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 1.2.0
  */
 public abstract class CommandHooksValidator extends Validator {
-    public static void validateCommandHooks(JReleaserContext context, Mode mode, Errors errors) {
+    public static void validateCommandHooks(JReleaserContext context, Errors errors) {
         context.getLogger().debug("hooks.command");
 
         CommandHooks hooks = context.getModel().getHooks().getCommand();

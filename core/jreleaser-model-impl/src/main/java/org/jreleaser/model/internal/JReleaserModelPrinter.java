@@ -223,7 +223,7 @@ public abstract class JReleaserModelPrinter {
 
     private String parseAsBoolean(String s) {
         if ("true".equalsIgnoreCase(s) || "false".equalsIgnoreCase(s)) {
-            boolean b = Boolean.valueOf(s);
+            boolean b = Boolean.parseBoolean(s);
             return b ? green(String.valueOf(b)) : red(String.valueOf(b));
         } else {
             return null;

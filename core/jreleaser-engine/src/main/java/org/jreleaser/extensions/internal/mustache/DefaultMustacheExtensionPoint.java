@@ -42,6 +42,7 @@ import java.util.EnumSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.ToLongFunction;
 import java.util.function.UnaryOperator;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -200,9 +201,9 @@ public final class DefaultMustacheExtensionPoint implements MustacheExtensionPoi
         }
     }
 
-    private static class FileSizeFunction implements Function<Object, Long> {
+    private static class FileSizeFunction implements ToLongFunction<Object> {
         @Override
-        public Long apply(Object input) {
+        public long applyAsLong(Object input) {
             try {
                 if (input instanceof Path) {
                     return Files.size((Path) input);

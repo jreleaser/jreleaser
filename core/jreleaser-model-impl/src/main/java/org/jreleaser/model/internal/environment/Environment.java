@@ -29,6 +29,7 @@ import org.jreleaser.util.Env;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -48,7 +49,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public final class Environment extends AbstractModelObject<Environment> implements Domain {
-    private static final long serialVersionUID = 1514816744502607426L;
+    private static final long serialVersionUID = -5128268824889374860L;
 
     private final Map<String, Object> properties = new LinkedHashMap<>();
     @JsonIgnore
@@ -58,6 +59,8 @@ public final class Environment extends AbstractModelObject<Environment> implemen
     private String variables;
     @JsonIgnore
     private Properties vars;
+    @JsonIgnore
+    private transient Path propertiesFile;
 
     private final org.jreleaser.model.api.environment.Environment immutable = new org.jreleaser.model.api.environment.Environment() {
         private static final long serialVersionUID = -7287090119869371299L;
@@ -82,9 +85,6 @@ public final class Environment extends AbstractModelObject<Environment> implemen
             return unmodifiableMap(Environment.this.asMap(full));
         }
     };
-
-    @JsonIgnore
-    private Path propertiesFile;
 
     public org.jreleaser.model.api.environment.Environment asImmutable() {
         return immutable;
@@ -221,11 +221,13 @@ public final class Environment extends AbstractModelObject<Environment> implemen
         return keyInProperties || keyInSourcedProperties;
     }
 
-    public interface PropertiesSource {
+    public interface PropertiesSource extends Serializable {
         Map<String, String> getProperties();
     }
 
     public abstract static class AbstractPropertiesSource implements PropertiesSource {
+        private static final long serialVersionUID = 9102569253517657171L;
+
         @Override
         public Map<String, String> getProperties() {
             Map<String, String> props = doGetProperties();
@@ -245,6 +247,8 @@ public final class Environment extends AbstractModelObject<Environment> implemen
     }
 
     public static class PropertiesPropertiesSource extends AbstractPropertiesSource {
+        private static final long serialVersionUID = 7747477120107034027L;
+
         private final Properties properties;
 
         public PropertiesPropertiesSource(Properties properties) {
@@ -260,6 +264,8 @@ public final class Environment extends AbstractModelObject<Environment> implemen
     }
 
     public static class MapPropertiesSource extends AbstractPropertiesSource {
+        private static final long serialVersionUID = 6643212572356054605L;
+
         private final Map<String, ?> properties;
 
         public MapPropertiesSource(Map<String, ?> properties) {

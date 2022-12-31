@@ -184,13 +184,10 @@ public class AppImagePackagerProcessor extends AbstractRepositoryPackagerProcess
 
         Path outputFile = outputDirectory.resolve(fileName);
 
-        switch (fileName) {
-            case "app.desktop":
-                outputFile = outputDirectory.resolve(distribution.getExecutable().getName() + ".desktop");
-                break;
-            case "appdata.xml":
-                outputFile = outputDirectory.resolve(getPackager().getComponentId() + ".appdata.xml");
-                break;
+        if ("app.desktop".equals(fileName)) {
+            outputFile = outputDirectory.resolve(distribution.getExecutable().getName() + ".desktop");
+        } else if ("appdata.xml".equals(fileName)) {
+            outputFile = outputDirectory.resolve(getPackager().getComponentId() + ".appdata.xml");
         }
 
         writeFile(content, outputFile);

@@ -523,7 +523,7 @@ public class JReleaserModel {
     }
 
     private void fillReleaserProperties(Map<String, Object> props, Release release) {
-        BaseReleaser service = release.getReleaser();
+        BaseReleaser<?, ?> service = release.getReleaser();
         props.put(Constants.KEY_REPO_HOST, service.getHost());
         props.put(Constants.KEY_REPO_OWNER, service.getOwner());
         props.put(Constants.KEY_REPO_NAME, service.getName());
@@ -569,6 +569,8 @@ public class JReleaserModel {
                 case "html":
                     return ("<a href=\"" + getRelease().getReleaser().getDownloadUrl() + "\">{{artifactFile}}</a>")
                         .replace("{{artifactFile}}", artifactFile);
+                default:
+                    // noop
             }
 
             throw new JReleaserException(RB.$("ERROR_invalid_function_input", input, NAME));

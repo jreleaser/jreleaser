@@ -19,6 +19,7 @@ package org.jreleaser.sdk.signing;
 
 import org.bouncycastle.bcpg.ArmoredOutputStream;
 import org.bouncycastle.bcpg.BCPGOutputStream;
+import org.bouncycastle.bcpg.HashAlgorithmTags;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openpgp.PGPCompressedData;
 import org.bouncycastle.openpgp.PGPCompressedDataGenerator;
@@ -220,7 +221,7 @@ public class SigningUtils {
                     .build(signing.getPassphrase().toCharArray()));
 
             PGPSignatureGenerator signatureGenerator = new PGPSignatureGenerator(
-                new JcaPGPContentSignerBuilder(pgpSecretKey.getPublicKey().getAlgorithm(), PGPUtil.SHA1)
+                new JcaPGPContentSignerBuilder(pgpSecretKey.getPublicKey().getAlgorithm(), HashAlgorithmTags.SHA1)
                     .setProvider(BouncyCastleProvider.PROVIDER_NAME));
 
             signatureGenerator.init(PGPSignature.BINARY_DOCUMENT, pgpPrivKey);

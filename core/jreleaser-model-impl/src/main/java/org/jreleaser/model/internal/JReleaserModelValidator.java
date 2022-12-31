@@ -60,7 +60,7 @@ public final class JReleaserModelValidator {
     }
 
     private static void validateModel(JReleaserContext context, Mode mode, Errors errors) {
-        validateExtensions(context, mode, errors);
+        validateExtensions(context, errors);
         validateHooks(context, mode, errors);
         validateProject(context, mode, errors);
         validateDownloaders(context, mode, errors);

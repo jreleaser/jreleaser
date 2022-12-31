@@ -41,7 +41,7 @@ public abstract class ArticleAnnouncerValidator extends Validator {
             return;
         }
 
-        BaseReleaser service = context.getModel().getRelease().getReleaser();
+        BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
         ArticleAnnouncer.Repository repository = article.getRepository();
 
         validateCommitAuthor(article, service);

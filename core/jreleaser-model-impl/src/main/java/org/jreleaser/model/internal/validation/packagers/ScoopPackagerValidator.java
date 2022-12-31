@@ -55,7 +55,7 @@ public abstract class ScoopPackagerValidator extends Validator {
             packager.disable();
             return;
         }
-        BaseReleaser service = model.getRelease().getReleaser();
+        BaseReleaser<?, ?> service = model.getRelease().getReleaser();
         if (!service.isReleaseSupported()) {
             context.getLogger().debug(RB.$("validation.disabled.release"));
             packager.disable();

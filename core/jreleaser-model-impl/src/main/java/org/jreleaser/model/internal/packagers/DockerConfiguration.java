@@ -111,6 +111,7 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
 
     final class Registry extends AbstractModelObject<Registry> implements Domain, Comparable<Registry> {
         public static final String DEFAULT_NAME = "DEFAULT";
+        private static final long serialVersionUID = 3311527767436036214L;
 
         private String server;
         private String serverName = DEFAULT_NAME;
@@ -119,6 +120,8 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
         private String password;
 
         private final org.jreleaser.model.api.packagers.DockerConfiguration.Registry immutable = new org.jreleaser.model.api.packagers.DockerConfiguration.Registry() {
+            private static final long serialVersionUID = 7816956628233064825L;
+
             @Override
             public String getServer() {
                 return server;
@@ -241,11 +244,15 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
     }
 
     final class Buildx extends AbstractModelObject<Buildx> implements Domain {
+        private static final long serialVersionUID = 7461262124806507085L;
+
         private final List<String> createBuilderFlags = new ArrayList<>();
         private final List<String> platforms = new ArrayList<>();
         private Boolean enabled;
 
         private final org.jreleaser.model.api.packagers.DockerConfiguration.Buildx immutable = new org.jreleaser.model.api.packagers.DockerConfiguration.Buildx() {
+            private static final long serialVersionUID = 5631255495889890989L;
+
             @Override
             public boolean isEnabled() {
                 return Buildx.this.isEnabled();
