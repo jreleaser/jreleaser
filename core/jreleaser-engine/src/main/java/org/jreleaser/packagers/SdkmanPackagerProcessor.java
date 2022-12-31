@@ -79,7 +79,7 @@ public class SdkmanPackagerProcessor extends AbstractPackagerProcessor<SdkmanPac
                     .platforms(platforms)
                     .releaseNotesUrl(releaseNotesUrl)
                     .dryrun(context.isDryrun())
-                    .skipAnnounce(true)
+                    .skipAnnounce(false)
                     .build()
                     .execute();
             } else if (sdkman.getCommand() == Sdkman.Command.MINOR) {
@@ -94,7 +94,7 @@ public class SdkmanPackagerProcessor extends AbstractPackagerProcessor<SdkmanPac
                     .platforms(platforms)
                     .releaseNotesUrl(releaseNotesUrl)
                     .dryrun(context.isDryrun())
-                    .skipAnnounce(true)
+                    .skipAnnounce(false)
                     .build()
                     .execute();
             }
