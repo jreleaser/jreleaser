@@ -30,7 +30,11 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 1.2.0
  */
-public abstract class CommandHooksValidator {
+public final class CommandHooksValidator {
+    private CommandHooksValidator() {
+        // noop
+    }
+
     public static void validateCommandHooks(JReleaserContext context, Errors errors) {
         context.getLogger().debug("hooks.command");
 

@@ -64,7 +64,7 @@ public abstract class AbstractDownloader<A extends org.jreleaser.model.api.downl
 
     @Override
     public String getPrefix() {
-        return type;
+        return getType();
     }
 
     @Override

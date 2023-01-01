@@ -34,7 +34,11 @@ import static org.jreleaser.model.internal.validation.common.Validator.validateT
  * @author Andres Almiray
  * @since 0.3.0
  */
-public abstract class ArtifactoryUploaderValidator {
+public final class ArtifactoryUploaderValidator {
+    private ArtifactoryUploaderValidator() {
+        // noop
+    }
+
     public static void validateArtifactory(JReleaserContext context, Mode mode, Errors errors) {
         Map<String, ArtifactoryUploader> artifactory = context.getModel().getUpload().getArtifactory();
         if (!artifactory.isEmpty()) context.getLogger().debug("upload.artifactory");

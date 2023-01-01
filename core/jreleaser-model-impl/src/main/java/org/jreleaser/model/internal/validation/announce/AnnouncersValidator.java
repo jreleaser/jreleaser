@@ -45,7 +45,11 @@ import static org.jreleaser.model.internal.validation.announce.ZulipAnnouncerVal
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class AnnouncersValidator {
+public final class AnnouncersValidator {
+    private AnnouncersValidator() {
+        // noop
+    }
+
     public static void validateAnnouncers(JReleaserContext context, Mode mode, Errors errors) {
         Announce announce = context.getModel().getAnnounce();
         context.getLogger().debug("announce");

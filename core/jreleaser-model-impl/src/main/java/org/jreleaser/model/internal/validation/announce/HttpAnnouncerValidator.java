@@ -39,8 +39,12 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 1.3.0
  */
-public abstract class HttpAnnouncerValidator {
+public final class HttpAnnouncerValidator {
     private static final String DEFAULT_TPL = "src/jreleaser/templates";
+
+    private HttpAnnouncerValidator() {
+        // noop
+    }
 
     public static void validateHttpAnnouncers(JReleaserContext context, Mode mode, HttpAnnouncers http, Errors errors) {
         context.getLogger().debug("announce.http");

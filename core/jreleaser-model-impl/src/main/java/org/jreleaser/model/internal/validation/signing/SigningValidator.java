@@ -41,7 +41,11 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class SigningValidator {
+public final class SigningValidator {
+    private SigningValidator() {
+        // noop
+    }
+
     public static void validateSigning(JReleaserContext context, Mode mode, Errors errors) {
         if (!mode.validateConfig()) {
             errors = new Errors();

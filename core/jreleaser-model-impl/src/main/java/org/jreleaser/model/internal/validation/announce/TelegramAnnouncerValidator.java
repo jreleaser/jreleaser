@@ -35,8 +35,12 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.8.0
  */
-public abstract class TelegramAnnouncerValidator {
+public final class TelegramAnnouncerValidator {
     private static final String DEFAULT_TELEGRAM_TPL = "src/jreleaser/templates/telegram.tpl";
+
+    private TelegramAnnouncerValidator() {
+        // noop
+    }
 
     public static void validateTelegram(JReleaserContext context, TelegramAnnouncer telegram, Errors errors) {
         context.getLogger().debug("announce.telegram");

@@ -22,11 +22,17 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.release.GenericGitReleaser;
 import org.jreleaser.util.Errors;
 
+import static org.jreleaser.model.internal.validation.release.BaseReleaserValidator.validateGitService;
+
 /**
  * @author Andres Almiray
  * @since 0.4.0
  */
-public abstract class GenericGitReleaserValidator extends BaseReleaserValidator {
+public final class GenericGitReleaserValidator {
+    private GenericGitReleaserValidator() {
+        // noop
+    }
+
     public static boolean validateGeneric(JReleaserContext context, Mode mode, GenericGitReleaser generic, Errors errors) {
         if (null == generic) return false;
         context.getLogger().debug("release.generic");

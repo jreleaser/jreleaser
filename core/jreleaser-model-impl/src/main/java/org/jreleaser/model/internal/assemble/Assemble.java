@@ -357,9 +357,9 @@ public final class Assemble extends AbstractModelObject<Assemble> implements Dom
                 return (Map<String, A>) jpackage;
             case org.jreleaser.model.api.assemble.NativeImageAssembler.TYPE:
                 return (Map<String, A>) nativeImage;
+            default:
+                return Collections.emptyMap();
         }
-
-        return Collections.emptyMap();
     }
 
     public <A extends Assembler<?>> Collection<A> findAllAssemblers() {

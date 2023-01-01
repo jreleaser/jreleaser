@@ -34,8 +34,12 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public abstract class GitterAnnouncerValidator {
+public final class GitterAnnouncerValidator {
     private static final String DEFAULT_GITTER_TPL = "src/jreleaser/templates/gitter.tpl";
+
+    private GitterAnnouncerValidator() {
+        // noop
+    }
 
     public static void validateGitter(JReleaserContext context, GitterAnnouncer gitter, Errors errors) {
         context.getLogger().debug("announce.gitter");

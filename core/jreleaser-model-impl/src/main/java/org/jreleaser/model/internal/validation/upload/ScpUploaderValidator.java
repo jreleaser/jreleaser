@@ -34,7 +34,11 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public abstract class ScpUploaderValidator {
+public final class ScpUploaderValidator {
+    private ScpUploaderValidator() {
+        // noop
+    }
+
     public static void validateScpUploader(JReleaserContext context, Mode mode, Errors errors) {
         Map<String, ScpUploader> scp = context.getModel().getUpload().getScp();
         if (!scp.isEmpty()) context.getLogger().debug("upload.scp");

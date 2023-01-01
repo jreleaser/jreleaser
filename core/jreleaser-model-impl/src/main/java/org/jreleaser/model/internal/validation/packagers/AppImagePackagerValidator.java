@@ -50,7 +50,11 @@ import static org.jreleaser.util.StringUtils.isTrue;
  * @author Andres Almiray
  * @since 1.2.0
  */
-public abstract class AppImagePackagerValidator {
+public final class AppImagePackagerValidator {
+    private AppImagePackagerValidator() {
+        // noop
+    }
+
     public static void validateAppImage(JReleaserContext context, Distribution distribution, AppImagePackager packager, Errors errors) {
         context.getLogger().debug("distribution.{}.appImage", distribution.getName());
         JReleaserModel model = context.getModel();

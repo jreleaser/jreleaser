@@ -43,7 +43,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public abstract class NativeImageAssemblerValidator {
+public final class NativeImageAssemblerValidator {
+    private NativeImageAssemblerValidator() {
+        // noop
+    }
+
     public static void validateNativeImage(JReleaserContext context, Mode mode, Errors errors) {
         Map<String, NativeImageAssembler> nativeImage = context.getModel().getAssemble().getNativeImage();
         if (!nativeImage.isEmpty()) context.getLogger().debug("assemble.nativeImage");

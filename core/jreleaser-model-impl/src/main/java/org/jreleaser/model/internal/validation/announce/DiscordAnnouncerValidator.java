@@ -34,8 +34,12 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public abstract class DiscordAnnouncerValidator {
+public final class DiscordAnnouncerValidator {
     private static final String DEFAULT_DISCORD_TPL = "src/jreleaser/templates/discord.tpl";
+
+    private DiscordAnnouncerValidator() {
+        // noop
+    }
 
     public static void validateDiscord(JReleaserContext context, DiscordAnnouncer discord, Errors errors) {
         context.getLogger().debug("announce.discord");

@@ -39,7 +39,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 1.4.0
  */
-public abstract class JavaArchiveAssemblerValidator {
+public final class JavaArchiveAssemblerValidator {
+    private JavaArchiveAssemblerValidator() {
+        // noop
+    }
+
     public static void validateJavaArchive(JReleaserContext context, Mode mode, Errors errors) {
         Map<String, JavaArchiveAssembler> archive = context.getModel().getAssemble().getJavaArchive();
         if (!archive.isEmpty()) context.getLogger().debug("assemble.java-archive");

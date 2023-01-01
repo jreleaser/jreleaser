@@ -35,7 +35,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class TemplateValidator {
+public final class TemplateValidator {
+    private TemplateValidator() {
+        // noop
+    }
+
     public static void validateTemplate(JReleaserContext context, Distribution distribution,
                                         TemplatePackager<?> packager, TemplatePackager<?> parentPackager, Errors errors) {
         String defaultTemplateDirectory = "src/jreleaser/distributions/" + distribution.getName() + "/" + packager.getType();

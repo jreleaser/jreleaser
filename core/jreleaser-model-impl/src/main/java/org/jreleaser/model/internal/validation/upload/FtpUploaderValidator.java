@@ -35,7 +35,11 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public abstract class FtpUploaderValidator {
+public final class FtpUploaderValidator {
+    private FtpUploaderValidator() {
+        // noop
+    }
+
     public static void validateFtpUploader(JReleaserContext context, Mode mode, Errors errors) {
         Map<String, FtpUploader> ftp = context.getModel().getUpload().getFtp();
         if (!ftp.isEmpty()) context.getLogger().debug("upload.ftp");

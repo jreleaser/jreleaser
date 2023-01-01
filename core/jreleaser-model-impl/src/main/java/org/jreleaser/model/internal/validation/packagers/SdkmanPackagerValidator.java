@@ -46,7 +46,11 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.6.0
  */
-public abstract class SdkmanPackagerValidator {
+public final class SdkmanPackagerValidator {
+    private SdkmanPackagerValidator() {
+        // noop
+    }
+
     public static void validateSdkman(JReleaserContext context, Distribution distribution, SdkmanPackager packager, Errors errors) {
         context.getLogger().debug("distribution.{}.sdkman", distribution.getName());
         JReleaserModel model = context.getModel();

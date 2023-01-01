@@ -31,7 +31,11 @@ import static org.jreleaser.model.internal.validation.assemble.NativeImageAssemb
  * @author Andres Almiray
  * @since 0.2.0
  */
-public abstract class AssemblersResolver {
+public final class AssemblersResolver {
+    private AssemblersResolver() {
+        // noop
+    }
+
     public static void resolveAssemblers(JReleaserContext context, Errors errors) {
         Environment environment = context.getModel().getEnvironment();
         if (environment.getBooleanProperty("skipAssembleResolvers")) return;

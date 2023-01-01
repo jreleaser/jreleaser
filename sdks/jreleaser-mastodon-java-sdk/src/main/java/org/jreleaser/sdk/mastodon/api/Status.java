@@ -27,7 +27,7 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
 public class Status {
     private String id;
     private String status;
-    private String in_reply_to_id;
+    private String inReplyToId;
     private String visibility;
 
     public String getStatus() {
@@ -38,14 +38,28 @@ public class Status {
         this.status = status;
     }
 
-    @Override
-    public String toString() {
-        return "Status[" +
-                   "id='" + id + "'," +
-                   "in_reply_to_id='" + in_reply_to_id + "'," +
-                   "visibility='" + visibility + "'," +
-                   "status='" + status + '\'' +
-            ']';
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getInReplyToId() {
+        return inReplyToId;
+    }
+
+    public void setInReplyToId(String inReplyToId) {
+        this.inReplyToId = inReplyToId;
+    }
+
+    public String getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(String visibility) {
+        this.visibility = visibility;
     }
 
     public static Status of(String status) {
@@ -55,32 +69,8 @@ public class Status {
     public static Status of(String status, String inReplyToId) {
         Status o = new Status();
         o.status = requireNonBlank(status, "'status' must not be blank").trim();
-        o.in_reply_to_id = inReplyToId;
+        o.inReplyToId = inReplyToId;
         if (isNotBlank(inReplyToId)) o.visibility = "unlisted";
         return o;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getIn_reply_to_id() {
-        return in_reply_to_id;
-    }
-
-    public void setIn_reply_to_id(String in_reply_to_id) {
-        this.in_reply_to_id = in_reply_to_id;
-    }
-
-    public String getVisibility() {
-        return visibility;
-    }
-
-    public void setVisibility(String visibility) {
-        this.visibility = visibility;
     }
 }

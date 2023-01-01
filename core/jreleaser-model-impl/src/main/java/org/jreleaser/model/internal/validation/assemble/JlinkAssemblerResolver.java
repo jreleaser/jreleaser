@@ -34,7 +34,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public abstract class JlinkAssemblerResolver {
+public final class JlinkAssemblerResolver {
+    private JlinkAssemblerResolver() {
+        // noop
+    }
+
     public static void resolveJlinkOutputs(JReleaserContext context, Errors errors) {
         List<JlinkAssembler> activeJlinks = context.getModel().getAssemble().getActiveJlinks();
         if (!activeJlinks.isEmpty()) context.getLogger().debug("assemble.jlink");

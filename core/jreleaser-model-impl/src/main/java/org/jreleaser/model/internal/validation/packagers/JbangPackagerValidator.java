@@ -42,7 +42,11 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class JbangPackagerValidator {
+public final class JbangPackagerValidator {
+    private JbangPackagerValidator() {
+        // noop
+    }
+
     public static void validateJbang(JReleaserContext context, Distribution distribution, JbangPackager packager, Errors errors) {
         context.getLogger().debug("distribution.{}.jbang", distribution.getName());
         JReleaserModel model = context.getModel();

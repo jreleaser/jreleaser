@@ -80,7 +80,7 @@ public abstract class AbstractUploader<A extends org.jreleaser.model.api.upload.
 
     @Override
     public String getPrefix() {
-        return type;
+        return getType();
     }
 
     @Override

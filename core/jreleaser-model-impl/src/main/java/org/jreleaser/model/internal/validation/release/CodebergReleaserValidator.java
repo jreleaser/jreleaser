@@ -25,13 +25,18 @@ import org.jreleaser.util.Errors;
 import static org.jreleaser.model.api.release.Releaser.DRAFT;
 import static org.jreleaser.model.api.release.Releaser.PRERELEASE_PATTERN;
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.release.BaseReleaserValidator.validateGitService;
 
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class CodebergReleaserValidator extends BaseReleaserValidator {
+public final class CodebergReleaserValidator {
+    private CodebergReleaserValidator() {
+        // noop
+    }
+
     public static boolean validateCodeberg(JReleaserContext context, Mode mode, CodebergReleaser codeberg, Errors errors) {
         if (null == codeberg) return false;
         context.getLogger().debug("release.codeberg");

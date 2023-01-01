@@ -26,6 +26,7 @@ import org.jreleaser.model.api.common.Java;
 import org.jreleaser.model.api.common.Screenshot;
 import org.jreleaser.version.Version;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -130,7 +131,7 @@ public interface Project extends Domain, ExtraProperties, Active.Releaseable {
      * @author Andres Almiray
      * @since 0.5.0
      */
-    interface VersionPattern {
+    interface VersionPattern extends Serializable {
         org.jreleaser.model.VersionPattern.Type getType();
 
         String getFormat();

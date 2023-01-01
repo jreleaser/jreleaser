@@ -62,7 +62,11 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class DockerPackagerValidator {
+public final class DockerPackagerValidator {
+    private DockerPackagerValidator() {
+        // noop
+    }
+
     public static void validateDocker(JReleaserContext context, Distribution distribution, DockerPackager packager, Errors errors) {
         String element = "distribution." + distribution.getName() + ".docker";
         context.getLogger().debug(element);

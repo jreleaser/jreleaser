@@ -26,7 +26,11 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class ExtraPropertiesValidator {
+public final class ExtraPropertiesValidator {
+    private ExtraPropertiesValidator() {
+        // noop
+    }
+
     public static void mergeExtraProperties(ExtraProperties self, ExtraProperties common) {
         Map<String, Object> extraProperties = new LinkedHashMap<>(common.getExtraProperties());
         extraProperties.putAll(self.getExtraProperties());

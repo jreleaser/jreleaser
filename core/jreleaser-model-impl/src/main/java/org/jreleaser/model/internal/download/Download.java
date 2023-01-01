@@ -295,7 +295,6 @@ public final class Download extends AbstractModelObject<Download> implements Dom
             default:
                 return Collections.emptyMap();
         }
-
     }
 
     public <A extends Downloader<?>> List<A> findAllActiveDownloaders() {

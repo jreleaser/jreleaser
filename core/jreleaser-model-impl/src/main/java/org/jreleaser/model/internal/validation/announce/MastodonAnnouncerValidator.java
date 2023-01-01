@@ -34,7 +34,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.4.0
  */
-public abstract class MastodonAnnouncerValidator {
+public final class MastodonAnnouncerValidator {
+    private MastodonAnnouncerValidator() {
+        // noop
+    }
+
     public static void validateMastodon(JReleaserContext context, MastodonAnnouncer mastodon, Errors errors) {
         context.getLogger().debug("announce.mastodon");
         if (!mastodon.resolveEnabled(context.getModel().getProject())) {

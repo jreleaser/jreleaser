@@ -38,8 +38,12 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.5.0
  */
-public abstract class WebhooksAnnouncerValidator {
+public final class WebhooksAnnouncerValidator {
     private static final String DEFAULT_TPL = "src/jreleaser/templates/";
+
+    private WebhooksAnnouncerValidator() {
+        // noop
+    }
 
     public static void validateWebhooks(JReleaserContext context, Mode mode, WebhooksAnnouncer webhooks, Errors errors) {
         context.getLogger().debug("announce.webhooks");

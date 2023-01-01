@@ -41,6 +41,7 @@ import org.jreleaser.version.JavaRuntimeVersion;
 import org.jreleaser.version.SemanticVersion;
 import org.jreleaser.version.Version;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -715,8 +716,6 @@ public final class Project extends AbstractModelObject<Project> implements Domai
         private String pattern;
         private String label;
         private Boolean fullChangelog;
-        private String cachedLabel;
-
         private final org.jreleaser.model.api.project.Project.Snapshot immutable = new org.jreleaser.model.api.project.Project.Snapshot() {
             private static final long serialVersionUID = 2581314557970795502L;
 
@@ -740,6 +739,7 @@ public final class Project extends AbstractModelObject<Project> implements Domai
                 return unmodifiableMap(Snapshot.this.asMap(full));
             }
         };
+        private String cachedLabel;
 
         public org.jreleaser.model.api.project.Project.Snapshot asImmutable() {
             return immutable;
@@ -1156,11 +1156,15 @@ public final class Project extends AbstractModelObject<Project> implements Domai
         }
     }
 
-    public static class VersionPattern extends AbstractModelObject<VersionPattern> {
+    public static class VersionPattern extends AbstractModelObject<VersionPattern> implements Serializable {
+        private static final long serialVersionUID = -8292733451111227968L;
+
         private org.jreleaser.model.VersionPattern.Type type;
         private String format;
 
         private final org.jreleaser.model.api.project.Project.VersionPattern immutable = new org.jreleaser.model.api.project.Project.VersionPattern() {
+            private static final long serialVersionUID = 1073045324421554619L;
+
             @Override
             public org.jreleaser.model.VersionPattern.Type getType() {
                 return type;

@@ -45,7 +45,11 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.9.0
  */
-public abstract class MacportsPackagerValidator {
+public final class MacportsPackagerValidator {
+    private MacportsPackagerValidator() {
+        // noop
+    }
+
     public static void validateMacports(JReleaserContext context, Distribution distribution, MacportsPackager packager, Errors errors) {
         context.getLogger().debug("distribution.{}.macports", distribution.getName());
         JReleaserModel model = context.getModel();

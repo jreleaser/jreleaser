@@ -53,7 +53,11 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class ChocolateyPackagerValidator {
+public final class ChocolateyPackagerValidator {
+    private ChocolateyPackagerValidator() {
+        // noop
+    }
+
     public static void validateChocolatey(JReleaserContext context, Distribution distribution, ChocolateyPackager packager, Errors errors) {
         context.getLogger().debug("distribution.{}.chocolatey", distribution.getName());
         JReleaserModel model = context.getModel();

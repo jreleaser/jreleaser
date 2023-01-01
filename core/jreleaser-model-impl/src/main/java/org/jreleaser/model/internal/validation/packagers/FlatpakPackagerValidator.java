@@ -52,7 +52,11 @@ import static org.jreleaser.util.StringUtils.isTrue;
  * @author Andres Almiray
  * @since 1.2.0
  */
-public abstract class FlatpakPackagerValidator {
+public final class FlatpakPackagerValidator {
+    private FlatpakPackagerValidator() {
+        // noop
+    }
+
     public static void validateFlatpak(JReleaserContext context, Distribution distribution, FlatpakPackager packager, Errors errors) {
         context.getLogger().debug("distribution.{}.flatpak", distribution.getName());
         JReleaserModel model = context.getModel();

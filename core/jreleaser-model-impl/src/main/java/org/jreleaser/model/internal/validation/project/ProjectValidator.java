@@ -48,7 +48,11 @@ import static org.jreleaser.util.StringUtils.isTrue;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class ProjectValidator {
+public final class ProjectValidator {
+    private ProjectValidator() {
+        // noop
+    }
+
     public static void validateProject(JReleaserContext context, Mode mode, Errors errors) {
         context.getLogger().debug("project");
         Project project = context.getModel().getProject();

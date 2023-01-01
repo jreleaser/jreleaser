@@ -30,7 +30,11 @@ import static org.jreleaser.model.internal.validation.deploy.maven.MavenDeployer
  * @author Andres Almiray
  * @since 1.3.0
  */
-public abstract class ArtifactoryMavenDeployerValidator {
+public final class ArtifactoryMavenDeployerValidator {
+    private ArtifactoryMavenDeployerValidator() {
+        // noop
+    }
+
     public static void validateArtifactoryMavenDeployer(JReleaserContext context, Mode mode, Errors errors) {
         Map<String, ArtifactoryMavenDeployer> artifactory = context.getModel().getDeploy().getMaven().getArtifactory();
         if (!artifactory.isEmpty()) context.getLogger().debug("deploy.maven.artifactory");

@@ -35,7 +35,11 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.6.0
  */
-public abstract class ArticleAnnouncerValidator {
+public final class ArticleAnnouncerValidator {
+    private ArticleAnnouncerValidator() {
+        // noop
+    }
+
     public static void validateArticle(JReleaserContext context, ArticleAnnouncer article, Errors errors) {
         context.getLogger().debug("announce.article");
         if (!article.resolveEnabled(context.getModel().getProject())) {

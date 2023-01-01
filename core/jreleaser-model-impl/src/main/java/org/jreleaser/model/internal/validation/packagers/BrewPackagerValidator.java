@@ -50,7 +50,11 @@ import static org.jreleaser.util.StringUtils.isTrue;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class BrewPackagerValidator {
+public final class BrewPackagerValidator {
+    private BrewPackagerValidator() {
+        // noop
+    }
+
     public static void validateBrew(JReleaserContext context, Distribution distribution, BrewPackager packager, Errors errors) {
         context.getLogger().debug("distribution.{}.brew", distribution.getName());
         JReleaserModel model = context.getModel();

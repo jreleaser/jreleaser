@@ -28,7 +28,11 @@ import static org.jreleaser.model.internal.validation.hooks.CommandHooksValidato
  * @author Andres Almiray
  * @since 1.2.0
  */
-public abstract class HooksValidator {
+public final class HooksValidator {
+    private HooksValidator() {
+        // noop
+    }
+
     public static void validateHooks(JReleaserContext context, Errors errors) {
         context.getLogger().debug("hooks");
 

@@ -27,7 +27,11 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.4.0
  */
-public abstract class ChecksumValidator {
+public final class ChecksumValidator {
+    private ChecksumValidator() {
+        // noop
+    }
+
     public static void validateChecksum(JReleaserContext context) {
         context.getLogger().debug("checksum");
         Checksum checksum = context.getModel().getChecksum();

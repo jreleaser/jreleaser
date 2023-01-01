@@ -43,7 +43,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public abstract class JlinkAssemblerValidator {
+public final class JlinkAssemblerValidator {
+    private JlinkAssemblerValidator() {
+        // noop
+    }
+
     public static void validateJlink(JReleaserContext context, Mode mode, Errors errors) {
         Map<String, JlinkAssembler> jlink = context.getModel().getAssemble().getJlink();
         if (!jlink.isEmpty()) context.getLogger().debug("assemble.jlink");

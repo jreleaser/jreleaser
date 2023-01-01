@@ -34,7 +34,11 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public abstract class SftpUploaderValidator {
+public final class SftpUploaderValidator {
+    private SftpUploaderValidator() {
+        // noop
+    }
+
     public static void validateSftpUploader(JReleaserContext context, Mode mode, Errors errors) {
         Map<String, SftpUploader> sftp = context.getModel().getUpload().getSftp();
         if (!sftp.isEmpty()) context.getLogger().debug("upload.sftp");

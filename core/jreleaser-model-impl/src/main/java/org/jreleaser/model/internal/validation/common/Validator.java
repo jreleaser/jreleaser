@@ -47,7 +47,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class Validator {
+public final class Validator {
+    private Validator() {
+        // noop
+    }
+
     public static String checkProperty(JReleaserContext context, String key, String property, String value, Errors errors) {
         if (isNotBlank(value)) return value;
         Environment environment = context.getModel().getEnvironment();
@@ -162,7 +166,7 @@ public abstract class Validator {
         if (isBlank(self.getOwner())) self.setOwner(other.getOwner());
     }
 
-    public static void validateContinueOnError(Packager self, Packager other) {
+    public static void validateContinueOnError(Packager<?> self, Packager<?> other) {
         if (!self.isContinueOnErrorSet()) {
             self.setContinueOnError(other.isContinueOnError());
         }
@@ -245,7 +249,7 @@ public abstract class Validator {
         }
     }
 
-    public static void validateFileSet(Mode mode, Assembler assembler, FileSet fileSet, int index, Errors errors) {
+    public static void validateFileSet(Mode mode, Assembler<?> assembler, FileSet fileSet, int index, Errors errors) {
         if (mode.validateStandalone() && isBlank(fileSet.getInput())) {
             errors.configuration(RB.$("validation_must_not_be_null", assembler.getType() + "." + assembler.getName() + ".fileSet[" + index + "].input"));
         }

@@ -36,7 +36,11 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public abstract class HttpDownloaderValidator {
+public final class HttpDownloaderValidator {
+    private HttpDownloaderValidator() {
+        // noop
+    }
+
     public static void validateHttpDownloader(JReleaserContext context, Mode mode, Errors errors) {
         Map<String, HttpDownloader> http = context.getModel().getDownload().getHttp();
         if (!http.isEmpty()) context.getLogger().debug("download.http");

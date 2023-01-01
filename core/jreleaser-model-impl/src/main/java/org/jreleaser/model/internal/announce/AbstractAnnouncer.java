@@ -68,7 +68,7 @@ public abstract class AbstractAnnouncer<S extends AbstractAnnouncer<S, A>, A ext
 
     @Override
     public String getPrefix() {
-        return name;
+        return getName();
     }
 
     @Override

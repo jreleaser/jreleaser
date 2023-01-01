@@ -36,7 +36,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 1.3.0
  */
-public abstract class Nexus2MavenDeployerValidator {
+public final class Nexus2MavenDeployerValidator {
+    private Nexus2MavenDeployerValidator() {
+        // noop
+    }
+
     public static void validateNexus2MavenDeployer(JReleaserContext context, Mode mode, Errors errors) {
         Map<String, Nexus2MavenDeployer> nexus2 = context.getModel().getDeploy().getMaven().getNexus2();
         if (!nexus2.isEmpty()) context.getLogger().debug("deploy.maven.nexus2");

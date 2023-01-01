@@ -32,7 +32,11 @@ import java.util.List;
  * @author Andres Almiray
  * @since 0.8.0
  */
-public abstract class ArchiveAssemblerResolver {
+public final class ArchiveAssemblerResolver {
+    private ArchiveAssemblerResolver() {
+        // noop
+    }
+
     public static void resolveArchiveOutputs(JReleaserContext context, Errors errors) {
         List<ArchiveAssembler> activeArchives = context.getModel().getAssemble().getActiveArchives();
         if (!activeArchives.isEmpty()) context.getLogger().debug("assemble.archive");

@@ -377,9 +377,9 @@ public final class Maven extends AbstractModelObject<Maven> implements Domain, A
                 return (Map<String, A>) gitlab;
             case org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.TYPE:
                 return (Map<String, A>) nexus2;
+            default:
+                return Collections.emptyMap();
         }
-
-        return Collections.emptyMap();
     }
 
     public <A extends MavenDeployer<?>> List<A> findAllActiveMavenDeployers() {

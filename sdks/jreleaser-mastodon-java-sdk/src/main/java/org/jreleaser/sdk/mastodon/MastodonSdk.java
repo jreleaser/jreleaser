@@ -17,7 +17,13 @@
  */
 package org.jreleaser.sdk.mastodon;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import feign.form.FormEncoder;
+import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.logging.JReleaserLogger;
@@ -58,10 +64,17 @@ public class MastodonSdk {
             host += API_V1;
         }
 
+        ObjectMapper objectMapper = new ObjectMapper()
+            .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .configure(SerializationFeature.INDENT_OUTPUT, true);
+
         this.logger = logger;
         this.dryrun = dryrun;
         this.api = ClientUtils.builder(logger, connectTimeout, readTimeout)
-            .encoder(new FormEncoder(new JacksonEncoder()))
+            .encoder(new FormEncoder(new JacksonEncoder(objectMapper)))
+            .decoder(new JacksonDecoder(objectMapper))
             .requestInterceptor(template -> template.header("Authorization", String.format("Bearer %s", accessToken)))
             .target(MastodonAPI.class, host);
 

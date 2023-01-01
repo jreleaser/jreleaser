@@ -35,7 +35,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class SmtpAnnouncerValidator {
+public final class SmtpAnnouncerValidator {
+    private SmtpAnnouncerValidator() {
+        // noop
+    }
+
     public static void validateSmtp(JReleaserContext context, SmtpAnnouncer smtp, Errors errors) {
         context.getLogger().debug("announce.mail");
         if (!smtp.resolveEnabled(context.getModel().getProject())) {

@@ -30,7 +30,11 @@ import static org.jreleaser.model.internal.validation.common.Validator.validateG
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class FilesValidator {
+public final class FilesValidator {
+    private FilesValidator() {
+        // noop
+    }
+
     public static void validateFiles(JReleaserContext context, Mode mode, Errors errors) {
         if (!mode.validateConfig()) {
             return;

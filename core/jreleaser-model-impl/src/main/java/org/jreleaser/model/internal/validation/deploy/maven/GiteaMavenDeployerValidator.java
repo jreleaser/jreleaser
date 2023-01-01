@@ -34,7 +34,11 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 1.3.0
  */
-public abstract class GiteaMavenDeployerValidator {
+public final class GiteaMavenDeployerValidator {
+    private GiteaMavenDeployerValidator() {
+        // noop
+    }
+
     public static void validateGiteaMavenDeployer(JReleaserContext context, Mode mode, Errors errors) {
         Map<String, GiteaMavenDeployer> gitea = context.getModel().getDeploy().getMaven().getGitea();
         if (!gitea.isEmpty()) context.getLogger().debug("deploy.maven.gitea");

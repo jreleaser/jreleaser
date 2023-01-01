@@ -34,8 +34,12 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Anyul Rivas
  * @since 0.5.0
  */
-public abstract class GoogleChatAnnouncerValidator {
+public final class GoogleChatAnnouncerValidator {
     private static final String DEFAULT_GOOGLE_CHAT_TPL = "src/jreleaser/templates/googleChat.tpl";
+
+    private GoogleChatAnnouncerValidator() {
+        // noop
+    }
 
     public static void validateGoogleChat(JReleaserContext context, GoogleChatAnnouncer googleChat, Errors errors) {
         context.getLogger().debug("announce.googleChat");

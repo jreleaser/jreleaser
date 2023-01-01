@@ -116,7 +116,7 @@ public final class Artifacts {
         return resolveTemplate(input, props);
     }
 
-    public static String resolveForArtifact(String input, JReleaserContext context, Artifact artifact, Assembler assembler) {
+    public static String resolveForArtifact(String input, JReleaserContext context, Artifact artifact, Assembler<?> assembler) {
         Map<String, Object> props = context.fullProps();
         props.putAll(assembler.props());
         artifactProps(artifact, props);
@@ -274,7 +274,7 @@ public final class Artifacts {
             downloadUrl = artifact.getExtraProperty(DOWNLOAD_URL_KEY);
         }
 
-        Packager packager = distribution.findPackager(packagerName);
+        Packager<?> packager = distribution.findPackager(packagerName);
         if (isBlank(downloadUrl)) {
             downloadUrl = packager.getDownloadUrl();
         }
@@ -286,7 +286,7 @@ public final class Artifacts {
             downloadUrl = distribution.getExtraProperty(DOWNLOAD_URL_KEY);
         }
 
-        BaseReleaser service = context.getModel().getRelease().getReleaser();
+        BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
         if (isBlank(downloadUrl)) {
             if (!service.isSkipRelease() && service.isArtifacts() && service.resolveUploadAssetsEnabled(context.getModel().getProject())) {
                 downloadUrl = service.getDownloadUrl();
@@ -340,7 +340,7 @@ public final class Artifacts {
             downloadUrl = distribution.getExtraProperty(DOWNLOAD_URL_KEY);
         }
 
-        BaseReleaser service = context.getModel().getRelease().getReleaser();
+        BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
         if (isBlank(downloadUrl)) {
             if (!service.isSkipRelease() && service.isArtifacts() && service.resolveUploadAssetsEnabled(context.getModel().getProject())) {
                 downloadUrl = service.getDownloadUrl();
@@ -379,7 +379,7 @@ public final class Artifacts {
         String coords = props.getExtraProperty(DOWNLOAD_URL_FROM_KEY);
         if (isBlank(coords)) {
             // search for "<uploaderType><uploaderName>Path"
-            for (Uploader up : upload.findAllActiveUploaders()) {
+            for (Uploader<?> up : upload.findAllActiveUploaders()) {
                 List<String> keys = up.resolveSkipKeys();
                 String key = up.getType() + capitalize(up.getName()) + "Path";
                 if (artifact.getExtraProperties().containsKey(key) && !isSkip(props, keys)) {
@@ -392,7 +392,7 @@ public final class Artifacts {
         String[] parts = coords.split(":");
         if (parts.length != 2) return null;
 
-        Optional<? extends Uploader> uploader = upload
+        Optional<? extends Uploader<?>> uploader = upload
             .getActiveUploader(parts[0], parts[1]);
         if (uploader.isPresent()) {
             List<String> keys = uploader.get().resolveSkipKeys();
@@ -401,7 +401,7 @@ public final class Artifacts {
             }
         } else {
             // search for "<uploaderType><uploaderName>Path"
-            for (Uploader up : upload.findAllActiveUploaders()) {
+            for (Uploader<?> up : upload.findAllActiveUploaders()) {
                 List<String> keys = up.resolveSkipKeys();
                 String key = up.getType() + capitalize(up.getName()) + "Path";
                 if (artifact.getExtraProperties().containsKey(key) && !isSkip(props, keys)) {

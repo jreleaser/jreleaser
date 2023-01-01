@@ -48,7 +48,11 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class SnapPackagerValidator {
+public final class SnapPackagerValidator {
+    private SnapPackagerValidator() {
+        // noop
+    }
+
     public static void validateSnap(JReleaserContext context, Distribution distribution, SnapPackager packager, Errors errors) {
         context.getLogger().debug("distribution.{}.snap", distribution.getName());
         JReleaserModel model = context.getModel();

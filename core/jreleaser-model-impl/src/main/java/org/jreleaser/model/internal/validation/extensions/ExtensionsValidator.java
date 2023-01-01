@@ -32,7 +32,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 1.3.0
  */
-public abstract class ExtensionsValidator {
+public final class ExtensionsValidator {
+    private ExtensionsValidator() {
+        // noop
+    }
+
     public static void validateExtensions(JReleaserContext context, Errors errors) {
         Map<String, Extension> extensions = context.getModel().getExtensions();
         if (!extensions.isEmpty()) context.getLogger().debug("extensions");

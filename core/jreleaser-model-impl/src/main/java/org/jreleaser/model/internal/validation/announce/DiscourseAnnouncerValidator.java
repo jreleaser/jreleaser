@@ -36,8 +36,12 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author shblue21
  * @since 1.3.0
  */
-public abstract class DiscourseAnnouncerValidator {
+public final class DiscourseAnnouncerValidator {
     private static final String DEFAULT_DISCOURSE_TPL = "src/jreleaser/templates/discourse.tpl";
+
+    private DiscourseAnnouncerValidator() {
+        // noop
+    }
 
     public static void validateDiscourse(JReleaserContext context, DiscourseAnnouncer discourse, Errors errors) {
         context.getLogger().debug("announce.discourse");

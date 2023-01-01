@@ -43,7 +43,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 1.2.0
  */
-public abstract class AsdfPackagerValidator {
+public final class AsdfPackagerValidator {
+    private AsdfPackagerValidator() {
+        // noop
+    }
+
     public static void validateAsdf(JReleaserContext context, Distribution distribution, AsdfPackager packager, Errors errors) {
         context.getLogger().debug("distribution.{}.asdf", distribution.getName());
         JReleaserModel model = context.getModel();

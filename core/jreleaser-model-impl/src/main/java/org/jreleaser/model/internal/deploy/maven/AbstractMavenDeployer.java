@@ -85,7 +85,7 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
 
     @Override
     public String getPrefix() {
-        return type;
+        return getType();
     }
 
     @Override

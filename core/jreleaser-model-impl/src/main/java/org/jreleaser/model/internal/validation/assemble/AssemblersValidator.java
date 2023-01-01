@@ -44,7 +44,11 @@ import static org.jreleaser.model.internal.validation.assemble.NativeImageAssemb
  * @author Andres Almiray
  * @since 0.2.0
  */
-public abstract class AssemblersValidator {
+public final class AssemblersValidator {
+    private AssemblersValidator() {
+        // noop
+    }
+
     public static void validateAssemblers(JReleaserContext context, Mode mode, Errors errors) {
         Assemble assemble = context.getModel().getAssemble();
         context.getLogger().debug("assemble");

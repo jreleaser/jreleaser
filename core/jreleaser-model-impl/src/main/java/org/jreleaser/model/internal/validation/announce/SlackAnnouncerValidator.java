@@ -35,8 +35,12 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class SlackAnnouncerValidator {
+public final class SlackAnnouncerValidator {
     private static final String DEFAULT_SLACK_TPL = "src/jreleaser/templates/slack.tpl";
+
+    private SlackAnnouncerValidator() {
+        // noop
+    }
 
     public static void validateSlack(JReleaserContext context, SlackAnnouncer slack, Errors errors) {
         context.getLogger().debug("announce.slack");

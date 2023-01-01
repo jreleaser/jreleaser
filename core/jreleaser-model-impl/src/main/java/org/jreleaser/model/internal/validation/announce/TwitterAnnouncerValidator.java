@@ -37,7 +37,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class TwitterAnnouncerValidator {
+public final class TwitterAnnouncerValidator {
+    private TwitterAnnouncerValidator() {
+        // noop
+    }
+
     public static void validateTwitter(JReleaserContext context, TwitterAnnouncer twitter, Errors errors) {
         context.getLogger().debug("announce.twitter");
         if (!twitter.resolveEnabled(context.getModel().getProject())) {

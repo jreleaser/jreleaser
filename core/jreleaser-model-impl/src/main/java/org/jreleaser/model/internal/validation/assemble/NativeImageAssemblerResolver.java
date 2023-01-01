@@ -33,7 +33,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public abstract class NativeImageAssemblerResolver {
+public final class NativeImageAssemblerResolver {
+    private NativeImageAssemblerResolver() {
+        // noop
+    }
+
     public static void resolveNativeImageOutputs(JReleaserContext context, Errors errors) {
         List<NativeImageAssembler> activeNativeImages = context.getModel().getAssemble().getActiveNativeImages();
         if (!activeNativeImages.isEmpty()) context.getLogger().debug("assemble.nativeImage");

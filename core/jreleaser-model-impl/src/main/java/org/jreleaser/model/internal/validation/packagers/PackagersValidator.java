@@ -41,7 +41,11 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class PackagersValidator {
+public final class PackagersValidator {
+    private PackagersValidator() {
+        // noop
+    }
+
     public static void validatePackagers(JReleaserContext context, Mode mode, Errors errors) {
         if (!mode.validateConfig()) {
             return;

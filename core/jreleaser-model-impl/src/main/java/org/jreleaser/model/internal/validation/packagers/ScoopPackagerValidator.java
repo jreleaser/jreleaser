@@ -43,7 +43,11 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class ScoopPackagerValidator {
+public final class ScoopPackagerValidator {
+    private ScoopPackagerValidator() {
+        // noop
+    }
+
     public static void validateScoop(JReleaserContext context, Distribution distribution, ScoopPackager packager, Errors errors) {
         context.getLogger().debug("distribution.{}.scoop", distribution.getName());
         JReleaserModel model = context.getModel();

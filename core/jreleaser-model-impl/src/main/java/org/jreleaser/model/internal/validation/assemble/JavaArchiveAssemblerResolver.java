@@ -31,7 +31,11 @@ import java.util.List;
  * @author Andres Almiray
  * @since 1.4.0
  */
-public abstract class JavaArchiveAssemblerResolver {
+public final class JavaArchiveAssemblerResolver {
+    private JavaArchiveAssemblerResolver() {
+        // noop
+    }
+
     public static void resolveJavaArchiveOutputs(JReleaserContext context, Errors errors) {
         List<JavaArchiveAssembler> activeArchives = context.getModel().getAssemble().getActiveJavaArchives();
         if (!activeArchives.isEmpty()) context.getLogger().debug("assemble.java-archive");

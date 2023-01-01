@@ -32,7 +32,11 @@ import static org.jreleaser.model.internal.validation.download.SftpDownloaderVal
  * @author Andres Almiray
  * @since 1.1.0
  */
-public abstract class DownloadersValidator {
+public final class DownloadersValidator {
+    private DownloadersValidator() {
+        // noop
+    }
+
     public static void validateDownloaders(JReleaserContext context, Mode mode, Errors errors) {
         Download download = context.getModel().getDownload();
         context.getLogger().debug("download");

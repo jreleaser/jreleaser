@@ -45,9 +45,13 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.10.0
  */
-public abstract class JpackageAssemblerValidator {
+public final class JpackageAssemblerValidator {
     private static final String MAC_IDENTIFIER = "[a-zA-Z0-9][a-zA-Z0-9\\.\\-]*";
     private static final Pattern MAC_IDENTIFIER_PATTERN = Pattern.compile(MAC_IDENTIFIER);
+
+    private JpackageAssemblerValidator() {
+        // noop
+    }
 
     public static void validateJpackage(JReleaserContext context, Mode mode, Errors errors) {
         Map<String, JpackageAssembler> jpackage = context.getModel().getAssemble().getJpackage();

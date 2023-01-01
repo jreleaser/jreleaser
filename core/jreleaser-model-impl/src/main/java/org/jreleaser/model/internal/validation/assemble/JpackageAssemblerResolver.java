@@ -35,7 +35,11 @@ import static org.jreleaser.util.FileUtils.listFilesAndProcess;
  * @author Andres Almiray
  * @since 0.10.0
  */
-public abstract class JpackageAssemblerResolver {
+public final class JpackageAssemblerResolver {
+    private JpackageAssemblerResolver() {
+        // noop
+    }
+
     public static void resolveJpackageOutputs(JReleaserContext context, Errors errors) {
         List<JpackageAssembler> activeJpackages = context.getModel().getAssemble().getActiveJpackages();
         if (!activeJpackages.isEmpty()) context.getLogger().debug("assemble.jpackage");

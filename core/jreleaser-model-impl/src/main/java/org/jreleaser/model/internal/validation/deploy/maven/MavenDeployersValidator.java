@@ -42,7 +42,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 1.3.0
  */
-public abstract class MavenDeployersValidator {
+public final class MavenDeployersValidator {
+    private MavenDeployersValidator() {
+        // noop
+    }
+
     public static void validateMavenDeployers(JReleaserContext context, Mode mode, Errors errors) {
         Maven maven = context.getModel().getDeploy().getMaven();
         context.getLogger().debug("deploy.maven");

@@ -36,7 +36,11 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.4.0
  */
-public abstract class HttpUploaderValidator {
+public final class HttpUploaderValidator {
+    private HttpUploaderValidator() {
+        // noop
+    }
+
     public static void validateHttpUploader(JReleaserContext context, Mode mode, Errors errors) {
         Map<String, HttpUploader> http = context.getModel().getUpload().getHttp();
         if (!http.isEmpty()) context.getLogger().debug("upload.http");

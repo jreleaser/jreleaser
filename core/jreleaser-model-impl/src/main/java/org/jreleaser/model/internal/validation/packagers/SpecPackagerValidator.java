@@ -43,7 +43,11 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.9.1
  */
-public abstract class SpecPackagerValidator {
+public final class SpecPackagerValidator {
+    private SpecPackagerValidator() {
+        // noop
+    }
+
     public static void validateSpec(JReleaserContext context, Distribution distribution, SpecPackager packager, Errors errors) {
         context.getLogger().debug("distribution.{}.spec", distribution.getName());
         JReleaserModel model = context.getModel();

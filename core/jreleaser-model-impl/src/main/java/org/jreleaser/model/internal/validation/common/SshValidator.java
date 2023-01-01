@@ -29,7 +29,11 @@ import static org.jreleaser.util.CollectionUtils.listOf;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public abstract class SshValidator {
+public final class SshValidator {
+    private SshValidator() {
+        // noop
+    }
+
     public static void validateSsh(JReleaserContext context, Ssh ssh, String name,
                                    String envPrefix, String propPrefix, Errors errors) {
         ssh.setUsername(

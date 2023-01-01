@@ -36,7 +36,11 @@ import static org.jreleaser.model.internal.validation.upload.SftpUploaderValidat
  * @author Andres Almiray
  * @since 0.3.0
  */
-public abstract class UploadersValidator {
+public final class UploadersValidator {
+    private UploadersValidator() {
+        // noop
+    }
+
     public static void validateUploaders(JReleaserContext context, Mode mode, Errors errors) {
         Upload upload = context.getModel().getUpload();
         context.getLogger().debug("upload");

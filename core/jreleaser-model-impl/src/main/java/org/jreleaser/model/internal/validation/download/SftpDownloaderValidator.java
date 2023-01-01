@@ -35,7 +35,11 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public abstract class SftpDownloaderValidator {
+public final class SftpDownloaderValidator {
+    private SftpDownloaderValidator() {
+        // noop
+    }
+
     public static void validateSftpDownloader(JReleaserContext context, Mode mode, Errors errors) {
         Map<String, SftpDownloader> sftp = context.getModel().getDownload().getSftp();
         if (!sftp.isEmpty()) context.getLogger().debug("download.sftp");

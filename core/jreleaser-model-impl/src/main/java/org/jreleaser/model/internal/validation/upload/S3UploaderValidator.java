@@ -36,7 +36,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.3.0
  */
-public abstract class S3UploaderValidator {
+public final class S3UploaderValidator {
+    private S3UploaderValidator() {
+        // noop
+    }
+
     public static void validateS3(JReleaserContext context, Mode mode, Errors errors) {
         Map<String, S3Uploader> s3 = context.getModel().getUpload().getS3();
         if (!s3.isEmpty()) context.getLogger().debug("upload.s3");

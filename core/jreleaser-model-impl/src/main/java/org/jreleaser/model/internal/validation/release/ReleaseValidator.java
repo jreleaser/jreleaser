@@ -33,7 +33,11 @@ import static org.jreleaser.model.internal.validation.release.GitlabReleaserVali
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class ReleaseValidator {
+public final class ReleaseValidator {
+    private ReleaseValidator() {
+        // noop
+    }
+
     public static void validateRelease(JReleaserContext context, Mode mode, Errors errors) {
         context.getLogger().debug("release");
         Release release = context.getModel().getRelease();

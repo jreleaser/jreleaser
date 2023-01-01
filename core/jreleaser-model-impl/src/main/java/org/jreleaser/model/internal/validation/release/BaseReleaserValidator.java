@@ -60,11 +60,15 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class BaseReleaserValidator {
+public final class BaseReleaserValidator {
+    private BaseReleaserValidator() {
+        // noop
+    }
+
     private static final String DEFAULT_CHANGELOG_TPL = "src/jreleaser/templates/changelog.tpl";
     private static final String DEFAULT_APPEND_CHANGELOG_TPL = "src/jreleaser/templates/append-changelog.tpl";
 
-    public static void validateGitService(JReleaserContext context, Mode mode, BaseReleaser service, Errors errors) {
+    public static void validateGitService(JReleaserContext context, Mode mode, BaseReleaser<?, ?> service, Errors errors) {
         JReleaserModel model = context.getModel();
         Project project = model.getProject();
 
@@ -266,7 +270,7 @@ public abstract class BaseReleaserValidator {
         }
     }
 
-    private static void validateChangelog(JReleaserContext context, BaseReleaser service, Errors errors) {
+    private static void validateChangelog(JReleaserContext context, BaseReleaser<?, ?> service, Errors errors) {
         Changelog changelog = service.getChangelog();
 
         if (isNotBlank(changelog.getExternal())) {

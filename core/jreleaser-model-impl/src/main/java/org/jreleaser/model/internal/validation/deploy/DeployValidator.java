@@ -29,7 +29,11 @@ import static org.jreleaser.model.internal.validation.deploy.maven.MavenDeployer
  * @author Andres Almiray
  * @since 1.3.0
  */
-public abstract class DeployValidator {
+public final class DeployValidator {
+    private DeployValidator() {
+        // noop
+    }
+
     public static void validateDeploy(JReleaserContext context, Mode mode, Errors errors) {
         context.getLogger().debug("deploy");
 

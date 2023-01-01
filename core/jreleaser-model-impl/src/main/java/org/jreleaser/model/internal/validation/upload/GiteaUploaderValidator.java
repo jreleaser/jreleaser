@@ -36,7 +36,11 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 1.2.0
  */
-public abstract class GiteaUploaderValidator {
+public final class GiteaUploaderValidator {
+    private GiteaUploaderValidator() {
+        // noop
+    }
+
     public static void validateGiteaUploader(JReleaserContext context, Mode mode, Errors errors) {
         Map<String, GiteaUploader> gitea = context.getModel().getUpload().getGitea();
         if (!gitea.isEmpty()) context.getLogger().debug("upload.gitea");

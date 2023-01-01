@@ -61,7 +61,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class DistributionsValidator {
+public final class DistributionsValidator {
+    private DistributionsValidator() {
+        // noop
+    }
+
     public static void validateDistributions(JReleaserContext context, Mode mode, Errors errors) {
         Map<String, Distribution> distributions = context.getModel().getDistributions();
         if (!distributions.isEmpty()) context.getLogger().debug("distributions");
@@ -291,7 +295,7 @@ public abstract class DistributionsValidator {
         }
     }
 
-    public static void validateArtifactPlatforms(Distribution distribution, Packager packager,
+    public static void validateArtifactPlatforms(Distribution distribution, Packager<?> packager,
                                                  List<Artifact> candidateArtifacts, Errors errors) {
         // validate distribution type
         if (distribution.getType() == org.jreleaser.model.Distribution.DistributionType.BINARY ||

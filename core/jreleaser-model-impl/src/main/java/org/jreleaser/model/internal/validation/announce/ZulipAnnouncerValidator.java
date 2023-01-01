@@ -34,8 +34,12 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class ZulipAnnouncerValidator {
+public final class ZulipAnnouncerValidator {
     private static final String DEFAULT_ZULIP_TPL = "src/jreleaser/templates/zulip.tpl";
+
+    private ZulipAnnouncerValidator() {
+        // noop
+    }
 
     public static void validateZulip(JReleaserContext context, ZulipAnnouncer zulip, Errors errors) {
         context.getLogger().debug("announce.zulip");

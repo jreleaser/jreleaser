@@ -36,7 +36,11 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 1.2.0
  */
-public abstract class GitlabUploaderValidator {
+public final class GitlabUploaderValidator {
+    private GitlabUploaderValidator() {
+        // noop
+    }
+
     public static void validateGitlabUploader(JReleaserContext context, Mode mode, Errors errors) {
         Map<String, GitlabUploader> gitlab = context.getModel().getUpload().getGitlab();
         if (!gitlab.isEmpty()) context.getLogger().debug("upload.gitlab");

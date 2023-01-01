@@ -32,8 +32,12 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class DiscussionsAnnouncerValidator {
+public final class DiscussionsAnnouncerValidator {
     private static final String DEFAULT_DISCUSSIONS_TPL = "src/jreleaser/templates/discussions.tpl";
+
+    private DiscussionsAnnouncerValidator() {
+        // noop
+    }
 
     public static void validateDiscussions(JReleaserContext context, DiscussionsAnnouncer discussions, Errors errors) {
         context.getLogger().debug("announce.discussions");

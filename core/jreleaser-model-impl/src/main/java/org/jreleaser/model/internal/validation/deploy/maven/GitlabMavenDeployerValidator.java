@@ -35,7 +35,11 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 1.3.0
  */
-public abstract class GitlabMavenDeployerValidator {
+public final class GitlabMavenDeployerValidator {
+    private GitlabMavenDeployerValidator() {
+        // noop
+    }
+
     public static void validateGitlabMavenDeployer(JReleaserContext context, Mode mode, Errors errors) {
         Map<String, GitlabMavenDeployer> gitlab = context.getModel().getDeploy().getMaven().getGitlab();
         if (!gitlab.isEmpty()) context.getLogger().debug("deploy.maven.gitlab");

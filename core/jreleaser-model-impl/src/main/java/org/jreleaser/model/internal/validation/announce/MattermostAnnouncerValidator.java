@@ -34,8 +34,12 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.4.0
  */
-public abstract class MattermostAnnouncerValidator {
+public final class MattermostAnnouncerValidator {
     private static final String DEFAULT_MATTERMOST_TPL = "src/jreleaser/templates/mattermost.tpl";
+
+    private MattermostAnnouncerValidator() {
+        // noop
+    }
 
     public static void validateMattermost(JReleaserContext context, MattermostAnnouncer mattermost, Errors errors) {
         context.getLogger().debug("announce.mattermost");

@@ -43,7 +43,11 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.10.0
  */
-public abstract class GofishPackagerValidator {
+public final class GofishPackagerValidator {
+    private GofishPackagerValidator() {
+        // noop
+    }
+
     public static void validateGofish(JReleaserContext context, Distribution distribution, GofishPackager packager, Errors errors) {
         context.getLogger().debug("distribution.{}.gofish", distribution.getName());
         JReleaserModel model = context.getModel();

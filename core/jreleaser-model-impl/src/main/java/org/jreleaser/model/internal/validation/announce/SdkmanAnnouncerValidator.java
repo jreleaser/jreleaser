@@ -35,7 +35,11 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class SdkmanAnnouncerValidator {
+public final class SdkmanAnnouncerValidator {
+    private SdkmanAnnouncerValidator() {
+        // noop
+    }
+
     public static void validateSdkmanAnnouncer(JReleaserContext context, SdkmanAnnouncer sdkman, Errors errors) {
         context.getLogger().debug("announce.sdkman");
         // activate if there are any active distributions with Sdkman packager enabled

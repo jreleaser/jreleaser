@@ -34,8 +34,12 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public abstract class TeamsAnnouncerValidator {
+public final class TeamsAnnouncerValidator {
     private static final String DEFAULT_TEAMS_TPL = "src/jreleaser/templates/teams.tpl";
+
+    private TeamsAnnouncerValidator() {
+        // noop
+    }
 
     public static void validateTeams(JReleaserContext context, TeamsAnnouncer teams, Errors errors) {
         context.getLogger().debug("announce.teams");

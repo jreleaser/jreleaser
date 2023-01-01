@@ -25,13 +25,17 @@ import org.jreleaser.util.Errors;
 import static org.jreleaser.model.api.release.Releaser.DRAFT;
 import static org.jreleaser.model.api.release.Releaser.PRERELEASE_PATTERN;
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
-
+import static org.jreleaser.model.internal.validation.release.BaseReleaserValidator.validateGitService;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class GithubReleaserValidator extends BaseReleaserValidator {
+public final class GithubReleaserValidator {
+    private GithubReleaserValidator() {
+        // noop
+    }
+
     public static boolean validateGithub(JReleaserContext context, Mode mode, GithubReleaser github, Errors errors) {
         if (null == github) return false;
         context.getLogger().debug("release.github");

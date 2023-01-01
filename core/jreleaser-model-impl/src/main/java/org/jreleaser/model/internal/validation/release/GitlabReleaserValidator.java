@@ -27,11 +27,17 @@ import org.jreleaser.util.Errors;
 import java.util.Map;
 import java.util.Optional;
 
+import static org.jreleaser.model.internal.validation.release.BaseReleaserValidator.validateGitService;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class GitlabReleaserValidator extends BaseReleaserValidator {
+public final class GitlabReleaserValidator  {
+    private GitlabReleaserValidator() {
+        // noop
+    }
+
     public static boolean validateGitlab(JReleaserContext context, Mode mode, GitlabReleaser gitlab, Errors errors) {
         if (null == gitlab) return false;
         context.getLogger().debug("release.gitlab");

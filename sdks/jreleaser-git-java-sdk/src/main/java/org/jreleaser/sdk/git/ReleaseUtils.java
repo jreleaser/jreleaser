@@ -34,11 +34,11 @@ import java.io.IOException;
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
 public final class ReleaseUtils {
     private ReleaseUtils() {
-
+        // noop
     }
 
     public static void createTag(JReleaserContext context) throws ReleaseException {
-        BaseReleaser service = context.getModel().getRelease().getReleaser();
+        BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
 
         try {
             GitSdk git = GitSdk.of(context);

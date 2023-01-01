@@ -82,7 +82,7 @@ public abstract class AbstractReleaserBuilder<R extends Releaser> implements Rel
     @Override
     public ReleaserBuilder<R> configureWith(JReleaserContext context) {
         this.context = context;
-        BaseReleaser service = context.getModel().getRelease().getReleaser();
+        BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
         if (!service.resolveUploadAssetsEnabled(context.getModel().getProject())) {
             return this;
         }
