@@ -206,6 +206,9 @@ public final class GitterAnnouncer extends AbstractAnnouncer<GitterAnnouncer, or
         announcer.setMessageTemplate(messageTemplate);
         announcer.setStructuredMessage(true);
         announcer.setMessageProperty("message");
+        announcer.setConnectTimeout(getConnectTimeout());
+        announcer.setReadTimeout(getReadTimeout());
+        announcer.setExtraProperties(getExtraProperties());
         return announcer;
     }
 }

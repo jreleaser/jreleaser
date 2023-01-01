@@ -180,6 +180,9 @@ public final class TeamsAnnouncer extends AbstractAnnouncer<TeamsAnnouncer, org.
         announcer.setWebhook(webhook);
         announcer.setMessageTemplate(messageTemplate);
         announcer.setStructuredMessage(false);
+        announcer.setConnectTimeout(getConnectTimeout());
+        announcer.setReadTimeout(getReadTimeout());
+        announcer.setExtraProperties(getExtraProperties());
         return announcer;
     }
 }

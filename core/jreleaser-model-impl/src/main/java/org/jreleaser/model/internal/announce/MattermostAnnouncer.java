@@ -223,6 +223,9 @@ public final class MattermostAnnouncer extends AbstractAnnouncer<MattermostAnnou
         announcer.setMessageTemplate(messageTemplate);
         announcer.setStructuredMessage(isStructuredMessage());
         announcer.setMessageProperty("text");
+        announcer.setConnectTimeout(getConnectTimeout());
+        announcer.setReadTimeout(getReadTimeout());
+        announcer.setExtraProperties(getExtraProperties());
         return announcer;
     }
 }

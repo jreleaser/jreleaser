@@ -35,6 +35,8 @@ interface WebhookAnnouncer extends Announcer {
 
     Property<String> getMessageProperty()
 
+    Property<Boolean> getStructuredMessage()
+
     RegularFileProperty getMessageTemplate()
 
     void setMessageTemplate(String messageTemplate)

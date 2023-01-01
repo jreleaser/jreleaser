@@ -211,6 +211,9 @@ public final class GoogleChatAnnouncer extends AbstractAnnouncer<GoogleChatAnnou
         announcer.setMessageTemplate(messageTemplate);
         announcer.setStructuredMessage(true);
         announcer.setMessageProperty("text");
+        announcer.setConnectTimeout(getConnectTimeout());
+        announcer.setReadTimeout(getReadTimeout());
+        announcer.setExtraProperties(getExtraProperties());
         return announcer;
     }
 }

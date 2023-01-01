@@ -39,6 +39,7 @@ class WebhookAnnouncerImpl extends AbstractAnnouncer implements WebhookAnnouncer
     final Property<String> message
     final Property<String> messageProperty
     final RegularFileProperty messageTemplate
+    final Property<Boolean> structuredMessage
 
     @Inject
     WebhookAnnouncerImpl(ObjectFactory objects) {
@@ -47,6 +48,7 @@ class WebhookAnnouncerImpl extends AbstractAnnouncer implements WebhookAnnouncer
         message = objects.property(String).convention(Providers.<String> notDefined())
         messageProperty = objects.property(String).convention(Providers.<String> notDefined())
         messageTemplate = objects.fileProperty().convention(Providers.notDefined())
+        structuredMessage = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
     }
 
     @Override
@@ -61,7 +63,8 @@ class WebhookAnnouncerImpl extends AbstractAnnouncer implements WebhookAnnouncer
             webhook.present ||
             message.present ||
             messageProperty.present ||
-            messageTemplate.present
+            messageTemplate.present ||
+            structuredMessage.present
     }
 
     org.jreleaser.model.internal.announce.WebhookAnnouncer toModel() {
@@ -74,6 +77,7 @@ class WebhookAnnouncerImpl extends AbstractAnnouncer implements WebhookAnnouncer
         if (messageTemplate.present) {
             w.messageTemplate = messageTemplate.asFile.get().absolutePath
         }
+        if (structuredMessage.present) w.structuredMessage = structuredMessage.get()
         w
     }
 }

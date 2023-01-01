@@ -206,6 +206,9 @@ public final class DiscordAnnouncer extends AbstractAnnouncer<DiscordAnnouncer, 
         announcer.setMessageTemplate(messageTemplate);
         announcer.setStructuredMessage(true);
         announcer.setMessageProperty("content");
+        announcer.setConnectTimeout(getConnectTimeout());
+        announcer.setReadTimeout(getReadTimeout());
+        announcer.setExtraProperties(getExtraProperties());
         return announcer;
     }
 }
