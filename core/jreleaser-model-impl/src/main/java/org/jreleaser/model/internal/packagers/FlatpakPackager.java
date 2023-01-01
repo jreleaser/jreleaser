@@ -418,7 +418,7 @@ public final class FlatpakPackager extends AbstractRepositoryPackager<org.jrelea
     }
 
     public PackagerRepository getPackagerRepository() {
-        return repository;
+        return getRepository();
     }
 
     @Override

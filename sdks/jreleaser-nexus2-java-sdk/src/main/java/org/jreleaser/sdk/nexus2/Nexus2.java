@@ -363,8 +363,8 @@ public class Nexus2 {
                 reader.reset();
                 return mapper.readValue(reader, mapper.constructType(type));
             } catch (RuntimeJsonMappingException e) {
-                if (e.getCause() != null && e.getCause() instanceof IOException) {
-                    throw IOException.class.cast(e.getCause());
+                if (e.getCause() instanceof IOException) {
+                    throw (IOException) e.getCause();
                 }
                 throw e;
             }
@@ -372,7 +372,7 @@ public class Nexus2 {
     }
 
     static class NotXml extends IOException {
-
+        private static final long serialVersionUID = -6458245950020411953L;
     }
 
     static class NexusErrorDecoder implements ErrorDecoder {

@@ -197,7 +197,7 @@ public final class GofishPackager extends AbstractRepositoryPackager<org.jreleas
     }
 
     public PackagerRepository getPackagerRepository() {
-        return repository;
+        return getRepository();
     }
 
     @Override

@@ -181,7 +181,7 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
             }
 
             doPublishDistribution(distribution, newProps);
-        } catch (IllegalArgumentException e) {
+        } catch (RuntimeException e) {
             throw new PackagerProcessingException(e);
         }
     }
@@ -190,7 +190,7 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
 
     protected abstract void doPublishDistribution(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException;
 
-    protected Map<String, Object> fillProps(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
+    protected Map<String, Object> fillProps(Distribution distribution, Map<String, Object> props) {
         Map<String, Object> newProps = new LinkedHashMap<>(props);
         context.getLogger().debug(RB.$("packager.fill.distribution.properties"));
         fillDistributionProperties(newProps, distribution);
@@ -216,7 +216,7 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
         props.putAll(distribution.props());
     }
 
-    protected abstract void fillPackagerProperties(Map<String, Object> props, Distribution distribution) throws PackagerProcessingException;
+    protected abstract void fillPackagerProperties(Map<String, Object> props, Distribution distribution);
 
     protected void executeCommand(Path directory, Command command) throws PackagerProcessingException {
         try {
@@ -367,12 +367,10 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
 
             String artifactOs = "";
             String artifactArch = "";
-            if (isNotBlank(platform)) {
-                if (platform.contains("-")) {
-                    String[] parts = platform.split("-");
-                    artifactOs = parts[0];
-                    artifactArch = parts[1];
-                }
+            if (isNotBlank(platform) && platform.contains("-")) {
+                String[] parts = platform.split("-");
+                artifactOs = parts[0];
+                artifactArch = parts[1];
             }
 
             safePut(props, ARTIFACT + artifactPlatform + NAME, artifactName);

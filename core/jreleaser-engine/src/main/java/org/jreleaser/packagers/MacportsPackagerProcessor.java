@@ -67,7 +67,7 @@ public class MacportsPackagerProcessor extends AbstractRepositoryPackagerProcess
     }
 
     @Override
-    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) throws PackagerProcessingException {
+    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) {
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
 
         props.put(KEY_MACPORTS_REPOSITORY_REPO_URL,

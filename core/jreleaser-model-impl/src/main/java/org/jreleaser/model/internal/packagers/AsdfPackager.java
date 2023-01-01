@@ -219,7 +219,7 @@ public final class AsdfPackager extends AbstractRepositoryPackager<org.jreleaser
     }
 
     public PackagerRepository getPackagerRepository() {
-        return repository;
+        return getRepository();
     }
 
     @Override

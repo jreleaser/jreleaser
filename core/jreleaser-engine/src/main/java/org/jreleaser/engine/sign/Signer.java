@@ -48,7 +48,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -340,11 +340,11 @@ public final class Signer {
         }
     }
 
-    private static List<SigningUtils.FilePair> collectArtifacts(JReleaserContext context, Function<SigningUtils.FilePair, Boolean> validator) {
+    private static List<SigningUtils.FilePair> collectArtifacts(JReleaserContext context, Predicate<SigningUtils.FilePair> validator) {
         return collectArtifacts(context, false, validator);
     }
 
-    private static List<SigningUtils.FilePair> collectArtifacts(JReleaserContext context, boolean forceSign, Function<SigningUtils.FilePair, Boolean> validator) {
+    private static List<SigningUtils.FilePair> collectArtifacts(JReleaserContext context, boolean forceSign, Predicate<SigningUtils.FilePair> validator) {
         List<SigningUtils.FilePair> files = new ArrayList<>();
 
         Signing signing = context.getModel().getSigning();
@@ -361,7 +361,7 @@ public final class Signer {
                 Path input = artifact.getEffectivePath(context);
                 Path output = signaturesDirectory.resolve(input.getFileName().toString().concat(extension));
                 SigningUtils.FilePair pair = new SigningUtils.FilePair(input, output);
-                if (!forceSign) pair.setValid(validator.apply(pair));
+                if (!forceSign) pair.setValid(validator.test(pair));
                 files.add(pair);
             }
         }
@@ -374,7 +374,7 @@ public final class Signer {
                     Path input = artifact.getEffectivePath(context, distribution);
                     Path output = signaturesDirectory.resolve(input.getFileName().toString().concat(extension));
                     SigningUtils.FilePair pair = new SigningUtils.FilePair(input, output);
-                    if (!forceSign) pair.setValid(validator.apply(pair));
+                    if (!forceSign) pair.setValid(validator.test(pair));
                     files.add(pair);
                 }
             }
@@ -387,7 +387,7 @@ public final class Signer {
                 if (Files.exists(checksums)) {
                     Path output = signaturesDirectory.resolve(checksums.getFileName().toString().concat(extension));
                     SigningUtils.FilePair pair = new SigningUtils.FilePair(checksums, output);
-                    if (!forceSign) pair.setValid(validator.apply(pair));
+                    if (!forceSign) pair.setValid(validator.test(pair));
                     files.add(pair);
                 }
             }

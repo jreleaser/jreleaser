@@ -62,7 +62,7 @@ public class ScoopPackagerProcessor extends AbstractRepositoryPackagerProcessor<
     }
 
     @Override
-    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) throws PackagerProcessingException {
+    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) {
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
 
         props.put(KEY_SCOOP_BUCKET_REPO_URL,

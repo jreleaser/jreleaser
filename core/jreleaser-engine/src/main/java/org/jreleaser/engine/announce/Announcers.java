@@ -45,7 +45,7 @@ public final class Announcers {
         // noop
     }
 
-    public static void announce(JReleaserContext context) throws AnnounceException {
+    public static void announce(JReleaserContext context) {
         context.getLogger().info(RB.$("announcers.header"));
         if (!context.getModel().getAnnounce().isEnabled()) {
             context.getLogger().info(RB.$("announcers.not.enabled"));

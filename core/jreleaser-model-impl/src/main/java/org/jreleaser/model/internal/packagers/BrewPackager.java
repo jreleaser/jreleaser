@@ -341,7 +341,7 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
     }
 
     public PackagerRepository getPackagerRepository() {
-        return repository;
+        return getTap();
     }
 
     @Override

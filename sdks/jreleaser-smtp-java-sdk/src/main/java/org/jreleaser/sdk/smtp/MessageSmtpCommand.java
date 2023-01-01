@@ -45,8 +45,8 @@ public class MessageSmtpCommand implements SmtpCommand {
     private final boolean dryrun;
     private final org.jreleaser.model.Mail.Transport transport;
     private final String host;
-    private final Integer port;
-    private final Boolean auth;
+    private final int port;
+    private final boolean auth;
     private final String username;
     private final String password;
     private final String from;
@@ -62,8 +62,8 @@ public class MessageSmtpCommand implements SmtpCommand {
                                boolean dryrun,
                                org.jreleaser.model.Mail.Transport transport,
                                String host,
-                               Integer port,
-                               Boolean auth,
+                               int port,
+                               boolean auth,
                                String username,
                                String password,
                                String from,
@@ -172,8 +172,8 @@ public class MessageSmtpCommand implements SmtpCommand {
         private boolean dryrun;
         private org.jreleaser.model.Mail.Transport transport = org.jreleaser.model.Mail.Transport.SMTP;
         private String host;
-        private Integer port;
-        private Boolean auth;
+        private int port;
+        private boolean auth;
         private String username;
         private String password;
         private String from;
@@ -204,12 +204,12 @@ public class MessageSmtpCommand implements SmtpCommand {
             return this;
         }
 
-        public Builder port(Integer port) {
+        public Builder port(int port) {
             this.port = port;
             return this;
         }
 
-        public Builder auth(Boolean auth) {
+        public Builder auth(boolean auth) {
             this.auth = auth;
             return this;
         }

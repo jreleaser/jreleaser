@@ -277,7 +277,7 @@ public final class MacportsPackager extends AbstractRepositoryPackager<org.jrele
     }
 
     public PackagerRepository getPackagerRepository() {
-        return repository;
+        return getRepository();
     }
 
     @Override

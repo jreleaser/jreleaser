@@ -81,10 +81,8 @@ public final class BaseReleaserValidator {
             return;
         }
 
-        if (!mode.validateStandalone()) {
-            if (isBlank(service.getOwner()) && !(service instanceof GenericGitReleaser)) {
-                errors.configuration(RB.$("validation_must_not_be_blank", service.getServiceName() + ".owner"));
-            }
+        if (!mode.validateStandalone() && isBlank(service.getOwner()) && !(service instanceof GenericGitReleaser)) {
+            errors.configuration(RB.$("validation_must_not_be_blank", service.getServiceName() + ".owner"));
         }
 
         if (isBlank(service.getName())) {
@@ -253,12 +251,10 @@ public final class BaseReleaserValidator {
         }
 
         if (mode.validateConfig()) {
-            if (service.isSign()) {
-                if (model.getSigning().getMode() == org.jreleaser.model.Signing.Mode.COSIGN) {
-                    service.setSign(false);
-                    errors.warning(RB.$("validation_git_signing_cosign", service.getServiceName()));
-                    return;
-                }
+            if (service.isSign() && model.getSigning().getMode() == org.jreleaser.model.Signing.Mode.COSIGN) {
+                service.setSign(false);
+                errors.warning(RB.$("validation_git_signing_cosign", service.getServiceName()));
+                return;
             }
             if (service.isSign() && !model.getSigning().isEnabled()) {
                 if (context.isDryrun()) {

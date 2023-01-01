@@ -131,7 +131,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         }
     }
 
-    private Map<String, Object> fillSpecProps(Distribution distribution, Map<String, Object> props, DockerSpec spec) throws PackagerProcessingException {
+    private Map<String, Object> fillSpecProps(Distribution distribution, Map<String, Object> props, DockerSpec spec) {
         List<Artifact> artifacts = singletonList(spec.getArtifact());
         Map<String, Object> newProps = fillProps(distribution, props);
         newProps.put(KEY_DOCKER_SPEC_NAME, spec.getName());
@@ -435,7 +435,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         if (!context.isDryrun()) executeCommandWithInput(cmd, in);
     }
 
-    private Map<String, List<String>> resolveTagNames(DockerConfiguration docker, Map<String, Object> props) throws PackagerProcessingException {
+    private Map<String, List<String>> resolveTagNames(DockerConfiguration docker, Map<String, Object> props) {
         Map<String, List<String>> tags = new LinkedHashMap<>();
 
         for (DockerConfiguration.Registry registry : docker.getRegistries()) {
@@ -541,7 +541,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
     }
 
     @Override
-    protected void prepareWorkingCopy(Map<String, Object> props, Path directory, Distribution distribution) throws PackagerProcessingException, IOException {
+    protected void prepareWorkingCopy(Map<String, Object> props, Path directory, Distribution distribution) throws IOException {
         Path packageDirectory = (Path) props.get(KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
 
         List<DockerSpec> activeSpecs = packager.getActiveSpecs();

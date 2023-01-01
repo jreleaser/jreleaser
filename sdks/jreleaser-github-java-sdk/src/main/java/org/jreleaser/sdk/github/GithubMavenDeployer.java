@@ -105,7 +105,7 @@ public class GithubMavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
         }
     }
 
-    private void deletePackage(String token, Deployable deployable) throws DeployException {
+    private void deletePackage(String token, Deployable deployable) {
         String packageType = "maven";
         String packageName = deployable.getGroupId() + "." + deployable.getArtifactId();
         String packageVersion = deployable.getVersion();

@@ -101,11 +101,9 @@ public final class ProjectValidator {
                 project.getSnapshot().getFullChangelog(),
                 false));
 
-        if (project.versionPattern().getType() == org.jreleaser.model.VersionPattern.Type.CALVER) {
-            if (isBlank(project.versionPattern().getFormat())) {
-                errors.configuration(RB.$("validation_version_format_missing",
-                    "project.versionPattern", VersionPattern.Type.CALVER.toString()));
-            }
+        if (project.versionPattern().getType() == VersionPattern.Type.CALVER && isBlank(project.versionPattern().getFormat())) {
+            errors.configuration(RB.$("validation_version_format_missing",
+                "project.versionPattern", VersionPattern.Type.CALVER.toString()));
         }
 
         // TODO: NATIVE_PACKAGE may not necessarily be related to Java
@@ -143,11 +141,9 @@ public final class ProjectValidator {
             context.nag("1.2.0", "Use project.inceptionYear instead of project.extraProperties.inceptionYear");
         }
 
-        if (isBlank(project.getLinks().getLicense())) {
-            if (isNotBlank(project.getLicense())) {
-                LicenseId.findByLiteral(project.getLicense()).ifPresent(licenseId ->
-                    project.getLinks().setLicense(licenseId.url()));
-            }
+        if (isBlank(project.getLinks().getLicense()) && isNotBlank(project.getLicense())) {
+            LicenseId.findByLiteral(project.getLicense()).ifPresent(licenseId ->
+                project.getLinks().setLicense(licenseId.url()));
         }
 
         // FIXME: extension

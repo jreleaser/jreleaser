@@ -72,7 +72,7 @@ abstract class AbstractHook implements Hook {
         if (active.present) hook.active = active.get()
     }
 
-    class FilterImpl implements Filter {
+    static class FilterImpl implements Filter {
         final SetProperty<String> includes
         final SetProperty<String> excludes
 

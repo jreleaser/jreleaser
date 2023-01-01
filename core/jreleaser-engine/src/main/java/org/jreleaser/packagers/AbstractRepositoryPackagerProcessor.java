@@ -140,7 +140,7 @@ public abstract class AbstractRepositoryPackagerProcessor<T extends RepositoryPa
         }
     }
 
-    protected void prepareWorkingCopy(Map<String, Object> props, Path directory, Distribution distribution) throws PackagerProcessingException, IOException {
+    protected void prepareWorkingCopy(Map<String, Object> props, Path directory, Distribution distribution) throws IOException {
         Path packageDirectory = (Path) props.get(KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
         prepareWorkingCopy(packageDirectory, directory);
     }

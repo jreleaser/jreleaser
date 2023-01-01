@@ -231,7 +231,7 @@ class Gitlab {
         }
     }
 
-    Optional<GlMilestone> findMilestoneByName(String owner, String repo, Integer projectIdentifier, String milestoneName) throws IOException {
+    Optional<GlMilestone> findMilestoneByName(String owner, String repo, Integer projectIdentifier, String milestoneName) {
         logger.debug(RB.$("git.milestone.lookup"), milestoneName, owner, repo);
 
         try {
@@ -253,7 +253,7 @@ class Gitlab {
         }
     }
 
-    Optional<GlMilestone> findClosedMilestoneByName(String owner, String repo, Integer projectIdentifier, String milestoneName) throws IOException {
+    Optional<GlMilestone> findClosedMilestoneByName(String owner, String repo, Integer projectIdentifier, String milestoneName) {
         logger.debug(RB.$("git.milestone.lookup.closed"), milestoneName, owner, repo);
 
         try {
@@ -275,7 +275,7 @@ class Gitlab {
         }
     }
 
-    void closeMilestone(String owner, String repo, Integer projectIdentifier, GlMilestone milestone) throws IOException {
+    void closeMilestone(String owner, String repo, Integer projectIdentifier, GlMilestone milestone) {
         logger.debug(RB.$("git.milestone.close"), milestone.getTitle(), owner, repo);
 
         api.updateMilestone(CollectionUtils.<String, Object>map()
@@ -283,7 +283,7 @@ class Gitlab {
             projectIdentifier, milestone.getId());
     }
 
-    GlProject createProject(String owner, String repo) throws IOException {
+    GlProject createProject(String owner, String repo) {
         logger.debug(RB.$("git.project.create"), owner, repo);
 
         return api.createProject(repo, "public");
@@ -398,7 +398,7 @@ class Gitlab {
         return uploads;
     }
 
-    void linkReleaseAssets(String owner, String repoName, GlRelease release, Integer projectIdentifier, Collection<GlFileUpload> uploads) throws IOException, RestAPIException {
+    void linkReleaseAssets(String owner, String repoName, GlRelease release, Integer projectIdentifier, Collection<GlFileUpload> uploads) throws RestAPIException {
         logger.info(RB.$("git.upload.asset.links"), owner, repoName, release.getTagName());
 
         for (GlFileUpload upload : uploads) {
@@ -412,7 +412,7 @@ class Gitlab {
         }
     }
 
-    void linkAssets(String owner, String repoName, GlRelease release, Integer projectIdentifier, Collection<GlLinkRequest> links) throws IOException, RestAPIException {
+    void linkAssets(String owner, String repoName, GlRelease release, Integer projectIdentifier, Collection<GlLinkRequest> links) throws RestAPIException {
         logger.info(RB.$("git.upload.asset.links"), owner, repoName, release.getTagName());
 
         for (GlLinkRequest link : links) {

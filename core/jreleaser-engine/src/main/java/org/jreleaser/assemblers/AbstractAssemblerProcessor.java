@@ -107,7 +107,7 @@ public abstract class AbstractAssemblerProcessor<A extends org.jreleaser.model.a
         }
     }
 
-    protected Map<String, Object> fillProps(Map<String, Object> props) throws AssemblerProcessingException {
+    protected Map<String, Object> fillProps(Map<String, Object> props) {
         Map<String, Object> newProps = new LinkedHashMap<>(props);
         context.getLogger().debug(RB.$("packager.fill.git.properties"));
         context.getModel().getRelease().getReleaser().fillProps(newProps, context.getModel());

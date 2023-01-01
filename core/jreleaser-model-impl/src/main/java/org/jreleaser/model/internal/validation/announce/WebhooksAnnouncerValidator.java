@@ -53,10 +53,8 @@ public final class WebhooksAnnouncerValidator {
         boolean enabled = false;
         for (Map.Entry<String, WebhookAnnouncer> e : webhook.entrySet()) {
             e.getValue().setName(e.getKey());
-            if (mode.validateConfig() || mode.validateAnnounce()) {
-                if (validateWebhook(context, e.getValue(), errors)) {
-                    enabled = true;
-                }
+            if ((mode.validateConfig() || mode.validateAnnounce()) && validateWebhook(context, e.getValue(), errors)) {
+                enabled = true;
             }
         }
 

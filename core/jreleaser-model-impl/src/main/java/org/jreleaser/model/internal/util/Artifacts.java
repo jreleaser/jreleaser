@@ -287,10 +287,8 @@ public final class Artifacts {
         }
 
         BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
-        if (isBlank(downloadUrl)) {
-            if (!service.isSkipRelease() && service.isArtifacts() && service.resolveUploadAssetsEnabled(context.getModel().getProject())) {
-                downloadUrl = service.getDownloadUrl();
-            }
+        if (isBlank(downloadUrl) && !service.isSkipRelease() && service.isArtifacts() && service.resolveUploadAssetsEnabled(context.getModel().getProject())) {
+            downloadUrl = service.getDownloadUrl();
         }
 
         if (isBlank(downloadUrl)) {
@@ -341,10 +339,8 @@ public final class Artifacts {
         }
 
         BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
-        if (isBlank(downloadUrl)) {
-            if (!service.isSkipRelease() && service.isArtifacts() && service.resolveUploadAssetsEnabled(context.getModel().getProject())) {
-                downloadUrl = service.getDownloadUrl();
-            }
+        if (isBlank(downloadUrl) && !service.isSkipRelease() && service.isArtifacts() && service.resolveUploadAssetsEnabled(context.getModel().getProject())) {
+            downloadUrl = service.getDownloadUrl();
         }
 
         if (isBlank(downloadUrl)) {

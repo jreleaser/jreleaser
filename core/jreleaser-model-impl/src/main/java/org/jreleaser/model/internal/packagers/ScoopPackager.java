@@ -248,7 +248,7 @@ public final class ScoopPackager extends AbstractRepositoryPackager<org.jrelease
     }
 
     public PackagerRepository getPackagerRepository() {
-        return repository;
+        return getBucket();
     }
 
     @Override

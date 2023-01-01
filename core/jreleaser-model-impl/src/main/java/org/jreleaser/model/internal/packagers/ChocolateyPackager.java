@@ -328,7 +328,7 @@ public final class ChocolateyPackager extends AbstractRepositoryPackager<org.jre
     }
 
     public PackagerRepository getPackagerRepository() {
-        return repository;
+        return getBucket();
     }
 
     @Override

@@ -68,7 +68,7 @@ public class JbangPackagerProcessor extends AbstractRepositoryPackagerProcessor<
     }
 
     @Override
-    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) throws PackagerProcessingException {
+    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) {
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
 
         props.put(KEY_JBANG_CATALOG_REPO_URL,
@@ -163,7 +163,7 @@ public class JbangPackagerProcessor extends AbstractRepositoryPackagerProcessor<
     }
 
     @Override
-    protected void prepareWorkingCopy(Map<String, Object> props, Path directory, Distribution distribution) throws PackagerProcessingException, IOException {
+    protected void prepareWorkingCopy(Map<String, Object> props, Path directory, Distribution distribution) throws IOException {
         Path catalog = directory.resolve("jbang-catalog.json");
 
         if (catalog.toFile().exists()) {

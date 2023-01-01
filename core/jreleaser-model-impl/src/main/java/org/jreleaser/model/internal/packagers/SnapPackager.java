@@ -447,7 +447,7 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
     }
 
     public PackagerRepository getPackagerRepository() {
-        return repository;
+        return getSnap();
     }
 
     @Override

@@ -55,7 +55,7 @@ public class GofishPackagerProcessor extends AbstractRepositoryPackagerProcessor
     }
 
     @Override
-    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) throws PackagerProcessingException {
+    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) {
         List<Artifact> artifacts = collectArtifacts(distribution);
 
         List<GofishPackage> packages = artifacts.stream()
@@ -137,12 +137,10 @@ public class GofishPackagerProcessor extends AbstractRepositoryPackagerProcessor
 
             String artifactOs = "";
             String artifactArch = "";
-            if (isNotBlank(platform)) {
-                if (platform.contains("-")) {
-                    String[] parts = platform.split("-");
-                    artifactOs = parts[0];
-                    artifactArch = parts[1];
-                }
+            if (isNotBlank(platform) && platform.contains("-")) {
+                String[] parts = platform.split("-");
+                artifactOs = parts[0];
+                artifactArch = parts[1];
             }
 
             packageNotWindows = !PlatformUtils.isWindows(platform);

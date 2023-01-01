@@ -17,12 +17,9 @@
  */
 package org.jreleaser.workflow;
 
-import org.jreleaser.bundle.RB;
 import org.jreleaser.engine.announce.Announcers;
-import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.api.JReleaserCommand;
 import org.jreleaser.model.internal.JReleaserContext;
-import org.jreleaser.model.spi.announce.AnnounceException;
 
 /**
  * @author Andres Almiray
@@ -35,10 +32,6 @@ class AnnounceWorkflowItem extends AbstractWorkflowItem {
 
     @Override
     protected void doInvoke(JReleaserContext context) {
-        try {
-            Announcers.announce(context);
-        } catch (AnnounceException e) {
-            throw new JReleaserException(RB.$("ERROR_unexpected_release_announce"), e);
-        }
+        Announcers.announce(context);
     }
 }

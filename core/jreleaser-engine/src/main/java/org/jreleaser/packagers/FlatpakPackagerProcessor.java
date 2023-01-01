@@ -207,7 +207,7 @@ public class FlatpakPackagerProcessor extends AbstractRepositoryPackagerProcesso
     }
 
     @Override
-    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) throws PackagerProcessingException {
+    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) {
         props.put(KEY_PROJECT_AUTHORS, context.getModel().getProject().getAuthors());
         props.put(KEY_FLATPAK_URLS, context.getModel().getProject().getLinks().asLinkTemplates());
         props.put(KEY_FLATPAK_COMPONENT_ID, getPackager().getComponentId());

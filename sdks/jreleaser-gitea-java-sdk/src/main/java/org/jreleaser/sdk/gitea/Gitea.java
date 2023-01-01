@@ -76,10 +76,10 @@ public class Gitea {
     private final GiteaAPI api;
 
     public Gitea(JReleaserLogger logger,
-          String endpoint,
-          String token,
-          int connectTimeout,
-          int readTimeout) {
+                 String endpoint,
+                 String token,
+                 int connectTimeout,
+                 int readTimeout) {
         requireNonNull(logger, "'logger' must not be null");
         requireNonBlank(token, "'token' must not be blank");
         requireNonBlank(endpoint, "'endpoint' must not be blank");
@@ -119,7 +119,7 @@ public class Gitea {
         }
     }
 
-    public List<Release> listReleases(String owner, String repoName) throws IOException {
+    public List<Release> listReleases(String owner, String repoName) {
         logger.debug(RB.$("git.list.releases"), owner, repoName);
 
         List<Release> releases = new ArrayList<>();
@@ -178,7 +178,7 @@ public class Gitea {
         return branches;
     }
 
-    public Map<String, GtAsset> listAssets(String owner, String repo, GtRelease release) throws IOException {
+    public Map<String, GtAsset> listAssets(String owner, String repo, GtRelease release) {
         logger.debug(RB.$("git.list.assets.github"), owner, repo, release.getId());
 
         Map<String, GtAsset> assets = new LinkedHashMap<>();
@@ -229,7 +229,7 @@ public class Gitea {
         }
     }
 
-    public void closeMilestone(String owner, String repo, GtMilestone milestone) throws IOException {
+    public void closeMilestone(String owner, String repo, GtMilestone milestone) {
         logger.debug(RB.$("git.milestone.close"), milestone.getTitle(), owner, repo);
 
         api.updateMilestone(CollectionUtils.<String, Object>map()
@@ -386,7 +386,7 @@ public class Gitea {
         return api.createLabel(owner, name, labelName, labelColor, description);
     }
 
-    public Optional<GtIssue> findIssue(String owner, String name, int issueNumber) throws IOException {
+    public Optional<GtIssue> findIssue(String owner, String name, int issueNumber) {
         logger.debug(RB.$("git.issue.fetch", issueNumber));
         try {
             return Optional.of(api.findIssue(owner, name, issueNumber));
@@ -425,7 +425,7 @@ public class Gitea {
         api.updateIssue(params, owner, name, issue.getNumber());
     }
 
-    private List<GtLabel> listLabels(String owner, String repoName) throws IOException {
+    private List<GtLabel> listLabels(String owner, String repoName) {
         logger.debug(RB.$("git.list.labels"), owner, repoName);
 
         List<GtLabel> labels = new ArrayList<>();

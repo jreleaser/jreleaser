@@ -159,10 +159,8 @@ public final class MavenDeployersValidator {
             mavenDeployer.setVerifyPom(true);
         }
 
-        if (mavenDeployer.isSign() && !context.getModel().getSigning().isEnabled()) {
-            if (!context.isDryrun() /*&& !mode.validateConfig()*/) {
-                errors.configuration(RB.$("validation_maven_deployer_signing", deployerPrefix));
-            }
+        if (mavenDeployer.isSign() && !context.getModel().getSigning().isEnabled() && !context.isDryrun() /*&& !mode.validateConfig()*/) {
+            errors.configuration(RB.$("validation_maven_deployer_signing", deployerPrefix));
         }
     }
 }

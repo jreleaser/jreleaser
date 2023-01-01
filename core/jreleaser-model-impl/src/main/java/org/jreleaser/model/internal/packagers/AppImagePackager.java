@@ -370,7 +370,7 @@ public final class AppImagePackager extends AbstractRepositoryPackager<org.jrele
     }
 
     public PackagerRepository getPackagerRepository() {
-        return repository;
+        return getRepository();
     }
 
     @Override

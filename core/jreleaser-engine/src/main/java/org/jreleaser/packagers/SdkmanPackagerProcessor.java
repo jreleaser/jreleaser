@@ -106,7 +106,7 @@ public class SdkmanPackagerProcessor extends AbstractPackagerProcessor<SdkmanPac
     }
 
     @Override
-    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) throws PackagerProcessingException {
+    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) {
         props.put(KEY_SDKMAN_CANDIDATE, packager.getCandidate());
         props.put(KEY_SDKMAN_RELEASE_NOTES_URL, resolveTemplate(packager.getReleaseNotesUrl(), props));
     }

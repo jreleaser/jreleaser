@@ -155,7 +155,7 @@ public class GitlabMavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
         }
     }
 
-    private void deletePackage(Gitlab api, Deployable deployable, List<GlPackage> glPackages) throws DeployException {
+    private void deletePackage(Gitlab api, Deployable deployable, List<GlPackage> glPackages) {
         try {
             String name = deployable.getGroupId().replace(".", "/") + "/" + deployable.getArtifactId();
             Optional<GlPackage> glPackage = glPackages.stream()

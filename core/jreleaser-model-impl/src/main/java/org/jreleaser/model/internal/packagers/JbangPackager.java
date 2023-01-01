@@ -198,7 +198,7 @@ public final class JbangPackager extends AbstractRepositoryPackager<org.jrelease
     }
 
     public PackagerRepository getPackagerRepository() {
-        return repository;
+        return getCatalog();
     }
 
     @Override

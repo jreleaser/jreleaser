@@ -149,7 +149,7 @@ BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> 
     }
 
     @Override
-    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) throws PackagerProcessingException {
+    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) {
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
 
         props.put(KEY_BREW_FORMULA_NAME, packager.getResolvedFormulaName(props));
@@ -259,7 +259,7 @@ BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> 
             }
 
             if (multiPlatforms.isEmpty()) {
-                throw new PackagerProcessingException(org.jreleaser.bundle.RB.$("ERROR_brew_multiplatform_artifacts"));
+                throw new IllegalStateException(org.jreleaser.bundle.RB.$("ERROR_brew_multiplatform_artifacts"));
             }
             props.put(KEY_BREW_MULTIPLATFORM, passThrough(String.join(System.lineSeparator() + "  ", multiPlatforms)));
         } else if ((distribution.getType() == org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY ||

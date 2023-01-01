@@ -54,10 +54,8 @@ public final class HttpAnnouncerValidator {
         boolean enabled = false;
         for (Map.Entry<String, HttpAnnouncer> e : ha.entrySet()) {
             e.getValue().setName(e.getKey());
-            if (mode.validateConfig() || mode.validateAnnounce()) {
-                if (validateHttpAnnouncer(context, e.getValue(), errors)) {
-                    enabled = true;
-                }
+            if ((mode.validateConfig() || mode.validateAnnounce()) && validateHttpAnnouncer(context, e.getValue(), errors)) {
+                enabled = true;
             }
         }
 
