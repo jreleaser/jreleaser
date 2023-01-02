@@ -63,7 +63,7 @@ jobs:
           key: ${{ runner.os }}-gradlew-${{ hashFiles('**/gradlew') }}
           restore-keys: ${{ runner.os }}-gradlew-
 
-      - uses: jfrog/frogbot@b92e53d9631139a697cb71d9e70229a70ca56694
+      - uses: jfrog/frogbot@decd4c39a540e6ce60c2f585142275803128a65f
         env:
           JF_URL: ${{ secrets.JFROG_PLATFORM_URL }}
           JF_ACCESS_TOKEN: ${{ secrets.JFROG_ACCESS_TOKEN }}
