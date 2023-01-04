@@ -41,6 +41,7 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
 import static org.jreleaser.bundle.RB.$;
+import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
@@ -53,6 +54,8 @@ public final class Init {
 
     public static void execute(JReleaserLogger logger, String format, boolean overwrite, Path outputDirectory) {
         try {
+            if (isBlank(format)) format = "yml";
+            
             if (!getSupportedConfigFormats().contains(format)) {
                 throw new IllegalArgumentException($("jreleaser.init.ERROR_invalid_format",
                     String.join("|", getSupportedConfigFormats())));
