@@ -18,7 +18,6 @@
 package org.jreleaser.sdk.twitter;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.Constants;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.spi.announce.AnnounceException;
 import org.jreleaser.model.spi.announce.Announcer;
@@ -32,7 +31,6 @@ import java.util.List;
 import static org.jreleaser.model.Constants.KEY_PREVIOUS_TAG_NAME;
 import static org.jreleaser.model.Constants.KEY_TAG_NAME;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
-import static org.jreleaser.mustache.MustacheUtils.passThrough;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -71,9 +69,7 @@ public class TwitterAnnouncer implements Announcer<org.jreleaser.model.api.annou
 
         if (isNotBlank(twitter.getStatusTemplate())) {
             TemplateContext props = new TemplateContext();
-            props.set(Constants.KEY_CHANGELOG, passThrough(context.getChangelog().getResolvedChangelog()));
-            props.set(Constants.KEY_CHANGELOG_CHANGES, passThrough(context.getChangelog().getFormattedChanges()));
-            props.set(Constants.KEY_CHANGELOG_CONTRIBUTORS, passThrough(context.getChangelog().getFormattedContributors()));
+            context.getChangelog().apply(props);
             context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
             Arrays.stream(twitter.getResolvedStatusTemplate(context, props)
                     .split(System.lineSeparator()))

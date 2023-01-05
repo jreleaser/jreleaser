@@ -17,7 +17,6 @@
  */
 package org.jreleaser.sdk.slack;
 
-import org.jreleaser.model.Constants;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.spi.announce.AnnounceException;
 import org.jreleaser.model.spi.announce.Announcer;
@@ -28,7 +27,6 @@ import org.jreleaser.sdk.slack.api.Message;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jreleaser.mustache.MustacheUtils.passThrough;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -67,9 +65,7 @@ public class SlackAnnouncer implements Announcer<org.jreleaser.model.api.announc
             message = slack.getResolvedMessage(context);
         } else {
             TemplateContext props = new TemplateContext();
-            props.set(Constants.KEY_CHANGELOG, passThrough(context.getChangelog().getResolvedChangelog()));
-            props.set(Constants.KEY_CHANGELOG_CHANGES, passThrough(context.getChangelog().getFormattedChanges()));
-            props.set(Constants.KEY_CHANGELOG_CONTRIBUTORS, passThrough(context.getChangelog().getFormattedContributors()));
+            context.getChangelog().apply(props);
             context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
             message = slack.getResolvedMessageTemplate(context, props);
         }

@@ -20,7 +20,6 @@ package org.jreleaser.sdk.http;
 import feign.form.FormData;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.extensions.api.workflow.WorkflowListenerException;
-import org.jreleaser.model.Constants;
 import org.jreleaser.model.Http;
 import org.jreleaser.model.api.JReleaserCommand;
 import org.jreleaser.model.api.announce.HttpAnnouncers;
@@ -37,7 +36,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.jreleaser.mustache.MustacheUtils.passThrough;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -94,9 +92,7 @@ public class HttpAnnouncer implements Announcer<org.jreleaser.model.api.announce
             payload = announcer.getResolvedPayload(context);
         } else {
             TemplateContext props = context.props();
-            props.set(Constants.KEY_CHANGELOG, passThrough(context.getChangelog().getResolvedChangelog()));
-            props.set(Constants.KEY_CHANGELOG_CHANGES, passThrough(context.getChangelog().getFormattedChanges()));
-            props.set(Constants.KEY_CHANGELOG_CONTRIBUTORS, passThrough(context.getChangelog().getFormattedContributors()));
+            context.getChangelog().apply(props);
             context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
             payload = announcer.getResolvedPayloadTemplate(context, props);
         }

@@ -21,7 +21,6 @@ import org.eclipse.jgit.api.CommitCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.Constants;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Artifact;
@@ -43,7 +42,6 @@ import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplate;
-import static org.jreleaser.mustache.MustacheUtils.passThrough;
 import static org.jreleaser.util.FileUtils.createDirectoriesWithFullAccess;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -97,9 +95,7 @@ public class ArticleAnnouncer implements Announcer<org.jreleaser.model.api.annou
         context.getLogger().debug(RB.$("announcer.article.resolve.templates"));
 
         TemplateContext props = context.fullProps();
-        props.set(Constants.KEY_CHANGELOG, passThrough(context.getChangelog().getResolvedChangelog()));
-        props.set(Constants.KEY_CHANGELOG_CHANGES, passThrough(context.getChangelog().getFormattedChanges()));
-        props.set(Constants.KEY_CHANGELOG_CONTRIBUTORS, passThrough(context.getChangelog().getFormattedContributors()));
+        context.getChangelog().apply(props);
         context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
         props.setAll(article.getResolvedExtraProperties());
 

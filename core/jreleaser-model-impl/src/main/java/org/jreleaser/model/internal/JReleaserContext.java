@@ -72,6 +72,9 @@ import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.unmodifiableList;
+import static org.jreleaser.model.Constants.KEY_CHANGELOG;
+import static org.jreleaser.model.Constants.KEY_CHANGELOG_CHANGES;
+import static org.jreleaser.model.Constants.KEY_CHANGELOG_CONTRIBUTORS;
 import static org.jreleaser.model.Constants.KEY_COMMIT_FULL_HASH;
 import static org.jreleaser.model.Constants.KEY_COMMIT_SHORT_HASH;
 import static org.jreleaser.model.Constants.KEY_MILESTONE_NAME;
@@ -98,6 +101,7 @@ import static org.jreleaser.model.Constants.KEY_VERSION_PRERELEASE;
 import static org.jreleaser.model.Constants.KEY_VERSION_TAG;
 import static org.jreleaser.model.Constants.KEY_VERSION_WEEK;
 import static org.jreleaser.model.Constants.KEY_VERSION_YEAR;
+import static org.jreleaser.mustache.MustacheUtils.passThrough;
 import static org.jreleaser.util.CollectionUtils.safePut;
 import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -1162,6 +1166,12 @@ public class JReleaserContext {
 
         public void setFormattedContributors(String formattedContributors) {
             this.formattedContributors = formattedContributors;
+        }
+
+        public void apply(TemplateContext props) {
+            props.set(KEY_CHANGELOG, passThrough(resolvedChangelog));
+            props.set(KEY_CHANGELOG_CHANGES, passThrough(formattedChanges));
+            props.set(KEY_CHANGELOG_CONTRIBUTORS, passThrough(formattedContributors));
         }
     }
 
