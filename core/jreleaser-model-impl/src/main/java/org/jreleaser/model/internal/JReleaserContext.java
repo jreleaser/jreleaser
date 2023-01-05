@@ -143,7 +143,7 @@ public class JReleaserContext {
     private final List<String> excludedUploaderNames = new ArrayList<>();
     private final List<WorkflowListener> workflowListeners = new ArrayList<>();
 
-    private String changelog;
+    private Changelog changelog = new Changelog();
     private org.jreleaser.model.spi.release.Releaser<?> releaser;
     private JReleaserCommand command;
 
@@ -625,12 +625,8 @@ public class JReleaserContext {
         return strict;
     }
 
-    public String getChangelog() {
+    public Changelog getChangelog() {
         return changelog;
-    }
-
-    public void setChangelog(String changelog) {
-        this.changelog = changelog;
     }
 
     public org.jreleaser.model.spi.release.Releaser<?> getReleaser() {
@@ -1136,6 +1132,36 @@ public class JReleaserContext {
         @Override
         public String toString() {
             return this.dsl;
+        }
+    }
+
+    public static class Changelog {
+        private String resolvedChangelog;
+        private String formattedChanges;
+        private String formattedContributors;
+
+        public String getResolvedChangelog() {
+            return resolvedChangelog;
+        }
+
+        public void setResolvedChangelog(String resolvedChangelog) {
+            this.resolvedChangelog = resolvedChangelog;
+        }
+
+        public String getFormattedChanges() {
+            return formattedChanges;
+        }
+
+        public void setFormattedChanges(String formattedChanges) {
+            this.formattedChanges = formattedChanges;
+        }
+
+        public String getFormattedContributors() {
+            return formattedContributors;
+        }
+
+        public void setFormattedContributors(String formattedContributors) {
+            this.formattedContributors = formattedContributors;
         }
     }
 

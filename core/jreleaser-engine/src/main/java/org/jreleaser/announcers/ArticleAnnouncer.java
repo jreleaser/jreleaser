@@ -97,7 +97,9 @@ public class ArticleAnnouncer implements Announcer<org.jreleaser.model.api.annou
         context.getLogger().debug(RB.$("announcer.article.resolve.templates"));
 
         TemplateContext props = context.fullProps();
-        props.set(Constants.KEY_CHANGELOG, passThrough(context.getChangelog()));
+        props.set(Constants.KEY_CHANGELOG, passThrough(context.getChangelog().getResolvedChangelog()));
+        props.set(Constants.KEY_CHANGELOG_CHANGES, passThrough(context.getChangelog().getFormattedChanges()));
+        props.set(Constants.KEY_CHANGELOG_CONTRIBUTORS, passThrough(context.getChangelog().getFormattedContributors()));
         context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
         props.setAll(article.getResolvedExtraProperties());
 

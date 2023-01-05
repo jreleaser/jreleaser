@@ -91,9 +91,13 @@ public class WebhooksAnnouncer implements Announcer<org.jreleaser.model.api.anno
         } else {
             TemplateContext props = new TemplateContext();
             if (webhook.getName().equals("teams")) {
-                props.set(Constants.KEY_CHANGELOG, passThrough(convertLineEndings(context.getChangelog())));
+                props.set(Constants.KEY_CHANGELOG, passThrough(convertLineEndings(context.getChangelog().getResolvedChangelog())));
+                props.set(Constants.KEY_CHANGELOG_CHANGES, passThrough(convertLineEndings(context.getChangelog().getFormattedChanges())));
+                props.set(Constants.KEY_CHANGELOG_CONTRIBUTORS, passThrough(convertLineEndings(context.getChangelog().getFormattedContributors())));
             } else {
-                props.set(Constants.KEY_CHANGELOG, passThrough(context.getChangelog()));
+                props.set(Constants.KEY_CHANGELOG, passThrough(context.getChangelog().getResolvedChangelog()));
+                props.set(Constants.KEY_CHANGELOG_CHANGES, passThrough(context.getChangelog().getFormattedChanges()));
+                props.set(Constants.KEY_CHANGELOG_CONTRIBUTORS, passThrough(context.getChangelog().getFormattedContributors()));
             }
             context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
             message = webhook.getResolvedMessageTemplate(context, props);

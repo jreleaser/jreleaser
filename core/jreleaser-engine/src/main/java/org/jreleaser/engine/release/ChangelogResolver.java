@@ -19,6 +19,7 @@ package org.jreleaser.engine.release;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.engine.changelog.Changelog;
+import org.jreleaser.model.Constants;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.release.BaseReleaser;
 import org.jreleaser.model.internal.release.Changelog.Append;
@@ -46,7 +47,7 @@ public class ChangelogResolver {
 
     public static void resolve(JReleaserContext context) {
         String resolvedChangelog = Changelog.createChangelog(context);
-        context.setChangelog(resolvedChangelog);
+        context.getChangelog().setResolvedChangelog(resolvedChangelog);
 
         if (isNotBlank(resolvedChangelog) &&
             context.getModel().getProject().isRelease() &&
@@ -62,8 +63,10 @@ public class ChangelogResolver {
         TemplateContext props = context.fullProps();
         String resolvedTitle = applyTemplate(append.getTitle(), props);
 
-        props.set("changelogTitle", passThrough(resolvedTitle));
-        props.set("changelogContent", passThrough(resolvedChangelog));
+        props.set(Constants.KEY_CHANGELOG_TITLE, passThrough(resolvedTitle));
+        props.set(Constants.KEY_CHANGELOG_CONTENT, passThrough(resolvedChangelog));
+        props.set(Constants.KEY_CHANGELOG_CHANGES, passThrough(context.getChangelog().getFormattedChanges()));
+        props.set(Constants.KEY_CHANGELOG_CONTRIBUTORS, passThrough(context.getChangelog().getFormattedContributors()));
         String appendableChangelog = stripMargin(applyTemplate(append.getResolvedContentTemplate(context), props));
 
         Path target = context.getBasedir().resolve(append.getTarget());

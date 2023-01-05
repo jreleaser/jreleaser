@@ -119,6 +119,8 @@ public interface Constants {
     String KEY_CHANGELOG = "changelog";
     String KEY_CHANGELOG_CHANGES = "changelogChanges";
     String KEY_CHANGELOG_CONTRIBUTORS = "changelogContributors";
+    String KEY_CHANGELOG_CONTENT = "changelogContent";
+    String KEY_CHANGELOG_TITLE = "changelogTitle";
 
     // Distribution
     String KEY_DISTRIBUTION_NAME = "distributionName";

@@ -184,7 +184,7 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
                 throw new ReleaseException(RB.$("ERROR_git_release_branch_not_exists", branch, branches.keySet()));
             }
 
-            String changelog = context.getChangelog();
+            String changelog = context.getChangelog().getResolvedChangelog();
 
             context.getLogger().debug(RB.$("git.releaser.release.lookup"), tagName, github.getCanonicalRepoName());
             GHRelease release = api.findReleaseByTag(github.getCanonicalRepoName(), tagName);

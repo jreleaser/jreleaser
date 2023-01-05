@@ -62,7 +62,9 @@ public class ZulipAnnouncer implements Announcer<org.jreleaser.model.api.announc
             message = zulip.getResolvedMessage(context);
         } else {
             TemplateContext props = new TemplateContext();
-            props.set(Constants.KEY_CHANGELOG, passThrough(context.getChangelog()));
+            props.set(Constants.KEY_CHANGELOG, passThrough(context.getChangelog().getResolvedChangelog()));
+            props.set(Constants.KEY_CHANGELOG_CHANGES, passThrough(context.getChangelog().getFormattedChanges()));
+            props.set(Constants.KEY_CHANGELOG_CONTRIBUTORS, passThrough(context.getChangelog().getFormattedContributors()));
             context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
             message = zulip.getResolvedMessageTemplate(context, props);
         }

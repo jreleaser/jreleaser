@@ -105,7 +105,7 @@ public class GiteaReleaser extends AbstractReleaser<org.jreleaser.model.api.rele
                 throw new ReleaseException(RB.$("ERROR_git_release_branch_not_exists", branch, branchNames));
             }
 
-            String changelog = context.getChangelog();
+            String changelog = context.getChangelog().getResolvedChangelog();
 
             context.getLogger().debug(RB.$("git.releaser.release.lookup"), tagName, gitea.getCanonicalRepoName());
             GtRelease release = api.findReleaseByTag(gitea.getOwner(), gitea.getName(), tagName);

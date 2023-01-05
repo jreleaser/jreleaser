@@ -23,11 +23,11 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.release.GithubReleaser;
 import org.jreleaser.model.spi.announce.AnnounceException;
 import org.jreleaser.model.spi.announce.Announcer;
-import org.jreleaser.mustache.MustacheUtils;
 import org.jreleaser.mustache.TemplateContext;
 
 import java.io.IOException;
 
+import static org.jreleaser.mustache.MustacheUtils.passThrough;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -68,7 +68,9 @@ public class DiscussionsAnnouncer implements Announcer<org.jreleaser.model.api.a
             message = discussions.getResolvedMessage(context);
         } else {
             TemplateContext props = new TemplateContext();
-            props.set(Constants.KEY_CHANGELOG, MustacheUtils.passThrough(context.getChangelog()));
+            props.set(Constants.KEY_CHANGELOG, passThrough(context.getChangelog().getResolvedChangelog()));
+            props.set(Constants.KEY_CHANGELOG_CHANGES, passThrough(context.getChangelog().getFormattedChanges()));
+            props.set(Constants.KEY_CHANGELOG_CONTRIBUTORS, passThrough(context.getChangelog().getFormattedContributors()));
             context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
             message = discussions.getResolvedMessageTemplate(context, props);
         }

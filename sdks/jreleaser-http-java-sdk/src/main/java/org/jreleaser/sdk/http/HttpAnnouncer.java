@@ -29,7 +29,6 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.spi.announce.AnnounceException;
 import org.jreleaser.model.spi.announce.Announcer;
 import org.jreleaser.model.spi.upload.UploadException;
-import org.jreleaser.mustache.MustacheUtils;
 import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.commons.ClientUtils;
 
@@ -38,6 +37,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.jreleaser.mustache.MustacheUtils.passThrough;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -94,7 +94,9 @@ public class HttpAnnouncer implements Announcer<org.jreleaser.model.api.announce
             payload = announcer.getResolvedPayload(context);
         } else {
             TemplateContext props = context.props();
-            props.set(Constants.KEY_CHANGELOG, MustacheUtils.passThrough(context.getChangelog()));
+            props.set(Constants.KEY_CHANGELOG, passThrough(context.getChangelog().getResolvedChangelog()));
+            props.set(Constants.KEY_CHANGELOG_CHANGES, passThrough(context.getChangelog().getFormattedChanges()));
+            props.set(Constants.KEY_CHANGELOG_CONTRIBUTORS, passThrough(context.getChangelog().getFormattedContributors()));
             context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
             payload = announcer.getResolvedPayloadTemplate(context, props);
         }

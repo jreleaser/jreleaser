@@ -423,6 +423,8 @@ public class ChangelogGenerator {
 
         props.set(KEY_CHANGELOG_CHANGES, passThrough(changes.toString()));
         props.set(KEY_CHANGELOG_CONTRIBUTORS, passThrough(formattedContributors.toString()));
+        context.getChangelog().setFormattedChanges(changes.toString());
+        context.getChangelog().setFormattedContributors(formattedContributors.toString());
 
         return applyReplacers(context, changelog, stripMargin(applyTemplate(changelog.getResolvedContentTemplate(context), props)));
     }

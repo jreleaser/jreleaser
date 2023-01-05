@@ -106,7 +106,7 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
                 throw new ReleaseException(RB.$("ERROR_git_release_branch_not_exists", branch, branchNames));
             }
 
-            String changelog = context.getChangelog();
+            String changelog = context.getChangelog().getResolvedChangelog();
 
             context.getLogger().debug(RB.$("git.releaser.release.lookup"), tagName, codeberg.getCanonicalRepoName());
             GtRelease release = api.findReleaseByTag(codeberg.getOwner(), codeberg.getName(), tagName);
