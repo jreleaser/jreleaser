@@ -706,10 +706,8 @@ public class ChangelogGenerator {
                 OptionalInt match = IntStream.range(0, lines.size())
                     .filter(i -> BREAKING_CHANGE_PATTERN.matcher(lines.get(i)).find())
                     .findFirst();
-                if (match.isPresent()) {
-                    if (lines.size() > match.getAsInt()) {
-                        lines.subList(match.getAsInt(), lines.size()).clear();
-                    }
+                if (match.isPresent() && lines.size() > match.getAsInt()) {
+                    lines.subList(match.getAsInt(), lines.size()).clear();
                 }
             }
 
