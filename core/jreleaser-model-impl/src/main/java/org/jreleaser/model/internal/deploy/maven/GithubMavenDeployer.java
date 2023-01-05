@@ -19,6 +19,7 @@ package org.jreleaser.model.internal.deploy.maven;
 
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Http;
+import org.jreleaser.mustache.TemplateContext;
 
 import java.util.List;
 import java.util.Map;
@@ -164,11 +165,11 @@ public final class GithubMavenDeployer extends AbstractMavenDeployer<GithubMaven
     }
 
     @Override
-    public String getResolvedUrl(Map<String, Object> props) {
-        props.put("username", getUsername());
-        props.put("owner", getUsername());
-        props.put("repository", repository);
-        props.putAll(getExtraProperties());
+    public String getResolvedUrl(TemplateContext props) {
+        props.set("username", getUsername());
+        props.set("owner", getUsername());
+        props.set("repository", repository);
+        props.setAll(getExtraProperties());
         return resolveTemplate(getUrl(), props);
     }
 

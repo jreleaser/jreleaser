@@ -37,7 +37,7 @@ import static java.util.Collections.unmodifiableMap;
  */
 public final class Deploy extends AbstractModelObject<Deploy> implements Domain, Activatable {
     private static final long serialVersionUID = 2526076491166719954L;
-    
+
     private final Maven maven = new Maven();
 
     private Active active;

@@ -37,7 +37,7 @@ class ChronVerTest {
     @ParameterizedTest
     @MethodSource("version_parsing")
     void testVersionParsing(String input, int year, int month, int day, String changeset,
-                                   int change1, String tag, int change2) {
+                            int change1, String tag, int change2) {
         // given:
         ChronVer v = ChronVer.of(input);
 

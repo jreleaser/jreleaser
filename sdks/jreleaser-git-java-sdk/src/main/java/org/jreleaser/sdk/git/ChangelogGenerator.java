@@ -30,6 +30,7 @@ import org.jreleaser.model.internal.release.BaseReleaser;
 import org.jreleaser.model.internal.release.Changelog;
 import org.jreleaser.model.internal.util.VersionUtils;
 import org.jreleaser.model.spi.release.User;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.util.CollectionUtils;
 import org.jreleaser.util.StringUtils;
 import org.jreleaser.version.Version;
@@ -174,7 +175,7 @@ public class ChangelogGenerator {
 
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
         String effectiveTagName = releaser.getEffectiveTagName(context.getModel());
-        String tagName = releaser.getConfiguredTagName();
+        String tagName = releaser.getTagName();
         String tagPattern = tagName.replaceAll("\\{\\{.*}}", "\\.\\*");
 
         Pattern versionPattern = VersionUtils.resolveVersionPattern(context);
@@ -192,7 +193,7 @@ public class ChangelogGenerator {
             .findFirst();
 
         Optional<Ref> previousTag = Optional.empty();
-        String previousTagName = releaser.getConfiguredPreviousTagName();
+        String previousTagName = releaser.getPreviousTagName();
         if (isNotBlank(previousTagName)) {
             context.getLogger().debug(RB.$("changelog.generator.lookup.previous.tag"), previousTagName);
             previousTag = tags.stream()
@@ -247,6 +248,7 @@ public class ChangelogGenerator {
 
                 if (tag.isPresent()) {
                     context.getLogger().debug(RB.$("changelog.generator.tag.found"), extractTagName(tag.get()));
+                    context.getModel().getRelease().getReleaser().setPreviousTagName(extractTagName(tag.get()));
                     return Tags.previous(tag.get());
                 }
 
@@ -272,6 +274,7 @@ public class ChangelogGenerator {
 
             if (tag.isPresent()) {
                 context.getLogger().debug(RB.$("changelog.generator.tag.found"), extractTagName(tag.get()));
+                context.getModel().getRelease().getReleaser().setPreviousTagName(extractTagName(tag.get()));
                 return Tags.previous(tag.get());
             }
 
@@ -290,6 +293,7 @@ public class ChangelogGenerator {
 
         if (previousTag.isPresent()) {
             context.getLogger().debug(RB.$("changelog.generator.tag.found"), extractTagName(previousTag.get()));
+            context.getModel().getRelease().getReleaser().setPreviousTagName(extractTagName(previousTag.get()));
             return Tags.of(tag.get(), previousTag.get());
         }
 
@@ -375,13 +379,13 @@ public class ChangelogGenerator {
         String commitsUrl = releaser.getResolvedCommitUrl(context.getModel());
         String issueTracker = releaser.getResolvedIssueTrackerUrl(context.getModel(), true);
 
-        Map<String, Object> props = context.fullProps();
+        TemplateContext props = context.fullProps();
         StringBuilder changes = new StringBuilder();
         for (Changelog.Category category : changelog.getCategories()) {
             String categoryKey = category.getKey();
             if (!categories.containsKey(categoryKey) || changelog.getHide().containsCategory(categoryKey)) continue;
 
-            props.put("categoryTitle", category.getTitle());
+            props.set("categoryTitle", category.getTitle());
             changes.append(applyTemplate(changelog.getCategoryTitleFormat(), props))
                 .append(lineSeparator);
 
@@ -417,8 +421,8 @@ public class ChangelogGenerator {
                 .append(lineSeparator);
         }
 
-        props.put(KEY_CHANGELOG_CHANGES, passThrough(changes.toString()));
-        props.put(KEY_CHANGELOG_CONTRIBUTORS, passThrough(formattedContributors.toString()));
+        props.set(KEY_CHANGELOG_CHANGES, passThrough(changes.toString()));
+        props.set(KEY_CHANGELOG_CONTRIBUTORS, passThrough(formattedContributors.toString()));
 
         return applyReplacers(context, changelog, stripMargin(applyTemplate(changelog.getResolvedContentTemplate(context), props)));
     }
@@ -465,7 +469,7 @@ public class ChangelogGenerator {
     }
 
     private String applyReplacers(JReleaserContext context, Changelog changelog, String text) {
-        Map<String, Object> props = context.getModel().props();
+        TemplateContext props = context.getModel().props();
         context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
         for (Changelog.Replacer replacer : changelog.getReplacers()) {
             String search = resolveTemplate(replacer.getSearch(), props);
@@ -598,20 +602,20 @@ public class ChangelogGenerator {
             }
         }
 
-        Map<String, Object> asContext(boolean links, String commitsUrl, String issueTrackerUrl) {
-            Map<String, Object> context = new LinkedHashMap<>();
+        TemplateContext asContext(boolean links, String commitsUrl, String issueTrackerUrl) {
+            TemplateContext context = new TemplateContext();
             if (links) {
-                context.put("commitShortHash", passThrough("[" + shortHash + "](" + commitsUrl + "/" + shortHash + ")"));
+                context.set("commitShortHash", passThrough("[" + shortHash + "](" + commitsUrl + "/" + shortHash + ")"));
             } else {
-                context.put("commitShortHash", shortHash);
+                context.set("commitShortHash", shortHash);
             }
-            context.put("commitsUrl", commitsUrl);
-            context.put("commitFullHash", fullHash);
-            context.put("commitTitle", passThrough(title));
-            context.put("commitAuthor", passThrough(author.name));
-            context.put("commitBody", passThrough(body));
-            context.put("commitHasIssues", !issues.isEmpty());
-            context.put("commitIssues", issues.stream().map(i -> {
+            context.set("commitsUrl", commitsUrl);
+            context.set("commitFullHash", fullHash);
+            context.set("commitTitle", passThrough(title));
+            context.set("commitAuthor", passThrough(author.name));
+            context.set("commitBody", passThrough(body));
+            context.set("commitHasIssues", !issues.isEmpty());
+            context.set("commitIssues", issues.stream().map(i -> {
                 String issue = links ? passThrough("[#" + i + "](" + issueTrackerUrl + i + ")") : "#" + i;
                 return singletonMap("issue", issue);
             }).collect(toList()));
@@ -716,16 +720,16 @@ public class ChangelogGenerator {
         }
 
         @Override
-        Map<String, Object> asContext(boolean links, String commitsUrl, String issueTrackerUrl) {
-            Map<String, Object> context = super.asContext(links, commitsUrl, issueTrackerUrl);
-            context.put("commitIsConventional", isConventional);
-            context.put("conventionalCommitBreakingChangeContent", passThrough(ccBreakingChangeContent));
-            context.put("conventionalCommitIsBreakingChange", ccIsBreakingChange);
-            context.put("conventionalCommitType", ccType);
-            context.put("conventionalCommitScope", ccScope);
-            context.put("conventionalCommitDescription", passThrough(ccDescription));
-            context.put("conventionalCommitBody", passThrough(ccBody));
-            context.put("conventionalCommitTrailers", unmodifiableList(trailers));
+        TemplateContext asContext(boolean links, String commitsUrl, String issueTrackerUrl) {
+            TemplateContext context = super.asContext(links, commitsUrl, issueTrackerUrl);
+            context.set("commitIsConventional", isConventional);
+            context.set("conventionalCommitBreakingChangeContent", passThrough(ccBreakingChangeContent));
+            context.set("conventionalCommitIsBreakingChange", ccIsBreakingChange);
+            context.set("conventionalCommitType", ccType);
+            context.set("conventionalCommitScope", ccScope);
+            context.set("conventionalCommitDescription", passThrough(ccDescription));
+            context.set("conventionalCommitBody", passThrough(ccBody));
+            context.set("conventionalCommitTrailers", unmodifiableList(trailers));
             return context;
         }
 
@@ -847,16 +851,16 @@ public class ChangelogGenerator {
             this.user = user;
         }
 
-        Map<String, Object> asContext() {
-            Map<String, Object> context = new LinkedHashMap<>();
-            context.put("contributorName", passThrough(name));
-            context.put("contributorNameAsLink", passThrough(name));
-            context.put("contributorUsername", "");
-            context.put("contributorUsernameAsLink", "");
+        TemplateContext asContext() {
+            TemplateContext context = new TemplateContext();
+            context.set("contributorName", passThrough(name));
+            context.set("contributorNameAsLink", passThrough(name));
+            context.set("contributorUsername", "");
+            context.set("contributorUsernameAsLink", "");
             if (user != null) {
-                context.put("contributorNameAsLink", passThrough(user.asLink(name)));
-                context.put("contributorUsername", passThrough(user.getUsername()));
-                context.put("contributorUsernameAsLink", passThrough(user.asLink("@" + user.getUsername())));
+                context.set("contributorNameAsLink", passThrough(user.asLink(name)));
+                context.set("contributorUsername", passThrough(user.getUsername()));
+                context.set("contributorUsernameAsLink", passThrough(user.asLink("@" + user.getUsername())));
             }
             return context;
         }

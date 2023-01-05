@@ -22,13 +22,12 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.spi.announce.AnnounceException;
 import org.jreleaser.model.spi.announce.Announcer;
 import org.jreleaser.mustache.MustacheUtils;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.slack.api.Message;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -67,8 +66,8 @@ public class SlackAnnouncer implements Announcer<org.jreleaser.model.api.announc
         if (isNotBlank(slack.getMessage())) {
             message = slack.getResolvedMessage(context);
         } else {
-            Map<String, Object> props = new LinkedHashMap<>();
-            props.put(Constants.KEY_CHANGELOG, MustacheUtils.passThrough(context.getChangelog()));
+            TemplateContext props = new TemplateContext();
+            props.set(Constants.KEY_CHANGELOG, MustacheUtils.passThrough(context.getChangelog()));
             context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
             message = slack.getResolvedMessageTemplate(context, props);
         }

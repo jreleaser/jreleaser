@@ -32,7 +32,7 @@ public interface DiscourseAnnouncer extends Announcer {
     String getUsername();
 
     String getApiKey();
-    
+
     String getCategoryName();
 
     String getTitle();

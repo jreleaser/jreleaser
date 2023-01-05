@@ -22,6 +22,7 @@ import org.jreleaser.model.Active;
 import org.jreleaser.model.Constants;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.mustache.TemplateContext;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -146,23 +147,26 @@ public final class DiscussionsAnnouncer extends AbstractAnnouncer<DiscussionsAnn
     }
 
     public String getResolvedTitle(JReleaserContext context) {
-        Map<String, Object> props = context.fullProps();
+        TemplateContext props = context.fullProps();
         applyTemplates(props, getResolvedExtraProperties());
         return resolveTemplate(title, props);
     }
 
     public String getResolvedMessage(JReleaserContext context) {
-        Map<String, Object> props = context.fullProps();
+        TemplateContext props = context.fullProps();
         applyTemplates(props, getResolvedExtraProperties());
         return resolveTemplate(message, props);
     }
 
-    public String getResolvedMessageTemplate(JReleaserContext context, Map<String, Object> extraProps) {
-        Map<String, Object> props = context.fullProps();
+    public String getResolvedMessageTemplate(JReleaserContext context, TemplateContext extraProps) {
+        TemplateContext props = context.fullProps();
         applyTemplates(props, getResolvedExtraProperties());
-        props.put(Constants.KEY_TAG_NAME, context.getModel().getRelease().getReleaser()
+        props.set(Constants.KEY_TAG_NAME, context.getModel().getRelease().getReleaser()
             .getEffectiveTagName(context.getModel()));
-        props.putAll(extraProps);
+        props.set(Constants.KEY_PREVIOUS_TAG_NAME,
+            context.getModel().getRelease().getReleaser()
+                .getResolvedPreviousTagName(context.getModel()));
+        props.setAll(extraProps);
 
         Path templatePath = context.getBasedir().resolve(messageTemplate);
         try {

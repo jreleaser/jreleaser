@@ -19,6 +19,7 @@ dependencies {
     api project(':jreleaser-logger-api')
     api project(':jreleaser-resource-bundle')
     api project(':jreleaser-utils')
+    api "com.github.spullara.mustache.java:compiler:$mustacheVersion"
 }
 
 project.rootProject.gradle.addBuildListener(new BuildAdapter() {

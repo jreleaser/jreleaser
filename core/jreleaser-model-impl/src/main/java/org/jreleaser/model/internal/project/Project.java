@@ -31,6 +31,7 @@ import org.jreleaser.model.internal.common.Icon;
 import org.jreleaser.model.internal.common.Java;
 import org.jreleaser.model.internal.common.Screenshot;
 import org.jreleaser.mustache.MustacheUtils;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.version.CalVer;
@@ -836,67 +837,59 @@ public final class Project extends AbstractModelObject<Project> implements Domai
             return map;
         }
 
-        public Map<String, Object> props(JReleaserModel model) {
+        public TemplateContext props(JReleaserModel model) {
             // duplicate from JReleaserModel to avoid endless recursion
-            Map<String, Object> props = new LinkedHashMap<>();
+            TemplateContext props = new TemplateContext();
             Project project = model.getProject();
-            props.putAll(model.getEnvironment().getProperties());
-            props.putAll(model.getEnvironment().getSourcedProperties());
-            props.put(Constants.KEY_PROJECT_NAME, project.getName());
-            props.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getCapitalizedName(project.getName()));
-            props.put(Constants.KEY_PROJECT_STEREOTYPE, project.getStereotype());
-            props.put(Constants.KEY_PROJECT_VERSION, project.getVersion());
-            props.put(Constants.KEY_PROJECT_SNAPSHOT, String.valueOf(project.isSnapshot()));
+            props.setAll(model.getEnvironment().getProperties());
+            props.setAll(model.getEnvironment().getSourcedProperties());
+            props.set(Constants.KEY_PROJECT_NAME, project.getName());
+            props.set(Constants.KEY_PROJECT_NAME_CAPITALIZED, getCapitalizedName(project.getName()));
+            props.set(Constants.KEY_PROJECT_STEREOTYPE, project.getStereotype());
+            props.set(Constants.KEY_PROJECT_VERSION, project.getVersion());
+            props.set(Constants.KEY_PROJECT_SNAPSHOT, String.valueOf(project.isSnapshot()));
             if (isNotBlank(project.getDescription())) {
-                props.put(Constants.KEY_PROJECT_DESCRIPTION, MustacheUtils.passThrough(project.getDescription()));
+                props.set(Constants.KEY_PROJECT_DESCRIPTION, MustacheUtils.passThrough(project.getDescription()));
             }
             if (isNotBlank(project.getLongDescription())) {
-                props.put(Constants.KEY_PROJECT_LONG_DESCRIPTION, MustacheUtils.passThrough(project.getLongDescription()));
+                props.set(Constants.KEY_PROJECT_LONG_DESCRIPTION, MustacheUtils.passThrough(project.getLongDescription()));
             }
-            if (isNotBlank(project.getLicense())) {
-                props.put(Constants.KEY_PROJECT_LICENSE, project.getLicense());
-            }
-            if (null != project.getInceptionYear()) {
-                props.put(Constants.KEY_PROJECT_INCEPTION_YEAR, project.getInceptionYear());
-            }
-            if (isNotBlank(project.getCopyright())) {
-                props.put(Constants.KEY_PROJECT_COPYRIGHT, project.getCopyright());
-            }
-            if (isNotBlank(project.getVendor())) {
-                props.put(Constants.KEY_PROJECT_VENDOR, project.getVendor());
-            }
+            props.set(Constants.KEY_PROJECT_LICENSE, project.getLicense());
+            props.set(Constants.KEY_PROJECT_INCEPTION_YEAR, project.getInceptionYear());
+            props.set(Constants.KEY_PROJECT_COPYRIGHT, project.getCopyright());
+            props.set(Constants.KEY_PROJECT_VENDOR, project.getVendor());
             project.getLinks().fillProps(props);
 
             if (project.getJava().isEnabled()) {
-                props.putAll(project.getJava().getResolvedExtraProperties());
-                props.put(Constants.KEY_PROJECT_JAVA_GROUP_ID, project.getJava().getGroupId());
-                props.put(Constants.KEY_PROJECT_JAVA_ARTIFACT_ID, project.getJava().getArtifactId());
+                props.setAll(project.getJava().getResolvedExtraProperties());
+                props.set(Constants.KEY_PROJECT_JAVA_GROUP_ID, project.getJava().getGroupId());
+                props.set(Constants.KEY_PROJECT_JAVA_ARTIFACT_ID, project.getJava().getArtifactId());
                 String javaVersion = project.getJava().getVersion();
-                props.put(Constants.KEY_PROJECT_JAVA_VERSION, javaVersion);
-                props.put(Constants.KEY_PROJECT_JAVA_MAIN_CLASS, project.getJava().getMainClass());
+                props.set(Constants.KEY_PROJECT_JAVA_VERSION, javaVersion);
+                props.set(Constants.KEY_PROJECT_JAVA_MAIN_CLASS, project.getJava().getMainClass());
                 if (isNotBlank(javaVersion)) {
                     SemanticVersion jv = SemanticVersion.of(javaVersion);
-                    props.put(Constants.KEY_PROJECT_JAVA_VERSION_MAJOR, jv.getMajor());
-                    if (jv.hasMinor()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_MINOR, jv.getMinor());
-                    if (jv.hasPatch()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_PATCH, jv.getPatch());
-                    if (jv.hasTag()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_TAG, jv.getTag());
-                    if (jv.hasBuild()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_BUILD, jv.getBuild());
+                    props.set(Constants.KEY_PROJECT_JAVA_VERSION_MAJOR, jv.getMajor());
+                    if (jv.hasMinor()) props.set(Constants.KEY_PROJECT_JAVA_VERSION_MINOR, jv.getMinor());
+                    if (jv.hasPatch()) props.set(Constants.KEY_PROJECT_JAVA_VERSION_PATCH, jv.getPatch());
+                    if (jv.hasTag()) props.set(Constants.KEY_PROJECT_JAVA_VERSION_TAG, jv.getTag());
+                    if (jv.hasBuild()) props.set(Constants.KEY_PROJECT_JAVA_VERSION_BUILD, jv.getBuild());
                 }
             }
 
             project.parseVersion();
-            props.putAll(project.getResolvedExtraProperties());
+            props.setAll(project.getResolvedExtraProperties());
 
             String osName = PlatformUtils.getDetectedOs();
             String osArch = PlatformUtils.getDetectedArch();
-            props.put(Constants.KEY_OS_NAME, osName);
-            props.put(Constants.KEY_OS_ARCH, osArch);
-            props.put(Constants.KEY_OS_VERSION, PlatformUtils.getDetectedVersion());
-            props.put(Constants.KEY_OS_PLATFORM, PlatformUtils.getCurrentFull());
-            props.put(Constants.KEY_OS_PLATFORM_REPLACED, model.getPlatform().applyReplacements(PlatformUtils.getCurrentFull()));
+            props.set(Constants.KEY_OS_NAME, osName);
+            props.set(Constants.KEY_OS_ARCH, osArch);
+            props.set(Constants.KEY_OS_VERSION, PlatformUtils.getDetectedVersion());
+            props.set(Constants.KEY_OS_PLATFORM, PlatformUtils.getCurrentFull());
+            props.set(Constants.KEY_OS_PLATFORM_REPLACED, model.getPlatform().applyReplacements(PlatformUtils.getCurrentFull()));
 
             applyTemplates(props, project.getResolvedExtraProperties());
-            props.put(Constants.KEY_ZONED_DATE_TIME_NOW, model.getNow());
+            props.set(Constants.KEY_ZONED_DATE_TIME_NOW, model.getNow());
 
             return props;
         }
@@ -1106,21 +1099,21 @@ public final class Project extends AbstractModelObject<Project> implements Domai
             return map;
         }
 
-        public void fillProps(Map<String, Object> props) {
-            if (isNotBlank(homepage)) props.put(PROJECT_LINK + "Homepage", homepage);
-            if (isNotBlank(documentation)) props.put(PROJECT_LINK + "Documentation", documentation);
-            if (isNotBlank(license)) props.put(PROJECT_LINK + "License", license);
-            if (isNotBlank(bugTracker)) props.put(PROJECT_LINK + "BugTracker", bugTracker);
-            if (isNotBlank(vcsBrowser)) props.put(PROJECT_LINK + "VcsBrowser", vcsBrowser);
-            if (isNotBlank(faq)) props.put(PROJECT_LINK + "Faq", faq);
-            if (isNotBlank(help)) props.put(PROJECT_LINK + "Help", help);
-            if (isNotBlank(donation)) props.put(PROJECT_LINK + "Donation", donation);
-            if (isNotBlank(translate)) props.put(PROJECT_LINK + "translate", translate);
-            if (isNotBlank(contact)) props.put(PROJECT_LINK + "contact", contact);
-            if (isNotBlank(contribute)) props.put(PROJECT_LINK + "contribute", contribute);
-            if (isNotBlank(homepage)) props.put(Constants.KEY_PROJECT_WEBSITE, homepage);
-            if (isNotBlank(documentation)) props.put(Constants.KEY_PROJECT_DOCS_URL, documentation);
-            if (isNotBlank(license)) props.put(Constants.KEY_PROJECT_LICENSE_URL, license);
+        public void fillProps(TemplateContext props) {
+            props.set(PROJECT_LINK + "Homepage", homepage);
+            props.set(PROJECT_LINK + "Documentation", documentation);
+            props.set(PROJECT_LINK + "License", license);
+            props.set(PROJECT_LINK + "BugTracker", bugTracker);
+            props.set(PROJECT_LINK + "VcsBrowser", vcsBrowser);
+            props.set(PROJECT_LINK + "Faq", faq);
+            props.set(PROJECT_LINK + "Help", help);
+            props.set(PROJECT_LINK + "Donation", donation);
+            props.set(PROJECT_LINK + "translate", translate);
+            props.set(PROJECT_LINK + "contact", contact);
+            props.set(PROJECT_LINK + "contribute", contribute);
+            props.set(Constants.KEY_PROJECT_WEBSITE, homepage);
+            props.set(Constants.KEY_PROJECT_DOCS_URL, documentation);
+            props.set(Constants.KEY_PROJECT_LICENSE_URL, license);
         }
 
         public Collection<LinkTemplate> asLinkTemplates() {

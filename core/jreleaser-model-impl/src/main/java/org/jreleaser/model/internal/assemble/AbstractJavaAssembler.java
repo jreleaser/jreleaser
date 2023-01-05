@@ -21,6 +21,7 @@ import org.jreleaser.model.Constants;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.Glob;
 import org.jreleaser.model.internal.common.Java;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.version.SemanticVersion;
 
 import java.util.ArrayList;
@@ -28,7 +29,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.jreleaser.util.CollectionUtils.safePut;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -62,28 +62,28 @@ public abstract class AbstractJavaAssembler<S extends AbstractJavaAssembler<S, A
     }
 
     @Override
-    public Map<String, Object> props() {
-        Map<String, Object> props = super.props();
-        props.put(Constants.KEY_DISTRIBUTION_EXECUTABLE, executable);
-        props.putAll(java.getResolvedExtraProperties());
-        safePut(Constants.KEY_DISTRIBUTION_JAVA_GROUP_ID, java.getGroupId(), props, true);
-        safePut(Constants.KEY_DISTRIBUTION_JAVA_ARTIFACT_ID, java.getArtifactId(), props, true);
-        safePut(Constants.KEY_DISTRIBUTION_JAVA_MAIN_CLASS, java.getMainClass(), props, true);
+    public TemplateContext props() {
+        TemplateContext props = super.props();
+        props.set(Constants.KEY_DISTRIBUTION_EXECUTABLE, executable);
+        props.setAll(java.getResolvedExtraProperties());
+        props.set(Constants.KEY_DISTRIBUTION_JAVA_GROUP_ID, java.getGroupId(), "");
+        props.set(Constants.KEY_DISTRIBUTION_JAVA_ARTIFACT_ID, java.getArtifactId(), "");
+        props.set(Constants.KEY_DISTRIBUTION_JAVA_MAIN_CLASS, java.getMainClass(), "");
         if (isNotBlank(java.getVersion())) {
-            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION, java.getVersion());
+            props.set(Constants.KEY_DISTRIBUTION_JAVA_VERSION, java.getVersion());
             SemanticVersion jv = SemanticVersion.of(java.getVersion());
-            safePut(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MAJOR, jv.getMajor(), props, true);
-            safePut(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MINOR, jv.getMinor(), props, true);
-            safePut(Constants.KEY_DISTRIBUTION_JAVA_VERSION_PATCH, jv.getPatch(), props, true);
-            safePut(Constants.KEY_DISTRIBUTION_JAVA_VERSION_TAG, jv.getTag(), props, true);
-            safePut(Constants.KEY_DISTRIBUTION_JAVA_VERSION_BUILD, jv.getBuild(), props, true);
+            props.set(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MAJOR, jv.getMajor(), "");
+            props.set(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MINOR, jv.getMinor(), "");
+            props.set(Constants.KEY_DISTRIBUTION_JAVA_VERSION_PATCH, jv.getPatch(), "");
+            props.set(Constants.KEY_DISTRIBUTION_JAVA_VERSION_TAG, jv.getTag(), "");
+            props.set(Constants.KEY_DISTRIBUTION_JAVA_VERSION_BUILD, jv.getBuild(), "");
         } else {
-            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION, "");
-            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MAJOR, "");
-            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MINOR, "");
-            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_PATCH, "");
-            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_TAG, "");
-            props.put(Constants.KEY_DISTRIBUTION_JAVA_VERSION_BUILD, "");
+            props.set(Constants.KEY_DISTRIBUTION_JAVA_VERSION, "");
+            props.set(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MAJOR, "");
+            props.set(Constants.KEY_DISTRIBUTION_JAVA_VERSION_MINOR, "");
+            props.set(Constants.KEY_DISTRIBUTION_JAVA_VERSION_PATCH, "");
+            props.set(Constants.KEY_DISTRIBUTION_JAVA_VERSION_TAG, "");
+            props.set(Constants.KEY_DISTRIBUTION_JAVA_VERSION_BUILD, "");
         }
         return props;
     }

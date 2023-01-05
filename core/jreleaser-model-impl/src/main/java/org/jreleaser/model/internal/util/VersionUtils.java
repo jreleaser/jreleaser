@@ -43,9 +43,10 @@ public final class VersionUtils {
     private VersionUtils() {
         // noop
     }
+
     public static Pattern resolveVersionPattern(JReleaserContext context) {
         BaseReleaser<?, ?> gitService = context.getModel().getRelease().getReleaser();
-        String tagName = gitService.getConfiguredTagName();
+        String tagName = gitService.getTagName();
         Pattern vp = Pattern.compile(tagName.replaceAll("\\{\\{.*}}", "\\(\\.\\*\\)"));
         if (!tagName.contains("{{")) {
             vp = Pattern.compile("(.*)");

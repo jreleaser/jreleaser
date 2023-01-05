@@ -19,6 +19,7 @@ package org.jreleaser.model.internal.release;
 
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.JReleaserModel;
+import org.jreleaser.mustache.TemplateContext;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -339,10 +340,10 @@ public final class GitlabReleaser extends BaseReleaser<org.jreleaser.model.api.r
     }
 
     @Override
-    public Map<String, Object> props(JReleaserModel model) {
-        Map<String, Object> props = super.props(model);
-        props.put(KEY_IDENTIFIER, projectIdentifier);
-        props.put(KEY_PROJECT_IDENTIFIER, projectIdentifier);
+    public TemplateContext props(JReleaserModel model) {
+        TemplateContext props = super.props(model);
+        props.set(KEY_IDENTIFIER, projectIdentifier);
+        props.set(KEY_PROJECT_IDENTIFIER, projectIdentifier);
 
         return props;
     }

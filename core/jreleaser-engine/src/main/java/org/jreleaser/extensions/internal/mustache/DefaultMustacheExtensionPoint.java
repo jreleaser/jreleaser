@@ -27,6 +27,7 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.extensions.api.mustache.MustacheExtensionPoint;
 import org.jreleaser.model.Constants;
 import org.jreleaser.mustache.MustacheUtils;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.util.Algorithm;
 import org.jreleaser.util.StringUtils;
 
@@ -40,7 +41,6 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.EnumSet;
 import java.util.Locale;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.function.ToLongFunction;
 import java.util.function.UnaryOperator;
@@ -55,45 +55,45 @@ import static org.jreleaser.util.ChecksumUtils.checksum;
  */
 public final class DefaultMustacheExtensionPoint implements MustacheExtensionPoint {
     @Override
-    public void apply(Map<String, Object> context) {
-        ZonedDateTime now = (ZonedDateTime) context.get(Constants.KEY_ZONED_DATE_TIME_NOW);
+    public void apply(TemplateContext context) {
+        ZonedDateTime now = context.get(Constants.KEY_ZONED_DATE_TIME_NOW);
         if (null == now) {
             now = ZonedDateTime.now();
         }
-        context.put("f_now", new TimeFormatFunction(now));
-        context.put("f_now_gmt", new TimeFormatFunction(now.withZoneSameInstant(ZoneId.of("GMT"))));
+        context.set("f_now", new TimeFormatFunction(now));
+        context.set("f_now_gmt", new TimeFormatFunction(now.withZoneSameInstant(ZoneId.of("GMT"))));
 
-        context.put("f_trim", new TrimFunction());
-        context.put("f_underscore", new UnderscoreFunction());
-        context.put("f_dash", new DashFunction());
-        context.put("f_slash", new SlashFunction());
-        context.put("f_upper", new UpperFunction());
-        context.put("f_lower", new LowerFunction());
-        context.put("f_capitalize", new CapitalizeFunction());
-        context.put("f_uncapitalize", new UncapitalizeFunction());
-        context.put("f_md2html", new MarkdownToHtmlFunction());
-        context.put("f_file_read", new FileReadFunction());
-        context.put("f_file_size", new FileSizeFunction());
+        context.set("f_trim", new TrimFunction());
+        context.set("f_underscore", new UnderscoreFunction());
+        context.set("f_dash", new DashFunction());
+        context.set("f_slash", new SlashFunction());
+        context.set("f_upper", new UpperFunction());
+        context.set("f_lower", new LowerFunction());
+        context.set("f_capitalize", new CapitalizeFunction());
+        context.set("f_uncapitalize", new UncapitalizeFunction());
+        context.set("f_md2html", new MarkdownToHtmlFunction());
+        context.set("f_file_read", new FileReadFunction());
+        context.set("f_file_size", new FileSizeFunction());
         EnumSet.allOf(Algorithm.class)
-            .forEach(algorithm -> context.put("f_checksum_" + algorithm.formatted(), new FileChecksumFunction(algorithm)));
-        context.put("f_json", new JsonFunction());
-        context.put("f_escape_csv", new DelegatingFunction(StringEscapeUtils::escapeCsv));
-        context.put("f_escape_ecma_script", new DelegatingFunction(StringEscapeUtils::escapeEcmaScript));
-        context.put("f_escape_html3", new DelegatingFunction(StringEscapeUtils::escapeHtml3));
-        context.put("f_escape_html4", new DelegatingFunction(StringEscapeUtils::escapeHtml4));
-        context.put("f_escape_java", new DelegatingFunction(StringEscapeUtils::escapeJava));
-        context.put("f_escape_json", new DelegatingFunction(StringEscapeUtils::escapeJson));
-        context.put("f_escape_xml10", new DelegatingFunction(StringEscapeUtils::escapeXml10));
-        context.put("f_escape_xml11", new DelegatingFunction(StringEscapeUtils::escapeXml11));
-        context.put("f_escape_xsi", new DelegatingFunction(StringEscapeUtils::escapeXSI));
-        context.put("f_chop", new DelegatingFunction(org.apache.commons.lang3.StringUtils::chop));
-        context.put("f_delete_whitespace", new DelegatingFunction(org.apache.commons.lang3.StringUtils::deleteWhitespace));
-        context.put("f_normalize_whitespace", new DelegatingFunction(org.apache.commons.lang3.StringUtils::normalizeSpace));
-        context.put("f_reverse", new DelegatingFunction(org.apache.commons.lang3.StringUtils::reverse));
-        context.put("f_strip", new DelegatingFunction(org.apache.commons.lang3.StringUtils::strip));
-        context.put("f_swapcase", new DelegatingFunction(org.apache.commons.lang3.StringUtils::swapCase));
+            .forEach(algorithm -> context.set("f_checksum_" + algorithm.formatted(), new FileChecksumFunction(algorithm)));
+        context.set("f_json", new JsonFunction());
+        context.set("f_escape_csv", new DelegatingFunction(StringEscapeUtils::escapeCsv));
+        context.set("f_escape_ecma_script", new DelegatingFunction(StringEscapeUtils::escapeEcmaScript));
+        context.set("f_escape_html3", new DelegatingFunction(StringEscapeUtils::escapeHtml3));
+        context.set("f_escape_html4", new DelegatingFunction(StringEscapeUtils::escapeHtml4));
+        context.set("f_escape_java", new DelegatingFunction(StringEscapeUtils::escapeJava));
+        context.set("f_escape_json", new DelegatingFunction(StringEscapeUtils::escapeJson));
+        context.set("f_escape_xml10", new DelegatingFunction(StringEscapeUtils::escapeXml10));
+        context.set("f_escape_xml11", new DelegatingFunction(StringEscapeUtils::escapeXml11));
+        context.set("f_escape_xsi", new DelegatingFunction(StringEscapeUtils::escapeXSI));
+        context.set("f_chop", new DelegatingFunction(org.apache.commons.lang3.StringUtils::chop));
+        context.set("f_delete_whitespace", new DelegatingFunction(org.apache.commons.lang3.StringUtils::deleteWhitespace));
+        context.set("f_normalize_whitespace", new DelegatingFunction(org.apache.commons.lang3.StringUtils::normalizeSpace));
+        context.set("f_reverse", new DelegatingFunction(org.apache.commons.lang3.StringUtils::reverse));
+        context.set("f_strip", new DelegatingFunction(org.apache.commons.lang3.StringUtils::strip));
+        context.set("f_swapcase", new DelegatingFunction(org.apache.commons.lang3.StringUtils::swapCase));
 
-        context.put("f_recursive_eval", new RecursiveEvalFunction(context));
+        context.set("f_recursive_eval", new RecursiveEvalFunction(context));
     }
 
     private static class TimeFormatFunction implements UnaryOperator<String> {
@@ -271,9 +271,9 @@ public final class DefaultMustacheExtensionPoint implements MustacheExtensionPoi
     }
 
     private static class RecursiveEvalFunction implements UnaryOperator<String> {
-        private final Map<String, Object> context;
+        private final TemplateContext context;
 
-        public RecursiveEvalFunction(Map<String, Object> context) {
+        public RecursiveEvalFunction(TemplateContext context) {
             this.context = context;
         }
 

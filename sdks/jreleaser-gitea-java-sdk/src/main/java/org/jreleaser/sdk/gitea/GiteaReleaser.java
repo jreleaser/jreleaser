@@ -29,6 +29,7 @@ import org.jreleaser.model.spi.release.Release;
 import org.jreleaser.model.spi.release.ReleaseException;
 import org.jreleaser.model.spi.release.Repository;
 import org.jreleaser.model.spi.release.User;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.git.ChangelogProvider;
 import org.jreleaser.sdk.git.GitSdk;
@@ -307,7 +308,7 @@ public class GiteaReleaser extends AbstractReleaser<org.jreleaser.model.api.rele
         String tagName = gitea.getEffectiveTagName(context.getModel());
         String labelName = gitea.getIssues().getLabel().getName();
         String labelColor = gitea.getIssues().getLabel().getColor();
-        Map<String, Object> props = gitea.props(context.getModel());
+        TemplateContext props = gitea.props(context.getModel());
         gitea.fillProps(props, context.getModel());
         String comment = resolveTemplate(gitea.getIssues().getComment(), props);
 

@@ -32,6 +32,7 @@ import org.jreleaser.model.internal.packagers.Packager;
 import org.jreleaser.model.internal.packagers.Packagers;
 import org.jreleaser.model.internal.platform.Platform;
 import org.jreleaser.model.internal.project.Project;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.version.SemanticVersion;
 
 import java.util.ArrayList;
@@ -67,7 +68,6 @@ import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_TAGS_BY_COMMA;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_TAGS_BY_SPACE;
 import static org.jreleaser.model.JReleaserOutput.nag;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
-import static org.jreleaser.util.CollectionUtils.safePut;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -254,38 +254,38 @@ public final class Distribution extends Packagers<Distribution> implements Domai
         setArtifacts(merge(this.artifacts, source.artifacts));
     }
 
-    public Map<String, Object> props() {
-        Map<String, Object> props = new LinkedHashMap<>();
+    public TemplateContext props() {
+        TemplateContext props = new TemplateContext();
         applyTemplates(props, getResolvedExtraProperties());
-        props.put(KEY_DISTRIBUTION_NAME, name);
-        props.put(KEY_DISTRIBUTION_STEREOTYPE, getStereotype());
-        props.put(KEY_DISTRIBUTION_EXECUTABLE, executable.getName());
-        props.put(KEY_DISTRIBUTION_EXECUTABLE_NAME, executable.getName());
-        props.put(KEY_DISTRIBUTION_EXECUTABLE_UNIX, executable.resolveExecutable("linux"));
-        props.put(KEY_DISTRIBUTION_EXECUTABLE_WINDOWS, executable.resolveExecutable("windows"));
-        safePut(KEY_DISTRIBUTION_EXECUTABLE_EXTENSION_UNIX, executable.resolveUnixExtension(), props, true);
-        safePut(KEY_DISTRIBUTION_EXECUTABLE_EXTENSION_WINDOWS, executable.resolveWindowsExtension(), props, true);
-        props.put(KEY_DISTRIBUTION_TAGS_BY_SPACE, String.join(" ", tags));
-        props.put(KEY_DISTRIBUTION_TAGS_BY_COMMA, String.join(",", tags));
-        props.putAll(java.getResolvedExtraProperties());
-        safePut(KEY_DISTRIBUTION_JAVA_GROUP_ID, java.getGroupId(), props, true);
-        safePut(KEY_DISTRIBUTION_JAVA_ARTIFACT_ID, java.getArtifactId(), props, true);
-        safePut(KEY_DISTRIBUTION_JAVA_MAIN_CLASS, java.getMainClass(), props, true);
+        props.set(KEY_DISTRIBUTION_NAME, name);
+        props.set(KEY_DISTRIBUTION_STEREOTYPE, getStereotype());
+        props.set(KEY_DISTRIBUTION_EXECUTABLE, executable.getName());
+        props.set(KEY_DISTRIBUTION_EXECUTABLE_NAME, executable.getName());
+        props.set(KEY_DISTRIBUTION_EXECUTABLE_UNIX, executable.resolveExecutable("linux"));
+        props.set(KEY_DISTRIBUTION_EXECUTABLE_WINDOWS, executable.resolveExecutable("windows"));
+        props.set(KEY_DISTRIBUTION_EXECUTABLE_EXTENSION_UNIX, executable.resolveUnixExtension(), "");
+        props.set(KEY_DISTRIBUTION_EXECUTABLE_EXTENSION_WINDOWS, executable.resolveWindowsExtension(), "");
+        props.set(KEY_DISTRIBUTION_TAGS_BY_SPACE, String.join(" ", tags));
+        props.set(KEY_DISTRIBUTION_TAGS_BY_COMMA, String.join(",", tags));
+        props.setAll(java.getResolvedExtraProperties());
+        props.set(KEY_DISTRIBUTION_JAVA_GROUP_ID, java.getGroupId(), "");
+        props.set(KEY_DISTRIBUTION_JAVA_ARTIFACT_ID, java.getArtifactId(), "");
+        props.set(KEY_DISTRIBUTION_JAVA_MAIN_CLASS, java.getMainClass(), "");
         if (isNotBlank(java.getVersion())) {
-            props.put(KEY_DISTRIBUTION_JAVA_VERSION, java.getVersion());
+            props.set(KEY_DISTRIBUTION_JAVA_VERSION, java.getVersion());
             SemanticVersion jv = SemanticVersion.of(java.getVersion());
-            safePut(KEY_DISTRIBUTION_JAVA_VERSION_MAJOR, jv.getMajor(), props, true);
-            safePut(KEY_DISTRIBUTION_JAVA_VERSION_MINOR, jv.getMinor(), props, true);
-            safePut(KEY_DISTRIBUTION_JAVA_VERSION_PATCH, jv.getPatch(), props, true);
-            safePut(KEY_DISTRIBUTION_JAVA_VERSION_TAG, jv.getTag(), props, true);
-            safePut(KEY_DISTRIBUTION_JAVA_VERSION_BUILD, jv.getBuild(), props, true);
+            props.set(KEY_DISTRIBUTION_JAVA_VERSION_MAJOR, jv.getMajor(), "");
+            props.set(KEY_DISTRIBUTION_JAVA_VERSION_MINOR, jv.getMinor(), "");
+            props.set(KEY_DISTRIBUTION_JAVA_VERSION_PATCH, jv.getPatch(), "");
+            props.set(KEY_DISTRIBUTION_JAVA_VERSION_TAG, jv.getTag(), "");
+            props.set(KEY_DISTRIBUTION_JAVA_VERSION_BUILD, jv.getBuild(), "");
         } else {
-            props.put(KEY_DISTRIBUTION_JAVA_VERSION, "");
-            props.put(KEY_DISTRIBUTION_JAVA_VERSION_MAJOR, "");
-            props.put(KEY_DISTRIBUTION_JAVA_VERSION_MINOR, "");
-            props.put(KEY_DISTRIBUTION_JAVA_VERSION_PATCH, "");
-            props.put(KEY_DISTRIBUTION_JAVA_VERSION_TAG, "");
-            props.put(KEY_DISTRIBUTION_JAVA_VERSION_BUILD, "");
+            props.set(KEY_DISTRIBUTION_JAVA_VERSION, "");
+            props.set(KEY_DISTRIBUTION_JAVA_VERSION_MAJOR, "");
+            props.set(KEY_DISTRIBUTION_JAVA_VERSION_MINOR, "");
+            props.set(KEY_DISTRIBUTION_JAVA_VERSION_PATCH, "");
+            props.set(KEY_DISTRIBUTION_JAVA_VERSION_TAG, "");
+            props.set(KEY_DISTRIBUTION_JAVA_VERSION_BUILD, "");
         }
         return props;
     }

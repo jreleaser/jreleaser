@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.project.Project;
+import org.jreleaser.mustache.TemplateContext;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -41,7 +42,7 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
     @JsonIgnore
     private boolean enabled;
     @JsonIgnore
-    private String basename;
+    private final String basename;
     @JsonIgnore
     private String tapName;
     private String owner;
@@ -140,12 +141,12 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
     }
 
     @Override
-    public String getResolvedCommitMessage(Map<String, Object> props) {
+    public String getResolvedCommitMessage(TemplateContext props) {
         return resolveTemplate(commitMessage, props);
     }
 
     @Override
-    public String getResolvedTagName(Map<String, Object> props) {
+    public String getResolvedTagName(TemplateContext props) {
         return resolveTemplate(tagName, props);
     }
 

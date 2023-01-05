@@ -391,7 +391,7 @@ public final class StringUtils {
 
         int i = className.lastIndexOf(".");
         if (i > -1) {
-            className = className.substring(i + 1, className.length());
+            className = className.substring(i + 1);
         }
 
         return className;

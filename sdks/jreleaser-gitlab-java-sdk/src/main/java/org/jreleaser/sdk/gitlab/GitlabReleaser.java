@@ -34,6 +34,7 @@ import org.jreleaser.model.spi.release.Release;
 import org.jreleaser.model.spi.release.ReleaseException;
 import org.jreleaser.model.spi.release.Repository;
 import org.jreleaser.model.spi.release.User;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.git.ChangelogProvider;
 import org.jreleaser.sdk.git.GitSdk;
@@ -389,7 +390,7 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
         String tagName = gitlab.getEffectiveTagName(context.getModel());
         String labelName = gitlab.getIssues().getLabel().getName();
         String labelColor = gitlab.getIssues().getLabel().getColor();
-        Map<String, Object> props = gitlab.props(context.getModel());
+        TemplateContext props = gitlab.props(context.getModel());
         gitlab.fillProps(props, context.getModel());
         String comment = resolveTemplate(gitlab.getIssues().getComment(), props);
 

@@ -20,8 +20,7 @@ package org.jreleaser.model.internal.packagers;
 import org.jreleaser.model.internal.common.Activatable;
 import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.common.OwnerAware;
-
-import java.util.Map;
+import org.jreleaser.mustache.TemplateContext;
 
 /**
  * @author Andres Almiray
@@ -58,7 +57,7 @@ public interface RepositoryTap extends Domain, OwnerAware, Activatable {
 
     void setCommitMessage(String commitMessage);
 
-    String getResolvedCommitMessage(Map<String, Object> props);
+    String getResolvedCommitMessage(TemplateContext props);
 
-    String getResolvedTagName(Map<String, Object> props);
+    String getResolvedTagName(TemplateContext props);
 }

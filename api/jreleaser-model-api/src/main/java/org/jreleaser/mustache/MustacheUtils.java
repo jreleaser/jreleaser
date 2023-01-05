@@ -58,13 +58,13 @@ public final class MustacheUtils {
         return vars;
     }
 
-    public static String applyTemplate(Reader reader, Map<String, Object> context, String templateName) {
+    public static String applyTemplate(Reader reader, TemplateContext context, String templateName) {
         StringWriter input = new StringWriter();
         MustacheFactory mf = new MyMustacheFactory();
         Mustache mustache = mf.compile(reader, templateName);
-        context.putAll(envVars());
+        context.setAll(envVars());
         applyFunctions(context);
-        mustache.execute(input, decorate(context));
+        mustache.execute(input, decorate(context.asMap()));
         input.flush();
         return input.toString();
     }
@@ -83,19 +83,23 @@ public final class MustacheUtils {
         return context;
     }
 
-    public static String applyTemplate(Reader reader, Map<String, Object> context) {
+    public static String applyTemplate(Reader reader, TemplateContext context) {
         return applyTemplate(reader, context, UUID.randomUUID().toString()).trim();
     }
 
-    public static String applyTemplate(String template, Map<String, Object> context, String templateName) {
+    public static String applyTemplate(String template, TemplateContext context, String templateName) {
         return applyTemplate(new StringReader(template), context, templateName);
     }
 
-    public static String applyTemplate(String template, Map<String, Object> context) {
+    public static String applyTemplate(String template, TemplateContext context) {
         return applyTemplate(new StringReader(template), context, UUID.randomUUID().toString()).trim();
     }
 
-    public static void applyTemplates(Map<String, Object> props, Map<String, Object> templates) {
+    public static void applyTemplates(Map<String, Object> props, TemplateContext templates) {
+        applyTemplates(new TemplateContext(props), templates);
+    }
+
+    public static void applyTemplates(TemplateContext props, Map<String, Object> templates) {
         for (Map.Entry<String, Object> e : new LinkedHashSet<>(templates.entrySet())) {
             Object value = e.getValue();
 
@@ -106,7 +110,22 @@ public final class MustacheUtils {
                 }
             }
 
-            props.put(e.getKey(), value);
+            props.set(e.getKey(), value);
+        }
+    }
+
+    public static void applyTemplates(TemplateContext props, TemplateContext templates) {
+        for (Map.Entry<String, Object> e : new LinkedHashSet<>(templates.entries())) {
+            Object value = e.getValue();
+
+            if (value instanceof CharSequence) {
+                String val = String.valueOf(value);
+                if (val.contains("{{") && val.contains("}}")) {
+                    value = applyTemplate(val, props);
+                }
+            }
+
+            props.set(e.getKey(), value);
         }
     }
 
@@ -114,7 +133,7 @@ public final class MustacheUtils {
         return isNotBlank(str) ? "!!" + str + "!!" : str;
     }
 
-    private static void applyFunctions(Map<String, Object> props) {
+    private static void applyFunctions(TemplateContext props) {
         ExtensionManagerHolder.get().findExtensionPoints(MustacheExtensionPoint.class)
             .forEach(ep -> ep.apply(props));
     }

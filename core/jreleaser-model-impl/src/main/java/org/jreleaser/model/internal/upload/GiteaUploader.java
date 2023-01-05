@@ -20,8 +20,8 @@ package org.jreleaser.model.internal.upload;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Artifact;
+import org.jreleaser.mustache.TemplateContext;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static java.util.Collections.unmodifiableMap;
@@ -217,13 +217,13 @@ public final class GiteaUploader extends AbstractUploader<org.jreleaser.model.ap
     }
 
     @Override
-    public String getResolvedDownloadUrl(Map<String, Object> props, Artifact artifact) {
-        Map<String, Object> p = new LinkedHashMap<>(artifactProps(props, artifact));
-        p.putAll(getResolvedExtraProperties());
-        p.put("host", host);
-        p.put("owner", owner);
-        p.put("packageName", packageName);
-        p.put("packageVersion", packageVersion);
+    public String getResolvedDownloadUrl(TemplateContext props, Artifact artifact) {
+        TemplateContext p = new TemplateContext(artifactProps(props, artifact));
+        p.setAll(getResolvedExtraProperties());
+        p.set("host", host);
+        p.set("owner", owner);
+        p.set("packageName", packageName);
+        p.set("packageVersion", packageVersion);
         return resolveTemplate(DOWNLOAD_URL, p);
     }
 

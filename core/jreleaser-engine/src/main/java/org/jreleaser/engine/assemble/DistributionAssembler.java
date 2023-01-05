@@ -23,9 +23,9 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.Assembler;
 import org.jreleaser.model.spi.assemble.AssemblerProcessingException;
 import org.jreleaser.model.spi.assemble.AssemblerProcessor;
+import org.jreleaser.mustache.TemplateContext;
 
 import java.nio.file.Path;
-import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
 
@@ -62,13 +62,13 @@ public class DistributionAssembler {
         assemblerProcessor.assemble(initProps());
     }
 
-    private Map<String, Object> initProps() {
-        Map<String, Object> props = context.props();
-        props.put(Constants.KEY_BASEDIR, context.getBasedir());
-        props.put(Constants.KEY_BASE_OUTPUT_DIRECTORY, outputDirectory.getParent());
-        props.put(Constants.KEY_OUTPUT_DIRECTORY, outputDirectory);
-        props.put(Constants.KEY_ASSEMBLE_DIRECTORY, context.getAssembleDirectory());
-        props.put(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY, context.getAssembleDirectory()
+    private TemplateContext initProps() {
+        TemplateContext props = context.props();
+        props.set(Constants.KEY_BASEDIR, context.getBasedir());
+        props.set(Constants.KEY_BASE_OUTPUT_DIRECTORY, outputDirectory.getParent());
+        props.set(Constants.KEY_OUTPUT_DIRECTORY, outputDirectory);
+        props.set(Constants.KEY_ASSEMBLE_DIRECTORY, context.getAssembleDirectory());
+        props.set(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY, context.getAssembleDirectory()
             .resolve(assembler.getName())
             .resolve(assembler.getType()));
         return props;

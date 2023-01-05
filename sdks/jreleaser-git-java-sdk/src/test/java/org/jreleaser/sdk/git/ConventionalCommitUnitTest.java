@@ -248,7 +248,7 @@ class ConventionalCommitUnitTest {
             .hasFieldOrPropertyWithValue("ccBody", "");
         assertThat(((ChangelogGenerator.ConventionalCommit) c).getTrailers()).isEmpty();
 
-        assertThat(c.asContext(false, "", ""))
+        assertThat(c.asContext(false, "", "").asMap())
             .containsEntry("commitIsConventional", true)
             .containsEntry("conventionalCommitBreakingChangeContent", "")
             .containsEntry("conventionalCommitIsBreakingChange", true)
@@ -276,7 +276,7 @@ class ConventionalCommitUnitTest {
             .hasFieldOrPropertyWithValue("ccBody", "");
         assertThat(((ChangelogGenerator.ConventionalCommit) c).getTrailers()).isEmpty();
 
-        assertThat(c.asContext(false, "", ""))
+        assertThat(c.asContext(false, "", "").asMap())
             .containsEntry("commitIsConventional", true)
             .containsEntry("conventionalCommitBreakingChangeContent", "!!use JavaScript features not available in Node 6.!!")
             .containsEntry("conventionalCommitIsBreakingChange", true)

@@ -46,6 +46,7 @@ import static java.util.stream.Collectors.groupingBy;
 import static org.jreleaser.model.api.release.Releaser.BRANCH;
 import static org.jreleaser.model.api.release.Releaser.MILESTONE_NAME;
 import static org.jreleaser.model.api.release.Releaser.OVERWRITE;
+import static org.jreleaser.model.api.release.Releaser.PREVIOUS_TAG_NAME;
 import static org.jreleaser.model.api.release.Releaser.RELEASE_NAME;
 import static org.jreleaser.model.api.release.Releaser.SKIP_RELEASE;
 import static org.jreleaser.model.api.release.Releaser.SKIP_TAG;
@@ -61,12 +62,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public final class BaseReleaserValidator {
+    private static final String DEFAULT_CHANGELOG_TPL = "src/jreleaser/templates/changelog.tpl";
+    private static final String DEFAULT_APPEND_CHANGELOG_TPL = "src/jreleaser/templates/append-changelog.tpl";
     private BaseReleaserValidator() {
         // noop
     }
-
-    private static final String DEFAULT_CHANGELOG_TPL = "src/jreleaser/templates/changelog.tpl";
-    private static final String DEFAULT_APPEND_CHANGELOG_TPL = "src/jreleaser/templates/append-changelog.tpl";
 
     public static void validateGitService(JReleaserContext context, Mode mode, BaseReleaser<?, ?> service, Errors errors) {
         JReleaserModel model = context.getModel();
@@ -110,6 +110,13 @@ public final class BaseReleaserValidator {
                 baseKey + "tagName",
                 service.getTagName(),
                 "v{{projectVersion}}"));
+
+        service.setPreviousTagName(
+            checkProperty(context,
+                PREVIOUS_TAG_NAME,
+                baseKey + "previousTagName",
+                service.getPreviousTagName(),
+                ""));
 
         if (service.isReleaseSupported()) {
             service.setReleaseName(

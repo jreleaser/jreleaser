@@ -24,6 +24,7 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.upload.HttpUploader;
 import org.jreleaser.model.spi.upload.UploadException;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.commons.AbstractArtifactUploader;
 import org.jreleaser.sdk.commons.ClientUtils;
 
@@ -124,7 +125,7 @@ public class HttpArtifactUploader extends AbstractArtifactUploader<org.jreleaser
     }
 
     private void resolveHeaders(Artifact artifact, Map<String, String> headers) {
-        Map<String, Object> props = uploader.artifactProps(context, artifact);
+        TemplateContext props = uploader.artifactProps(context, artifact);
         uploader.getHeaders().forEach((k, v) -> {
             String value = resolveTemplate(v, props);
             if (isNotBlank(value)) headers.put(k, value);

@@ -20,6 +20,7 @@ package org.jreleaser.model.internal.checksum;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.common.Domain;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.util.Algorithm;
 
 import java.util.LinkedHashMap;
@@ -85,7 +86,7 @@ public final class Checksum extends AbstractModelObject<Checksum> implements Dom
     }
 
     public String getResolvedName(JReleaserContext context) {
-        Map<String, Object> props = context.fullProps();
+        TemplateContext props = context.fullProps();
         context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
         return resolveTemplate(name, props);
     }

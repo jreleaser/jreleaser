@@ -20,8 +20,6 @@ package org.jreleaser.mustache;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserException;
 
-import java.util.Map;
-
 import static org.jreleaser.mustache.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -34,7 +32,7 @@ public final class Templates {
         // noop
     }
 
-    public static String resolveTemplate(String input, Map<String, Object> props) {
+    public static String resolveTemplate(String input, TemplateContext props) {
         if (isBlank(input)) return input;
 
         int count = 0;

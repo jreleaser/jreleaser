@@ -25,6 +25,7 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.JavaArchiveAssembler;
 import org.jreleaser.model.internal.common.Glob;
 import org.jreleaser.model.spi.assemble.AssemblerProcessingException;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.templates.TemplateResource;
 import org.jreleaser.util.FileUtils;
 
@@ -52,8 +53,8 @@ public class JavaArchiveAssemblerProcessor extends AbstractAssemblerProcessor<or
     }
 
     @Override
-    protected void doAssemble(Map<String, Object> props) throws AssemblerProcessingException {
-        Path assembleDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
+    protected void doAssemble(TemplateContext props) throws AssemblerProcessingException {
+        Path assembleDirectory = props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
         String archiveName = assembler.getResolvedArchiveName(context);
 
         Path inputsDirectory = assembleDirectory.resolve("inputs");
@@ -132,18 +133,18 @@ public class JavaArchiveAssemblerProcessor extends AbstractAssemblerProcessor<or
     }
 
     @Override
-    protected void fillAssemblerProperties(Map<String, Object> props) {
+    protected void fillAssemblerProperties(TemplateContext props) {
         super.fillAssemblerProperties(props);
 
         if (isNotBlank(assembler.getMainJar().getPath())) {
-            props.put(Constants.KEY_DISTRIBUTION_JAVA_MAIN_JAR, assembler.getMainJar().getEffectivePath(context, assembler)
+            props.set(Constants.KEY_DISTRIBUTION_JAVA_MAIN_JAR, assembler.getMainJar().getEffectivePath(context, assembler)
                 .getFileName());
         } else {
-            props.put(Constants.KEY_DISTRIBUTION_JAVA_MAIN_JAR, "");
+            props.set(Constants.KEY_DISTRIBUTION_JAVA_MAIN_JAR, "");
         }
-        props.put(Constants.KEY_DISTRIBUTION_JAVA_MAIN_CLASS, assembler.getJava().getMainClass());
-        props.put(Constants.KEY_DISTRIBUTION_JAVA_MAIN_MODULE, assembler.getJava().getMainModule());
-        props.put(Constants.KEY_DISTRIBUTION_JAVA_OPTIONS, !assembler.getJava().getOptions().isEmpty() ? assembler.getJava().getOptions() : "");
+        props.set(Constants.KEY_DISTRIBUTION_JAVA_MAIN_CLASS, assembler.getJava().getMainClass());
+        props.set(Constants.KEY_DISTRIBUTION_JAVA_MAIN_MODULE, assembler.getJava().getMainModule());
+        props.set(Constants.KEY_DISTRIBUTION_JAVA_OPTIONS, !assembler.getJava().getOptions().isEmpty() ? assembler.getJava().getOptions() : "");
     }
 
     private void archive(Path workDirectory, Path assembleDirectory, String archiveName, Archive.Format format) throws AssemblerProcessingException {
@@ -182,11 +183,11 @@ public class JavaArchiveAssemblerProcessor extends AbstractAssemblerProcessor<or
         return paths;
     }
 
-    private void writeFile(String content, Map<String, Object> props, String fileName)
+    private void writeFile(String content, TemplateContext props, String fileName)
         throws AssemblerProcessingException {
         fileName = trimTplExtension(fileName);
 
-        Path outputDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
+        Path outputDirectory = props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
         Path inputsDirectory = outputDirectory.resolve("inputs");
         try {
             Files.createDirectories(inputsDirectory);
@@ -205,8 +206,8 @@ public class JavaArchiveAssemblerProcessor extends AbstractAssemblerProcessor<or
         writeFile(content, outputFile);
     }
 
-    private void writeFile(byte[] content, Map<String, Object> props, String fileName) throws AssemblerProcessingException {
-        Path outputDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
+    private void writeFile(byte[] content, TemplateContext props, String fileName) throws AssemblerProcessingException {
+        Path outputDirectory = props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
         Path inputsDirectory = outputDirectory.resolve("inputs");
         try {
             Files.createDirectories(inputsDirectory);

@@ -21,9 +21,7 @@ import org.jreleaser.model.Constants;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.spi.announce.AnnounceException;
 import org.jreleaser.model.spi.announce.Announcer;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
+import org.jreleaser.mustache.TemplateContext;
 
 import static org.jreleaser.mustache.MustacheUtils.passThrough;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -63,8 +61,8 @@ public class ZulipAnnouncer implements Announcer<org.jreleaser.model.api.announc
         if (isNotBlank(zulip.getMessage())) {
             message = zulip.getResolvedMessage(context);
         } else {
-            Map<String, Object> props = new LinkedHashMap<>();
-            props.put(Constants.KEY_CHANGELOG, passThrough(context.getChangelog()));
+            TemplateContext props = new TemplateContext();
+            props.set(Constants.KEY_CHANGELOG, passThrough(context.getChangelog()));
             context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
             message = zulip.getResolvedMessageTemplate(context, props);
         }

@@ -30,7 +30,7 @@ import static java.util.Collections.unmodifiableMap;
  */
 public final class Screenshot extends AbstractModelObject<Screenshot> implements Domain, ExtraProperties {
     private static final long serialVersionUID = 7278270297286736205L;
-    
+
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
 
     private org.jreleaser.model.Screenshot.Type type = org.jreleaser.model.Screenshot.Type.SOURCE;

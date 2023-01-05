@@ -24,8 +24,7 @@ import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.Packager;
 import org.jreleaser.model.spi.packagers.PackagerProcessingException;
 import org.jreleaser.model.spi.packagers.PackagerProcessor;
-
-import java.util.Map;
+import org.jreleaser.mustache.TemplateContext;
 
 import static java.util.Objects.requireNonNull;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
@@ -150,14 +149,14 @@ public class DistributionProcessor {
         }
     }
 
-    private Map<String, Object> initProps() {
-        Map<String, Object> props = context.props();
-        props.put(Constants.KEY_PREPARE_DIRECTORY, context.getPrepareDirectory());
-        props.put(Constants.KEY_PACKAGE_DIRECTORY, context.getPackageDirectory());
-        props.put(Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY, context.getPrepareDirectory()
+    private TemplateContext initProps() {
+        TemplateContext props = context.props();
+        props.set(Constants.KEY_PREPARE_DIRECTORY, context.getPrepareDirectory());
+        props.set(Constants.KEY_PACKAGE_DIRECTORY, context.getPackageDirectory());
+        props.set(Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY, context.getPrepareDirectory()
             .resolve(distributionName)
             .resolve(packagerName));
-        props.put(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY, context.getPackageDirectory()
+        props.set(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY, context.getPackageDirectory()
             .resolve(distributionName)
             .resolve(packagerName));
         return props;
@@ -171,10 +170,6 @@ public class DistributionProcessor {
         private final String text;
         private final Type type;
         private final PackagerProcessingFunction function;
-
-        public static PackagingAction of(String text, Type type, PackagerProcessingFunction function) {
-            return new PackagingAction(text, type, function);
-        }
 
         private PackagingAction(String text, Type type, PackagerProcessingFunction function) {
             this.text = text;
@@ -192,6 +187,10 @@ public class DistributionProcessor {
 
         public PackagerProcessingFunction getFunction() {
             return function;
+        }
+
+        public static PackagingAction of(String text, Type type, PackagerProcessingFunction function) {
+            return new PackagingAction(text, type, function);
         }
 
         public enum Type {

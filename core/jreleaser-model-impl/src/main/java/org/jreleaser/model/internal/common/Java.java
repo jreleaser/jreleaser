@@ -30,7 +30,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public final class Java extends AbstractModelObject<Java> implements Domain, ExtraProperties, EnabledAware {
     private static final long serialVersionUID = -2234061310893799176L;
-    
+
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
 
     private Boolean enabled;

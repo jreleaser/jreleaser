@@ -24,6 +24,7 @@ import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.SdkmanPackager;
 import org.jreleaser.model.spi.announce.AnnounceException;
 import org.jreleaser.model.spi.announce.Announcer;
+import org.jreleaser.mustache.TemplateContext;
 
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -93,8 +94,8 @@ public class SdkmanAnnouncer implements Announcer<org.jreleaser.model.api.announ
             Distribution distribution = e.getValue();
 
             SdkmanPackager sdkman = distribution.getSdkman();
-            Map<String, Object> props = context.fullProps();
-            props.putAll(distribution.props());
+            TemplateContext props = context.fullProps();
+            props.setAll(distribution.props());
             String releaseNotesUrl = resolveTemplate(sdkman.getReleaseNotesUrl(), props);
             String command = sdkman.getCommand().name().toLowerCase(Locale.ENGLISH);
 

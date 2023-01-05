@@ -27,6 +27,7 @@ import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.common.FileSet;
 import org.jreleaser.model.internal.common.Glob;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.util.PlatformUtils;
 
 import java.util.ArrayList;
@@ -510,8 +511,8 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
         }
 
         public String getResolvedAppVersion(JReleaserContext context, JpackageAssembler jpackage) {
-            Map<String, Object> props = context.getModel().props();
-            props.putAll(jpackage.props());
+            TemplateContext props = context.getModel().props();
+            props.setAll(jpackage.props());
             return resolveTemplate(appVersion, props);
         }
 
@@ -707,8 +708,8 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
 
         @Override
         public String getResolvedAppName(JReleaserContext context, JpackageAssembler jpackage) {
-            Map<String, Object> props = context.getModel().props();
-            props.putAll(jpackage.props());
+            TemplateContext props = context.getModel().props();
+            props.setAll(jpackage.props());
             return resolveTemplate(appName, props);
         }
 

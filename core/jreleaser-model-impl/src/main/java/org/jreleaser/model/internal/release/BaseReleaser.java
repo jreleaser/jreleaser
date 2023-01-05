@@ -29,6 +29,7 @@ import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.common.EnabledAware;
 import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.mustache.MustacheUtils;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.version.SemanticVersion;
@@ -51,7 +52,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Releaser, S extends BaseReleaser<A, S>> extends AbstractModelObject<S> implements Releaser<A> {
-    private static final long serialVersionUID = 655832984022101746L;
+    private static final long serialVersionUID = -8766074471785244397L;
 
     @JsonIgnore
     private final String serviceName;
@@ -98,6 +99,8 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
     private Boolean uploadAssetsEnabled;
     @JsonIgnore
     private String cachedTagName;
+    @JsonIgnore
+    private String cachedPreviousTagName;
     @JsonIgnore
     private String cachedReleaseName;
 
@@ -176,22 +179,22 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
         return name;
     }
 
-    public String getConfiguredTagName() {
-        return Env.env(org.jreleaser.model.api.release.Releaser.TAG_NAME, tagName);
-    }
+    public String getResolvedPreviousTagName(JReleaserModel model) {
+        if (isBlank(cachedPreviousTagName) && isNotBlank(previousTagName)) {
+            cachedPreviousTagName = resolveTemplate(previousTagName, props(model));
+        }
+        if (isNotBlank(cachedPreviousTagName) && cachedPreviousTagName.contains("{{")) {
+            cachedPreviousTagName = resolveTemplate(cachedPreviousTagName, props(model));
+        }
 
-    public String getConfiguredPreviousTagName() {
-        return Env.env(org.jreleaser.model.api.release.Releaser.PREVIOUS_TAG_NAME, previousTagName);
+        return cachedPreviousTagName;
     }
 
     public String getResolvedTagName(JReleaserModel model) {
         if (isBlank(cachedTagName)) {
-            cachedTagName = getConfiguredTagName();
-        }
-
-        if (isBlank(cachedTagName)) {
             cachedTagName = resolveTemplate(tagName, props(model));
-        } else if (cachedTagName.contains("{{")) {
+        }
+        if (cachedTagName.contains("{{")) {
             cachedTagName = resolveTemplate(cachedTagName, props(model));
         }
 
@@ -205,18 +208,11 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
         return cachedTagName;
     }
 
-    public String getConfiguredReleaseName() {
-        return Env.env(org.jreleaser.model.api.release.Releaser.RELEASE_NAME, cachedReleaseName);
-    }
-
     public String getResolvedReleaseName(JReleaserModel model) {
         if (isBlank(cachedReleaseName)) {
-            cachedReleaseName = getConfiguredReleaseName();
-        }
-
-        if (isBlank(cachedReleaseName)) {
             cachedReleaseName = resolveTemplate(releaseName, props(model));
-        } else if (cachedReleaseName.contains("{{")) {
+        }
+        if (cachedReleaseName.contains("{{")) {
             cachedReleaseName = resolveTemplate(cachedReleaseName, props(model));
         }
 
@@ -239,17 +235,17 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
 
     public String getResolvedRepoUrl(JReleaserModel model, String repoOwner, String repoName) {
         if (!releaseSupported) return "";
-        Map<String, Object> props = props(model);
-        props.put(Constants.KEY_REPO_OWNER, repoOwner);
-        props.put(Constants.KEY_REPO_NAME, repoName);
+        TemplateContext props = props(model);
+        props.set(Constants.KEY_REPO_OWNER, repoOwner);
+        props.set(Constants.KEY_REPO_NAME, repoName);
         return resolveTemplate(repoUrl, props);
     }
 
     public String getResolvedRepoCloneUrl(JReleaserModel model, String repoOwner, String repoName) {
         if (!releaseSupported) return "";
-        Map<String, Object> props = props(model);
-        props.put(Constants.KEY_REPO_OWNER, repoOwner);
-        props.put(Constants.KEY_REPO_NAME, repoName);
+        TemplateContext props = props(model);
+        props.set(Constants.KEY_REPO_OWNER, repoOwner);
+        props.set(Constants.KEY_REPO_NAME, repoName);
         return resolveTemplate(repoCloneUrl, props);
     }
 
@@ -429,6 +425,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
     }
 
     public void setTagName(String tagName) {
+        this.cachedTagName = null;
         this.tagName = tagName;
     }
 
@@ -437,6 +434,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
     }
 
     public void setPreviousTagName(String previousTagName) {
+        this.cachedPreviousTagName = null;
         this.previousTagName = previousTagName;
     }
 
@@ -445,6 +443,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
     }
 
     public void setReleaseName(String releaseName) {
+        this.cachedReleaseName = null;
         this.releaseName = releaseName;
     }
 
@@ -644,153 +643,159 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
 
     @Override
     public Map<String, Object> asMap(boolean full) {
-        Map<String, Object> props = new LinkedHashMap<>();
-        props.put("enabled", isEnabled());
-        props.put("host", host);
-        props.put("owner", owner);
-        props.put("name", name);
-        props.put("username", username);
-        props.put("token", isNotBlank(token) ? Constants.HIDE : Constants.UNSET);
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("enabled", isEnabled());
+        map.put("host", host);
+        map.put("owner", owner);
+        map.put("name", name);
+        map.put("username", username);
+        map.put("token", isNotBlank(token) ? Constants.HIDE : Constants.UNSET);
         if (releaseSupported) {
-            props.put("uploadAssets", uploadAssets);
-            props.put("artifacts", isArtifacts());
-            props.put("files", isFiles());
-            props.put("checksums", isChecksums());
-            props.put("signatures", isSignatures());
-            props.put("repoUrl", repoUrl);
-            props.put("repoCloneUrl", repoCloneUrl);
-            props.put("commitUrl", commitUrl);
-            props.put("srcUrl", srcUrl);
-            props.put("downloadUrl", downloadUrl);
-            props.put("releaseNotesUrl", releaseNotesUrl);
-            props.put("latestReleaseUrl", latestReleaseUrl);
-            props.put("issueTrackerUrl", issueTrackerUrl);
+            map.put("uploadAssets", uploadAssets);
+            map.put("artifacts", isArtifacts());
+            map.put("files", isFiles());
+            map.put("checksums", isChecksums());
+            map.put("signatures", isSignatures());
+            map.put("repoUrl", repoUrl);
+            map.put("repoCloneUrl", repoCloneUrl);
+            map.put("commitUrl", commitUrl);
+            map.put("srcUrl", srcUrl);
+            map.put("downloadUrl", downloadUrl);
+            map.put("releaseNotesUrl", releaseNotesUrl);
+            map.put("latestReleaseUrl", latestReleaseUrl);
+            map.put("issueTrackerUrl", issueTrackerUrl);
         }
-        props.put("tagName", tagName);
+        map.put("tagName", tagName);
         if (releaseSupported) {
-            props.put("releaseName", releaseName);
+            map.put("releaseName", releaseName);
         }
-        props.put("branch", branch);
-        props.put("commitAuthor", commitAuthor.asMap(full));
-        props.put("sign", isSign());
-        props.put("skipTag", isSkipTag());
-        props.put("skipRelease", isSkipRelease());
-        props.put("overwrite", isOverwrite());
+        map.put("branch", branch);
+        map.put("commitAuthor", commitAuthor.asMap(full));
+        map.put("sign", isSign());
+        map.put("skipTag", isSkipTag());
+        map.put("skipRelease", isSkipRelease());
+        map.put("overwrite", isOverwrite());
         if (releaseSupported) {
-            props.put("update", update.asMap(full));
-            props.put("apiEndpoint", apiEndpoint);
-            props.put("connectTimeout", connectTimeout);
-            props.put("readTimeout", readTimeout);
+            map.put("update", update.asMap(full));
+            map.put("apiEndpoint", apiEndpoint);
+            map.put("connectTimeout", connectTimeout);
+            map.put("readTimeout", readTimeout);
         }
-        props.put("changelog", changelog.asMap(full));
+        map.put("changelog", changelog.asMap(full));
         if (releaseSupported) {
-            props.put("milestone", milestone.asMap(full));
-            props.put("issues", issues.asMap(full));
+            map.put("milestone", milestone.asMap(full));
+            map.put("issues", issues.asMap(full));
         }
-        props.put("prerelease", prerelease.asMap(full));
-        return props;
+        map.put("prerelease", prerelease.asMap(full));
+        return map;
     }
 
-    public Map<String, Object> props(JReleaserModel model) {
+    public TemplateContext props(JReleaserModel model) {
         // duplicate from JReleaserModel to avoid endless recursion
-        Map<String, Object> props = new LinkedHashMap<>();
+        TemplateContext props = new TemplateContext();
         Project project = model.getProject();
-        props.putAll(model.getEnvironment().getProperties());
-        props.putAll(model.getEnvironment().getSourcedProperties());
-        props.put(Constants.KEY_PROJECT_NAME, project.getName());
-        props.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getCapitalizedName(project.getName()));
-        props.put(Constants.KEY_PROJECT_VERSION, project.getVersion());
-        props.put(Constants.KEY_PROJECT_STEREOTYPE, project.getStereotype());
-        props.put(Constants.KEY_PROJECT_EFFECTIVE_VERSION, project.getEffectiveVersion());
-        props.put(Constants.KEY_PROJECT_SNAPSHOT, String.valueOf(project.isSnapshot()));
+        props.setAll(model.getEnvironment().getProperties());
+        props.setAll(model.getEnvironment().getSourcedProperties());
+        props.set(Constants.KEY_PROJECT_NAME, project.getName());
+        props.set(Constants.KEY_PROJECT_NAME_CAPITALIZED, getCapitalizedName(project.getName()));
+        props.set(Constants.KEY_PROJECT_VERSION, project.getVersion());
+        props.set(Constants.KEY_PROJECT_STEREOTYPE, project.getStereotype());
+        props.set(Constants.KEY_PROJECT_EFFECTIVE_VERSION, project.getEffectiveVersion());
+        props.set(Constants.KEY_PROJECT_SNAPSHOT, String.valueOf(project.isSnapshot()));
         if (isNotBlank(project.getDescription())) {
-            props.put(Constants.KEY_PROJECT_DESCRIPTION, MustacheUtils.passThrough(project.getDescription()));
+            props.set(Constants.KEY_PROJECT_DESCRIPTION, MustacheUtils.passThrough(project.getDescription()));
         }
         if (isNotBlank(project.getLongDescription())) {
-            props.put(Constants.KEY_PROJECT_LONG_DESCRIPTION, MustacheUtils.passThrough(project.getLongDescription()));
+            props.set(Constants.KEY_PROJECT_LONG_DESCRIPTION, MustacheUtils.passThrough(project.getLongDescription()));
         }
         if (isNotBlank(project.getLicense())) {
-            props.put(Constants.KEY_PROJECT_LICENSE, project.getLicense());
+            props.set(Constants.KEY_PROJECT_LICENSE, project.getLicense());
         }
         if (null != project.getInceptionYear()) {
-            props.put(Constants.KEY_PROJECT_INCEPTION_YEAR, project.getInceptionYear());
+            props.set(Constants.KEY_PROJECT_INCEPTION_YEAR, project.getInceptionYear());
         }
         if (isNotBlank(project.getCopyright())) {
-            props.put(Constants.KEY_PROJECT_COPYRIGHT, project.getCopyright());
+            props.set(Constants.KEY_PROJECT_COPYRIGHT, project.getCopyright());
         }
         if (isNotBlank(project.getVendor())) {
-            props.put(Constants.KEY_PROJECT_VENDOR, project.getVendor());
+            props.set(Constants.KEY_PROJECT_VENDOR, project.getVendor());
         }
         project.getLinks().fillProps(props);
 
         if (project.getJava().isEnabled()) {
-            props.putAll(project.getJava().getResolvedExtraProperties());
-            props.put(Constants.KEY_PROJECT_JAVA_GROUP_ID, project.getJava().getGroupId());
-            props.put(Constants.KEY_PROJECT_JAVA_ARTIFACT_ID, project.getJava().getArtifactId());
+            props.setAll(project.getJava().getResolvedExtraProperties());
+            props.set(Constants.KEY_PROJECT_JAVA_GROUP_ID, project.getJava().getGroupId());
+            props.set(Constants.KEY_PROJECT_JAVA_ARTIFACT_ID, project.getJava().getArtifactId());
             String javaVersion = project.getJava().getVersion();
-            props.put(Constants.KEY_PROJECT_JAVA_VERSION, javaVersion);
-            props.put(Constants.KEY_PROJECT_JAVA_MAIN_CLASS, project.getJava().getMainClass());
+            props.set(Constants.KEY_PROJECT_JAVA_VERSION, javaVersion);
+            props.set(Constants.KEY_PROJECT_JAVA_MAIN_CLASS, project.getJava().getMainClass());
             if (isNotBlank(javaVersion)) {
                 SemanticVersion jv = SemanticVersion.of(javaVersion);
-                props.put(Constants.KEY_PROJECT_JAVA_VERSION_MAJOR, jv.getMajor());
-                if (jv.hasMinor()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_MINOR, jv.getMinor());
-                if (jv.hasPatch()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_PATCH, jv.getPatch());
-                if (jv.hasTag()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_TAG, jv.getTag());
-                if (jv.hasBuild()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_BUILD, jv.getBuild());
+                props.set(Constants.KEY_PROJECT_JAVA_VERSION_MAJOR, jv.getMajor());
+                if (jv.hasMinor()) props.set(Constants.KEY_PROJECT_JAVA_VERSION_MINOR, jv.getMinor());
+                if (jv.hasPatch()) props.set(Constants.KEY_PROJECT_JAVA_VERSION_PATCH, jv.getPatch());
+                if (jv.hasTag()) props.set(Constants.KEY_PROJECT_JAVA_VERSION_TAG, jv.getTag());
+                if (jv.hasBuild()) props.set(Constants.KEY_PROJECT_JAVA_VERSION_BUILD, jv.getBuild());
             }
         }
 
         project.parseVersion();
-        props.putAll(project.getResolvedExtraProperties());
+        props.setAll(project.getResolvedExtraProperties());
 
         String osName = PlatformUtils.getDetectedOs();
         String osArch = PlatformUtils.getDetectedArch();
-        props.put(Constants.KEY_OS_NAME, osName);
-        props.put(Constants.KEY_OS_ARCH, osArch);
-        props.put(Constants.KEY_OS_VERSION, PlatformUtils.getDetectedVersion());
-        props.put(Constants.KEY_OS_PLATFORM, PlatformUtils.getCurrentFull());
-        props.put(Constants.KEY_OS_PLATFORM_REPLACED, model.getPlatform().applyReplacements(PlatformUtils.getCurrentFull()));
+        props.set(Constants.KEY_OS_NAME, osName);
+        props.set(Constants.KEY_OS_ARCH, osArch);
+        props.set(Constants.KEY_OS_VERSION, PlatformUtils.getDetectedVersion());
+        props.set(Constants.KEY_OS_PLATFORM, PlatformUtils.getCurrentFull());
+        props.set(Constants.KEY_OS_PLATFORM_REPLACED, model.getPlatform().applyReplacements(PlatformUtils.getCurrentFull()));
 
-        props.put(Constants.KEY_REPO_HOST, host);
-        props.put(Constants.KEY_REPO_OWNER, owner);
-        props.put(Constants.KEY_REPO_NAME, name);
-        props.put(Constants.KEY_REPO_BRANCH, branch);
-        props.put(Constants.KEY_REVERSE_REPO_HOST, getReverseRepoHost());
-        props.put(Constants.KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
-        props.put(Constants.KEY_TAG_NAME, project.isSnapshot() ? project.getSnapshot().getResolvedLabel(model) : cachedTagName);
-        props.put(Constants.KEY_RELEASE_NAME, cachedReleaseName);
-        props.put(Constants.KEY_MILESTONE_NAME, milestone.getEffectiveName());
+        props.set(Constants.KEY_REPO_HOST, host);
+        props.set(Constants.KEY_REPO_OWNER, owner);
+        props.set(Constants.KEY_REPO_NAME, name);
+        props.set(Constants.KEY_REPO_BRANCH, branch);
+        props.set(Constants.KEY_REVERSE_REPO_HOST, getReverseRepoHost());
+        props.set(Constants.KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
+        props.set(Constants.KEY_TAG_NAME, project.isSnapshot() ? project.getSnapshot().getResolvedLabel(model) : cachedTagName);
+        props.set(Constants.KEY_PREVIOUS_TAG_NAME, cachedPreviousTagName);
+        props.set(Constants.KEY_RELEASE_NAME, cachedReleaseName);
+        props.set(Constants.KEY_MILESTONE_NAME, milestone.getEffectiveName());
 
         applyTemplates(props, project.getResolvedExtraProperties());
-        props.put(Constants.KEY_ZONED_DATE_TIME_NOW, model.getNow());
+        props.set(Constants.KEY_ZONED_DATE_TIME_NOW, model.getNow());
 
         return props;
     }
 
-    public void fillProps(Map<String, Object> props, JReleaserModel model) {
-        props.put(Constants.KEY_REPO_HOST, host);
-        props.put(Constants.KEY_REPO_OWNER, owner);
-        props.put(Constants.KEY_REPO_NAME, name);
-        props.put(Constants.KEY_REPO_BRANCH, branch);
-        props.put(Constants.KEY_REVERSE_REPO_HOST, getReverseRepoHost());
-        props.put(Constants.KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
-        props.put(Constants.KEY_TAG_NAME, getEffectiveTagName(model));
-        props.put(Constants.KEY_RELEASE_NAME, getEffectiveReleaseName());
-        props.put(Constants.KEY_MILESTONE_NAME, milestone.getEffectiveName());
-        props.put(Constants.KEY_REPO_URL, getResolvedRepoUrl(model));
-        props.put(Constants.KEY_REPO_CLONE_URL, getResolvedRepoCloneUrl(model));
-        props.put(Constants.KEY_COMMIT_URL, getResolvedCommitUrl(model));
-        props.put(Constants.KEY_SRC_URL, getResolvedSrcUrl(model));
-        props.put(Constants.KEY_RELEASE_NOTES_URL, getResolvedReleaseNotesUrl(model));
-        props.put(Constants.KEY_LATEST_RELEASE_URL, getResolvedLatestReleaseUrl(model));
-        props.put(Constants.KEY_ISSUE_TRACKER_URL, getResolvedIssueTrackerUrl(model, false));
+    public void fillProps(TemplateContext props, JReleaserModel model) {
+        props.set(Constants.KEY_REPO_HOST, host);
+        props.set(Constants.KEY_REPO_OWNER, owner);
+        props.set(Constants.KEY_REPO_NAME, name);
+        props.set(Constants.KEY_REPO_BRANCH, branch);
+        props.set(Constants.KEY_REVERSE_REPO_HOST, getReverseRepoHost());
+        props.set(Constants.KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
+        props.set(Constants.KEY_TAG_NAME, getEffectiveTagName(model));
+        props.set(Constants.KEY_PREVIOUS_TAG_NAME, getResolvedPreviousTagName(model));
+        props.set(Constants.KEY_RELEASE_NAME, getEffectiveReleaseName());
+        props.set(Constants.KEY_MILESTONE_NAME, milestone.getEffectiveName());
+        props.set(Constants.KEY_REPO_URL, getResolvedRepoUrl(model));
+        props.set(Constants.KEY_REPO_CLONE_URL, getResolvedRepoCloneUrl(model));
+        props.set(Constants.KEY_COMMIT_URL, getResolvedCommitUrl(model));
+        props.set(Constants.KEY_SRC_URL, getResolvedSrcUrl(model));
+        props.set(Constants.KEY_RELEASE_NOTES_URL, getResolvedReleaseNotesUrl(model));
+        props.set(Constants.KEY_LATEST_RELEASE_URL, getResolvedLatestReleaseUrl(model));
+        props.set(Constants.KEY_ISSUE_TRACKER_URL, getResolvedIssueTrackerUrl(model, false));
     }
 
     public static final class Update extends AbstractModelObject<Update> implements Domain, EnabledAware {
+        private static final long serialVersionUID = -3809529510256990035L;
+
         private final Set<UpdateSection> sections = new LinkedHashSet<>();
         private Boolean enabled;
 
         private final org.jreleaser.model.api.release.Releaser.Update immutable = new org.jreleaser.model.api.release.Releaser.Update() {
+            private static final long serialVersionUID = -7253526159752557224L;
+
             @Override
             public Set<UpdateSection> getSections() {
                 return unmodifiableSet(sections);
@@ -986,7 +991,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
             return Env.env(org.jreleaser.model.api.release.Releaser.MILESTONE_NAME, cachedName);
         }
 
-        public String getResolvedName(Map<String, Object> props) {
+        public String getResolvedName(TemplateContext props) {
             if (isBlank(cachedName)) {
                 cachedName = getConfiguredName();
             }

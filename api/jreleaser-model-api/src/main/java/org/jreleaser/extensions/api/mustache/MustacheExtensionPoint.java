@@ -18,8 +18,7 @@
 package org.jreleaser.extensions.api.mustache;
 
 import org.jreleaser.extensions.api.ExtensionPoint;
-
-import java.util.Map;
+import org.jreleaser.mustache.TemplateContext;
 
 /**
  * Enables customization of the Mustache context used when evaluating named templates.
@@ -36,5 +35,5 @@ public interface MustacheExtensionPoint extends ExtensionPoint {
      *
      * @param context the evaluation context.
      */
-    void apply(Map<String, Object> context);
+    void apply(TemplateContext context);
 }

@@ -22,11 +22,11 @@ import org.jreleaser.engine.changelog.Changelog;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.release.BaseReleaser;
 import org.jreleaser.model.internal.release.Changelog.Append;
+import org.jreleaser.mustache.TemplateContext;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
 
 import static java.lang.System.lineSeparator;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -59,12 +59,11 @@ public class ChangelogResolver {
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
         Append append = releaser.getChangelog().getAppend();
 
-        Map<String, Object> props = context.fullProps();
+        TemplateContext props = context.fullProps();
         String resolvedTitle = applyTemplate(append.getTitle(), props);
 
-        props = context.fullProps();
-        props.put("changelogTitle", passThrough(resolvedTitle));
-        props.put("changelogContent", passThrough(resolvedChangelog));
+        props.set("changelogTitle", passThrough(resolvedTitle));
+        props.set("changelogContent", passThrough(resolvedChangelog));
         String appendableChangelog = stripMargin(applyTemplate(append.getResolvedContentTemplate(context), props));
 
         Path target = context.getBasedir().resolve(append.getTarget());

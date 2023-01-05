@@ -25,6 +25,7 @@ import org.jreleaser.model.internal.packagers.Packager;
 import org.jreleaser.model.internal.util.Artifacts;
 import org.jreleaser.model.spi.packagers.PackagerProcessingException;
 import org.jreleaser.model.spi.packagers.PackagerProcessor;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.command.Command;
 import org.jreleaser.sdk.command.CommandException;
 import org.jreleaser.sdk.command.CommandExecutor;
@@ -40,8 +41,6 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -129,11 +128,11 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
     }
 
     @Override
-    public void prepareDistribution(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
+    public void prepareDistribution(Distribution distribution, TemplateContext props) throws PackagerProcessingException {
         try {
             String distributionName = distribution.getName();
             context.getLogger().debug(RB.$("packager.create.properties"), distributionName, getPackagerName());
-            Map<String, Object> newProps = fillProps(distribution, props);
+            TemplateContext newProps = fillProps(distribution, props);
             if (newProps.isEmpty()) {
                 context.getLogger().warn(RB.$("packager.skip.distribution"), distributionName);
                 return;
@@ -145,14 +144,14 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
         }
     }
 
-    protected abstract void doPrepareDistribution(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException;
+    protected abstract void doPrepareDistribution(Distribution distribution, TemplateContext props) throws PackagerProcessingException;
 
     @Override
-    public void packageDistribution(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
+    public void packageDistribution(Distribution distribution, TemplateContext props) throws PackagerProcessingException {
         try {
             String distributionName = distribution.getName();
             context.getLogger().debug(RB.$("packager.create.properties"), distributionName, getPackagerName());
-            Map<String, Object> newProps = fillProps(distribution, props);
+            TemplateContext newProps = fillProps(distribution, props);
             if (newProps.isEmpty()) {
                 context.getLogger().warn(RB.$("packager.skip.distribution"), distributionName);
                 return;
@@ -165,7 +164,7 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
     }
 
     @Override
-    public void publishDistribution(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
+    public void publishDistribution(Distribution distribution, TemplateContext props) throws PackagerProcessingException {
         if (context.getModel().getProject().isSnapshot() && !packager.isSnapshotSupported()) {
             context.getLogger().info(RB.$("packager.publish.snapshot.not.supported"));
             return;
@@ -174,7 +173,7 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
         try {
             String distributionName = distribution.getName();
             context.getLogger().debug(RB.$("packager.create.properties"), distributionName, getPackagerName());
-            Map<String, Object> newProps = fillProps(distribution, props);
+            TemplateContext newProps = fillProps(distribution, props);
             if (newProps.isEmpty()) {
                 context.getLogger().warn(RB.$("packager.skip.distribution"), distributionName);
                 return;
@@ -186,12 +185,12 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
         }
     }
 
-    protected abstract void doPackageDistribution(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException;
+    protected abstract void doPackageDistribution(Distribution distribution, TemplateContext props) throws PackagerProcessingException;
 
-    protected abstract void doPublishDistribution(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException;
+    protected abstract void doPublishDistribution(Distribution distribution, TemplateContext props) throws PackagerProcessingException;
 
-    protected Map<String, Object> fillProps(Distribution distribution, Map<String, Object> props) {
-        Map<String, Object> newProps = new LinkedHashMap<>(props);
+    protected TemplateContext fillProps(Distribution distribution, TemplateContext props) {
+        TemplateContext newProps = new TemplateContext(props);
         context.getLogger().debug(RB.$("packager.fill.distribution.properties"));
         fillDistributionProperties(newProps, distribution);
         context.getLogger().debug(RB.$("packager.fill.git.properties"));
@@ -199,24 +198,24 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
         context.getLogger().debug(RB.$("packager.fill.artifact.properties"));
         if (!verifyAndAddArtifacts(newProps, distribution)) {
             // we can't continue with this packager
-            return Collections.emptyMap();
+            return TemplateContext.empty();
         }
         context.getLogger().debug(RB.$("packager.fill.packager.properties"));
         fillPackagerProperties(newProps, distribution);
         applyTemplates(newProps, packager.getResolvedExtraProperties());
         if (isBlank(context.getModel().getRelease().getReleaser().getReverseRepoHost())) {
-            newProps.put(KEY_REVERSE_REPO_HOST,
+            newProps.set(KEY_REVERSE_REPO_HOST,
                 packager.getExtraProperties().get(KEY_REVERSE_REPO_HOST));
         }
         applyTemplates(newProps, newProps);
         return newProps;
     }
 
-    protected void fillDistributionProperties(Map<String, Object> props, Distribution distribution) {
-        props.putAll(distribution.props());
+    protected void fillDistributionProperties(TemplateContext props, Distribution distribution) {
+        props.setAll(distribution.props());
     }
 
-    protected abstract void fillPackagerProperties(Map<String, Object> props, Distribution distribution);
+    protected abstract void fillPackagerProperties(TemplateContext props, Distribution distribution);
 
     protected void executeCommand(Path directory, Command command) throws PackagerProcessingException {
         try {
@@ -267,7 +266,7 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
         }
     }
 
-    protected void copyPreparedFiles(Map<String, Object> props) throws PackagerProcessingException {
+    protected void copyPreparedFiles(TemplateContext props) throws PackagerProcessingException {
         Path prepareDirectory = getPrepareDirectory(props);
         Path packageDirectory = getPackageDirectory(props);
         copyFiles(prepareDirectory, packageDirectory);
@@ -291,12 +290,12 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
         }
     }
 
-    protected boolean verifyAndAddArtifacts(Map<String, Object> props,
+    protected boolean verifyAndAddArtifacts(TemplateContext props,
                                             Distribution distribution) {
         return verifyAndAddArtifacts(props, distribution, collectArtifacts(distribution));
     }
 
-    protected boolean verifyAndAddArtifacts(Map<String, Object> props,
+    protected boolean verifyAndAddArtifacts(TemplateContext props,
                                             Distribution distribution,
                                             List<Artifact> artifacts) {
         List<Artifact> activeArtifacts = artifacts.stream()
@@ -323,8 +322,8 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
             // add extra properties without clobbering existing keys
             Map<String, Object> artifactProps = artifact.getResolvedExtraProperties(ARTIFACT + artifactPlatform);
             artifactProps.keySet().stream()
-                .filter(k -> !props.containsKey(k))
-                .forEach(k -> props.put(k, artifactProps.get(k)));
+                .filter(k -> !props.contains(k))
+                .forEach(k -> props.set(k, artifactProps.get(k)));
 
             Path artifactPath = artifact.getEffectivePath(context, distribution);
 
@@ -400,13 +399,13 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
 
             safePut(props, ARTIFACT + artifactPlatform + URL, artifactUrl);
             safePut(props, ARTIFACT + artifactPlatformReplaced + URL, artifactUrl);
-            props.putAll(context.getModel().getUpload()
+            props.setAll(context.getModel().getUpload()
                 .resolveDownloadUrls(context, distribution, artifact, ARTIFACT + artifactPlatform));
-            props.putAll(context.getModel().getUpload()
+            props.setAll(context.getModel().getUpload()
                 .resolveDownloadUrls(context, distribution, artifact, ARTIFACT + artifactPlatformReplaced));
 
             if (count == 1) {
-                props.putAll(context.getModel().getUpload()
+                props.setAll(context.getModel().getUpload()
                     .resolveDownloadUrls(context, distribution, artifact, DISTRIBUTION));
                 safePut(props, KEY_DISTRIBUTION_ARTIFACT, artifact);
                 safePut(props, KEY_DISTRIBUTION_URL, artifactUrl);
@@ -442,11 +441,11 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
 
                 // add extra properties without clobbering existing keys
                 Map<String, Object> aprops = artifact.getResolvedExtraProperties();
-                Map<String, Object> bprops = new LinkedHashMap<>(aprops);
+                TemplateContext bprops = new TemplateContext(aprops);
                 applyTemplates(aprops, bprops);
                 aprops.keySet().stream()
-                    .filter(k -> !props.containsKey(k))
-                    .forEach(k -> props.put(k, aprops.get(k)));
+                    .filter(k -> !props.contains(k))
+                    .forEach(k -> props.set(k, aprops.get(k)));
             }
         }
 
@@ -473,19 +472,19 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
             .forEach(consumer);
     }
 
-    protected Path getPrepareDirectory(Map<String, Object> props) {
-        return (Path) props.get(KEY_DISTRIBUTION_PREPARE_DIRECTORY);
+    protected Path getPrepareDirectory(TemplateContext props) {
+        return props.get(KEY_DISTRIBUTION_PREPARE_DIRECTORY);
     }
 
-    protected Path getPackageDirectory(Map<String, Object> props) {
-        return (Path) props.get(KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
+    protected Path getPackageDirectory(TemplateContext props) {
+        return props.get(KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
     }
 
-    protected void safePut(Map<String, Object> dest, String key, Object value) {
+    protected void safePut(TemplateContext dest, String key, Object value) {
         if (value instanceof CharSequence && isNotBlank(String.valueOf(value))) {
-            dest.put(key, value);
+            dest.set(key, value);
         } else if (value != null) {
-            dest.put(key, value);
+            dest.set(key, value);
         }
     }
 }

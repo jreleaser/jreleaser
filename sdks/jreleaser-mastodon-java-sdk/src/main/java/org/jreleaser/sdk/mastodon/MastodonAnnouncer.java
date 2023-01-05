@@ -23,14 +23,14 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.spi.announce.AnnounceException;
 import org.jreleaser.model.spi.announce.Announcer;
 import org.jreleaser.mustache.MustacheUtils;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
+import static org.jreleaser.model.Constants.KEY_PREVIOUS_TAG_NAME;
 import static org.jreleaser.model.Constants.KEY_TAG_NAME;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
@@ -70,21 +70,21 @@ public class MastodonAnnouncer implements Announcer<org.jreleaser.model.api.anno
         List<String> statuses = new ArrayList<>();
 
         if (isNotBlank(mastodon.getStatusTemplate())) {
-            Map<String, Object> props = new LinkedHashMap<>();
-            props.put(Constants.KEY_CHANGELOG, MustacheUtils.passThrough(context.getChangelog()));
+            TemplateContext props = new TemplateContext();
+            props.set(Constants.KEY_CHANGELOG, MustacheUtils.passThrough(context.getChangelog()));
             context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
             Arrays.stream(mastodon.getResolvedStatusTemplate(context, props)
-                                 .split(System.lineSeparator()))
-                  .filter(StringUtils::isNotBlank)
-                  .map(String::trim)
-                  .forEach(statuses::add);
+                    .split(System.lineSeparator()))
+                .filter(StringUtils::isNotBlank)
+                .map(String::trim)
+                .forEach(statuses::add);
         }
         if (statuses.isEmpty() && !mastodon.getStatuses().isEmpty()) {
             statuses.addAll(mastodon.getStatuses());
             mastodon.getStatuses().stream()
-                   .filter(StringUtils::isNotBlank)
-                   .map(String::trim)
-                   .forEach(statuses::add);
+                .filter(StringUtils::isNotBlank)
+                .map(String::trim)
+                .forEach(statuses::add);
         }
         if (statuses.isEmpty()) {
             statuses.add(mastodon.getStatus());
@@ -112,9 +112,10 @@ public class MastodonAnnouncer implements Announcer<org.jreleaser.model.api.anno
     }
 
     private String getResolvedMessage(JReleaserContext context, String message) {
-        Map<String, Object> props = context.fullProps();
+        TemplateContext props = context.fullProps();
         applyTemplates(props, context.getModel().getAnnounce().getMastodon().getResolvedExtraProperties());
-        props.put(KEY_TAG_NAME, context.getModel().getRelease().getReleaser().getEffectiveTagName(context.getModel()));
+        props.set(KEY_TAG_NAME, context.getModel().getRelease().getReleaser().getEffectiveTagName(context.getModel()));
+        props.set(KEY_PREVIOUS_TAG_NAME, context.getModel().getRelease().getReleaser().getResolvedPreviousTagName(context.getModel()));
         return resolveTemplate(message, props);
     }
 }

@@ -24,6 +24,7 @@ import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.SdkmanPackager;
 import org.jreleaser.model.internal.util.SdkmanHelper;
 import org.jreleaser.model.spi.packagers.PackagerProcessingException;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.sdkman.MajorReleaseSdkmanCommand;
 import org.jreleaser.sdk.sdkman.MinorReleaseSdkmanCommand;
 import org.jreleaser.sdk.sdkman.SdkmanException;
@@ -46,17 +47,17 @@ public class SdkmanPackagerProcessor extends AbstractPackagerProcessor<SdkmanPac
     }
 
     @Override
-    protected void doPrepareDistribution(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
+    protected void doPrepareDistribution(Distribution distribution, TemplateContext props) throws PackagerProcessingException {
         // noop
     }
 
     @Override
-    protected void doPackageDistribution(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
+    protected void doPackageDistribution(Distribution distribution, TemplateContext props) throws PackagerProcessingException {
         // noop
     }
 
     @Override
-    protected void doPublishDistribution(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
+    protected void doPublishDistribution(Distribution distribution, TemplateContext props) throws PackagerProcessingException {
         SdkmanPackager sdkman = distribution.getSdkman();
 
         Map<String, String> platforms = new LinkedHashMap<>();
@@ -106,8 +107,8 @@ public class SdkmanPackagerProcessor extends AbstractPackagerProcessor<SdkmanPac
     }
 
     @Override
-    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) {
-        props.put(KEY_SDKMAN_CANDIDATE, packager.getCandidate());
-        props.put(KEY_SDKMAN_RELEASE_NOTES_URL, resolveTemplate(packager.getReleaseNotesUrl(), props));
+    protected void fillPackagerProperties(TemplateContext props, Distribution distribution) {
+        props.set(KEY_SDKMAN_CANDIDATE, packager.getCandidate());
+        props.set(KEY_SDKMAN_RELEASE_NOTES_URL, resolveTemplate(packager.getReleaseNotesUrl(), props));
     }
 }

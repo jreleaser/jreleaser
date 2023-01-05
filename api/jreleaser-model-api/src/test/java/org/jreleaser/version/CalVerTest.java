@@ -37,8 +37,8 @@ class CalVerTest {
     @ParameterizedTest
     @MethodSource("version_parsing")
     void testVersionParsing(String format, String input,
-                                   String year, String month, String day, String week,
-                                   String minor, String micro, String modifier) {
+                            String year, String month, String day, String week,
+                            String minor, String micro, String modifier) {
         // given:
         CalVer v = CalVer.of(format, input);
 

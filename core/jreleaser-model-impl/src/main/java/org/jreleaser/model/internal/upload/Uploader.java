@@ -23,9 +23,9 @@ import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.common.ExtraProperties;
 import org.jreleaser.model.internal.common.TimeoutAware;
+import org.jreleaser.mustache.TemplateContext;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Andres Almiray
@@ -68,11 +68,11 @@ public interface Uploader<A extends org.jreleaser.model.api.upload.Uploader> ext
 
     A asImmutable();
 
-    Map<String, Object> artifactProps(JReleaserContext context, Artifact artifact);
+    TemplateContext artifactProps(JReleaserContext context, Artifact artifact);
 
-    Map<String, Object> artifactProps(Map<String, Object> props, Artifact artifact);
+    TemplateContext artifactProps(TemplateContext props, Artifact artifact);
 
     String getResolvedDownloadUrl(JReleaserContext context, Artifact artifact);
 
-    String getResolvedDownloadUrl(Map<String, Object> props, Artifact artifact);
+    String getResolvedDownloadUrl(TemplateContext props, Artifact artifact);
 }

@@ -28,10 +28,10 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.announce.WebhookAnnouncer;
 import org.jreleaser.model.spi.announce.AnnounceException;
 import org.jreleaser.model.spi.announce.Announcer;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.util.CollectionUtils;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.jreleaser.mustache.MustacheUtils.passThrough;
@@ -89,11 +89,11 @@ public class WebhooksAnnouncer implements Announcer<org.jreleaser.model.api.anno
         if (isNotBlank(webhook.getMessage())) {
             message = webhook.getResolvedMessage(context);
         } else {
-            Map<String, Object> props = new LinkedHashMap<>();
+            TemplateContext props = new TemplateContext();
             if (webhook.getName().equals("teams")) {
-                props.put(Constants.KEY_CHANGELOG, passThrough(convertLineEndings(context.getChangelog())));
+                props.set(Constants.KEY_CHANGELOG, passThrough(convertLineEndings(context.getChangelog())));
             } else {
-                props.put(Constants.KEY_CHANGELOG, passThrough(context.getChangelog()));
+                props.set(Constants.KEY_CHANGELOG, passThrough(context.getChangelog()));
             }
             context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
             message = webhook.getResolvedMessageTemplate(context, props);

@@ -25,9 +25,9 @@ import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.common.ExtraProperties;
 import org.jreleaser.model.internal.common.FileSet;
 import org.jreleaser.model.internal.platform.Platform;
+import org.jreleaser.mustache.TemplateContext;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -63,7 +63,7 @@ public interface Assembler<A extends org.jreleaser.model.api.assemble.Assembler>
 
     void addOutput(Artifact artifact);
 
-    Map<String, Object> props();
+    TemplateContext props();
 
     List<FileSet> getFileSets();
 

@@ -23,12 +23,12 @@ import org.jreleaser.model.Constants;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.ArchiveAssembler;
 import org.jreleaser.model.spi.assemble.AssemblerProcessingException;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.util.FileUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
 
 /**
  * @author Andres Almiray
@@ -40,8 +40,8 @@ public class ArchiveAssemblerProcessor extends AbstractAssemblerProcessor<org.jr
     }
 
     @Override
-    protected void doAssemble(Map<String, Object> props) throws AssemblerProcessingException {
-        Path assembleDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
+    protected void doAssemble(TemplateContext props) throws AssemblerProcessingException {
+        Path assembleDirectory = props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
         String archiveName = assembler.getResolvedArchiveName(context);
 
         Path workDirectory = assembleDirectory.resolve("work");

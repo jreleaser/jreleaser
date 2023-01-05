@@ -19,8 +19,8 @@ package org.jreleaser.model.internal.upload;
 
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Artifact;
+import org.jreleaser.mustache.TemplateContext;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.jreleaser.model.Constants.HIDE;
@@ -69,8 +69,8 @@ public abstract class AbstractSshUploader<A extends org.jreleaser.model.api.uplo
 
     @Override
     public String getResolvedPath(JReleaserContext context, Artifact artifact) {
-        Map<String, Object> p = artifactProps(context.fullProps(), artifact);
-        p.putAll(getResolvedExtraProperties());
+        TemplateContext p = artifactProps(context.fullProps(), artifact);
+        p.setAll(getResolvedExtraProperties());
         return resolveTemplate(path, p);
     }
 
@@ -80,9 +80,9 @@ public abstract class AbstractSshUploader<A extends org.jreleaser.model.api.uplo
     }
 
     @Override
-    public String getResolvedDownloadUrl(Map<String, Object> props, Artifact artifact) {
-        Map<String, Object> p = new LinkedHashMap<>(artifactProps(props, artifact));
-        p.putAll(getResolvedExtraProperties());
+    public String getResolvedDownloadUrl(TemplateContext props, Artifact artifact) {
+        TemplateContext p = new TemplateContext(artifactProps(props, artifact));
+        p.setAll(getResolvedExtraProperties());
         return resolveTemplate(downloadUrl, p);
     }
 

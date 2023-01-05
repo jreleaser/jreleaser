@@ -27,6 +27,7 @@ import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.common.EnabledAware;
 import org.jreleaser.model.internal.common.FileSet;
 import org.jreleaser.model.internal.common.Glob;
+import org.jreleaser.mustache.TemplateContext;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -261,15 +262,15 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
     }
 
     public String getResolvedImageName(JReleaserContext context) {
-        Map<String, Object> props = context.getModel().props();
-        props.putAll(props());
+        TemplateContext props = context.getModel().props();
+        props.setAll(props());
         return resolveTemplate(imageName, props);
     }
 
     public String getResolvedImageNameTransform(JReleaserContext context) {
         if (isBlank(imageNameTransform)) return null;
-        Map<String, Object> props = context.getModel().props();
-        props.putAll(props());
+        TemplateContext props = context.getModel().props();
+        props.setAll(props());
         return resolveTemplate(imageNameTransform, props);
     }
 

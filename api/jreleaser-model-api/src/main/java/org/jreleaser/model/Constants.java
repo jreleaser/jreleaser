@@ -51,11 +51,11 @@ public interface Constants {
     String KEY_VERSION_MICRO = "versionMicro";
     String KEY_VERSION_MODIFIER = "versionModifier";
     String KEY_VERSION_WITH_UNDERSCORES = "versionWithUnderscores";
-    String KEY_VERSION_WITH_DASHES      = "versionWithDashes";
+    String KEY_VERSION_WITH_DASHES = "versionWithDashes";
     String KEY_VERSION_NUMBER_WITH_UNDERSCORES = "versionNumberWithUnderscores";
-    String KEY_VERSION_NUMBER_WITH_DASHES      = "versionNumberWithDashes";
+    String KEY_VERSION_NUMBER_WITH_DASHES = "versionNumberWithDashes";
     String KEY_EFFECTIVE_VERSION_WITH_UNDERSCORES = "effectiveVersionWithUnderscores";
-    String KEY_EFFECTIVE_VERSION_WITH_DASHES      = "effectiveVersionWithDashes";
+    String KEY_EFFECTIVE_VERSION_WITH_DASHES = "effectiveVersionWithDashes";
 
     // Project
     String KEY_PROJECT_NAME = "projectName";
@@ -103,6 +103,7 @@ public interface Constants {
     String KEY_PROJECT_IDENTIFIER = "projectIdentifier";
     String KEY_REPO_BRANCH = "repoBranch";
     String KEY_TAG_NAME = "tagName";
+    String KEY_PREVIOUS_TAG_NAME = "previousTagName";
     String KEY_RELEASE_NAME = "releaseName";
     String KEY_MILESTONE_NAME = "milestoneName";
     String KEY_CANONICAL_REPO_NAME = "repoCanonicalName";

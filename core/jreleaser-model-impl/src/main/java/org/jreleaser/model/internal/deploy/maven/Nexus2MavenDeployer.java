@@ -19,6 +19,7 @@ package org.jreleaser.model.internal.deploy.maven;
 
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Http;
+import org.jreleaser.mustache.TemplateContext;
 
 import java.util.List;
 import java.util.Map;
@@ -231,10 +232,10 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
         return true;
     }
 
-    public String getResolvedSnapshotUrl(Map<String, Object> props) {
-        props.put("username", getUsername());
-        props.put("owner", getUsername());
-        props.putAll(getExtraProperties());
+    public String getResolvedSnapshotUrl(TemplateContext props) {
+        props.set("username", getUsername());
+        props.set("owner", getUsername());
+        props.setAll(getExtraProperties());
         return resolveTemplate(snapshotUrl, props);
     }
 

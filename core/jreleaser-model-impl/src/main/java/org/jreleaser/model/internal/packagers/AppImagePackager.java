@@ -90,7 +90,7 @@ public final class AppImagePackager extends AbstractRepositoryPackager<org.jrele
 
     private final org.jreleaser.model.api.packagers.AppImagePackager immutable = new org.jreleaser.model.api.packagers.AppImagePackager() {
         private static final long serialVersionUID = -5612869889684591103L;
-        
+
         private List<? extends org.jreleaser.model.api.common.Screenshot> screenshots;
         private List<? extends org.jreleaser.model.api.common.Icon> icons;
 

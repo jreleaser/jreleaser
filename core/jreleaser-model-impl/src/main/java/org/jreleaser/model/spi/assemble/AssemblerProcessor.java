@@ -18,8 +18,7 @@
 package org.jreleaser.model.spi.assemble;
 
 import org.jreleaser.model.internal.assemble.Assembler;
-
-import java.util.Map;
+import org.jreleaser.mustache.TemplateContext;
 
 /**
  * @author Andres Almiray
@@ -30,5 +29,5 @@ public interface AssemblerProcessor<A extends org.jreleaser.model.api.assemble.A
 
     void setAssembler(S assembler);
 
-    void assemble(Map<String, Object> props) throws AssemblerProcessingException;
+    void assemble(TemplateContext props) throws AssemblerProcessingException;
 }

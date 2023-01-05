@@ -34,6 +34,7 @@ import org.jreleaser.model.spi.release.Asset;
 import org.jreleaser.model.spi.release.Release;
 import org.jreleaser.model.spi.release.User;
 import org.jreleaser.model.spi.upload.UploadException;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.gitlab.api.GitlabAPI;
@@ -621,15 +622,15 @@ class Gitlab {
 
         logger.debug(RB.$("gitlab.delete.file", link.getName()));
         try {
-            Map<String, Object> props = new LinkedHashMap<>();
-            props.put("filename", link.getName());
+            TemplateContext props = new TemplateContext();
+            props.set("filename", link.getName());
 
             String url = link.getUrl().substring(apiHost.length() + 1);
             url = url.substring(0, url.length() - link.getName().length() - 1);
             Matcher matcher = UPLOADS_PATTERN.matcher(url);
             if (matcher.matches()) {
-                props.put("projectPath", matcher.group(1));
-                props.put("secret", matcher.group(2));
+                props.set("projectPath", matcher.group(1));
+                props.set("secret", matcher.group(2));
             } else {
                 throw new IOException(RB.$("ERROR_gitlab_invalid_upload_link", link.getUrl()));
             }

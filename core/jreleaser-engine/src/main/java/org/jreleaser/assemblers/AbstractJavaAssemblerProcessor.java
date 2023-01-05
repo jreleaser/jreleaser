@@ -24,6 +24,7 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.JavaAssembler;
 import org.jreleaser.model.internal.common.Glob;
 import org.jreleaser.model.spi.assemble.AssemblerProcessingException;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.templates.TemplateResource;
 
 import java.io.IOException;
@@ -57,10 +58,10 @@ public abstract class AbstractJavaAssemblerProcessor<A extends org.jreleaser.mod
     }
 
     @Override
-    public void assemble(Map<String, Object> props) throws AssemblerProcessingException {
+    public void assemble(TemplateContext props) throws AssemblerProcessingException {
         try {
             context.getLogger().debug(RB.$("packager.create.properties"), assembler.getType(), assembler.getName());
-            Map<String, Object> newProps = fillProps(props);
+            TemplateContext newProps = fillProps(props);
 
             context.getLogger().debug(RB.$("packager.resolve.templates"), assembler.getType(), assembler.getName());
             Map<String, TemplateResource> templates = resolveAndMergeTemplates(context.getLogger(),
@@ -84,7 +85,7 @@ public abstract class AbstractJavaAssemblerProcessor<A extends org.jreleaser.mod
                 }
             }
 
-            Path assembleDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
+            Path assembleDirectory = props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
             Files.createDirectories(assembleDirectory);
 
             doAssemble(newProps);
@@ -117,10 +118,10 @@ public abstract class AbstractJavaAssemblerProcessor<A extends org.jreleaser.mod
         return paths;
     }
 
-    protected abstract void writeFile(String content, Map<String, Object> props, String fileName) throws AssemblerProcessingException;
+    protected abstract void writeFile(String content, TemplateContext props, String fileName) throws AssemblerProcessingException;
 
-    protected void writeFile(byte[] content, Map<String, Object> props, String fileName) throws AssemblerProcessingException {
-        Path outputDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
+    protected void writeFile(byte[] content, TemplateContext props, String fileName) throws AssemblerProcessingException {
+        Path outputDirectory = props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
         Path inputsDirectory = outputDirectory.resolve("inputs");
         try {
             Files.createDirectories(inputsDirectory);

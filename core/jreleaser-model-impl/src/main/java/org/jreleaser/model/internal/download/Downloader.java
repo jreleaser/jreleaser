@@ -24,6 +24,7 @@ import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.common.EnabledAware;
 import org.jreleaser.model.internal.common.ExtraProperties;
 import org.jreleaser.model.internal.common.TimeoutAware;
+import org.jreleaser.mustache.TemplateContext;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -172,18 +173,18 @@ public interface Downloader<A extends org.jreleaser.model.api.download.Downloade
         }
 
         public String getResolvedInput(JReleaserContext context, Downloader<?> downloader) {
-            Map<String, Object> p = context.getModel().props();
-            p.putAll(downloader.getResolvedExtraProperties());
-            p.put(KEY_DOWNLOADER_NAME, downloader.getName());
+            TemplateContext p = context.getModel().props();
+            p.setAll(downloader.getResolvedExtraProperties());
+            p.set(KEY_DOWNLOADER_NAME, downloader.getName());
             return resolveTemplate(input, p);
         }
 
         public String getResolvedOutput(JReleaserContext context, Downloader<?> downloader, String artifactFile) {
             if (isBlank(output)) return output;
-            Map<String, Object> p = context.getModel().props();
-            p.putAll(downloader.getResolvedExtraProperties());
-            p.put(KEY_DOWNLOADER_NAME, downloader.getName());
-            p.put(KEY_ARTIFACT_FILE, artifactFile);
+            TemplateContext p = context.getModel().props();
+            p.setAll(downloader.getResolvedExtraProperties());
+            p.set(KEY_DOWNLOADER_NAME, downloader.getName());
+            p.set(KEY_ARTIFACT_FILE, artifactFile);
             return resolveTemplate(output, p);
         }
 

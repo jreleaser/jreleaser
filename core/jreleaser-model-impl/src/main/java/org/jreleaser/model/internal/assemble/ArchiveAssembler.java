@@ -24,6 +24,7 @@ import org.jreleaser.model.Stereotype;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.FileSet;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.util.PlatformUtils;
 
 import java.util.LinkedHashSet;
@@ -180,8 +181,8 @@ public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, 
     }
 
     public String getResolvedArchiveName(JReleaserContext context) {
-        Map<String, Object> props = context.fullProps();
-        props.putAll(props());
+        TemplateContext props = context.fullProps();
+        props.setAll(props());
         String result = resolveTemplate(archiveName, props);
         if (isAttachPlatform()) {
             result += "-" + getPlatform().applyReplacements(PlatformUtils.getCurrentFull());

@@ -31,6 +31,7 @@ import org.jreleaser.model.spi.release.Release;
 import org.jreleaser.model.spi.release.ReleaseException;
 import org.jreleaser.model.spi.release.Repository;
 import org.jreleaser.model.spi.release.User;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.git.ChangelogGenerator;
 import org.jreleaser.sdk.git.ChangelogProvider;
@@ -390,7 +391,7 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
         String tagName = github.getEffectiveTagName(context.getModel());
         String labelName = github.getIssues().getLabel().getName();
         String labelColor = github.getIssues().getLabel().getColor();
-        Map<String, Object> props = github.props(context.getModel());
+        TemplateContext props = github.props(context.getModel());
         github.fillProps(props, context.getModel());
         String comment = resolveTemplate(github.getIssues().getComment(), props);
         if (labelColor.startsWith("#")) {

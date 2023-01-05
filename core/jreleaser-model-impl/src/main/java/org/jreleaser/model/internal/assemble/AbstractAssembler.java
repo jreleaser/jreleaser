@@ -25,6 +25,7 @@ import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.FileSet;
 import org.jreleaser.model.internal.platform.Platform;
 import org.jreleaser.model.internal.project.Project;
+import org.jreleaser.mustache.TemplateContext;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -78,11 +79,11 @@ public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A ext
     }
 
     @Override
-    public Map<String, Object> props() {
-        Map<String, Object> props = new LinkedHashMap<>();
+    public TemplateContext props() {
+        TemplateContext props = new TemplateContext();
         applyTemplates(props, getResolvedExtraProperties());
-        props.put(KEY_DISTRIBUTION_NAME, name);
-        props.put(KEY_DISTRIBUTION_STEREOTYPE, getStereotype());
+        props.set(KEY_DISTRIBUTION_NAME, name);
+        props.set(KEY_DISTRIBUTION_STEREOTYPE, getStereotype());
         return props;
     }
 

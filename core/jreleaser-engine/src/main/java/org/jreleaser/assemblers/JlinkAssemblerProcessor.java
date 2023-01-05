@@ -24,6 +24,7 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.JlinkAssembler;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.spi.assemble.AssemblerProcessingException;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.command.Command;
 import org.jreleaser.util.FileUtils;
 import org.jreleaser.util.IoUtils;
@@ -37,7 +38,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Stream;
@@ -63,7 +63,7 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<org.
     }
 
     @Override
-    protected void doAssemble(Map<String, Object> props) throws AssemblerProcessingException {
+    protected void doAssemble(TemplateContext props) throws AssemblerProcessingException {
         // verify jdk
         Path jdkPath = assembler.getJdk().getEffectivePath(context, assembler);
         SemanticVersion jdkVersion = SemanticVersion.of(readJavaVersion(jdkPath));
@@ -82,7 +82,7 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<org.
             }
         }
 
-        Path assembleDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
+        Path assembleDirectory = props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
         Path inputsDirectory = assembleDirectory.resolve("inputs");
 
         // run jlink x jdk
@@ -235,7 +235,7 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<org.
         }
     }
 
-    private Set<String> resolveModuleNames(JReleaserContext context, Path jdkPath, Path jarsDirectory, String platform, Map<String, Object> props) throws AssemblerProcessingException {
+    private Set<String> resolveModuleNames(JReleaserContext context, Path jdkPath, Path jarsDirectory, String platform, TemplateContext props) throws AssemblerProcessingException {
         if (!assembler.getModuleNames().isEmpty()) {
             return assembler.getModuleNames();
         }
@@ -338,11 +338,11 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<org.
     }
 
     @Override
-    protected void writeFile(String content, Map<String, Object> props, String fileName)
+    protected void writeFile(String content, TemplateContext props, String fileName)
         throws AssemblerProcessingException {
         fileName = trimTplExtension(fileName);
 
-        Path outputDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
+        Path outputDirectory = props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
         Path inputsDirectory = outputDirectory.resolve("inputs");
         try {
             Files.createDirectories(inputsDirectory);

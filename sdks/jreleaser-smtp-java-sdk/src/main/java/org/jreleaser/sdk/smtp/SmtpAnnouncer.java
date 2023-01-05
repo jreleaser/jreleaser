@@ -22,9 +22,7 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.spi.announce.AnnounceException;
 import org.jreleaser.model.spi.announce.Announcer;
 import org.jreleaser.mustache.MustacheUtils;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
+import org.jreleaser.mustache.TemplateContext;
 
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -63,8 +61,8 @@ public class SmtpAnnouncer implements Announcer<org.jreleaser.model.api.announce
         if (isNotBlank(smtp.getMessage())) {
             message = smtp.getResolvedMessage(context);
         } else {
-            Map<String, Object> props = new LinkedHashMap<>();
-            props.put(Constants.KEY_CHANGELOG, MustacheUtils.passThrough(context.getChangelog()));
+            TemplateContext props = new TemplateContext();
+            props.set(Constants.KEY_CHANGELOG, MustacheUtils.passThrough(context.getChangelog()));
             context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
             message = smtp.getResolvedMessageTemplate(context, props);
         }

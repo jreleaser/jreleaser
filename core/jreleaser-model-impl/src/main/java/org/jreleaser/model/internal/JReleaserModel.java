@@ -41,6 +41,7 @@ import org.jreleaser.model.internal.release.Release;
 import org.jreleaser.model.internal.signing.Signing;
 import org.jreleaser.model.internal.upload.Upload;
 import org.jreleaser.mustache.MustacheUtils;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.version.SemanticVersion;
 
@@ -438,108 +439,109 @@ public class JReleaserModel {
         return map;
     }
 
-    public Map<String, Object> props() {
-        Map<String, Object> props = new LinkedHashMap<>();
+    public TemplateContext props() {
+        TemplateContext props = new TemplateContext();
 
         String jreleaserCreationStamp = String.format("Generated with JReleaser %s at %s",
             JReleaserVersion.getPlainVersion(), timestamp);
-        props.put("jreleaserCreationStamp", jreleaserCreationStamp);
+        props.set("jreleaserCreationStamp", jreleaserCreationStamp);
 
         fillProjectProperties(props, project);
         fillReleaserProperties(props, release);
 
         String osName = PlatformUtils.getDetectedOs();
         String osArch = PlatformUtils.getDetectedArch();
-        props.put(Constants.KEY_OS_NAME, osName);
-        props.put(Constants.KEY_OS_ARCH, osArch);
-        props.put(Constants.KEY_OS_VERSION, PlatformUtils.getDetectedVersion());
-        props.put(Constants.KEY_OS_PLATFORM, PlatformUtils.getCurrentFull());
-        props.put(Constants.KEY_OS_PLATFORM_REPLACED, getPlatform().applyReplacements(PlatformUtils.getCurrentFull()));
+        props.set(Constants.KEY_OS_NAME, osName);
+        props.set(Constants.KEY_OS_ARCH, osArch);
+        props.set(Constants.KEY_OS_VERSION, PlatformUtils.getDetectedVersion());
+        props.set(Constants.KEY_OS_PLATFORM, PlatformUtils.getCurrentFull());
+        props.set(Constants.KEY_OS_PLATFORM_REPLACED, getPlatform().applyReplacements(PlatformUtils.getCurrentFull()));
 
         applyTemplates(props, project.getResolvedExtraProperties());
-        props.put(Constants.KEY_ZONED_DATE_TIME_NOW, now);
-        props.put(ReleaserDownloadUrl.NAME, new ReleaserDownloadUrl());
+        props.set(Constants.KEY_ZONED_DATE_TIME_NOW, now);
+        props.set(ReleaserDownloadUrl.NAME, new ReleaserDownloadUrl());
 
         return props;
     }
 
-    private void fillProjectProperties(Map<String, Object> props, Project project) {
-        props.putAll(environment.getProperties());
-        props.putAll(environment.getSourcedProperties());
-        props.put(Constants.KEY_TIMESTAMP, timestamp);
+    private void fillProjectProperties(TemplateContext props, Project project) {
+        props.setAll(environment.getProperties());
+        props.setAll(environment.getSourcedProperties());
+        props.set(Constants.KEY_TIMESTAMP, timestamp);
         if (commit != null) {
-            props.put(Constants.KEY_COMMIT_SHORT_HASH, commit.getShortHash());
-            props.put(Constants.KEY_COMMIT_FULL_HASH, commit.getFullHash());
+            props.set(Constants.KEY_COMMIT_SHORT_HASH, commit.getShortHash());
+            props.set(Constants.KEY_COMMIT_FULL_HASH, commit.getFullHash());
         }
-        props.put(Constants.KEY_PROJECT_NAME, project.getName());
-        props.put(Constants.KEY_PROJECT_NAME_CAPITALIZED, getCapitalizedName(project.getName()));
-        props.put(Constants.KEY_PROJECT_VERSION, project.getVersion());
-        props.put(Constants.KEY_PROJECT_STEREOTYPE, project.getStereotype());
-        props.put(Constants.KEY_PROJECT_EFFECTIVE_VERSION, project.getEffectiveVersion());
-        props.put(Constants.KEY_PROJECT_SNAPSHOT, String.valueOf(project.isSnapshot()));
+        props.set(Constants.KEY_PROJECT_NAME, project.getName());
+        props.set(Constants.KEY_PROJECT_NAME_CAPITALIZED, getCapitalizedName(project.getName()));
+        props.set(Constants.KEY_PROJECT_VERSION, project.getVersion());
+        props.set(Constants.KEY_PROJECT_STEREOTYPE, project.getStereotype());
+        props.set(Constants.KEY_PROJECT_EFFECTIVE_VERSION, project.getEffectiveVersion());
+        props.set(Constants.KEY_PROJECT_SNAPSHOT, String.valueOf(project.isSnapshot()));
         if (isNotBlank(project.getDescription())) {
-            props.put(Constants.KEY_PROJECT_DESCRIPTION, MustacheUtils.passThrough(project.getDescription()));
+            props.set(Constants.KEY_PROJECT_DESCRIPTION, MustacheUtils.passThrough(project.getDescription()));
         }
         if (isNotBlank(project.getLongDescription())) {
-            props.put(Constants.KEY_PROJECT_LONG_DESCRIPTION, MustacheUtils.passThrough(project.getLongDescription()));
+            props.set(Constants.KEY_PROJECT_LONG_DESCRIPTION, MustacheUtils.passThrough(project.getLongDescription()));
         }
         if (isNotBlank(project.getLicense())) {
-            props.put(Constants.KEY_PROJECT_LICENSE, project.getLicense());
+            props.set(Constants.KEY_PROJECT_LICENSE, project.getLicense());
         }
         if (null != project.getInceptionYear()) {
-            props.put(Constants.KEY_PROJECT_INCEPTION_YEAR, project.getInceptionYear());
+            props.set(Constants.KEY_PROJECT_INCEPTION_YEAR, project.getInceptionYear());
         }
         if (isNotBlank(project.getCopyright())) {
-            props.put(Constants.KEY_PROJECT_COPYRIGHT, project.getCopyright());
+            props.set(Constants.KEY_PROJECT_COPYRIGHT, project.getCopyright());
         }
         if (isNotBlank(project.getVendor())) {
-            props.put(Constants.KEY_PROJECT_VENDOR, project.getVendor());
+            props.set(Constants.KEY_PROJECT_VENDOR, project.getVendor());
         }
         project.getLinks().fillProps(props);
-        props.put(Constants.KEY_PROJECT_AUTHORS_BY_SPACE, String.join(" ", project.getAuthors()));
-        props.put(Constants.KEY_PROJECT_AUTHORS_BY_COMMA, String.join(",", project.getAuthors()));
-        props.put(Constants.KEY_PROJECT_TAGS_BY_SPACE, String.join(" ", project.getTags()));
-        props.put(Constants.KEY_PROJECT_TAGS_BY_COMMA, String.join(",", project.getTags()));
+        props.set(Constants.KEY_PROJECT_AUTHORS_BY_SPACE, String.join(" ", project.getAuthors()));
+        props.set(Constants.KEY_PROJECT_AUTHORS_BY_COMMA, String.join(",", project.getAuthors()));
+        props.set(Constants.KEY_PROJECT_TAGS_BY_SPACE, String.join(" ", project.getTags()));
+        props.set(Constants.KEY_PROJECT_TAGS_BY_COMMA, String.join(",", project.getTags()));
 
         if (project.getJava().isEnabled()) {
-            props.putAll(project.getJava().getResolvedExtraProperties());
-            props.put(Constants.KEY_PROJECT_JAVA_GROUP_ID, project.getJava().getGroupId());
-            props.put(Constants.KEY_PROJECT_JAVA_ARTIFACT_ID, project.getJava().getArtifactId());
+            props.setAll(project.getJava().getResolvedExtraProperties());
+            props.set(Constants.KEY_PROJECT_JAVA_GROUP_ID, project.getJava().getGroupId());
+            props.set(Constants.KEY_PROJECT_JAVA_ARTIFACT_ID, project.getJava().getArtifactId());
             String javaVersion = project.getJava().getVersion();
-            props.put(Constants.KEY_PROJECT_JAVA_VERSION, javaVersion);
-            props.put(Constants.KEY_PROJECT_JAVA_MAIN_CLASS, project.getJava().getMainClass());
+            props.set(Constants.KEY_PROJECT_JAVA_VERSION, javaVersion);
+            props.set(Constants.KEY_PROJECT_JAVA_MAIN_CLASS, project.getJava().getMainClass());
             if (isNotBlank(javaVersion)) {
                 SemanticVersion jv = SemanticVersion.of(javaVersion);
-                props.put(Constants.KEY_PROJECT_JAVA_VERSION_MAJOR, jv.getMajor());
-                if (jv.hasMinor()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_MINOR, jv.getMinor());
-                if (jv.hasPatch()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_PATCH, jv.getPatch());
-                if (jv.hasTag()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_TAG, jv.getTag());
-                if (jv.hasBuild()) props.put(Constants.KEY_PROJECT_JAVA_VERSION_BUILD, jv.getBuild());
+                props.set(Constants.KEY_PROJECT_JAVA_VERSION_MAJOR, jv.getMajor());
+                if (jv.hasMinor()) props.set(Constants.KEY_PROJECT_JAVA_VERSION_MINOR, jv.getMinor());
+                if (jv.hasPatch()) props.set(Constants.KEY_PROJECT_JAVA_VERSION_PATCH, jv.getPatch());
+                if (jv.hasTag()) props.set(Constants.KEY_PROJECT_JAVA_VERSION_TAG, jv.getTag());
+                if (jv.hasBuild()) props.set(Constants.KEY_PROJECT_JAVA_VERSION_BUILD, jv.getBuild());
             }
         }
 
         project.parseVersion();
-        props.putAll(project.getResolvedExtraProperties());
+        props.setAll(project.getResolvedExtraProperties());
     }
 
-    private void fillReleaserProperties(Map<String, Object> props, Release release) {
+    private void fillReleaserProperties(TemplateContext props, Release release) {
         BaseReleaser<?, ?> service = release.getReleaser();
-        props.put(Constants.KEY_REPO_HOST, service.getHost());
-        props.put(Constants.KEY_REPO_OWNER, service.getOwner());
-        props.put(Constants.KEY_REPO_NAME, service.getName());
-        props.put(Constants.KEY_REPO_BRANCH, service.getBranch());
-        props.put(Constants.KEY_REVERSE_REPO_HOST, service.getReverseRepoHost());
-        props.put(Constants.KEY_CANONICAL_REPO_NAME, service.getCanonicalRepoName());
-        props.put(Constants.KEY_TAG_NAME, service.getEffectiveTagName(this));
-        props.put(Constants.KEY_RELEASE_NAME, service.getEffectiveReleaseName());
-        props.put(Constants.KEY_MILESTONE_NAME, service.getMilestone().getEffectiveName());
-        props.put(Constants.KEY_REPO_URL, service.getResolvedRepoUrl(this));
-        props.put(Constants.KEY_REPO_CLONE_URL, service.getResolvedRepoCloneUrl(this));
-        props.put(Constants.KEY_COMMIT_URL, service.getResolvedCommitUrl(this));
-        props.put(Constants.KEY_SRC_URL, service.getResolvedSrcUrl(this));
-        props.put(Constants.KEY_RELEASE_NOTES_URL, service.getResolvedReleaseNotesUrl(this));
-        props.put(Constants.KEY_LATEST_RELEASE_URL, service.getResolvedLatestReleaseUrl(this));
-        props.put(Constants.KEY_ISSUE_TRACKER_URL, service.getResolvedIssueTrackerUrl(this, false));
+        props.set(Constants.KEY_REPO_HOST, service.getHost());
+        props.set(Constants.KEY_REPO_OWNER, service.getOwner());
+        props.set(Constants.KEY_REPO_NAME, service.getName());
+        props.set(Constants.KEY_REPO_BRANCH, service.getBranch());
+        props.set(Constants.KEY_REVERSE_REPO_HOST, service.getReverseRepoHost());
+        props.set(Constants.KEY_CANONICAL_REPO_NAME, service.getCanonicalRepoName());
+        props.set(Constants.KEY_TAG_NAME, service.getEffectiveTagName(this));
+        props.set(Constants.KEY_PREVIOUS_TAG_NAME, service.getResolvedPreviousTagName(this));
+        props.set(Constants.KEY_RELEASE_NAME, service.getEffectiveReleaseName());
+        props.set(Constants.KEY_MILESTONE_NAME, service.getMilestone().getEffectiveName());
+        props.set(Constants.KEY_REPO_URL, service.getResolvedRepoUrl(this));
+        props.set(Constants.KEY_REPO_CLONE_URL, service.getResolvedRepoCloneUrl(this));
+        props.set(Constants.KEY_COMMIT_URL, service.getResolvedCommitUrl(this));
+        props.set(Constants.KEY_SRC_URL, service.getResolvedSrcUrl(this));
+        props.set(Constants.KEY_RELEASE_NOTES_URL, service.getResolvedReleaseNotesUrl(this));
+        props.set(Constants.KEY_LATEST_RELEASE_URL, service.getResolvedLatestReleaseUrl(this));
+        props.set(Constants.KEY_ISSUE_TRACKER_URL, service.getResolvedIssueTrackerUrl(this, false));
     }
 
     private final class ReleaserDownloadUrl implements TemplateFunction {

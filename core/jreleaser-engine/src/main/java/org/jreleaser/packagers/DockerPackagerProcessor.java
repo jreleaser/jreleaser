@@ -25,6 +25,7 @@ import org.jreleaser.model.internal.packagers.DockerConfiguration;
 import org.jreleaser.model.internal.packagers.DockerPackager;
 import org.jreleaser.model.internal.packagers.DockerSpec;
 import org.jreleaser.model.spi.packagers.PackagerProcessingException;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.command.Command;
 import org.jreleaser.util.FileUtils;
 import org.jreleaser.util.IoUtils;
@@ -73,7 +74,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
 
     @Override
     protected void doPrepareDistribution(Distribution distribution,
-                                         Map<String, Object> props,
+                                         TemplateContext props,
                                          String distributionName,
                                          Path prepareDirectory,
                                          String templateDirectory,
@@ -110,11 +111,11 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
     }
 
     private void prepareSpec(Distribution distribution,
-                             Map<String, Object> props,
+                             TemplateContext props,
                              String distributionName,
                              Path prepareDirectory,
                              DockerSpec spec) throws IOException, PackagerProcessingException {
-        Map<String, Object> newProps = fillSpecProps(distribution, props, spec);
+        TemplateContext newProps = fillSpecProps(distribution, props, spec);
         context.getLogger().debug(RB.$("distributions.action.preparing") + " {} spec", spec.getName());
         super.doPrepareDistribution(distribution, newProps, distributionName,
             prepareDirectory.resolve(spec.getName()),
@@ -131,21 +132,21 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         }
     }
 
-    private Map<String, Object> fillSpecProps(Distribution distribution, Map<String, Object> props, DockerSpec spec) {
+    private TemplateContext fillSpecProps(Distribution distribution, TemplateContext props, DockerSpec spec) {
         List<Artifact> artifacts = singletonList(spec.getArtifact());
-        Map<String, Object> newProps = fillProps(distribution, props);
-        newProps.put(KEY_DOCKER_SPEC_NAME, spec.getName());
+        TemplateContext newProps = fillProps(distribution, props);
+        newProps.set(KEY_DOCKER_SPEC_NAME, spec.getName());
         fillDockerProperties(newProps, spec);
         verifyAndAddArtifacts(newProps, distribution, artifacts);
-        Path prepareDirectory = (Path) newProps.get(KEY_DISTRIBUTION_PREPARE_DIRECTORY);
-        newProps.put(KEY_DISTRIBUTION_PREPARE_DIRECTORY, prepareDirectory.resolve(spec.getName()));
-        Path packageDirectory = (Path) newProps.get(KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
-        newProps.put(KEY_DISTRIBUTION_PACKAGE_DIRECTORY, packageDirectory.resolve(spec.getName()));
+        Path prepareDirectory = newProps.get(KEY_DISTRIBUTION_PREPARE_DIRECTORY);
+        newProps.set(KEY_DISTRIBUTION_PREPARE_DIRECTORY, prepareDirectory.resolve(spec.getName()));
+        Path packageDirectory = newProps.get(KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
+        newProps.set(KEY_DISTRIBUTION_PACKAGE_DIRECTORY, packageDirectory.resolve(spec.getName()));
         return newProps;
     }
 
     @Override
-    protected boolean verifyAndAddArtifacts(Map<String, Object> props, Distribution distribution) {
+    protected boolean verifyAndAddArtifacts(TemplateContext props, Distribution distribution) {
         if (packager.getActiveSpecs().isEmpty()) {
             return super.verifyAndAddArtifacts(props, distribution);
         }
@@ -154,7 +155,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
 
     @Override
     protected void doPackageDistribution(Distribution distribution,
-                                         Map<String, Object> props,
+                                         TemplateContext props,
                                          Path packageDirectory) throws PackagerProcessingException {
         if (packager.getActiveSpecs().isEmpty()) {
             List<Artifact> artifacts = packager.resolveCandidateArtifacts(context, distribution);
@@ -168,14 +169,14 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
 
         for (DockerSpec spec : packager.getActiveSpecs()) {
             context.getLogger().debug(RB.$("distributions.action.packaging") + " {} spec", spec.getName());
-            Map<String, Object> newProps = fillSpecProps(distribution, props, spec);
+            TemplateContext newProps = fillSpecProps(distribution, props, spec);
             packageDocker(distribution, newProps, packageDirectory.resolve(spec.getName()),
                 spec, singletonList(spec.getArtifact()));
         }
     }
 
     protected void packageDocker(Distribution distribution,
-                                 Map<String, Object> props,
+                                 TemplateContext props,
                                  Path packageDirectory,
                                  DockerConfiguration docker,
                                  List<Artifact> artifacts) throws PackagerProcessingException {
@@ -235,7 +236,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         }
     }
 
-    private void createBuildxBuilder(Map<String, Object> props, DockerConfiguration docker) throws PackagerProcessingException {
+    private void createBuildxBuilder(TemplateContext props, DockerConfiguration docker) throws PackagerProcessingException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Command cmd = new Command("docker" + (PlatformUtils.isWindows() ? ".exe" : ""))
             .arg("buildx")
@@ -249,7 +250,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
     }
 
     private Path prepareAssembly(Distribution distribution,
-                                 Map<String, Object> props,
+                                 TemplateContext props,
                                  Path packageDirectory,
                                  List<Artifact> artifacts) throws IOException, PackagerProcessingException {
         copyPreparedFiles(props);
@@ -273,7 +274,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         return packageDirectory;
     }
 
-    private Command buildCommand(Map<String, Object> props, DockerConfiguration docker) {
+    private Command buildCommand(TemplateContext props, DockerConfiguration docker) {
         Command cmd = createCommand("build");
         for (int i = 0; i < docker.getBuildArgs().size(); i++) {
             String arg = docker.getBuildArgs().get(i);
@@ -286,7 +287,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         return cmd;
     }
 
-    private Command buildxBuildCommand(Map<String, Object> props, DockerConfiguration docker) {
+    private Command buildxBuildCommand(TemplateContext props, DockerConfiguration docker) {
         Command cmd = createCommand("buildx");
         cmd.arg("build");
 
@@ -313,7 +314,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         return cmd;
     }
 
-    private Command buildxCreateCommand(Map<String, Object> props, DockerConfiguration docker) {
+    private Command buildxCreateCommand(TemplateContext props, DockerConfiguration docker) {
         Command cmd = createCommand("buildx");
         cmd.arg("create");
         for (int i = 0; i < docker.getBuildx().getCreateBuilderFlags().size(); i++) {
@@ -335,7 +336,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
     }
 
     @Override
-    public void publishDistribution(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
+    public void publishDistribution(Distribution distribution, TemplateContext props) throws PackagerProcessingException {
         if (packager.getActiveSpecs().isEmpty()) {
             publishToRepository(distribution, props);
             super.publishDistribution(distribution, props);
@@ -345,21 +346,21 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         publishToRepository(distribution, props);
         for (DockerSpec spec : packager.getActiveSpecs()) {
             context.getLogger().debug(RB.$("distributions.action.publishing") + " {} spec", spec.getName());
-            Map<String, Object> newProps = fillSpecProps(distribution, props, spec);
+            TemplateContext newProps = fillSpecProps(distribution, props, spec);
             publishDocker(newProps, spec);
         }
     }
 
-    private void publishToRepository(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
+    private void publishToRepository(Distribution distribution, TemplateContext props) throws PackagerProcessingException {
         super.doPublishDistribution(distribution, fillProps(distribution, props));
     }
 
     @Override
-    protected void doPublishDistribution(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
+    protected void doPublishDistribution(Distribution distribution, TemplateContext props) throws PackagerProcessingException {
         publishDocker(props, getPackager());
     }
 
-    protected void publishDocker(Map<String, Object> props,
+    protected void publishDocker(TemplateContext props,
                                  DockerConfiguration docker) throws PackagerProcessingException {
         Map<String, List<String>> tagNames = resolveTagNames(docker, props);
 
@@ -368,7 +369,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         }
 
         if (docker.getBuildx().isEnabled()) {
-            Path workingDirectory = (Path) props.get(KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
+            Path workingDirectory = props.get(KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
             List<String> tags = tagNames.values().stream()
                 .flatMap(List::stream)
                 .collect(toList());
@@ -435,7 +436,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         if (!context.isDryrun()) executeCommandWithInput(cmd, in);
     }
 
-    private Map<String, List<String>> resolveTagNames(DockerConfiguration docker, Map<String, Object> props) {
+    private Map<String, List<String>> resolveTagNames(DockerConfiguration docker, TemplateContext props) {
         Map<String, List<String>> tags = new LinkedHashMap<>();
 
         for (DockerConfiguration.Registry registry : docker.getRegistries()) {
@@ -505,22 +506,22 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
     }
 
     @Override
-    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) {
+    protected void fillPackagerProperties(TemplateContext props, Distribution distribution) {
         fillDockerProperties(props, getPackager());
     }
 
-    protected void fillDockerProperties(Map<String, Object> props, DockerConfiguration docker) {
-        props.put(KEY_DOCKER_BASE_IMAGE,
+    protected void fillDockerProperties(TemplateContext props, DockerConfiguration docker) {
+        props.set(KEY_DOCKER_BASE_IMAGE,
             resolveTemplate(docker.getBaseImage(), props));
 
         List<String> labels = new ArrayList<>();
         docker.getLabels().forEach((label, value) -> labels.add(passThrough("\"" + label + "\"=\"" +
             resolveTemplate(value, props) + "\"")));
-        props.put(KEY_DOCKER_LABELS, labels);
-        props.put(KEY_DOCKER_PRE_COMMANDS, docker.getPreCommands().stream()
+        props.set(KEY_DOCKER_LABELS, labels);
+        props.set(KEY_DOCKER_PRE_COMMANDS, docker.getPreCommands().stream()
             .map(c -> passThrough(resolveTemplate(c, props)))
             .collect(toList()));
-        props.put(KEY_DOCKER_POST_COMMANDS, docker.getPostCommands().stream()
+        props.set(KEY_DOCKER_POST_COMMANDS, docker.getPostCommands().stream()
             .map(c -> passThrough(resolveTemplate(c, props)))
             .collect(toList()));
     }
@@ -528,7 +529,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
     @Override
     protected void writeFile(Distribution distribution,
                              String content,
-                             Map<String, Object> props,
+                             TemplateContext props,
                              Path outputDirectory,
                              String fileName) throws PackagerProcessingException {
         fileName = trimTplExtension(fileName);
@@ -541,8 +542,8 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
     }
 
     @Override
-    protected void prepareWorkingCopy(Map<String, Object> props, Path directory, Distribution distribution) throws IOException {
-        Path packageDirectory = (Path) props.get(KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
+    protected void prepareWorkingCopy(TemplateContext props, Path directory, Distribution distribution) throws IOException {
+        Path packageDirectory = props.get(KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
 
         List<DockerSpec> activeSpecs = packager.getActiveSpecs();
 
@@ -555,7 +556,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
             prepareWorkingCopy(packageDirectory.resolve(ROOT), directory);
 
             for (DockerSpec spec : activeSpecs) {
-                Map<String, Object> newProps = fillSpecProps(distribution, props, spec);
+                TemplateContext newProps = fillSpecProps(distribution, props, spec);
                 for (String imageName : spec.getImageNames()) {
                     copyDockerfiles(packageDirectory.resolve(spec.getName()), resolveTemplate(imageName, newProps), directory, spec, true);
                 }

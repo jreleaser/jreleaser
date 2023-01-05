@@ -24,6 +24,7 @@ import org.jreleaser.model.internal.assemble.Assembler;
 import org.jreleaser.model.internal.common.FileSet;
 import org.jreleaser.model.spi.assemble.AssemblerProcessingException;
 import org.jreleaser.model.spi.assemble.AssemblerProcessor;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.command.Command;
 import org.jreleaser.sdk.command.CommandException;
 import org.jreleaser.sdk.command.CommandExecutor;
@@ -33,8 +34,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Set;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -71,12 +70,12 @@ public abstract class AbstractAssemblerProcessor<A extends org.jreleaser.model.a
     }
 
     @Override
-    public void assemble(Map<String, Object> props) throws AssemblerProcessingException {
+    public void assemble(TemplateContext props) throws AssemblerProcessingException {
         try {
             context.getLogger().debug(RB.$("packager.create.properties"), assembler.getType(), assembler.getName());
-            Map<String, Object> newProps = fillProps(props);
+            TemplateContext newProps = fillProps(props);
 
-            Path assembleDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
+            Path assembleDirectory = props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
             Files.createDirectories(assembleDirectory);
 
             doAssemble(newProps);
@@ -85,7 +84,7 @@ public abstract class AbstractAssemblerProcessor<A extends org.jreleaser.model.a
         }
     }
 
-    protected abstract void doAssemble(Map<String, Object> props) throws AssemblerProcessingException;
+    protected abstract void doAssemble(TemplateContext props) throws AssemblerProcessingException;
 
     protected void writeFile(String content, Path outputFile) throws AssemblerProcessingException {
         try {
@@ -107,8 +106,8 @@ public abstract class AbstractAssemblerProcessor<A extends org.jreleaser.model.a
         }
     }
 
-    protected Map<String, Object> fillProps(Map<String, Object> props) {
-        Map<String, Object> newProps = new LinkedHashMap<>(props);
+    protected TemplateContext fillProps(TemplateContext props) {
+        TemplateContext newProps = new TemplateContext(props);
         context.getLogger().debug(RB.$("packager.fill.git.properties"));
         context.getModel().getRelease().getReleaser().fillProps(newProps, context.getModel());
         context.getLogger().debug(RB.$("assembler.fill.assembler.properties"));
@@ -117,8 +116,8 @@ public abstract class AbstractAssemblerProcessor<A extends org.jreleaser.model.a
         return newProps;
     }
 
-    protected void fillAssemblerProperties(Map<String, Object> props) {
-        props.putAll(assembler.props());
+    protected void fillAssemblerProperties(TemplateContext props) {
+        props.setAll(assembler.props());
     }
 
     protected void executeCommand(Path directory, Command command) throws AssemblerProcessingException {

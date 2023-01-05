@@ -19,9 +19,11 @@ package org.jreleaser.model.internal.announce;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
+import org.jreleaser.model.Constants;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.Mail;
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.mustache.TemplateContext;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -32,6 +34,7 @@ import java.util.Map;
 
 import static java.util.Collections.unmodifiableMap;
 import static org.jreleaser.model.Constants.HIDE;
+import static org.jreleaser.model.Constants.KEY_PREVIOUS_TAG_NAME;
 import static org.jreleaser.model.Constants.KEY_TAG_NAME;
 import static org.jreleaser.model.Constants.UNSET;
 import static org.jreleaser.model.api.announce.SmtpAnnouncer.TYPE;
@@ -223,25 +226,30 @@ public final class SmtpAnnouncer extends AbstractAnnouncer<SmtpAnnouncer, org.jr
     }
 
     public String getResolvedSubject(JReleaserContext context) {
-        Map<String, Object> props = context.fullProps();
+        TemplateContext props = context.fullProps();
         applyTemplates(props, getResolvedExtraProperties());
-        props.put(KEY_TAG_NAME, context.getModel().getRelease().getReleaser().getEffectiveTagName(context.getModel()));
+        props.set(KEY_TAG_NAME, context.getModel().getRelease().getReleaser().getEffectiveTagName(context.getModel()));
+        props.set(KEY_PREVIOUS_TAG_NAME, context.getModel().getRelease().getReleaser().getResolvedPreviousTagName(context.getModel()));
         return resolveTemplate(subject, props);
     }
 
     public String getResolvedMessage(JReleaserContext context) {
-        Map<String, Object> props = context.fullProps();
+        TemplateContext props = context.fullProps();
         applyTemplates(props, getResolvedExtraProperties());
-        props.put(KEY_TAG_NAME, context.getModel().getRelease().getReleaser().getEffectiveTagName(context.getModel()));
+        props.set(KEY_TAG_NAME, context.getModel().getRelease().getReleaser().getEffectiveTagName(context.getModel()));
+        props.set(KEY_PREVIOUS_TAG_NAME, context.getModel().getRelease().getReleaser().getResolvedPreviousTagName(context.getModel()));
         return resolveTemplate(message, props);
     }
 
-    public String getResolvedMessageTemplate(JReleaserContext context, Map<String, Object> extraProps) {
-        Map<String, Object> props = context.fullProps();
+    public String getResolvedMessageTemplate(JReleaserContext context, TemplateContext extraProps) {
+        TemplateContext props = context.fullProps();
         applyTemplates(props, getResolvedExtraProperties());
-        props.put(KEY_TAG_NAME, context.getModel().getRelease().getReleaser()
+        props.set(KEY_TAG_NAME, context.getModel().getRelease().getReleaser()
             .getEffectiveTagName(context.getModel()));
-        props.putAll(extraProps);
+        props.set(Constants.KEY_PREVIOUS_TAG_NAME,
+            context.getModel().getRelease().getReleaser()
+                .getResolvedPreviousTagName(context.getModel()));
+        props.setAll(extraProps);
 
         Path templatePath = context.getBasedir().resolve(messageTemplate);
         try {

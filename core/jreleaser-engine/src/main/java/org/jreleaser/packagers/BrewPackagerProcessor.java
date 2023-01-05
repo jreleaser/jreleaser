@@ -25,15 +25,14 @@ import org.jreleaser.model.internal.release.BaseReleaser;
 import org.jreleaser.model.internal.util.Artifacts;
 import org.jreleaser.model.spi.packagers.PackagerProcessingException;
 import org.jreleaser.mustache.MustacheUtils;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.util.Algorithm;
 import org.jreleaser.util.FileType;
 import org.jreleaser.util.PlatformUtils;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.jreleaser.model.Constants.KEY_BREW_CASK_APP;
@@ -143,28 +142,28 @@ BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> 
     }
 
     @Override
-    protected void doPackageDistribution(Distribution distribution, Map<String, Object> props, Path packageDirectory) throws PackagerProcessingException {
+    protected void doPackageDistribution(Distribution distribution, TemplateContext props, Path packageDirectory) throws PackagerProcessingException {
         super.doPackageDistribution(distribution, props, packageDirectory);
         copyPreparedFiles(props);
     }
 
     @Override
-    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) {
+    protected void fillPackagerProperties(TemplateContext props, Distribution distribution) {
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
 
-        props.put(KEY_BREW_FORMULA_NAME, packager.getResolvedFormulaName(props));
+        props.set(KEY_BREW_FORMULA_NAME, packager.getResolvedFormulaName(props));
 
-        props.put(KEY_HOMEBREW_TAP_REPO_OWNER, packager.getTap().getOwner());
-        props.put(KEY_HOMEBREW_TAP_REPO_NAME, packager.getTap().getResolvedName());
-        props.put(KEY_HOMEBREW_TAP_NAME, packager.getTap().getResolvedName().substring("homebrew-".length()));
-        props.put(KEY_HOMEBREW_TAP_REPO_URL,
+        props.set(KEY_HOMEBREW_TAP_REPO_OWNER, packager.getTap().getOwner());
+        props.set(KEY_HOMEBREW_TAP_REPO_NAME, packager.getTap().getResolvedName());
+        props.set(KEY_HOMEBREW_TAP_NAME, packager.getTap().getResolvedName().substring("homebrew-".length()));
+        props.set(KEY_HOMEBREW_TAP_REPO_URL,
             releaser.getResolvedRepoUrl(context.getModel(), packager.getTap().getOwner(), packager.getTap().getResolvedName()));
-        props.put(KEY_HOMEBREW_TAP_REPO_CLONE_URL,
+        props.set(KEY_HOMEBREW_TAP_REPO_CLONE_URL,
             releaser.getResolvedRepoCloneUrl(context.getModel(), packager.getTap().getOwner(), packager.getTap().getResolvedName()));
 
-        props.put(KEY_BREW_HAS_LIVECHECK, packager.hasLivecheck());
+        props.set(KEY_BREW_HAS_LIVECHECK, packager.hasLivecheck());
         if (packager.hasLivecheck()) {
-            props.put(KEY_BREW_LIVECHECK, packager.getLivecheck().stream()
+            props.set(KEY_BREW_LIVECHECK, packager.getLivecheck().stream()
                 .map(line -> resolveTemplate(line, props))
                 .map(MustacheUtils::passThrough)
                 .collect(Collectors.toList()));
@@ -175,29 +174,29 @@ BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> 
             boolean hasPkg = isNotBlank(cask.getPkgName());
             boolean hasApp = isNotBlank(cask.getAppName());
 
-            props.put(KEY_BREW_CASK_NAME, cask.getResolvedCaskName(props));
-            props.put(KEY_BREW_CASK_DISPLAY_NAME, cask.getResolvedDisplayName(props));
-            props.put(KEY_BREW_CASK_HAS_UNINSTALL, !cask.getUninstallItems().isEmpty());
-            props.put(KEY_BREW_CASK_HAS_PKG, hasPkg);
+            props.set(KEY_BREW_CASK_NAME, cask.getResolvedCaskName(props));
+            props.set(KEY_BREW_CASK_DISPLAY_NAME, cask.getResolvedDisplayName(props));
+            props.set(KEY_BREW_CASK_HAS_UNINSTALL, !cask.getUninstallItems().isEmpty());
+            props.set(KEY_BREW_CASK_HAS_PKG, hasPkg);
             if (hasPkg) {
-                props.put(KEY_BREW_CASK_PKG, cask.getResolvedPkgName(props));
+                props.set(KEY_BREW_CASK_PKG, cask.getResolvedPkgName(props));
             }
-            props.put(KEY_BREW_CASK_HAS_APP, hasApp);
+            props.set(KEY_BREW_CASK_HAS_APP, hasApp);
             if (hasApp) {
-                props.put(KEY_BREW_CASK_APP, cask.getResolvedAppName(props));
+                props.set(KEY_BREW_CASK_APP, cask.getResolvedAppName(props));
             }
-            props.put(KEY_BREW_CASK_UNINSTALL, cask.getUninstallItems());
-            props.put(KEY_BREW_CASK_HAS_ZAP, !cask.getZapItems().isEmpty());
-            props.put(KEY_BREW_CASK_ZAP, cask.getZapItems());
+            props.set(KEY_BREW_CASK_UNINSTALL, cask.getUninstallItems());
+            props.set(KEY_BREW_CASK_HAS_ZAP, !cask.getZapItems().isEmpty());
+            props.set(KEY_BREW_CASK_ZAP, cask.getZapItems());
             String appcast = cask.getResolvedAppcast(props);
-            props.put(KEY_BREW_CASK_HAS_APPCAST, isNotBlank(appcast));
-            props.put(KEY_BREW_CASK_APPCAST, appcast);
+            props.set(KEY_BREW_CASK_HAS_APPCAST, isNotBlank(appcast));
+            props.set(KEY_BREW_CASK_APPCAST, appcast);
 
             if (!hasApp && !hasPkg) {
                 for (Artifact artifact : collectArtifacts(distribution)) {
                     if (artifact.getPath().endsWith(ZIP.extension())) {
-                        props.put(KEY_DISTRIBUTION_URL, resolveArtifactUrl(distribution, artifact));
-                        props.put(KEY_BREW_CASK_HAS_BINARY, true);
+                        props.set(KEY_DISTRIBUTION_URL, resolveArtifactUrl(distribution, artifact));
+                        props.set(KEY_BREW_CASK_HAS_BINARY, true);
                         break;
                     }
                 }
@@ -238,10 +237,10 @@ BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> 
                 }
 
                 if (isNotBlank(template)) {
-                    Map<String, Object> newProps = new LinkedHashMap<>(props);
-                    newProps.put(KEY_DISTRIBUTION_URL, artifactUrl);
-                    newProps.put(KEY_DISTRIBUTION_ARTIFACT_FILE_NAME, artifactFileName);
-                    newProps.put(KEY_DISTRIBUTION_CHECKSUM_SHA_256, artifact.getHash(Algorithm.SHA_256));
+                    TemplateContext newProps = new TemplateContext(props);
+                    newProps.set(KEY_DISTRIBUTION_URL, artifactUrl);
+                    newProps.set(KEY_DISTRIBUTION_ARTIFACT_FILE_NAME, artifactFileName);
+                    newProps.set(KEY_DISTRIBUTION_CHECKSUM_SHA_256, artifact.getHash(Algorithm.SHA_256));
                     multiPlatforms.add(resolveTemplate(template, newProps));
                 }
             }
@@ -251,24 +250,24 @@ BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> 
                 String artifactUrl = resolveArtifactUrl(distribution, osxIntelArtifact);
                 String artifactFile = osxIntelArtifact.getEffectivePath().getFileName().toString();
                 String artifactFileName = getFilename(artifactFile, FileType.getSupportedExtensions());
-                Map<String, Object> newProps = new LinkedHashMap<>(props);
-                newProps.put(KEY_DISTRIBUTION_URL, artifactUrl);
-                newProps.put(KEY_DISTRIBUTION_ARTIFACT_FILE_NAME, artifactFileName);
-                newProps.put(KEY_DISTRIBUTION_CHECKSUM_SHA_256, osxIntelArtifact.getHash(Algorithm.SHA_256));
+                TemplateContext newProps = new TemplateContext(props);
+                newProps.set(KEY_DISTRIBUTION_URL, artifactUrl);
+                newProps.set(KEY_DISTRIBUTION_ARTIFACT_FILE_NAME, artifactFileName);
+                newProps.set(KEY_DISTRIBUTION_CHECKSUM_SHA_256, osxIntelArtifact.getHash(Algorithm.SHA_256));
                 multiPlatforms.add(resolveTemplate(flatBinary ? TPL_LINUX_ARM_FLAT_BINARY : TPL_MAC_ARM, newProps));
             }
 
             if (multiPlatforms.isEmpty()) {
                 throw new IllegalStateException(org.jreleaser.bundle.RB.$("ERROR_brew_multiplatform_artifacts"));
             }
-            props.put(KEY_BREW_MULTIPLATFORM, passThrough(String.join(System.lineSeparator() + "  ", multiPlatforms)));
+            props.set(KEY_BREW_MULTIPLATFORM, passThrough(String.join(System.lineSeparator() + "  ", multiPlatforms)));
         } else if ((distribution.getType() == org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY ||
             distribution.getType() == org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR) &&
             !isTrue(packager.getExtraProperties().get(SKIP_JAVA))) {
             packager.addDependency("openjdk@" + props.get(KEY_DISTRIBUTION_JAVA_VERSION));
         }
 
-        props.put(KEY_BREW_DEPENDENCIES, packager.getDependenciesAsList()
+        props.set(KEY_BREW_DEPENDENCIES, packager.getDependenciesAsList()
             .stream()
             // prevent Mustache from converting quotes into &quot;
             .map(dependency -> passThrough(dependency.toString()))
@@ -282,7 +281,7 @@ BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> 
     @Override
     protected void writeFile(Distribution distribution,
                              String content,
-                             Map<String, Object> props,
+                             TemplateContext props,
                              Path outputDirectory,
                              String fileName)
         throws PackagerProcessingException {

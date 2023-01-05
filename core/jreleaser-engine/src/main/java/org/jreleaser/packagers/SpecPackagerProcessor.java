@@ -22,6 +22,7 @@ import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.SpecPackager;
 import org.jreleaser.model.spi.packagers.PackagerProcessingException;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.util.FileUtils;
 
 import java.io.IOException;
@@ -29,7 +30,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static java.util.Collections.emptyList;
@@ -55,21 +55,21 @@ public class SpecPackagerProcessor extends AbstractRepositoryPackagerProcessor<S
     }
 
     @Override
-    protected void doPrepareDistribution(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
+    protected void doPrepareDistribution(Distribution distribution, TemplateContext props) throws PackagerProcessingException {
         setupFiles(distribution, props);
         super.doPrepareDistribution(distribution, props);
     }
 
-    private void setupFiles(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
-        Artifact artifact = (Artifact) props.get(KEY_DISTRIBUTION_ARTIFACT);
+    private void setupFiles(Distribution distribution, TemplateContext props) throws PackagerProcessingException {
+        Artifact artifact = props.get(KEY_DISTRIBUTION_ARTIFACT);
         Path artifactPath = artifact.getResolvedPath(context, distribution);
         String artifactFileName = getFilename(artifactPath.getFileName().toString(), packager.getSupportedFileExtensions(distribution.getType()));
 
         if (distribution.getType() == org.jreleaser.model.Distribution.DistributionType.FLAT_BINARY) {
-            props.put(KEY_PROJECT_VERSION, context.getModel().getProject().version().toRpmVersion());
-            props.put(KEY_SPEC_DIRECTORIES, emptyList());
-            props.put(KEY_SPEC_BINARIES, singletonList(distribution.getExecutable().resolveExecutable("linux")));
-            props.put(KEY_SPEC_FILES, emptyList());
+            props.set(KEY_PROJECT_VERSION, context.getModel().getProject().version().toRpmVersion());
+            props.set(KEY_SPEC_DIRECTORIES, emptyList());
+            props.set(KEY_SPEC_BINARIES, singletonList(distribution.getExecutable().resolveExecutable("linux")));
+            props.set(KEY_SPEC_FILES, emptyList());
             return;
         }
 
@@ -111,32 +111,32 @@ public class SpecPackagerProcessor extends AbstractRepositoryPackagerProcessor<S
                     files.add(entry);
                 });
 
-            props.put(KEY_PROJECT_VERSION, context.getModel().getProject().version().toRpmVersion());
-            props.put(KEY_SPEC_DIRECTORIES, directories);
-            props.put(KEY_SPEC_BINARIES, binaries);
-            props.put(KEY_SPEC_FILES, files);
+            props.set(KEY_PROJECT_VERSION, context.getModel().getProject().version().toRpmVersion());
+            props.set(KEY_SPEC_DIRECTORIES, directories);
+            props.set(KEY_SPEC_BINARIES, binaries);
+            props.set(KEY_SPEC_FILES, files);
         } catch (IOException e) {
             throw new PackagerProcessingException("ERROR", e);
         }
     }
 
     @Override
-    protected void doPackageDistribution(Distribution distribution, Map<String, Object> props, Path packageDirectory) throws PackagerProcessingException {
+    protected void doPackageDistribution(Distribution distribution, TemplateContext props, Path packageDirectory) throws PackagerProcessingException {
         super.doPackageDistribution(distribution, props, packageDirectory);
         copyPreparedFiles(props);
     }
 
     @Override
-    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) {
-        props.put(KEY_SPEC_PACKAGE_NAME, packager.getPackageName());
-        props.put(KEY_SPEC_RELEASE, packager.getRelease());
-        props.put(KEY_SPEC_REQUIRES, packager.getRequires());
+    protected void fillPackagerProperties(TemplateContext props, Distribution distribution) {
+        props.set(KEY_SPEC_PACKAGE_NAME, packager.getPackageName());
+        props.set(KEY_SPEC_RELEASE, packager.getRelease());
+        props.set(KEY_SPEC_REQUIRES, packager.getRequires());
     }
 
     @Override
     protected void writeFile(Distribution distribution,
                              String content,
-                             Map<String, Object> props,
+                             TemplateContext props,
                              Path outputDirectory,
                              String fileName) throws PackagerProcessingException {
         fileName = trimTplExtension(fileName);

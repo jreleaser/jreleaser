@@ -33,7 +33,7 @@ import static org.jreleaser.model.internal.validation.release.BaseReleaserValida
  * @author Andres Almiray
  * @since 0.1.0
  */
-public final class GitlabReleaserValidator  {
+public final class GitlabReleaserValidator {
     private GitlabReleaserValidator() {
         // noop
     }

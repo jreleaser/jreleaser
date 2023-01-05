@@ -25,6 +25,7 @@ import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.distributions.Distribution;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.util.PlatformUtils;
 
 import java.util.ArrayList;
@@ -229,7 +230,7 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
         return cachedFormulaName;
     }
 
-    public String getResolvedFormulaName(Map<String, Object> props) {
+    public String getResolvedFormulaName(TemplateContext props) {
         if (isBlank(cachedFormulaName)) {
             cachedFormulaName = resolveTemplate(formulaName, props);
             cachedFormulaName = getClassNameForLowerCaseHyphenSeparatedName(cachedFormulaName);
@@ -562,7 +563,7 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
             return enabled != null;
         }
 
-        public String getResolvedAppcast(Map<String, Object> props) {
+        public String getResolvedAppcast(TemplateContext props) {
             if (isNotBlank(appcast)) {
                 return resolveTemplate(appcast, props);
             }
@@ -577,7 +578,7 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
             return cachedCaskName;
         }
 
-        public String getResolvedCaskName(Map<String, Object> props) {
+        public String getResolvedCaskName(TemplateContext props) {
             if (isBlank(cachedCaskName)) {
                 cachedCaskName = resolveTemplate(name, props);
                 cachedCaskName = getClassNameForLowerCaseHyphenSeparatedName(cachedCaskName);
@@ -596,7 +597,7 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
             return cachedDisplayName;
         }
 
-        public String getResolvedDisplayName(Map<String, Object> props) {
+        public String getResolvedDisplayName(TemplateContext props) {
             if (isBlank(cachedDisplayName)) {
                 cachedDisplayName = resolveTemplate(displayName, props);
                 cachedDisplayName = getNaturalName(getClassNameForLowerCaseHyphenSeparatedName(cachedDisplayName));
@@ -614,7 +615,7 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
             return cachedAppName;
         }
 
-        public String getResolvedAppName(Map<String, Object> props) {
+        public String getResolvedAppName(TemplateContext props) {
             if (isBlank(cachedAppName)) {
                 cachedAppName = resolveTemplate(appName, props);
             } else if (cachedAppName.contains("{{")) {
@@ -630,7 +631,7 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
             return cachedPkgName;
         }
 
-        public String getResolvedPkgName(Map<String, Object> props) {
+        public String getResolvedPkgName(TemplateContext props) {
             if (isBlank(cachedPkgName)) {
                 cachedPkgName = resolveTemplate(pkgName, props);
             } else if (cachedPkgName.contains("{{")) {

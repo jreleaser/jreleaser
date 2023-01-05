@@ -20,8 +20,8 @@ package org.jreleaser.model.internal.upload;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Artifact;
+import org.jreleaser.mustache.TemplateContext;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static java.util.Collections.unmodifiableMap;
@@ -219,13 +219,13 @@ public final class GitlabUploader extends AbstractUploader<org.jreleaser.model.a
     }
 
     @Override
-    public String getResolvedDownloadUrl(Map<String, Object> props, Artifact artifact) {
-        Map<String, Object> p = new LinkedHashMap<>(artifactProps(props, artifact));
-        p.putAll(getResolvedExtraProperties());
-        p.put("host", host);
-        p.put("packageName", packageName);
-        p.put("packageVersion", packageVersion);
-        p.put("projectIdentifier", projectIdentifier);
+    public String getResolvedDownloadUrl(TemplateContext props, Artifact artifact) {
+        TemplateContext p = new TemplateContext(artifactProps(props, artifact));
+        p.setAll(getResolvedExtraProperties());
+        p.set("host", host);
+        p.set("packageName", packageName);
+        p.set("packageVersion", packageVersion);
+        p.set("projectIdentifier", projectIdentifier);
         return resolveTemplate(DOWNLOAD_URL, p);
     }
 

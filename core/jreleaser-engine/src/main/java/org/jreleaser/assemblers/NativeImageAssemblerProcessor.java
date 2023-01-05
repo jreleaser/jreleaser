@@ -23,6 +23,7 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.NativeImageAssembler;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.spi.assemble.AssemblerProcessingException;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.command.Command;
 import org.jreleaser.sdk.command.CommandException;
 import org.jreleaser.sdk.tool.ToolException;
@@ -38,7 +39,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -59,7 +59,7 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
     }
 
     @Override
-    protected void doAssemble(Map<String, Object> props) throws AssemblerProcessingException {
+    protected void doAssemble(TemplateContext props) throws AssemblerProcessingException {
         // verify graal
         Path graalPath = assembler.getGraal().getEffectivePath(context, assembler);
         SemanticVersion javaVersion = SemanticVersion.of(readJavaVersion(graalPath));
@@ -69,7 +69,7 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
 
         String platform = assembler.getGraal().getPlatform();
         // copy jars to assembly
-        Path assembleDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
+        Path assembleDirectory = props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
         Path jarsDirectory = assembleDirectory.resolve("jars");
         Path universalJarsDirectory = jarsDirectory.resolve("universal");
         context.getLogger().debug(RB.$("assembler.copy.jars"), context.relativizeToBasedir(universalJarsDirectory));
@@ -255,7 +255,7 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
     }
 
     @Override
-    protected void writeFile(String content, Map<String, Object> props, String fileName)
+    protected void writeFile(String content, TemplateContext props, String fileName)
         throws AssemblerProcessingException {
         // noop
     }

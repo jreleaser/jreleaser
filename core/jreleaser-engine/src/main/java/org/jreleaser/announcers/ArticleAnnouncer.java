@@ -29,6 +29,7 @@ import org.jreleaser.model.internal.release.BaseReleaser;
 import org.jreleaser.model.spi.announce.AnnounceException;
 import org.jreleaser.model.spi.announce.Announcer;
 import org.jreleaser.model.spi.release.Repository;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.git.JReleaserGpgSigner;
 import org.jreleaser.util.FileUtils;
 
@@ -36,7 +37,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardOpenOption.CREATE;
@@ -96,10 +96,10 @@ public class ArticleAnnouncer implements Announcer<org.jreleaser.model.api.annou
 
         context.getLogger().debug(RB.$("announcer.article.resolve.templates"));
 
-        Map<String, Object> props = context.fullProps();
-        props.put(Constants.KEY_CHANGELOG, passThrough(context.getChangelog()));
+        TemplateContext props = context.fullProps();
+        props.set(Constants.KEY_CHANGELOG, passThrough(context.getChangelog()));
         context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
-        props.putAll(article.getResolvedExtraProperties());
+        props.setAll(article.getResolvedExtraProperties());
 
         try {
             for (Artifact file : article.getFiles()) {
@@ -163,7 +163,7 @@ public class ArticleAnnouncer implements Announcer<org.jreleaser.model.api.annou
                 .addFilepattern(".")
                 .call();
 
-            Map<String, Object> props = context.fullProps();
+            TemplateContext props = context.fullProps();
             context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
 
             // setup commit

@@ -24,10 +24,9 @@ import org.jreleaser.model.internal.packagers.ScoopPackager;
 import org.jreleaser.model.internal.release.BaseReleaser;
 import org.jreleaser.model.internal.util.Artifacts;
 import org.jreleaser.model.spi.packagers.PackagerProcessingException;
+import org.jreleaser.mustache.TemplateContext;
 
 import java.nio.file.Path;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import static org.jreleaser.model.Constants.KEY_ARTIFACT_FILE;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT;
@@ -56,61 +55,61 @@ public class ScoopPackagerProcessor extends AbstractRepositoryPackagerProcessor<
     }
 
     @Override
-    protected void doPackageDistribution(Distribution distribution, Map<String, Object> props, Path packageDirectory) throws PackagerProcessingException {
+    protected void doPackageDistribution(Distribution distribution, TemplateContext props, Path packageDirectory) throws PackagerProcessingException {
         super.doPackageDistribution(distribution, props, packageDirectory);
         copyPreparedFiles(props);
     }
 
     @Override
-    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) {
+    protected void fillPackagerProperties(TemplateContext props, Distribution distribution) {
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
 
-        props.put(KEY_SCOOP_BUCKET_REPO_URL,
+        props.set(KEY_SCOOP_BUCKET_REPO_URL,
             releaser.getResolvedRepoUrl(context.getModel(), packager.getBucket().getOwner(), packager.getBucket().getResolvedName()));
-        props.put(KEY_SCOOP_BUCKET_REPO_CLONE_URL,
+        props.set(KEY_SCOOP_BUCKET_REPO_CLONE_URL,
             releaser.getResolvedRepoCloneUrl(context.getModel(), packager.getBucket().getOwner(), packager.getBucket().getResolvedName()));
 
-        props.put(KEY_SCOOP_PACKAGE_NAME, packager.getPackageName());
-        props.put(KEY_SCOOP_CHECKVER_URL, resolveCheckverUrl(props));
-        props.put(KEY_SCOOP_AUTOUPDATE_URL, resolveAutoupdateUrl(props, distribution));
-        String autoupdateExtractDir = (String) props.get(KEY_DISTRIBUTION_ARTIFACT_FILE_NAME);
+        props.set(KEY_SCOOP_PACKAGE_NAME, packager.getPackageName());
+        props.set(KEY_SCOOP_CHECKVER_URL, resolveCheckverUrl(props));
+        props.set(KEY_SCOOP_AUTOUPDATE_URL, resolveAutoupdateUrl(props, distribution));
+        String autoupdateExtractDir = props.get(KEY_DISTRIBUTION_ARTIFACT_FILE_NAME);
         autoupdateExtractDir = autoupdateExtractDir.replace(context.getModel().getProject().getEffectiveVersion(), "$version");
-        props.put(KEY_SCOOP_AUTOUPDATE_EXTRACT_DIR, autoupdateExtractDir);
+        props.set(KEY_SCOOP_AUTOUPDATE_EXTRACT_DIR, autoupdateExtractDir);
     }
 
-    private Object resolveCheckverUrl(Map<String, Object> props) {
+    private Object resolveCheckverUrl(TemplateContext props) {
         if (!getPackager().getCheckverUrl().contains("{{")) {
             return getPackager().getCheckverUrl();
         }
         return resolveTemplate(getPackager().getCheckverUrl(), props);
     }
 
-    private Object resolveAutoupdateUrl(Map<String, Object> props, Distribution distribution) {
+    private Object resolveAutoupdateUrl(TemplateContext props, Distribution distribution) {
         String url = getPackager().getAutoupdateUrl();
         if (isBlank(url)) {
-            Artifact artifact = (Artifact) props.get(KEY_DISTRIBUTION_ARTIFACT);
+            Artifact artifact = props.get(KEY_DISTRIBUTION_ARTIFACT);
             url = Artifacts.resolveDownloadUrl(context, org.jreleaser.model.api.packagers.ScoopPackager.TYPE, distribution, artifact);
         }
 
-        String artifactFile = (String) props.get(KEY_DISTRIBUTION_ARTIFACT_FILE);
-        String projectVersion = (String) props.get(KEY_PROJECT_VERSION);
-        String tagName = (String) props.get(KEY_TAG_NAME);
+        String artifactFile = props.get(KEY_DISTRIBUTION_ARTIFACT_FILE);
+        String projectVersion = props.get(KEY_PROJECT_VERSION);
+        String tagName = props.get(KEY_TAG_NAME);
         url = url.replace(projectVersion, "$version");
         artifactFile = artifactFile.replace(projectVersion, "$version");
         tagName = tagName.replace(projectVersion, "$version");
 
-        Map<String, Object> copy = new LinkedHashMap<>(props);
-        copy.put(KEY_PROJECT_VERSION, "$version");
-        copy.put(KEY_PROJECT_EFFECTIVE_VERSION, "$version");
-        copy.put(KEY_TAG_NAME, tagName);
-        copy.put(KEY_ARTIFACT_FILE, artifactFile);
+        TemplateContext copy = new TemplateContext(props);
+        copy.set(KEY_PROJECT_VERSION, "$version");
+        copy.set(KEY_PROJECT_EFFECTIVE_VERSION, "$version");
+        copy.set(KEY_TAG_NAME, tagName);
+        copy.set(KEY_ARTIFACT_FILE, artifactFile);
         return resolveTemplate(url, copy);
     }
 
     @Override
     protected void writeFile(Distribution distribution,
                              String content,
-                             Map<String, Object> props,
+                             TemplateContext props,
                              Path outputDirectory,
                              String fileName) throws PackagerProcessingException {
         fileName = trimTplExtension(fileName);

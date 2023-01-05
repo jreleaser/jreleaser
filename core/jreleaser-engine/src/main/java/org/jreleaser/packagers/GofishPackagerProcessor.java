@@ -23,6 +23,7 @@ import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.GofishPackager;
 import org.jreleaser.model.internal.util.Artifacts;
 import org.jreleaser.model.spi.packagers.PackagerProcessingException;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.util.Algorithm;
 import org.jreleaser.util.FileType;
 import org.jreleaser.util.PlatformUtils;
@@ -49,13 +50,13 @@ public class GofishPackagerProcessor extends AbstractRepositoryPackagerProcessor
     }
 
     @Override
-    protected void doPackageDistribution(Distribution distribution, Map<String, Object> props, Path packageDirectory) throws PackagerProcessingException {
+    protected void doPackageDistribution(Distribution distribution, TemplateContext props, Path packageDirectory) throws PackagerProcessingException {
         super.doPackageDistribution(distribution, props, packageDirectory);
         copyPreparedFiles(props);
     }
 
     @Override
-    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) {
+    protected void fillPackagerProperties(TemplateContext props, Distribution distribution) {
         List<Artifact> artifacts = collectArtifacts(distribution);
 
         List<GofishPackage> packages = artifacts.stream()
@@ -76,13 +77,13 @@ public class GofishPackagerProcessor extends AbstractRepositoryPackagerProcessor
             }
         }
 
-        props.put(KEY_GOFISH_PACKAGES, packages);
+        props.set(KEY_GOFISH_PACKAGES, packages);
     }
 
     @Override
     protected void writeFile(Distribution distribution,
                              String content,
-                             Map<String, Object> props,
+                             TemplateContext props,
                              Path outputDirectory,
                              String fileName) throws PackagerProcessingException {
         fileName = trimTplExtension(fileName);
@@ -103,14 +104,14 @@ public class GofishPackagerProcessor extends AbstractRepositoryPackagerProcessor
         private final String packagePath;
         private final String packageInstallPath;
 
-        public GofishPackage(Map<String, Object> props, JReleaserContext context, Distribution distribution, Artifact artifact) {
+        public GofishPackage(TemplateContext props, JReleaserContext context, Distribution distribution, Artifact artifact) {
             String platform = artifact.getPlatform();
             String artifactPlatform = isNotBlank(platform) ? capitalize(platform) : "";
             // add extra properties without clobbering existing keys
             Map<String, Object> artifactProps = artifact.getResolvedExtraProperties("artifact" + artifactPlatform);
             artifactProps.keySet().stream()
-                .filter(k -> !props.containsKey(k))
-                .forEach(k -> props.put(k, artifactProps.get(k)));
+                .filter(k -> !props.contains(k))
+                .forEach(k -> props.set(k, artifactProps.get(k)));
 
             String artifactFile = artifact.getEffectivePath().getFileName().toString();
             String artifactFileName = getFilename(artifactFile, FileType.getSupportedExtensions());

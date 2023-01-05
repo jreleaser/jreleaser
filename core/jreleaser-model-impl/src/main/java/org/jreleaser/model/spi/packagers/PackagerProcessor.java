@@ -19,8 +19,7 @@ package org.jreleaser.model.spi.packagers;
 
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.Packager;
-
-import java.util.Map;
+import org.jreleaser.mustache.TemplateContext;
 
 /**
  * @author Andres Almiray
@@ -35,9 +34,9 @@ public interface PackagerProcessor<T extends Packager> {
 
     boolean supportsDistribution(Distribution distribution);
 
-    void prepareDistribution(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException;
+    void prepareDistribution(Distribution distribution, TemplateContext props) throws PackagerProcessingException;
 
-    void packageDistribution(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException;
+    void packageDistribution(Distribution distribution, TemplateContext props) throws PackagerProcessingException;
 
-    void publishDistribution(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException;
+    void publishDistribution(Distribution distribution, TemplateContext props) throws PackagerProcessingException;
 }

@@ -28,13 +28,13 @@ import org.jreleaser.model.internal.packagers.RepositoryTap;
 import org.jreleaser.model.internal.release.BaseReleaser;
 import org.jreleaser.model.spi.packagers.PackagerProcessingException;
 import org.jreleaser.model.spi.release.Repository;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.git.JReleaserGpgSigner;
 import org.jreleaser.util.FileUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
 import java.util.function.Predicate;
 
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY;
@@ -50,7 +50,7 @@ public abstract class AbstractRepositoryPackagerProcessor<T extends RepositoryPa
     }
 
     @Override
-    protected void doPublishDistribution(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
+    protected void doPublishDistribution(Distribution distribution, TemplateContext props) throws PackagerProcessingException {
         RepositoryTap tap = packager.getRepositoryTap();
         if (!tap.isEnabled()) {
             context.getLogger().info(RB.$("repository.disabled"), tap.getCanonicalRepoName());
@@ -94,7 +94,7 @@ public abstract class AbstractRepositoryPackagerProcessor<T extends RepositoryPa
                 .addFilepattern(".")
                 .call();
 
-            props.putAll(distribution.props());
+            props.setAll(distribution.props());
             context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
 
             // setup commit
@@ -140,8 +140,8 @@ public abstract class AbstractRepositoryPackagerProcessor<T extends RepositoryPa
         }
     }
 
-    protected void prepareWorkingCopy(Map<String, Object> props, Path directory, Distribution distribution) throws IOException {
-        Path packageDirectory = (Path) props.get(KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
+    protected void prepareWorkingCopy(TemplateContext props, Path directory, Distribution distribution) throws IOException {
+        Path packageDirectory = props.get(KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
         prepareWorkingCopy(packageDirectory, directory);
     }
 

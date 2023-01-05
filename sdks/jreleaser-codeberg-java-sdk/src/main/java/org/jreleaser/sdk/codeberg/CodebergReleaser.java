@@ -29,6 +29,7 @@ import org.jreleaser.model.spi.release.Release;
 import org.jreleaser.model.spi.release.ReleaseException;
 import org.jreleaser.model.spi.release.Repository;
 import org.jreleaser.model.spi.release.User;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.git.ChangelogProvider;
 import org.jreleaser.sdk.git.GitSdk;
@@ -308,7 +309,7 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
         String tagName = codeberg.getEffectiveTagName(context.getModel());
         String labelName = codeberg.getIssues().getLabel().getName();
         String labelColor = codeberg.getIssues().getLabel().getColor();
-        Map<String, Object> props = codeberg.props(context.getModel());
+        TemplateContext props = codeberg.props(context.getModel());
         codeberg.fillProps(props, context.getModel());
         String comment = resolveTemplate(codeberg.getIssues().getComment(), props);
 

@@ -20,6 +20,7 @@ package org.jreleaser.model.internal.upload;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Artifact;
+import org.jreleaser.mustache.TemplateContext;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -199,21 +200,21 @@ public final class S3Uploader extends AbstractUploader<org.jreleaser.model.api.u
     }
 
     @Override
-    public String getResolvedDownloadUrl(Map<String, Object> props, Artifact artifact) {
+    public String getResolvedDownloadUrl(TemplateContext props, Artifact artifact) {
         if (isNotBlank(getDownloadUrl())) {
-            Map<String, Object> p = new LinkedHashMap<>(artifactProps(props, artifact));
-            p.putAll(getResolvedExtraProperties());
-            p.put("bucket", bucket);
-            p.put("region", region);
+            TemplateContext p = new TemplateContext(artifactProps(props, artifact));
+            p.setAll(getResolvedExtraProperties());
+            p.set("bucket", bucket);
+            p.set("region", region);
             return resolveTemplate(getDownloadUrl(), p);
         }
 
         if (isBlank(getEndpoint())) {
             String url = "https://{{bucket}}.s3.{{region}}.amazonaws.com/" + path;
-            Map<String, Object> p = new LinkedHashMap<>(artifactProps(props, artifact));
-            p.putAll(getResolvedExtraProperties());
-            p.put("bucket", bucket);
-            p.put("region", region);
+            TemplateContext p = new TemplateContext(artifactProps(props, artifact));
+            p.setAll(getResolvedExtraProperties());
+            p.set("bucket", bucket);
+            p.set("region", region);
             return resolveTemplate(url, p);
         }
 
@@ -314,8 +315,8 @@ public final class S3Uploader extends AbstractUploader<org.jreleaser.model.api.u
             artifactPath = artifact.getExtraProperty(customPathKey);
         }
 
-        Map<String, Object> p = new LinkedHashMap<>(artifactProps(context, artifact));
-        p.putAll(getResolvedExtraProperties());
+        TemplateContext p = new TemplateContext(artifactProps(context, artifact));
+        p.setAll(getResolvedExtraProperties());
         return resolveTemplate(artifactPath, p);
     }
 }

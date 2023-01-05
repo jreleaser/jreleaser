@@ -25,6 +25,7 @@ import org.jreleaser.model.internal.common.Activatable;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.project.Project;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.mustache.Templates;
 import org.jreleaser.util.FileType;
 
@@ -260,7 +261,7 @@ public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.mo
     }
 
     @Override
-    public String getResolvedDownloadUrl(Map<String, Object> props, Artifact artifact) {
+    public String getResolvedDownloadUrl(TemplateContext props, Artifact artifact) {
         return resolveUrl(props, artifact);
     }
 
@@ -268,16 +269,16 @@ public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.mo
         return resolveUrl(context.fullProps(), artifact);
     }
 
-    private String resolveUrl(Map<String, Object> props, Artifact artifact) {
-        Map<String, Object> p = new LinkedHashMap<>(artifactProps(props, artifact));
-        p.put("artifactoryHost", host);
+    private String resolveUrl(TemplateContext props, Artifact artifact) {
+        TemplateContext p = new TemplateContext(artifactProps(props, artifact));
+        p.set("artifactoryHost", host);
 
         Optional<ArtifactoryRepository> repository = repositories.stream()
             .filter(r -> r.handles(artifact))
             .findFirst();
 
         if (repository.isPresent()) {
-            p.put("repositoryPath", repository.get().getPath());
+            p.set("repositoryPath", repository.get().getPath());
             String url = "{{artifactoryHost}}/{{repositoryPath}}";
             return Templates.resolveTemplate(url, p);
         }

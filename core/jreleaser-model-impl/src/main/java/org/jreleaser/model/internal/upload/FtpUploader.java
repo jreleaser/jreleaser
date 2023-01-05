@@ -21,8 +21,8 @@ import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.Ftp;
+import org.jreleaser.mustache.TemplateContext;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static java.util.Collections.unmodifiableMap;
@@ -237,8 +237,8 @@ public final class FtpUploader extends AbstractUploader<org.jreleaser.model.api.
     }
 
     public String getResolvedPath(JReleaserContext context, Artifact artifact) {
-        Map<String, Object> p = artifactProps(context.fullProps(), artifact);
-        p.putAll(getResolvedExtraProperties());
+        TemplateContext p = artifactProps(context.fullProps(), artifact);
+        p.setAll(getResolvedExtraProperties());
         return resolveTemplate(path, p);
     }
 
@@ -248,9 +248,9 @@ public final class FtpUploader extends AbstractUploader<org.jreleaser.model.api.
     }
 
     @Override
-    public String getResolvedDownloadUrl(Map<String, Object> props, Artifact artifact) {
-        Map<String, Object> p = new LinkedHashMap<>(artifactProps(props, artifact));
-        p.putAll(getResolvedExtraProperties());
+    public String getResolvedDownloadUrl(TemplateContext props, Artifact artifact) {
+        TemplateContext p = new TemplateContext(artifactProps(props, artifact));
+        p.setAll(getResolvedExtraProperties());
         return resolveTemplate(downloadUrl, p);
     }
 }

@@ -137,7 +137,7 @@ public final class DefaultExtensionManager implements ExtensionManager {
         }
 
         List<Path> jars = null;
-        try (Stream<Path> jarPaths = Files.list(directoryPath)){
+        try (Stream<Path> jarPaths = Files.list(directoryPath)) {
             jars = jarPaths
                 .filter(path -> path.getFileName().toString().endsWith(".jar"))
                 .collect(toList());

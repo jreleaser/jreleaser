@@ -43,6 +43,7 @@ import org.jreleaser.model.internal.assemble.JavaAssembler;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.internal.release.BaseReleaser;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.signing.FilesKeyring;
 import org.jreleaser.sdk.signing.InMemoryKeyring;
 import org.jreleaser.util.Errors;
@@ -76,6 +77,7 @@ import static org.jreleaser.model.Constants.KEY_COMMIT_SHORT_HASH;
 import static org.jreleaser.model.Constants.KEY_MILESTONE_NAME;
 import static org.jreleaser.model.Constants.KEY_PLATFORM;
 import static org.jreleaser.model.Constants.KEY_PLATFORM_REPLACED;
+import static org.jreleaser.model.Constants.KEY_PREVIOUS_TAG_NAME;
 import static org.jreleaser.model.Constants.KEY_PROJECT_NAME;
 import static org.jreleaser.model.Constants.KEY_PROJECT_SNAPSHOT;
 import static org.jreleaser.model.Constants.KEY_PROJECT_VERSION;
@@ -99,6 +101,7 @@ import static org.jreleaser.model.Constants.KEY_VERSION_YEAR;
 import static org.jreleaser.util.CollectionUtils.safePut;
 import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -336,12 +339,12 @@ public class JReleaserContext {
         }
 
         @Override
-        public Map<String, Object> props() {
+        public TemplateContext props() {
             return JReleaserContext.this.props();
         }
 
         @Override
-        public Map<String, Object> fullProps() {
+        public TemplateContext fullProps() {
             return JReleaserContext.this.fullProps();
         }
 
@@ -850,24 +853,24 @@ public class JReleaserContext {
         this.command = command;
     }
 
-    public Map<String, Object> props() {
-        Map<String, Object> props = new LinkedHashMap<>(model.props());
-        props.put(Constants.KEY_BASEDIR, getBasedir());
-        props.put(Constants.KEY_BASE_OUTPUT_DIRECTORY, getOutputDirectory().getParent());
-        props.put(Constants.KEY_OUTPUT_DIRECTORY, getOutputDirectory());
-        props.put(Constants.KEY_CHECKSUMS_DIRECTORY, getChecksumsDirectory());
-        props.put(Constants.KEY_SIGNATURES_DIRECTORY, getSignaturesDirectory());
-        props.put(Constants.KEY_PREPARE_DIRECTORY, getPrepareDirectory());
-        props.put(Constants.KEY_PACKAGE_DIRECTORY, getPackageDirectory());
-        props.put(Constants.KEY_DOWNLOAD_DIRECTORY, getDownloadDirectory());
-        props.put(Constants.KEY_ASSEMBLE_DIRECTORY, getAssembleDirectory());
-        props.put(Constants.KEY_ARTIFACTS_DIRECTORY, getArtifactsDirectory());
+    public TemplateContext props() {
+        TemplateContext props = new TemplateContext(model.props());
+        props.set(Constants.KEY_BASEDIR, getBasedir());
+        props.set(Constants.KEY_BASE_OUTPUT_DIRECTORY, getOutputDirectory().getParent());
+        props.set(Constants.KEY_OUTPUT_DIRECTORY, getOutputDirectory());
+        props.set(Constants.KEY_CHECKSUMS_DIRECTORY, getChecksumsDirectory());
+        props.set(Constants.KEY_SIGNATURES_DIRECTORY, getSignaturesDirectory());
+        props.set(Constants.KEY_PREPARE_DIRECTORY, getPrepareDirectory());
+        props.set(Constants.KEY_PACKAGE_DIRECTORY, getPackageDirectory());
+        props.set(Constants.KEY_DOWNLOAD_DIRECTORY, getDownloadDirectory());
+        props.set(Constants.KEY_ASSEMBLE_DIRECTORY, getAssembleDirectory());
+        props.set(Constants.KEY_ARTIFACTS_DIRECTORY, getArtifactsDirectory());
         return props;
     }
 
-    public Map<String, Object> fullProps() {
-        LinkedHashMap<String, Object> props = new LinkedHashMap<>(props());
-        props.putAll(model.props());
+    public TemplateContext fullProps() {
+        TemplateContext props = new TemplateContext(props());
+        props.setAll(model.props());
         return props;
     }
 
@@ -900,6 +903,8 @@ public class JReleaserContext {
         if (model.getCommit() != null) {
             BaseReleaser<?, ?> releaser = model.getRelease().getReleaser();
             props.put(KEY_TAG_NAME, releaser.getEffectiveTagName(model));
+            String previousTagName = releaser.getResolvedPreviousTagName(model);
+            if (isNotBlank(previousTagName)) props.put(KEY_PREVIOUS_TAG_NAME, previousTagName);
             props.put("releaseBranch", releaser.getBranch());
             if (releaser.isReleaseSupported()) {
                 props.put(KEY_RELEASE_NAME, releaser.getEffectiveReleaseName());

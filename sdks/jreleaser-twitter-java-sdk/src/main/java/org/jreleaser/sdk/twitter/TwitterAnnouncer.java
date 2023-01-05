@@ -23,14 +23,14 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.spi.announce.AnnounceException;
 import org.jreleaser.model.spi.announce.Announcer;
 import org.jreleaser.mustache.MustacheUtils;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
+import static org.jreleaser.model.Constants.KEY_PREVIOUS_TAG_NAME;
 import static org.jreleaser.model.Constants.KEY_TAG_NAME;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
@@ -70,8 +70,8 @@ public class TwitterAnnouncer implements Announcer<org.jreleaser.model.api.annou
         List<String> statuses = new ArrayList<>();
 
         if (isNotBlank(twitter.getStatusTemplate())) {
-            Map<String, Object> props = new LinkedHashMap<>();
-            props.put(Constants.KEY_CHANGELOG, MustacheUtils.passThrough(context.getChangelog()));
+            TemplateContext props = new TemplateContext();
+            props.set(Constants.KEY_CHANGELOG, MustacheUtils.passThrough(context.getChangelog()));
             context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
             Arrays.stream(twitter.getResolvedStatusTemplate(context, props)
                     .split(System.lineSeparator()))
@@ -115,9 +115,10 @@ public class TwitterAnnouncer implements Announcer<org.jreleaser.model.api.annou
     }
 
     private String getResolvedMessage(JReleaserContext context, String message) {
-        Map<String, Object> props = context.fullProps();
+        TemplateContext props = context.fullProps();
         applyTemplates(props, context.getModel().getAnnounce().getTwitter().getResolvedExtraProperties());
-        props.put(KEY_TAG_NAME, context.getModel().getRelease().getReleaser().getEffectiveTagName(context.getModel()));
+        props.set(KEY_TAG_NAME, context.getModel().getRelease().getReleaser().getEffectiveTagName(context.getModel()));
+        props.set(KEY_PREVIOUS_TAG_NAME, context.getModel().getRelease().getReleaser().getResolvedPreviousTagName(context.getModel()));
         return resolveTemplate(message, props);
     }
 }

@@ -24,6 +24,7 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.JpackageAssembler;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.spi.assemble.AssemblerProcessingException;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.command.Command;
 import org.jreleaser.templates.TemplateResource;
 import org.jreleaser.templates.TemplateUtils;
@@ -36,7 +37,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
 import java.util.Optional;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
@@ -58,7 +58,7 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<o
     }
 
     @Override
-    protected void doAssemble(Map<String, Object> props) throws AssemblerProcessingException {
+    protected void doAssemble(TemplateContext props) throws AssemblerProcessingException {
         JpackageAssembler.PlatformPackager packager = assembler.getResolvedPlatformPackager();
 
         // verify jdk
@@ -71,7 +71,7 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<o
 
         String platform = packager.getJdk().getPlatform();
 
-        Path assembleDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
+        Path assembleDirectory = props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
         Path workDirectory = assembleDirectory.resolve("work-" + platform);
         Path inputsDirectory = workDirectory.resolve("inputs");
         Path filesDirectory = inputsDirectory.resolve("files");
@@ -101,7 +101,7 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<o
 
     private void copyIcon(JReleaserContext context, JpackageAssembler assembler,
                           JpackageAssembler.PlatformPackager packager, Path inputsDirectory,
-                          String platform, Map<String, Object> props) throws AssemblerProcessingException {
+                          String platform, TemplateContext props) throws AssemblerProcessingException {
         String p = "linux";
         String ext = ".png";
 
@@ -154,7 +154,7 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<o
         runtimeImageByPlatform.get().setPath(adjustedImage.toAbsolutePath().toString());
     }
 
-    private void jpackage(JReleaserContext context, String type, Path workDirectory, Map<String, Object> props) throws AssemblerProcessingException {
+    private void jpackage(JReleaserContext context, String type, Path workDirectory, TemplateContext props) throws AssemblerProcessingException {
         JpackageAssembler.PlatformPackager packager = assembler.getResolvedPlatformPackager();
         Path jdkPath = packager.getJdk().getEffectivePath(context, assembler);
         String platform = packager.getJdk().getPlatform();
@@ -284,7 +284,7 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<o
         }
     }
 
-    private void customize(String type, JpackageAssembler.PlatformPackager packager, Path inputsDirectory, Command cmd, Map<String, Object> props) {
+    private void customize(String type, JpackageAssembler.PlatformPackager packager, Path inputsDirectory, Command cmd, TemplateContext props) {
         String installDir = resolveTemplate(packager.getInstallDir(), props);
         if (isNotBlank(installDir)) {
             cmd.arg("--install-dir")
@@ -309,7 +309,7 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<o
         }
     }
 
-    private void customizeOsx(JpackageAssembler.Osx packager, Path inputsDirectory, Command cmd, Map<String, Object> props) {
+    private void customizeOsx(JpackageAssembler.Osx packager, Path inputsDirectory, Command cmd, TemplateContext props) {
         if (isNotBlank(packager.getPackageName())) {
             cmd.arg("--mac-package-name")
                 .arg(packager.getPackageName());
@@ -410,11 +410,11 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<o
     }
 
     @Override
-    protected void writeFile(String content, Map<String, Object> props, String fileName)
+    protected void writeFile(String content, TemplateContext props, String fileName)
         throws AssemblerProcessingException {
         fileName = trimTplExtension(fileName);
 
-        Path outputDirectory = (Path) props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
+        Path outputDirectory = props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
         Path outputFile = outputDirectory.resolve(fileName);
 
         writeFile(content, outputFile);

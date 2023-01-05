@@ -55,7 +55,7 @@ public final class Init {
     public static void execute(JReleaserLogger logger, String format, boolean overwrite, Path outputDirectory) {
         try {
             if (isBlank(format)) format = "yml";
-            
+
             if (!getSupportedConfigFormats().contains(format)) {
                 throw new IllegalArgumentException($("jreleaser.init.ERROR_invalid_format",
                     String.join("|", getSupportedConfigFormats())));

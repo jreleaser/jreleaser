@@ -42,8 +42,8 @@ class SimpleJReleaserLoggerAdapterTest {
     @ParameterizedTest
     @MethodSource("logging_values")
     void testLogging(SimpleJReleaserLoggerAdapter.Level currentLevel,
-                            SimpleJReleaserLoggerAdapter.Level activeLevel,
-                            Consumer<JReleaserLogger> consumer, boolean active) {
+                     SimpleJReleaserLoggerAdapter.Level activeLevel,
+                     Consumer<JReleaserLogger> consumer, boolean active) {
         // given:
         StringWriter witness = new StringWriter();
         PrintWriter writer = new PrintWriter(witness);

@@ -28,6 +28,7 @@ import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.common.Executable;
 import org.jreleaser.model.internal.common.FileSet;
 import org.jreleaser.model.internal.common.Glob;
+import org.jreleaser.mustache.TemplateContext;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -224,8 +225,8 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
     }
 
     public String getResolvedArchiveName(JReleaserContext context) {
-        Map<String, Object> props = context.fullProps();
-        props.putAll(props());
+        TemplateContext props = context.fullProps();
+        props.setAll(props());
         return resolveTemplate(archiveName, props);
     }
 

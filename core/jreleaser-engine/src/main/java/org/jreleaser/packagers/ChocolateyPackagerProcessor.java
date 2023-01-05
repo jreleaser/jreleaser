@@ -25,12 +25,12 @@ import org.jreleaser.model.internal.release.BaseReleaser;
 import org.jreleaser.model.internal.release.GithubReleaser;
 import org.jreleaser.model.internal.release.Releaser;
 import org.jreleaser.model.spi.packagers.PackagerProcessingException;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.command.Command;
 import org.jreleaser.util.PlatformUtils;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.jreleaser.model.Constants.KEY_CHOCOLATEY_BUCKET_REPO_CLONE_URL;
@@ -59,7 +59,7 @@ public class ChocolateyPackagerProcessor extends AbstractRepositoryPackagerProce
     }
 
     @Override
-    protected void doPackageDistribution(Distribution distribution, Map<String, Object> props, Path packageDirectory) throws PackagerProcessingException {
+    protected void doPackageDistribution(Distribution distribution, TemplateContext props, Path packageDirectory) throws PackagerProcessingException {
         super.doPackageDistribution(distribution, props, packageDirectory);
 
         copyPreparedFiles(props);
@@ -77,7 +77,7 @@ public class ChocolateyPackagerProcessor extends AbstractRepositoryPackagerProce
     }
 
     @Override
-    protected void doPublishDistribution(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
+    protected void doPublishDistribution(Distribution distribution, TemplateContext props) throws PackagerProcessingException {
         if (packager.isRemoteBuild()) {
             super.doPublishDistribution(distribution, props);
             return;
@@ -97,34 +97,34 @@ public class ChocolateyPackagerProcessor extends AbstractRepositoryPackagerProce
     }
 
     @Override
-    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) {
+    protected void fillPackagerProperties(TemplateContext props, Distribution distribution) {
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
 
-        if (!props.containsKey(KEY_PROJECT_LICENSE_URL) ||
-            isBlank((String) props.get(KEY_PROJECT_LICENSE_URL))) {
+        if (!props.contains(KEY_PROJECT_LICENSE_URL) ||
+            isBlank(props.get(KEY_PROJECT_LICENSE_URL))) {
             context.getLogger().warn(RB.$("ERROR_project_no_license_url"));
         }
 
         String repoUrl = releaser.getResolvedRepoUrl(context.getModel());
         String bucketRepoUrl = releaser.getResolvedRepoUrl(context.getModel(), packager.getBucket().getOwner(), packager.getBucket().getResolvedName());
 
-        props.put(KEY_CHOCOLATEY_PACKAGE_SOURCE_URL, packager.isRemoteBuild() ? bucketRepoUrl : repoUrl);
-        props.put(KEY_CHOCOLATEY_BUCKET_REPO_URL, bucketRepoUrl);
-        props.put(KEY_CHOCOLATEY_BUCKET_REPO_CLONE_URL,
+        props.set(KEY_CHOCOLATEY_PACKAGE_SOURCE_URL, packager.isRemoteBuild() ? bucketRepoUrl : repoUrl);
+        props.set(KEY_CHOCOLATEY_BUCKET_REPO_URL, bucketRepoUrl);
+        props.set(KEY_CHOCOLATEY_BUCKET_REPO_CLONE_URL,
             releaser.getResolvedRepoCloneUrl(context.getModel(), packager.getBucket().getOwner(), packager.getBucket().getResolvedName()));
 
-        props.put(KEY_CHOCOLATEY_PACKAGE_NAME, packager.getPackageName());
-        props.put(KEY_CHOCOLATEY_PACKAGE_VERSION, resolveTemplate(packager.getPackageVersion(), props));
-        props.put(KEY_CHOCOLATEY_USERNAME, packager.getUsername());
-        props.put(KEY_CHOCOLATEY_TITLE, packager.getTitle());
-        props.put(KEY_CHOCOLATEY_ICON_URL, resolveTemplate(packager.getIconUrl(), props));
-        props.put(KEY_CHOCOLATEY_SOURCE, packager.getSource());
+        props.set(KEY_CHOCOLATEY_PACKAGE_NAME, packager.getPackageName());
+        props.set(KEY_CHOCOLATEY_PACKAGE_VERSION, resolveTemplate(packager.getPackageVersion(), props));
+        props.set(KEY_CHOCOLATEY_USERNAME, packager.getUsername());
+        props.set(KEY_CHOCOLATEY_TITLE, packager.getTitle());
+        props.set(KEY_CHOCOLATEY_ICON_URL, resolveTemplate(packager.getIconUrl(), props));
+        props.set(KEY_CHOCOLATEY_SOURCE, packager.getSource());
     }
 
     @Override
     protected void writeFile(Distribution distribution,
                              String content,
-                             Map<String, Object> props,
+                             TemplateContext props,
                              Path outputDirectory,
                              String fileName) throws PackagerProcessingException {
         Releaser<?> gitService = context.getModel().getRelease().getReleaser();
@@ -143,8 +143,8 @@ public class ChocolateyPackagerProcessor extends AbstractRepositoryPackagerProce
         writeFile(content, outputFile);
     }
 
-    private void createChocolateyPackage(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
-        Path packageDirectory = (Path) props.get(KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
+    private void createChocolateyPackage(Distribution distribution, TemplateContext props) throws PackagerProcessingException {
+        Path packageDirectory = props.get(KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
         Path execDirectory = packageDirectory.resolve(distribution.getName());
 
         Command cmd = new Command("choco")
@@ -155,8 +155,8 @@ public class ChocolateyPackagerProcessor extends AbstractRepositoryPackagerProce
         executeCommand(execDirectory, cmd);
     }
 
-    private void publishChocolateyPackage(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
-        Path packageDirectory = (Path) props.get(KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
+    private void publishChocolateyPackage(Distribution distribution, TemplateContext props) throws PackagerProcessingException {
+        Path packageDirectory = props.get(KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
         Path execDirectory = packageDirectory.resolve(distribution.getName());
 
         Command cmd = new Command("choco")

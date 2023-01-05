@@ -30,6 +30,7 @@ import org.jreleaser.model.spi.announce.AnnounceException;
 import org.jreleaser.model.spi.announce.Announcer;
 import org.jreleaser.model.spi.upload.UploadException;
 import org.jreleaser.mustache.MustacheUtils;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.commons.ClientUtils;
 
 import java.util.Base64;
@@ -92,8 +93,8 @@ public class HttpAnnouncer implements Announcer<org.jreleaser.model.api.announce
         if (isNotBlank(announcer.getPayload())) {
             payload = announcer.getResolvedPayload(context);
         } else {
-            Map<String, Object> props = context.props();
-            props.put(Constants.KEY_CHANGELOG, MustacheUtils.passThrough(context.getChangelog()));
+            TemplateContext props = context.props();
+            props.set(Constants.KEY_CHANGELOG, MustacheUtils.passThrough(context.getChangelog()));
             context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
             payload = announcer.getResolvedPayloadTemplate(context, props);
         }
@@ -158,7 +159,7 @@ public class HttpAnnouncer implements Announcer<org.jreleaser.model.api.announce
     }
 
     private void resolveHeaders(org.jreleaser.model.internal.announce.HttpAnnouncer announcer, Map<String, String> headers) {
-        Map<String, Object> props = context.props();
+        TemplateContext props = context.props();
         announcer.getHeaders().forEach((k, v) -> {
             String value = resolveTemplate(v, props);
             if (isNotBlank(value)) headers.put(k, value);

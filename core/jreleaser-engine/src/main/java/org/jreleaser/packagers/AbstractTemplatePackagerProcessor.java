@@ -23,6 +23,7 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.TemplatePackager;
 import org.jreleaser.model.spi.packagers.PackagerProcessingException;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.templates.TemplateResource;
 import org.jreleaser.util.FileUtils;
 
@@ -54,7 +55,7 @@ public abstract class AbstractTemplatePackagerProcessor<T extends TemplatePackag
     }
 
     @Override
-    protected void doPrepareDistribution(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
+    protected void doPrepareDistribution(Distribution distribution, TemplateContext props) throws PackagerProcessingException {
         try {
             doPrepareDistribution(distribution, props, distribution.getName(),
                 getPrepareDirectory(props), getPackager().getTemplateDirectory(), getPackagerName(), true);
@@ -64,7 +65,7 @@ public abstract class AbstractTemplatePackagerProcessor<T extends TemplatePackag
     }
 
     protected void doPrepareDistribution(Distribution distribution,
-                                         Map<String, Object> props,
+                                         TemplateContext props,
                                          String distributionName,
                                          Path prepareDirectory,
                                          String templateDirectory,
@@ -136,11 +137,11 @@ public abstract class AbstractTemplatePackagerProcessor<T extends TemplatePackag
     }
 
     @Override
-    protected void doPackageDistribution(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
+    protected void doPackageDistribution(Distribution distribution, TemplateContext props) throws PackagerProcessingException {
         doPackageDistribution(distribution, props, getPackageDirectory(props));
     }
 
-    protected void doPackageDistribution(Distribution distribution, Map<String, Object> props, Path packageDirectory) throws PackagerProcessingException {
+    protected void doPackageDistribution(Distribution distribution, TemplateContext props, Path packageDirectory) throws PackagerProcessingException {
         try {
             // cleanup from previous session
             FileUtils.deleteFiles(packageDirectory);
@@ -150,9 +151,9 @@ public abstract class AbstractTemplatePackagerProcessor<T extends TemplatePackag
         }
     }
 
-    protected abstract void writeFile(Distribution distribution, String content, Map<String, Object> props, Path outputDirectory, String fileName) throws PackagerProcessingException;
+    protected abstract void writeFile(Distribution distribution, String content, TemplateContext props, Path outputDirectory, String fileName) throws PackagerProcessingException;
 
-    protected void writeFile(Distribution distribution, InputStream inputStream, Map<String, Object> props, Path outputDirectory, String fileName) throws PackagerProcessingException {
+    protected void writeFile(Distribution distribution, InputStream inputStream, TemplateContext props, Path outputDirectory, String fileName) throws PackagerProcessingException {
         Path outputFile = outputDirectory.resolve(fileName);
 
         writeFile(inputStream, outputFile);

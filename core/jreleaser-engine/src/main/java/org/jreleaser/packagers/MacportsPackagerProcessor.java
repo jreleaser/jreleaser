@@ -22,11 +22,11 @@ import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.MacportsPackager;
 import org.jreleaser.model.internal.release.BaseReleaser;
 import org.jreleaser.model.spi.packagers.PackagerProcessingException;
+import org.jreleaser.mustache.TemplateContext;
 
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_NAME;
@@ -61,46 +61,46 @@ public class MacportsPackagerProcessor extends AbstractRepositoryPackagerProcess
     }
 
     @Override
-    protected void doPackageDistribution(Distribution distribution, Map<String, Object> props, Path packageDirectory) throws PackagerProcessingException {
+    protected void doPackageDistribution(Distribution distribution, TemplateContext props, Path packageDirectory) throws PackagerProcessingException {
         super.doPackageDistribution(distribution, props, packageDirectory);
         copyPreparedFiles(props);
     }
 
     @Override
-    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) {
+    protected void fillPackagerProperties(TemplateContext props, Distribution distribution) {
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
 
-        props.put(KEY_MACPORTS_REPOSITORY_REPO_URL,
+        props.set(KEY_MACPORTS_REPOSITORY_REPO_URL,
             releaser.getResolvedRepoUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
-        props.put(KEY_MACPORTS_REPOSITORY_REPO_CLONE_URL,
+        props.set(KEY_MACPORTS_REPOSITORY_REPO_CLONE_URL,
             releaser.getResolvedRepoCloneUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
 
         List<String> longDescription = Arrays.asList(context.getModel().getProject().getLongDescription().split("\\n"));
 
-        props.put(KEY_MACPORTS_PACKAGE_NAME, packager.getPackageName());
-        props.put(KEY_MACPORTS_REVISION, packager.getRevision());
-        props.put(KEY_MACPORTS_CATEGORIES, String.join(" ", packager.getCategories()));
-        props.put(KEY_MACPORTS_MAINTAINERS, passThrough(String.join(LINE_SEPARATOR, packager.getResolvedMaintainers(context))));
-        props.put(KEY_PROJECT_LONG_DESCRIPTION, passThrough(String.join(LINE_SEPARATOR, longDescription)));
+        props.set(KEY_MACPORTS_PACKAGE_NAME, packager.getPackageName());
+        props.set(KEY_MACPORTS_REVISION, packager.getRevision());
+        props.set(KEY_MACPORTS_CATEGORIES, String.join(" ", packager.getCategories()));
+        props.set(KEY_MACPORTS_MAINTAINERS, passThrough(String.join(LINE_SEPARATOR, packager.getResolvedMaintainers(context))));
+        props.set(KEY_PROJECT_LONG_DESCRIPTION, passThrough(String.join(LINE_SEPARATOR, longDescription)));
         if (distribution.getType() == org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY) {
-            props.put(KEY_MACPORTS_JAVA_VERSION, resolveJavaVersion(distribution));
+            props.set(KEY_MACPORTS_JAVA_VERSION, resolveJavaVersion(distribution));
         }
         if (packager.getExtraProperties().containsKey(APP_NAME)) {
-            props.put(KEY_MACPORTS_APP_NAME, resolveTemplate(packager.getExtraProperty(APP_NAME), props));
+            props.set(KEY_MACPORTS_APP_NAME, resolveTemplate(packager.getExtraProperty(APP_NAME), props));
         }
 
-        String distributionUrl = (String) props.get(KEY_DISTRIBUTION_URL);
-        String artifactFile = (String) props.get(KEY_DISTRIBUTION_ARTIFACT_FILE);
+        String distributionUrl = props.get(KEY_DISTRIBUTION_URL);
+        String artifactFile = props.get(KEY_DISTRIBUTION_ARTIFACT_FILE);
         if (distributionUrl.endsWith(artifactFile)) {
             distributionUrl = distributionUrl.substring(0, distributionUrl.length() - artifactFile.length() - 1);
         }
         distributionUrl = distributionUrl.replace(context.getModel().getProject().getEffectiveVersion(), "${version}");
-        props.put(KEY_MACPORTS_DISTRIBUTION_URL, distributionUrl);
+        props.set(KEY_MACPORTS_DISTRIBUTION_URL, distributionUrl);
 
-        String artifactFileName = (String) props.get(KEY_DISTRIBUTION_ARTIFACT_FILE_NAME);
-        String artifactName = (String) props.get(KEY_DISTRIBUTION_ARTIFACT_NAME);
-        String artifactVersion = (String) props.get(KEY_DISTRIBUTION_ARTIFACT_VERSION);
-        props.put(KEY_MACPORTS_DISTNAME, artifactFileName.replace(artifactName, "${name}")
+        String artifactFileName = props.get(KEY_DISTRIBUTION_ARTIFACT_FILE_NAME);
+        String artifactName = props.get(KEY_DISTRIBUTION_ARTIFACT_NAME);
+        String artifactVersion = props.get(KEY_DISTRIBUTION_ARTIFACT_VERSION);
+        props.set(KEY_MACPORTS_DISTNAME, artifactFileName.replace(artifactName, "${name}")
             .replace(artifactVersion, "${version}"));
     }
 
@@ -120,7 +120,7 @@ public class MacportsPackagerProcessor extends AbstractRepositoryPackagerProcess
     @Override
     protected void writeFile(Distribution distribution,
                              String content,
-                             Map<String, Object> props,
+                             TemplateContext props,
                              Path outputDirectory,
                              String fileName) throws PackagerProcessingException {
         fileName = trimTplExtension(fileName);

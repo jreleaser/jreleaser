@@ -34,6 +34,7 @@ import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.internal.release.BaseReleaser;
 import org.jreleaser.model.internal.release.Changelog;
 import org.jreleaser.model.internal.release.Release;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.git.ChangelogGenerator.Commit;
 import org.jreleaser.version.SemanticVersion;
 import org.junit.jupiter.api.Disabled;
@@ -54,7 +55,6 @@ import java.io.StringReader;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -269,7 +269,7 @@ class ChangelogGeneratorUnitTest {
         when(mockGitSdk.open()).thenReturn(git);
 
         ChangelogGenerator.Commit commit = mock(ChangelogGenerator.Commit.class);
-        when(commit.asContext(anyBoolean(), any(), any())).thenReturn(new HashMap<>());
+        when(commit.asContext(anyBoolean(), any(), any())).thenReturn(TemplateContext.empty());
         commitMockedStatic.when(() -> ChangelogGenerator.Commit.of(any())).thenReturn(commit);
 
         Mockito.doReturn(true).when(changelogGenerator).checkLabels(commit, changelog);
@@ -300,7 +300,7 @@ class ChangelogGeneratorUnitTest {
         when(release.getReleaser()).thenReturn(releaser);
 
         when(releaser.getEffectiveTagName(any())).thenReturn(effectiveTagName);
-        when(releaser.getConfiguredTagName()).thenReturn(configuredTagName);
+        when(releaser.getTagName()).thenReturn(configuredTagName);
         when(git.getRepository().resolve(Constants.HEAD)).thenReturn(headId);
         doReturn(SemanticVersion.of(effectiveTagName)).when(project).version();
         when(context.getModel().getProject().isSnapshot()).thenReturn(isSnapshot);

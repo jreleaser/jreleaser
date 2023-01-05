@@ -23,6 +23,7 @@ import org.jreleaser.model.Http;
 import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.common.ExtraProperties;
 import org.jreleaser.model.internal.project.Project;
+import org.jreleaser.mustache.TemplateContext;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -315,10 +316,10 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
 
     protected abstract void asMap(boolean full, Map<String, Object> props);
 
-    public String getResolvedUrl(Map<String, Object> props) {
-        props.put("username", username);
-        props.put("owner", username);
-        props.putAll(getExtraProperties());
+    public String getResolvedUrl(TemplateContext props) {
+        props.set("username", username);
+        props.set("owner", username);
+        props.setAll(getExtraProperties());
         return resolveTemplate(url, props);
     }
 

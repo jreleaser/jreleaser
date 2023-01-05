@@ -32,6 +32,7 @@ import org.jreleaser.model.internal.release.GithubReleaser;
 import org.jreleaser.model.internal.release.Releaser;
 import org.jreleaser.model.spi.packagers.PackagerProcessingException;
 import org.jreleaser.mustache.MustacheUtils;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.util.FileUtils;
 
 import java.io.IOException;
@@ -44,7 +45,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -96,20 +96,20 @@ public class FlatpakPackagerProcessor extends AbstractRepositoryPackagerProcesso
     }
 
     @Override
-    protected void doPrepareDistribution(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
+    protected void doPrepareDistribution(Distribution distribution, TemplateContext props) throws PackagerProcessingException {
         setupPrepare(distribution, props);
         super.doPrepareDistribution(distribution, props);
     }
 
-    private void setupPrepare(Distribution distribution, Map<String, Object> props) throws PackagerProcessingException {
-        Artifact artifact = (Artifact) props.get(KEY_DISTRIBUTION_ARTIFACT);
+    private void setupPrepare(Distribution distribution, TemplateContext props) throws PackagerProcessingException {
+        Artifact artifact = props.get(KEY_DISTRIBUTION_ARTIFACT);
         Path artifactPath = artifact.getResolvedPath(context, distribution);
         String artifactFileName = getFilename(artifactPath.getFileName().toString(), packager.getSupportedFileExtensions(distribution.getType()));
 
         if (distribution.getType() == org.jreleaser.model.Distribution.DistributionType.FLAT_BINARY) {
-            props.put(KEY_SPEC_DIRECTORIES, emptyList());
-            props.put(KEY_SPEC_BINARIES, singletonList(distribution.getExecutable().resolveExecutable("linux")));
-            props.put(KEY_SPEC_FILES, emptyList());
+            props.set(KEY_SPEC_DIRECTORIES, emptyList());
+            props.set(KEY_SPEC_BINARIES, singletonList(distribution.getExecutable().resolveExecutable("linux")));
+            props.set(KEY_SPEC_FILES, emptyList());
         } else {
             try {
                 List<String> entries = FileUtils.inspectArchive(artifactPath);
@@ -149,9 +149,9 @@ public class FlatpakPackagerProcessor extends AbstractRepositoryPackagerProcesso
                         files.add(entry);
                     });
 
-                props.put(KEY_FLATPAK_DIRECTORIES, directories);
-                props.put(KEY_FLATPAK_BINARIES, binaries);
-                props.put(KEY_FLATPAK_FILES, files);
+                props.set(KEY_FLATPAK_DIRECTORIES, directories);
+                props.set(KEY_FLATPAK_BINARIES, binaries);
+                props.set(KEY_FLATPAK_FILES, files);
             } catch (IOException e) {
                 throw new PackagerProcessingException("ERROR", e);
             }
@@ -160,7 +160,7 @@ public class FlatpakPackagerProcessor extends AbstractRepositoryPackagerProcesso
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
 
         try {
-            props.put(KEY_FLATPAK_RELEASES, Releasers.releaserFor(context)
+            props.set(KEY_FLATPAK_RELEASES, Releasers.releaserFor(context)
                 .listReleases(releaser.getOwner(), releaser.getName()).stream()
                 .filter(r -> isReleaseIncluded(packager.getSkipReleases(), r.getVersion().toString()))
                 .map(r -> Release.of(r.getUrl(), r.getVersion().toString(), r.getPublishedAt()))
@@ -169,12 +169,12 @@ public class FlatpakPackagerProcessor extends AbstractRepositoryPackagerProcesso
             throw new PackagerProcessingException(RB.$("ERROR_unexpected_error"), e);
         }
 
-        props.put(KEY_FLATPAK_SCREENSHOTS, packager.getScreenshots().stream()
+        props.set(KEY_FLATPAK_SCREENSHOTS, packager.getScreenshots().stream()
             .map(Screenshot::asScreenshotTemplate)
             .collect(toList()));
 
         context.getLogger().debug(RB.$("packager.fetch.icons"));
-        props.put(KEY_FLATPACK_ICONS, packager.getIcons());
+        props.set(KEY_FLATPACK_ICONS, packager.getIcons());
         for (Icon icon : packager.getIcons()) {
             // check if exists
             String iconUrl = resolveTemplate(icon.getUrl(), props);
@@ -201,39 +201,39 @@ public class FlatpakPackagerProcessor extends AbstractRepositoryPackagerProcesso
     }
 
     @Override
-    protected void doPackageDistribution(Distribution distribution, Map<String, Object> props, Path packageDirectory) throws PackagerProcessingException {
+    protected void doPackageDistribution(Distribution distribution, TemplateContext props, Path packageDirectory) throws PackagerProcessingException {
         super.doPackageDistribution(distribution, props, packageDirectory);
         copyPreparedFiles(props);
     }
 
     @Override
-    protected void fillPackagerProperties(Map<String, Object> props, Distribution distribution) {
-        props.put(KEY_PROJECT_AUTHORS, context.getModel().getProject().getAuthors());
-        props.put(KEY_FLATPAK_URLS, context.getModel().getProject().getLinks().asLinkTemplates());
-        props.put(KEY_FLATPAK_COMPONENT_ID, getPackager().getComponentId());
-        props.put(KEY_FLATPAK_CATEGORIES, getPackager().getCategories());
-        props.put(KEY_FLATPAK_CATEGORIES_BY_COMMA, String.join(",", getPackager().getCategories()));
-        props.put(KEY_FLATPAK_CATEGORIES_BY_SEMICOLON, String.join(";", getPackager().getCategories()) +
+    protected void fillPackagerProperties(TemplateContext props, Distribution distribution) {
+        props.set(KEY_PROJECT_AUTHORS, context.getModel().getProject().getAuthors());
+        props.set(KEY_FLATPAK_URLS, context.getModel().getProject().getLinks().asLinkTemplates());
+        props.set(KEY_FLATPAK_COMPONENT_ID, getPackager().getComponentId());
+        props.set(KEY_FLATPAK_CATEGORIES, getPackager().getCategories());
+        props.set(KEY_FLATPAK_CATEGORIES_BY_COMMA, String.join(",", getPackager().getCategories()));
+        props.set(KEY_FLATPAK_CATEGORIES_BY_SEMICOLON, String.join(";", getPackager().getCategories()) +
             (getPackager().getCategories().size() > 1 ? ";" : ""));
-        props.put(KEY_FLATPAK_DEVELOPER_NAME, getPackager().getDeveloperName());
-        props.put(KEY_FLATPAK_REPO_OWNER, packager.getRepository().getOwner());
-        props.put(KEY_FLATPAK_REPO_NAME, packager.getRepository().getName());
-        props.put(KEY_FLATPAK_HAS_SDK_EXTENSIONS, !packager.getSdkExtensions().isEmpty());
-        props.put(KEY_FLATPAK_SDK_EXTENSIONS, packager.getSdkExtensions());
-        props.put(KEY_FLATPAK_HAS_SDK_FINISH_ARGS, !packager.getFinishArgs().isEmpty());
-        props.put(KEY_FLATPAK_SDK_FINISH_ARGS, packager.getFinishArgs().stream()
+        props.set(KEY_FLATPAK_DEVELOPER_NAME, getPackager().getDeveloperName());
+        props.set(KEY_FLATPAK_REPO_OWNER, packager.getRepository().getOwner());
+        props.set(KEY_FLATPAK_REPO_NAME, packager.getRepository().getName());
+        props.set(KEY_FLATPAK_HAS_SDK_EXTENSIONS, !packager.getSdkExtensions().isEmpty());
+        props.set(KEY_FLATPAK_SDK_EXTENSIONS, packager.getSdkExtensions());
+        props.set(KEY_FLATPAK_HAS_SDK_FINISH_ARGS, !packager.getFinishArgs().isEmpty());
+        props.set(KEY_FLATPAK_SDK_FINISH_ARGS, packager.getFinishArgs().stream()
             .map(MustacheUtils::passThrough)
             .collect(toList()));
-        props.put(KEY_FLATPAK_RUNTIME, packager.getRuntime().runtime());
-        props.put(KEY_FLATPAK_RUNTIME_VERSION, packager.getRuntimeVersion());
-        props.put(KEY_FLATPAK_SDK, packager.getRuntime().sdk());
-        props.put(KEY_FLATPAK_INCLUDE_OPENJDK, isFalse(packager.getExtraProperties().get(SKIP_OPENJDK)));
+        props.set(KEY_FLATPAK_RUNTIME, packager.getRuntime().runtime());
+        props.set(KEY_FLATPAK_RUNTIME_VERSION, packager.getRuntimeVersion());
+        props.set(KEY_FLATPAK_SDK, packager.getRuntime().sdk());
+        props.set(KEY_FLATPAK_INCLUDE_OPENJDK, isFalse(packager.getExtraProperties().get(SKIP_OPENJDK)));
     }
 
     @Override
     protected void writeFile(Distribution distribution,
                              String content,
-                             Map<String, Object> props,
+                             TemplateContext props,
                              Path outputDirectory,
                              String fileName) throws PackagerProcessingException {
         Releaser<?> gitService = context.getModel().getRelease().getReleaser();

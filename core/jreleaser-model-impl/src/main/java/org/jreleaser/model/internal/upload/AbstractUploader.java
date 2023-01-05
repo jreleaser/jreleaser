@@ -25,6 +25,7 @@ import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.ExtraProperties;
 import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.internal.util.Artifacts;
+import org.jreleaser.mustache.TemplateContext;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -273,16 +274,16 @@ public abstract class AbstractUploader<A extends org.jreleaser.model.api.upload.
     }
 
     @Override
-    public Map<String, Object> artifactProps(JReleaserContext context, Artifact artifact) {
+    public TemplateContext artifactProps(JReleaserContext context, Artifact artifact) {
         return artifactProps(context.fullProps(), artifact);
     }
 
     @Override
-    public Map<String, Object> artifactProps(Map<String, Object> props, Artifact artifact) {
-        props.put(KEY_UPLOADER_NAME, getName());
+    public TemplateContext artifactProps(TemplateContext props, Artifact artifact) {
+        props.set(KEY_UPLOADER_NAME, getName());
         Artifacts.artifactProps(artifact, props);
 
-        Set<String> keys = new LinkedHashSet<>(props.keySet());
+        Set<String> keys = new LinkedHashSet<>(props.keys());
         keys.stream()
             .filter(k -> k.contains("skip") || k.contains("Skip"))
             .forEach(props::remove);

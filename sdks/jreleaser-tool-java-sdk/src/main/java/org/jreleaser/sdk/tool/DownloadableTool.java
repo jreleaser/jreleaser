@@ -19,6 +19,7 @@ package org.jreleaser.sdk.tool;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.logging.JReleaserLogger;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.command.Command;
 import org.jreleaser.sdk.command.CommandException;
 import org.jreleaser.sdk.command.CommandExecutor;
@@ -34,8 +35,6 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
@@ -133,7 +132,7 @@ public class DownloadableTool {
 
         try {
             String verify = properties.getProperty(K_COMMAND_VERIFY).trim();
-            Map<String, Object> props = props();
+            TemplateContext props = props();
             verify = resolveTemplate(verify, props);
 
             Pattern pattern = Pattern.compile(verify);
@@ -174,7 +173,7 @@ public class DownloadableTool {
         String executablePath = properties.getProperty(platformKey(K_EXECUTABLE_PATH));
         String exec = properties.getProperty(platformKey(K_EXECUTABLE));
 
-        Map<String, Object> props = props();
+        TemplateContext props = props();
         filename = resolveTemplate(filename, props);
         if (isNotBlank(executablePath)) executablePath = resolveTemplate(executablePath, props);
 
@@ -225,9 +224,9 @@ public class DownloadableTool {
         return new Command(executable.toString());
     }
 
-    private Map<String, Object> props() {
-        Map<String, Object> props = new LinkedHashMap<>();
-        props.put(K_VERSION, version);
+    private TemplateContext props() {
+        TemplateContext props = new TemplateContext();
+        props.set(K_VERSION, version);
         return props;
     }
 

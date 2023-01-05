@@ -20,6 +20,7 @@ package org.jreleaser.model.internal.hooks;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.api.hooks.ExecutionEvent;
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.mustache.TemplateContext;
 
 import java.util.Map;
 
@@ -80,8 +81,8 @@ public final class CommandHook extends AbstractHook<CommandHook> {
     }
 
     public String getResolvedCmd(JReleaserContext context, ExecutionEvent event) {
-        Map<String, Object> props = context.fullProps();
-        props.put("event", event);
+        TemplateContext props = context.fullProps();
+        props.set("event", event);
         return resolveTemplate(cmd, props);
     }
 
