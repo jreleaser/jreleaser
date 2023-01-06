@@ -23,6 +23,7 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.Directory
+import org.gradle.api.logging.LogLevel
 import org.gradle.api.plugins.JavaApplication
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildServiceSpec
@@ -36,6 +37,7 @@ import org.jreleaser.gradle.plugin.tasks.JReleaserChecksumTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserConfigTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserDeployTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserDownloadTask
+import org.jreleaser.gradle.plugin.tasks.JReleaserEnvTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserFullReleaseTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserInitTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserJsonSchemaTask
@@ -50,6 +52,7 @@ import org.jreleaser.model.internal.JReleaserModel
 import org.jreleaser.version.SemanticVersion
 import org.kordamp.gradle.util.AnsiConsole
 
+import static org.jreleaser.util.IoUtils.newPrintWriter
 import static org.kordamp.gradle.util.StringUtils.isBlank
 
 /**
@@ -87,6 +90,17 @@ class JReleaserProjectConfigurer {
                 })
             }
         })
+
+        project.tasks.register('jreleaserEnv', JReleaserEnvTask,
+            new Action<JReleaserEnvTask>() {
+                @Override
+                void execute(JReleaserEnvTask t) {
+                    t.group = JRELEASER_GROUP
+                    t.description = 'Display environment variable names'
+                    t.jlogger.set(new JReleaserLoggerAdapter(new AnsiConsole(project), LogLevel.INFO,
+                        newPrintWriter(new ByteArrayOutputStream())))
+                }
+            })
 
         JReleaserModel model = extension.toModel(project, loggerProvider.get().logger)
         configureModel(project, model)

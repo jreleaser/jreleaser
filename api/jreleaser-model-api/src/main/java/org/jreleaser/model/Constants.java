@@ -27,6 +27,8 @@ public interface Constants {
 
     String MAGIC_SET = "__MAGIC_SET__";
     String SKIP_OPENJDK = "skipOpenjdk";
+    String DEFAULT_GIT_REMOTE = "DEFAULT_GIT_REMOTE";
+    String JRELEASER_USER_HOME = "JRELEASER_USER_HOME";
 
     // General
     String KEY_ZONED_DATE_TIME_NOW = "__ZonedDateTime_now__";

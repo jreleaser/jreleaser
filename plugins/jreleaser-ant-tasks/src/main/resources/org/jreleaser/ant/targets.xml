@@ -67,6 +67,10 @@
     <property name="jreleaser.excluded.downloader.types" value=""/>
     <property name="jreleaser.excluded.downloader.names" value=""/>
 
+    <target name="jreleaser-env">
+        <jreleaser:env/>
+    </target>
+
     <target name="jreleaser-template">
         <jreleaser:template skip="${jreleaser.skip}"
                             distributionName="${jreleaser.distribution.name}"

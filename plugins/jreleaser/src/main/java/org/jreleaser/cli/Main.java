@@ -27,7 +27,7 @@ import java.io.PrintWriter;
  * @since 0.1.0
  */
 @CommandLine.Command(name = "jreleaser",
-    subcommands = {Init.class, Config.class, Template.class,
+    subcommands = {Env.class, Init.class, Config.class, Template.class,
         Download.class, Assemble.class, Changelog.class,
         Checksum.class, Sign.class, Deploy.class, Upload.class,
         Release.class, Prepare.class, Package.class,

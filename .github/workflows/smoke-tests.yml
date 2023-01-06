@@ -131,6 +131,9 @@ jobs:
           echo "::group::➡️ json-schema"
           ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser json-schema
           echo "::endgroup::"
+          echo "::group::➡️ env"
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser env
+          echo "::endgroup::"
           echo "::group::➡️ assemble"
           ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser assemble -PoutputDir=out
           echo "::endgroup::"
@@ -314,6 +317,9 @@ jobs:
           echo "::endgroup::"
           echo "::group::➡️ json-schema"
           java $JAVA_OPTS -jar jreleaser.jar json-schema
+          echo "::endgroup::"
+          echo "::group::➡️ env"
+          java $JAVA_OPTS -jar jreleaser.jar env
           echo "::endgroup::"
           echo "::group::➡️ assemble"
           java $JAVA_OPTS -jar jreleaser.jar assemble -PoutputDir=out
@@ -500,6 +506,9 @@ jobs:
           echo "::group::➡️ json-schema"
           ant jreleaser-json-schema
           echo "::endgroup::"
+          echo "::group::➡️ env"
+          ant jreleaser-env
+          echo "::endgroup::"
           echo "::group::➡️ assemble"
           ant jreleaser-assemble -DoutputDir=build
           echo "::endgroup::"
@@ -677,6 +686,9 @@ jobs:
           chmod +x mvnw
           ./mvnw -B -ntp deploy -DaltDeploymentRepository=local::file:./target/staging-deploy
           ./gradlew jreleaserJsonSchema -S
+          echo "::endgroup::"
+          echo "::group::➡️ env"
+          ./gradlew jreleaserEnv -S
           echo "::endgroup::"
           echo "::group::➡️ assemble"
           ./gradlew jreleaserAssemble -PoutputDir=build -S
@@ -873,6 +885,9 @@ jobs:
           echo "::endgroup::"
           echo "::group::➡️ json-schema"
           ./mvnw -B -ntp jreleaser:json-schema
+          echo "::endgroup::"
+          echo "::group::➡️ env"
+          ./mvnw -B -ntp jreleaser:env
           echo "::endgroup::"
           echo "::group::➡️ assemble"
           ./mvnw -B -ntp jreleaser:assemble -DoutputDir=target

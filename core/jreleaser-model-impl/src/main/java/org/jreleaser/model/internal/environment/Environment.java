@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.config.JReleaserConfigLoader;
 import org.jreleaser.config.JReleaserConfigParser;
+import org.jreleaser.model.Constants;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.common.Domain;
@@ -158,7 +159,7 @@ public final class Environment extends AbstractModelObject<Environment> implemen
         if (null == vars) {
             vars = new Properties();
 
-            String home = System.getenv("JRELEASER_USER_HOME");
+            String home = System.getenv(Constants.JRELEASER_USER_HOME);
             if (isBlank(home)) {
                 home = System.getProperty("user.home") + File.separator + ".jreleaser";
             }
@@ -264,6 +265,8 @@ public final class Environment extends AbstractModelObject<Environment> implemen
     }
 
     public static class MapPropertiesSource extends AbstractPropertiesSource {
+        private static final long serialVersionUID = 6643212572356054605L;
+
         private final Map<String, ?> properties;
 
         public MapPropertiesSource(Map<String, ?> properties) {

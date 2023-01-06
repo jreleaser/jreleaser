@@ -19,6 +19,10 @@
 -->
 <antlib>
     <taskdef
+            name="env"
+            classname="org.jreleaser.ant.tasks.JReleaserEnvTask"/>
+
+    <taskdef
             name="jsonSchema"
             classname="org.jreleaser.ant.tasks.JReleaserJsonSchemaTask"/>
 
