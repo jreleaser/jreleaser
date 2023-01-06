@@ -49,10 +49,10 @@ public class DistributionAssembler {
         return assembler;
     }
 
-    public void assemble() throws AssemblerProcessingException {
+    public boolean assemble() throws AssemblerProcessingException {
         if (!assembler.isEnabled()) {
             context.getLogger().debug(RB.$("assemblers.distribution.skip"), assembler.getName());
-            return;
+            return false;
         }
 
         AssemblerProcessor<?, ?> assemblerProcessor = AssemblerProcessors.findProcessor(context, assembler);
@@ -60,6 +60,7 @@ public class DistributionAssembler {
         context.getLogger().info(RB.$("assemblers.distribution.assemble"), assembler.getName());
 
         assemblerProcessor.assemble(initProps());
+        return true;
     }
 
     private TemplateContext initProps() {

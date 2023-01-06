@@ -43,12 +43,27 @@ public final class MavenDeployers {
     }
 
     public static void deploy(JReleaserContext context) {
+        context.getLogger().info(RB.$("deployers.maven.header"));
+        context.getLogger().increaseIndent();
+        context.getLogger().setPrefix("maven");
+
         Maven maven = context.getModel().getDeploy().getMaven();
         if (!maven.isEnabled()) {
             context.getLogger().info(RB.$("deployers.not.enabled"));
+            context.getLogger().decreaseIndent();
+            context.getLogger().restorePrefix();
             return;
         }
 
+        try {
+            doDeploy(context, maven);
+        } finally {
+            context.getLogger().decreaseIndent();
+            context.getLogger().restorePrefix();
+        }
+    }
+
+    private static void doDeploy(JReleaserContext context, Maven maven) {
         if (!context.getIncludedDeployerTypes().isEmpty()) {
             for (String deployerType : context.getIncludedDeployerTypes()) {
                 // check if the deployerType is valid
@@ -60,11 +75,12 @@ public final class MavenDeployers {
                 Map<String, MavenDeployer<?>> deployers = maven.findMavenDeployersByType(deployerType);
 
                 if (deployers.isEmpty()) {
-                    context.getLogger().debug(RB.$("deployers.no.match"), deployerType);
+                    context.getLogger().info(RB.$("deployers.no.match"), deployerType);
                     return;
                 }
 
                 if (!context.getIncludedDeployerNames().isEmpty()) {
+                    boolean deployed = false;
                     for (String deployerName : context.getIncludedDeployerNames()) {
                         if (!deployers.containsKey(deployerName)) {
                             context.getLogger().warn(RB.$("deployers.deployer.not.configured"), deployerType, deployerName);
@@ -80,14 +96,26 @@ public final class MavenDeployers {
                         context.getLogger().info(RB.$("deployers.deploy.with"),
                             deployerType,
                             deployerName);
-                        deploy(context, deployer);
+                        if (deploy(context, deployer)) deployed = true;
+                    }
+
+                    if (!deployed) {
+                        context.getLogger().info(RB.$("deployers.not.triggered"));
                     }
                 } else {
                     context.getLogger().info(RB.$("deployers.deploy.all.artifacts.with"), deployerType);
-                    deployers.values().forEach(deployer -> deploy(context, deployer));
+                    boolean[] deployed = new boolean[]{false};
+                    deployers.values().forEach(deployer -> {
+                        if (deploy(context, deployer)) deployed[0] = true;
+                    });
+
+                    if (!deployed[0]) {
+                        context.getLogger().info(RB.$("deployers.not.triggered"));
+                    }
                 }
             }
         } else if (!context.getIncludedDeployerNames().isEmpty()) {
+            boolean[] deployed = new boolean[]{false};
             for (String deployerName : context.getIncludedDeployerNames()) {
                 List<MavenDeployer<?>> filteredDeployers = maven.findAllActiveMavenDeployers().stream()
                     .filter(a -> deployerName.equals(a.getName()))
@@ -95,13 +123,20 @@ public final class MavenDeployers {
 
                 if (!filteredDeployers.isEmpty()) {
                     context.getLogger().info(RB.$("deployers.deploy.all.artifacts.to"), deployerName);
-                    filteredDeployers.forEach(deployer -> deploy(context, deployer));
+                    filteredDeployers.forEach(deployer -> {
+                        if (deploy(context, deployer)) deployed[0] = true;
+                    });
                 } else {
                     context.getLogger().warn(RB.$("deployers.deployer.not.configured2"), deployerName);
                 }
             }
+
+            if (!deployed[0]) {
+                context.getLogger().info(RB.$("deployers.not.triggered"));
+            }
         } else {
             context.getLogger().info(RB.$("deployers.deploy.all.artifacts"));
+            boolean deployed = false;
             for (MavenDeployer<?> deployer : maven.findAllActiveMavenDeployers()) {
                 String deployerType = deployer.getType();
                 String deployerName = deployer.getName();
@@ -112,12 +147,16 @@ public final class MavenDeployers {
                     continue;
                 }
 
-                deploy(context, deployer);
+                if (deploy(context, deployer)) deployed = true;
+            }
+
+            if (!deployed) {
+                context.getLogger().info(RB.$("deployers.not.triggered"));
             }
         }
     }
 
-    private static void deploy(JReleaserContext context, MavenDeployer<?> deployer) {
+    private static boolean deploy(JReleaserContext context, MavenDeployer<?> deployer) {
         try {
             context.getLogger().increaseIndent();
             context.getLogger().setPrefix(deployer.getType());
@@ -125,8 +164,9 @@ public final class MavenDeployers {
             fireDeployEvent(ExecutionEvent.before(JReleaserCommand.DEPLOY.toStep()), context, deployer);
 
             ProjectMavenDeployer projectDeployer = createProjectDeployer(context, deployer);
-            projectDeployer.deploy();
+            boolean deployed = projectDeployer.deploy();
             fireDeployEvent(ExecutionEvent.success(JReleaserCommand.DEPLOY.toStep()), context, deployer);
+            return deployed;
         } catch (DeployException e) {
             fireDeployEvent(ExecutionEvent.failure(JReleaserCommand.DEPLOY.toStep(), e), context, deployer);
             throw new JReleaserException(RB.$("ERROR_unexpected_error"), e);

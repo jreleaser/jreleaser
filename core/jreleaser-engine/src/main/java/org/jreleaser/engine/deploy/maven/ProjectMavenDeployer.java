@@ -42,10 +42,10 @@ public class ProjectMavenDeployer {
         return deployer;
     }
 
-    public void deploy() throws DeployException {
+    public boolean deploy() throws DeployException {
         if (!deployer.isEnabled()) {
             context.getLogger().debug(RB.$("deployers.skip.deploy"), deployer.getName());
-            return;
+            return false;
         }
 
         MavenDeployer<?, ?> artifactMavenDeployer = ArtifactDeployers.findMavenDeployer(context, deployer);
@@ -53,6 +53,7 @@ public class ProjectMavenDeployer {
         context.getLogger().info(RB.$("deployers.deploy.to"), deployer.getName());
 
         artifactMavenDeployer.deploy(deployer.getName());
+        return true;
     }
 
     public static ProjectMavenDeployerBuilder builder() {

@@ -43,12 +43,27 @@ public final class Uploaders {
     }
 
     public static void upload(JReleaserContext context) {
+        context.getLogger().info(RB.$("uploaders.header"));
+        context.getLogger().increaseIndent();
+        context.getLogger().setPrefix("upload");
+
         Upload upload = context.getModel().getUpload();
         if (!upload.isEnabled()) {
             context.getLogger().info(RB.$("uploaders.not.enabled"));
+            context.getLogger().decreaseIndent();
+            context.getLogger().restorePrefix();
             return;
         }
 
+        try {
+            doUpload(context, upload);
+        } finally {
+            context.getLogger().decreaseIndent();
+            context.getLogger().restorePrefix();
+        }
+    }
+
+    private static void doUpload(JReleaserContext context, Upload upload) {
         if (!context.getIncludedUploaderTypes().isEmpty()) {
             for (String uploaderType : context.getIncludedUploaderTypes()) {
                 // check if the uploaderType is valid
@@ -60,11 +75,12 @@ public final class Uploaders {
                 Map<String, Uploader<?>> uploaders = upload.findUploadersByType(uploaderType);
 
                 if (uploaders.isEmpty()) {
-                    context.getLogger().debug(RB.$("uploaders.no.match"), uploaderType);
+                    context.getLogger().info(RB.$("uploaders.no.match"), uploaderType);
                     return;
                 }
 
                 if (!context.getIncludedUploaderNames().isEmpty()) {
+                    boolean uploaded = false;
                     for (String uploaderName : context.getIncludedUploaderNames()) {
                         if (!uploaders.containsKey(uploaderName)) {
                             context.getLogger().warn(RB.$("uploaders.uploader.not.configured"), uploaderType, uploaderName);
@@ -80,14 +96,26 @@ public final class Uploaders {
                         context.getLogger().info(RB.$("uploaders.upload.with"),
                             uploaderType,
                             uploaderName);
-                        upload(context, uploader);
+                        if (upload(context, uploader)) uploaded = true;
+                    }
+
+                    if (!uploaded) {
+                        context.getLogger().info(RB.$("uploaders.not.triggered"));
                     }
                 } else {
                     context.getLogger().info(RB.$("uploaders.upload.all.artifacts.with"), uploaderType);
-                    uploaders.values().forEach(uploader -> upload(context, uploader));
+                    boolean[] uploaded = new boolean[]{false};
+                    uploaders.values().forEach(uploader -> {
+                        if (upload(context, uploader)) uploaded[0] = true;
+                    });
+
+                    if (!uploaded[0]) {
+                        context.getLogger().info(RB.$("uploaders.not.triggered"));
+                    }
                 }
             }
         } else if (!context.getIncludedUploaderNames().isEmpty()) {
+            boolean[] uploaded = new boolean[]{false};
             for (String uploaderName : context.getIncludedUploaderNames()) {
                 List<Uploader<?>> filteredUploaders = upload.findAllActiveUploaders().stream()
                     .filter(a -> uploaderName.equals(a.getName()))
@@ -95,12 +123,19 @@ public final class Uploaders {
 
                 if (!filteredUploaders.isEmpty()) {
                     context.getLogger().info(RB.$("uploaders.upload.all.artifacts.to"), uploaderName);
-                    filteredUploaders.forEach(uploader -> upload(context, uploader));
+                    filteredUploaders.forEach(uploader -> {
+                        if (upload(context, uploader)) uploaded[0] = true;
+                    });
                 } else {
                     context.getLogger().warn(RB.$("uploaders.uploader.not.configured2"), uploaderName);
                 }
             }
+
+            if (!uploaded[0]) {
+                context.getLogger().info(RB.$("uploaders.not.triggered"));
+            }
         } else {
+            boolean uploaded = false;
             context.getLogger().info(RB.$("uploaders.upload.all.artifacts"));
             for (Uploader<?> uploader : upload.findAllActiveUploaders()) {
                 String uploaderType = uploader.getType();
@@ -112,21 +147,26 @@ public final class Uploaders {
                     continue;
                 }
 
-                upload(context, uploader);
+                if (upload(context, uploader)) uploaded = true;
+            }
+
+            if (!uploaded) {
+                context.getLogger().info(RB.$("uploaders.not.triggered"));
             }
         }
     }
 
-    private static void upload(JReleaserContext context, Uploader<?> uploader) {
+    private static boolean upload(JReleaserContext context, Uploader<?> uploader) {
         try {
             context.getLogger().increaseIndent();
             context.getLogger().setPrefix(uploader.getType());
             fireUploadEvent(ExecutionEvent.before(JReleaserCommand.UPLOAD.toStep()), context, uploader);
 
             ProjectUploader projectUploader = createProjectUploader(context, uploader);
-            projectUploader.upload();
+            boolean uploaded = projectUploader.upload();
 
             fireUploadEvent(ExecutionEvent.success(JReleaserCommand.UPLOAD.toStep()), context, uploader);
+            return uploaded;
         } catch (UploadException e) {
             fireUploadEvent(ExecutionEvent.failure(JReleaserCommand.UPLOAD.toStep(), e), context, uploader);
             throw new JReleaserException(RB.$("ERROR_unexpected_error"), e);
