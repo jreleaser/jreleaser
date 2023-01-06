@@ -86,6 +86,8 @@ interface DockerConfiguration extends Activatable, ExtraProperties {
         Property<String> getUsername()
 
         Property<String> getPassword()
+
+        Property<Boolean> getExternalLogin()
     }
 
     @CompileStatic

@@ -70,6 +70,8 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
         String getUsername();
 
         String getPassword();
+
+        boolean isExternalLogin();
     }
 
     interface Buildx extends Domain {

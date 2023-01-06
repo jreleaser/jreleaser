@@ -391,18 +391,20 @@ public final class DockerPackagerValidator {
                 registry.setRepositoryName(service.getOwner());
             }
 
-            if (isBlank(registry.getUsername())) {
-                errors.configuration(RB.$("validation_must_not_be_blank", element +
-                    ".registry." + serverName + ".username"));
-            }
+            if (!registry.isExternalLogin()) {
+                if (isBlank(registry.getUsername())) {
+                    errors.configuration(RB.$("validation_must_not_be_blank", element +
+                        ".registry." + serverName + ".username"));
+                }
 
-            registry.setPassword(
-                checkProperty(context,
-                    "DOCKER_" + Env.toVar(serverName) + "_PASSWORD",
-                    "registry." + Env.toVar(serverName) + ".password",
-                    registry.getPassword(),
-                    errors,
-                    context.isDryrun()));
+                registry.setPassword(
+                    checkProperty(context,
+                        "DOCKER_" + Env.toVar(serverName) + "_PASSWORD",
+                        "registry." + Env.toVar(serverName) + ".password",
+                        registry.getPassword(),
+                        errors,
+                        context.isDryrun()));
+            }
         }
     }
 }

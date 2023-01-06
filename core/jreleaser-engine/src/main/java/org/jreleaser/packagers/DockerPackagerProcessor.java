@@ -421,6 +421,8 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
     }
 
     private void login(DockerConfiguration.Registry registry) throws PackagerProcessingException {
+        if (registry.isExternalLogin()) return;
+
         Command cmd = createCommand("login");
         if (isNotBlank(registry.getServer())) {
             cmd.arg(registry.getServer());
@@ -496,6 +498,8 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
     }
 
     private void logout(DockerConfiguration.Registry registry) throws PackagerProcessingException {
+        if (registry.isExternalLogin()) return;
+
         Command cmd = createCommand("logout");
         if (isNotBlank(registry.getServer())) {
             cmd.arg(registry.getServerName());

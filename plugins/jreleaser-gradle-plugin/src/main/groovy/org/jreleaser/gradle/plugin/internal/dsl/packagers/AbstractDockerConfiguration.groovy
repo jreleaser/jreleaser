@@ -187,12 +187,13 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
     }
 
     @CompileStatic
-    static class RegistryImpl implements DockerConfiguration.Registry {
+    static class RegistryImpl implements Registry {
         final String name
         final Property<String> server
         final Property<String> repositoryName
         final Property<String> username
         final Property<String> password
+        final Property<Boolean> externalLogin
 
         @Inject
         RegistryImpl(String name, ObjectFactory objects) {
@@ -201,6 +202,7 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
             repositoryName = objects.property(String).convention(Providers.<String> notDefined())
             username = objects.property(String).convention(Providers.<String> notDefined())
             password = objects.property(String).convention(Providers.<String> notDefined())
+            externalLogin = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         }
 
         org.jreleaser.model.internal.packagers.DockerConfiguration.Registry toModel() {
@@ -210,12 +212,13 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
             if (repositoryName.present) registry.repositoryName = repositoryName.get()
             if (username.present) registry.username = username.get()
             if (password.present) registry.password = password.get()
+            if (externalLogin.present) registry.externalLogin = externalLogin.get()
             registry
         }
     }
 
     @CompileStatic
-    static class BuildxImpl implements DockerConfiguration.Buildx {
+    static class BuildxImpl implements Buildx {
         final Property<Boolean> enabled
         final Property<Boolean> createBuilder
         final ListProperty<String> createBuilderFlags

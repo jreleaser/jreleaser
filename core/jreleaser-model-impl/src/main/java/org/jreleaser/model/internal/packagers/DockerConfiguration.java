@@ -111,16 +111,17 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
 
     final class Registry extends AbstractModelObject<Registry> implements Domain, Comparable<Registry> {
         public static final String DEFAULT_NAME = "DEFAULT";
-        private static final long serialVersionUID = 3311527767436036214L;
+        private static final long serialVersionUID = -1522955594088189796L;
 
         private String server;
         private String serverName = DEFAULT_NAME;
         private String repositoryName;
         private String username;
         private String password;
+        private Boolean externalLogin;
 
         private final org.jreleaser.model.api.packagers.DockerConfiguration.Registry immutable = new org.jreleaser.model.api.packagers.DockerConfiguration.Registry() {
-            private static final long serialVersionUID = 7816956628233064825L;
+            private static final long serialVersionUID = -1273111436252150810L;
 
             @Override
             public String getServer() {
@@ -148,6 +149,11 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
             }
 
             @Override
+            public boolean isExternalLogin() {
+                return Registry.this.isExternalLogin();
+            }
+
+            @Override
             public int compareTo(org.jreleaser.model.api.packagers.DockerConfiguration.Registry o) {
                 if (null == o) return -1;
                 return serverName.compareTo(o.getServerName());
@@ -170,6 +176,7 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
             this.repositoryName = merge(this.repositoryName, source.repositoryName);
             this.username = merge(this.username, source.username);
             this.password = merge(this.password, source.password);
+            this.externalLogin = merge(this.externalLogin, source.externalLogin);
         }
 
         public String getServer() {
@@ -212,6 +219,18 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
             this.password = password;
         }
 
+        public boolean isExternalLogin() {
+            return externalLogin != null && externalLogin;
+        }
+
+        public void setExternalLogin(Boolean externalLogin) {
+            this.externalLogin = externalLogin;
+        }
+
+        public boolean isExternalLoginSet() {
+            return externalLogin != null;
+        }
+
         @Override
         public Map<String, Object> asMap(boolean full) {
             Map<String, Object> map = new LinkedHashMap<>();
@@ -220,6 +239,7 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
             map.put("repositoryName", repositoryName);
             map.put("username", username);
             map.put("password", isNotBlank(password) ? HIDE : UNSET);
+            map.put("externalLogin", isExternalLogin());
             return map;
         }
 
