@@ -325,7 +325,7 @@ public class GiteaReleaser extends AbstractReleaser<org.jreleaser.model.api.rele
                 labelName,
                 labelColor,
                 gitea.getIssues().getLabel().getDescription());
-        } catch (IOException e) {
+        } catch (RestAPIException e) {
             throw new IllegalStateException(RB.$("ERROR_git_releaser_fetch_label", tagName, labelName), e);
         }
 

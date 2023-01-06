@@ -45,6 +45,10 @@ import static org.jreleaser.util.StringUtils.stripMargin;
 public class ChangelogResolver {
     private static final String JRELEASER_CHANGELOG_ANCHOR = "<!-- JRELEASER_CHANGELOG_APPEND - Do not remove or modify this section -->";
 
+    private ChangelogResolver() {
+        // noop
+    }
+
     public static void resolve(JReleaserContext context) {
         String resolvedChangelog = Changelog.createChangelog(context);
         context.getChangelog().setResolvedChangelog(resolvedChangelog);

@@ -326,7 +326,7 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
                 labelName,
                 labelColor,
                 codeberg.getIssues().getLabel().getDescription());
-        } catch (IOException e) {
+        } catch (RestAPIException e) {
             throw new IllegalStateException(RB.$("ERROR_git_releaser_fetch_label", tagName, labelName), e);
         }
 

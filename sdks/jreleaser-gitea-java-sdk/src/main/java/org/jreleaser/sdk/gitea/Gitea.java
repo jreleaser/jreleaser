@@ -152,7 +152,7 @@ public class Gitea {
         return releases;
     }
 
-    public List<String> listBranches(String owner, String repoName) throws IOException {
+    public List<String> listBranches(String owner, String repoName) {
         logger.debug(RB.$("git.list.branches"), owner, repoName);
 
         List<String> branches = new ArrayList<>();
@@ -370,7 +370,7 @@ public class Gitea {
         return Optional.empty();
     }
 
-    public GtLabel getOrCreateLabel(String owner, String name, String labelName, String labelColor, String description) throws IOException {
+    public GtLabel getOrCreateLabel(String owner, String name, String labelName, String labelColor, String description) {
         logger.debug(RB.$("git.label.fetch", labelName));
 
         List<GtLabel> labels = listLabels(owner, name);
