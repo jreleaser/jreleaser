@@ -92,6 +92,8 @@ interface DockerConfiguration extends Activatable, ExtraProperties {
     interface Buildx {
         Property<Boolean> getEnabled()
 
+        Property<Boolean> getCreateBuilder()
+
         ListProperty<String> getCreateBuilderFlags()
 
         ListProperty<String> getPlatforms()

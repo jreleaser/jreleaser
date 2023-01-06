@@ -217,12 +217,14 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
     @CompileStatic
     static class BuildxImpl implements DockerConfiguration.Buildx {
         final Property<Boolean> enabled
+        final Property<Boolean> createBuilder
         final ListProperty<String> createBuilderFlags
         final ListProperty<String> platforms
 
         @Inject
         BuildxImpl(ObjectFactory objects) {
             enabled = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+            createBuilder = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
             createBuilderFlags = objects.listProperty(String).convention(Providers.<List<String>> notDefined())
             platforms = objects.listProperty(String).convention(Providers.<List<String>> notDefined())
         }
@@ -230,6 +232,7 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
         @Internal
         boolean isSet() {
             enabled.present ||
+                createBuilder.present ||
                 createBuilderFlags.present ||
                 platforms.present
         }
@@ -251,6 +254,7 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
         org.jreleaser.model.internal.packagers.DockerConfiguration.Buildx toModel() {
             org.jreleaser.model.internal.packagers.DockerConfiguration.Buildx buildx = new org.jreleaser.model.internal.packagers.DockerConfiguration.Buildx()
             if (enabled.present) buildx.enabled = enabled.get()
+            if (createBuilder.present) buildx.createBuilder = createBuilder.get()
             if (createBuilderFlags.present) buildx.createBuilderFlags.addAll(createBuilderFlags.get())
             if (platforms.present) buildx.platforms.addAll(platforms.get())
             buildx

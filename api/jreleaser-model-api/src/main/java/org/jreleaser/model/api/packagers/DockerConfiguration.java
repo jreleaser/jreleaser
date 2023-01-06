@@ -75,6 +75,8 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
     interface Buildx extends Domain {
         boolean isEnabled();
 
+        boolean isCreateBuilder();
+
         List<String> getCreateBuilderFlags();
 
         List<String> getPlatforms();

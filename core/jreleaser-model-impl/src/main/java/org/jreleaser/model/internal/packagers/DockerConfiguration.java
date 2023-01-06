@@ -244,18 +244,24 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
     }
 
     final class Buildx extends AbstractModelObject<Buildx> implements Domain {
-        private static final long serialVersionUID = 7461262124806507085L;
+        private static final long serialVersionUID = -1508943969111212467L;
 
         private final List<String> createBuilderFlags = new ArrayList<>();
         private final List<String> platforms = new ArrayList<>();
         private Boolean enabled;
+        private Boolean createBuilder;
 
         private final org.jreleaser.model.api.packagers.DockerConfiguration.Buildx immutable = new org.jreleaser.model.api.packagers.DockerConfiguration.Buildx() {
-            private static final long serialVersionUID = 5631255495889890989L;
+            private static final long serialVersionUID = -6178190371465420854L;
 
             @Override
             public boolean isEnabled() {
                 return Buildx.this.isEnabled();
+            }
+
+            @Override
+            public boolean isCreateBuilder() {
+                return Buildx.this.isCreateBuilder();
             }
 
             @Override
@@ -281,6 +287,7 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
         @Override
         public void merge(DockerConfiguration.Buildx source) {
             this.enabled = merge(this.enabled, source.enabled);
+            this.createBuilder = merge(this.createBuilder, source.createBuilder);
             setCreateBuilderFlags(merge(this.createBuilderFlags, source.createBuilderFlags));
             setPlatforms(merge(this.platforms, source.platforms));
         }
@@ -315,12 +322,25 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
             return enabled != null;
         }
 
+        public boolean isCreateBuilder() {
+            return createBuilder == null || createBuilder;
+        }
+
+        public void setCreateBuilder(Boolean createBuilder) {
+            this.createBuilder = createBuilder;
+        }
+
+        public boolean isCreateBuilderSet() {
+            return createBuilder != null;
+        }
+
         @Override
         public Map<String, Object> asMap(boolean full) {
             if (!full && !isEnabled()) return Collections.emptyMap();
 
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("enabled", isEnabled());
+            map.put("createBuilder", isCreateBuilder());
             map.put("createBuilderFlags", createBuilderFlags);
             map.put("platforms", platforms);
             return map;

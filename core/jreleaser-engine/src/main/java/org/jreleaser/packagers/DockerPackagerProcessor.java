@@ -237,6 +237,8 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
     }
 
     private void createBuildxBuilder(TemplateContext props, DockerConfiguration docker) throws PackagerProcessingException {
+        if (!docker.getBuildx().isCreateBuilder()) return;
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Command cmd = new Command("docker" + (PlatformUtils.isWindows() ? ".exe" : ""))
             .arg("buildx")

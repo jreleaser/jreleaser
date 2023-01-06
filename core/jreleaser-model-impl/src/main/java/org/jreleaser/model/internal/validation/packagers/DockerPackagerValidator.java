@@ -181,6 +181,10 @@ public final class DockerPackagerValidator {
             buildx.setEnabled(parentBuildx.isEnabled());
         }
 
+        if (!buildx.isCreateBuilderSet()) {
+            buildx.setCreateBuilder(parentBuildx.isCreateBuilder());
+        }
+
         if (buildx.getPlatforms().isEmpty()) {
             buildx.setPlatforms(parentBuildx.getPlatforms());
         }
