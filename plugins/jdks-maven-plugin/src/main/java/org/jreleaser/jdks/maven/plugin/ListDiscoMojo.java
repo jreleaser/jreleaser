@@ -128,6 +128,7 @@ public class ListDiscoMojo extends AbstractMojo {
             getLog().info("archiveType:   " + pkg.getArchiveType());
             getLog().info("platform:      " + pkg.getPlatform());
             getLog().info("distribution:  " + pkg.getDistribution());
+            getLog().info("libcType:      " + pkg.getLibcType());
             getLog().info("javafxBundled: " + pkg.isJavafxBundled());
             getLog().info("package(s):    " + packages.size());
 

@@ -20,6 +20,7 @@ package org.jreleaser.jdks.maven.plugin;
 import org.jreleaser.util.Errors;
 
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -31,6 +32,7 @@ public class Pkg {
     private String archiveType = "zip";
     private String distribution = "zulu";
     private String platform;
+    private String libcType;
     private boolean javafxBundled;
 
     public void validate(Errors errors) {
@@ -96,6 +98,14 @@ public class Pkg {
         this.platform = platform;
     }
 
+    public String getLibcType() {
+        return libcType;
+    }
+
+    public void setLibcType(String libcType) {
+        this.libcType = libcType;
+    }
+
     public boolean isJavafxBundled() {
         return javafxBundled;
     }
@@ -106,14 +116,17 @@ public class Pkg {
 
     @Override
     public String toString() {
-        return '[' +
-            "name='" + name + "'" +
+        String s = "[name='" + name + "'" +
             ", version='" + version + "'" +
             ", archiveType='" + archiveType + "'" +
             ", distribution='" + distribution + "'" +
-            ", platform='" + platform + "'" +
-            ", javafxBundled='" + javafxBundled + "'" +
-            ']';
+            ", platform='" + platform + "'";
+
+        if (isNotBlank(libcType)) {
+            s += ", libcType='" + libcType + "'";
+        }
+
+        return s + ", javafxBundled='" + javafxBundled + "']";
     }
 
     public org.jreleaser.sdk.disco.api.Pkg asDiscoPkg() {
@@ -129,6 +142,9 @@ public class Pkg {
         pkg.setArchitecture(architecture);
         pkg.setArchiveType(archiveType);
         pkg.setJavafxBundled(javafxBundled);
+        if (isNotBlank(libcType)) {
+            pkg.setLibc_type(libcType);
+        }
         return pkg;
     }
 }
