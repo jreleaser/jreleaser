@@ -81,7 +81,7 @@ public final class JReleaserModelValidator {
         context.getLogger().setPrefix("postvalidation");
         try {
             postValidateProject(context, mode, errors);
-            if (mode.validateConfig() || mode.validateAssembly()) postValidateAssemblers(context, mode, errors);
+            if (mode.validateConfig() || mode.validateAssembly()) postValidateAssemblers(context);
             if (mode.validateConfig()) postValidateDistributions(context, errors);
         } finally {
             context.getLogger().restorePrefix();

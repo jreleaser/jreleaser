@@ -32,6 +32,7 @@ public class AbstractTool {
     protected final JReleaserContext context;
     protected final DownloadableTool tool;
     protected final String name;
+    protected final String version;
     protected final boolean verifyErrorOutput;
 
     public AbstractTool(JReleaserContext context, String name, String version) {
@@ -39,7 +40,7 @@ public class AbstractTool {
     }
 
     public AbstractTool(JReleaserContext context, String name, String version, boolean verifyErrorOutput) {
-        requireNonBlank(version, "'version' must not be blank");
+        this.version = requireNonBlank(version, "'version' must not be blank");
         this.name = requireNonBlank(name, "'name' must not be blank");
         this.context = context;
         this.verifyErrorOutput = verifyErrorOutput;

@@ -21,6 +21,8 @@ import org.jreleaser.model.api.JReleaserContext;
 import org.jreleaser.sdk.command.Command;
 import org.jreleaser.sdk.command.CommandException;
 import org.jreleaser.sdk.command.CommandExecutor;
+import org.jreleaser.util.ComparatorUtils;
+import org.jreleaser.version.SemanticVersion;
 
 import java.io.OutputStream;
 import java.nio.file.Path;
@@ -36,6 +38,12 @@ public class PomChecker extends AbstractTool {
     }
 
     public void invoke(Path parent, List<String> args, OutputStream out, OutputStream err) throws CommandException {
+        SemanticVersion semver = SemanticVersion.of(version);
+        SemanticVersion ofz = SemanticVersion.of("1.5.0");
+        if (ComparatorUtils.greaterThanOrEqualTo(semver, ofz)) {
+            args.add("-Dorg.kordamp.banner=false");
+        }
+
         Command command = tool.asCommand().args(args);
         executeCommand(() -> new CommandExecutor(context.getLogger())
             .executeCommandCapturing(parent, command, out, err));

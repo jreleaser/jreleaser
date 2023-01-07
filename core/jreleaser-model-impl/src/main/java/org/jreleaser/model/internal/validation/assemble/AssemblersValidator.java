@@ -111,7 +111,7 @@ public final class AssemblersValidator {
         }
     }
 
-    public static void postValidateAssemblers(JReleaserContext context, Mode mode, Errors errors) {
+    public static void postValidateAssemblers(JReleaserContext context) {
         context.getLogger().debug("assemble");
 
         postValidateJpackage(context);
