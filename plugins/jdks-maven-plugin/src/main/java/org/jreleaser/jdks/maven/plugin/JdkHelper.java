@@ -36,6 +36,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Locale;
 
+import static org.jreleaser.util.StringUtils.isBlank;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.configuration;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.element;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.executeMojo;
@@ -126,15 +127,20 @@ public class JdkHelper {
     }
 
     private void verifyJdk(File jdkExtractDirectory, Jdk jdk) throws MojoExecutionException {
-        String algo = Algorithm.SHA_256.formatted();
         String checksum = jdk.getChecksum();
+        String filename = getFilename(jdk);
+
+        if (isBlank(checksum)) {
+            log.info("Checksum not available. Skipping verification of " + filename);
+            return;
+        }
+
+        String algo = Algorithm.SHA_256.formatted();
         if (checksum.contains("/")) {
             String[] parts = checksum.split("/");
             algo = parts[0];
             checksum = parts[1];
         }
-
-        String filename = getFilename(jdk);
 
         try {
             // calculate checksum
