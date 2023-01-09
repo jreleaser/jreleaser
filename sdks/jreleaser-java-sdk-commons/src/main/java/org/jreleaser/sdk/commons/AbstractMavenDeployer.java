@@ -28,7 +28,6 @@ import org.jreleaser.sdk.tool.PomChecker;
 import org.jreleaser.sdk.tool.ToolException;
 import org.jreleaser.util.Algorithm;
 import org.jreleaser.util.ChecksumUtils;
-import org.jreleaser.util.DefaultVersions;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.IoUtils;
 import org.w3c.dom.Document;
@@ -174,7 +173,8 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
             return;
         }
 
-        PomChecker pomChecker = new PomChecker(context.asImmutable(), DefaultVersions.getInstance().getPomcheckerVersion());
+        PomChecker pomChecker = new PomChecker(context.asImmutable(),
+            context.getModel().getDeploy().getMaven().getPomchecker().getVersion());
         try {
             if (!pomChecker.setup()) {
                 context.getLogger().warn(RB.$("tool_unavailable", "pomchecker"));

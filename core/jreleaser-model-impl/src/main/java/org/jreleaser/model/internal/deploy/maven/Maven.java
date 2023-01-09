@@ -42,13 +42,14 @@ import static java.util.stream.Collectors.toMap;
  * @since 1.3.0
  */
 public final class Maven extends AbstractModelObject<Maven> implements Domain, Activatable {
-    private static final long serialVersionUID = -2000338943730503826L;
+    private static final long serialVersionUID = 5399032127872975911L;
 
     private final Map<String, ArtifactoryMavenDeployer> artifactory = new LinkedHashMap<>();
     private final Map<String, GiteaMavenDeployer> gitea = new LinkedHashMap<>();
     private final Map<String, GithubMavenDeployer> github = new LinkedHashMap<>();
     private final Map<String, GitlabMavenDeployer> gitlab = new LinkedHashMap<>();
     private final Map<String, Nexus2MavenDeployer> nexus2 = new LinkedHashMap<>();
+    private final Pomchecker pomchecker = new Pomchecker();
 
     private Active active;
     @JsonIgnore
@@ -114,6 +115,11 @@ public final class Maven extends AbstractModelObject<Maven> implements Domain, A
         }
 
         @Override
+        public Pomchecker getPomchecker() {
+            return pomchecker.asImmutable();
+        }
+
+        @Override
         public Active getActive() {
             return active;
         }
@@ -142,6 +148,7 @@ public final class Maven extends AbstractModelObject<Maven> implements Domain, A
         setGithub(mergeModel(this.github, source.github));
         setGitlab(mergeModel(this.gitlab, source.gitlab));
         setNexus2(mergeModel(this.nexus2, source.nexus2));
+        setPomchecker(source.pomchecker);
     }
 
     public boolean isSet() {
@@ -321,11 +328,20 @@ public final class Maven extends AbstractModelObject<Maven> implements Domain, A
         this.nexus2.put(nexus2.getName(), nexus2);
     }
 
+    public Pomchecker getPomchecker() {
+        return pomchecker;
+    }
+
+    public void setPomchecker(Pomchecker pomchecker) {
+        this.pomchecker.merge(pomchecker);
+    }
+
     @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", enabled);
         map.put("active", active);
+        map.put("pomchecker", pomchecker.asMap(full));
 
         List<Map<String, Object>> artifactory = this.artifactory.values()
             .stream()
@@ -390,5 +406,49 @@ public final class Maven extends AbstractModelObject<Maven> implements Domain, A
         deployers.addAll((List<A>) getActiveGitlabs());
         deployers.addAll((List<A>) getActiveNexus2s());
         return deployers;
+    }
+
+    public static final class Pomchecker extends AbstractModelObject<Pomchecker> implements Domain {
+        private static final long serialVersionUID = 8467928554400937980L;
+
+        private String version;
+
+        private final org.jreleaser.model.api.deploy.maven.Maven.Pomchecker immutable = new org.jreleaser.model.api.deploy.maven.Maven.Pomchecker() {
+            private static final long serialVersionUID = -7691641757680849149L;
+
+            @Override
+            public String getVersion() {
+                return version;
+            }
+
+            @Override
+            public Map<String, Object> asMap(boolean full) {
+                return unmodifiableMap(Pomchecker.this.asMap(full));
+            }
+        };
+
+        public org.jreleaser.model.api.deploy.maven.Maven.Pomchecker asImmutable() {
+            return immutable;
+        }
+
+        @Override
+        public void merge(Pomchecker source) {
+            this.version = merge(this.version, source.version);
+        }
+
+        public String getVersion() {
+            return version;
+        }
+
+        public void setVersion(String version) {
+            this.version = version;
+        }
+
+        @Override
+        public Map<String, Object> asMap(boolean full) {
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("version", version);
+            return map;
+        }
     }
 }

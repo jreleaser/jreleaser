@@ -27,6 +27,8 @@ import java.util.Map;
  * @since 1.3.0
  */
 public interface Maven extends Domain, Activatable {
+    Pomchecker getPomchecker();
+
     Map<String, ? extends ArtifactoryMavenDeployer> getArtifactory();
 
     Map<String, ? extends GiteaMavenDeployer> getGitea();
@@ -36,4 +38,8 @@ public interface Maven extends Domain, Activatable {
     Map<String, ? extends GitlabMavenDeployer> getGitlab();
 
     Map<String, ? extends Nexus2MavenDeployer> getNexus2();
+
+    interface Pomchecker extends Domain {
+        String getVersion();
+    }
 }

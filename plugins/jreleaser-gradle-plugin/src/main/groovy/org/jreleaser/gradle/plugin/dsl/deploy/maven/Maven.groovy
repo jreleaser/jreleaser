@@ -20,6 +20,7 @@ package org.jreleaser.gradle.plugin.dsl.deploy.maven
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.common.Activatable
 
 /**
@@ -58,4 +59,13 @@ interface Maven extends Activatable {
     void gitlab(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 
     void nexus2(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
+
+    void pomchecker(Action<? super Pomchecker> action)
+
+    void pomchecker(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Pomchecker) Closure<Void> action)
+
+    @CompileStatic
+    interface Pomchecker {
+        Property<String> getVersion()
+    }
 }

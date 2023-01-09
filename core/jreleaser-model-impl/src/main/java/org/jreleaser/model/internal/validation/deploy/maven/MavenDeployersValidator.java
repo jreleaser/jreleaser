@@ -23,6 +23,7 @@ import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.deploy.maven.Maven;
 import org.jreleaser.model.internal.deploy.maven.MavenDeployer;
+import org.jreleaser.util.DefaultVersions;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
@@ -36,6 +37,7 @@ import static org.jreleaser.model.internal.validation.deploy.maven.GithubMavenDe
 import static org.jreleaser.model.internal.validation.deploy.maven.GitlabMavenDeployerValidator.validateGitlabMavenDeployer;
 import static org.jreleaser.model.internal.validation.deploy.maven.Nexus2MavenDeployerValidator.validateNexus2MavenDeployer;
 import static org.jreleaser.util.CollectionUtils.listOf;
+import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -51,6 +53,7 @@ public final class MavenDeployersValidator {
         Maven maven = context.getModel().getDeploy().getMaven();
         context.getLogger().debug("deploy.maven");
 
+        validatePomchecker(context);
         validateArtifactoryMavenDeployer(context, mode, errors);
         validateGiteaMavenDeployer(context, mode, errors);
         validateGithubMavenDeployer(context, mode, errors);
@@ -73,6 +76,14 @@ public final class MavenDeployersValidator {
                     maven.disable();
                 }
             }
+        }
+    }
+
+    private static void validatePomchecker(JReleaserContext context) {
+        Maven maven = context.getModel().getDeploy().getMaven();
+
+        if (isBlank(maven.getPomchecker().getVersion())) {
+            maven.getPomchecker().setVersion(DefaultVersions.getInstance().getPomcheckerVersion());
         }
     }
 

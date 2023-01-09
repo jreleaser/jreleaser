@@ -52,9 +52,12 @@ class MavenImpl implements Maven {
     final NamedDomainObjectContainer<GitlabMavenDeployer> gitlab
     final NamedDomainObjectContainer<Nexus2MavenDeployer> nexus2
 
+    final PomcheckerImpl pomchecker
+
     @Inject
     MavenImpl(ObjectFactory objects) {
         active = objects.property(Active).convention(Providers.<Active> notDefined())
+        pomchecker = objects.newInstance(PomcheckerImpl, objects)
 
         artifactory = objects.domainObjectContainer(ArtifactoryMavenDeployer, new NamedDomainObjectFactory<ArtifactoryMavenDeployer>() {
             @Override
@@ -135,6 +138,11 @@ class MavenImpl implements Maven {
     }
 
     @Override
+    void pomchecker(Action<? super Pomchecker> action) {
+        action.execute(pomchecker)
+    }
+
+    @Override
     void artifactory(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, artifactory)
     }
@@ -159,6 +167,11 @@ class MavenImpl implements Maven {
         ConfigureUtil.configure(action, nexus2)
     }
 
+    @Override
+    void pomchecker(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Pomchecker) Closure<Void> action) {
+        ConfigureUtil.configure(action, pomchecker)
+    }
+
     @CompileDynamic
     org.jreleaser.model.internal.deploy.maven.Maven toModel() {
         org.jreleaser.model.internal.deploy.maven.Maven maven = new org.jreleaser.model.internal.deploy.maven.Maven()
@@ -171,5 +184,21 @@ class MavenImpl implements Maven {
         nexus2.each { maven.addNexus2(((Nexus2MavenDeployerImpl) it).toModel()) }
 
         maven
+    }
+
+    @CompileStatic
+    static class PomcheckerImpl implements Pomchecker {
+        final Property<String> version
+
+        @Inject
+        PomcheckerImpl(ObjectFactory objects) {
+            version = objects.property(String).convention(Providers.<String> notDefined())
+        }
+
+        org.jreleaser.model.internal.deploy.maven.Maven.Pomchecker toModel() {
+            org.jreleaser.model.internal.deploy.maven.Maven.Pomchecker pomchecker = new org.jreleaser.model.internal.deploy.maven.Maven.Pomchecker()
+            if (version.present) pomchecker.version = version.get()
+            pomchecker
+        }
     }
 }
