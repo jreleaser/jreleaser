@@ -41,6 +41,8 @@ public interface Signing extends Domain, Activatable {
 
     boolean isArmored();
 
+    boolean isVerify();
+
     String getPublicKey();
 
     String getSecretKey();

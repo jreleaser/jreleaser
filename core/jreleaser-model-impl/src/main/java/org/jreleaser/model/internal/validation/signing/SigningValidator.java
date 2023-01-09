@@ -20,6 +20,7 @@ package org.jreleaser.model.internal.validation.signing;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.deploy.maven.MavenDeployer;
 import org.jreleaser.model.internal.signing.Signing;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.PlatformUtils;
@@ -95,12 +96,14 @@ public final class SigningValidator {
                     signing.getCommand().getKeyName(),
                     ""));
 
-            signing.getCommand().setPublicKeyring(
-                checkProperty(context,
-                    GPG_PUBLIC_KEYRING,
-                    "signing.command.publicKeyRing",
-                    signing.getCommand().getPublicKeyring(),
-                    ""));
+            if (signing.isVerify()) {
+                signing.getCommand().setPublicKeyring(
+                    checkProperty(context,
+                        GPG_PUBLIC_KEYRING,
+                        "signing.command.publicKeyRing",
+                        signing.getCommand().getPublicKeyring(),
+                        ""));
+            }
         } else if (signing.resolveMode() == org.jreleaser.model.Signing.Mode.COSIGN) {
             if (isBlank(signing.getCosign().getVersion())) {
                 errors.configuration(RB.$("validation_is_missing", "signing.cosign.version"));
@@ -120,21 +123,59 @@ public final class SigningValidator {
                     signing.getCosign().getPublicKeyFile(),
                     ""));
         } else {
-            signing.setPublicKey(
-                checkProperty(context,
-                    GPG_PUBLIC_KEY,
-                    "signing.publicKey",
-                    signing.getPublicKey(),
-                    errors,
-                    context.isDryrun()));
+            if (signing.isVerify()) {
+                signing.setPublicKey(
+                    checkProperty(context,
+                        GPG_PUBLIC_KEY,
+                        "signing.publicKey",
+                        signing.getPublicKey(),
+                        errors));
+            }
 
             signing.setSecretKey(
                 checkProperty(context,
                     GPG_SECRET_KEY,
                     "signing.secretKey",
                     signing.getSecretKey(),
-                    errors,
-                    context.isDryrun()));
+                    errors));
+        }
+    }
+
+    public static void postValidateSigning(JReleaserContext context, Mode mode, Errors errors) {
+        Signing signing = context.getModel().getSigning();
+        if (!signing.isEnabled()) return;
+
+        boolean checkSign = mode == Mode.DEPLOY && context.getModel().getDeploy().getMaven()
+            .getActiveDeployers().stream()
+            .map((MavenDeployer d) -> d.isSign())
+            .filter(b -> b)
+            .findAny()
+            .orElseGet(() -> false);
+
+        if (!checkSign) {
+            return;
+        }
+
+        context.getLogger().debug("signing");
+
+        if (signing.resolveMode() == org.jreleaser.model.Signing.Mode.COMMAND) {
+            if (signing.isVerify()) {
+                signing.getCommand().setPublicKeyring(
+                    checkProperty(context,
+                        GPG_PUBLIC_KEYRING,
+                        "signing.command.publicKeyRing",
+                        signing.getCommand().getPublicKeyring(),
+                        ""));
+            }
+        } else if (signing.resolveMode() != org.jreleaser.model.Signing.Mode.COSIGN) {
+            if (signing.isVerify()) {
+                signing.setPublicKey(
+                    checkProperty(context,
+                        GPG_PUBLIC_KEY,
+                        "signing.publicKey",
+                        signing.getPublicKey(),
+                        errors));
+            }
         }
     }
 }

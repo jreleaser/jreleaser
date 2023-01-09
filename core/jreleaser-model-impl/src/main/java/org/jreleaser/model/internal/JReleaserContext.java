@@ -949,17 +949,19 @@ public class JReleaserContext {
 
     public Keyring createKeyring() throws SigningException {
         try {
-            if (model.getSigning().getMode() == Signing.Mode.FILE) {
+            org.jreleaser.model.internal.signing.Signing signing = model.getSigning();
+
+            if (signing.getMode() == Signing.Mode.FILE) {
                 return new FilesKeyring(
-                    basedir.resolve(model.getSigning().getPublicKey()),
-                    basedir.resolve(model.getSigning().getSecretKey())
-                ).initialize(model.getSigning().isArmored());
+                    signing.isVerify() ? basedir.resolve(signing.getPublicKey()) : null,
+                    basedir.resolve(signing.getSecretKey())
+                ).initialize(signing.isArmored());
             }
 
             return new InMemoryKeyring(
-                model.getSigning().getPublicKey().getBytes(UTF_8),
-                model.getSigning().getSecretKey().getBytes(UTF_8)
-            ).initialize(model.getSigning().isArmored());
+                signing.isVerify() ? signing.getPublicKey().getBytes(UTF_8) : null,
+                signing.getSecretKey().getBytes(UTF_8)
+            ).initialize(signing.isArmored());
         } catch (IOException | PGPException e) {
             throw new SigningException(RB.$("ERROR_signing_init_keyring"), e);
         }

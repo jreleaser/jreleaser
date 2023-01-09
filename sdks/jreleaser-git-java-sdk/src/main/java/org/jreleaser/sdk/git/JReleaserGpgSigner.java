@@ -173,7 +173,7 @@ public class JReleaserGpgSigner extends GpgSigner implements GpgObjectSigner {
 
         private PGPSignatureGenerator initSignatureGenerator(Signing signing, Keyring keyring) throws SigningException {
             try {
-                PGPSecretKey secretKey = keyring.getSecretKey();
+                PGPSecretKey secretKey = keyring.readSecretKey();
 
                 PGPPrivateKey privateKey = secretKey.extractPrivateKey(
                     new JcePBESecretKeyDecryptorBuilder()

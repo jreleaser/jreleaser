@@ -35,6 +35,7 @@ import static org.jreleaser.model.internal.validation.packagers.PackagersValidat
 import static org.jreleaser.model.internal.validation.project.ProjectValidator.postValidateProject;
 import static org.jreleaser.model.internal.validation.project.ProjectValidator.validateProject;
 import static org.jreleaser.model.internal.validation.release.ReleaseValidator.validateRelease;
+import static org.jreleaser.model.internal.validation.signing.SigningValidator.postValidateSigning;
 import static org.jreleaser.model.internal.validation.signing.SigningValidator.validateSigning;
 import static org.jreleaser.model.internal.validation.upload.UploadersValidator.validateUploaders;
 
@@ -83,6 +84,7 @@ public final class JReleaserModelValidator {
             postValidateProject(context, mode, errors);
             if (mode.validateConfig() || mode.validateAssembly()) postValidateAssemblers(context);
             if (mode.validateConfig()) postValidateDistributions(context, errors);
+            postValidateSigning(context, mode, errors);
         } finally {
             context.getLogger().restorePrefix();
         }

@@ -41,7 +41,10 @@ public final class FilesKeyring extends Keyring {
 
     @Override
     protected InputStream getPublicKeyRingStream() throws IOException {
-        return Files.newInputStream(publicKeyring);
+        if (null != publicKeyring) {
+            return Files.newInputStream(publicKeyring);
+        }
+        return new EmptyInputStream();
     }
 
     @Override

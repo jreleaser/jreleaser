@@ -107,7 +107,9 @@ public final class Signer {
         }
 
         sign(context, files);
-        verify(context, files);
+        if (context.getModel().getSigning().isVerify()) {
+            verify(context, files);
+        }
     }
 
     private static void cosignSign(JReleaserContext context) throws SigningException {
@@ -184,7 +186,9 @@ public final class Signer {
         }
 
         sign(context, keyring, files);
-        verify(context, keyring, files);
+        if (context.getModel().getSigning().isVerify()) {
+            verify(context, keyring, files);
+        }
     }
 
 

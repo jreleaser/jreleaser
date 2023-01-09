@@ -39,7 +39,10 @@ public final class InMemoryKeyring extends Keyring {
 
     @Override
     protected InputStream getPublicKeyRingStream() {
-        return new ByteArrayInputStream(encodedPublicKey);
+        if (null != encodedPublicKey) {
+            return new ByteArrayInputStream(encodedPublicKey);
+        }
+        return new EmptyInputStream();
     }
 
     @Override

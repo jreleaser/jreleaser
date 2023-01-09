@@ -239,6 +239,16 @@ public final class Maven extends AbstractModelObject<Maven> implements Domain, A
             .collect(toList());
     }
 
+    public List<? extends MavenDeployer> getActiveDeployers() {
+        List list = new ArrayList<>();
+        list.addAll(getActiveArtifactories());
+        list.addAll(getActiveGiteas());
+        list.addAll(getActiveGithubs());
+        list.addAll(getActiveGitlabs());
+        list.addAll(getActiveNexus2s());
+        return (List<? extends MavenDeployer>) list;
+    }
+
     public Map<String, ArtifactoryMavenDeployer> getArtifactory() {
         return artifactory;
     }

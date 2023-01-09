@@ -33,6 +33,8 @@ import org.jreleaser.gradle.plugin.dsl.common.Activatable
 interface Signing extends Activatable {
     Property<Boolean> getArmored()
 
+    Property<Boolean> getVerify()
+
     Property<String> getPassphrase()
 
     Property<String> getPublicKey()

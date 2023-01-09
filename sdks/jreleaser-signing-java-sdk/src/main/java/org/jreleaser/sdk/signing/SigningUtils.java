@@ -89,7 +89,11 @@ public final class SigningUtils {
         }
 
         sign(context, pair);
-        verify(context, pair);
+        if (context.getModel().getSigning().isVerify()) {
+            verify(context, pair);
+        } else {
+            context.getLogger().debug(RB.$("signing.verify.disabled"));
+        }
     }
 
     private static void bcSign(JReleaserContext context, Path input) throws SigningException {
@@ -102,7 +106,11 @@ public final class SigningUtils {
         }
 
         sign(context, keyring, pair);
-        verify(context, keyring, pair);
+        if (context.getModel().getSigning().isVerify()) {
+            verify(context, keyring, pair);
+        } else {
+            context.getLogger().debug(RB.$("signing.verify.disabled"));
+        }
     }
 
     private static FilePair checkInput(JReleaserContext context, Path input) {
@@ -217,7 +225,7 @@ public final class SigningUtils {
 
     public static PGPSignatureGenerator initSignatureGenerator(Signing signing, Keyring keyring) throws SigningException {
         try {
-            PGPSecretKey pgpSecretKey = keyring.getSecretKey();
+            PGPSecretKey pgpSecretKey = keyring.readSecretKey();
 
             PGPPrivateKey pgpPrivKey = pgpSecretKey.extractPrivateKey(
                 new JcePBESecretKeyDecryptorBuilder()
@@ -280,7 +288,12 @@ public final class SigningUtils {
         }
 
         try {
-            return verify(context, pair);
+            if (context.getModel().getSigning().isVerify()) {
+                return verify(context, pair);
+            } else {
+                // force signing as we can't verify
+                return false;
+            }
         } catch (SigningException e) {
             return false;
         }
@@ -305,7 +318,12 @@ public final class SigningUtils {
         }
 
         try {
-            return verify(context, keyring, pair);
+            if (context.getModel().getSigning().isVerify()) {
+                return verify(context, keyring, pair);
+            } else {
+                // force signing as we can't verify
+                return false;
+            }
         } catch (SigningException e) {
             return false;
         }

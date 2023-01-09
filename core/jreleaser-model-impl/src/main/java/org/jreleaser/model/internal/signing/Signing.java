@@ -46,7 +46,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public final class Signing extends AbstractModelObject<Signing> implements Domain, Activatable {
-    private static final long serialVersionUID = 6323797672803535814L;
+    private static final long serialVersionUID = -307970953006860587L;
 
     private final Command command = new Command();
     private final Cosign cosign = new Cosign();
@@ -55,6 +55,7 @@ public final class Signing extends AbstractModelObject<Signing> implements Domai
     @JsonIgnore
     private boolean enabled;
     private Boolean armored;
+    private Boolean verify;
     private String publicKey;
     private String secretKey;
     private String passphrase;
@@ -64,11 +65,16 @@ public final class Signing extends AbstractModelObject<Signing> implements Domai
     private Boolean checksums;
 
     private final org.jreleaser.model.api.signing.Signing immutable = new org.jreleaser.model.api.signing.Signing() {
-        private static final long serialVersionUID = 5272378040186196053L;
+        private static final long serialVersionUID = 6133653522072601397L;
 
         @Override
         public boolean isArmored() {
             return Signing.this.isArmored();
+        }
+
+        @Override
+        public boolean isVerify() {
+            return Signing.this.isVerify();
         }
 
         @Override
@@ -141,6 +147,7 @@ public final class Signing extends AbstractModelObject<Signing> implements Domai
         this.active = merge(this.active, source.active);
         this.enabled = merge(this.enabled, source.enabled);
         this.armored = merge(this.armored, source.armored);
+        this.verify = merge(this.verify, source.verify);
         this.publicKey = merge(this.publicKey, source.publicKey);
         this.secretKey = merge(this.secretKey, source.secretKey);
         this.passphrase = merge(this.passphrase, source.passphrase);
@@ -208,6 +215,18 @@ public final class Signing extends AbstractModelObject<Signing> implements Domai
 
     public boolean isArmoredSet() {
         return armored != null;
+    }
+
+    public boolean isVerify() {
+        return verify == null || verify;
+    }
+
+    public void setVerify(Boolean verify) {
+        this.verify = verify;
+    }
+
+    public boolean isVerifySet() {
+        return verify != null;
     }
 
     public String getPublicKey() {
@@ -306,6 +325,7 @@ public final class Signing extends AbstractModelObject<Signing> implements Domai
         props.put("enabled", isEnabled());
         props.put("active", active);
         props.put("armored", isArmored());
+        props.put("verify", isVerify());
         props.put("mode", mode);
         props.put("artifacts", isArtifacts());
         props.put("files", isFiles());

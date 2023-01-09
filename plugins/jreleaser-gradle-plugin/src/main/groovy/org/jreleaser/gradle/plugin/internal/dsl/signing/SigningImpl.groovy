@@ -42,6 +42,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 class SigningImpl implements Signing {
     final Property<Active> active
     final Property<Boolean> armored
+    final Property<Boolean> verify
     final Property<String> passphrase
     final Property<String> publicKey
     final Property<String> secretKey
@@ -56,6 +57,7 @@ class SigningImpl implements Signing {
     SigningImpl(ObjectFactory objects) {
         active = objects.property(Active).convention(Providers.<Active> notDefined())
         armored = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+        verify = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         passphrase = objects.property(String).convention(Providers.<String> notDefined())
         publicKey = objects.property(String).convention(Providers.<String> notDefined())
         secretKey = objects.property(String).convention(Providers.<String> notDefined())
@@ -71,6 +73,7 @@ class SigningImpl implements Signing {
     boolean isSet() {
         return active.present ||
             armored.present ||
+            verify.present ||
             passphrase.present ||
             publicKey.present ||
             artifacts.present ||
@@ -119,6 +122,7 @@ class SigningImpl implements Signing {
         org.jreleaser.model.internal.signing.Signing signing = new org.jreleaser.model.internal.signing.Signing()
         if (active.present) signing.active = active.get()
         if (armored.present) signing.armored = armored.get()
+        if (verify.present) signing.verify = verify.get()
         if (passphrase.present) signing.passphrase = passphrase.get()
         if (publicKey.present) signing.publicKey = publicKey.get()
         if (secretKey.present) signing.secretKey = secretKey.get()
