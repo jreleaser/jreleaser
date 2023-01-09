@@ -367,6 +367,7 @@ public final class DockerPackagerValidator {
             context.getLogger().info(RB.$("validation_docker_no_registries", element, username));
             DockerConfiguration.Registry registry = new DockerConfiguration.Registry();
             registry.setServerName(DockerConfiguration.Registry.DEFAULT_NAME);
+            registry.setServer("docker.io");
             registry.setUsername(username);
             self.addRegistry(registry);
         }
@@ -379,6 +380,10 @@ public final class DockerPackagerValidator {
         for (AbstractDockerConfiguration.Registry registry : registries) {
             BaseReleaser<?, ?> service = model.getRelease().getReleaser();
             String serverName = registry.getServerName();
+
+            if (isBlank(registry.getServer())) {
+                registry.setServer(serverName);
+            }
 
             registry.setUsername(
                 checkProperty(context,

@@ -111,7 +111,8 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
 
     final class Registry extends AbstractModelObject<Registry> implements Domain, Comparable<Registry> {
         public static final String DEFAULT_NAME = "DEFAULT";
-        private static final long serialVersionUID = -1522955594088189796L;
+        public static final String DOCKER_IO = "docker.io";
+        private static final long serialVersionUID = 4898944186216584709L;
 
         private String server;
         private String serverName = DEFAULT_NAME;
@@ -248,18 +249,22 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             DockerConfiguration.Registry that = (DockerConfiguration.Registry) o;
-            return serverName.equals(that.serverName);
+            String sn1 = serverName.equals(DEFAULT_NAME) ? DOCKER_IO : serverName;
+            String sn2 = that.serverName.equals(DEFAULT_NAME) ? DOCKER_IO : that.serverName;
+            return sn1.equals(sn2);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(serverName);
+            return Objects.hash(serverName.equals(DEFAULT_NAME) ? DOCKER_IO : serverName);
         }
 
         @Override
         public int compareTo(Registry o) {
             if (null == o) return -1;
-            return serverName.compareTo(o.getServerName());
+            String sn1 = serverName.equals(DEFAULT_NAME) ? DOCKER_IO : serverName;
+            String sn2 = o.serverName.equals(DEFAULT_NAME) ? DOCKER_IO : o.serverName;
+            return sn1.compareTo(sn2);
         }
     }
 

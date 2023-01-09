@@ -31,7 +31,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -334,11 +333,13 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
         if (buildx.isEnabled() || full) props.put("buildx", buildx.asMap(full));
         asMap(full, props);
 
-        List<Map<String, Object>> repos = this.registries
-            .stream()
-            .map(r -> r.asMap(full))
-            .collect(Collectors.toList());
-        if (!repos.isEmpty()) props.put("registries", repos);
+        Map<String, Map<String, Object>> m = new LinkedHashMap<>();
+        int i = 0;
+        for (Registry registry : this.registries) {
+            m.put("registry " + (i++), registry.asMap(full));
+        }
+        props.put("registries", m);
+
         props.put("extraProperties", getResolvedExtraProperties());
 
         return props;

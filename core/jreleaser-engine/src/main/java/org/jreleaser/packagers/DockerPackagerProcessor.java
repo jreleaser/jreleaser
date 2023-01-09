@@ -458,7 +458,6 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
                 //   tag: server/repositoryName/imageName
 
                 if (DockerConfiguration.Registry.DEFAULT_NAME.equals(serverName)) {
-                    server = "docker.io";
                     if (!tag.startsWith(repositoryName)) {
                         int pos = tag.indexOf("/");
                         if (pos < 0) {
