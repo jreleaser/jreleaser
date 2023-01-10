@@ -147,7 +147,7 @@ public final class SigningValidator {
 
         boolean checkSign = mode == Mode.DEPLOY && context.getModel().getDeploy().getMaven()
             .getActiveDeployers().stream()
-            .map((MavenDeployer d) -> d.isSign())
+            .map(MavenDeployer::isSign)
             .filter(b -> b)
             .findAny()
             .orElseGet(() -> false);
