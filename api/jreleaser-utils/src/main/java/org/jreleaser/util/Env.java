@@ -34,7 +34,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
 public final class Env {
-    private static final String JRELEASER_ENV_PREFIX = "JRELEASER_";
+    public static final String JRELEASER_ENV_PREFIX = "JRELEASER_";
+
     private static final String JRELEASER_SYS_PREFIX = "jreleaser.";
 
     private Env() {

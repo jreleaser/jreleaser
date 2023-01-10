@@ -36,6 +36,8 @@ import java.util.TreeSet;
 
 import static org.jreleaser.model.Constants.DEFAULT_GIT_REMOTE;
 import static org.jreleaser.model.Constants.JRELEASER_USER_HOME;
+import static org.jreleaser.util.Env.JRELEASER_ENV_PREFIX;
+import static org.jreleaser.util.Env.envKey;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -43,7 +45,6 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 1.5.0
  */
 public final class Environment {
-    private static final String JRELEASER_PREFIX = "JRELEASER_";
 
     private Environment() {
         // noop
@@ -59,23 +60,23 @@ public final class Environment {
         loadVariables(logger, resolveConfigFileAt(configDirectory)
             .orElse(configDirectory.resolve("config.properties")));
 
-        if (System.getenv().containsKey(DEFAULT_GIT_REMOTE)) {
-            logger.info(DEFAULT_GIT_REMOTE);
+        if (System.getenv().containsKey(envKey(DEFAULT_GIT_REMOTE))) {
+            logger.info(envKey(DEFAULT_GIT_REMOTE));
         }
     }
 
     private static void loadVariables(JReleaserLogger logger, Path file) {
         Set<String> vars = new TreeSet<>();
         System.getenv().forEach((k, v) -> {
-            if (k.startsWith(JRELEASER_PREFIX)) vars.add(k);
+            if (k.startsWith(JRELEASER_ENV_PREFIX)) vars.add(k);
         });
-        if (System.getenv().containsKey(DEFAULT_GIT_REMOTE)) {
-            vars.add(DEFAULT_GIT_REMOTE);
+        if (System.getenv().containsKey(envKey(DEFAULT_GIT_REMOTE))) {
+            vars.add(envKey(DEFAULT_GIT_REMOTE));
         }
 
         if (!vars.isEmpty()) {
             logger.info(RB.$("environment.variables.env"));
-            vars.forEach(message -> logger.info("  "+ message));
+            vars.forEach(message -> logger.info("  " + message));
         }
 
         vars.clear();
@@ -98,12 +99,12 @@ public final class Environment {
         }
 
         p.stringPropertyNames().stream()
-            .filter(k -> k.startsWith(JRELEASER_PREFIX)).
+            .filter(k -> k.startsWith(JRELEASER_ENV_PREFIX)).
             forEach(vars::add);
 
         if (!vars.isEmpty()) {
             logger.info(RB.$("environment.variables.file", file.getFileName().toString()));
-            vars.forEach(message -> logger.info("  "+ message));
+            vars.forEach(message -> logger.info("  " + message));
         }
     }
 
