@@ -105,7 +105,7 @@ public class Nexus2MavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
         }
 
         for (Deployable deployable : deployables) {
-            context.getLogger().info(" - {}", deployable.getFilename());
+            context.getLogger().info(" - {}", deployable.getFullDeployPath());
 
             if (!context.isDryrun()) {
                 try {

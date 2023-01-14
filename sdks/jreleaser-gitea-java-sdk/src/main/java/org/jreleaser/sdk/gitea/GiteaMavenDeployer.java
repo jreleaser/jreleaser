@@ -93,7 +93,7 @@ public class GiteaMavenDeployer extends AbstractMavenDeployer<org.jreleaser.mode
                     headers.put("Authorization", "token " + token);
                     FormData data = ClientUtils.toFormData(localPath);
 
-                    String url = baseUrl + deployable.getDeployPath() + "/" + deployable.getFilename();
+                    String url = baseUrl + deployable.getFullDeployPath();
                     ClientUtils.putFile(context.getLogger(),
                         url,
                         deployer.getConnectTimeout(),
