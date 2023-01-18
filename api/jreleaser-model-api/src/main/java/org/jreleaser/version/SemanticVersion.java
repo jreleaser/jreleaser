@@ -54,7 +54,7 @@ public class SemanticVersion implements Version<SemanticVersion> {
         this.pattern = pattern;
 
         if (isNotBlank(tagsep)) {
-            requireState(tagsep.equals(".") || tagsep.equals("-"), "Argument 'tagsep' must not be '.' or '-'");
+            requireState(".".equals(tagsep) || "-".equals(tagsep), "Argument 'tagsep' must not be '.' or '-'");
         }
     }
 

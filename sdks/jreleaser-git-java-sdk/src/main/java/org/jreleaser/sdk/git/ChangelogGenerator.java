@@ -682,7 +682,7 @@ public class ChangelogGenerator {
             }
 
             // drop any empty lines at the beginning
-            while (!lines.isEmpty() && lines.get(0).equals("")) {
+            while (!lines.isEmpty() && "".equals(lines.get(0))) {
                 lines.remove(0);
             }
 
@@ -691,7 +691,7 @@ public class ChangelogGenerator {
                 Matcher matcherTrailer = TRAILER_PATTERN.matcher(lines.get(lines.size() - 1));
                 if (matcherTrailer.matches()) {
                     String token = matcherTrailer.group("token");
-                    if (token.equals("BREAKING-CHANGE")) break;
+                    if ("BREAKING-CHANGE".equals(token)) break;
                     trailers.add(new Trailer(token, matcherTrailer.group("value")));
                     lines.remove(lines.size() - 1); // consume last line
                 } else {
@@ -700,7 +700,7 @@ public class ChangelogGenerator {
             }
 
             // drop any empty lines at the end
-            while (!lines.isEmpty() && lines.get(lines.size() - 1).equals("")) {
+            while (!lines.isEmpty() && "".equals(lines.get(lines.size() - 1))) {
                 lines.remove(lines.size() - 1);
             }
 

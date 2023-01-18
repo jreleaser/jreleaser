@@ -34,7 +34,7 @@ public abstract class AbstractJReleaserLogger implements JReleaserLogger {
     }
 
     protected boolean isIndented() {
-        return !indent.equals("");
+        return !"".equals(indent);
     }
 
     @Override

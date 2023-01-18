@@ -48,7 +48,7 @@ class KordampJReleaserAdapter {
         }
         if (!jreleaser.project.license.present) {
             List<License> licenses = config.licensing.allLicenses()
-            if (licenses.size() > 0) {
+            if (!licenses.isEmpty()) {
                 License license = licenses.find {
                     it.primary
                 } ?: licenses[0]

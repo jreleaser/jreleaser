@@ -351,7 +351,7 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
             if (!op.isPresent()) continue;
 
             GtIssue gtIssue = op.get();
-            if (gtIssue.getState().equals("closed") && gtIssue.getLabels().stream().noneMatch(l -> l.getName().equals(labelName))) {
+            if ("closed".equals(gtIssue.getState()) && gtIssue.getLabels().stream().noneMatch(l -> l.getName().equals(labelName))) {
                 context.getLogger().debug(RB.$("git.issue.release", issueNumber));
                 api.addLabelToIssue(codeberg.getOwner(), codeberg.getName(), gtIssue, gtLabel);
                 api.commentOnIssue(codeberg.getOwner(), codeberg.getName(), gtIssue, comment);

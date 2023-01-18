@@ -145,7 +145,7 @@ class CollectionUtilsTest {
         map1.put("key.string", "string");
         map1.put("key.boolean", true);
         map1.put("key.list", asList(1, 2, 3));
-        LinkedHashMap<String, Integer> map2 = new LinkedHashMap<String, Integer>(2);
+        LinkedHashMap<String, Integer> map2 = new LinkedHashMap<>(2);
         map2.put("one", 1);
         map2.put("two", 2);
         map1.put("key.map", map2);
