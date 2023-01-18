@@ -39,6 +39,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -342,6 +343,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         if (packager.getActiveSpecs().isEmpty()) {
             publishToRepository(distribution, props);
             super.publishDistribution(distribution, props);
+            cleanupBuilder(props, getPackager());
             return;
         }
 
@@ -351,6 +353,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
             TemplateContext newProps = fillSpecProps(distribution, props, spec);
             publishDocker(newProps, spec);
         }
+        cleanupBuilder(props, packager.getActiveSpecs());
     }
 
     private void publishToRepository(Distribution distribution, TemplateContext props) throws PackagerProcessingException {
@@ -362,8 +365,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         publishDocker(props, getPackager());
     }
 
-    protected void publishDocker(TemplateContext props,
-                                 DockerConfiguration docker) throws PackagerProcessingException {
+    protected void publishDocker(TemplateContext props, DockerConfiguration docker) throws PackagerProcessingException {
         Map<String, List<String>> tagNames = resolveTagNames(docker, props);
 
         for (DockerConfiguration.Registry registry : docker.getRegistries()) {
@@ -407,11 +409,30 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         for (DockerConfiguration.Registry registry : docker.getRegistries()) {
             logout(registry);
         }
+    }
 
-        // cleanup builder
+    private void cleanupBuilder(TemplateContext props, DockerConfiguration docker) throws PackagerProcessingException {
         if (docker.getBuildx().isEnabled()) {
             int i = docker.getBuildx().getCreateBuilderFlags().indexOf("--name");
             String builderName = docker.getBuildx().getCreateBuilderFlags().get(i + 1);
+            Command cmd = createCommand("buildx")
+                .arg("rm")
+                .arg(resolveTemplate(builderName, props).trim());
+
+            executeCommand(cmd);
+        }
+    }
+
+    private void cleanupBuilder(TemplateContext props, List<DockerSpec> specs) throws PackagerProcessingException {
+        Set<String> builderNames = new LinkedHashSet<>();
+        for (DockerSpec spec : specs) {
+            if (spec.getBuildx().isEnabled()) {
+                int i = spec.getBuildx().getCreateBuilderFlags().indexOf("--name");
+                builderNames.add(spec.getBuildx().getCreateBuilderFlags().get(i + 1));
+            }
+        }
+
+        for (String builderName : builderNames) {
             Command cmd = createCommand("buildx")
                 .arg("rm")
                 .arg(resolveTemplate(builderName, props).trim());
