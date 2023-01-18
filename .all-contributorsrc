@@ -497,6 +497,15 @@
         "promotion",
         "code"
       ]
+    },
+    {
+      "login": "timtebeek",
+      "name": "Tim te Beek",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1027334?v=4",
+      "profile": "https://www.linkedin.com/in/timtebeek/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
