@@ -181,7 +181,7 @@ public final class CollectionUtils {
     }
 
     public static <K, V> MapBuilder<K, V> map() {
-        return map(new LinkedHashMap<K, V>());
+        return map(new LinkedHashMap<>());
     }
 
     public static <K, V> MapBuilder<K, V> map(Map<K, V> delegate) {
@@ -189,7 +189,7 @@ public final class CollectionUtils {
     }
 
     public static <E> ListBuilder<E> list() {
-        return list(new ArrayList<E>());
+        return list(new ArrayList<>());
     }
 
     public static <E> ListBuilder<E> list(List<E> delegate) {
@@ -197,7 +197,7 @@ public final class CollectionUtils {
     }
 
     public static <E> SetBuilder<E> set() {
-        return set(new HashSet<E>());
+        return set(new HashSet<>());
     }
 
     public static <E> SetBuilder<E> set(Set<E> delegate) {

@@ -441,7 +441,7 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
             if (!op.isPresent()) continue;
 
             GlIssue glIssue = op.get();
-            if (glIssue.getState().equals("closed") && glIssue.getLabels().stream().noneMatch(l -> l.equals(labelName))) {
+            if ("closed".equals(glIssue.getState()) && glIssue.getLabels().stream().noneMatch(l -> l.equals(labelName))) {
                 context.getLogger().debug(RB.$("git.issue.release", issueNumber));
                 api.addLabelToIssue(projectIdentifier, glIssue, glLabel);
                 api.commentOnIssue(projectIdentifier, glIssue, comment);

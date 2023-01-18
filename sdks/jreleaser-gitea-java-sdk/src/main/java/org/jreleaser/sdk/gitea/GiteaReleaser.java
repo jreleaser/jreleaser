@@ -350,7 +350,7 @@ public class GiteaReleaser extends AbstractReleaser<org.jreleaser.model.api.rele
             if (!op.isPresent()) continue;
 
             GtIssue gtIssue = op.get();
-            if (gtIssue.getState().equals("closed") && gtIssue.getLabels().stream().noneMatch(l -> l.getName().equals(labelName))) {
+            if ("closed".equals(gtIssue.getState()) && gtIssue.getLabels().stream().noneMatch(l -> l.getName().equals(labelName))) {
                 context.getLogger().debug(RB.$("git.issue.release", issueNumber));
                 api.addLabelToIssue(gitea.getOwner(), gitea.getName(), gtIssue, gtLabel);
                 api.commentOnIssue(gitea.getOwner(), gitea.getName(), gtIssue, comment);
