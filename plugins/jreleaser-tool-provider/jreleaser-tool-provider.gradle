@@ -72,7 +72,12 @@ shadowJar {
 
 task relocateShadowJar(type: org.jreleaser.gradle.shadow.ConfigureShadowRelocation) {
     target = tasks.shadowJar
-    exclude('zstd-jni.*')
+    exclude('zstd-jni')
+    exclude('jreleaser-logger-api')
+    exclude('jreleaser-model-api')
+    exclude('jreleaser-resource-bundle')
+    exclude('jreleaser-utils')
+    exclude('jreleaser-templates')
 }
 
 tasks.shadowJar.dependsOn tasks.relocateShadowJar
