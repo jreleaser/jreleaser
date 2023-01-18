@@ -141,7 +141,7 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<o
 
         try {
             if (!FileUtils.copyFilesRecursive(context.getLogger(), originalImage, adjustedImage, path -> {
-                boolean pathIsJar = path.getFileName().toString().endsWith(".jar") && "jars".equals(path.getParent().getFileName().toString());
+                boolean pathIsJar = path.getFileName().toString().endsWith(".jar") && path.getParent().getFileName().toString().equals("jars");
                 boolean pathIsExecutable = path.getFileName().toString().equals(context.getModel().getAssemble().findJlink(assembler.getJlink()).getExecutable());
                 return pathIsJar || pathIsExecutable;
             })) {
