@@ -26,7 +26,7 @@ import picocli.CommandLine;
  * @since 0.3.0
  */
 @CommandLine.Command(name = "upload")
-public class Upload extends AbstractPlatformAwareModelCommand {
+public class Upload extends AbstractPlatformAwareModelCommand<Main> {
     @CommandLine.Option(names = {"--dry-run"})
     Boolean dryrun;
 

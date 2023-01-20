@@ -43,8 +43,8 @@ import static org.jreleaser.util.IoUtils.newPrintWriter;
  * @author Andres Almiray
  * @since 0.1.0
  */
-@Mojo(name = "template")
-public class JReleaserTemplateMojo extends AbstractMojo {
+@Mojo(name = "template-generate")
+public class JReleaserTemplateGenerateMojo extends AbstractMojo {
     /**
      * The project whose model will be checked.
      */

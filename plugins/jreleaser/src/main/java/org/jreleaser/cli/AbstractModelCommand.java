@@ -50,8 +50,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-@CommandLine.Command
-public abstract class AbstractModelCommand extends AbstractLoggingCommand {
+public abstract class AbstractModelCommand<C extends IO> extends AbstractLoggingCommand<C> {
     @CommandLine.Option(names = {"-c", "--config-file"})
     Path configFile;
 
@@ -65,16 +64,8 @@ public abstract class AbstractModelCommand extends AbstractLoggingCommand {
         paramLabel = "<key=value>")
     String[] properties;
 
-    @CommandLine.ParentCommand
-    Main parent;
-
     Path actualConfigFile;
     Path actualBasedir;
-
-    @Override
-    protected Main parent() {
-        return parent;
-    }
 
     @Override
     protected void execute() {
@@ -111,7 +102,7 @@ public abstract class AbstractModelCommand extends AbstractLoggingCommand {
                     .errorText($("ERROR_missing_config_file",
                         String.join("|", getSupportedConfigFormats())
                     )));
-            spec.commandLine().usage(parent.out);
+            spec.commandLine().usage(parent().getOut());
             throw new HaltExecutionException();
         }
     }
@@ -137,7 +128,7 @@ public abstract class AbstractModelCommand extends AbstractLoggingCommand {
             spec.commandLine().getErr()
                 .println(spec.commandLine().getColorScheme().errorText(
                     $("ERROR_missing_required_option", "--basedir=<basedir>")));
-            spec.commandLine().usage(parent.out);
+            spec.commandLine().usage(parent().getOut());
             throw new HaltExecutionException();
         }
     }

@@ -30,6 +30,8 @@ import org.jreleaser.util.IoUtils
  */
 @CompileStatic
 abstract class JReleaserJsonSchemaTask extends DefaultTask {
+    static final String NAME = 'jreleaserJsonSchema'
+
     @TaskAction
     void generateJsonSchema() {
         JsonSchemaGenerator.generate(IoUtils.newPrintWriter(System.out))

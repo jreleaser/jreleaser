@@ -38,6 +38,8 @@ import static org.jreleaser.model.api.JReleaserContext.Mode.DOWNLOAD
  */
 @CompileStatic
 abstract class JReleaserDownloadTask extends AbstractJReleaserTask {
+    static final String NAME = 'jreleaserDownload'
+    
     @Input
     @Optional
     final ListProperty<String> downloaderTypes

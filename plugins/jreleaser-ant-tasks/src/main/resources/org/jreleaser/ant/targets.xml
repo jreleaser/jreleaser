@@ -66,22 +66,40 @@
     <property name="jreleaser.excluded.uploader.names" value=""/>
     <property name="jreleaser.excluded.downloader.types" value=""/>
     <property name="jreleaser.excluded.downloader.names" value=""/>
+    <property name="jreleaser.template.input.file" value=""/>
+    <property name="jreleaser.template.input.dir" value=""/>
+    <property name="jreleaser.template.target.dir" value=""/>
 
     <target name="jreleaser-env">
         <jreleaser:env/>
     </target>
 
-    <target name="jreleaser-template">
-        <jreleaser:template skip="${jreleaser.skip}"
-                            distributionName="${jreleaser.distribution.name}"
-                            packagerName="${jreleaser.packager.name}"
-                            announcerName="${jreleaser.announcer.name}"
-                            assemblerType="${jreleaser.assembler.type}"
-                            assemblerName="${jreleaser.assembler.name}"
-                            distributionType="${jreleaser.distribution.type}"
-                            overwrite="${jreleaser.overwrite}"
-                            snapshot="${jreleaser.snapshot}"
-                            outputDir="${jreleaser.outputdir}"/>
+    <target name="jreleaser-template-generate">
+        <jreleaser:template-generate skip="${jreleaser.skip}"
+                                     distributionName="${jreleaser.distribution.name}"
+                                     packagerName="${jreleaser.packager.name}"
+                                     announcerName="${jreleaser.announcer.name}"
+                                     assemblerType="${jreleaser.assembler.type}"
+                                     assemblerName="${jreleaser.assembler.name}"
+                                     distributionType="${jreleaser.distribution.type}"
+                                     overwrite="${jreleaser.overwrite}"
+                                     snapshot="${jreleaser.snapshot}"
+                                     outputDir="${jreleaser.outputdir}"/>
+    </target>
+
+    <target name="jreleaser-template-eval">
+        <jreleaser:template-eval gitRootSearch="${jreleaser.git.root.search}"
+                                 strict="${jreleaser.strict}"
+                                 announce="${jreleaser.announce}"
+                                 assembly="${jreleaser.assembly}"
+                                 changelog="${jreleaser.changelog}"
+                                 download="${jreleaser.download}"
+                                 basedir="${jreleaser.basedir}"
+                                 configFile="${jreleaser.config.file}"
+                                 outputDir="${jreleaser.outputdir}"
+                                 inputFile="${jreleaser.template.input.file}"
+                                 inputDir="${jreleaser.template.input.dir}"
+                                 targetDir="${jreleaser.template.target.dir}"/>
     </target>
 
     <target name="jreleaser-announce">

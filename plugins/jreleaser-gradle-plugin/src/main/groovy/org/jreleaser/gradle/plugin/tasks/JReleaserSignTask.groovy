@@ -36,6 +36,8 @@ import javax.inject.Inject
  */
 @CompileStatic
 abstract class JReleaserSignTask extends AbstractPlatformAwareJReleaserTask {
+    static final String NAME = 'jreleaserSign'
+
     @Input
     @Optional
     final ListProperty<String> distributions

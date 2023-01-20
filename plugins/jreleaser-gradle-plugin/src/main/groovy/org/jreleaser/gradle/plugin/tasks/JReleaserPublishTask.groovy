@@ -31,6 +31,8 @@ import javax.inject.Inject
  */
 @CompileStatic
 abstract class JReleaserPublishTask extends AbstractJReleaserPackagerTask {
+    static final String NAME = 'jreleaserPublish'
+
     @Inject
     JReleaserPublishTask(ObjectFactory objects) {
         super(objects)

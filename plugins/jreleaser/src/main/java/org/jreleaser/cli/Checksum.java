@@ -26,7 +26,7 @@ import picocli.CommandLine;
  * @since 0.1.0
  */
 @CommandLine.Command(name = "checksum")
-public class Checksum extends AbstractPlatformAwareModelCommand {
+public class Checksum extends AbstractPlatformAwareModelCommand<Main> {
     @CommandLine.ArgGroup
     Composite composite;
 

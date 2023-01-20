@@ -18,13 +18,19 @@
 package org.jreleaser.gradle.plugin.tasks
 
 import groovy.transform.CompileStatic
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.jreleaser.engine.context.ModelValidator
-import org.jreleaser.gradle.plugin.internal.GradleJReleaserModelPrinter
+import org.jreleaser.engine.templates.TemplateEvaluator
 import org.jreleaser.model.internal.JReleaserContext
 
 import javax.inject.Inject
@@ -38,14 +44,11 @@ import static org.jreleaser.model.api.JReleaserContext.Mode.DOWNLOAD
 /**
  *
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 1.5.0
  */
 @CompileStatic
-abstract class JReleaserConfigTask extends AbstractPlatformAwareJReleaserTask {
-    static final String NAME = 'jreleaserConfig'
-    
-    @Input
-    final Property<Boolean> full
+abstract class JReleaserTemplateEvalTask extends AbstractPlatformAwareJReleaserTask {
+    static final String NAME = 'jreleaserTemplateEval'
 
     @Input
     final Property<Boolean> announce
@@ -59,39 +62,67 @@ abstract class JReleaserConfigTask extends AbstractPlatformAwareJReleaserTask {
     @Input
     final Property<Boolean> download
 
+    @Optional
+    @InputFile
+    final RegularFileProperty inputFile
+
+    @Optional
+    @InputDirectory
+    final DirectoryProperty inputDirectory
+
+    @OutputDirectory
+    final DirectoryProperty targetDirectory
+
+    @Input
+    final Property<Boolean> overwrite
+
     @Inject
-    JReleaserConfigTask(ObjectFactory objects) {
+    JReleaserTemplateEvalTask(ObjectFactory objects) {
         super(objects)
-        full = objects.property(Boolean).convention(false)
         assembly = objects.property(Boolean).convention(false)
         announce = objects.property(Boolean).convention(false)
         changelog = objects.property(Boolean).convention(false)
         download = objects.property(Boolean).convention(false)
+        overwrite = objects.property(Boolean).convention(false)
+
+        inputFile = objects.fileProperty()
+        inputDirectory = objects.directoryProperty()
+        targetDirectory = objects.directoryProperty()
     }
 
-    @Option(option = 'full', description = 'Display full configuration (OPTIONAL).')
-    void setFull(boolean full) {
-        this.full.set(full)
-    }
-
-    @Option(option = 'announce', description = 'Display announce configuration (OPTIONAL).')
+    @Option(option = 'announce', description = 'Eval model in announce configuration (OPTIONAL).')
     void setAnnounce(boolean announce) {
         this.announce.set(announce)
     }
 
-    @Option(option = 'assembly', description = 'Display assembly configuration (OPTIONAL).')
+    @Option(option = 'assembly', description = 'Eval model in assembly configuration (OPTIONAL).')
     void setAssembly(boolean assembly) {
         this.assembly.set(assembly)
     }
 
-    @Option(option = 'changelog', description = 'Display changelog configuration (OPTIONAL).')
+    @Option(option = 'changelog', description = 'Eval model in changelog configuration (OPTIONAL).')
     void setChangelog(boolean changelog) {
         this.changelog.set(changelog)
     }
 
-    @Option(option = 'download', description = 'Display download configuration (OPTIONAL).')
+    @Option(option = 'download', description = 'Eval model in download configuration (OPTIONAL).')
     void setDownload(boolean download) {
         this.download.set(download)
+    }
+
+    @Option(option = 'input-file', description = 'An input template file.')
+    void setInputFile(String inputFile) {
+        this.inputFile.set(new File(inputFile))
+    }
+
+    @Option(option = 'input-directory', description = 'A directory with input templates.')
+    void setInputDirectory(String inputDirectory) {
+        this.inputDirectory.set(new File(inputDirectory))
+    }
+
+    @Option(option = 'target-directory', description = 'Directory where evaluated template(s) will be placed.')
+    void setTargetDirectory(String targetDirectory) {
+        this.targetDirectory.set(new File(targetDirectory))
     }
 
     @TaskAction
@@ -110,8 +141,15 @@ abstract class JReleaserConfigTask extends AbstractPlatformAwareJReleaserTask {
 
         JReleaserContext context = createContext()
         ModelValidator.validate(context)
-        new GradleJReleaserModelPrinter(project)
-            .print(context.model.asMap(full.get()))
+
+        if (inputFile.present) {
+            TemplateEvaluator.generateTemplate(context, inputFile.get().asFile.toPath(),
+                context.relativizeToBasedir(targetDirectory.get().asFile.toPath()), overwrite.getOrElse(false));
+        } else if (null != inputDirectory) {
+            TemplateEvaluator.generateTemplates(context, inputDirectory.get().asFile.toPath(),
+                context.relativizeToBasedir(targetDirectory.get().asFile.toPath()), overwrite.getOrElse(false));
+        }
+
         context.report()
     }
 }

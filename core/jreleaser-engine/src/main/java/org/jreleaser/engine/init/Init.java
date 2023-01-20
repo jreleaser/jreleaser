@@ -75,7 +75,7 @@ public final class Init {
                  BufferedWriter decoratedWriter = new VersionDecoratingWriter(fileWriter)) {
                 decoratedWriter.write(content);
             } catch (FileAlreadyExistsException e) {
-                logger.error($("jreleaser.init.ERROR_file_exists"), outputFile.toAbsolutePath());
+                logger.error($("jreleaser.ERROR_file_exists"), outputFile.toAbsolutePath());
                 return;
             }
 

@@ -19,6 +19,7 @@ package org.jreleaser.cli;
 
 import org.jreleaser.cli.internal.Colorizer;
 import org.jreleaser.model.JReleaserException;
+import picocli.CommandLine;
 
 import java.util.concurrent.Callable;
 
@@ -26,8 +27,14 @@ import java.util.concurrent.Callable;
  * @author Andres Almiray
  * @since 0.1.0
  */
-abstract class AbstractCommand extends BaseCommand implements Callable<Integer> {
-    protected abstract Main parent();
+@CommandLine.Command
+abstract class AbstractCommand<C extends IO> extends BaseCommand implements Callable<Integer> {
+    @CommandLine.ParentCommand
+    private C parent;
+
+    protected C parent() {
+        return parent;
+    }
 
     @Override
     public Integer call() {
@@ -38,13 +45,13 @@ abstract class AbstractCommand extends BaseCommand implements Callable<Integer> 
         } catch (HaltExecutionException e) {
             return 1;
         } catch (JReleaserException e) {
-            Colorizer colorizer = new Colorizer(parent().out);
+            Colorizer colorizer = new Colorizer(parent().getOut());
             String message = e.getMessage();
             colorizer.println(message);
             printDetails(e.getCause(), message, colorizer);
             return 1;
         } catch (Exception e) {
-            e.printStackTrace(new Colorizer(parent().out));
+            e.printStackTrace(new Colorizer(parent().getOut()));
             return 1;
         }
 
@@ -52,7 +59,7 @@ abstract class AbstractCommand extends BaseCommand implements Callable<Integer> 
     }
 
     protected void setup() {
-        Banner.display(parent().out);
+        Banner.display(parent().getOut());
 
         System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "error");
     }

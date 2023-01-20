@@ -27,7 +27,7 @@ import picocli.CommandLine;
  * @since 1.1.0
  */
 @CommandLine.Command(name = "download")
-public class Download extends AbstractModelCommand {
+public class Download extends AbstractModelCommand<Main> {
     @CommandLine.Option(names = {"--dry-run"})
     Boolean dryrun;
 

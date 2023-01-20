@@ -37,7 +37,7 @@ import static org.jreleaser.util.IoUtils.newPrintWriter;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class JReleaserTemplateTask extends Task {
+public class JReleaserTemplateGenerateTask extends Task {
     private boolean skip;
     private Path outputDir;
     private String distributionName;

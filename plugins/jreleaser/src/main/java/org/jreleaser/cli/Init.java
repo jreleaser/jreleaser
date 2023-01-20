@@ -28,7 +28,7 @@ import java.nio.file.Paths;
  * @since 0.1.0
  */
 @CommandLine.Command(name = "init")
-public class Init extends AbstractLoggingCommand {
+public class Init extends AbstractLoggingCommand<Main> {
     @CommandLine.Option(names = {"-o", "--overwrite"})
     boolean overwrite;
 

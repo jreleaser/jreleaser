@@ -38,6 +38,8 @@ import static org.jreleaser.model.api.JReleaserContext.Mode.DEPLOY
  */
 @CompileStatic
 abstract class JReleaserDeployTask extends AbstractJReleaserTask {
+    static final String NAME = 'jreleaserDeploy'
+    
     @Input
     @Optional
     final ListProperty<String> deployerTypes

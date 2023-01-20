@@ -59,8 +59,12 @@
             classname="org.jreleaser.ant.tasks.JReleaserFullReleaseTask"/>
 
     <taskdef
-            name="template"
-            classname="org.jreleaser.ant.tasks.JReleaserTemplateTask"/>
+            name="template-generate"
+            classname="org.jreleaser.ant.tasks.JReleaserTemplateGenerateTask"/>
+
+    <taskdef
+            name="template-eval"
+            classname="org.jreleaser.ant.tasks.JReleaserTemplateEvalTask"/>
 
     <taskdef
             name="init"

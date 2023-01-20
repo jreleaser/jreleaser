@@ -44,7 +44,9 @@ import java.nio.file.Path
  * @since 0.1.0
  */
 @CompileStatic
-abstract class JReleaserTemplateTask extends DefaultTask {
+abstract class JReleaserTemplateGenerateTask extends DefaultTask {
+    static final String NAME = 'jreleaserTemplateGenerate'
+
     @Input
     @Optional
     final Property<Distribution.DistributionType> distributionType
@@ -82,7 +84,7 @@ abstract class JReleaserTemplateTask extends DefaultTask {
     final Property<JReleaserLoggerService> jlogger
 
     @Inject
-    JReleaserTemplateTask(ObjectFactory objects) {
+    JReleaserTemplateGenerateTask(ObjectFactory objects) {
         jlogger = objects.property(JReleaserLoggerService)
         distributionType = objects.property(Distribution.DistributionType).convention(Distribution.DistributionType.JAVA_BINARY)
         distributionName = objects.property(String)

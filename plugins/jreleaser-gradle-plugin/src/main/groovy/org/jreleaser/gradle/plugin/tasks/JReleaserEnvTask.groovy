@@ -35,6 +35,8 @@ import javax.inject.Inject
  */
 @CompileStatic
 abstract class JReleaserEnvTask extends DefaultTask {
+    static final String NAME = 'jreleaserEnv'
+
     @Input
     final Property<JReleaserLogger> jlogger
 

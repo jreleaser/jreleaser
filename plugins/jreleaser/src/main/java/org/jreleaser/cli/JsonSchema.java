@@ -25,7 +25,7 @@ import picocli.CommandLine;
  * @since 0.10.0
  */
 @CommandLine.Command(name = "json-schema")
-public class JsonSchema extends AbstractCommand {
+public class JsonSchema extends AbstractCommand<Main> {
     @CommandLine.ParentCommand
     Main parent;
 
@@ -36,6 +36,6 @@ public class JsonSchema extends AbstractCommand {
 
     @Override
     protected void execute() {
-        JsonSchemaGenerator.generate(parent().out);
+        JsonSchemaGenerator.generate(parent().getOut());
     }
 }

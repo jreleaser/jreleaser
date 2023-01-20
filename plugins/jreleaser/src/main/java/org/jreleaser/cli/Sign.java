@@ -26,7 +26,7 @@ import picocli.CommandLine;
  * @since 0.1.0
  */
 @CommandLine.Command(name = "sign")
-public class Sign extends AbstractPlatformAwareModelCommand {
+public class Sign extends AbstractPlatformAwareModelCommand<Main> {
     @CommandLine.ArgGroup
     Composite composite;
 

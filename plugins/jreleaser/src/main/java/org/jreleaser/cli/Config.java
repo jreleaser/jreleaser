@@ -28,7 +28,7 @@ import picocli.CommandLine;
  * @since 0.1.0
  */
 @CommandLine.Command(name = "config")
-public class Config extends AbstractPlatformAwareModelCommand {
+public class Config extends AbstractPlatformAwareModelCommand<Main> {
     @CommandLine.Option(names = {"-f", "--full"})
     boolean full;
 
@@ -52,7 +52,7 @@ public class Config extends AbstractPlatformAwareModelCommand {
     @Override
     protected void doExecute(JReleaserContext context) {
         ModelValidator.validate(context);
-        new CliJReleaserModelPrinter(parent.out).print(context.getModel().asMap(full));
+        new CliJReleaserModelPrinter(parent().getOut()).print(context.getModel().asMap(full));
         context.report();
     }
 

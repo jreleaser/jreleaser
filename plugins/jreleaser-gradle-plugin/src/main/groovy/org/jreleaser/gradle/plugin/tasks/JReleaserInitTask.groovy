@@ -45,6 +45,8 @@ import static org.jreleaser.bundle.RB.$
  */
 @CompileStatic
 abstract class JReleaserInitTask extends DefaultTask {
+    static final String NAME = 'jreleaserInit'
+
     @Input
     @Optional
     final Property<String> format

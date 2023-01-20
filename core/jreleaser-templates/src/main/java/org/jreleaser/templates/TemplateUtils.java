@@ -96,7 +96,7 @@ public final class TemplateUtils {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     templates.put(actualTemplateDirectory.relativize(file).toString(),
-                        asResource(file));
+                        resolveTemplate(file));
                     return FileVisitResult.CONTINUE;
                 }
             });
@@ -121,7 +121,7 @@ public final class TemplateUtils {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
                     templates.put(templateDirectory.relativize(file).toString(),
-                        asResource(file));
+                        resolveTemplate(file));
                     return FileVisitResult.CONTINUE;
                 }
             });
@@ -132,7 +132,7 @@ public final class TemplateUtils {
         return templates;
     }
 
-    private static TemplateResource asResource(Path file) throws IOException {
+    public static TemplateResource resolveTemplate(Path file) throws IOException {
         FileInputStream inputStream = new FileInputStream(file.toFile());
         if (file.getFileName().toString().endsWith(TPL)) {
             return new ReaderTemplateResource(new InputStreamReader(inputStream, StandardCharsets.UTF_8));

@@ -38,6 +38,8 @@ import static org.jreleaser.model.api.JReleaserContext.Mode.ANNOUNCE
  */
 @CompileStatic
 abstract class JReleaserAnnounceTask extends AbstractJReleaserTask {
+    static final String NAME = 'jreleaserAnnounce'
+    
     @Input
     @Optional
     final ListProperty<String> announcers

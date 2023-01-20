@@ -29,7 +29,7 @@ import java.util.List;
  * @since 0.6.0
  */
 @CommandLine.Command
-public abstract class AbstractPlatformAwareModelCommand extends AbstractModelCommand {
+public abstract class AbstractPlatformAwareModelCommand<C extends IO> extends AbstractModelCommand<C> {
     @CommandLine.Option(names = {"-scp", "--select-current-platform"})
     Boolean selectCurrentPlatform;
 

@@ -36,6 +36,8 @@ import javax.inject.Inject
  */
 @CompileStatic
 abstract class JReleaserFullReleaseTask extends AbstractJReleaserPackagerTask {
+    static final String NAME = 'jreleaserFullRelease'
+
     @Input
     @Optional
     final ListProperty<String> deployerTypes

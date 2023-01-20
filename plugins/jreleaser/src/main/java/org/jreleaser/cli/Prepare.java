@@ -26,7 +26,7 @@ import picocli.CommandLine;
  * @since 0.1.0
  */
 @CommandLine.Command(name = "prepare")
-public class Prepare extends AbstractPlatformAwareModelCommand {
+public class Prepare extends AbstractPlatformAwareModelCommand<Main> {
     @CommandLine.ArgGroup
     Composite composite;
 

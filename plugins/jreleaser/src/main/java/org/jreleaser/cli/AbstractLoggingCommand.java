@@ -40,7 +40,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-abstract class AbstractLoggingCommand extends AbstractCommand implements Callable<Integer> {
+abstract class AbstractLoggingCommand<C extends IO> extends AbstractCommand<C> implements Callable<Integer> {
     protected JReleaserLogger logger;
 
     @CommandLine.Option(names = {"-g", "--debug"})
@@ -80,11 +80,11 @@ abstract class AbstractLoggingCommand extends AbstractCommand implements Callabl
             System.setProperty(JRELEASER_QUIET, "true");
         }
 
-        Banner.display(parent().out);
+        Banner.display(parent().getOut());
     }
 
     protected void initLogger() {
-        logger = new ColorizedJReleaserLoggerAdapter(createTracer(), parent().out, level);
+        logger = new ColorizedJReleaserLoggerAdapter(createTracer(), parent().getOut(), level);
     }
 
     protected PrintWriter createTracer() {

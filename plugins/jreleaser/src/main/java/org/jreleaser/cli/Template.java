@@ -17,155 +17,42 @@
  */
 package org.jreleaser.cli;
 
-import org.jreleaser.model.JReleaserException;
-import org.jreleaser.templates.TemplateGenerationException;
-import org.jreleaser.templates.TemplateGenerator;
 import picocli.CommandLine;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.PrintWriter;
 
 /**
  * @author Andres Almiray
  * @since 0.10.0
  */
-@CommandLine.Command(name = "template")
-public class Template extends AbstractLoggingCommand {
-    @CommandLine.ArgGroup(exclusive = true, multiplicity = "1")
-    Composite composite;
-
-    static class Composite {
-        @CommandLine.ArgGroup(exclusive = false, order = 1,
-            headingKey = "announcer.header")
-        Announcers announcers;
-
-        @CommandLine.ArgGroup(exclusive = false, order = 1,
-            headingKey = "assembler.header")
-        Assemblers assemblers;
-
-        @CommandLine.ArgGroup(exclusive = false, order = 2,
-            headingKey = "packager.header")
-        Packagers packagers;
-
-        String announcerName() {
-            return announcers != null ? announcers.announcerName : null;
-        }
-
-        String assemblerType() {
-            return assemblers != null ? assemblers.assemblerType : null;
-        }
-
-        String assemblerName() {
-            return assemblers != null ? assemblers.assemblerName : null;
-        }
-
-        String packagerName() {
-            return packagers != null ? packagers.packagerName : null;
-        }
-
-        String distributionName() {
-            return packagers != null ? packagers.distributionName : null;
-        }
-
-        org.jreleaser.model.Distribution.DistributionType distributionType() {
-            return packagers != null ? packagers.distributionType : null;
-        }
-    }
-
-    static class Announcers {
-        @CommandLine.Option(names = {"-a", "--announcer"},
-            paramLabel = "<announcer>",
-            descriptionKey = "announcer.name",
-            required = true)
-        String announcerName;
-    }
-
-    static class Assemblers {
-        @CommandLine.Option(names = {"-st", "--assembler-type"},
-            paramLabel = "<assembler-type>",
-            descriptionKey = "assembler.type",
-            required = true)
-        String assemblerType;
-
-        @CommandLine.Option(names = {"-s", "--assembler-name"},
-            paramLabel = "<assembler-name>",
-            descriptionKey = "assembler.name",
-            required = true)
-        String assemblerName;
-    }
-
-    static class Packagers {
-        @CommandLine.Option(names = {"-d", "--distribution"},
-            paramLabel = "<distribution>",
-            required = true)
-        String distributionName;
-
-        @CommandLine.Option(names = {"-p", "--packager"},
-            paramLabel = "<packager>",
-            required = true)
-        String packagerName;
-
-        @CommandLine.Option(names = {"-dt", "--distribution-type"},
-            paramLabel = "<type>",
-            required = true,
-            defaultValue = "JAVA_BINARY")
-        org.jreleaser.model.Distribution.DistributionType distributionType;
-    }
-
-    @CommandLine.Option(names = {"-o", "--overwrite"})
-    boolean overwrite;
-
-    @CommandLine.Option(names = {"-sn", "--snapshot"})
-    boolean snapshot;
-
-    @CommandLine.ParentCommand
-    Main parent;
+@CommandLine.Command(name = "template",
+    subcommands = {TemplateGenerate.class, TemplateEval.class})
+public class Template extends AbstractCommand<Main> implements IO {
+    @CommandLine.Spec
+    public CommandLine.Model.CommandSpec spec;
 
     @Override
-    protected Main parent() {
-        return parent;
+    public PrintWriter getOut() {
+        return parent().getOut();
+    }
+
+    @Override
+    public void setOut(PrintWriter out) {
+        parent().setOut(out);
+    }
+
+    @Override
+    public PrintWriter getErr() {
+        return parent().getErr();
+    }
+
+    @Override
+    public void setErr(PrintWriter err) {
+        parent().setErr(err);
     }
 
     @Override
     protected void execute() {
-        try {
-            basedir = null != basedir ? basedir : Paths.get(".").normalize();
-
-            initLogger();
-
-            Path outputDirectory = basedir
-                .resolve("src")
-                .resolve("jreleaser");
-
-            Path output = TemplateGenerator.builder()
-                .logger(logger)
-                .distributionName(composite.distributionName())
-                .distributionType(composite.distributionType())
-                .packagerName(composite.packagerName())
-                .announcerName(composite.announcerName())
-                .assemblerType(composite.assemblerType())
-                .assemblerName(composite.assemblerName())
-                .outputDirectory(outputDirectory)
-                .overwrite(overwrite)
-                .snapshot(snapshot)
-                .build()
-                .generate();
-
-            if (null != output && !quiet) {
-                logger.info($("jreleaser.template.TEXT_success"), output.toAbsolutePath());
-            }
-        } catch (TemplateGenerationException e) {
-            throw new JReleaserException($("ERROR_unexpected_error"), e);
-        } finally {
-            if (logger != null) logger.close();
-        }
-    }
-
-    @Override
-    protected Path getOutputDirectory() {
-        if (null != outputdir) {
-            return outputdir.resolve("jreleaser");
-        }
-        return basedir.resolve("out").resolve("jreleaser");
+        spec.commandLine().usage(parent().getOut());
     }
 }

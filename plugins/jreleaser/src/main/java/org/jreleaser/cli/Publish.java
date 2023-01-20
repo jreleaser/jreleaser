@@ -26,7 +26,7 @@ import picocli.CommandLine;
  * @since 0.1.0
  */
 @CommandLine.Command(name = "publish")
-public class Publish extends AbstractPlatformAwareModelCommand {
+public class Publish extends AbstractPlatformAwareModelCommand<Main> {
     @CommandLine.Option(names = {"--dry-run"})
     Boolean dryrun;
 

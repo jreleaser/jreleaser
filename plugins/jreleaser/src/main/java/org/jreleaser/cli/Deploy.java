@@ -29,7 +29,7 @@ import static org.jreleaser.model.api.JReleaserContext.Mode.DEPLOY;
  * @since 1.3.0
  */
 @CommandLine.Command(name = "deploy")
-public class Deploy extends AbstractModelCommand {
+public class Deploy extends AbstractModelCommand<Main> {
     @CommandLine.Option(names = {"--dry-run"})
     Boolean dryrun;
 

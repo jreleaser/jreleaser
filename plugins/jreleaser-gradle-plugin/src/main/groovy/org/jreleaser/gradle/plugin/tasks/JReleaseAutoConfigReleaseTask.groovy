@@ -54,6 +54,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank
  */
 @CompileStatic
 abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
+    static final String NAME = 'jreleaserAutoConfigRelease'
+    
     @InputDirectory
     final DirectoryProperty outputDirectory
     @Input

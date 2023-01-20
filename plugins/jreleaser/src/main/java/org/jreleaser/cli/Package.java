@@ -26,7 +26,7 @@ import picocli.CommandLine;
  * @since 0.1.0
  */
 @CommandLine.Command(name = "package")
-public class Package extends AbstractPlatformAwareModelCommand {
+public class Package extends AbstractPlatformAwareModelCommand<Main> {
     @CommandLine.Option(names = {"--dry-run"})
     Boolean dryrun;
 

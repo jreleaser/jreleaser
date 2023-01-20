@@ -32,22 +32,14 @@ import static org.jreleaser.util.IoUtils.newPrintWriter;
  * @since 1.5.0
  */
 @CommandLine.Command(name = "env")
-public class Env extends AbstractCommand {
-    @CommandLine.ParentCommand
-    Main parent;
-
-    @Override
-    protected Main parent() {
-        return parent;
-    }
-
+public class Env extends AbstractCommand<Main> {
     @Override
     protected void execute() {
         Environment.display(initLogger());
     }
 
     protected JReleaserLogger initLogger() {
-        return new ColorizedJReleaserLoggerAdapter(createTracer(), parent().out, ColorizedJReleaserLoggerAdapter.Level.INFO);
+        return new ColorizedJReleaserLoggerAdapter(createTracer(), parent().getOut(), ColorizedJReleaserLoggerAdapter.Level.INFO);
     }
 
     protected PrintWriter createTracer() {

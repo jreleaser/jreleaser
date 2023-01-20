@@ -43,7 +43,8 @@ import org.jreleaser.gradle.plugin.tasks.JReleaserPrepareTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserPublishTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserReleaseTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserSignTask
-import org.jreleaser.gradle.plugin.tasks.JReleaserTemplateTask
+import org.jreleaser.gradle.plugin.tasks.JReleaserTemplateEvalTask
+import org.jreleaser.gradle.plugin.tasks.JReleaserTemplateGenerateTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserUploadTask
 import org.jreleaser.model.internal.JReleaserModel
 import org.jreleaser.version.SemanticVersion
@@ -58,7 +59,7 @@ import static org.kordamp.gradle.util.StringUtils.isBlank
  */
 @CompileStatic
 class JReleaserProjectConfigurer {
-    private static final String JRELEASER_GROUP = 'JReleaser'
+    static final String ASSEMBLE_DIST_TASK_NAME = 'assembleDist'
 
     static void configure(Project project) {
         JReleaserExtensionImpl extension = (JReleaserExtensionImpl) project.extensions.findByType(JReleaserExtension)
@@ -90,7 +91,7 @@ class JReleaserProjectConfigurer {
         JReleaserModel model = extension.toModel(project, loggerProvider.get().logger)
         configureModel(project, model)
 
-        project.tasks.named('jreleaserConfig', JReleaserConfigTask,
+        project.tasks.named(JReleaserConfigTask.NAME, JReleaserConfigTask,
             new Action<JReleaserConfigTask>() {
                 @Override
                 void execute(JReleaserConfigTask t) {
@@ -101,21 +102,30 @@ class JReleaserProjectConfigurer {
                     t.jlogger.set(loggerProvider)
                     t.usesService(loggerProvider)
                     if (hasDistributionPlugin) {
-                        t.dependsOn('assembleDist')
+                        t.dependsOn(ASSEMBLE_DIST_TASK_NAME)
                     }
                 }
             })
 
-        project.tasks.named('jreleaserTemplate', JReleaserTemplateTask,
-            new Action<JReleaserTemplateTask>() {
+        project.tasks.named(JReleaserTemplateGenerateTask.NAME, JReleaserTemplateGenerateTask,
+            new Action<JReleaserTemplateGenerateTask>() {
                 @Override
-                void execute(JReleaserTemplateTask t) {
+                void execute(JReleaserTemplateGenerateTask t) {
                     t.jlogger.set(loggerProvider)
                     t.usesService(loggerProvider)
                 }
             })
 
-        project.tasks.named('jreleaserDownload', JReleaserDownloadTask,
+        project.tasks.named(JReleaserTemplateEvalTask.NAME, JReleaserTemplateEvalTask,
+            new Action<JReleaserTemplateEvalTask>() {
+                @Override
+                void execute(JReleaserTemplateEvalTask t) {
+                    t.jlogger.set(loggerProvider)
+                    t.usesService(loggerProvider)
+                }
+            })
+
+        project.tasks.named(JReleaserDownloadTask.NAME, JReleaserDownloadTask,
             new Action<JReleaserDownloadTask>() {
                 @Override
                 void execute(JReleaserDownloadTask t) {
@@ -128,7 +138,7 @@ class JReleaserProjectConfigurer {
                 }
             })
 
-        project.tasks.named('jreleaserAssemble', JReleaserAssembleTask,
+        project.tasks.named(JReleaserAssembleTask.NAME, JReleaserAssembleTask,
             new Action<JReleaserAssembleTask>() {
                 @Override
                 void execute(JReleaserAssembleTask t) {
@@ -141,7 +151,7 @@ class JReleaserProjectConfigurer {
                 }
             })
 
-        project.tasks.named('jreleaserChangelog', JReleaserChangelogTask,
+        project.tasks.named(JReleaserChangelogTask.NAME, JReleaserChangelogTask,
             new Action<JReleaserChangelogTask>() {
                 @Override
                 void execute(JReleaserChangelogTask t) {
@@ -154,7 +164,7 @@ class JReleaserProjectConfigurer {
                 }
             })
 
-        project.tasks.named('jreleaserChecksum', JReleaserChecksumTask,
+        project.tasks.named(JReleaserChecksumTask.NAME, JReleaserChecksumTask,
             new Action<JReleaserChecksumTask>() {
                 @Override
                 void execute(JReleaserChecksumTask t) {
@@ -165,12 +175,12 @@ class JReleaserProjectConfigurer {
                     t.jlogger.set(loggerProvider)
                     t.usesService(loggerProvider)
                     if (hasDistributionPlugin) {
-                        t.dependsOn('assembleDist')
+                        t.dependsOn(ASSEMBLE_DIST_TASK_NAME)
                     }
                 }
             })
 
-        project.tasks.named('jreleaserSign', JReleaserSignTask,
+        project.tasks.named(JReleaserSignTask.NAME, JReleaserSignTask,
             new Action<JReleaserSignTask>() {
                 @Override
                 void execute(JReleaserSignTask t) {
@@ -181,12 +191,12 @@ class JReleaserProjectConfigurer {
                     t.jlogger.set(loggerProvider)
                     t.usesService(loggerProvider)
                     if (hasDistributionPlugin) {
-                        t.dependsOn('assembleDist')
+                        t.dependsOn(ASSEMBLE_DIST_TASK_NAME)
                     }
                 }
             })
 
-        project.tasks.named('jreleaserDeploy', JReleaserDeployTask,
+        project.tasks.named(JReleaserDeployTask.NAME, JReleaserDeployTask,
             new Action<JReleaserDeployTask>() {
                 @Override
                 void execute(JReleaserDeployTask t) {
@@ -199,7 +209,7 @@ class JReleaserProjectConfigurer {
                 }
             })
 
-        project.tasks.named('jreleaserUpload', JReleaserUploadTask,
+        project.tasks.named(JReleaserUploadTask.NAME, JReleaserUploadTask,
             new Action<JReleaserUploadTask>() {
                 @Override
                 void execute(JReleaserUploadTask t) {
@@ -210,12 +220,12 @@ class JReleaserProjectConfigurer {
                     t.jlogger.set(loggerProvider)
                     t.usesService(loggerProvider)
                     if (hasDistributionPlugin) {
-                        t.dependsOn('assembleDist')
+                        t.dependsOn(ASSEMBLE_DIST_TASK_NAME)
                     }
                 }
             })
 
-        project.tasks.named('jreleaserRelease', JReleaserReleaseTask,
+        project.tasks.named(JReleaserReleaseTask.NAME, JReleaserReleaseTask,
             new Action<JReleaserReleaseTask>() {
                 @Override
                 void execute(JReleaserReleaseTask t) {
@@ -226,12 +236,12 @@ class JReleaserProjectConfigurer {
                     t.jlogger.set(loggerProvider)
                     t.usesService(loggerProvider)
                     if (hasDistributionPlugin) {
-                        t.dependsOn('assembleDist')
+                        t.dependsOn(ASSEMBLE_DIST_TASK_NAME)
                     }
                 }
             })
 
-        project.tasks.named('jreleaserAutoConfigRelease', JReleaseAutoConfigReleaseTask,
+        project.tasks.named(JReleaseAutoConfigReleaseTask.NAME, JReleaseAutoConfigReleaseTask,
             new Action<JReleaseAutoConfigReleaseTask>() {
                 @Override
                 void execute(JReleaseAutoConfigReleaseTask t) {
@@ -243,7 +253,7 @@ class JReleaserProjectConfigurer {
                 }
             })
 
-        project.tasks.named('jreleaserPrepare', JReleaserPrepareTask,
+        project.tasks.named(JReleaserPrepareTask.NAME, JReleaserPrepareTask,
             new Action<JReleaserPrepareTask>() {
                 @Override
                 void execute(JReleaserPrepareTask t) {
@@ -254,12 +264,12 @@ class JReleaserProjectConfigurer {
                     t.jlogger.set(loggerProvider)
                     t.usesService(loggerProvider)
                     if (hasDistributionPlugin) {
-                        t.dependsOn('assembleDist')
+                        t.dependsOn(ASSEMBLE_DIST_TASK_NAME)
                     }
                 }
             })
 
-        project.tasks.named('jreleaserPackage', JReleaserPackageTask,
+        project.tasks.named(JReleaserPackageTask.NAME, JReleaserPackageTask,
             new Action<JReleaserPackageTask>() {
                 @Override
                 void execute(JReleaserPackageTask t) {
@@ -270,12 +280,12 @@ class JReleaserProjectConfigurer {
                     t.jlogger.set(loggerProvider)
                     t.usesService(loggerProvider)
                     if (hasDistributionPlugin) {
-                        t.dependsOn('assembleDist')
+                        t.dependsOn(ASSEMBLE_DIST_TASK_NAME)
                     }
                 }
             })
 
-        project.tasks.named('jreleaserPublish', JReleaserPublishTask,
+        project.tasks.named(JReleaserPublishTask.NAME, JReleaserPublishTask,
             new Action<JReleaserPublishTask>() {
                 @Override
                 void execute(JReleaserPublishTask t) {
@@ -286,12 +296,12 @@ class JReleaserProjectConfigurer {
                     t.jlogger.set(loggerProvider)
                     t.usesService(loggerProvider)
                     if (hasDistributionPlugin) {
-                        t.dependsOn('assembleDist')
+                        t.dependsOn(ASSEMBLE_DIST_TASK_NAME)
                     }
                 }
             })
 
-        project.tasks.named('jreleaserAnnounce', JReleaserAnnounceTask,
+        project.tasks.named(JReleaserAnnounceTask.NAME, JReleaserAnnounceTask,
             new Action<JReleaserAnnounceTask>() {
                 @Override
                 void execute(JReleaserAnnounceTask t) {
@@ -302,12 +312,12 @@ class JReleaserProjectConfigurer {
                     t.jlogger.set(loggerProvider)
                     t.usesService(loggerProvider)
                     if (hasDistributionPlugin) {
-                        t.dependsOn('assembleDist')
+                        t.dependsOn(ASSEMBLE_DIST_TASK_NAME)
                     }
                 }
             })
 
-        project.tasks.named('jreleaserFullRelease', JReleaserFullReleaseTask,
+        project.tasks.named(JReleaserFullReleaseTask.NAME, JReleaserFullReleaseTask,
             new Action<JReleaserFullReleaseTask>() {
                 @Override
                 void execute(JReleaserFullReleaseTask t) {
@@ -318,12 +328,12 @@ class JReleaserProjectConfigurer {
                     t.jlogger.set(loggerProvider)
                     t.usesService(loggerProvider)
                     if (hasDistributionPlugin) {
-                        t.dependsOn('assembleDist')
+                        t.dependsOn(ASSEMBLE_DIST_TASK_NAME)
                     }
                 }
             })
 
-        project.tasks.named('jreleaserInit', JReleaserInitTask,
+        project.tasks.named(JReleaserInitTask.NAME, JReleaserInitTask,
             new Action<JReleaserInitTask>() {
                 @Override
                 void execute(JReleaserInitTask t) {

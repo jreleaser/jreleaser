@@ -17,32 +17,18 @@
  */
 package org.jreleaser.cli;
 
-import org.jreleaser.model.api.JReleaserContext.Mode;
-import org.jreleaser.model.internal.JReleaserContext;
-import org.jreleaser.workflow.Workflows;
-import picocli.CommandLine;
+import java.io.PrintWriter;
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 1.5.0
  */
-@CommandLine.Command(name = "changelog")
-public class Changelog extends AbstractModelCommand<Main> {
-    @CommandLine.Option(names = {"--dry-run"})
-    Boolean dryrun;
+public interface IO {
+    PrintWriter getOut();
 
-    @Override
-    protected void doExecute(JReleaserContext context) {
-        Workflows.changelog(context).execute();
-    }
+    void setOut(PrintWriter out);
 
-    @Override
-    protected Boolean dryrun() {
-        return dryrun;
-    }
+    PrintWriter getErr();
 
-    @Override
-    protected Mode getMode() {
-        return Mode.CHANGELOG;
-    }
+    void setErr(PrintWriter err);
 }

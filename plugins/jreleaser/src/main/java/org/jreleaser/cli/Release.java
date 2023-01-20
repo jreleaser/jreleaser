@@ -33,7 +33,7 @@ import java.util.Set;
  * @since 0.1.0
  */
 @CommandLine.Command(name = "release")
-public class Release extends AbstractPlatformAwareModelCommand {
+public class Release extends AbstractPlatformAwareModelCommand<Main> {
     @CommandLine.Option(names = {"--dry-run"})
     Boolean dryrun;
 
@@ -355,7 +355,7 @@ public class Release extends AbstractPlatformAwareModelCommand {
     private HaltExecutionException halt(String message) throws HaltExecutionException {
         spec.commandLine().getErr()
             .println(spec.commandLine().getColorScheme().errorText(message));
-        spec.commandLine().usage(parent.out);
+        spec.commandLine().usage(parent().getOut());
         throw new HaltExecutionException();
     }
 }
