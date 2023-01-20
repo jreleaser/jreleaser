@@ -203,17 +203,8 @@ public final class Validator {
         if (isBlank(tap.getTagName()) && isNotBlank(parentTap.getTagName())) {
             tap.setTagName(parentTap.getTagName());
         }
-        if (isBlank(tap.getBranch()) && isNotBlank(parentTap.getBranch())) {
-            tap.setBranch(parentTap.getBranch());
-        }
         if (isBlank(tap.getName()) && isNotBlank(parentTap.getName())) {
             tap.setName(parentTap.getName());
-        }
-        if (isBlank(tap.getUsername()) && isNotBlank(parentTap.getUsername())) {
-            tap.setUsername(parentTap.getUsername());
-        }
-        if (isBlank(tap.getToken()) && isNotBlank(parentTap.getToken())) {
-            tap.setToken(parentTap.getToken());
         }
 
         BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
@@ -223,21 +214,21 @@ public final class Validator {
                 Env.toVar(tap.getBasename() + "_" + service.getServiceName()) + "_USERNAME",
                 "distributions." + distribution.getName() + "." + property + ".username",
                 tap.getUsername(),
-                service.getUsername()));
+                parentTap.getUsername()));
 
         tap.setToken(
             checkProperty(context,
                 Env.toVar(tap.getBasename() + "_" + service.getServiceName()) + "_TOKEN",
                 "distributions." + distribution.getName() + "." + property + ".token",
                 tap.getToken(),
-                service.getToken()));
+                parentTap.getToken()));
 
         tap.setBranch(
             checkProperty(context,
                 Env.toVar(tap.getBasename() + "_" + service.getServiceName()) + "_BRANCH",
                 "distributions." + distribution.getName() + "." + property + ".branch",
                 tap.getBranch(),
-                "HEAD"));
+                parentTap.getBranch()));
     }
 
     public static void validateGlobs(Collection<Glob> globs, String property, Errors errors) {
