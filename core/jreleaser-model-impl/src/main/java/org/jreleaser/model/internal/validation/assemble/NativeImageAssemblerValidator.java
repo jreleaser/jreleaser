@@ -18,7 +18,6 @@
 package org.jreleaser.model.internal.validation.assemble;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.Active;
 import org.jreleaser.model.Archive;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
@@ -34,8 +33,10 @@ import java.util.Optional;
 
 import static java.util.stream.Collectors.groupingBy;
 import static org.jreleaser.model.internal.validation.common.TemplateValidator.validateTemplate;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateFileSet;
 import static org.jreleaser.model.internal.validation.common.Validator.validateGlobs;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -63,9 +64,9 @@ public final class NativeImageAssemblerValidator {
     private static void validateNativeImage(JReleaserContext context, Mode mode, NativeImageAssembler nativeImage, Errors errors) {
         context.getLogger().debug("assemble.nativeImage.{}", nativeImage.getName());
 
-        if (!nativeImage.isActiveSet()) {
-            nativeImage.setActive(Active.NEVER);
-        }
+        resolveActivatable(nativeImage,
+            listOf("assemble.native.image." + nativeImage.getName(), "assemble.native.image"),
+            "NEVER");
         if (!nativeImage.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
@@ -182,9 +183,9 @@ public final class NativeImageAssemblerValidator {
         nativeImage.getComponents().remove("native-image");
 
         NativeImageAssembler.Upx upx = nativeImage.getUpx();
-        if (!upx.isActiveSet()) {
-            upx.setActive(Active.NEVER);
-        }
+        resolveActivatable(upx,
+            listOf("assemble.native.image." + nativeImage.getName() + ".upx", "assemble.native.image.upx"),
+            "NEVER");
         if (!upx.resolveEnabled(context.getModel().getProject())) return;
 
         if (isBlank(upx.getVersion())) {

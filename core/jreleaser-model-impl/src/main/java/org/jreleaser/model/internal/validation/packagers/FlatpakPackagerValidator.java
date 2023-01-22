@@ -36,6 +36,7 @@ import static org.jreleaser.model.Constants.SKIP_OPENJDK;
 import static org.jreleaser.model.api.packagers.FlatpakPackager.SKIP_FLATPAK;
 import static org.jreleaser.model.internal.validation.common.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.internal.validation.common.TemplateValidator.validateTemplate;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateCommitAuthor;
 import static org.jreleaser.model.internal.validation.common.Validator.validateContinueOnError;
 import static org.jreleaser.model.internal.validation.common.Validator.validateIcons;
@@ -58,13 +59,11 @@ public final class FlatpakPackagerValidator {
     }
 
     public static void validateFlatpak(JReleaserContext context, Distribution distribution, FlatpakPackager packager, Errors errors) {
-        context.getLogger().debug("distribution.{}.flatpak", distribution.getName());
+        context.getLogger().debug("distribution.{}." + packager.getType(), distribution.getName());
         JReleaserModel model = context.getModel();
         FlatpakPackager parentPackager = model.getPackagers().getFlatpak();
 
-        if (!packager.isActiveSet() && parentPackager.isActiveSet()) {
-            packager.setActive(parentPackager.getActive());
-        }
+        resolveActivatable(packager, "distributions." + distribution.getName() + "." + packager.getType(), parentPackager);
         if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) {
             context.getLogger().debug(RB.$("validation.disabled"));
             packager.disable();
@@ -192,8 +191,8 @@ public final class FlatpakPackagerValidator {
 
         validateCommitAuthor(packager, parentPackager);
         FlatpakPackager.FlatpakRepository repository = packager.getRepository();
-        repository.resolveEnabled(model.getProject());
         validateTap(context, distribution, repository, parentPackager.getRepository(), "flatpak.repository");
+        repository.resolveEnabled(model.getProject());
         validateTemplate(context, distribution, packager, parentPackager, errors);
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);

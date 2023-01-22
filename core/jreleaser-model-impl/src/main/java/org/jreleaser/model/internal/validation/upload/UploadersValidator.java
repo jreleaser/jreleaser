@@ -23,6 +23,7 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.upload.Upload;
 import org.jreleaser.util.Errors;
 
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.upload.ArtifactoryUploaderValidator.validateArtifactory;
 import static org.jreleaser.model.internal.validation.upload.FtpUploaderValidator.validateFtpUploader;
 import static org.jreleaser.model.internal.validation.upload.GiteaUploaderValidator.validateGiteaUploader;
@@ -56,6 +57,7 @@ public final class UploadersValidator {
 
         if (mode.validateConfig()) {
             boolean activeSet = upload.isActiveSet();
+            resolveActivatable(upload, "upload", "ALWAYS");
             upload.resolveEnabled(context.getModel().getProject());
 
             if (upload.isEnabled()) {

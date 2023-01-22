@@ -19,7 +19,6 @@ package org.jreleaser.model.internal.validation.common;
 
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Ssh;
-import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
@@ -34,16 +33,20 @@ public final class SshValidator {
         // noop
     }
 
-    public static void validateSsh(JReleaserContext context, Ssh ssh, String name,
-                                   String envPrefix, String propPrefix, Errors errors) {
+    public static void validateSsh(JReleaserContext context, Ssh ssh, String type,
+                                   String name, String prefix, Errors errors) {
         ssh.setUsername(
             checkProperty(context,
                 listOf(
-                    envPrefix + "_" + Env.toVar(name) + "_USERNAME",
-                    "SSH_" + Env.toVar(name) + "_USERNAME",
-                    envPrefix + "_USERNAME",
-                    "SSH_USERNAME"),
-                propPrefix + ".username",
+                    prefix + type + "." + name + ".username",
+                    prefix + "ssh." + name + ".username",
+                    prefix + type + ".username",
+                    prefix + "ssh" + ".username",
+                    type + "." + name + ".username",
+                    "ssh." + name + ".username",
+                    type + ".username",
+                    "ssh.username"),
+                prefix + type + "." + name + ".username",
                 ssh.getUsername(),
                 errors,
                 context.isDryrun()));
@@ -51,11 +54,15 @@ public final class SshValidator {
         ssh.setPassword(
             checkProperty(context,
                 listOf(
-                    envPrefix + "_" + Env.toVar(name) + "_PASSWORD",
-                    "SSH_" + Env.toVar(name) + "_PASSWORD",
-                    envPrefix + "_PASSWORD",
-                    "SSH_PASSWORD"),
-                propPrefix + ".password",
+                    prefix + type + "." + name + ".password",
+                    prefix + "ssh." + name + ".password",
+                    prefix + type + ".password",
+                    prefix + "ssh" + ".password",
+                    type + "." + name + ".password",
+                    "ssh." + name + ".password",
+                    type + ".password",
+                    "ssh.password"),
+                prefix + type + "." + name + ".password",
                 ssh.getPassword(),
                 errors,
                 context.isDryrun()));
@@ -63,11 +70,15 @@ public final class SshValidator {
         ssh.setHost(
             checkProperty(context,
                 listOf(
-                    envPrefix + "_" + Env.toVar(name) + "_HOST",
-                    "SSH_" + Env.toVar(name) + "_HOST",
-                    envPrefix + "_HOST",
-                    "SSH_HOST"),
-                propPrefix + ".host",
+                    prefix + type + "." + name + ".host",
+                    prefix + "ssh." + name + ".host",
+                    prefix + type + ".host",
+                    prefix + "ssh" + ".host",
+                    type + "." + name + ".host",
+                    "ssh." + name + ".host",
+                    type + ".host",
+                    "ssh.host"),
+                prefix + type + "." + name + ".host",
                 ssh.getHost(),
                 errors,
                 context.isDryrun()));
@@ -75,11 +86,15 @@ public final class SshValidator {
         ssh.setPort(
             checkProperty(context,
                 listOf(
-                    envPrefix + "_" + Env.toVar(name) + "_PORT",
-                    "SSH_" + Env.toVar(name) + "_PORT",
-                    envPrefix + "_PORT",
-                    "SSH_PORT"),
-                propPrefix + ".port",
+                    prefix + type + "." + name + ".port",
+                    prefix + "ssh." + name + ".port",
+                    prefix + type + ".port",
+                    prefix + "ssh" + ".port",
+                    type + "." + name + ".port",
+                    "ssh." + name + ".port",
+                    type + ".port",
+                    "ssh.port"),
+                prefix + type + "." + name + ".port",
                 ssh.getPort(),
                 errors,
                 context.isDryrun()));
@@ -87,11 +102,15 @@ public final class SshValidator {
         ssh.setPublicKey(
             checkProperty(context,
                 listOf(
-                    envPrefix + "_" + Env.toVar(name) + "_PUBLIC_KEY",
-                    "SSH_" + Env.toVar(name) + "_PUBLIC_KEY",
-                    envPrefix + "_PUBLIC_KEY",
-                    "SSH_PUBLIC_KEY"),
-                propPrefix + ".publicKey",
+                    prefix + type + "." + name + ".public.key",
+                    prefix + "ssh." + name + ".public.key",
+                    prefix + type + ".public.key",
+                    prefix + "ssh" + ".public.key",
+                    type + "." + name + ".public.key",
+                    "ssh." + name + ".public.key",
+                    type + ".public.key",
+                    "ssh.public.key"),
+                prefix + type + "." + name + ".publicKey",
                 ssh.getPublicKey(),
                 errors,
                 true));
@@ -99,11 +118,15 @@ public final class SshValidator {
         ssh.setPrivateKey(
             checkProperty(context,
                 listOf(
-                    envPrefix + "_" + Env.toVar(name) + "_PRIVATE_KEY",
-                    "SSH_" + Env.toVar(name) + "_PRIVATE_KEY",
-                    envPrefix + "_PRIVATE_KEY",
-                    "SSH_PRIVATE_KEY"),
-                propPrefix + ".privateKey",
+                    prefix + type + "." + name + ".private.key",
+                    prefix + "ssh." + name + ".private.key",
+                    prefix + type + ".private.key",
+                    prefix + "ssh" + ".private.key",
+                    type + "." + name + ".private.key",
+                    "ssh." + name + ".private.key",
+                    type + ".private.key",
+                    "ssh.private.key"),
+                prefix + type + "." + name + ".privateKey",
                 ssh.getPrivateKey(),
                 errors,
                 true));
@@ -111,11 +134,15 @@ public final class SshValidator {
         ssh.setPassphrase(
             checkProperty(context,
                 listOf(
-                    envPrefix + "_" + Env.toVar(name) + "_PASSPHRASE",
-                    "SSH_" + Env.toVar(name) + "_PASSPHRASE",
-                    envPrefix + "_PASSPHRASE",
-                    "SSH_PASSPHRASE"),
-                propPrefix + ".passphrase",
+                    prefix + type + "." + name + ".passphrase",
+                    prefix + "ssh." + name + ".passphrase",
+                    prefix + type + ".passphrase",
+                    prefix + "ssh" + ".passphrase",
+                    type + "." + name + ".passphrase",
+                    "ssh." + name + ".passphrase",
+                    type + ".passphrase",
+                    "ssh.passphrase"),
+                prefix + type + "." + name + ".passphrase",
                 ssh.getPassphrase(),
                 errors,
                 true));
@@ -123,11 +150,15 @@ public final class SshValidator {
         ssh.setFingerprint(
             checkProperty(context,
                 listOf(
-                    envPrefix + "_" + Env.toVar(name) + "_FINGERPRINT",
-                    "SSH_" + Env.toVar(name) + "_FINGERPRINT",
-                    envPrefix + "_FINGERPRINT",
-                    "SSH_FINGERPRINT"),
-                propPrefix + ".fingerprint",
+                    prefix + type + "." + name + ".fingerprint",
+                    prefix + "ssh." + name + ".fingerprint",
+                    prefix + type + ".fingerprint",
+                    prefix + "ssh" + ".fingerprint",
+                    type + "." + name + ".fingerprint",
+                    "ssh." + name + ".fingerprint",
+                    type + ".fingerprint",
+                    "ssh.fingerprint"),
+                prefix + type + "." + name + ".fingerprint",
                 ssh.getFingerprint(),
                 errors,
                 true));

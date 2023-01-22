@@ -42,11 +42,13 @@ import static org.jreleaser.model.api.packagers.ChocolateyPackager.DEFAULT_CHOCO
 import static org.jreleaser.model.internal.validation.common.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.internal.validation.common.TemplateValidator.validateTemplate;
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateCommitAuthor;
 import static org.jreleaser.model.internal.validation.common.Validator.validateContinueOnError;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTap;
 import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -59,13 +61,11 @@ public final class ChocolateyPackagerValidator {
     }
 
     public static void validateChocolatey(JReleaserContext context, Distribution distribution, ChocolateyPackager packager, Errors errors) {
-        context.getLogger().debug("distribution.{}.chocolatey", distribution.getName());
+        context.getLogger().debug("distribution.{}." + packager.getType(), distribution.getName());
         JReleaserModel model = context.getModel();
         ChocolateyPackager parentPackager = model.getPackagers().getChocolatey();
 
-        if (!packager.isActiveSet() && parentPackager.isActiveSet()) {
-            packager.setActive(parentPackager.getActive());
-        }
+        resolveActivatable(packager, "distributions." + distribution.getName() + "." + packager.getType(), parentPackager);
         Project project = context.getModel().getProject();
         if (!packager.resolveEnabled(project, distribution)) {
             context.getLogger().debug(RB.$("validation.disabled"));
@@ -99,8 +99,8 @@ public final class ChocolateyPackagerValidator {
 
         validateCommitAuthor(packager, parentPackager);
         ChocolateyPackager.ChocolateyRepository bucket = packager.getBucket();
-        bucket.resolveEnabled(model.getProject());
         validateTap(context, distribution, bucket, parentPackager.getBucket(), "chocolatey.bucket");
+        bucket.resolveEnabled(model.getProject());
         validateTemplate(context, distribution, packager, parentPackager, errors);
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);
@@ -154,8 +154,10 @@ public final class ChocolateyPackagerValidator {
 
             packager.setApiKey(
                 checkProperty(context,
-                    CHOCOLATEY_API_KEY,
-                    "distributions." + distribution.getName() + ".chocolatey.internal.mutableKey",
+                    listOf(
+                        "distributions." + distribution.getName() + ".chocolatey.api.key",
+                        CHOCOLATEY_API_KEY),
+                    "distributions." + distribution.getName() + ".chocolatey.apiKey",
                     packager.getApiKey(),
                     errors,
                     context.isDryrun()));

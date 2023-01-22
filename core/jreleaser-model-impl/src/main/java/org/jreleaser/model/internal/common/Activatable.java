@@ -18,6 +18,7 @@
 package org.jreleaser.model.internal.common;
 
 import org.jreleaser.model.Active;
+import org.jreleaser.model.internal.project.Project;
 
 /**
  * @author Andres Almiray
@@ -35,4 +36,6 @@ public interface Activatable {
     boolean isEnabled();
 
     void disable();
+
+    boolean resolveEnabled(Project project);
 }

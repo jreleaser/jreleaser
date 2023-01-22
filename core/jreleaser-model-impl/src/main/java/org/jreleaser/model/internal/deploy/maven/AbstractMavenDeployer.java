@@ -102,10 +102,7 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
 
     @Override
     public boolean resolveEnabled(Project project) {
-        if (null == active) {
-            active = Active.NEVER;
-        }
-        enabled = active.check(project);
+        enabled = null != active && active.check(project);
         if (project.isSnapshot() && !isSnapshotAllowed()) {
             enabled = false;
         }

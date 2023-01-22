@@ -26,7 +26,9 @@ import java.nio.file.Files;
 
 import static org.jreleaser.model.api.announce.MattermostAnnouncer.MATTERMOST_WEBHOOK;
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -43,6 +45,7 @@ public final class MattermostAnnouncerValidator {
 
     public static void validateMattermost(JReleaserContext context, MattermostAnnouncer mattermost, Errors errors) {
         context.getLogger().debug("announce.mattermost");
+        resolveActivatable(mattermost, "announce.mattermost", "NEVER");
         if (!mattermost.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
@@ -50,7 +53,9 @@ public final class MattermostAnnouncerValidator {
 
         mattermost.setWebhook(
             checkProperty(context,
-                MATTERMOST_WEBHOOK,
+                listOf(
+                    "announce.mattermost.webhook",
+                    MATTERMOST_WEBHOOK),
                 "announce.mattermost.webhook",
                 mattermost.getWebhook(),
                 errors,

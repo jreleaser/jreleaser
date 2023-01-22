@@ -18,7 +18,6 @@
 package org.jreleaser.model.internal.validation.upload;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.Active;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.upload.ScpUploader;
@@ -27,7 +26,9 @@ import org.jreleaser.util.Errors;
 import java.util.Map;
 
 import static org.jreleaser.model.internal.validation.common.SshValidator.validateSsh;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -54,9 +55,9 @@ public final class ScpUploaderValidator {
     private static void validateScpUploader(JReleaserContext context, ScpUploader scp, Errors errors) {
         context.getLogger().debug("upload.scp.{}", scp.getName());
 
-        if (!scp.isActiveSet()) {
-            scp.setActive(Active.NEVER);
-        }
+        resolveActivatable(scp,
+            listOf("upload.scp." + scp.getName(), "upload.scp"),
+            "NEVER");
         if (!scp.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
@@ -69,9 +70,9 @@ public final class ScpUploaderValidator {
             return;
         }
 
-        validateSsh(context, scp, scp.getName(), "SCP", "upload." + scp.getType() + "." + scp.getName(), errors);
+        validateSsh(context, scp, scp.getType(), scp.getName(), "upload.", errors);
         if (isBlank(scp.getPath())) {
-            errors.configuration(RB.$("validation_must_not_be_blank", "scp." + scp.getName() + ".path"));
+            errors.configuration(RB.$("validation_must_not_be_blank", "upload.scp." + scp.getName() + ".path"));
         }
         validateTimeout(scp);
     }

@@ -20,14 +20,14 @@ package org.jreleaser.model.internal.validation.deploy.maven;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.deploy.maven.GiteaMavenDeployer;
-import org.jreleaser.util.Env;
+import org.jreleaser.model.internal.release.BaseReleaser;
 import org.jreleaser.util.Errors;
 
-import java.util.Locale;
 import java.util.Map;
 
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
 import static org.jreleaser.model.internal.validation.deploy.maven.MavenDeployersValidator.validateMavenDeployer;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -55,15 +55,33 @@ public final class GiteaMavenDeployerValidator {
         validateMavenDeployer(context, mavenDeployer, errors);
         if (!mavenDeployer.isEnabled()) return;
 
-        String baseEnvKey = mavenDeployer.getType().toUpperCase(Locale.ENGLISH);
+        BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
 
         mavenDeployer.setUsername(
             checkProperty(context,
-                baseEnvKey + "_" + Env.toVar(mavenDeployer.getName()) + "_USERNAME",
-                "maven.deploy." + mavenDeployer.getType() + ".username",
+                listOf(
+                    "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".username",
+                    "deploy.maven." + mavenDeployer.getType() + ".username",
+                    mavenDeployer.getType() + "." + mavenDeployer.getName() + ".username",
+                    mavenDeployer.getType() + ".username"),
+                "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".username",
                 mavenDeployer.getUsername(),
-                errors,
-                true));
+                service.getUsername()));
+
+        mavenDeployer.setPassword(
+            checkProperty(context,
+                listOf(
+                    "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".password",
+                    "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".token",
+                    "deploy.maven." + mavenDeployer.getType() + ".password",
+                    "deploy.maven." + mavenDeployer.getType() + ".token",
+                    mavenDeployer.getType() + "." + mavenDeployer.getName() + ".password",
+                    mavenDeployer.getType() + "." + mavenDeployer.getName() + ".token",
+                    mavenDeployer.getType() + ".password",
+                    mavenDeployer.getType() + ".token"),
+                "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".password",
+                mavenDeployer.getPassword(),
+                service.getToken()));
 
         if (isBlank(mavenDeployer.getUsername())) {
             mavenDeployer.setUsername(context.getModel().getRelease().getReleaser().getUsername());

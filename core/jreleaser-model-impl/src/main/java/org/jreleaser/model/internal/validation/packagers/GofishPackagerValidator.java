@@ -33,6 +33,7 @@ import static java.util.stream.Collectors.toList;
 import static org.jreleaser.model.JReleaserOutput.nag;
 import static org.jreleaser.model.internal.validation.common.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.internal.validation.common.TemplateValidator.validateTemplate;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateCommitAuthor;
 import static org.jreleaser.model.internal.validation.common.Validator.validateContinueOnError;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTap;
@@ -49,13 +50,11 @@ public final class GofishPackagerValidator {
     }
 
     public static void validateGofish(JReleaserContext context, Distribution distribution, GofishPackager packager, Errors errors) {
-        context.getLogger().debug("distribution.{}.gofish", distribution.getName());
+        context.getLogger().debug("distribution.{}." + packager.getType(), distribution.getName());
         JReleaserModel model = context.getModel();
         GofishPackager parentPackager = model.getPackagers().getGofish();
 
-        if (!packager.isActiveSet() && parentPackager.isActiveSet()) {
-            packager.setActive(parentPackager.getActive());
-        }
+        resolveActivatable(packager, "distributions." + distribution.getName() + "." + packager.getType(), parentPackager);
         if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) {
             context.getLogger().debug(RB.$("validation.disabled"));
             packager.disable();
@@ -94,8 +93,8 @@ public final class GofishPackagerValidator {
 
         validateCommitAuthor(packager, parentPackager);
         GofishPackager.GofishRepository repository = packager.getRepository();
-        repository.resolveEnabled(model.getProject());
         validateTap(context, distribution, repository, parentPackager.getRepository(), "gofish.repository");
+        repository.resolveEnabled(model.getProject());
         validateTemplate(context, distribution, packager, parentPackager, errors);
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);

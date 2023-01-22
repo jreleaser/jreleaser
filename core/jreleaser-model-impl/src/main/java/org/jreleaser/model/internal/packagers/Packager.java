@@ -24,6 +24,7 @@ import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.common.ExtraProperties;
 import org.jreleaser.model.internal.distributions.Distribution;
+import org.jreleaser.model.internal.project.Project;
 
 import java.util.List;
 import java.util.Set;
@@ -62,4 +63,6 @@ public interface Packager<A extends org.jreleaser.model.api.packagers.Packager> 
     void fail();
 
     A asImmutable();
+
+    boolean resolveEnabled(Project project, Distribution distribution);
 }

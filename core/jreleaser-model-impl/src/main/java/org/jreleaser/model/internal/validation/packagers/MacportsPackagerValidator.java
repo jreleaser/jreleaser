@@ -35,6 +35,7 @@ import static java.util.stream.Collectors.toList;
 import static org.jreleaser.model.api.packagers.MacportsPackager.APP_NAME;
 import static org.jreleaser.model.internal.validation.common.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.internal.validation.common.TemplateValidator.validateTemplate;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateCommitAuthor;
 import static org.jreleaser.model.internal.validation.common.Validator.validateContinueOnError;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTap;
@@ -51,13 +52,11 @@ public final class MacportsPackagerValidator {
     }
 
     public static void validateMacports(JReleaserContext context, Distribution distribution, MacportsPackager packager, Errors errors) {
-        context.getLogger().debug("distribution.{}.macports", distribution.getName());
+        context.getLogger().debug("distribution.{}." + packager.getType(), distribution.getName());
         JReleaserModel model = context.getModel();
         MacportsPackager parentPackager = model.getPackagers().getMacports();
 
-        if (!packager.isActiveSet() && parentPackager.isActiveSet()) {
-            packager.setActive(parentPackager.getActive());
-        }
+        resolveActivatable(packager, "distributions." + distribution.getName() + "." + packager.getType(), parentPackager);
         if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) {
             context.getLogger().debug(RB.$("validation.disabled"));
             packager.disable();
@@ -120,8 +119,8 @@ public final class MacportsPackagerValidator {
 
         validateCommitAuthor(packager, parentPackager);
         MacportsPackager.MacportsRepository repository = packager.getRepository();
-        repository.resolveEnabled(model.getProject());
         validateTap(context, distribution, repository, parentPackager.getRepository(), "macports.repository");
+        repository.resolveEnabled(model.getProject());
         validateTemplate(context, distribution, packager, parentPackager, errors);
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);

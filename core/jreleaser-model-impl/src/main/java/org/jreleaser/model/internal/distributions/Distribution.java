@@ -302,10 +302,7 @@ public final class Distribution extends Packagers<Distribution> implements Domai
     }
 
     public boolean resolveEnabled(Project project) {
-        if (null == active) {
-            active = Active.NEVER;
-        }
-        enabled = active.check(project);
+        enabled = null != active && active.check(project);
         return enabled;
     }
 

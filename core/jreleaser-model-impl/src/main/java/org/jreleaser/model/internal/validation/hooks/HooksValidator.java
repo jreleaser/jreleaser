@@ -22,6 +22,7 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.hooks.Hooks;
 import org.jreleaser.util.Errors;
 
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.hooks.CommandHooksValidator.validateCommandHooks;
 
 /**
@@ -40,6 +41,7 @@ public final class HooksValidator {
         validateCommandHooks(context, errors);
 
         boolean activeSet = hooks.isActiveSet();
+        resolveActivatable(hooks, "hooks", "ALWAYS");
         hooks.resolveEnabled(context.getModel().getProject());
 
         if (hooks.isEnabled()) {

@@ -26,7 +26,9 @@ import java.nio.file.Files;
 
 import static org.jreleaser.model.api.announce.GitterAnnouncer.GITTER_WEBHOOK;
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -43,6 +45,7 @@ public final class GitterAnnouncerValidator {
 
     public static void validateGitter(JReleaserContext context, GitterAnnouncer gitter, Errors errors) {
         context.getLogger().debug("announce.gitter");
+        resolveActivatable(gitter, "announce.gitter", "NEVER");
         if (!gitter.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
@@ -50,7 +53,9 @@ public final class GitterAnnouncerValidator {
 
         gitter.setWebhook(
             checkProperty(context,
-                GITTER_WEBHOOK,
+                listOf(
+                    "announce.gitter.webhook",
+                    GITTER_WEBHOOK),
                 "announce.gitter.webhook",
                 gitter.getWebhook(),
                 errors,

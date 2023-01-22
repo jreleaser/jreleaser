@@ -39,6 +39,7 @@ import static org.jreleaser.model.internal.validation.assemble.JlinkAssemblerVal
 import static org.jreleaser.model.internal.validation.assemble.JpackageAssemblerValidator.postValidateJpackage;
 import static org.jreleaser.model.internal.validation.assemble.JpackageAssemblerValidator.validateJpackage;
 import static org.jreleaser.model.internal.validation.assemble.NativeImageAssemblerValidator.validateNativeImage;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 
 /**
  * @author Andres Almiray
@@ -95,6 +96,7 @@ public final class AssemblersValidator {
         });
 
         boolean activeSet = assemble.isActiveSet();
+        resolveActivatable(assemble, "assemble", "ALWAYS");
         assemble.resolveEnabled(context.getModel().getProject());
 
         if (assemble.isEnabled()) {

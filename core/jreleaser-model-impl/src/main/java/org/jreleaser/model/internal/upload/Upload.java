@@ -27,7 +27,6 @@ import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.common.ExtraProperties;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.project.Project;
-import org.jreleaser.util.Env;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -210,10 +209,7 @@ public final class Upload extends AbstractModelObject<Upload> implements Domain,
     }
 
     public boolean resolveEnabled(Project project) {
-        if (null == active) {
-            setActive(Env.resolveOrDefault("upload.active", "", "ALWAYS"));
-        }
-        enabled = active.check(project);
+        enabled = null != active && active.check(project);
         return enabled;
     }
 

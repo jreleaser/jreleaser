@@ -83,10 +83,7 @@ public abstract class AbstractAnnouncer<S extends AbstractAnnouncer<S, A>, A ext
     }
 
     public boolean resolveEnabled(Project project) {
-        if (null == active) {
-            active = Active.NEVER;
-        }
-        enabled = active.check(project);
+        enabled = null != active && active.check(project);
         if (project.isSnapshot() && !isSnapshotSupported()) {
             enabled = false;
         }

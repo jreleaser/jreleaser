@@ -33,6 +33,7 @@ import static java.util.stream.Collectors.toList;
 import static org.jreleaser.model.api.checksum.Checksum.INDIVIDUAL_CHECKSUM;
 import static org.jreleaser.model.internal.validation.common.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.internal.validation.common.TemplateValidator.validateTemplate;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateCommitAuthor;
 import static org.jreleaser.model.internal.validation.common.Validator.validateContinueOnError;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTap;
@@ -49,13 +50,11 @@ public final class ScoopPackagerValidator {
     }
 
     public static void validateScoop(JReleaserContext context, Distribution distribution, ScoopPackager packager, Errors errors) {
-        context.getLogger().debug("distribution.{}.scoop", distribution.getName());
+        context.getLogger().debug("distribution.{}." + packager.getType(), distribution.getName());
         JReleaserModel model = context.getModel();
         ScoopPackager parentPackager = model.getPackagers().getScoop();
 
-        if (!packager.isActiveSet() && parentPackager.isActiveSet()) {
-            packager.setActive(parentPackager.getActive());
-        }
+        resolveActivatable(packager, "distributions." + distribution.getName() + "." + packager.getType(), parentPackager);
         if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) {
             context.getLogger().debug(RB.$("validation.disabled"));
             packager.disable();
@@ -92,8 +91,8 @@ public final class ScoopPackagerValidator {
 
         validateCommitAuthor(packager, parentPackager);
         ScoopPackager.ScoopRepository bucket = packager.getBucket();
-        bucket.resolveEnabled(model.getProject());
         validateTap(context, distribution, bucket, parentPackager.getBucket(), "scoop.bucket");
+        bucket.resolveEnabled(model.getProject());
         validateTemplate(context, distribution, packager, parentPackager, errors);
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);

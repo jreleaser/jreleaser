@@ -18,12 +18,12 @@
 package org.jreleaser.model.internal.validation.hooks;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.hooks.CommandHook;
 import org.jreleaser.model.internal.hooks.CommandHooks;
 import org.jreleaser.util.Errors;
 
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -40,6 +40,7 @@ public final class CommandHooksValidator {
 
         CommandHooks hooks = context.getModel().getHooks().getCommand();
         boolean activeSet = hooks.isActiveSet();
+        resolveActivatable(hooks, "hooks.command", "ALWAYS");
         hooks.resolveEnabled(context.getModel().getProject());
 
         for (int i = 0; i < hooks.getBefore().size(); i++) {
@@ -67,9 +68,7 @@ public final class CommandHooksValidator {
     private static void validateCommandHook(JReleaserContext context, CommandHook hook, String type, int index, Errors errors) {
         context.getLogger().debug("hooks.command.{}[{}]", type, index);
 
-        if (!hook.isActiveSet()) {
-            hook.setActive(Active.ALWAYS);
-        }
+        resolveActivatable(hook, "hooks.command." + type + "." + index, "ALWAYS");
         if (!hook.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;

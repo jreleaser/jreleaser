@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
 import static org.jreleaser.model.api.release.Releaser.KEY_SKIP_RELEASE_SIGNATURES;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.packagers.AppImagePackagerValidator.validateAppImage;
 import static org.jreleaser.model.internal.validation.packagers.AsdfPackagerValidator.validateAsdf;
 import static org.jreleaser.model.internal.validation.packagers.BrewPackagerValidator.postValidateBrew;
@@ -54,6 +55,7 @@ import static org.jreleaser.model.internal.validation.packagers.SdkmanPackagerVa
 import static org.jreleaser.model.internal.validation.packagers.SdkmanPackagerValidator.validateSdkman;
 import static org.jreleaser.model.internal.validation.packagers.SnapPackagerValidator.validateSnap;
 import static org.jreleaser.model.internal.validation.packagers.SpecPackagerValidator.validateSpec;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -95,9 +97,9 @@ public final class DistributionsValidator {
     private static void validateDistribution(JReleaserContext context, Distribution distribution, Errors errors) {
         context.getLogger().debug("distribution.{}", distribution.getName());
 
-        if (!distribution.isActiveSet()) {
-            distribution.setActive(Active.ALWAYS);
-        }
+        resolveActivatable(distribution,
+            listOf("distributions." + distribution.getName(), "distributions"),
+            "ALWAYS");
         if (!distribution.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;

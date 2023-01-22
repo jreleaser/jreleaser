@@ -28,10 +28,10 @@ import org.jreleaser.model.internal.packagers.SdkmanPackager;
 import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.internal.release.BaseReleaser;
 import org.jreleaser.model.internal.release.Releaser;
-import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateCommitAuthor;
 import static org.jreleaser.model.internal.validation.common.Validator.validateOwner;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
@@ -57,8 +57,6 @@ public final class PackagersValidator {
         Project project = model.getProject();
         Releaser<?> gitService = model.getRelease().getReleaser();
 
-        packagers.getAppImage().resolveEnabled(project);
-        packagers.getAppImage().getRepository().resolveEnabled(project);
         validatePackager(context,
             packagers.getAppImage(),
             packagers.getAppImage().getRepository()
@@ -73,29 +71,21 @@ public final class PackagersValidator {
             packagers.getAppImage().setDeveloperName(String.join(", ", project.getAuthors()));
         }
 
-        packagers.getAsdf().resolveEnabled(project);
-        packagers.getAsdf().getRepository().resolveEnabled(project);
         validatePackager(context,
             packagers.getAsdf(),
             packagers.getAsdf().getRepository()
         );
 
-        packagers.getBrew().resolveEnabled(project);
-        packagers.getBrew().getTap().resolveEnabled(project);
         validatePackager(context,
             packagers.getBrew(),
             packagers.getBrew().getTap()
         );
 
-        packagers.getChocolatey().resolveEnabled(project);
-        packagers.getChocolatey().getBucket().resolveEnabled(project);
         validatePackager(context,
             packagers.getChocolatey(),
             packagers.getChocolatey().getBucket()
         );
 
-        packagers.getDocker().resolveEnabled(project);
-        packagers.getDocker().getPackagerRepository().resolveEnabled(project);
         validatePackager(context,
             packagers.getDocker(),
             packagers.getDocker().getPackagerRepository()
@@ -105,8 +95,6 @@ public final class PackagersValidator {
             errors.configuration(RB.$("validation_packagers_docker_specs"));
         }
 
-        packagers.getFlatpak().resolveEnabled(project);
-        packagers.getFlatpak().getRepository().resolveEnabled(project);
         validatePackager(context,
             packagers.getFlatpak(),
             packagers.getFlatpak().getRepository()
@@ -121,8 +109,6 @@ public final class PackagersValidator {
             packagers.getFlatpak().setDeveloperName(String.join(", ", project.getAuthors()));
         }
 
-        packagers.getGofish().resolveEnabled(project);
-        packagers.getGofish().getRepository().resolveEnabled(project);
         validatePackager(context,
             packagers.getGofish(),
             packagers.getGofish().getRepository()
@@ -133,15 +119,11 @@ public final class PackagersValidator {
         }
         packagers.getGofish().getRepository().setTapName(gitService.getOwner() + "-fish-food");
 
-        packagers.getJbang().resolveEnabled(project);
-        packagers.getJbang().getCatalog().resolveEnabled(project);
         validatePackager(context,
             packagers.getJbang(),
             packagers.getJbang().getCatalog()
         );
 
-        packagers.getMacports().resolveEnabled(project);
-        packagers.getMacports().getRepository().resolveEnabled(project);
         validatePackager(context,
             packagers.getMacports(),
             packagers.getMacports().getRepository()
@@ -150,8 +132,6 @@ public final class PackagersValidator {
             packagers.getMacports().getMaintainers().addAll(project.getMaintainers());
         }
 
-        packagers.getScoop().resolveEnabled(project);
-        packagers.getScoop().getBucket().resolveEnabled(project);
         validatePackager(context,
             packagers.getScoop(),
             packagers.getScoop().getBucket()
@@ -162,15 +142,11 @@ public final class PackagersValidator {
         }
         packagers.getScoop().getBucket().setTapName("scoop-" + gitService.getOwner());
 
-        packagers.getSnap().resolveEnabled(project);
-        packagers.getSnap().getSnap().resolveEnabled(project);
         validatePackager(context,
             packagers.getSnap(),
             packagers.getSnap().getSnap()
         );
 
-        packagers.getSpec().resolveEnabled(project);
-        packagers.getSpec().getRepository().resolveEnabled(project);
         validatePackager(context,
             packagers.getSpec(),
             packagers.getSpec().getRepository()
@@ -196,16 +172,20 @@ public final class PackagersValidator {
         validateCommitAuthor(packager, service);
         validateOwner(tap, service);
 
+        resolveActivatable(packager, "packagers." + packager.getType(), "NEVER");
+        packager.resolveEnabled(context.getModel().getProject());
+        packager.getRepositoryTap().resolveEnabled(context.getModel().getProject());
+
         tap.setUsername(
             checkProperty(context,
-                Env.toVar(tap.getBasename() + "_" + service.getServiceName()) + "_USERNAME",
+                tap.getBasename() + "." + service.getServiceName() + ".username",
                 "<empty>",
                 tap.getUsername(),
                 service.getUsername()));
 
         tap.setToken(
             checkProperty(context,
-                Env.toVar(tap.getBasename() + "_" + service.getServiceName()) + "_TOKEN",
+                tap.getBasename() + "." + service.getServiceName() + ".token",
                 "<empty>",
                 tap.getToken(),
                 service.getToken()));

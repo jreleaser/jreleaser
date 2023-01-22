@@ -23,7 +23,6 @@ import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.common.Activatable;
 import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.project.Project;
-import org.jreleaser.util.Env;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -171,10 +170,7 @@ public final class Maven extends AbstractModelObject<Maven> implements Domain, A
     }
 
     public boolean resolveEnabled(Project project) {
-        if (null == active) {
-            setActive(Env.resolveOrDefault("deploy.maven.active", "", "ALWAYS"));
-        }
-        enabled = active.check(project);
+        enabled = null != active && active.check(project);
         return enabled;
     }
 

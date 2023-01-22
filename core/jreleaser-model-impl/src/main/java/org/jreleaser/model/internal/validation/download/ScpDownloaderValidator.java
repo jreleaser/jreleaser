@@ -18,7 +18,6 @@
 package org.jreleaser.model.internal.validation.download;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.Active;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.download.Downloader;
@@ -28,7 +27,9 @@ import org.jreleaser.util.Errors;
 import java.util.Map;
 
 import static org.jreleaser.model.internal.validation.common.SshValidator.validateSsh;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -55,24 +56,24 @@ public final class ScpDownloaderValidator {
     private static void validateScpDownloader(JReleaserContext context, ScpDownloader scp, Errors errors) {
         context.getLogger().debug("download.scp.{}", scp.getName());
 
-        if (!scp.isActiveSet()) {
-            scp.setActive(Active.ALWAYS);
-        }
+        resolveActivatable(scp,
+            listOf("download.scp." + scp.getName(), "download.scp"),
+            "ALWAYS");
         if (!scp.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
-        validateSsh(context, scp, scp.getName(), "SCP", "download." + scp.getType() + "." + scp.getName(), errors);
+        validateSsh(context, scp, scp.getType(), scp.getName(), "download.", errors);
         validateTimeout(scp);
 
         if (scp.getAssets().isEmpty()) {
-            errors.configuration(RB.$("validation_must_not_be_empty", "scp." + scp.getName() + ".assets"));
+            errors.configuration(RB.$("validation_must_not_be_empty", "download.scp." + scp.getName() + ".assets"));
         } else {
             int index = 0;
             for (Downloader.Asset asset : scp.getAssets()) {
                 if (isBlank(asset.getInput())) {
-                    errors.configuration(RB.$("validation_must_not_be_null", "scp." + scp.getName() + ".asset[" + (index++) + "].input"));
+                    errors.configuration(RB.$("validation_must_not_be_null", "download.scp." + scp.getName() + ".asset[" + (index++) + "].input"));
                 }
             }
         }

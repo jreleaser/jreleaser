@@ -28,7 +28,9 @@ import static org.jreleaser.model.api.announce.DiscourseAnnouncer.DISCOURSE_API_
 import static org.jreleaser.model.api.announce.DiscourseAnnouncer.DISCOURSE_CATEGORY_NAME;
 import static org.jreleaser.model.api.announce.DiscourseAnnouncer.DISCOURSE_USERNAME;
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -45,6 +47,7 @@ public final class DiscourseAnnouncerValidator {
 
     public static void validateDiscourse(JReleaserContext context, DiscourseAnnouncer discourse, Errors errors) {
         context.getLogger().debug("announce.discourse");
+        resolveActivatable(discourse, "announce.discourse", "NEVER");
         if (!discourse.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
@@ -56,7 +59,9 @@ public final class DiscourseAnnouncerValidator {
 
         discourse.setUsername(
             checkProperty(context,
-                DISCOURSE_USERNAME,
+                listOf(
+                    "announce.discourse.username",
+                    DISCOURSE_USERNAME),
                 "announce.discourse.username",
                 discourse.getUsername(),
                 errors,
@@ -64,7 +69,9 @@ public final class DiscourseAnnouncerValidator {
 
         discourse.setApiKey(
             checkProperty(context,
-                DISCOURSE_API_KEY,
+                listOf(
+                    "announce.discourse.api.key",
+                    DISCOURSE_API_KEY),
                 "announce.discourse.apiKey",
                 discourse.getApiKey(),
                 errors,
@@ -72,7 +79,9 @@ public final class DiscourseAnnouncerValidator {
 
         discourse.setCategoryName(
             checkProperty(context,
-                DISCOURSE_CATEGORY_NAME,
+                listOf(
+                    "announce.discourse.category",
+                    DISCOURSE_CATEGORY_NAME),
                 "announce.discourse.category",
                 discourse.getCategoryName(),
                 errors,

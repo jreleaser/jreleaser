@@ -26,7 +26,9 @@ import java.nio.file.Files;
 
 import static org.jreleaser.model.api.announce.ZulipAnnouncer.ZULIP_API_KEY;
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -43,26 +45,40 @@ public final class ZulipAnnouncerValidator {
 
     public static void validateZulip(JReleaserContext context, ZulipAnnouncer zulip, Errors errors) {
         context.getLogger().debug("announce.zulip");
+        resolveActivatable(zulip, "announce.zulip", "NEVER");
         if (!zulip.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
-        if (isBlank(zulip.getAccount())) {
-            errors.configuration(RB.$("validation_must_not_be_blank", "zulip.account"));
-        }
+        zulip.setAccount(
+            checkProperty(context,
+                listOf(
+                    "announce.zulip.account",
+                    "zulip.account"),
+                "announce.zulip.account",
+                zulip.getAccount(),
+                errors));
 
         zulip.setApiKey(
             checkProperty(context,
-                ZULIP_API_KEY,
+                listOf(
+                    "announce.zulip.api.key",
+                    ZULIP_API_KEY),
                 "announce.zulip.apiKey",
                 zulip.getApiKey(),
                 errors,
                 context.isDryrun()));
 
-        if (isBlank(zulip.getApiHost())) {
-            errors.configuration(RB.$("validation_must_not_be_blank", "zulip.internal.mutableHost"));
-        }
+        zulip.setApiHost(
+            checkProperty(context,
+                listOf(
+                    "announce.zulip.api.host",
+                    "zulip.api.host"),
+                "announce.zulip.apiHost",
+                zulip.getApiHost(),
+                errors));
+
         if (isBlank(zulip.getSubject())) {
             zulip.setSubject(RB.$("default.discussion.title"));
         }

@@ -29,6 +29,7 @@ import static org.jreleaser.model.api.packagers.SdkmanPackager.SDKMAN_CONSUMER_K
 import static org.jreleaser.model.api.packagers.SdkmanPackager.SDKMAN_CONSUMER_TOKEN;
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -67,7 +68,9 @@ public final class SdkmanAnnouncerValidator {
 
         sdkman.setConsumerKey(
             checkProperty(context,
-                SDKMAN_CONSUMER_KEY,
+                listOf(
+                    "announce.sdkman.consumer.key",
+                    SDKMAN_CONSUMER_KEY),
                 "announce.sdkman.consumerKey",
                 sdkman.getConsumerKey(),
                 errors,
@@ -75,7 +78,9 @@ public final class SdkmanAnnouncerValidator {
 
         sdkman.setConsumerToken(
             checkProperty(context,
-                SDKMAN_CONSUMER_TOKEN,
+                listOf(
+                    "announce.sdkman.consumer.token",
+                    SDKMAN_CONSUMER_TOKEN),
                 "announce.sdkman.consumerToken",
                 sdkman.getConsumerToken(),
                 errors,

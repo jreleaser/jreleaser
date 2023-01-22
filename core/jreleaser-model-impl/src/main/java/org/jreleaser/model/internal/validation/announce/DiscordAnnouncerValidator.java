@@ -26,7 +26,9 @@ import java.nio.file.Files;
 
 import static org.jreleaser.model.api.announce.DiscordAnnouncer.DISCORD_WEBHOOK;
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -43,6 +45,7 @@ public final class DiscordAnnouncerValidator {
 
     public static void validateDiscord(JReleaserContext context, DiscordAnnouncer discord, Errors errors) {
         context.getLogger().debug("announce.discord");
+        resolveActivatable(discord, "announce.discord", "NEVER");
         if (!discord.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
@@ -50,7 +53,9 @@ public final class DiscordAnnouncerValidator {
 
         discord.setWebhook(
             checkProperty(context,
-                DISCORD_WEBHOOK,
+                listOf(
+                    "announce.discord.webhook",
+                    DISCORD_WEBHOOK),
                 "announce.discord.webhook",
                 discord.getWebhook(),
                 errors,

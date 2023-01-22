@@ -23,7 +23,6 @@ import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.common.Activatable;
 import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.project.Project;
-import org.jreleaser.util.Env;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -94,10 +93,7 @@ public final class Hooks extends AbstractModelObject<Hooks> implements Domain, A
     }
 
     public boolean resolveEnabled(Project project) {
-        if (null == active) {
-            setActive(Env.resolveOrDefault("hooks.active", "", "ALWAYS"));
-        }
-        enabled = active.check(project);
+        enabled = null != active && active.check(project);
         return enabled;
     }
 

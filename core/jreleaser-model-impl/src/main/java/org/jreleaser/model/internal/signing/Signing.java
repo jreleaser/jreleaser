@@ -24,7 +24,6 @@ import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.common.Activatable;
 import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.project.Project;
-import org.jreleaser.util.Env;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -171,10 +170,7 @@ public final class Signing extends AbstractModelObject<Signing> implements Domai
     }
 
     public boolean resolveEnabled(Project project) {
-        if (null == active) {
-            setActive(Env.resolveOrDefault("signing.active", "", "NEVER"));
-        }
-        enabled = active.check(project);
+        enabled = null != active && active.check(project);
         return enabled;
     }
 

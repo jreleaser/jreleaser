@@ -35,6 +35,7 @@ import static java.util.stream.Collectors.toList;
 import static org.jreleaser.model.api.packagers.AppImagePackager.SKIP_APPIMAGE;
 import static org.jreleaser.model.internal.validation.common.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.internal.validation.common.TemplateValidator.validateTemplate;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateCommitAuthor;
 import static org.jreleaser.model.internal.validation.common.Validator.validateContinueOnError;
 import static org.jreleaser.model.internal.validation.common.Validator.validateIcons;
@@ -60,9 +61,7 @@ public final class AppImagePackagerValidator {
         JReleaserModel model = context.getModel();
         AppImagePackager parentPackager = model.getPackagers().getAppImage();
 
-        if (!packager.isActiveSet() && parentPackager.isActiveSet()) {
-            packager.setActive(parentPackager.getActive());
-        }
+        resolveActivatable(packager, "distributions." + distribution.getName() + "." + packager.getType(), parentPackager);
         if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
@@ -175,8 +174,8 @@ public final class AppImagePackagerValidator {
 
         validateCommitAuthor(packager, parentPackager);
         AppImagePackager.AppImageRepository repository = packager.getRepository();
-        repository.resolveEnabled(model.getProject());
         validateTap(context, distribution, repository, parentPackager.getRepository(), "appImage.repository");
+        repository.resolveEnabled(model.getProject());
         validateTemplate(context, distribution, packager, parentPackager, errors);
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);

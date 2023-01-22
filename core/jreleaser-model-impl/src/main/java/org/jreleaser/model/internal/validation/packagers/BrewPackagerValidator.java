@@ -38,6 +38,7 @@ import static java.util.stream.Collectors.groupingBy;
 import static org.jreleaser.model.api.packagers.BrewPackager.SKIP_BREW;
 import static org.jreleaser.model.internal.validation.common.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.internal.validation.common.TemplateValidator.validateTemplate;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateCommitAuthor;
 import static org.jreleaser.model.internal.validation.common.Validator.validateContinueOnError;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTap;
@@ -56,13 +57,11 @@ public final class BrewPackagerValidator {
     }
 
     public static void validateBrew(JReleaserContext context, Distribution distribution, BrewPackager packager, Errors errors) {
-        context.getLogger().debug("distribution.{}.brew", distribution.getName());
+        context.getLogger().debug("distribution.{}." + packager.getType(), distribution.getName());
         JReleaserModel model = context.getModel();
         BrewPackager parentPackager = model.getPackagers().getBrew();
 
-        if (!packager.isActiveSet() && parentPackager.isActiveSet()) {
-            packager.setActive(parentPackager.getActive());
-        }
+        resolveActivatable(packager, "distributions." + distribution.getName() + "." + packager.getType(), parentPackager);
         if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) {
             context.getLogger().debug(RB.$("validation.disabled"));
             packager.disable();
@@ -105,8 +104,8 @@ public final class BrewPackagerValidator {
 
         validateCommitAuthor(packager, parentPackager);
         BrewPackager.HomebrewTap tap = packager.getTap();
-        tap.resolveEnabled(model.getProject());
         validateTap(context, distribution, tap, parentPackager.getTap(), "brew.tap");
+        tap.resolveEnabled(model.getProject());
         validateTemplate(context, distribution, packager, parentPackager, errors);
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);

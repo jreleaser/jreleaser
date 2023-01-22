@@ -40,7 +40,6 @@ public interface Releaser extends Domain, EnabledAware, CommitAuthorAware, Owner
     String RELEASE_NAME = "RELEASE_NAME";
     String OVERWRITE = "OVERWRITE";
     String UPDATE = "UPDATE";
-    String PRERELEASE = "PRERELEASE";
     String DRAFT = "DRAFT";
     String SKIP_TAG = "SKIP_TAG";
     String SKIP_RELEASE = "SKIP_RELEASE";

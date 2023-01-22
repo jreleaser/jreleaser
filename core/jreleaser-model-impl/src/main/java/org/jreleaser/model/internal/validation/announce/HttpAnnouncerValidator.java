@@ -24,14 +24,15 @@ import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.announce.HttpAnnouncer;
 import org.jreleaser.model.internal.announce.HttpAnnouncers;
-import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
 import java.nio.file.Files;
 import java.util.Map;
 
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -72,6 +73,9 @@ public final class HttpAnnouncerValidator {
 
     public static boolean validateHttpAnnouncer(JReleaserContext context, HttpAnnouncer announcer, Errors errors) {
         context.getLogger().debug("announce.http." + announcer.getName());
+        resolveActivatable(announcer,
+            listOf("announce.http." + announcer.getName(), "announce.http"),
+            "NEVER");
         if (!announcer.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return false;
@@ -90,13 +94,16 @@ public final class HttpAnnouncerValidator {
             announcer.setMethod(Http.Method.PUT);
         }
 
-        String baseKey = "announce.http." + announcer.getName() + ".";
+        String baseKey1 = "announce.http." + announcer.getName();
+        String baseKey2 = "http." + announcer.getName();
         switch (announcer.resolveAuthorization()) {
             case BEARER:
                 announcer.setPassword(
                     checkProperty(context,
-                        "HTTP_" + Env.toVar(announcer.getName()) + "_PASSWORD",
-                        baseKey + "http.password",
+                        listOf(
+                            baseKey1 + ".password",
+                            baseKey2 + ".password"),
+                        baseKey1 + ".password",
                         announcer.getPassword(),
                         errors,
                         context.isDryrun()));
@@ -108,16 +115,20 @@ public final class HttpAnnouncerValidator {
             case BASIC:
                 announcer.setUsername(
                     checkProperty(context,
-                        "HTTP_" + Env.toVar(announcer.getName()) + "_USERNAME",
-                        baseKey + "http.username",
-                        announcer.getUsername(),
+                        listOf(
+                            baseKey1 + ".username",
+                            baseKey2 + ".username"),
+                        baseKey1 + ".username",
+                        announcer.getPassword(),
                         errors,
                         context.isDryrun()));
 
                 announcer.setPassword(
                     checkProperty(context,
-                        "HTTP_" + Env.toVar(announcer.getName()) + "_PASSWORD",
-                        baseKey + "http.password",
+                        listOf(
+                            baseKey1 + ".password",
+                            baseKey2 + ".password"),
+                        baseKey1 + ".password",
                         announcer.getPassword(),
                         errors,
                         context.isDryrun()));

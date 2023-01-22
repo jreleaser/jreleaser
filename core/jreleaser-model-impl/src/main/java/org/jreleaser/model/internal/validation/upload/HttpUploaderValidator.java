@@ -18,18 +18,18 @@
 package org.jreleaser.model.internal.validation.upload;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.Active;
 import org.jreleaser.model.Http;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.upload.HttpUploader;
-import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
 import java.util.Map;
 
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -56,9 +56,9 @@ public final class HttpUploaderValidator {
     private static void validateHttp(JReleaserContext context, HttpUploader http, Errors errors) {
         context.getLogger().debug("upload.http.{}", http.getName());
 
-        if (!http.isActiveSet()) {
-            http.setActive(Active.NEVER);
-        }
+        resolveActivatable(http,
+            listOf("upload.http." + http.getName(), "upload.http"),
+            "NEVER");
         if (!http.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
@@ -72,7 +72,7 @@ public final class HttpUploaderValidator {
         }
 
         if (isBlank(http.getUploadUrl())) {
-            errors.configuration(RB.$("validation_must_not_be_blank", "http." + http.getName() + ".uploadUrl"));
+            errors.configuration(RB.$("validation_must_not_be_blank", "upload.http." + http.getName() + ".uploadUrl"));
         }
         if (isBlank(http.getDownloadUrl())) {
             http.setDownloadUrl(http.getUploadUrl());
@@ -82,13 +82,21 @@ public final class HttpUploaderValidator {
             http.setMethod(Http.Method.PUT);
         }
 
-        String baseKey = "upload.http." + http.getName() + ".";
+        String baseKey1 = "upload.http." + http.getName();
+        String baseKey2 = "upload.http";
+        String baseKey3 = "http." + http.getName();
+        String baseKey4 = "http";
+
         switch (http.resolveAuthorization()) {
             case BEARER:
                 http.setPassword(
                     checkProperty(context,
-                        "HTTP_" + Env.toVar(http.getName()) + "_PASSWORD",
-                        baseKey + "password",
+                        listOf(
+                            baseKey1 + ".password",
+                            baseKey2 + ".password",
+                            baseKey3 + ".password",
+                            baseKey4 + ".password"),
+                        baseKey1 + ".password",
                         http.getPassword(),
                         errors,
                         context.isDryrun()));
@@ -96,16 +104,24 @@ public final class HttpUploaderValidator {
             case BASIC:
                 http.setUsername(
                     checkProperty(context,
-                        "HTTP_" + Env.toVar(http.getName()) + "_USERNAME",
-                        baseKey + "username",
+                        listOf(
+                            baseKey1 + ".username",
+                            baseKey2 + ".username",
+                            baseKey3 + ".username",
+                            baseKey4 + ".username"),
+                        baseKey1 + ".username",
                         http.getUsername(),
                         errors,
                         context.isDryrun()));
 
                 http.setPassword(
                     checkProperty(context,
-                        "HTTP_" + Env.toVar(http.getName()) + "_PASSWORD",
-                        baseKey + "password",
+                        listOf(
+                            baseKey1 + ".password",
+                            baseKey2 + ".password",
+                            baseKey3 + ".password",
+                            baseKey4 + ".password"),
+                        baseKey1 + ".password",
                         http.getPassword(),
                         errors,
                         context.isDryrun()));

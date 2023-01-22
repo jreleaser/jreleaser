@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toList;
 import static org.jreleaser.model.internal.validation.common.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.internal.validation.common.TemplateValidator.validateTemplate;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateCommitAuthor;
 import static org.jreleaser.model.internal.validation.common.Validator.validateContinueOnError;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTap;
@@ -54,13 +55,11 @@ public final class SnapPackagerValidator {
     }
 
     public static void validateSnap(JReleaserContext context, Distribution distribution, SnapPackager packager, Errors errors) {
-        context.getLogger().debug("distribution.{}.snap", distribution.getName());
+        context.getLogger().debug("distribution.{}." + packager.getType(), distribution.getName());
         JReleaserModel model = context.getModel();
         SnapPackager parentPackager = model.getPackagers().getSnap();
 
-        if (!packager.isActiveSet() && parentPackager.isActiveSet()) {
-            packager.setActive(parentPackager.getActive());
-        }
+        resolveActivatable(packager, "distributions." + distribution.getName() + "." + packager.getType(), parentPackager);
         if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) {
             context.getLogger().debug(RB.$("validation.disabled"));
             packager.disable();
@@ -94,11 +93,11 @@ public final class SnapPackagerValidator {
 
         validateCommitAuthor(packager, parentPackager);
         SnapPackager.SnapRepository snap = packager.getSnap();
+        validateTap(context, distribution, snap, parentPackager.getSnap(), "snap.snap");
         snap.resolveEnabled(model.getProject());
         if (isBlank(snap.getName())) {
             snap.setName(distribution.getName() + "-snap");
         }
-        validateTap(context, distribution, snap, parentPackager.getSnap(), "snap.snap");
         validateTemplate(context, distribution, packager, parentPackager, errors);
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);

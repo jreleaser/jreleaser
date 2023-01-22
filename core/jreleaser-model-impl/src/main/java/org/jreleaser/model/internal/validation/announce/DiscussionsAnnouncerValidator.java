@@ -24,6 +24,7 @@ import org.jreleaser.util.Errors;
 
 import java.nio.file.Files;
 
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -41,6 +42,7 @@ public final class DiscussionsAnnouncerValidator {
 
     public static void validateDiscussions(JReleaserContext context, DiscussionsAnnouncer discussions, Errors errors) {
         context.getLogger().debug("announce.discussions");
+        resolveActivatable(discussions, "announce.discussions", "NEVER");
         if (!discussions.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;

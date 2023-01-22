@@ -29,7 +29,9 @@ import static org.jreleaser.model.api.announce.TwitterAnnouncer.TWITTER_ACCESS_T
 import static org.jreleaser.model.api.announce.TwitterAnnouncer.TWITTER_CONSUMER_KEY;
 import static org.jreleaser.model.api.announce.TwitterAnnouncer.TWITTER_CONSUMER_SECRET;
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -44,6 +46,7 @@ public final class TwitterAnnouncerValidator {
 
     public static void validateTwitter(JReleaserContext context, TwitterAnnouncer twitter, Errors errors) {
         context.getLogger().debug("announce.twitter");
+        resolveActivatable(twitter, "announce.twitter", "NEVER");
         if (!twitter.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
@@ -51,7 +54,9 @@ public final class TwitterAnnouncerValidator {
 
         twitter.setConsumerKey(
             checkProperty(context,
-                TWITTER_CONSUMER_KEY,
+                listOf(
+                    "announce.twitter.consumer.key",
+                    TWITTER_CONSUMER_KEY),
                 "announce.twitter.consumerKey",
                 twitter.getConsumerKey(),
                 errors,
@@ -59,7 +64,9 @@ public final class TwitterAnnouncerValidator {
 
         twitter.setConsumerSecret(
             checkProperty(context,
-                TWITTER_CONSUMER_SECRET,
+                listOf(
+                    "announce.twitter.consumer.secret",
+                    TWITTER_CONSUMER_SECRET),
                 "announce.twitter.consumerSecret",
                 twitter.getConsumerSecret(),
                 errors,
@@ -67,7 +74,9 @@ public final class TwitterAnnouncerValidator {
 
         twitter.setAccessToken(
             checkProperty(context,
-                TWITTER_ACCESS_TOKEN,
+                listOf(
+                    "announce.twitter.access.token",
+                    TWITTER_ACCESS_TOKEN),
                 "announce.twitter.accessToken",
                 twitter.getAccessToken(),
                 errors,
@@ -75,7 +84,9 @@ public final class TwitterAnnouncerValidator {
 
         twitter.setAccessTokenSecret(
             checkProperty(context,
-                TWITTER_ACCESS_TOKEN_SECRET,
+                listOf(
+                    "announce.twitter.access.token.secret",
+                    TWITTER_ACCESS_TOKEN_SECRET),
                 "announce.twitter.accessTokenSecret",
                 twitter.getAccessTokenSecret(),
                 errors,

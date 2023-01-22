@@ -18,17 +18,17 @@
 package org.jreleaser.model.internal.validation.upload;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.Active;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.upload.FtpUploader;
-import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
 import java.util.Map;
 
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -55,9 +55,9 @@ public final class FtpUploaderValidator {
     private static void validateFtp(JReleaserContext context, FtpUploader ftp, Errors errors) {
         context.getLogger().debug("upload.ftp.{}", ftp.getName());
 
-        if (!ftp.isActiveSet()) {
-            ftp.setActive(Active.NEVER);
-        }
+        resolveActivatable(ftp,
+            listOf("upload.ftp." + ftp.getName(), "upload.ftp"),
+            "NEVER");
         if (!ftp.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
@@ -70,41 +70,61 @@ public final class FtpUploaderValidator {
             return;
         }
 
-        String baseKey = "upload.ftp." + ftp.getName() + ".";
+        String baseKey1 = "upload.ftp." + ftp.getName();
+        String baseKey2 = "upload.ftp";
+        String baseKey3 = "ftp." + ftp.getName();
+        String baseKey4 = "ftp";
+
         ftp.setUsername(
             checkProperty(context,
-                "FTP_" + Env.toVar(ftp.getName()) + "_USERNAME",
-                baseKey + "username",
+                listOf(
+                    baseKey1 + ".username",
+                    baseKey2 + ".username",
+                    baseKey3 + ".username",
+                    baseKey4 + ".username"),
+                baseKey1 + ".username",
                 ftp.getUsername(),
                 errors,
                 context.isDryrun()));
 
         ftp.setPassword(
             checkProperty(context,
-                "FTP_" + Env.toVar(ftp.getName()) + "_PASSWORD",
-                baseKey + "password",
+                listOf(
+                    baseKey1 + ".password",
+                    baseKey2 + ".password",
+                    baseKey3 + ".password",
+                    baseKey4 + ".password"),
+                baseKey1 + ".password",
                 ftp.getPassword(),
                 errors,
                 context.isDryrun()));
 
         ftp.setHost(
             checkProperty(context,
-                "FTP_" + Env.toVar(ftp.getName()) + "_HOST",
-                baseKey + "host",
+                listOf(
+                    baseKey1 + ".host",
+                    baseKey2 + ".host",
+                    baseKey3 + ".host",
+                    baseKey4 + ".host"),
+                baseKey1 + ".host",
                 ftp.getHost(),
                 errors,
                 context.isDryrun()));
 
         ftp.setPort(
             checkProperty(context,
-                "FTP_" + Env.toVar(ftp.getName()) + "_PORT",
-                baseKey + "port",
+                listOf(
+                    baseKey1 + ".port",
+                    baseKey2 + ".port",
+                    baseKey3 + ".port",
+                    baseKey4 + ".port"),
+                baseKey1 + ".port",
                 ftp.getPort(),
                 errors,
                 context.isDryrun()));
 
         if (isBlank(ftp.getPath())) {
-            errors.configuration(RB.$("validation_must_not_be_blank", "ftp." + ftp.getName() + ".path"));
+            errors.configuration(RB.$("validation_must_not_be_blank", baseKey1 + ".path"));
         }
         validateTimeout(ftp);
     }

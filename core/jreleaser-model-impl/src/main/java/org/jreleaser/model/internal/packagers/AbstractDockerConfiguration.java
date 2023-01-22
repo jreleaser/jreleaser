@@ -93,11 +93,13 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
         enabled = false;
     }
 
+    protected void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    @Override
     public boolean resolveEnabled(Project project) {
-        if (null == active) {
-            active = Active.NEVER;
-        }
-        enabled = active.check(project);
+        enabled = null != active && active.check(project);
         return enabled;
     }
 

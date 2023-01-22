@@ -40,6 +40,7 @@ import static org.jreleaser.model.internal.validation.announce.TelegramAnnouncer
 import static org.jreleaser.model.internal.validation.announce.TwitterAnnouncerValidator.validateTwitter;
 import static org.jreleaser.model.internal.validation.announce.WebhooksAnnouncerValidator.validateWebhooks;
 import static org.jreleaser.model.internal.validation.announce.ZulipAnnouncerValidator.validateZulip;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 
 /**
  * @author Andres Almiray
@@ -78,6 +79,7 @@ public final class AnnouncersValidator {
         validateZulip(context, announce.getZulip(), errors);
 
         boolean activeSet = announce.isActiveSet();
+        resolveActivatable(announce, "announce", "ALWAYS");
         announce.resolveEnabled(context.getModel().getProject());
 
         if (announce.isEnabled()) {

@@ -21,14 +21,15 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.announce.ArticleAnnouncer;
 import org.jreleaser.model.internal.release.BaseReleaser;
-import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
 import java.io.File;
 
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateCommitAuthor;
 import static org.jreleaser.model.internal.validation.common.Validator.validateOwner;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -42,6 +43,7 @@ public final class ArticleAnnouncerValidator {
 
     public static void validateArticle(JReleaserContext context, ArticleAnnouncer article, Errors errors) {
         context.getLogger().debug("announce.article");
+        resolveActivatable(article, "announce.article", "NEVER");
         if (!article.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
@@ -63,21 +65,27 @@ public final class ArticleAnnouncerValidator {
 
         repository.setUsername(
             checkProperty(context,
-                Env.toVar(repository.getBasename() + "_" + service.getServiceName()) + "_USERNAME",
+                listOf(
+                    "announce.article.repository.username",
+                    repository.getBasename() + "." + service.getServiceName() + ".username"),
                 "announce.article.repository.username",
                 repository.getUsername(),
                 service.getUsername()));
 
         repository.setToken(
             checkProperty(context,
-                Env.toVar(repository.getBasename() + "_" + service.getServiceName()) + "_TOKEN",
+                listOf(
+                    "announce.article.repository.token",
+                    repository.getBasename() + "." + service.getServiceName() + ".token"),
                 "announce.article.repository.token",
                 repository.getToken(),
                 service.getToken()));
 
         repository.setBranch(
             checkProperty(context,
-                Env.toVar(repository.getBasename() + "_" + service.getServiceName()) + "_BRANCH",
+                listOf(
+                    "announce.article.repository.branch",
+                    repository.getBasename() + "." + service.getServiceName() + ".branch"),
                 "announce.article.repository.branch",
                 repository.getBranch(),
                 "HEAD"));

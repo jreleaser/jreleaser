@@ -178,10 +178,12 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
                 github.getConnectTimeout(),
                 github.getReadTimeout());
 
-            String branch = github.getBranch();
-            Map<String, GHBranch> branches = api.listBranches(github.getOwner(), github.getName());
-            if (!branches.containsKey(branch)) {
-                throw new ReleaseException(RB.$("ERROR_git_release_branch_not_exists", branch, branches.keySet()));
+            if (!context.isDryrun()) {
+                String branch = github.getBranch();
+                Map<String, GHBranch> branches = api.listBranches(github.getOwner(), github.getName());
+                if (!branches.containsKey(branch)) {
+                    throw new ReleaseException(RB.$("ERROR_git_release_branch_not_exists", branch, branches.keySet()));
+                }
             }
 
             String changelog = context.getChangelog().getResolvedChangelog();

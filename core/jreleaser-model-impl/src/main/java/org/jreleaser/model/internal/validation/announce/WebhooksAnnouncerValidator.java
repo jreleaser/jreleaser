@@ -23,14 +23,15 @@ import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.announce.WebhookAnnouncer;
 import org.jreleaser.model.internal.announce.WebhooksAnnouncer;
-import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
 import java.nio.file.Files;
 import java.util.Map;
 
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -70,7 +71,10 @@ public final class WebhooksAnnouncerValidator {
     }
 
     public static boolean validateWebhook(JReleaserContext context, WebhookAnnouncer webhook, Errors errors) {
-        context.getLogger().debug("announce.webhook." + webhook.getName());
+        context.getLogger().debug("announce.webhooks." + webhook.getName());
+        resolveActivatable(webhook,
+            listOf("announce.webhooks." + webhook.getName(), "announce.webhooks"),
+            "NEVER");
         if (!webhook.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return false;
@@ -83,7 +87,9 @@ public final class WebhooksAnnouncerValidator {
 
         webhook.setWebhook(
             checkProperty(context,
-                Env.toVar(webhook.getName()) + "_WEBHOOK",
+                listOf(
+                    "announce.webhooks." + webhook.getName() + ".webhook",
+                    webhook.getName() + ".webhook"),
                 "announce.webhooks." + webhook.getName() + ".webhook",
                 webhook.getWebhook(),
                 errors,

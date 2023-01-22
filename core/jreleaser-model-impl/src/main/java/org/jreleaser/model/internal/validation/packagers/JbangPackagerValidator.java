@@ -33,6 +33,7 @@ import static java.util.stream.Collectors.groupingBy;
 import static org.jreleaser.model.Constants.KEY_REVERSE_REPO_HOST;
 import static org.jreleaser.model.internal.validation.common.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.internal.validation.common.TemplateValidator.validateTemplate;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateCommitAuthor;
 import static org.jreleaser.model.internal.validation.common.Validator.validateContinueOnError;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTap;
@@ -48,13 +49,11 @@ public final class JbangPackagerValidator {
     }
 
     public static void validateJbang(JReleaserContext context, Distribution distribution, JbangPackager packager, Errors errors) {
-        context.getLogger().debug("distribution.{}.jbang", distribution.getName());
+        context.getLogger().debug("distribution.{}." + packager.getType(), distribution.getName());
         JReleaserModel model = context.getModel();
         JbangPackager parentPackager = model.getPackagers().getJbang();
 
-        if (!packager.isActiveSet() && parentPackager.isActiveSet()) {
-            packager.setActive(parentPackager.getActive());
-        }
+        resolveActivatable(packager, "distributions." + distribution.getName() + "." + packager.getType(), parentPackager);
         if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) {
             context.getLogger().debug(RB.$("validation.disabled"));
             packager.disable();
@@ -69,8 +68,8 @@ public final class JbangPackagerValidator {
 
         validateCommitAuthor(packager, parentPackager);
         JbangPackager.JbangRepository catalog = packager.getCatalog();
+        validateTap(context, distribution, catalog, parentPackager.getCatalog(), "jbang.catalog", "ALWAYS");
         catalog.resolveEnabled(model.getProject());
-        validateTap(context, distribution, catalog, parentPackager.getCatalog(), "jbang.catalog");
         validateTemplate(context, distribution, packager, parentPackager, errors);
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);

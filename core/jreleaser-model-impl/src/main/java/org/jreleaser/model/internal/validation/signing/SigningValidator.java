@@ -36,6 +36,7 @@ import static org.jreleaser.model.api.signing.Signing.GPG_PUBLIC_KEY;
 import static org.jreleaser.model.api.signing.Signing.GPG_PUBLIC_KEYRING;
 import static org.jreleaser.model.api.signing.Signing.GPG_SECRET_KEY;
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -55,6 +56,7 @@ public final class SigningValidator {
         context.getLogger().debug("signing");
         Signing signing = context.getModel().getSigning();
 
+        resolveActivatable(signing, "signing", "NEVER");
         if (!signing.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;

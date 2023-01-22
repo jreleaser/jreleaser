@@ -45,7 +45,7 @@ public final class GiteaReleaserValidator {
         validateGitService(context, mode, gitea, errors);
 
         if (isBlank(gitea.getApiEndpoint())) {
-            errors.configuration(RB.$("validation_must_not_be_blank", "gitea.internal.mutableEndpoint"));
+            errors.configuration(RB.$("validation_must_not_be_blank", "gitea.apiEndpoint"));
         }
 
         if (context.getModel().getProject().isSnapshot()) {

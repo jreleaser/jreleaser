@@ -18,18 +18,18 @@
 package org.jreleaser.model.internal.validation.download;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.Active;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.download.Downloader;
 import org.jreleaser.model.internal.download.HttpDownloader;
-import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
 import java.util.Map;
 
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -56,21 +56,28 @@ public final class HttpDownloaderValidator {
     private static void validateHttp(JReleaserContext context, HttpDownloader http, Errors errors) {
         context.getLogger().debug("download.http.{}", http.getName());
 
-        if (!http.isActiveSet()) {
-            http.setActive(Active.ALWAYS);
-        }
+        resolveActivatable(http,
+            listOf("download.http." + http.getName(), "download.http"),
+            "ALWAYS");
         if (!http.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
-        String baseKey = "download.http." + http.getName() + ".";
+        String baseKey1 = "download.http." + http.getName();
+        String baseKey2 = "download.http";
+        String baseKey3 = "http." + http.getName();
+        String baseKey4 = "http";
         switch (http.resolveAuthorization()) {
             case BEARER:
                 http.setPassword(
                     checkProperty(context,
-                        "HTTP_" + Env.toVar(http.getName()) + "_PASSWORD",
-                        baseKey + "password",
+                        listOf(
+                            baseKey1 + ".password",
+                            baseKey2 + ".password",
+                            baseKey3 + ".password",
+                            baseKey4 + ".password"),
+                        baseKey1 + ".password",
                         http.getPassword(),
                         errors,
                         context.isDryrun()));
@@ -78,16 +85,24 @@ public final class HttpDownloaderValidator {
             case BASIC:
                 http.setUsername(
                     checkProperty(context,
-                        "HTTP_" + Env.toVar(http.getName()) + "_USERNAME",
-                        baseKey + "username",
+                        listOf(
+                            baseKey1 + ".username",
+                            baseKey2 + ".username",
+                            baseKey3 + ".username",
+                            baseKey4 + ".username"),
+                        baseKey1 + ".username",
                         http.getUsername(),
                         errors,
                         context.isDryrun()));
 
                 http.setPassword(
                     checkProperty(context,
-                        "HTTP_" + Env.toVar(http.getName()) + "_PASSWORD",
-                        baseKey + ".password",
+                        listOf(
+                            baseKey1 + ".password",
+                            baseKey2 + ".password",
+                            baseKey3 + ".password",
+                            baseKey4 + ".password"),
+                        baseKey1 + ".password",
                         http.getPassword(),
                         errors,
                         context.isDryrun()));
@@ -99,12 +114,12 @@ public final class HttpDownloaderValidator {
         validateTimeout(http);
 
         if (http.getAssets().isEmpty()) {
-            errors.configuration(RB.$("validation_must_not_be_empty", "http." + http.getName() + ".assets"));
+            errors.configuration(RB.$("validation_must_not_be_empty", baseKey1 + ".assets"));
         } else {
             int index = 0;
             for (Downloader.Asset asset : http.getAssets()) {
                 if (isBlank(asset.getInput())) {
-                    errors.configuration(RB.$("validation_must_not_be_null", "http." + http.getName() + ".asset[" + (index++) + "].input"));
+                    errors.configuration(RB.$("validation_must_not_be_null", baseKey1 + ".asset[" + (index++) + "].input"));
                 }
             }
         }

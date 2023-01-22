@@ -56,10 +56,7 @@ public abstract class AbstractHook<S extends AbstractHook<S>> extends AbstractMo
     }
 
     public boolean resolveEnabled(Project project) {
-        if (null == active) {
-            active = Active.ALWAYS;
-        }
-        enabled = active.check(project);
+        enabled = null != active && active.check(project);
         return enabled;
     }
 

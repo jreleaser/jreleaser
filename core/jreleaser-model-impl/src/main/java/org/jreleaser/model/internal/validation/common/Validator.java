@@ -21,6 +21,7 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.Assembler;
+import org.jreleaser.model.internal.common.Activatable;
 import org.jreleaser.model.internal.common.CommitAuthor;
 import org.jreleaser.model.internal.common.CommitAuthorAware;
 import org.jreleaser.model.internal.common.FileSet;
@@ -40,6 +41,7 @@ import org.jreleaser.util.Errors;
 import java.util.Collection;
 import java.util.List;
 
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -192,6 +194,14 @@ public final class Validator {
 
     public static void validateTap(JReleaserContext context, Distribution distribution,
                                    RepositoryTap tap, RepositoryTap parentTap, String property) {
+        validateTap(context, distribution, tap, parentTap, property, "RELEASE");
+    }
+
+    public static void validateTap(JReleaserContext context, Distribution distribution,
+                                   RepositoryTap tap, RepositoryTap parentTap, String property, String activeDefaultValue) {
+        String distributionName = distribution.getName();
+        resolveActivatable(tap, "distributions." + distributionName + "." + property, activeDefaultValue);
+
         validateOwner(tap, parentTap);
 
         if (isBlank(tap.getCommitMessage()) && isNotBlank(parentTap.getCommitMessage())) {
@@ -209,24 +219,33 @@ public final class Validator {
 
         BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
 
+        String tapBasename = tap.getBasename();
+        String serviceName = service.getServiceName();
+
         tap.setUsername(
             checkProperty(context,
-                Env.toVar(tap.getBasename() + "_" + service.getServiceName()) + "_USERNAME",
-                "distributions." + distribution.getName() + "." + property + ".username",
+                listOf(
+                    "distributions." + distributionName + "." + property + ".username",
+                    tapBasename + "." + serviceName + ".username"),
+                "distributions." + distributionName + "." + property + ".username",
                 tap.getUsername(),
                 parentTap.getUsername()));
 
         tap.setToken(
             checkProperty(context,
-                Env.toVar(tap.getBasename() + "_" + service.getServiceName()) + "_TOKEN",
-                "distributions." + distribution.getName() + "." + property + ".token",
+                listOf(
+                    "distributions." + distributionName + "." + property + ".token",
+                    tapBasename + "." + serviceName + ".token"),
+                "distributions." + distributionName + "." + property + ".token",
                 tap.getToken(),
                 parentTap.getToken()));
 
         tap.setBranch(
             checkProperty(context,
-                Env.toVar(tap.getBasename() + "_" + service.getServiceName()) + "_BRANCH",
-                "distributions." + distribution.getName() + "." + property + ".branch",
+                listOf(
+                    "distributions." + distributionName + "." + property + ".branch",
+                    tapBasename + "." + serviceName + ".branch"),
+                "distributions." + distributionName + "." + property + ".branch",
                 tap.getBranch(),
                 parentTap.getBranch()));
     }
@@ -308,6 +327,40 @@ public final class Validator {
             if (null == icon.getHeight()) {
                 errors.configuration(RB.$("validation_must_not_be_null", base + ".icons[" + i + "].height"));
             }
+        }
+    }
+
+    public static void resolveActivatable(Activatable activatable, String key, Activatable parentActivatable) {
+        if (!activatable.isActiveSet()) {
+            String value = Env.resolve(key + ".active", "");
+            // defaultValue may be blank
+            if (isNotBlank(value)) {
+                activatable.setActive(value);
+            } else {
+                activatable.setActive(parentActivatable.getActive());
+            }
+        }
+    }
+
+    public static void resolveActivatable(Activatable activatable, String key, String defaultValue) {
+        if (!activatable.isActiveSet()) {
+            String value = Env.resolveOrDefault(key + ".active", "", defaultValue);
+            // defaultValue may be blank
+            if (isNotBlank(value)) activatable.setActive(value);
+        }
+    }
+
+    public static void resolveActivatable(Activatable activatable, List<String> keys, String defaultValue) {
+        if (!activatable.isActiveSet()) {
+            String value = null;
+            for (String key : keys) {
+                value = Env.resolve(key + ".active", "");
+                if (isNotBlank(value)) break;
+            }
+
+            // defaultValue may be blank
+            value = isNotBlank(value) ? value : defaultValue;
+            if (isNotBlank(value)) activatable.setActive(value);
         }
     }
 }

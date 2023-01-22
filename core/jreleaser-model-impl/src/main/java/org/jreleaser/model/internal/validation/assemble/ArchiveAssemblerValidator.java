@@ -18,7 +18,6 @@
 package org.jreleaser.model.internal.validation.assemble;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.Active;
 import org.jreleaser.model.Archive;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.api.JReleaserContext.Mode;
@@ -29,7 +28,9 @@ import org.jreleaser.util.Errors;
 
 import java.util.Map;
 
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateFileSet;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -56,9 +57,9 @@ public final class ArchiveAssemblerValidator {
     private static void validateArchive(JReleaserContext context, Mode mode, ArchiveAssembler archive, Errors errors) {
         context.getLogger().debug("assemble.archive.{}", archive.getName());
 
-        if (!archive.isActiveSet()) {
-            archive.setActive(Active.NEVER);
-        }
+        resolveActivatable(archive,
+            listOf("assemble.archive." + archive.getName(), "assemble.archive"),
+            "NEVER");
         if (!archive.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;

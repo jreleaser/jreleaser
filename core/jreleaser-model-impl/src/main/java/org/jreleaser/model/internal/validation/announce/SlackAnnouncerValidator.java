@@ -27,7 +27,9 @@ import java.nio.file.Files;
 import static org.jreleaser.model.api.announce.SlackAnnouncer.SLACK_TOKEN;
 import static org.jreleaser.model.api.announce.SlackAnnouncer.SLACK_WEBHOOK;
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -44,6 +46,7 @@ public final class SlackAnnouncerValidator {
 
     public static void validateSlack(JReleaserContext context, SlackAnnouncer slack, Errors errors) {
         context.getLogger().debug("announce.slack");
+        resolveActivatable(slack, "announce.slack", "NEVER");
         if (!slack.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
@@ -52,7 +55,9 @@ public final class SlackAnnouncerValidator {
         Errors ignored = new Errors();
         slack.setToken(
             checkProperty(context,
-                SLACK_TOKEN,
+                listOf(
+                    "announce.slack.token",
+                    SLACK_TOKEN),
                 "announce.slack.token",
                 slack.getToken(),
                 ignored,
@@ -60,7 +65,9 @@ public final class SlackAnnouncerValidator {
 
         slack.setWebhook(
             checkProperty(context,
-                SLACK_WEBHOOK,
+                listOf(
+                    "announce.slack.webhook",
+                    SLACK_WEBHOOK),
                 "announce.slack.webhook",
                 slack.getWebhook(),
                 ignored,

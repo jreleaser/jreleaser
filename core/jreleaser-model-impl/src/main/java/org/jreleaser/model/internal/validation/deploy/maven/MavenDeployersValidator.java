@@ -18,18 +18,16 @@
 package org.jreleaser.model.internal.validation.deploy.maven;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.Active;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.deploy.maven.Maven;
 import org.jreleaser.model.internal.deploy.maven.MavenDeployer;
+import org.jreleaser.model.internal.release.BaseReleaser;
 import org.jreleaser.util.DefaultVersions;
-import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
-import java.util.Locale;
-
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
 import static org.jreleaser.model.internal.validation.deploy.maven.ArtifactoryMavenDeployerValidator.validateArtifactoryMavenDeployer;
 import static org.jreleaser.model.internal.validation.deploy.maven.GiteaMavenDeployerValidator.validateGiteaMavenDeployer;
@@ -62,6 +60,7 @@ public final class MavenDeployersValidator {
 
         if (mode.validateDeploy() || mode.validateConfig()) {
             boolean activeSet = maven.isActiveSet();
+            resolveActivatable(maven, "deploy.maven", "ALWAYS");
             maven.resolveEnabled(context.getModel().getProject());
 
             if (maven.isEnabled()) {
@@ -90,21 +89,25 @@ public final class MavenDeployersValidator {
     static void validateMavenDeployer(JReleaserContext context, MavenDeployer<?> mavenDeployer, Errors errors) {
         context.getLogger().debug("deploy.maven.{}.{}", mavenDeployer.getType(), mavenDeployer.getName());
 
-        if (!mavenDeployer.isActiveSet()) {
-            mavenDeployer.setActive(Active.NEVER);
-        }
+        resolveActivatable(mavenDeployer,
+            listOf("deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName(),
+                "deploy.maven." + mavenDeployer.getType()),
+            "NEVER");
         if (!mavenDeployer.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
-        String baseEnvKey = mavenDeployer.getType().toLowerCase(Locale.ENGLISH);
         String deployerPrefix = "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName();
 
         mavenDeployer.setUrl(
             checkProperty(context,
-                baseEnvKey + "_" + Env.toVar(mavenDeployer.getName()) + "_URL",
-                "maven.deploy." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".url",
+                listOf(
+                    "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".url",
+                    "deploy.maven." + mavenDeployer.getType() + ".url",
+                    mavenDeployer.getType() + "." + mavenDeployer.getName() + ".url",
+                    mavenDeployer.getType() + ".url"),
+                "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".url",
                 mavenDeployer.getUrl(),
                 errors));
 
@@ -112,42 +115,51 @@ public final class MavenDeployersValidator {
             mavenDeployer.setUrl(mavenDeployer.getUrl().substring(0, mavenDeployer.getUrl().length() - 1));
         }
 
+        BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
+
         switch (mavenDeployer.resolveAuthorization()) {
             case BEARER:
                 mavenDeployer.setPassword(
                     checkProperty(context,
                         listOf(
-                            baseEnvKey + "_" + Env.toVar(mavenDeployer.getName()) + "_PASSWORD",
-                            baseEnvKey + "_" + Env.toVar(mavenDeployer.getName()) + "_TOKEN",
-                            baseEnvKey + "_PASSWORD",
-                            baseEnvKey + "_TOKEN"),
-                        "maven.deploy." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".password",
+                            "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".password",
+                            "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".token",
+                            "deploy.maven." + mavenDeployer.getType() + ".password",
+                            "deploy.maven." + mavenDeployer.getType() + ".token",
+                            mavenDeployer.getType() + "." + mavenDeployer.getName() + ".password",
+                            mavenDeployer.getType() + "." + mavenDeployer.getName() + ".token",
+                            mavenDeployer.getType() + ".password",
+                            mavenDeployer.getType() + ".token"),
+                        "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".password",
                         mavenDeployer.getPassword(),
-                        errors,
-                        context.isDryrun()));
+                        service.getToken()));
                 break;
             case BASIC:
                 mavenDeployer.setUsername(
                     checkProperty(context,
                         listOf(
-                            baseEnvKey + "_" + Env.toVar(mavenDeployer.getName()) + "_USERNAME",
-                            baseEnvKey + "_USERNAME"),
-                        "maven.deploy." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".username",
+                            "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".username",
+                            "deploy.maven." + mavenDeployer.getType() + ".username",
+                            mavenDeployer.getType() + "." + mavenDeployer.getName() + ".username",
+                            mavenDeployer.getType() + ".username"),
+                        "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".username",
                         mavenDeployer.getUsername(),
-                        errors,
-                        context.isDryrun()));
+                        service.getUsername()));
 
                 mavenDeployer.setPassword(
                     checkProperty(context,
                         listOf(
-                            baseEnvKey + "_" + Env.toVar(mavenDeployer.getName()) + "_PASSWORD",
-                            baseEnvKey + "_" + Env.toVar(mavenDeployer.getName()) + "_TOKEN",
-                            baseEnvKey + "_PASSWORD",
-                            baseEnvKey + "_TOKEN"),
-                        "maven.deploy." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".password",
+                            "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".password",
+                            "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".token",
+                            "deploy.maven." + mavenDeployer.getType() + ".password",
+                            "deploy.maven." + mavenDeployer.getType() + ".token",
+                            mavenDeployer.getType() + "." + mavenDeployer.getName() + ".password",
+                            mavenDeployer.getType() + "." + mavenDeployer.getName() + ".token",
+                            mavenDeployer.getType() + ".password",
+                            mavenDeployer.getType() + ".token"),
+                        "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".password",
                         mavenDeployer.getPassword(),
-                        errors,
-                        context.isDryrun()));
+                        service.getToken()));
                 break;
             case NONE:
                 errors.configuration(RB.$("validation_value_cannot_be", deployerPrefix + ".authorization", "NONE"));

@@ -21,14 +21,13 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.deploy.maven.Nexus2MavenDeployer;
-import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
-import java.util.Locale;
 import java.util.Map;
 
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
 import static org.jreleaser.model.internal.validation.deploy.maven.MavenDeployersValidator.validateMavenDeployer;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -70,13 +69,15 @@ public final class Nexus2MavenDeployerValidator {
         validateMavenDeployer(context, mavenDeployer, errors);
         if (!mavenDeployer.isEnabled()) return;
 
-        String baseEnvKey = mavenDeployer.getType().toUpperCase(Locale.ENGLISH);
-
         if (context.getModel().getProject().isSnapshot()) {
             mavenDeployer.setSnapshotUrl(
                 checkProperty(context,
-                    baseEnvKey + "_" + Env.toVar(mavenDeployer.getName()) + "_SNAPSHOT_URL",
-                    "maven.deploy." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".snapshotUrl",
+                    listOf(
+                        "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".snapshot.url",
+                        "deploy.maven." + mavenDeployer.getType() + ".snapshot.url",
+                        mavenDeployer.getType() + "." + mavenDeployer.getName() + ".snapshot.url",
+                        mavenDeployer.getType() + ".snapshot.url"),
+                    "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".snapshotUrl",
                     mavenDeployer.getSnapshotUrl(),
                     errors));
 

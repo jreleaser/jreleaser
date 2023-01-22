@@ -348,10 +348,7 @@ public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.mo
         }
 
         public boolean resolveEnabled(Project project) {
-            if (null == active) {
-                active = Active.RELEASE;
-            }
-            enabled = active.check(project);
+            enabled = null != active && active.check(project);
             return enabled;
         }
 

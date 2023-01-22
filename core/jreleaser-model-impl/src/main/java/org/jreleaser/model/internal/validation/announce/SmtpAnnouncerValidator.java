@@ -27,6 +27,7 @@ import java.nio.file.Files;
 import static org.jreleaser.model.api.announce.SmtpAnnouncer.MAIL_PASSWORD;
 import static org.jreleaser.model.api.announce.SmtpAnnouncer.SMTP_PASSWORD;
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -41,7 +42,8 @@ public final class SmtpAnnouncerValidator {
     }
 
     public static void validateSmtp(JReleaserContext context, SmtpAnnouncer smtp, Errors errors) {
-        context.getLogger().debug("announce.mail");
+        context.getLogger().debug("announce.smtp");
+        resolveActivatable(smtp, "announce.smtp", "NEVER");
         if (!smtp.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
@@ -70,8 +72,9 @@ public final class SmtpAnnouncerValidator {
         smtp.setPassword(
             checkProperty(context,
                 listOf(
-                    MAIL_PASSWORD,
-                    SMTP_PASSWORD),
+                    "announce.smtp.password",
+                    SMTP_PASSWORD,
+                    MAIL_PASSWORD),
                 "announce.smtp.password",
                 smtp.getPassword(),
                 errors,

@@ -26,7 +26,9 @@ import java.nio.file.Files;
 
 import static org.jreleaser.model.api.announce.MastodonAnnouncer.MASTODON_ACCESS_TOKEN;
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -41,18 +43,26 @@ public final class MastodonAnnouncerValidator {
 
     public static void validateMastodon(JReleaserContext context, MastodonAnnouncer mastodon, Errors errors) {
         context.getLogger().debug("announce.mastodon");
+        resolveActivatable(mastodon, "announce.mastodon", "NEVER");
         if (!mastodon.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
-        if (isBlank(mastodon.getHost())) {
-            errors.configuration(RB.$("validation_must_not_be_blank", "mastodon.host"));
-        }
+        mastodon.setHost(
+            checkProperty(context,
+                listOf(
+                    "announce.mastodon.host",
+                    "mastodon.host"),
+                "announce.mastodon.host",
+                mastodon.getHost(),
+                errors));
 
         mastodon.setAccessToken(
             checkProperty(context,
-                MASTODON_ACCESS_TOKEN,
+                listOf(
+                    "announce.mastodon.access.token",
+                    MASTODON_ACCESS_TOKEN),
                 "announce.mastodon.accessToken",
                 mastodon.getAccessToken(),
                 errors,

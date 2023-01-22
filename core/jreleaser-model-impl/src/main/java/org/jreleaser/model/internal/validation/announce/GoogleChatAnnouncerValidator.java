@@ -26,7 +26,9 @@ import java.nio.file.Files;
 
 import static org.jreleaser.model.api.announce.GoogleChatAnnouncer.GOOGLE_CHAT_WEBHOOK;
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -43,6 +45,7 @@ public final class GoogleChatAnnouncerValidator {
 
     public static void validateGoogleChat(JReleaserContext context, GoogleChatAnnouncer googleChat, Errors errors) {
         context.getLogger().debug("announce.googleChat");
+        resolveActivatable(googleChat, "announce.google.chat", "NEVER");
         if (!googleChat.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
@@ -50,7 +53,9 @@ public final class GoogleChatAnnouncerValidator {
 
         googleChat.setWebhook(
             checkProperty(context,
-                GOOGLE_CHAT_WEBHOOK,
+                listOf(
+                    "announce.google.chat.webhook",
+                    GOOGLE_CHAT_WEBHOOK),
                 "announce.googleChat.webhook",
                 googleChat.getWebhook(),
                 errors,

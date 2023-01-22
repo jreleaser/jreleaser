@@ -18,12 +18,12 @@
 package org.jreleaser.model.internal.validation.files;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.Active;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.files.Files;
 import org.jreleaser.util.Errors;
 
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateGlobs;
 
 /**
@@ -43,9 +43,7 @@ public final class FilesValidator {
         context.getLogger().debug("files");
         Files files = context.getModel().getFiles();
 
-        if (!files.isActiveSet()) {
-            files.setActive(Active.ALWAYS);
-        }
+        resolveActivatable(files, "files", "ALWAYS");
         if (!files.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;

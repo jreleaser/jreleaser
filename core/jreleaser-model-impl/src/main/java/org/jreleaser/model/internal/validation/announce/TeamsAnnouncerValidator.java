@@ -26,7 +26,9 @@ import java.nio.file.Files;
 
 import static org.jreleaser.model.api.announce.TeamsAnnouncer.TEAMS_WEBHOOK;
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -43,6 +45,7 @@ public final class TeamsAnnouncerValidator {
 
     public static void validateTeams(JReleaserContext context, TeamsAnnouncer teams, Errors errors) {
         context.getLogger().debug("announce.teams");
+        resolveActivatable(teams, "announce.teams", "NEVER");
         if (!teams.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
@@ -50,7 +53,9 @@ public final class TeamsAnnouncerValidator {
 
         teams.setWebhook(
             checkProperty(context,
-                TEAMS_WEBHOOK,
+                listOf(
+                    "announce.teams.webhook",
+                    TEAMS_WEBHOOK),
                 "announce.teams.webhook",
                 teams.getWebhook(),
                 errors,

@@ -18,18 +18,18 @@
 package org.jreleaser.model.internal.validation.download;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.Active;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.download.Downloader;
 import org.jreleaser.model.internal.download.FtpDownloader;
-import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
 import java.util.Map;
 
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -56,44 +56,63 @@ public final class FtpDownloaderValidator {
     private static void validateFtp(JReleaserContext context, FtpDownloader ftp, Errors errors) {
         context.getLogger().debug("download.ftp.{}", ftp.getName());
 
-        if (!ftp.isActiveSet()) {
-            ftp.setActive(Active.ALWAYS);
-        }
+        resolveActivatable(ftp,
+            listOf("download.ftp." + ftp.getName(), "download.ftp"),
+            "ALWAYS");
         if (!ftp.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
         // allow anonymous access
-        String baseKey = "download.ftp." + ftp.getName() + ".";
+        String baseKey1 = "download.ftp." + ftp.getName();
+        String baseKey2 = "download.ftp";
+        String baseKey3 = "ftp." + ftp.getName();
+        String baseKey4 = "ftp";
         ftp.setUsername(
             checkProperty(context,
-                "FTP_" + Env.toVar(ftp.getName()) + "_USERNAME",
-                baseKey + "username",
+                listOf(
+                    baseKey1 + ".username",
+                    baseKey2 + ".username",
+                    baseKey3 + ".username",
+                    baseKey4 + ".username"),
+                baseKey1 + ".username",
                 ftp.getUsername(),
                 errors,
                 true));
 
         ftp.setPassword(
             checkProperty(context,
-                "FTP_" + Env.toVar(ftp.getName()) + "_PASSWORD",
-                baseKey + "password",
+                listOf(
+                    baseKey1 + ".password",
+                    baseKey2 + ".password",
+                    baseKey3 + ".password",
+                    baseKey4 + ".password"),
+                baseKey1 + ".password",
                 ftp.getPassword(),
                 errors,
                 true));
 
         ftp.setHost(
             checkProperty(context,
-                "FTP_" + Env.toVar(ftp.getName()) + "_HOST",
-                baseKey + "host",
+                listOf(
+                    baseKey1 + ".host",
+                    baseKey2 + ".host",
+                    baseKey3 + ".host",
+                    baseKey4 + ".host"),
+                baseKey1 + ".host",
                 ftp.getHost(),
                 errors,
                 context.isDryrun()));
 
         ftp.setPort(
             checkProperty(context,
-                "FTP_" + Env.toVar(ftp.getName()) + "_PORT",
-                baseKey + "port",
+                listOf(
+                    baseKey1 + ".port",
+                    baseKey2 + ".port",
+                    baseKey3 + ".port",
+                    baseKey4 + ".port"),
+                baseKey1 + ".port",
                 ftp.getPort(),
                 errors,
                 context.isDryrun()));
@@ -101,12 +120,12 @@ public final class FtpDownloaderValidator {
         validateTimeout(ftp);
 
         if (ftp.getAssets().isEmpty()) {
-            errors.configuration(RB.$("validation_must_not_be_empty", "ftp." + ftp.getName() + ".assets"));
+            errors.configuration(RB.$("validation_must_not_be_empty", baseKey1 + ".assets"));
         } else {
             int index = 0;
             for (Downloader.Asset asset : ftp.getAssets()) {
                 if (isBlank(asset.getInput())) {
-                    errors.configuration(RB.$("validation_must_not_be_null", "ftp." + ftp.getName() + ".asset[" + (index++) + "].input"));
+                    errors.configuration(RB.$("validation_must_not_be_null", baseKey1 + ".asset[" + (index++) + "].input"));
                 }
             }
         }

@@ -23,6 +23,7 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.download.Download;
 import org.jreleaser.util.Errors;
 
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.download.FtpDownloaderValidator.validateFtpDownloader;
 import static org.jreleaser.model.internal.validation.download.HttpDownloaderValidator.validateHttpDownloader;
 import static org.jreleaser.model.internal.validation.download.ScpDownloaderValidator.validateScpDownloader;
@@ -48,6 +49,7 @@ public final class DownloadersValidator {
 
         if (mode.validateConfig() || mode.validateDownload()) {
             boolean activeSet = download.isActiveSet();
+            resolveActivatable(download, "download", "ALWAYS");
             download.resolveEnabled(context.getModel().getProject());
 
             if (download.isEnabled()) {

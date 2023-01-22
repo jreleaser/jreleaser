@@ -23,6 +23,7 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.deploy.Deploy;
 import org.jreleaser.util.Errors;
 
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.deploy.maven.MavenDeployersValidator.validateMavenDeployers;
 
 /**
@@ -42,6 +43,7 @@ public final class DeployValidator {
 
         if (mode.validateDeploy() || mode.validateConfig()) {
             boolean activeSet = deploy.isActiveSet();
+            resolveActivatable(deploy, "deploy", "ALWAYS");
             deploy.resolveEnabled(context.getModel().getProject());
 
             if (deploy.isEnabled()) {

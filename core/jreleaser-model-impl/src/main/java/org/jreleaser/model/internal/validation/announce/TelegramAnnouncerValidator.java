@@ -27,7 +27,9 @@ import java.nio.file.Files;
 import static org.jreleaser.model.api.announce.TelegramAnnouncer.TELEGRAM_CHAT_ID;
 import static org.jreleaser.model.api.announce.TelegramAnnouncer.TELEGRAM_TOKEN;
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -44,6 +46,7 @@ public final class TelegramAnnouncerValidator {
 
     public static void validateTelegram(JReleaserContext context, TelegramAnnouncer telegram, Errors errors) {
         context.getLogger().debug("announce.telegram");
+        resolveActivatable(telegram, "announce.telegram", "NEVER");
         if (!telegram.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
@@ -51,7 +54,9 @@ public final class TelegramAnnouncerValidator {
 
         telegram.setToken(
             checkProperty(context,
-                TELEGRAM_TOKEN,
+                listOf(
+                    "announce.telegram.token",
+                    TELEGRAM_TOKEN),
                 "announce.telegram.token",
                 telegram.getToken(),
                 errors,
@@ -59,7 +64,9 @@ public final class TelegramAnnouncerValidator {
 
         telegram.setChatId(
             checkProperty(context,
-                TELEGRAM_CHAT_ID,
+                listOf(
+                    "announce.telegram.chat.id",
+                    TELEGRAM_CHAT_ID),
                 "announce.telegram.chatId",
                 telegram.getChatId(),
                 errors,

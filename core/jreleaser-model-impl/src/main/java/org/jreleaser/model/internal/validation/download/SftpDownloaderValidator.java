@@ -18,7 +18,6 @@
 package org.jreleaser.model.internal.validation.download;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.Active;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.download.Downloader;
@@ -28,7 +27,9 @@ import org.jreleaser.util.Errors;
 import java.util.Map;
 
 import static org.jreleaser.model.internal.validation.common.SshValidator.validateSsh;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -55,24 +56,24 @@ public final class SftpDownloaderValidator {
     private static void validateSftpDownloader(JReleaserContext context, SftpDownloader sftp, Errors errors) {
         context.getLogger().debug("download.sftp.{}", sftp.getName());
 
-        if (!sftp.isActiveSet()) {
-            sftp.setActive(Active.ALWAYS);
-        }
+        resolveActivatable(sftp,
+            listOf("download.sftp." + sftp.getName(), "download.sftp"),
+            "ALWAYS");
         if (!sftp.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
-        validateSsh(context, sftp, sftp.getName(), "SFTP", "download." + sftp.getType() + "." + sftp.getName(), errors);
+        validateSsh(context, sftp, sftp.getType(), sftp.getName(), "download.", errors);
         validateTimeout(sftp);
 
         if (sftp.getAssets().isEmpty()) {
-            errors.configuration(RB.$("validation_must_not_be_empty", "sftp." + sftp.getName() + ".assets"));
+            errors.configuration(RB.$("validation_must_not_be_empty", "download.sftp." + sftp.getName() + ".assets"));
         } else {
             int index = 0;
             for (Downloader.Asset asset : sftp.getAssets()) {
                 if (isBlank(asset.getInput())) {
-                    errors.configuration(RB.$("validation_must_not_be_null", "sftp." + sftp.getName() + ".asset[" + (index++) + "].input"));
+                    errors.configuration(RB.$("validation_must_not_be_null", "download.sftp." + sftp.getName() + ".asset[" + (index++) + "].input"));
                 }
             }
         }

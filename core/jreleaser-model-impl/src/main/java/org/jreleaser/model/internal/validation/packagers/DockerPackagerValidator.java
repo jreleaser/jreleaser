@@ -29,7 +29,6 @@ import org.jreleaser.model.internal.packagers.DockerPackager;
 import org.jreleaser.model.internal.packagers.DockerSpec;
 import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.internal.release.BaseReleaser;
-import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.PlatformUtils;
 
@@ -51,6 +50,7 @@ import static org.jreleaser.model.internal.packagers.DockerPackager.LABEL_OCI_IM
 import static org.jreleaser.model.internal.validation.common.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.internal.validation.common.TemplateValidator.validateTemplate;
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateCommitAuthor;
 import static org.jreleaser.model.internal.validation.common.Validator.validateContinueOnError;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTap;
@@ -74,9 +74,7 @@ public final class DockerPackagerValidator {
         Project project = model.getProject();
         DockerPackager parentPackager = model.getPackagers().getDocker();
 
-        if (!packager.isActiveSet() && parentPackager.isActiveSet()) {
-            packager.setActive(parentPackager.getActive());
-        }
+        resolveActivatable(packager, "distributions." + distribution.getName() + "." + packager.getType(), parentPackager);
         if (!packager.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             packager.disable();
@@ -98,6 +96,7 @@ public final class DockerPackagerValidator {
             if (!spec.isActiveSet() && packager.isActiveSet()) {
                 spec.setActive(packager.getActive());
             }
+            resolveActivatable(packager, "distributions." + distribution.getName() + "." + packager.getType() + "." + spec.getName(), "NEVER");
             spec.resolveEnabled(context.getModel().getProject());
         }
 
@@ -105,7 +104,6 @@ public final class DockerPackagerValidator {
 
         validateCommitAuthor(packager, parentPackager);
         DockerPackager.DockerRepository repository = packager.getPackagerRepository();
-        repository.resolveEnabled(model.getProject());
         if (!repository.isVersionedSubfoldersSet()) {
             repository.setVersionedSubfolders(parentPackager.getPackagerRepository().isVersionedSubfolders());
         }
@@ -113,6 +111,7 @@ public final class DockerPackagerValidator {
             repository.setName(project.getName() + "-docker");
         }
         validateTap(context, distribution, repository, parentPackager.getRepositoryTap(), "docker.repository");
+        repository.resolveEnabled(model.getProject());
 
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);
@@ -387,8 +386,10 @@ public final class DockerPackagerValidator {
 
             registry.setUsername(
                 checkProperty(context,
-                    "DOCKER_" + Env.toVar(serverName) + "_USERNAME",
-                    "registry." + Env.toVar(serverName) + ".username",
+                    listOf(
+                        element + "." + serverName + ".username",
+                        "docker." + serverName + ".username"),
+                    "registry." + serverName + ".username",
                     registry.getUsername(),
                     service.getUsername()));
 
@@ -404,8 +405,10 @@ public final class DockerPackagerValidator {
 
                 registry.setPassword(
                     checkProperty(context,
-                        "DOCKER_" + Env.toVar(serverName) + "_PASSWORD",
-                        "registry." + Env.toVar(serverName) + ".password",
+                        listOf(
+                            element + "." + serverName + ".password",
+                            "docker." + serverName + ".password"),
+                        "registry." + serverName + ".password",
                         registry.getPassword(),
                         errors,
                         context.isDryrun()));

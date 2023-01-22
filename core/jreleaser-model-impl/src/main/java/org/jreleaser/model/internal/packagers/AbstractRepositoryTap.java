@@ -95,11 +95,9 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
         enabled = false;
     }
 
+    @Override
     public boolean resolveEnabled(Project project) {
-        if (null == active) {
-            active = Active.RELEASE;
-        }
-        enabled = active.check(project);
+        enabled = null != active && active.check(project);
         return enabled;
     }
 

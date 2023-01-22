@@ -37,9 +37,11 @@ import static org.jreleaser.model.api.packagers.SdkmanPackager.SDKMAN_CONSUMER_K
 import static org.jreleaser.model.api.packagers.SdkmanPackager.SDKMAN_CONSUMER_TOKEN;
 import static org.jreleaser.model.internal.validation.common.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateContinueOnError;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
 import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.validateArtifactPlatforms;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -52,7 +54,7 @@ public final class SdkmanPackagerValidator {
     }
 
     public static void validateSdkman(JReleaserContext context, Distribution distribution, SdkmanPackager packager, Errors errors) {
-        context.getLogger().debug("distribution.{}.sdkman", distribution.getName());
+        context.getLogger().debug("distribution.{}." + packager.getType(), distribution.getName());
         JReleaserModel model = context.getModel();
         SdkmanPackager parentPackager = model.getPackagers().getSdkman();
 
@@ -60,9 +62,7 @@ public final class SdkmanPackagerValidator {
         boolean parentPackagerSet = parentPackager.isActiveSet();
         packager.getExtraProperties().put(MAGIC_SET, packagerSet || parentPackagerSet);
 
-        if (!packager.isActiveSet() && parentPackager.isActiveSet()) {
-            packager.setActive(parentPackager.getActive());
-        }
+        resolveActivatable(packager, "distributions." + distribution.getName() + "." + packager.getType(), parentPackager);
         if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) {
             context.getLogger().debug(RB.$("validation.disabled"));
             packager.disable();
@@ -119,19 +119,23 @@ public final class SdkmanPackagerValidator {
             packager.setConsumerToken(parentPackager.getConsumerToken());
         }
 
-        String baseKey = "distributions." + distribution.getName() + ".";
+        String baseKey = "distributions." + distribution.getName();
         packager.setConsumerKey(
             checkProperty(context,
-                SDKMAN_CONSUMER_KEY,
-                baseKey + "sdkman.consumerKey",
+                listOf(
+                    baseKey + ".sdkman.consumer.key",
+                    SDKMAN_CONSUMER_KEY),
+                baseKey + ".sdkman.consumerKey",
                 packager.getConsumerKey(),
                 errors,
                 context.isDryrun()));
 
         packager.setConsumerToken(
             checkProperty(context,
-                SDKMAN_CONSUMER_TOKEN,
-                baseKey + "sdkman.consumerToken",
+                listOf(
+                    baseKey + ".sdkman.consumer.token",
+                    SDKMAN_CONSUMER_TOKEN),
+                baseKey + ".sdkman.consumerToken",
                 packager.getConsumerToken(),
                 errors,
                 context.isDryrun()));

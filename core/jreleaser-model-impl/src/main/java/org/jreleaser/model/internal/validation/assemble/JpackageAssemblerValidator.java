@@ -18,7 +18,6 @@
 package org.jreleaser.model.internal.validation.assemble;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.Active;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.JlinkAssembler;
@@ -38,6 +37,8 @@ import java.util.regex.Pattern;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.groupingBy;
 import static org.jreleaser.model.internal.validation.common.TemplateValidator.validateTemplate;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -77,9 +78,9 @@ public final class JpackageAssemblerValidator {
     private static void validateJpackage(JReleaserContext context, Mode mode, JpackageAssembler jpackage, Errors errors) {
         context.getLogger().debug("assemble.jpackage.{}", jpackage.getName());
 
-        if (!jpackage.isActiveSet()) {
-            jpackage.setActive(Active.NEVER);
-        }
+        resolveActivatable(jpackage,
+            listOf("assemble.jpackage." + jpackage.getName(), "assemble.jpackage"),
+            "NEVER");
 
         Project project = context.getModel().getProject();
         if (!jpackage.resolveEnabled(project)) {

@@ -26,6 +26,7 @@ import org.jreleaser.model.internal.common.CommitAuthor;
 import org.jreleaser.model.internal.common.CommitAuthorAware;
 import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.distributions.Distribution;
+import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.util.FileType;
 import org.jreleaser.util.PlatformUtils;
 
@@ -257,6 +258,15 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
         setSpecs(mergeModel(this.specs, source.specs));
         setCommitAuthor(source.commitAuthor);
         setRepository(source.repository);
+    }
+
+    @Override
+    public boolean resolveEnabled(Project project, Distribution distribution) {
+        setEnabled(null != getActive() && getActive().check(project));
+        if (!supportsDistribution(distribution.getType())) {
+            setEnabled(false);
+        }
+        return isEnabled();
     }
 
     @Override

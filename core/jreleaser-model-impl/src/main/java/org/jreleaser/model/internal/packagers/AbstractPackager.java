@@ -150,20 +150,15 @@ public abstract class AbstractPackager<A extends org.jreleaser.model.api.package
         return continueOnError != null;
     }
 
+    @Override
     public boolean resolveEnabled(Project project) {
-        if (null == active) {
-            active = Active.NEVER;
-        }
-        enabled = active.check(project);
-
+        enabled = null != active && active.check(project);
         return enabled;
     }
 
+    @Override
     public boolean resolveEnabled(Project project, Distribution distribution) {
-        if (null == active) {
-            active = Active.NEVER;
-        }
-        enabled = active.check(project);
+        enabled = null != active && active.check(project);
         if (!supportsDistribution(distribution.getType())) {
             enabled = false;
         }

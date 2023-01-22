@@ -96,10 +96,7 @@ public abstract class AbstractUploader<A extends org.jreleaser.model.api.upload.
     }
 
     public boolean resolveEnabled(Project project) {
-        if (null == active) {
-            active = Active.NEVER;
-        }
-        enabled = active.check(project);
+        enabled = null != active && active.check(project);
         if (project.isSnapshot() && !isSnapshotSupported()) {
             enabled = false;
         }

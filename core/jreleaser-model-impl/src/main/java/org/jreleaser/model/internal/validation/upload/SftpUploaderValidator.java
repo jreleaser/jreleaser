@@ -18,7 +18,6 @@
 package org.jreleaser.model.internal.validation.upload;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.Active;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.upload.SftpUploader;
@@ -27,7 +26,9 @@ import org.jreleaser.util.Errors;
 import java.util.Map;
 
 import static org.jreleaser.model.internal.validation.common.SshValidator.validateSsh;
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -54,9 +55,9 @@ public final class SftpUploaderValidator {
     private static void validateSftpUploader(JReleaserContext context, SftpUploader sftp, Errors errors) {
         context.getLogger().debug("upload.sftp.{}", sftp.getName());
 
-        if (!sftp.isActiveSet()) {
-            sftp.setActive(Active.NEVER);
-        }
+        resolveActivatable(sftp,
+            listOf("upload.sftp." + sftp.getName(), "upload.sftp"),
+            "NEVER");
         if (!sftp.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
@@ -69,9 +70,9 @@ public final class SftpUploaderValidator {
             return;
         }
 
-        validateSsh(context, sftp, sftp.getName(), "SFTP", "upload." + sftp.getType() + "." + sftp.getName(), errors);
+        validateSsh(context, sftp, sftp.getType(), sftp.getName(), "upload.", errors);
         if (isBlank(sftp.getPath())) {
-            errors.configuration(RB.$("validation_must_not_be_blank", "sftp." + sftp.getName() + ".path"));
+            errors.configuration(RB.$("validation_must_not_be_blank", "upload.sftp." + sftp.getName() + ".path"));
         }
         validateTimeout(sftp);
     }
