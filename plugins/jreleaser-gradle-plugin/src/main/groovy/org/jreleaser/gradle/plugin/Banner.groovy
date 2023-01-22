@@ -30,7 +30,7 @@ import java.text.MessageFormat
  */
 @CompileStatic
 abstract class Banner implements BuildService<Params> {
-    private static final String ORG_KORDAMP_BANNER = 'org.kordamp.banner'
+    private static final String ORG_JRELEASER_BANNER = 'org.jreleaser.banner'
 
     private String productVersion
     private String productId
@@ -48,7 +48,7 @@ abstract class Banner implements BuildService<Params> {
         String productName = bundle.getString('product.name')
         String banner = MessageFormat.format(bundle.getString('product.banner'), productName, productVersion)
 
-        boolean printBanner = null == System.getProperty(ORG_KORDAMP_BANNER) || Boolean.getBoolean(ORG_KORDAMP_BANNER)
+        boolean printBanner = null == System.getProperty(ORG_JRELEASER_BANNER) || Boolean.getBoolean(ORG_JRELEASER_BANNER)
 
         File parent = new File(project.gradle.gradleUserHomeDir, 'caches')
         File markerFile = getMarkerFile(parent)
@@ -80,7 +80,7 @@ abstract class Banner implements BuildService<Params> {
 
     private File getMarkerFile(File parent) {
         new File(parent,
-            'kordamp' +
+            'jreleaser' +
                 File.separator +
                 productId +
                 File.separator +
