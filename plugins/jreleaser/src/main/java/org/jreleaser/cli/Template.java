@@ -28,9 +28,6 @@ import java.io.PrintWriter;
 @CommandLine.Command(name = "template",
     subcommands = {TemplateGenerate.class, TemplateEval.class})
 public class Template extends AbstractCommand<Main> implements IO {
-    @CommandLine.Spec
-    public CommandLine.Model.CommandSpec spec;
-
     @Override
     public PrintWriter getOut() {
         return parent().getOut();
