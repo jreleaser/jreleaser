@@ -39,8 +39,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.ServiceLoader;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static java.util.Collections.unmodifiableMap;
+import static org.jreleaser.model.Constants.DEFAULT_GIT_REMOTE;
+import static org.jreleaser.util.Env.JRELEASER_ENV_PREFIX;
+import static org.jreleaser.util.Env.JRELEASER_SYS_PREFIX;
+import static org.jreleaser.util.Env.envKey;
 import static org.jreleaser.util.StringUtils.getPropertyNameForLowerCaseHyphenSeparatedName;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -164,6 +170,31 @@ public final class Environment extends AbstractModelObject<Environment> implemen
                 home = System.getProperty("user.home") + File.separator + ".jreleaser";
             }
 
+            // system props
+            Set<String> keyNames = new TreeSet<>();
+            System.getProperties().stringPropertyNames().forEach(k -> {
+                if (k.startsWith(JRELEASER_SYS_PREFIX)) keyNames.add(k);
+            });
+            if (!keyNames.isEmpty()) {
+                context.getLogger().debug(RB.$("environment.system.properties"));
+                keyNames.forEach(message -> context.getLogger().debug("  " + message));
+            }
+
+            // env vars
+            keyNames.clear();
+            Properties envVars = new Properties();
+            System.getenv().forEach((k, v) -> {
+                if (k.startsWith(JRELEASER_ENV_PREFIX)) keyNames.add(k);
+                if (k.startsWith(JRELEASER_ENV_PREFIX)) envVars.put(k, v);
+            });
+            if (System.getenv().containsKey(envKey(DEFAULT_GIT_REMOTE))) {
+                keyNames.add(envKey(DEFAULT_GIT_REMOTE));
+            }
+            if (!keyNames.isEmpty()) {
+                context.getLogger().debug(RB.$("environment.variables.env"));
+                keyNames.forEach(message -> context.getLogger().debug("  " + message));
+            }
+
             Path configDirectory = Paths.get(home);
             loadVariables(context, resolveConfigFileAt(configDirectory)
                 .orElse(configDirectory.resolve("config.properties")));
@@ -172,6 +203,13 @@ public final class Environment extends AbstractModelObject<Environment> implemen
                 loadVariables(context, context.getBasedir().resolve(variables.trim()));
             }
 
+            // merge keyNames
+            Properties merged = new Properties();
+            merged.putAll(envVars);
+            merged.putAll(this.vars);
+            this.vars.clear();
+            this.vars.putAll(merged);
+
             if (null != propertiesSource) {
                 sourcedProperties.putAll(propertiesSource.getProperties());
             }
@@ -179,20 +217,28 @@ public final class Environment extends AbstractModelObject<Environment> implemen
     }
 
     private void loadVariables(JReleaserContext context, Path file) {
-        System.getenv().forEach((k, v) -> {
-            if (k.startsWith("JRELEASER_")) vars.put(k, v);
-        });
-
         propertiesFile = file;
         context.getLogger().info(RB.$("environment.load.variables"), file.toAbsolutePath());
         if (Files.exists(file)) {
             try {
+                Properties p = new Properties();
                 if (file.getFileName().toString().endsWith(".properties")) {
                     try (FileInputStream in = new FileInputStream(file.toFile())) {
-                        vars.load(in);
+                        p.load(in);
                     }
                 } else {
-                    vars.putAll(JReleaserConfigLoader.loadProperties(file));
+                    p.putAll(JReleaserConfigLoader.loadProperties(file));
+                }
+                vars.putAll(p);
+
+                Set<String> keyNames = new TreeSet<>();
+                p.stringPropertyNames().stream()
+                    .filter(k -> k.startsWith(JRELEASER_ENV_PREFIX)).
+                    forEach(keyNames::add);
+
+                if (!keyNames.isEmpty()) {
+                    context.getLogger().debug(RB.$("environment.variables.file", file.getFileName().toString()));
+                    keyNames.forEach(message -> context.getLogger().debug("  " + message));
                 }
             } catch (IOException e) {
                 context.getLogger().debug(RB.$("environment.variables.load.error"), file.toAbsolutePath(), e);
