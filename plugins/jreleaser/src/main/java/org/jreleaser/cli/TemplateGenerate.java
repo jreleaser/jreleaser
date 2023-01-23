@@ -144,7 +144,7 @@ public class TemplateGenerate extends AbstractLoggingCommand<Template> {
                 .generate();
 
             if (null != output && !quiet) {
-                logger.info($("jreleaser.template.TEXT_success"), output.toAbsolutePath());
+                logger.info($("jreleaser.template.generate.TEXT_success"), output.toAbsolutePath());
             }
         } catch (TemplateGenerationException e) {
             throw new JReleaserException($("ERROR_unexpected_error"), e);

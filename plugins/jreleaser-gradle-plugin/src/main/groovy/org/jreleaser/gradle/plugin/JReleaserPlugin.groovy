@@ -50,9 +50,6 @@ import org.jreleaser.gradle.plugin.tasks.JReleaserTemplateGenerateTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserUploadTask
 import org.kordamp.gradle.util.AnsiConsole
 
-import java.nio.file.Files
-import java.nio.file.Path
-
 import static org.jreleaser.model.JReleaserOutput.JRELEASER_QUIET
 import static org.jreleaser.util.IoUtils.newPrintWriter
 
@@ -123,8 +120,6 @@ class JReleaserPlugin implements Plugin<Project> {
     private void registerTasks(Project project) {
         Provider<Directory> outputDirectory = project.layout.buildDirectory
             .dir('jreleaser')
-        Path outputDirectoryPath = outputDirectory.get().asFile.toPath()
-        Files.createDirectories(outputDirectoryPath)
 
         project.tasks.register(JReleaserEnvTask.NAME, JReleaserEnvTask,
             new Action<JReleaserEnvTask>() {
