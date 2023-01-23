@@ -18,9 +18,14 @@
 plugins {
     id 'com.github.johnrengelman.shadow'
     id 'application'
+    id 'org.moditect.gradleplugin'
 }
 
-mainClassName = 'org.jreleaser.tool.JReleaser'
+application {
+    mainClass = 'org.jreleaser.tool.JReleaser'
+    // shadow complains if this is not set
+    mainClassName = 'org.jreleaser.tool.JReleaser'
+}
 
 config {
     info {
@@ -57,6 +62,17 @@ idea {
     }
 }
 
+addMainModuleInfo {
+    version = project.version
+    jvmVersion = targetCompatibility
+    overwriteExistingFiles = true
+    jdepsExtraArgs = ['-q']
+    module {
+        mainClass = application.mainClass.get()
+        moduleInfoFile = file('src/java11/module-info.java')
+    }
+}
+
 shadowJar {
     configurations    = [project.configurations.uberjar]
     archiveBaseName   = project.name
@@ -83,6 +99,7 @@ task relocateShadowJar(type: org.jreleaser.gradle.shadow.ConfigureShadowRelocati
 tasks.shadowJar.dependsOn tasks.relocateShadowJar
 
 jar.finalizedBy shadowJar
+addMainModuleInfo.mustRunAfter(shadowJar)
 
 tasks.withType(JavaCompile) { JavaCompile c ->
     c.sourceCompatibility = JavaVersion.VERSION_11

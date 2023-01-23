@@ -40,6 +40,7 @@ buildscript {
         classpath "org.ow2.asm:asm-analysis:$asmVersion"
         classpath "org.ow2.asm:asm-tree:$asmVersion"
         classpath "org.kordamp.gradle:oci-gradle-build-cache-plugin:$ociBuildCacheVersion"
+        classpath "org.moditect:moditect-gradle-plugin:$moditectPluginVersion"
     }
 }
 
