@@ -42,5 +42,5 @@ jobs:
           restore-keys: ${{ runner.os }}-gradlew-
 
       - name: Build
-        run: |
-          ./gradlew build -S
+        shell: bash
+        run: ./gradlew build -S

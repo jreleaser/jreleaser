@@ -14,7 +14,7 @@
 @rem limitations under the License.
 @rem
 
-@if "%DEBUG%" == "" @echo off
+@if "%DEBUG%"=="" @echo off
 @rem ##########################################################################
 @rem
 @rem  Gradle startup script for Windows
@@ -25,7 +25,8 @@
 if "%OS%"=="Windows_NT" setlocal
 
 set DIRNAME=%~dp0
-if "%DIRNAME%" == "" set DIRNAME=.
+if "%DIRNAME%"=="" set DIRNAME=.
+@rem This is normally unused
 set APP_BASE_NAME=%~n0
 set APP_HOME=%DIRNAME%
 
@@ -40,7 +41,7 @@ if defined JAVA_HOME goto findJavaFromJavaHome
 
 set JAVA_EXE=java.exe
 %JAVA_EXE% -version >NUL 2>&1
-if "%ERRORLEVEL%" == "0" goto execute
+if %ERRORLEVEL% equ 0 goto execute
 
 echo.
 echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
@@ -67,7 +68,42 @@ goto fail
 :execute
 @rem Setup the command line
 
-set CLASSPATH=%APP_HOME%\gradle\wrapper\gradle-wrapper.jar
+set WRAPPER_JAR="%APP_HOME%\gradle\wrapper\gradle-wrapper.jar"
+
+@REM Extension to allow automatically downloading the gradle-wrapper.jar from
+@REM https://services.gradle.org/distributions/
+@REM This allows using the gradle wrapper in projects that prohibit checking in binary data.
+@REM Copied and modified from the Maven wrapper
+if exist %WRAPPER_JAR% (
+    if "%GRADLEW_VERBOSE%" == "true" (
+        echo "Found %WRAPPER_JAR%"
+    )
+) else (
+    if "%GRADLEW_VERBOSE%" == "true" (
+        echo "Couldn't find %WRAPPER_JAR%, downloading it ..."
+    )
+
+    set GRADLEWD_SOURCE="%APP_HOME%\gradle\wrapper\GradleWrapperDownloader.java"
+    set GRADLEWD_CLASS="%APP_HOME%\gradle\wrapper\GradleWrapperDownloader.class"
+
+    if exist "%GRADLEWD_SOURCE%" (
+        if not exist "%GRADLEWD_CLASS% "(
+            if "%GRADLEW_VERBOSE%" == "true" (
+              echo " - Compiling GradleWrapperDownloader.java ..."
+            )
+            "%JAVA_HOME%/bin/javac.exe" -encoding UTF-8 "%GRADLEWD_SOURCE%"
+        )
+        if exist "%GRADLEWD_CLASS%" (
+            if "%GRADLEW_VERBOSE%" == "true" (
+              echo " - Running GradleWrapperDownloader.java ..."
+            )
+            "%JAVA_HOME%/bin/java.exe" -classpath gradle\wrapper -Dfile.encoding=UTF-8 GradleWrapperDownloader "%APP_HOME%"
+        )
+    )
+)
+@REM End of extension
+
+set CLASSPATH=%WRAPPER_JAR%
 
 
 @rem Execute Gradle
@@ -75,13 +111,15 @@ set CLASSPATH=%APP_HOME%\gradle\wrapper\gradle-wrapper.jar
 
 :end
 @rem End local scope for the variables with windows NT shell
-if "%ERRORLEVEL%"=="0" goto mainEnd
+if %ERRORLEVEL% equ 0 goto mainEnd
 
 :fail
-rem Set variable GRADLE_EXIT_CONSOLE if you need the _script_ return code instead of
-rem the _cmd.exe /c_ return code!
-if  not "" == "%GRADLE_EXIT_CONSOLE%" exit 1
-exit /b 1
+@rem Set variable GRADLE_EXIT_CONSOLE if you need the _script_ return code instead of
+@rem the _cmd.exe /c_ return code!
+set EXIT_CODE=%ERRORLEVEL%
+if %EXIT_CODE% equ 0 set EXIT_CODE=1
+if not ""=="%GRADLE_EXIT_CONSOLE%" exit %EXIT_CODE%
+exit /b %EXIT_CODE%
 
 :mainEnd
 if "%OS%"=="Windows_NT" endlocal

@@ -83,6 +83,7 @@ jobs:
           restore-keys: ${{ runner.os }}-gradlew-
 
       - name: Build
+        shell: bash
         run: ./gradlew -Prelease=true -PreproducibleBuild=true build publishToMavenLocal -S
 
       - name: Checkout smoketests repository
@@ -270,7 +271,8 @@ jobs:
           restore-keys: ${{ runner.os }}-gradlew-
 
       - name: Build
-        run: ./gradlew -Prelease=true -PreproducibleBuild=true build publishToMavenLocal -S
+        shell: bash
+        run: ./gradlew  -Prelease=true -PreproducibleBuild=true build publishToMavenLocal -S
 
       - name: Checkout smoketests repository
         uses: actions/checkout@v3
@@ -457,6 +459,7 @@ jobs:
           restore-keys: ${{ runner.os }}-gradlew-
 
       - name: Build
+        shell: bash
         run: ./gradlew -Prelease=true -PreproducibleBuild=true build publishToMavenLocal -S
 
       - name: Checkout smoketests repository
@@ -642,6 +645,7 @@ jobs:
           restore-keys: ${{ runner.os }}-gradlew-
 
       - name: Build
+        shell: bash
         run: ./gradlew -Prelease=true -PreproducibleBuild=true build publishToMavenLocal -S
 
       - name: Checkout smoketests repository
@@ -839,6 +843,7 @@ jobs:
           restore-keys: ${{ runner.os }}-gradlew-
 
       - name: Build
+        shell: bash
         run: ./gradlew -Prelease=true -PreproducibleBuild=true build publishToMavenLocal -S
 
       - name: Checkout smoketests repository
@@ -987,9 +992,9 @@ jobs:
     name: 'Unit Test ${{ matrix.os }}'
     continue-on-error: true
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, macOS-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
@@ -1019,8 +1024,8 @@ jobs:
           restore-keys: ${{ runner.os }}-gradlew-
 
       - name: Test
-        run: |
-          ./gradlew :aggregateJacocoReport
+        shell: bash
+        run: ./gradlew :aggregateJacocoReport
 
       - name: Rename JaCoCo execution data
         shell: bash

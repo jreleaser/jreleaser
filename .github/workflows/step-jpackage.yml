@@ -70,6 +70,7 @@ jobs:
           echo ${{ inputs.project-version }} > VERSION
 
       - name: Build
+        shell: bash
         run: ./gradlew :jreleaser:copyJdksFromCache :jreleaser:setupJdks
 
       - name: Jpackage
