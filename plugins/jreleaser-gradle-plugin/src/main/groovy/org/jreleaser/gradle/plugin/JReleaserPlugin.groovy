@@ -22,7 +22,6 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.file.Directory
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.provider.Provider
 import org.jreleaser.gradle.plugin.internal.JReleaserExtensionImpl
@@ -118,9 +117,6 @@ class JReleaserPlugin implements Plugin<Project> {
     }
 
     private void registerTasks(Project project) {
-        Provider<Directory> outputDirectory = project.layout.buildDirectory
-            .dir('jreleaser')
-
         project.tasks.register(JReleaserEnvTask.NAME, JReleaserEnvTask,
             new Action<JReleaserEnvTask>() {
                 @Override
@@ -138,7 +134,6 @@ class JReleaserPlugin implements Plugin<Project> {
                 void execute(JReleaserConfigTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Outputs current JReleaser configuration'
-                    t.outputDirectory.set(outputDirectory)
                 }
             })
 
@@ -160,7 +155,6 @@ class JReleaserPlugin implements Plugin<Project> {
                 void execute(JReleaserTemplateEvalTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Evaluate a template or templates'
-                    t.outputDirectory.set(outputDirectory)
                 }
             })
 
@@ -170,7 +164,6 @@ class JReleaserPlugin implements Plugin<Project> {
                 void execute(JReleaserDownloadTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Downloads all artifacts'
-                    t.outputDirectory.set(outputDirectory)
                 }
             })
 
@@ -180,7 +173,6 @@ class JReleaserPlugin implements Plugin<Project> {
                 void execute(JReleaserAssembleTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Assemble all distributions'
-                    t.outputDirectory.set(outputDirectory)
                 }
             })
 
@@ -190,7 +182,6 @@ class JReleaserPlugin implements Plugin<Project> {
                 void execute(JReleaserChangelogTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Calculate changelogs'
-                    t.outputDirectory.set(outputDirectory)
                 }
             })
 
@@ -200,7 +191,6 @@ class JReleaserPlugin implements Plugin<Project> {
                 void execute(JReleaserChecksumTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Calculate checksums'
-                    t.outputDirectory.set(outputDirectory)
                 }
             })
 
@@ -210,7 +200,6 @@ class JReleaserPlugin implements Plugin<Project> {
                 void execute(JReleaserSignTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Signs a release'
-                    t.outputDirectory.set(outputDirectory)
                 }
             })
 
@@ -220,7 +209,6 @@ class JReleaserPlugin implements Plugin<Project> {
                 void execute(JReleaserDeployTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Deploys all artifacts'
-                    t.outputDirectory.set(outputDirectory)
                 }
             })
 
@@ -230,7 +218,6 @@ class JReleaserPlugin implements Plugin<Project> {
                 void execute(JReleaserUploadTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Uploads all artifacts'
-                    t.outputDirectory.set(outputDirectory)
                 }
             })
 
@@ -240,7 +227,6 @@ class JReleaserPlugin implements Plugin<Project> {
                 void execute(JReleaserReleaseTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Creates or updates a release'
-                    t.outputDirectory.set(outputDirectory)
                 }
             })
 
@@ -250,7 +236,6 @@ class JReleaserPlugin implements Plugin<Project> {
                 void execute(JReleaseAutoConfigReleaseTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Creates or updates a release with auto-config enabled'
-                    t.outputDirectory.set(outputDirectory)
                 }
             })
 
@@ -260,7 +245,6 @@ class JReleaserPlugin implements Plugin<Project> {
                 void execute(JReleaserPrepareTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Prepares all distributions'
-                    t.outputDirectory.set(outputDirectory)
                 }
             })
 
@@ -270,7 +254,6 @@ class JReleaserPlugin implements Plugin<Project> {
                 void execute(JReleaserPackageTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Packages all distributions'
-                    t.outputDirectory.set(outputDirectory)
                 }
             })
 
@@ -280,7 +263,6 @@ class JReleaserPlugin implements Plugin<Project> {
                 void execute(JReleaserPublishTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Publishes all distributions'
-                    t.outputDirectory.set(outputDirectory)
                 }
             })
 
@@ -290,7 +272,6 @@ class JReleaserPlugin implements Plugin<Project> {
                 void execute(JReleaserAnnounceTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Announces a release'
-                    t.outputDirectory.set(outputDirectory)
                 }
             })
 
@@ -300,7 +281,6 @@ class JReleaserPlugin implements Plugin<Project> {
                 void execute(JReleaserFullReleaseTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Invokes release, publish, and announce'
-                    t.outputDirectory.set(outputDirectory)
                 }
             })
 
