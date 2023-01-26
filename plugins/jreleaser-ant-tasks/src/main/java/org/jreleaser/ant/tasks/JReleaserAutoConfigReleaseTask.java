@@ -276,7 +276,7 @@ public class JReleaserAutoConfigReleaseTask extends Task {
 
     @Override
     public void execute() throws BuildException {
-        Banner.display(newPrintWriter(System.out));
+        Banner.display(newPrintWriter(System.err));
 
         basedir();
         initLogger();

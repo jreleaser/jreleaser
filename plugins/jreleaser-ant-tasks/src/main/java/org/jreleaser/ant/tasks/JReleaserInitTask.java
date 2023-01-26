@@ -52,7 +52,7 @@ public class JReleaserInitTask extends Task {
 
     @Override
     public void execute() throws BuildException {
-        Banner.display(newPrintWriter(System.out));
+        Banner.display(newPrintWriter(System.err));
         try {
             initLogger();
             Init.execute(logger, format, overwrite, getOutputDirectory());

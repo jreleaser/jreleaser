@@ -123,6 +123,7 @@ class JReleaserPlugin implements Plugin<Project> {
                 void execute(JReleaserEnvTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Display environment variable names'
+                    t.basedir.set(project.layout.projectDirectory)
                     t.jlogger.set(new JReleaserLoggerAdapter(new AnsiConsole(project), LogLevel.INFO,
                         newPrintWriter(new ByteArrayOutputStream())))
                 }

@@ -100,7 +100,7 @@ abstract class AbstractJReleaserTask extends Task {
 
     @Override
     public void execute() throws BuildException {
-        Banner.display(newPrintWriter(System.out));
+        Banner.display(newPrintWriter(System.err));
         if (skip) return;
 
         resolveConfigFile();

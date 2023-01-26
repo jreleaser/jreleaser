@@ -80,7 +80,7 @@ abstract class AbstractLoggingCommand<C extends IO> extends AbstractCommand<C> i
             System.setProperty(JRELEASER_QUIET, "true");
         }
 
-        Banner.display(parent().getOut());
+        Banner.display(parent().getErr());
     }
 
     protected void initLogger() {

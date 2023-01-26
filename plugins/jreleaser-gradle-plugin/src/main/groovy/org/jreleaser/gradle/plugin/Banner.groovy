@@ -55,17 +55,17 @@ abstract class Banner implements BuildService<Params> {
         if (!markerFile.exists()) {
             markerFile.parentFile.mkdirs()
             markerFile.text = '1'
-            if (printBanner) println(banner)
+            if (printBanner) System.err.println(banner)
         } else {
             try {
                 int count = Integer.parseInt(markerFile.text)
                 if (count < 3) {
-                    if (printBanner) println(banner)
+                    if (printBanner) System.err.println(banner)
                 }
                 markerFile.text = (count + 1) + ''
             } catch (NumberFormatException e) {
                 markerFile.text = '1'
-                if (printBanner) println(banner)
+                if (printBanner) System.err.println(banner)
             }
         }
     }

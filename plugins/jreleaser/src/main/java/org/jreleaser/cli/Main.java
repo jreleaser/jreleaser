@@ -60,7 +60,7 @@ public class Main extends BaseCommand implements Runnable, IO {
 
     @Override
     public void run() {
-        Banner.display(out);
+        Banner.display(err);
 
         spec.commandLine().usage(out);
     }

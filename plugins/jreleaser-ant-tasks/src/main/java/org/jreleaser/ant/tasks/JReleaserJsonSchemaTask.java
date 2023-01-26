@@ -31,7 +31,7 @@ import static org.jreleaser.util.IoUtils.newPrintWriter;
 public class JReleaserJsonSchemaTask extends Task {
     @Override
     public void execute() throws BuildException {
-        Banner.display(newPrintWriter(System.out));
+        Banner.display(newPrintWriter(System.err));
         JsonSchemaGenerator.generate(IoUtils.newPrintWriter(System.out));
     }
 }

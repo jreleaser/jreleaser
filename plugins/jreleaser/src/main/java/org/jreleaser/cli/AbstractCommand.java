@@ -59,7 +59,7 @@ abstract class AbstractCommand<C extends IO> extends BaseCommand implements Call
     }
 
     protected void setup() {
-        Banner.display(parent().getOut());
+        Banner.display(parent().getErr());
 
         System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "error");
     }
