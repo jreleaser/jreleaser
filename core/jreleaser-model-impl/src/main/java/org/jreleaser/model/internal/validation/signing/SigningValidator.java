@@ -56,7 +56,7 @@ public final class SigningValidator {
         context.getLogger().debug("signing");
         Signing signing = context.getModel().getSigning();
 
-        resolveActivatable(signing, "signing", "NEVER");
+        resolveActivatable(context, signing, "signing", "NEVER");
         if (!signing.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;

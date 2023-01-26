@@ -78,7 +78,7 @@ public final class JpackageAssemblerValidator {
     private static void validateJpackage(JReleaserContext context, Mode mode, JpackageAssembler jpackage, Errors errors) {
         context.getLogger().debug("assemble.jpackage.{}", jpackage.getName());
 
-        resolveActivatable(jpackage,
+        resolveActivatable(context, jpackage,
             listOf("assemble.jpackage." + jpackage.getName(), "assemble.jpackage"),
             "NEVER");
 

@@ -40,7 +40,7 @@ public final class CommandHooksValidator {
 
         CommandHooks hooks = context.getModel().getHooks().getCommand();
         boolean activeSet = hooks.isActiveSet();
-        resolveActivatable(hooks, "hooks.command", "ALWAYS");
+        resolveActivatable(context, hooks, "hooks.command", "ALWAYS");
         hooks.resolveEnabled(context.getModel().getProject());
 
         for (int i = 0; i < hooks.getBefore().size(); i++) {
@@ -68,7 +68,7 @@ public final class CommandHooksValidator {
     private static void validateCommandHook(JReleaserContext context, CommandHook hook, String type, int index, Errors errors) {
         context.getLogger().debug("hooks.command.{}[{}]", type, index);
 
-        resolveActivatable(hook, "hooks.command." + type + "." + index, "ALWAYS");
+        resolveActivatable(context, hook, "hooks.command." + type + "." + index, "ALWAYS");
         if (!hook.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;

@@ -43,7 +43,7 @@ public final class FilesValidator {
         context.getLogger().debug("files");
         Files files = context.getModel().getFiles();
 
-        resolveActivatable(files, "files", "ALWAYS");
+        resolveActivatable(context, files, "files", "ALWAYS");
         if (!files.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;

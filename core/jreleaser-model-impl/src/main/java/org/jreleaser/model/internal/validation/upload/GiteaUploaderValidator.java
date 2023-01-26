@@ -55,7 +55,7 @@ public final class GiteaUploaderValidator {
     private static void validateGiteaUploader(JReleaserContext context, GiteaUploader gitea, Errors errors) {
         context.getLogger().debug("upload.gitea.{}", gitea.getName());
 
-        resolveActivatable(gitea,
+        resolveActivatable(context, gitea,
             listOf("upload.gitea." + gitea.getName(), "upload.gitea"),
             "NEVER");
         if (!gitea.resolveEnabled(context.getModel().getProject())) {

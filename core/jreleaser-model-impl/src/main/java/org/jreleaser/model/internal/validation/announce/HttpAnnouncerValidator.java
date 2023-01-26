@@ -73,7 +73,7 @@ public final class HttpAnnouncerValidator {
 
     public static boolean validateHttpAnnouncer(JReleaserContext context, HttpAnnouncer announcer, Errors errors) {
         context.getLogger().debug("announce.http." + announcer.getName());
-        resolveActivatable(announcer,
+        resolveActivatable(context, announcer,
             listOf("announce.http." + announcer.getName(), "announce.http"),
             "NEVER");
         if (!announcer.resolveEnabled(context.getModel().getProject())) {

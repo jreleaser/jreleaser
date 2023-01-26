@@ -60,7 +60,7 @@ public final class MavenDeployersValidator {
 
         if (mode.validateDeploy() || mode.validateConfig()) {
             boolean activeSet = maven.isActiveSet();
-            resolveActivatable(maven, "deploy.maven", "ALWAYS");
+            resolveActivatable(context, maven, "deploy.maven", "ALWAYS");
             maven.resolveEnabled(context.getModel().getProject());
 
             if (maven.isEnabled()) {
@@ -89,7 +89,7 @@ public final class MavenDeployersValidator {
     static void validateMavenDeployer(JReleaserContext context, MavenDeployer<?> mavenDeployer, Errors errors) {
         context.getLogger().debug("deploy.maven.{}.{}", mavenDeployer.getType(), mavenDeployer.getName());
 
-        resolveActivatable(mavenDeployer,
+        resolveActivatable(context, mavenDeployer,
             listOf("deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName(),
                 "deploy.maven." + mavenDeployer.getType()),
             "NEVER");

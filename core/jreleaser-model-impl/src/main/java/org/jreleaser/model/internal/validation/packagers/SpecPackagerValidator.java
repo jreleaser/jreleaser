@@ -54,7 +54,7 @@ public final class SpecPackagerValidator {
         JReleaserModel model = context.getModel();
         SpecPackager parentPackager = model.getPackagers().getSpec();
 
-        resolveActivatable(packager, "distributions." + distribution.getName() + "." + packager.getType(), parentPackager);
+        resolveActivatable(context, packager, "distributions." + distribution.getName() + "." + packager.getType(), parentPackager);
         if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) {
             context.getLogger().debug(RB.$("validation.disabled"));
             packager.disable();

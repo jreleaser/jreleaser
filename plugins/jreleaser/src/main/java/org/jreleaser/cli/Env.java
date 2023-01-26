@@ -24,6 +24,7 @@ import picocli.CommandLine;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
+import java.nio.file.Paths;
 
 import static org.jreleaser.util.IoUtils.newPrintWriter;
 
@@ -35,7 +36,7 @@ import static org.jreleaser.util.IoUtils.newPrintWriter;
 public class Env extends AbstractCommand<Main> {
     @Override
     protected void execute() {
-        Environment.display(initLogger());
+        Environment.display(initLogger(), Paths.get(".").normalize());
     }
 
     protected JReleaserLogger initLogger() {

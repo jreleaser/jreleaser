@@ -46,7 +46,7 @@ public final class TwitterAnnouncerValidator {
 
     public static void validateTwitter(JReleaserContext context, TwitterAnnouncer twitter, Errors errors) {
         context.getLogger().debug("announce.twitter");
-        resolveActivatable(twitter, "announce.twitter", "NEVER");
+        resolveActivatable(context, twitter, "announce.twitter", "NEVER");
         if (!twitter.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;

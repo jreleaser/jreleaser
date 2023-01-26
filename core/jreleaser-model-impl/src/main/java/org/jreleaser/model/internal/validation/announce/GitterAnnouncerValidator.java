@@ -45,7 +45,7 @@ public final class GitterAnnouncerValidator {
 
     public static void validateGitter(JReleaserContext context, GitterAnnouncer gitter, Errors errors) {
         context.getLogger().debug("announce.gitter");
-        resolveActivatable(gitter, "announce.gitter", "NEVER");
+        resolveActivatable(context, gitter, "announce.gitter", "NEVER");
         if (!gitter.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;

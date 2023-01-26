@@ -172,7 +172,7 @@ public final class PackagersValidator {
         validateCommitAuthor(packager, service);
         validateOwner(tap, service);
 
-        resolveActivatable(packager, "packagers." + packager.getType(), "NEVER");
+        resolveActivatable(context, packager, "packagers." + packager.getType(), "NEVER");
         packager.resolveEnabled(context.getModel().getProject());
         packager.getRepositoryTap().resolveEnabled(context.getModel().getProject());
 

@@ -41,7 +41,7 @@ public final class HooksValidator {
         validateCommandHooks(context, errors);
 
         boolean activeSet = hooks.isActiveSet();
-        resolveActivatable(hooks, "hooks", "ALWAYS");
+        resolveActivatable(context, hooks, "hooks", "ALWAYS");
         hooks.resolveEnabled(context.getModel().getProject());
 
         if (hooks.isEnabled()) {

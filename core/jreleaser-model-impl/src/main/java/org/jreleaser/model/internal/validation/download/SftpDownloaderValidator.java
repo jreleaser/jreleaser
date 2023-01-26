@@ -56,7 +56,7 @@ public final class SftpDownloaderValidator {
     private static void validateSftpDownloader(JReleaserContext context, SftpDownloader sftp, Errors errors) {
         context.getLogger().debug("download.sftp.{}", sftp.getName());
 
-        resolveActivatable(sftp,
+        resolveActivatable(context, sftp,
             listOf("download.sftp." + sftp.getName(), "download.sftp"),
             "ALWAYS");
         if (!sftp.resolveEnabled(context.getModel().getProject())) {

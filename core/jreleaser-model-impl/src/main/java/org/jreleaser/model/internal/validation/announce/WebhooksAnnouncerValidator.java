@@ -72,7 +72,7 @@ public final class WebhooksAnnouncerValidator {
 
     public static boolean validateWebhook(JReleaserContext context, WebhookAnnouncer webhook, Errors errors) {
         context.getLogger().debug("announce.webhooks." + webhook.getName());
-        resolveActivatable(webhook,
+        resolveActivatable(context, webhook,
             listOf("announce.webhooks." + webhook.getName(), "announce.webhooks"),
             "NEVER");
         if (!webhook.resolveEnabled(context.getModel().getProject())) {

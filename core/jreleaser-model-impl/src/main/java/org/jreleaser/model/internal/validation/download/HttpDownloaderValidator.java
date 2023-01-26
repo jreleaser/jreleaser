@@ -56,7 +56,7 @@ public final class HttpDownloaderValidator {
     private static void validateHttp(JReleaserContext context, HttpDownloader http, Errors errors) {
         context.getLogger().debug("download.http.{}", http.getName());
 
-        resolveActivatable(http,
+        resolveActivatable(context, http,
             listOf("download.http." + http.getName(), "download.http"),
             "ALWAYS");
         if (!http.resolveEnabled(context.getModel().getProject())) {

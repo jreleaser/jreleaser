@@ -64,7 +64,7 @@ public final class NativeImageAssemblerValidator {
     private static void validateNativeImage(JReleaserContext context, Mode mode, NativeImageAssembler nativeImage, Errors errors) {
         context.getLogger().debug("assemble.nativeImage.{}", nativeImage.getName());
 
-        resolveActivatable(nativeImage,
+        resolveActivatable(context, nativeImage,
             listOf("assemble.native.image." + nativeImage.getName(), "assemble.native.image"),
             "NEVER");
         if (!nativeImage.resolveEnabled(context.getModel().getProject())) {
@@ -183,7 +183,7 @@ public final class NativeImageAssemblerValidator {
         nativeImage.getComponents().remove("native-image");
 
         NativeImageAssembler.Upx upx = nativeImage.getUpx();
-        resolveActivatable(upx,
+        resolveActivatable(context, upx,
             listOf("assemble.native.image." + nativeImage.getName() + ".upx", "assemble.native.image.upx"),
             "NEVER");
         if (!upx.resolveEnabled(context.getModel().getProject())) return;

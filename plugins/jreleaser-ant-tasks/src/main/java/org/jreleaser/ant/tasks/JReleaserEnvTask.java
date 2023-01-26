@@ -25,6 +25,7 @@ import org.jreleaser.logging.JReleaserLogger;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
+import java.nio.file.Paths;
 
 import static org.jreleaser.util.IoUtils.newPrintWriter;
 
@@ -35,8 +36,8 @@ import static org.jreleaser.util.IoUtils.newPrintWriter;
 public class JReleaserEnvTask extends Task {
     @Override
     public void execute() throws BuildException {
-        Banner.display(newPrintWriter(System.out));
-        Environment.display(initLogger());
+        Banner.display(newPrintWriter(System.err));
+        Environment.display(initLogger(), Paths.get(".").normalize());
     }
 
     private PrintWriter createTracer() {

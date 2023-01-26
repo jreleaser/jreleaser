@@ -49,7 +49,7 @@ public final class DownloadersValidator {
 
         if (mode.validateConfig() || mode.validateDownload()) {
             boolean activeSet = download.isActiveSet();
-            resolveActivatable(download, "download", "ALWAYS");
+            resolveActivatable(context, download, "download", "ALWAYS");
             download.resolveEnabled(context.getModel().getProject());
 
             if (download.isEnabled()) {

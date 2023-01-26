@@ -56,7 +56,7 @@ public final class S3UploaderValidator {
     private static void validateS3(JReleaserContext context, S3Uploader s3, Errors errors) {
         context.getLogger().debug("upload.s3.{}", s3.getName());
 
-        resolveActivatable(s3,
+        resolveActivatable(context, s3,
             listOf("upload.s3." + s3.getName(), "upload.s3"),
             "NEVER");
         if (!s3.resolveEnabled(context.getModel().getProject())) {

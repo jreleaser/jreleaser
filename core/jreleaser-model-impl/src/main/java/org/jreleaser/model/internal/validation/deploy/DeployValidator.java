@@ -43,7 +43,7 @@ public final class DeployValidator {
 
         if (mode.validateDeploy() || mode.validateConfig()) {
             boolean activeSet = deploy.isActiveSet();
-            resolveActivatable(deploy, "deploy", "ALWAYS");
+            resolveActivatable(context, deploy, "deploy", "ALWAYS");
             deploy.resolveEnabled(context.getModel().getProject());
 
             if (deploy.isEnabled()) {

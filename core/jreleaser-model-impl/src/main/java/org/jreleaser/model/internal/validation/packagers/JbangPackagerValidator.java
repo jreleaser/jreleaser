@@ -53,7 +53,7 @@ public final class JbangPackagerValidator {
         JReleaserModel model = context.getModel();
         JbangPackager parentPackager = model.getPackagers().getJbang();
 
-        resolveActivatable(packager, "distributions." + distribution.getName() + "." + packager.getType(), parentPackager);
+        resolveActivatable(context, packager, "distributions." + distribution.getName() + "." + packager.getType(), parentPackager);
         if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) {
             context.getLogger().debug(RB.$("validation.disabled"));
             packager.disable();

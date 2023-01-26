@@ -96,7 +96,7 @@ public final class AssemblersValidator {
         });
 
         boolean activeSet = assemble.isActiveSet();
-        resolveActivatable(assemble, "assemble", "ALWAYS");
+        resolveActivatable(context, assemble, "assemble", "ALWAYS");
         assemble.resolveEnabled(context.getModel().getProject());
 
         if (assemble.isEnabled()) {

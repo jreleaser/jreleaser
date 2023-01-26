@@ -55,7 +55,7 @@ public final class GitlabUploaderValidator {
     private static void validateGitlabUploader(JReleaserContext context, GitlabUploader gitlab, Errors errors) {
         context.getLogger().debug("upload.gitlab.{}", gitlab.getName());
 
-        resolveActivatable(gitlab,
+        resolveActivatable(context, gitlab,
             listOf("upload.gitlab." + gitlab.getName(), "upload.gitlab"),
             "NEVER");
         if (!gitlab.resolveEnabled(context.getModel().getProject())) {

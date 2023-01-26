@@ -59,7 +59,7 @@ public class JReleaserEnvMojo extends AbstractMojo {
             return;
         }
 
-        Environment.display(getLogger());
+        Environment.display(getLogger(), project.getBasedir().toPath());
     }
 
     protected JReleaserLogger getLogger() {

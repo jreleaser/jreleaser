@@ -45,7 +45,7 @@ public final class ZulipAnnouncerValidator {
 
     public static void validateZulip(JReleaserContext context, ZulipAnnouncer zulip, Errors errors) {
         context.getLogger().debug("announce.zulip");
-        resolveActivatable(zulip, "announce.zulip", "NEVER");
+        resolveActivatable(context, zulip, "announce.zulip", "NEVER");
         if (!zulip.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;

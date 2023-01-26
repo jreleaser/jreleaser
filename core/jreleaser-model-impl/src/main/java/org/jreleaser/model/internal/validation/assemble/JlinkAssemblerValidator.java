@@ -64,7 +64,7 @@ public final class JlinkAssemblerValidator {
     private static void validateJlink(JReleaserContext context, Mode mode, JlinkAssembler jlink, Errors errors) {
         context.getLogger().debug("assemble.jlink.{}", jlink.getName());
 
-        resolveActivatable(jlink,
+        resolveActivatable(context, jlink,
             listOf("assemble.jlink." + jlink.getName(), "assemble.jlink"),
             "NEVER");
         if (!jlink.resolveEnabled(context.getModel().getProject())) {

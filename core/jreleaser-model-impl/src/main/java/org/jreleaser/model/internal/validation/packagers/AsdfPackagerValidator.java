@@ -54,7 +54,7 @@ public final class AsdfPackagerValidator {
         JReleaserModel model = context.getModel();
         AsdfPackager parentPackager = model.getPackagers().getAsdf();
 
-        resolveActivatable(packager, "distributions." + distribution.getName() + "." + packager.getType(), parentPackager);
+        resolveActivatable(context, packager, "distributions." + distribution.getName() + "." + packager.getType(), parentPackager);
         if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;

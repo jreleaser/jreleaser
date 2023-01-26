@@ -65,7 +65,7 @@ public final class ChocolateyPackagerValidator {
         JReleaserModel model = context.getModel();
         ChocolateyPackager parentPackager = model.getPackagers().getChocolatey();
 
-        resolveActivatable(packager, "distributions." + distribution.getName() + "." + packager.getType(), parentPackager);
+        resolveActivatable(context, packager, "distributions." + distribution.getName() + "." + packager.getType(), parentPackager);
         Project project = context.getModel().getProject();
         if (!packager.resolveEnabled(project, distribution)) {
             context.getLogger().debug(RB.$("validation.disabled"));

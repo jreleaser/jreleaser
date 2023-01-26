@@ -39,6 +39,8 @@ import java.util.Properties;
 import java.util.regex.Pattern;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static org.jreleaser.model.Constants.JRELEASER_USER_HOME;
+import static org.jreleaser.model.Constants.XDG_CACHE_HOME;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -240,11 +242,15 @@ public class DownloadableTool {
     }
 
     private Path resolveJReleaserCacheDir() {
-        String home = System.getenv("JRELEASER_USER_HOME");
+        String home = System.getenv(XDG_CACHE_HOME);
+        if (isNotBlank(home)) {
+            return Paths.get(home).resolve("jreleaser");
+        }
+
+        home = System.getenv(JRELEASER_USER_HOME);
         if (isBlank(home)) {
             home = System.getProperty("user.home") + File.separator + ".jreleaser";
         }
-
         return Paths.get(home).resolve("caches");
     }
 }

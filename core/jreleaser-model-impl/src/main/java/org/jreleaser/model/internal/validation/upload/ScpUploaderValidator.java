@@ -55,7 +55,7 @@ public final class ScpUploaderValidator {
     private static void validateScpUploader(JReleaserContext context, ScpUploader scp, Errors errors) {
         context.getLogger().debug("upload.scp.{}", scp.getName());
 
-        resolveActivatable(scp,
+        resolveActivatable(context, scp,
             listOf("upload.scp." + scp.getName(), "upload.scp"),
             "NEVER");
         if (!scp.resolveEnabled(context.getModel().getProject())) {

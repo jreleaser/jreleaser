@@ -23,8 +23,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -114,31 +114,41 @@ public final class Env {
 
     public static String check(String key, String value, String property, String dsl, String configFilePath, Errors errors) {
         if (isBlank(value)) {
-            String prefixedKey = envKey(key);
-            value = System.getenv(prefixedKey);
-            if (isBlank(value)) {
-                errors.configuration(RB.$("ERROR_environment_property_check",
-                    property, dsl, prefixedKey, configFilePath, prefixedKey));
-            }
+            String envKey = envKey(key);
+            String sysKey = sysKey(key);
+            errors.configuration(RB.$("ERROR_environment_property_check",
+                property, dsl, sysKey, envKey, configFilePath, envKey));
         }
 
         return value;
     }
 
     public static String check(Collection<String> keys, Properties values, String property, String dsl, String configFilePath, Errors errors) {
-        List<String> prefixedKeys = keys.stream()
-            .map(Env::envKey)
-            .collect(Collectors.toList());
+        List<String> sysKeys = keys.stream()
+            .map(Env::sysKey)
+            .collect(toList());
 
-        String value = prefixedKeys.stream()
-            .filter(values::containsKey)
-            .map(values::getProperty)
+        List<String> envKeys = keys.stream()
+            .map(Env::envKey)
+            .collect(toList());
+
+        String value = sysKeys.stream()
+            .filter(System.getProperties()::containsKey)
+            .map(System::getProperty)
             .findFirst()
             .orElse(null);
 
         if (isBlank(value)) {
+            value = envKeys.stream()
+                .filter(values::containsKey)
+                .map(values::getProperty)
+                .findFirst()
+                .orElse(null);
+        }
+
+        if (isBlank(value)) {
             errors.configuration(RB.$("ERROR_environment_property_check2",
-                property, dsl, prefixedKeys, configFilePath, prefixedKeys));
+                property, dsl, sysKeys, envKeys, configFilePath, envKeys));
         }
 
         return value;

@@ -74,7 +74,7 @@ public final class DockerPackagerValidator {
         Project project = model.getProject();
         DockerPackager parentPackager = model.getPackagers().getDocker();
 
-        resolveActivatable(packager, "distributions." + distribution.getName() + "." + packager.getType(), parentPackager);
+        resolveActivatable(context, packager, "distributions." + distribution.getName() + "." + packager.getType(), parentPackager);
         if (!packager.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             packager.disable();
@@ -96,7 +96,7 @@ public final class DockerPackagerValidator {
             if (!spec.isActiveSet() && packager.isActiveSet()) {
                 spec.setActive(packager.getActive());
             }
-            resolveActivatable(packager, "distributions." + distribution.getName() + "." + packager.getType() + "." + spec.getName(), "NEVER");
+            resolveActivatable(context, packager, "distributions." + distribution.getName() + "." + packager.getType() + "." + spec.getName(), "NEVER");
             spec.resolveEnabled(context.getModel().getProject());
         }
 

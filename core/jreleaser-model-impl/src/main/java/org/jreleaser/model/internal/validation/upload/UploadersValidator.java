@@ -57,7 +57,7 @@ public final class UploadersValidator {
 
         if (mode.validateConfig()) {
             boolean activeSet = upload.isActiveSet();
-            resolveActivatable(upload, "upload", "ALWAYS");
+            resolveActivatable(context, upload, "upload", "ALWAYS");
             upload.resolveEnabled(context.getModel().getProject());
 
             if (upload.isEnabled()) {

@@ -57,7 +57,7 @@ public final class ArchiveAssemblerValidator {
     private static void validateArchive(JReleaserContext context, Mode mode, ArchiveAssembler archive, Errors errors) {
         context.getLogger().debug("assemble.archive.{}", archive.getName());
 
-        resolveActivatable(archive,
+        resolveActivatable(context, archive,
             listOf("assemble.archive." + archive.getName(), "assemble.archive"),
             "NEVER");
         if (!archive.resolveEnabled(context.getModel().getProject())) {

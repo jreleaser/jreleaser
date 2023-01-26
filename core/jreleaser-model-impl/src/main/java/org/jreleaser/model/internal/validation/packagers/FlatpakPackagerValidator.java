@@ -63,7 +63,7 @@ public final class FlatpakPackagerValidator {
         JReleaserModel model = context.getModel();
         FlatpakPackager parentPackager = model.getPackagers().getFlatpak();
 
-        resolveActivatable(packager, "distributions." + distribution.getName() + "." + packager.getType(), parentPackager);
+        resolveActivatable(context, packager, "distributions." + distribution.getName() + "." + packager.getType(), parentPackager);
         if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) {
             context.getLogger().debug(RB.$("validation.disabled"));
             packager.disable();

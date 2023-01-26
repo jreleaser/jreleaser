@@ -54,7 +54,7 @@ public final class ArtifactoryUploaderValidator {
     private static void validateArtifactory(JReleaserContext context, ArtifactoryUploader artifactory, Errors errors) {
         context.getLogger().debug("upload.artifactory.{}", artifactory.getName());
 
-        resolveActivatable(artifactory,
+        resolveActivatable(context, artifactory,
             listOf("upload.artifactory." + artifactory.getName(), "upload.artifactory"),
             "NEVER");
         if (!artifactory.resolveEnabled(context.getModel().getProject())) {
@@ -140,7 +140,7 @@ public final class ArtifactoryUploaderValidator {
         validateTimeout(artifactory);
 
         for (ArtifactoryUploader.ArtifactoryRepository repository : artifactory.getRepositories()) {
-            resolveActivatable(repository, baseKey1 + ".repository", "");
+            resolveActivatable(context, repository, baseKey1 + ".repository", "");
             if (!repository.isActiveSet()) {
                 repository.setActive(artifactory.getActive());
             }

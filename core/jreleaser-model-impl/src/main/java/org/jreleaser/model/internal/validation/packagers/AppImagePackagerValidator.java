@@ -61,7 +61,7 @@ public final class AppImagePackagerValidator {
         JReleaserModel model = context.getModel();
         AppImagePackager parentPackager = model.getPackagers().getAppImage();
 
-        resolveActivatable(packager, "distributions." + distribution.getName() + "." + packager.getType(), parentPackager);
+        resolveActivatable(context, packager, "distributions." + distribution.getName() + "." + packager.getType(), parentPackager);
         if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;

@@ -97,7 +97,7 @@ public final class DistributionsValidator {
     private static void validateDistribution(JReleaserContext context, Distribution distribution, Errors errors) {
         context.getLogger().debug("distribution.{}", distribution.getName());
 
-        resolveActivatable(distribution,
+        resolveActivatable(context, distribution,
             listOf("distributions." + distribution.getName(), "distributions"),
             "ALWAYS");
         if (!distribution.resolveEnabled(context.getModel().getProject())) {

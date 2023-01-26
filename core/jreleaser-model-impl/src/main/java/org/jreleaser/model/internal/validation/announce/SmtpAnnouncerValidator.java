@@ -43,7 +43,7 @@ public final class SmtpAnnouncerValidator {
 
     public static void validateSmtp(JReleaserContext context, SmtpAnnouncer smtp, Errors errors) {
         context.getLogger().debug("announce.smtp");
-        resolveActivatable(smtp, "announce.smtp", "NEVER");
+        resolveActivatable(context, smtp, "announce.smtp", "NEVER");
         if (!smtp.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;

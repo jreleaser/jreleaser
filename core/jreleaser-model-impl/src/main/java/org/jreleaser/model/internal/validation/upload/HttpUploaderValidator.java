@@ -56,7 +56,7 @@ public final class HttpUploaderValidator {
     private static void validateHttp(JReleaserContext context, HttpUploader http, Errors errors) {
         context.getLogger().debug("upload.http.{}", http.getName());
 
-        resolveActivatable(http,
+        resolveActivatable(context, http,
             listOf("upload.http." + http.getName(), "upload.http"),
             "NEVER");
         if (!http.resolveEnabled(context.getModel().getProject())) {

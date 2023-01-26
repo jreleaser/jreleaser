@@ -56,7 +56,7 @@ public final class ScpDownloaderValidator {
     private static void validateScpDownloader(JReleaserContext context, ScpDownloader scp, Errors errors) {
         context.getLogger().debug("download.scp.{}", scp.getName());
 
-        resolveActivatable(scp,
+        resolveActivatable(context, scp,
             listOf("download.scp." + scp.getName(), "download.scp"),
             "ALWAYS");
         if (!scp.resolveEnabled(context.getModel().getProject())) {

@@ -55,7 +55,7 @@ public final class FtpUploaderValidator {
     private static void validateFtp(JReleaserContext context, FtpUploader ftp, Errors errors) {
         context.getLogger().debug("upload.ftp.{}", ftp.getName());
 
-        resolveActivatable(ftp,
+        resolveActivatable(context, ftp,
             listOf("upload.ftp." + ftp.getName(), "upload.ftp"),
             "NEVER");
         if (!ftp.resolveEnabled(context.getModel().getProject())) {

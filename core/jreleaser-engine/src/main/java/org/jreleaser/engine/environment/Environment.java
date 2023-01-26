@@ -36,36 +36,45 @@ import java.util.TreeSet;
 
 import static org.jreleaser.model.Constants.DEFAULT_GIT_REMOTE;
 import static org.jreleaser.model.Constants.JRELEASER_USER_HOME;
+import static org.jreleaser.model.Constants.XDG_CONFIG_HOME;
 import static org.jreleaser.util.Env.JRELEASER_ENV_PREFIX;
 import static org.jreleaser.util.Env.envKey;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
  * @since 1.5.0
  */
 public final class Environment {
-
     private Environment() {
         // noop
     }
 
-    public static void display(JReleaserLogger logger) {
-        String home = System.getenv(JRELEASER_USER_HOME);
-        if (isBlank(home)) {
-            home = System.getProperty("user.home") + File.separator + ".jreleaser";
+    public static void display(JReleaserLogger logger, Path basedir) {
+        Path configDirectory = null;
+
+        String home = System.getenv(XDG_CONFIG_HOME);
+        if (isNotBlank(home) && Files.exists(Paths.get(home).resolve("jreleaser"))) {
+            configDirectory = Paths.get(home).resolve("jreleaser");
         }
 
-        Path configDirectory = Paths.get(home);
+        if (null == configDirectory) {
+            home = System.getenv(JRELEASER_USER_HOME);
+            if (isBlank(home)) {
+                home = System.getProperty("user.home") + File.separator + ".jreleaser";
+            }
+            configDirectory = Paths.get(home);
+        }
+
         loadVariables(logger, resolveConfigFileAt(configDirectory)
             .orElse(configDirectory.resolve("config.properties")));
 
-        if (System.getenv().containsKey(envKey(DEFAULT_GIT_REMOTE))) {
-            logger.info(envKey(DEFAULT_GIT_REMOTE));
+        Path envFilePath = basedir.resolve(".env");
+        if (Files.exists(envFilePath)) {
+            loadVariables(logger, envFilePath);
         }
-    }
 
-    private static void loadVariables(JReleaserLogger logger, Path file) {
         Set<String> vars = new TreeSet<>();
         System.getenv().forEach((k, v) -> {
             if (k.startsWith(JRELEASER_ENV_PREFIX)) vars.add(k);
@@ -78,13 +87,17 @@ public final class Environment {
             logger.info(RB.$("environment.variables.env"));
             vars.forEach(message -> logger.info("  " + message));
         }
+    }
 
-        vars.clear();
+    private static void loadVariables(JReleaserLogger logger, Path file) {
+        Set<String> vars = new TreeSet<>();
+
         Properties p = new Properties();
         logger.info(RB.$("environment.load.variables"), file.toAbsolutePath());
         if (Files.exists(file)) {
             try {
-                if (file.getFileName().toString().endsWith(".properties")) {
+                if (file.getFileName().toString().endsWith(".properties") ||
+                    file.getFileName().toString().equals(".env")) {
                     try (FileInputStream in = new FileInputStream(file.toFile())) {
                         p.load(in);
                     }

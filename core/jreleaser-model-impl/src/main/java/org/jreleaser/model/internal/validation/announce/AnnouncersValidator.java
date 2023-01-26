@@ -79,7 +79,7 @@ public final class AnnouncersValidator {
         validateZulip(context, announce.getZulip(), errors);
 
         boolean activeSet = announce.isActiveSet();
-        resolveActivatable(announce, "announce", "ALWAYS");
+        resolveActivatable(context, announce, "announce", "ALWAYS");
         announce.resolveEnabled(context.getModel().getProject());
 
         if (announce.isEnabled()) {

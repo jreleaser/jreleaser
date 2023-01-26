@@ -55,7 +55,7 @@ public final class SftpUploaderValidator {
     private static void validateSftpUploader(JReleaserContext context, SftpUploader sftp, Errors errors) {
         context.getLogger().debug("upload.sftp.{}", sftp.getName());
 
-        resolveActivatable(sftp,
+        resolveActivatable(context, sftp,
             listOf("upload.sftp." + sftp.getName(), "upload.sftp"),
             "NEVER");
         if (!sftp.resolveEnabled(context.getModel().getProject())) {

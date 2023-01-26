@@ -60,7 +60,7 @@ public final class JavaArchiveAssemblerValidator {
     private static void validateJavaArchive(JReleaserContext context, Mode mode, JavaArchiveAssembler archive, Errors errors) {
         context.getLogger().debug("assemble.java-archive.{}", archive.getName());
 
-        resolveActivatable(archive,
+        resolveActivatable(context, archive,
             listOf("assemble.java.archive." + archive.getName(), "assemble.java.archive"),
             "NEVER");
         if (!archive.resolveEnabled(context.getModel().getProject())) {

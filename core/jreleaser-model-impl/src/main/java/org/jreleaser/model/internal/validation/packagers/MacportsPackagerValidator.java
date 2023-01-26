@@ -56,7 +56,7 @@ public final class MacportsPackagerValidator {
         JReleaserModel model = context.getModel();
         MacportsPackager parentPackager = model.getPackagers().getMacports();
 
-        resolveActivatable(packager, "distributions." + distribution.getName() + "." + packager.getType(), parentPackager);
+        resolveActivatable(context, packager, "distributions." + distribution.getName() + "." + packager.getType(), parentPackager);
         if (!packager.resolveEnabled(context.getModel().getProject(), distribution)) {
             context.getLogger().debug(RB.$("validation.disabled"));
             packager.disable();
