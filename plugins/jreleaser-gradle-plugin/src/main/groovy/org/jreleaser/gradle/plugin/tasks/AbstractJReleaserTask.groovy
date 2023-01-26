@@ -23,8 +23,8 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.options.Option
 import org.jreleaser.engine.context.ContextCreator
 import org.jreleaser.gradle.plugin.JReleaserExtension
@@ -61,7 +61,7 @@ abstract class AbstractJReleaserTask extends DefaultTask {
     @Input
     final Property<Boolean> strict
 
-    @OutputDirectory
+    @InputDirectory
     final DirectoryProperty outputDirectory
 
     @Internal

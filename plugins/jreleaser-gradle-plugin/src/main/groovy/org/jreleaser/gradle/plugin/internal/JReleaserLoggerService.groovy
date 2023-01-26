@@ -64,7 +64,6 @@ abstract class JReleaserLoggerService implements BuildService<JReleaserLoggerSer
 
     @Override
     void close() {
-        println "Closing ${traceLogFile.absolutePath}"
         logger.close()
     }
 }
