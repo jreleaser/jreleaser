@@ -152,19 +152,24 @@ class JReleaserLoggerAdapter extends AbstractJReleaserLogger {
 
     private void log(Level level, String message, Throwable throwable) {
         StringBuilder b = new StringBuilder('[')
-        switch (level.color()) {
-            case 'cyan':
-                b.append(console.cyan(level.name()))
-                break
-            case 'blue':
-                b.append(console.blue(level.name()))
-                break
-            case 'yellow':
-                b.append(console.yellow(level.name()))
-                break
-            case 'red':
-                b.append(console.red(level.name()))
-                break
+
+        if (console.plain) {
+            b.append(level.name())
+        } else {
+            switch (level.color()) {
+                case 'cyan':
+                    b.append(console.cyan(level.name()))
+                    break
+                case 'blue':
+                    b.append(console.blue(level.name()))
+                    break
+                case 'yellow':
+                    b.append(console.yellow(level.name()))
+                    break
+                case 'red':
+                    b.append(console.red(level.name()))
+                    break
+            }
         }
 
         out.println(b.append('] ')
@@ -192,7 +197,7 @@ class JReleaserLoggerAdapter extends AbstractJReleaserLogger {
 
     private void printThrowable(Throwable throwable) {
         if (null != throwable) {
-            throwable.printStackTrace(new Colorizer(out))
+            throwable.printStackTrace(console.plain? out : new Colorizer(out))
         }
     }
 

@@ -71,7 +71,7 @@ class JReleaserProjectConfigurer {
 
         Provider<JReleaserLoggerService> loggerProvider = project.gradle.sharedServices
             .registerIfAbsent('jreleaserLogger', JReleaserLoggerService.class) { BuildServiceSpec<JReleaserLoggerService.Params> spec ->
-                spec.parameters.console.set(new AnsiConsole(project))
+                spec.parameters.console.set(new AnsiConsole(project, 'JRELEASER'))
                 spec.parameters.logLevel.set(project.gradle.startParameter.logLevel)
                 spec.parameters.outputDirectory.set(outputDirectory)
             }

@@ -124,7 +124,7 @@ class JReleaserPlugin implements Plugin<Project> {
                     t.group = JRELEASER_GROUP
                     t.description = 'Display environment variable names'
                     t.basedir.set(project.layout.projectDirectory)
-                    t.jlogger.set(new JReleaserLoggerAdapter(new AnsiConsole(project), LogLevel.INFO,
+                    t.jlogger.set(new JReleaserLoggerAdapter(new AnsiConsole(project, 'JRELEASER'), LogLevel.INFO,
                         newPrintWriter(new ByteArrayOutputStream())))
                 }
             })

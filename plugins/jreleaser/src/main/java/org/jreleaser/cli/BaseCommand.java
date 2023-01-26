@@ -31,6 +31,12 @@ import java.util.ResourceBundle;
     versionProvider = Versions.class,
     resourceBundle = "org.jreleaser.cli.Messages")
 abstract class BaseCommand {
+    static {
+        if (System.getenv().containsKey("JRELEASER_NO_COLOR")) {
+            System.setProperty("picocli.ansi", "false");
+        }
+    }
+
     @CommandLine.Spec
     CommandLine.Model.CommandSpec spec;
 

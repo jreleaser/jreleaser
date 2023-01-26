@@ -38,7 +38,7 @@ class GradleJReleaserModelPrinter extends JReleaserModelPrinter {
 
     GradleJReleaserModelPrinter(Project project, PrintWriter out) {
         super(out)
-        this.console = new AnsiConsole(project)
+        this.console = new AnsiConsole(project, 'JRELEASER')
     }
 
     @Override
