@@ -46,12 +46,14 @@ abstract class JReleaserLoggerService implements BuildService<JReleaserLoggerSer
     }
 
     private final JReleaserLogger logger
+    private final File traceLogFile
 
     JReleaserLoggerService() {
         Path outputDirectoryPath = parameters.outputDirectory.get().asFile.toPath()
         Files.createDirectories(outputDirectoryPath)
-        PrintWriter tracer = newPrintWriter(new FileOutputStream(outputDirectoryPath
-            .resolve('trace.log').toFile()))
+        traceLogFile = outputDirectoryPath
+            .resolve('trace.log').toFile()
+        PrintWriter tracer = newPrintWriter(new FileOutputStream(traceLogFile))
 
         logger = new JReleaserLoggerAdapter(parameters.console.get(), parameters.logLevel.get(), tracer)
     }
@@ -62,6 +64,7 @@ abstract class JReleaserLoggerService implements BuildService<JReleaserLoggerSer
 
     @Override
     void close() {
+        println "Closing ${traceLogFile.absolutePath}"
         logger.close()
     }
 }

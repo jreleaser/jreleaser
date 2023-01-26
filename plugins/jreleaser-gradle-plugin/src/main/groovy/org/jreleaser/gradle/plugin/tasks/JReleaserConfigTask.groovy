@@ -43,7 +43,7 @@ import static org.jreleaser.model.api.JReleaserContext.Mode.DOWNLOAD
 @CompileStatic
 abstract class JReleaserConfigTask extends AbstractPlatformAwareJReleaserTask {
     static final String NAME = 'jreleaserConfig'
-    
+
     @Input
     final Property<Boolean> full
 
@@ -95,7 +95,7 @@ abstract class JReleaserConfigTask extends AbstractPlatformAwareJReleaserTask {
     }
 
     @TaskAction
-    void displayConfig() {
+    void performAction() {
         if (download.get()) {
             mode = DOWNLOAD
         } else if (announce.get()) {

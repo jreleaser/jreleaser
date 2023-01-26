@@ -53,7 +53,7 @@ abstract class JReleaserFullReleaseTask extends AbstractJReleaserPackagerTask {
     @Input
     @Optional
     final ListProperty<String> excludedDeployerNames
-    
+
     @Input
     @Optional
     final ListProperty<String> uploaderTypes
@@ -112,7 +112,7 @@ abstract class JReleaserFullReleaseTask extends AbstractJReleaserPackagerTask {
     void setExcludeDeployerName(List<String> excludedDeployerNames) {
         this.excludedDeployerNames.set(excludedDeployerNames)
     }
-    
+
     @Option(option = 'uploader', description = 'Include an uploader by type (OPTIONAL).')
     void setUploaderType(List<String> uploaderTypes) {
         this.uploaderTypes.set(uploaderTypes)

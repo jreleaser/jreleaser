@@ -126,7 +126,7 @@ abstract class JReleaserTemplateEvalTask extends AbstractPlatformAwareJReleaserT
     }
 
     @TaskAction
-    void displayConfig() {
+    void performAction() {
         if (download.get()) {
             mode = DOWNLOAD
         } else if (announce.get()) {
@@ -144,10 +144,10 @@ abstract class JReleaserTemplateEvalTask extends AbstractPlatformAwareJReleaserT
 
         if (inputFile.present) {
             TemplateEvaluator.generateTemplate(context, inputFile.get().asFile.toPath(),
-                context.relativizeToBasedir(targetDirectory.get().asFile.toPath()), overwrite.getOrElse(false));
+                context.relativizeToBasedir(targetDirectory.get().asFile.toPath()), overwrite.getOrElse(false))
         } else if (null != inputDirectory) {
             TemplateEvaluator.generateTemplates(context, inputDirectory.get().asFile.toPath(),
-                context.relativizeToBasedir(targetDirectory.get().asFile.toPath()), overwrite.getOrElse(false));
+                context.relativizeToBasedir(targetDirectory.get().asFile.toPath()), overwrite.getOrElse(false))
         }
 
         context.report()

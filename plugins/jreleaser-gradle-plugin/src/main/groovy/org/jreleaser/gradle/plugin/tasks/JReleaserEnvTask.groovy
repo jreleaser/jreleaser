@@ -52,7 +52,7 @@ abstract class JReleaserEnvTask extends DefaultTask {
     }
 
     @TaskAction
-    void display() {
+    void performAction() {
         Environment.display(jlogger.get(), basedir.get().asFile.toPath())
     }
 }

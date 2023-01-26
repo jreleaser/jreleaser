@@ -144,7 +144,7 @@ abstract class JReleaserTemplateGenerateTask extends DefaultTask {
     }
 
     @TaskAction
-    void generateTemplate() {
+    void performAction() {
         JReleaserLogger logger = jlogger.get().logger
         try {
             Path output = TemplateGenerator.builder()

@@ -39,7 +39,7 @@ import static org.jreleaser.model.api.JReleaserContext.Mode.ASSEMBLE
 @CompileStatic
 abstract class JReleaserAssembleTask extends AbstractPlatformAwareJReleaserTask {
     static final String NAME = 'jreleaserAssemble'
-    
+
     @Input
     @Optional
     final ListProperty<String> assemblers

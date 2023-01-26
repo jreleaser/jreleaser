@@ -34,7 +34,7 @@ import static org.jreleaser.model.api.JReleaserContext.Mode.CHANGELOG
 @CompileStatic
 abstract class JReleaserChangelogTask extends AbstractJReleaserTask {
     static final String NAME = 'jreleaserChangelog'
-    
+
     @Inject
     JReleaserChangelogTask(ObjectFactory objects) {
         super(objects)

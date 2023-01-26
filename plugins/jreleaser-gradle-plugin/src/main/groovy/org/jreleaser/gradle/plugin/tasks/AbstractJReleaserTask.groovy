@@ -23,7 +23,6 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.options.Option
@@ -132,7 +131,7 @@ abstract class AbstractJReleaserTask extends DefaultTask {
     }
 
     protected List<String> resolveCollection(String key, List<String> values) {
-        if (!values.isEmpty()) return values;
+        if (!values.isEmpty()) return values
         String resolvedValue = Env.resolve(key, '')
         if (isBlank(resolvedValue)) return Collections.emptyList()
         return Arrays.stream(resolvedValue.trim().split(','))

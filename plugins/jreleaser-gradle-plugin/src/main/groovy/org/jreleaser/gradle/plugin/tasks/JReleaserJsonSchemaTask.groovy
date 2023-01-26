@@ -33,7 +33,7 @@ abstract class JReleaserJsonSchemaTask extends DefaultTask {
     static final String NAME = 'jreleaserJsonSchema'
 
     @TaskAction
-    void generateJsonSchema() {
+    void performAction() {
         JsonSchemaGenerator.generate(IoUtils.newPrintWriter(System.out))
     }
 }

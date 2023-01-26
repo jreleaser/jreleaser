@@ -80,7 +80,7 @@ abstract class JReleaserInitTask extends DefaultTask {
     }
 
     @TaskAction
-    void init() {
+    void performAction() {
         JReleaserLogger logger = jlogger.get().logger
         try {
             Init.execute(logger, format.orNull, overwrite.getOrElse(false), outputDirectory.getAsFile().get().toPath())

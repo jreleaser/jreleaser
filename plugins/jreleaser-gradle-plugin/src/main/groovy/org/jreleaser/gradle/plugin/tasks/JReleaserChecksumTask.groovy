@@ -37,7 +37,7 @@ import javax.inject.Inject
 @CompileStatic
 abstract class JReleaserChecksumTask extends AbstractPlatformAwareJReleaserTask {
     static final String NAME = 'jreleaserChecksum'
-    
+
     @Input
     @Optional
     final ListProperty<String> distributions

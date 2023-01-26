@@ -40,8 +40,6 @@ import org.jreleaser.util.PlatformUtils
 import org.jreleaser.workflow.Workflows
 
 import javax.inject.Inject
-import java.nio.file.Files
-import java.nio.file.Path
 
 import static java.util.stream.Collectors.toList
 import static org.jreleaser.util.StringUtils.isBlank
@@ -55,7 +53,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 @CompileStatic
 abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
     static final String NAME = 'jreleaserAutoConfigRelease'
-    
+
     @OutputDirectory
     final DirectoryProperty outputDirectory
     @Input
@@ -417,13 +415,10 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
 
     @TaskAction
     void performAction() {
-        Path outputDirectoryPath = outputDirectory.get().asFile.toPath()
-        Files.createDirectories(outputDirectoryPath)
-
         JReleaserContext context = ModelAutoConfigurer.builder()
             .logger(jlogger.get().logger)
             .basedir(project.projectDir.toPath())
-            .outputDirectory(outputDirectoryPath)
+            .outputDirectory(outputDirectory.get().asFile.toPath())
             .dryrun(dryrun.getOrElse(false))
             .gitRootSearch(gitRootSearch.getOrElse(false))
             .strict(strict.getOrElse(false))
@@ -483,7 +478,7 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
     }
 
     protected List<String> resolveCollection(String key, List<String> values) {
-        if (!values.isEmpty()) return values;
+        if (!values.isEmpty()) return values
         String resolvedValue = Env.resolve(key, '')
         if (isBlank(resolvedValue)) return Collections.emptyList()
         return Arrays.stream(resolvedValue.trim().split(','))
