@@ -110,7 +110,7 @@ public abstract class AbstractDownloader<A extends org.jreleaser.model.api.downl
 
     @Override
     public boolean isActiveSet() {
-        return active != null;
+        return null != active;
     }
 
     @Override

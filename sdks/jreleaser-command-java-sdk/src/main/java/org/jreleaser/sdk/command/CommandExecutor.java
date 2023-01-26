@@ -166,7 +166,7 @@ public class CommandExecutor {
                 error(errLocal);
             }
 
-            if (err != null) {
+            if (null != err) {
                 err.write(errLocal.toByteArray());
             }
 

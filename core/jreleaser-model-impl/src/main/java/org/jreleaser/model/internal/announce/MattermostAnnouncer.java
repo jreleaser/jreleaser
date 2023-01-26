@@ -148,7 +148,7 @@ public final class MattermostAnnouncer extends AbstractAnnouncer<MattermostAnnou
     @Override
     protected boolean isSet() {
         return super.isSet() ||
-            structuredMessage != null ||
+            null != structuredMessage ||
             isNotBlank(webhook) ||
             isNotBlank(message) ||
             isNotBlank(messageTemplate);
@@ -205,7 +205,7 @@ public final class MattermostAnnouncer extends AbstractAnnouncer<MattermostAnnou
     }
 
     public boolean isStructuredMessage() {
-        return structuredMessage == null || structuredMessage;
+        return null == structuredMessage || structuredMessage;
     }
 
     public void setStructuredMessage(Boolean structuredMessage) {

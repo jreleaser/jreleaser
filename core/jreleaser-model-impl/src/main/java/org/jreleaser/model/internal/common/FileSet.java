@@ -156,7 +156,7 @@ public final class FileSet extends AbstractModelObject<FileSet> implements Domai
     }
 
     public boolean isFailOnMissingInput() {
-        return failOnMissingInput == null || failOnMissingInput;
+        return null == failOnMissingInput || failOnMissingInput;
     }
 
     public void setFailOnMissingInput(Boolean failOnMissingInput) {
@@ -164,7 +164,7 @@ public final class FileSet extends AbstractModelObject<FileSet> implements Domai
     }
 
     public boolean isFailOnMissingInputSet() {
-        return failOnMissingInput != null;
+        return null != failOnMissingInput;
     }
 
     @Override

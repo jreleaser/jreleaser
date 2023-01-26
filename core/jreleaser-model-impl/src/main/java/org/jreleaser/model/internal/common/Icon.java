@@ -113,7 +113,7 @@ public final class Icon extends AbstractModelObject<Icon> implements Domain, Ext
     }
 
     public boolean isPrimary() {
-        return primary != null && primary;
+        return null != primary && primary;
     }
 
     public void setPrimary(Boolean primary) {

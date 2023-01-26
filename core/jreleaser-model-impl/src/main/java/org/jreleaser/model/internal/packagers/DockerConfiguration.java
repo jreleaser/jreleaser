@@ -221,7 +221,7 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
         }
 
         public boolean isExternalLogin() {
-            return externalLogin != null && externalLogin;
+            return null != externalLogin && externalLogin;
         }
 
         public void setExternalLogin(Boolean externalLogin) {
@@ -229,7 +229,7 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
         }
 
         public boolean isExternalLoginSet() {
-            return externalLogin != null;
+            return null != externalLogin;
         }
 
         @Override
@@ -247,7 +247,7 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (null == o || getClass() != o.getClass()) return false;
             DockerConfiguration.Registry that = (DockerConfiguration.Registry) o;
             String sn1 = serverName.equals(DEFAULT_NAME) ? DOCKER_IO : serverName;
             String sn2 = that.serverName.equals(DEFAULT_NAME) ? DOCKER_IO : that.serverName;
@@ -336,7 +336,7 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
         }
 
         public boolean isEnabled() {
-            return enabled != null && enabled;
+            return null != enabled && enabled;
         }
 
         public void setEnabled(Boolean enabled) {
@@ -344,11 +344,11 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
         }
 
         public boolean isEnabledSet() {
-            return enabled != null;
+            return null != enabled;
         }
 
         public boolean isCreateBuilder() {
-            return createBuilder == null || createBuilder;
+            return null == createBuilder || createBuilder;
         }
 
         public void setCreateBuilder(Boolean createBuilder) {
@@ -356,7 +356,7 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
         }
 
         public boolean isCreateBuilderSet() {
-            return createBuilder != null;
+            return null != createBuilder;
         }
 
         @Override

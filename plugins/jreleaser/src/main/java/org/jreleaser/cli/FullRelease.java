@@ -43,59 +43,59 @@ public class FullRelease extends AbstractPlatformAwareModelCommand<Main> {
         Exclude exclude;
 
         String[] includedDeployerTypes() {
-            return include != null ? include.includedDeployerTypes : null;
+            return null != include ? include.includedDeployerTypes : null;
         }
 
         String[] includedDeployerNames() {
-            return include != null ? include.includedDeployerNames : null;
+            return null != include ? include.includedDeployerNames : null;
         }
 
         String[] includedUploaderTypes() {
-            return include != null ? include.includedUploaderTypes : null;
+            return null != include ? include.includedUploaderTypes : null;
         }
 
         String[] includedUploaderNames() {
-            return include != null ? include.includedUploaderNames : null;
+            return null != include ? include.includedUploaderNames : null;
         }
 
         String[] includedDistributions() {
-            return include != null ? include.includedDistributions : null;
+            return null != include ? include.includedDistributions : null;
         }
 
         String[] includedPackagers() {
-            return include != null ? include.includedPackagers : null;
+            return null != include ? include.includedPackagers : null;
         }
 
         String[] includedAnnouncers() {
-            return include != null ? include.includedAnnouncers : null;
+            return null != include ? include.includedAnnouncers : null;
         }
 
         String[] excludedDeployerTypes() {
-            return exclude != null ? exclude.excludedDeployerTypes : null;
+            return null != exclude ? exclude.excludedDeployerTypes : null;
         }
 
         String[] excludedDeployerNames() {
-            return exclude != null ? exclude.excludedDeployerNames : null;
+            return null != exclude ? exclude.excludedDeployerNames : null;
         }
 
         String[] excludedUploaderTypes() {
-            return exclude != null ? exclude.excludedUploaderTypes : null;
+            return null != exclude ? exclude.excludedUploaderTypes : null;
         }
 
         String[] excludedUploaderNames() {
-            return exclude != null ? exclude.excludedUploaderNames : null;
+            return null != exclude ? exclude.excludedUploaderNames : null;
         }
 
         String[] excludedDistributions() {
-            return exclude != null ? exclude.excludedDistributions : null;
+            return null != exclude ? exclude.excludedDistributions : null;
         }
 
         String[] excludedPackagers() {
-            return exclude != null ? exclude.excludedPackagers : null;
+            return null != exclude ? exclude.excludedPackagers : null;
         }
 
         String[] excludedAnnouncers() {
-            return exclude != null ? exclude.excludedAnnouncers : null;
+            return null != exclude ? exclude.excludedAnnouncers : null;
         }
     }
 

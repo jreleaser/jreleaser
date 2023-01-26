@@ -301,7 +301,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
 
     @Override
     public boolean isEnabled() {
-        return enabled != null && enabled;
+        return null != enabled && enabled;
     }
 
     @Override
@@ -311,7 +311,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
 
     @Override
     public boolean isEnabledSet() {
-        return enabled != null;
+        return null != enabled;
     }
 
     public String getHost() {
@@ -474,7 +474,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
     }
 
     public boolean isSign() {
-        return sign != null && sign;
+        return null != sign && sign;
     }
 
     public void setSign(Boolean sign) {
@@ -506,7 +506,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
     }
 
     public boolean isSkipTag() {
-        return skipTag != null && skipTag;
+        return null != skipTag && skipTag;
     }
 
     public void setSkipTag(Boolean skipTag) {
@@ -514,11 +514,11 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
     }
 
     public boolean isSkipTagSet() {
-        return skipTag != null;
+        return null != skipTag;
     }
 
     public boolean isSkipRelease() {
-        return skipRelease != null && skipRelease;
+        return null != skipRelease && skipRelease;
     }
 
     public void setSkipRelease(Boolean skipRelease) {
@@ -526,11 +526,11 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
     }
 
     public boolean isSkipReleaseSet() {
-        return skipRelease != null;
+        return null != skipRelease;
     }
 
     public boolean isOverwrite() {
-        return overwrite != null && overwrite;
+        return null != overwrite && overwrite;
     }
 
     public void setOverwrite(Boolean overwrite) {
@@ -538,7 +538,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
     }
 
     public boolean isOverwriteSet() {
-        return overwrite != null;
+        return null != overwrite;
     }
 
     public Update getUpdate() {
@@ -578,11 +578,11 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
     }
 
     public boolean isArtifactsSet() {
-        return artifacts != null;
+        return null != artifacts;
     }
 
     public boolean isArtifacts() {
-        return artifacts == null || artifacts;
+        return null == artifacts || artifacts;
     }
 
     public void setArtifacts(Boolean artifacts) {
@@ -590,7 +590,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
     }
 
     public boolean isFiles() {
-        return files == null || files;
+        return null == files || files;
     }
 
     public void setFiles(Boolean files) {
@@ -598,15 +598,15 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
     }
 
     public boolean isFilesSet() {
-        return files != null;
+        return null != files;
     }
 
     public boolean isChecksumsSet() {
-        return checksums != null;
+        return null != checksums;
     }
 
     public boolean isChecksums() {
-        return checksums == null || checksums;
+        return null == checksums || checksums;
     }
 
     public void setChecksums(Boolean checksums) {
@@ -614,11 +614,11 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
     }
 
     public boolean isSignaturesSet() {
-        return signatures != null;
+        return null != signatures;
     }
 
     public boolean isSignatures() {
-        return signatures == null || signatures;
+        return null == signatures || signatures;
     }
 
     public void setSignatures(Boolean signatures) {
@@ -638,7 +638,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
     }
 
     public boolean isUploadAssetsSet() {
-        return uploadAssets != null;
+        return null != uploadAssets;
     }
 
     @Override
@@ -824,7 +824,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
 
         @Override
         public boolean isEnabled() {
-            return enabled != null && enabled;
+            return null != enabled && enabled;
         }
 
         @Override
@@ -834,7 +834,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
 
         @Override
         public boolean isEnabledSet() {
-            return enabled != null;
+            return null != enabled;
         }
 
 
@@ -902,7 +902,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
 
         @Override
         public boolean isEnabled() {
-            return enabled != null && enabled;
+            return null != enabled && enabled;
         }
 
         @Override
@@ -912,7 +912,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
 
         @Override
         public boolean isEnabledSet() {
-            return enabled != null;
+            return null != enabled;
         }
 
         public boolean isPrerelease(String version) {
@@ -1010,7 +1010,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
         }
 
         public boolean isClose() {
-            return close == null || close;
+            return null == close || close;
         }
 
         public void setClose(Boolean close) {
@@ -1018,7 +1018,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
         }
 
         public boolean isCloseSet() {
-            return close != null;
+            return null != close;
         }
 
         public String getName() {
@@ -1089,7 +1089,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
 
         @Override
         public boolean isEnabled() {
-            return enabled != null && enabled;
+            return null != enabled && enabled;
         }
 
         @Override
@@ -1099,7 +1099,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
 
         @Override
         public boolean isEnabledSet() {
-            return enabled != null;
+            return null != enabled;
         }
 
         public String getComment() {

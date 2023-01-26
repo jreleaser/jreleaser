@@ -289,7 +289,7 @@ public final class ChocolateyPackager extends AbstractRepositoryPackager<org.jre
     }
 
     public boolean isRemoteBuild() {
-        return remoteBuild != null && remoteBuild;
+        return null != remoteBuild && remoteBuild;
     }
 
     public void setRemoteBuild(Boolean remoteBuild) {
@@ -297,7 +297,7 @@ public final class ChocolateyPackager extends AbstractRepositoryPackager<org.jre
     }
 
     public boolean isRemoteBuildSet() {
-        return remoteBuild != null;
+        return null != remoteBuild;
     }
 
     public ChocolateyRepository getBucket() {

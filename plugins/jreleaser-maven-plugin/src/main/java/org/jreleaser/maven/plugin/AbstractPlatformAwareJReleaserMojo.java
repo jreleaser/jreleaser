@@ -53,7 +53,7 @@ abstract class AbstractPlatformAwareJReleaserMojo extends AbstractJReleaserMojo 
         if (resolvedSelectCurrentPlatform) return Collections.singletonList(PlatformUtils.getCurrentFull());
 
         List<String> list = new ArrayList<>();
-        if (selectPlatforms != null && selectPlatforms.length > 0) {
+        if (null != selectPlatforms && selectPlatforms.length > 0) {
             Collections.addAll(list, selectPlatforms);
         }
         return resolveCollection(org.jreleaser.model.api.JReleaserContext.SELECT_PLATFORMS, list);
@@ -62,7 +62,7 @@ abstract class AbstractPlatformAwareJReleaserMojo extends AbstractJReleaserMojo 
     @Override
     protected List<String> collectRejectedPlatforms() {
         List<String> list = new ArrayList<>();
-        if (rejectedPlatforms != null && rejectedPlatforms.length > 0) {
+        if (null != rejectedPlatforms && rejectedPlatforms.length > 0) {
             Collections.addAll(list, rejectedPlatforms);
         }
         return resolveCollection(org.jreleaser.model.api.JReleaserContext.REJECT_PLATFORMS, list);

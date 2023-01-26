@@ -83,12 +83,12 @@ public abstract class AbstractHook<S extends AbstractHook<S>> extends AbstractMo
 
     @Override
     public boolean isActiveSet() {
-        return active != null;
+        return null != active;
     }
 
     @Override
     public boolean isContinueOnError() {
-        return continueOnError != null && continueOnError;
+        return null != continueOnError && continueOnError;
     }
 
     @Override
@@ -98,7 +98,7 @@ public abstract class AbstractHook<S extends AbstractHook<S>> extends AbstractMo
 
     @Override
     public boolean isContinueOnErrorSet() {
-        return continueOnError != null;
+        return null != continueOnError;
     }
 
     @Override

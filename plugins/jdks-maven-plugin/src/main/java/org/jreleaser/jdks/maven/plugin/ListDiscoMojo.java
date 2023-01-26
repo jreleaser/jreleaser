@@ -80,7 +80,7 @@ public class ListDiscoMojo extends AbstractMojo {
         Banner.display(project, getLog());
         if (skip) return;
 
-        if (pkgs == null || pkgs.isEmpty()) return;
+        if (null == pkgs || pkgs.isEmpty()) return;
         validate();
 
         Disco disco = initializeDisco();

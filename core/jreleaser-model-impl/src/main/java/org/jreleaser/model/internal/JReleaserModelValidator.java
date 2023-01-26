@@ -66,7 +66,7 @@ public final class JReleaserModelValidator {
         validateProject(context, mode, errors);
         validateDownloaders(context, mode, errors);
         validateAssemblers(context, mode, errors);
-        if (context.getModel().getCommit() != null) {
+        if (null != context.getModel().getCommit()) {
             validateSigning(context, mode, errors);
             validateRelease(context, mode, errors);
         }

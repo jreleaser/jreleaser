@@ -292,7 +292,7 @@ public final class SmtpAnnouncer extends AbstractAnnouncer<SmtpAnnouncer, org.jr
     }
 
     public boolean isAuth() {
-        return auth != null && auth;
+        return null != auth && auth;
     }
 
     public void setAuth(Boolean auth) {
@@ -300,7 +300,7 @@ public final class SmtpAnnouncer extends AbstractAnnouncer<SmtpAnnouncer, org.jr
     }
 
     public boolean isAuthSet() {
-        return auth != null;
+        return null != auth;
     }
 
     public String getUsername() {

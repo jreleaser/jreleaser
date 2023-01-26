@@ -284,7 +284,7 @@ public class GiteaReleaser extends BaseReleaser<org.jreleaser.model.api.release.
     }
 
     public boolean isDraft() {
-        return draft != null && draft;
+        return null != draft && draft;
     }
 
     public void setDraft(Boolean draft) {
@@ -292,7 +292,7 @@ public class GiteaReleaser extends BaseReleaser<org.jreleaser.model.api.release.
     }
 
     public boolean isDraftSet() {
-        return draft != null;
+        return null != draft;
     }
 
     @Override

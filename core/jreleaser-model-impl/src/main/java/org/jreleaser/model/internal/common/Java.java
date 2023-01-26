@@ -113,7 +113,7 @@ public final class Java extends AbstractModelObject<Java> implements Domain, Ext
 
     @Override
     public boolean isEnabled() {
-        return enabled != null && enabled;
+        return null != enabled && enabled;
     }
 
     @Override
@@ -123,7 +123,7 @@ public final class Java extends AbstractModelObject<Java> implements Domain, Ext
 
     @Override
     public boolean isEnabledSet() {
-        return enabled != null;
+        return null != enabled;
     }
 
     @Override
@@ -160,7 +160,7 @@ public final class Java extends AbstractModelObject<Java> implements Domain, Ext
     }
 
     public boolean isMultiProject() {
-        return multiProject != null && multiProject;
+        return null != multiProject && multiProject;
     }
 
     public void setMultiProject(Boolean multiProject) {
@@ -184,7 +184,7 @@ public final class Java extends AbstractModelObject<Java> implements Domain, Ext
     }
 
     public boolean isMultiProjectSet() {
-        return multiProject != null;
+        return null != multiProject;
     }
 
     @Override

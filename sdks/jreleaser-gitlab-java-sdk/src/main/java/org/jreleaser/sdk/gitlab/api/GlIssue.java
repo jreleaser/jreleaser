@@ -72,7 +72,7 @@ public class GlIssue {
     }
 
     public void setLabels(List<String> labels) {
-        if (labels != null) {
+        if (null != labels) {
             this.labels.clear();
             this.labels.addAll(labels);
         }

@@ -129,7 +129,7 @@ public class JavaRuntimeVersion implements Version<JavaRuntimeVersion> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (null == o || getClass() != o.getClass()) return false;
         JavaRuntimeVersion v = (JavaRuntimeVersion) o;
         return pattern.pattern().equals(v.pattern.pattern()) &&
             Objects.equals(version, v.version) &&

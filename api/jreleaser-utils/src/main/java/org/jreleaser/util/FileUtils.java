@@ -397,7 +397,7 @@ public final class FileUtils {
 
     private static void unpackArchive(String basename, File destinationDir, ArchiveInputStream in) throws IOException {
         ArchiveEntry entry = null;
-        while ((entry = in.getNextEntry()) != null) {
+        while (null != (entry = in.getNextEntry())) {
             if (!in.canReadEntryData(entry)) {
                 // log something?
                 continue;
@@ -662,7 +662,7 @@ public final class FileUtils {
         List<String> entries = new ArrayList<>();
 
         ArchiveEntry entry = null;
-        while ((entry = in.getNextEntry()) != null) {
+        while (null != (entry = in.getNextEntry())) {
             if (!in.canReadEntryData(entry)) {
                 // log something?
                 continue;
@@ -742,7 +742,7 @@ public final class FileUtils {
     }
 
     public static void copyFiles(JReleaserLogger logger, Path source, Path target, Predicate<Path> filter) throws IOException {
-        Predicate<Path> actualFilter = filter != null ? filter : path -> true;
+        Predicate<Path> actualFilter = null != filter ? filter : path -> true;
         IOException[] thrown = new IOException[1];
 
         try (Stream<Path> stream = Files.list(source)) {
@@ -759,7 +759,7 @@ public final class FileUtils {
                 });
         }
 
-        if (thrown[0] != null) {
+        if (null != thrown[0]) {
             throw thrown[0];
         }
     }
@@ -873,7 +873,7 @@ public final class FileUtils {
         public FileVisitResult postVisitDirectory(Path dir, IOException exc) {
             if (filtered(dir)) return CONTINUE;
 
-            if (exc == null) {
+            if (null == exc) {
                 Path newdir = target.resolve(source.relativize(dir));
                 try {
                     FileTime time = Files.getLastModifiedTime(dir);

@@ -69,7 +69,7 @@ public class Asset {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (null == o || getClass() != o.getClass()) return false;
         Asset asset = (Asset) o;
         return path.equals(asset.path);
     }

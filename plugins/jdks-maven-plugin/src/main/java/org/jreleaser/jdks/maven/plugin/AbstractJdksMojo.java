@@ -39,7 +39,7 @@ abstract class AbstractJdksMojo extends AbstractMojo {
     protected List<Jdk> jdks;
 
     protected void validate() throws MojoFailureException {
-        if (jdks == null || jdks.isEmpty()) return;
+        if (null == jdks || jdks.isEmpty()) return;
 
         Errors errors = new Errors();
         jdks.forEach(jdk -> jdk.validate(errors));

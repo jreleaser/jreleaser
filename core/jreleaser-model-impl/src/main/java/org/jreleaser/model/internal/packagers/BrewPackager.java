@@ -250,7 +250,7 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
     }
 
     public boolean isMultiPlatform() {
-        return multiPlatform != null && multiPlatform;
+        return null != multiPlatform && multiPlatform;
     }
 
     public void setMultiPlatform(Boolean multiPlatform) {
@@ -258,7 +258,7 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
     }
 
     public boolean isMultiPlatformSet() {
-        return multiPlatform != null;
+        return null != multiPlatform;
     }
 
     public HomebrewTap getTap() {
@@ -424,7 +424,7 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (null == o || getClass() != o.getClass()) return false;
             Dependency that = (Dependency) o;
             return key.equals(that.key);
         }
@@ -552,7 +552,7 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
 
 
         public boolean isEnabled() {
-            return enabled != null && enabled;
+            return null != enabled && enabled;
         }
 
         public void setEnabled(Boolean enabled) {
@@ -560,7 +560,7 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
         }
 
         public boolean isEnabledSet() {
-            return enabled != null;
+            return null != enabled;
         }
 
         public String getResolvedAppcast(TemplateContext props) {

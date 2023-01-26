@@ -97,13 +97,13 @@ public final class CollectionUtils {
     }
 
     public static void safePut(String key, Object value, Map<String, Object> dest) {
-        if (value != null) {
+        if (null != value) {
             dest.put(key, value);
         }
     }
 
     public static void safePut(String key, Object value, Map<String, Object> dest, boolean forceKey) {
-        if (value != null) {
+        if (null != value) {
             dest.put(key, value);
         } else if (forceKey) {
             dest.put(key, "");
@@ -136,7 +136,7 @@ public final class CollectionUtils {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     public static <K, V> Map mapOf(Object... keysAndValues) {
-        if (keysAndValues == null) {
+        if (null == keysAndValues) {
             return Collections.emptyMap();
         }
         if (keysAndValues.length % 2 == 1) {
@@ -158,7 +158,7 @@ public final class CollectionUtils {
 
     @SafeVarargs
     public static <T> Set<T> setOf(T... values) {
-        if (values == null) {
+        if (null == values) {
             return Collections.emptySet();
         }
 
@@ -173,7 +173,7 @@ public final class CollectionUtils {
 
     @SafeVarargs
     public static <T> List<T> listOf(T... values) {
-        if (values == null) {
+        if (null == values) {
             return Collections.emptyList();
         }
 
@@ -591,13 +591,13 @@ public final class CollectionUtils {
         @Override
         public String getProperty(String key) { // lgtm [java/unsynchronized-getter]
             Object value = map.get(key);
-            return value != null ? String.valueOf(value) : null;
+            return null != value ? String.valueOf(value) : null;
         }
 
         @Override
         public String getProperty(String key, String defaultValue) { // lgtm [java/unsynchronized-getter]
             Object value = map.get(key);
-            return value != null ? String.valueOf(value) : defaultValue;
+            return null != value ? String.valueOf(value) : defaultValue;
         }
 
         @Override

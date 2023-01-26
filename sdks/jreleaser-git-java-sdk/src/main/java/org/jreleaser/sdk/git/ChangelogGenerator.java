@@ -343,7 +343,7 @@ public class ChangelogGenerator {
 
     private ObjectId getObjectId(Git git, Ref ref) throws IOException {
         Ref peeled = git.getRepository().getRefDatabase().peel(ref);
-        return peeled.getPeeledObjectId() != null ? peeled.getPeeledObjectId() : peeled.getObjectId();
+        return null != peeled.getPeeledObjectId() ? peeled.getPeeledObjectId() : peeled.getObjectId();
     }
 
     protected String formatChangelog(JReleaserContext context,
@@ -457,7 +457,7 @@ public class ChangelogGenerator {
         grouped.keySet().stream().sorted().forEach(name -> {
             List<Contributor> cs = grouped.get(name);
             Optional<Contributor> contributor = cs.stream()
-                .filter(c -> c.getUser() != null)
+                .filter(c -> null != c.getUser())
                 .findFirst();
             if (contributor.isPresent()) {
                 list.add(resolveTemplate(contributorFormat, contributor.get().asContext()));
@@ -670,11 +670,11 @@ public class ChangelogGenerator {
             Matcher matcherFirstLine = FIRST_LINE_PATTERN.matcher(lines.get(0));
             if (matcherFirstLine.matches()) {
                 lines.remove(0); // consumed first line
-                if (matcherFirstLine.group("bang") != null && !matcherFirstLine.group("bang").isEmpty()) {
+                if (null != matcherFirstLine.group("bang") && !matcherFirstLine.group("bang").isEmpty()) {
                     ccIsBreakingChange = true;
                 }
                 ccType = matcherFirstLine.group("type");
-                ccScope = matcherFirstLine.group("scope") == null ? "" : matcherFirstLine.group("scope");
+                ccScope = null == matcherFirstLine.group("scope") ? "" : matcherFirstLine.group("scope");
                 ccDescription = matcherFirstLine.group("description");
             } else {
                 isConventional = false;
@@ -811,7 +811,7 @@ public class ChangelogGenerator {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (null == o || getClass() != o.getClass()) return false;
             Author that = (Author) o;
             return name.equals(that.name);
         }
@@ -859,7 +859,7 @@ public class ChangelogGenerator {
             context.set("contributorNameAsLink", passThrough(name));
             context.set("contributorUsername", "");
             context.set("contributorUsernameAsLink", "");
-            if (user != null) {
+            if (null != user) {
                 context.set("contributorNameAsLink", passThrough(user.asLink(name)));
                 context.set("contributorUsername", passThrough(user.getUsername()));
                 context.set("contributorUsernameAsLink", passThrough(user.asLink("@" + user.getUsername())));
@@ -875,7 +875,7 @@ public class ChangelogGenerator {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (null == o || getClass() != o.getClass()) return false;
             Contributor that = (Contributor) o;
             return name.equals(that.name);
         }

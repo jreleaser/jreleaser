@@ -244,7 +244,7 @@ abstract class AbstractJReleaserTask extends Task {
 
     protected List<String> collectEntries(String[] input, boolean lowerCase) {
         List<String> list = new ArrayList<>();
-        if (input != null && input.length > 0) {
+        if (null != input && input.length > 0) {
             for (String s : input) {
                 if (isNotBlank(s)) {
                     s = s.trim();

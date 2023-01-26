@@ -44,11 +44,11 @@ public class Announce extends AbstractModelCommand<Main> {
         Exclude exclude;
 
         String[] includedAnnouncers() {
-            return include != null ? include.includedAnnouncers : null;
+            return null != include ? include.includedAnnouncers : null;
         }
 
         String[] excludedAnnouncers() {
-            return exclude != null ? exclude.excludedAnnouncers : null;
+            return null != exclude ? exclude.excludedAnnouncers : null;
         }
     }
 

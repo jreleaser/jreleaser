@@ -83,7 +83,7 @@ public class JavaModuleVersion implements Version<JavaModuleVersion> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (null == o || getClass() != o.getClass()) return false;
         JavaModuleVersion v = (JavaModuleVersion) o;
         return Objects.equals(version, v.version) &&
             Objects.equals(prerelease, v.prerelease) &&

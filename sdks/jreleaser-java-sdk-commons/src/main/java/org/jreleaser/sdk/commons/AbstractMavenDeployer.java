@@ -388,7 +388,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (null == o || getClass() != o.getClass()) return false;
             Deployable that = (Deployable) o;
             return stagingRepository.equals(that.stagingRepository) &&
                 path.equals(that.path) &&
@@ -402,7 +402,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
 
         @Override
         public int compareTo(Deployable o) {
-            if (o == null) return -1;
+            if (null == o) return -1;
             return getFullDeployPath().compareTo(o.getFullDeployPath());
         }
     }

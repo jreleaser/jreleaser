@@ -37,7 +37,7 @@ public class ChecksumUtils {
         if (null == algorithm) {
             throw new IOException(RB.$("ERROR_unsupported_algorithm", algorithm));
         }
-        if (data == null || data.length == 0) {
+        if (null == data || data.length == 0) {
             throw new IOException(RB.$("ERROR_empty_data", algorithm));
         }
 

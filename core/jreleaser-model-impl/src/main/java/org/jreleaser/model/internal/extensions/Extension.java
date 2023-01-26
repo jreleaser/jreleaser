@@ -99,7 +99,7 @@ public final class Extension extends AbstractModelObject<Extension> implements D
 
     @Override
     public boolean isEnabled() {
-        return enabled != null && enabled;
+        return null != enabled && enabled;
     }
 
     @Override
@@ -109,7 +109,7 @@ public final class Extension extends AbstractModelObject<Extension> implements D
 
     @Override
     public boolean isEnabledSet() {
-        return enabled != null;
+        return null != enabled;
     }
 
     public String getName() {

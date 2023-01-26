@@ -69,7 +69,7 @@ public final class StringUtils {
     }
 
     public static String getFilenameExtension(String path) {
-        if (path == null) {
+        if (null == path) {
             return null;
         }
 
@@ -87,7 +87,7 @@ public final class StringUtils {
     }
 
     public static String getFilename(String path) {
-        if (path == null) {
+        if (null == path) {
             return null;
         }
 
@@ -151,7 +151,7 @@ public final class StringUtils {
 
 
         String className = capitalize(logicalName);
-        if (trailingName != null) {
+        if (null != trailingName) {
             className = className + trailingName;
         }
 
@@ -166,7 +166,7 @@ public final class StringUtils {
      */
     public static String getClassNameRepresentation(String name) {
         StringBuilder buf = new StringBuilder();
-        if (name != null && name.length() > 0) {
+        if (null != name && name.length() > 0) {
             String[] tokens = name.split("[^\\w\\d]");
             for (String token1 : tokens) {
                 String token = token1.trim();
@@ -194,7 +194,7 @@ public final class StringUtils {
             StringBuilder buf = new StringBuilder();
             String[] tokens = name.split("-");
             for (String token : tokens) {
-                if (token == null || token.length() == 0) {
+                if (null == token || token.length() == 0) {
                     continue;
                 }
 
@@ -224,7 +224,7 @@ public final class StringUtils {
             StringBuilder buf = new StringBuilder();
             String[] tokens = name.split("-");
             for (String token : tokens) {
-                if (token == null || token.length() == 0) {
+                if (null == token || token.length() == 0) {
                     continue;
                 }
                 if (buf.length() > 0) {
@@ -463,7 +463,7 @@ public final class StringUtils {
      * blank.
      */
     public static boolean isBlank(String str) {
-        if (str == null || str.length() == 0) {
+        if (null == str || str.length() == 0) {
             return true;
         }
 
@@ -541,7 +541,7 @@ public final class StringUtils {
      * @return The hyphenated name representation
      */
     public static String getHyphenatedName(Class<?> clazz) {
-        if (clazz == null) {
+        if (null == clazz) {
             return null;
         }
 
@@ -704,7 +704,7 @@ public final class StringUtils {
     }
 
     public static boolean isTrue(Object o) {
-        if (o == null) return false;
+        if (null == o) return false;
         if (o instanceof Boolean) return (Boolean) o;
         return "true".equalsIgnoreCase(String.valueOf(o).trim());
     }
@@ -751,7 +751,7 @@ public final class StringUtils {
     }
 
     private static String applyQuotes(String string) {
-        if (string == null || string.length() == 0) {
+        if (null == string || string.length() == 0) {
             return "\"\"";
         }
 

@@ -369,7 +369,7 @@ public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.mo
 
         @Override
         public boolean isActiveSet() {
-            return active != null;
+            return null != active;
         }
 
         public String getPath() {

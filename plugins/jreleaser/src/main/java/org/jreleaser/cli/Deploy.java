@@ -46,19 +46,19 @@ public class Deploy extends AbstractModelCommand<Main> {
         Exclude exclude;
 
         String[] includedDeployerTypes() {
-            return include != null ? include.includedDeployerTypes : null;
+            return null != include ? include.includedDeployerTypes : null;
         }
 
         String[] includedDeployerNames() {
-            return include != null ? include.includedDeployerNames : null;
+            return null != include ? include.includedDeployerNames : null;
         }
 
         String[] excludedDeployerTypes() {
-            return exclude != null ? exclude.excludedDeployerTypes : null;
+            return null != exclude ? exclude.excludedDeployerTypes : null;
         }
 
         String[] excludedDeployerNames() {
-            return exclude != null ? exclude.excludedDeployerNames : null;
+            return null != exclude ? exclude.excludedDeployerNames : null;
         }
     }
 

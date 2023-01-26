@@ -65,7 +65,7 @@ abstract class AbstractCommand<C extends IO> extends BaseCommand implements Call
     }
 
     protected void printDetails(Throwable throwable, String message, Colorizer colorizer) {
-        if (throwable == null) return;
+        if (null == throwable) return;
         String myMessage = throwable.getMessage();
         if (!message.equals(myMessage)) {
             colorizer.println(myMessage);

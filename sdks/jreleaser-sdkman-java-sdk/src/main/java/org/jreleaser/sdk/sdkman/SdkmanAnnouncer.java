@@ -80,7 +80,7 @@ public class SdkmanAnnouncer implements Announcer<org.jreleaser.model.api.announ
         sdkman.getExtraProperties().remove(MAGIC_SET);
 
         if (distributions.isEmpty()) {
-            if (set == null || !set) {
+            if (null == set || !set) {
                 announceProject();
             } else {
                 context.getLogger().debug(RB.$("announcers.announcer.disabled"));

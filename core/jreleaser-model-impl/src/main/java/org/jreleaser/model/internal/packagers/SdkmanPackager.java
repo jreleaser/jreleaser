@@ -229,7 +229,7 @@ public final class SdkmanPackager extends AbstractPackager<org.jreleaser.model.a
     }
 
     public boolean isCommandSet() {
-        return command != null;
+        return null != command;
     }
 
     public String getConsumerKey() {

@@ -118,7 +118,7 @@ public class Errors {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (null == o || getClass() != o.getClass()) return false;
             Error error = (Error) o;
             return kind == error.kind &&
                 message.equals(error.message);

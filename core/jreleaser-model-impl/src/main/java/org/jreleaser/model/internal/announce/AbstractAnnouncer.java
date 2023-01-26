@@ -60,9 +60,9 @@ public abstract class AbstractAnnouncer<S extends AbstractAnnouncer<S, A>, A ext
     }
 
     protected boolean isSet() {
-        return active != null ||
-            connectTimeout != null ||
-            readTimeout != null ||
+        return null != active ||
+            null != connectTimeout ||
+            null != readTimeout ||
             !extraProperties.isEmpty();
     }
 
@@ -107,7 +107,7 @@ public abstract class AbstractAnnouncer<S extends AbstractAnnouncer<S, A>, A ext
 
     @Override
     public boolean isActiveSet() {
-        return active != null;
+        return null != active;
     }
 
     @Override

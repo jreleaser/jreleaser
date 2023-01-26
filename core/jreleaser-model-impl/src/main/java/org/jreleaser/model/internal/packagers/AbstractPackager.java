@@ -144,7 +144,7 @@ public abstract class AbstractPackager<A extends org.jreleaser.model.api.package
 
     @Override
     public boolean isContinueOnError() {
-        return continueOnError != null && continueOnError;
+        return null != continueOnError && continueOnError;
     }
 
     @Override
@@ -154,7 +154,7 @@ public abstract class AbstractPackager<A extends org.jreleaser.model.api.package
 
     @Override
     public boolean isContinueOnErrorSet() {
-        return continueOnError != null;
+        return null != continueOnError;
     }
 
     @Override
@@ -189,7 +189,7 @@ public abstract class AbstractPackager<A extends org.jreleaser.model.api.package
 
     @Override
     public boolean isActiveSet() {
-        return active != null;
+        return null != active;
     }
 
     @Override

@@ -125,7 +125,7 @@ public final class JpackageAssemblerValidator {
             for (Artifact runtimeImage : jpackage.getRuntimeImages()) {
                 Path rp = runtimeImage.getResolvedPath(context, jpackage);
                 Path tp = runtimeImage.getResolvedTransform(context, jpackage);
-                Path path = tp != null ? tp : rp;
+                Path path = null != tp ? tp : rp;
                 if (candidateRuntimeImages.stream()
                     .anyMatch(a -> a.getPath().equals(path.toString()))) {
                     count++;

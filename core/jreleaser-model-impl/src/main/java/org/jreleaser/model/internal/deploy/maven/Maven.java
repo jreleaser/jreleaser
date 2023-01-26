@@ -160,7 +160,7 @@ public final class Maven extends AbstractModelObject<Maven> implements Domain, A
 
     @Override
     public boolean isEnabled() {
-        return enabled && active != null;
+        return enabled && null != active;
     }
 
     @Override
@@ -191,7 +191,7 @@ public final class Maven extends AbstractModelObject<Maven> implements Domain, A
 
     @Override
     public boolean isActiveSet() {
-        return active != null;
+        return null != active;
     }
 
     public Optional<ArtifactoryMavenDeployer> getActiveArtifactory(String name) {

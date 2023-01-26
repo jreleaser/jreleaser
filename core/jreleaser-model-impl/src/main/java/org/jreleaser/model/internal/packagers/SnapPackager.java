@@ -390,7 +390,7 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
     }
 
     public boolean isRemoteBuild() {
-        return remoteBuild != null && remoteBuild;
+        return null != remoteBuild && remoteBuild;
     }
 
     public void setRemoteBuild(Boolean remoteBuild) {
@@ -398,7 +398,7 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
     }
 
     public boolean isRemoteBuildSet() {
-        return remoteBuild != null;
+        return null != remoteBuild;
     }
 
     public SnapRepository getSnap() {
@@ -791,7 +791,7 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
         }
 
         public boolean isIgnoreError() {
-            return ignoreError != null && ignoreError;
+            return null != ignoreError && ignoreError;
         }
 
         public void setIgnoreError(Boolean ignoreError) {
@@ -799,7 +799,7 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
         }
 
         public boolean isIgnoreErrorSet() {
-            return ignoreError != null;
+            return null != ignoreError;
         }
 
         @Override

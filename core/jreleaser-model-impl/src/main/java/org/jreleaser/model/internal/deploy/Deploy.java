@@ -115,7 +115,7 @@ public final class Deploy extends AbstractModelObject<Deploy> implements Domain,
 
     @Override
     public boolean isActiveSet() {
-        return active != null;
+        return null != active;
     }
 
     public Maven getMaven() {

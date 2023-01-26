@@ -201,7 +201,7 @@ public final class Announce extends AbstractModelObject<Announce> implements Dom
 
     @Override
     public boolean isEnabled() {
-        return enabled && active != null;
+        return enabled && null != active;
     }
 
     @Deprecated
@@ -240,7 +240,7 @@ public final class Announce extends AbstractModelObject<Announce> implements Dom
 
     @Override
     public boolean isActiveSet() {
-        return active != null;
+        return null != active;
     }
 
     public ArticleAnnouncer getArticle() {

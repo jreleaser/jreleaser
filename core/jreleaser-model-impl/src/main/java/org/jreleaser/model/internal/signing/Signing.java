@@ -198,11 +198,11 @@ public final class Signing extends AbstractModelObject<Signing> implements Domai
 
     @Override
     public boolean isActiveSet() {
-        return active != null;
+        return null != active;
     }
 
     public boolean isArmored() {
-        return armored != null && armored;
+        return null != armored && armored;
     }
 
     public void setArmored(Boolean armored) {
@@ -210,11 +210,11 @@ public final class Signing extends AbstractModelObject<Signing> implements Domai
     }
 
     public boolean isArmoredSet() {
-        return armored != null;
+        return null != armored;
     }
 
     public boolean isVerify() {
-        return verify == null || verify;
+        return null == verify || verify;
     }
 
     public void setVerify(Boolean verify) {
@@ -222,7 +222,7 @@ public final class Signing extends AbstractModelObject<Signing> implements Domai
     }
 
     public boolean isVerifySet() {
-        return verify != null;
+        return null != verify;
     }
 
     public String getPublicKey() {
@@ -262,11 +262,11 @@ public final class Signing extends AbstractModelObject<Signing> implements Domai
     }
 
     public boolean isArtifactsSet() {
-        return artifacts != null;
+        return null != artifacts;
     }
 
     public boolean isArtifacts() {
-        return artifacts == null || artifacts;
+        return null == artifacts || artifacts;
     }
 
     public void setArtifacts(Boolean artifacts) {
@@ -274,7 +274,7 @@ public final class Signing extends AbstractModelObject<Signing> implements Domai
     }
 
     public boolean isFiles() {
-        return files == null || files;
+        return null == files || files;
     }
 
     public void setFiles(Boolean files) {
@@ -282,15 +282,15 @@ public final class Signing extends AbstractModelObject<Signing> implements Domai
     }
 
     public boolean isFilesSet() {
-        return files != null;
+        return null != files;
     }
 
     public boolean isChecksumsSet() {
-        return checksums != null;
+        return null != checksums;
     }
 
     public boolean isChecksums() {
-        return checksums == null || checksums;
+        return null == checksums || checksums;
     }
 
     public void setChecksums(Boolean checksums) {
@@ -446,11 +446,11 @@ public final class Signing extends AbstractModelObject<Signing> implements Domai
         }
 
         public boolean isDefaultKeyringSet() {
-            return defaultKeyring != null;
+            return null != defaultKeyring;
         }
 
         public boolean isDefaultKeyring() {
-            return defaultKeyring == null || defaultKeyring;
+            return null == defaultKeyring || defaultKeyring;
         }
 
         public void setDefaultKeyring(Boolean defaultKeyring) {

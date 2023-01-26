@@ -327,7 +327,7 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
 
     private List<String> collectAuthors() {
         List<String> list = new ArrayList<>();
-        if (authors != null && authors.length > 0) {
+        if (null != authors && authors.length > 0) {
             Collections.addAll(list, authors);
         }
         return list;
@@ -335,7 +335,7 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
 
     private List<String> collectFiles() {
         List<String> list = new ArrayList<>();
-        if (files != null && files.length > 0) {
+        if (null != files && files.length > 0) {
             Collections.addAll(list, files);
         }
         return list;
@@ -343,7 +343,7 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
 
     private List<String> collectGlobs() {
         List<String> list = new ArrayList<>();
-        if (globs != null && globs.length > 0) {
+        if (null != globs && globs.length > 0) {
             Collections.addAll(list, globs);
         }
         return list;
@@ -351,7 +351,7 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
 
     private Set<org.jreleaser.model.UpdateSection> collectUpdateSections() {
         Set<org.jreleaser.model.UpdateSection> set = new LinkedHashSet<>();
-        if (updateSections != null && updateSections.length > 0) {
+        if (null != updateSections && updateSections.length > 0) {
             for (UpdateSection updateSection : updateSections) {
                 set.add(org.jreleaser.model.UpdateSection.of(updateSection.name()));
             }
@@ -364,7 +364,7 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
         if (resolvedSelectCurrentPlatform) return Collections.singletonList(PlatformUtils.getCurrentFull());
 
         List<String> list = new ArrayList<>();
-        if (selectPlatforms != null && selectPlatforms.length > 0) {
+        if (null != selectPlatforms && selectPlatforms.length > 0) {
             Collections.addAll(list, selectPlatforms);
         }
         return resolveCollection(org.jreleaser.model.api.JReleaserContext.SELECT_PLATFORMS, list);
@@ -372,7 +372,7 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
 
     protected List<String> collectRejectedPlatforms() {
         List<String> list = new ArrayList<>();
-        if (rejectedPlatforms != null && rejectedPlatforms.length > 0) {
+        if (null != rejectedPlatforms && rejectedPlatforms.length > 0) {
             Collections.addAll(list, rejectedPlatforms);
         }
         return resolveCollection(org.jreleaser.model.api.JReleaserContext.REJECT_PLATFORMS, list);

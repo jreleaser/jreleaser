@@ -336,7 +336,7 @@ public class Nexus2 {
 
         @Override
         public Object decode(Response response, Type type) throws IOException {
-            if (response.body() == null) {
+            if (null == response.body()) {
                 throw new NotXml();
             }
 

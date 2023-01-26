@@ -280,7 +280,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
 
     @Override
     public boolean isEnabled() {
-        return enabled != null && enabled;
+        return null != enabled && enabled;
     }
 
     @Override
@@ -290,11 +290,11 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
 
     @Override
     public boolean isEnabledSet() {
-        return enabled != null;
+        return null != enabled;
     }
 
     public boolean isLinks() {
-        return links != null && links;
+        return null != links && links;
     }
 
     public void setLinks(Boolean links) {
@@ -302,7 +302,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
     }
 
     public boolean isSkipMergeCommits() {
-        return skipMergeCommits != null && skipMergeCommits;
+        return null != skipMergeCommits && skipMergeCommits;
     }
 
     public void setSkipMergeCommits(Boolean skipMergeCommits) {
@@ -344,7 +344,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
     }
 
     public boolean isFormattedSet() {
-        return formatted != null;
+        return null != formatted;
     }
 
     public Set<String> getIncludeLabels() {
@@ -568,7 +568,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
         }
 
         public boolean isEnabled() {
-            return enabled != null && enabled;
+            return null != enabled && enabled;
         }
 
         public void setEnabled(Boolean enabled) {
@@ -766,7 +766,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (null == o || getClass() != o.getClass()) return false;
             Category category = (Category) o;
             return key.equals(category.key);
         }
@@ -942,7 +942,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (null == o || getClass() != o.getClass()) return false;
             Labeler labeler = (Labeler) o;
             return Objects.equals(title, labeler.title) &&
                 Objects.equals(body, labeler.body);
@@ -1001,7 +1001,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
 
         @Override
         public boolean isEnabled() {
-            return enabled != null && enabled;
+            return null != enabled && enabled;
         }
 
         @Override
@@ -1011,7 +1011,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
 
         @Override
         public boolean isEnabledSet() {
-            return enabled != null;
+            return null != enabled;
         }
 
         public String getFormat() {
@@ -1089,7 +1089,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
         }
 
         public boolean isUncategorized() {
-            return uncategorized != null && uncategorized;
+            return null != uncategorized && uncategorized;
         }
 
         public void setUncategorized(Boolean uncategorized) {

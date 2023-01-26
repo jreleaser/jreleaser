@@ -35,7 +35,7 @@ public final class ProcessorUtil {
     }
 
     static void generate(Location location, String fileName, String content, Context context) throws IOException {
-        if (content == null || content.isEmpty()) return;
+        if (null == content || content.isEmpty()) return;
 
         FileObject resource = context.getProcessingEnv().getFiler().createResource(
             location,
@@ -53,7 +53,7 @@ public final class ProcessorUtil {
             writer.write(text);
             writer.flush();
         } finally {
-            if (writer != null) {
+            if (null != writer) {
                 writer.close();
             }
         }

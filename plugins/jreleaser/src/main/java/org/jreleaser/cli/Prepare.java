@@ -40,19 +40,19 @@ public class Prepare extends AbstractPlatformAwareModelCommand<Main> {
         Exclude exclude;
 
         String[] includedPackagers() {
-            return include != null ? include.includedPackagers : null;
+            return null != include ? include.includedPackagers : null;
         }
 
         String[] includedDistributions() {
-            return include != null ? include.includedDistributions : null;
+            return null != include ? include.includedDistributions : null;
         }
 
         String[] excludedPackagers() {
-            return exclude != null ? exclude.excludedPackagers : null;
+            return null != exclude ? exclude.excludedPackagers : null;
         }
 
         String[] excludedDistributions() {
-            return exclude != null ? exclude.excludedDistributions : null;
+            return null != exclude ? exclude.excludedDistributions : null;
         }
     }
 

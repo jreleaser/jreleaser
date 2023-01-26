@@ -62,7 +62,7 @@ public abstract class JReleaserModelPrinter {
     }
 
     private void doPrintMap(Map<String, ?> map, final int offset) {
-        if (map != null) {
+        if (null != map) {
             map.forEach((key, value) -> {
                 if (value instanceof Map) {
                     if (!((Map) value).isEmpty()) {
@@ -109,7 +109,7 @@ public abstract class JReleaserModelPrinter {
     }
 
     private void doPrintCollection(Collection<?> collection, final int offset) {
-        if (collection != null) {
+        if (null != collection) {
             collection.forEach(value -> {
                 if (value instanceof Map) {
                     if (!((Map) value).isEmpty()) {
@@ -131,7 +131,7 @@ public abstract class JReleaserModelPrinter {
     }
 
     private void doPrintArray(Object[] array, final int offset) {
-        if (array != null) {
+        if (null != array) {
             Arrays.stream(array).forEach(value -> {
                 if (value instanceof Map) {
                     if (!((Map) value).isEmpty()) {
@@ -153,21 +153,21 @@ public abstract class JReleaserModelPrinter {
     }
 
     private void doPrintMap(String key, Map<String, ?> map, int offset) {
-        if (map != null && !map.isEmpty()) {
+        if (null != map && !map.isEmpty()) {
             out.println(multiply("    ", offset) + key + ':');
             doPrintMap(map, offset + 1);
         }
     }
 
     private void doPrintCollection(String key, Collection<?> collection, int offset) {
-        if (collection != null && !collection.isEmpty()) {
+        if (null != collection && !collection.isEmpty()) {
             out.println(multiply("    ", offset) + key + ':');
             doPrintCollection(collection, offset + 1);
         }
     }
 
     private void doPrintArray(String key, Object[] array, int offset) {
-        if (array != null && array.length > 0) {
+        if (null != array && array.length > 0) {
             out.println(multiply("    ", offset) + key + ':');
             doPrintArray(array, offset + 1);
         }
@@ -185,7 +185,7 @@ public abstract class JReleaserModelPrinter {
             return isNotBlank(String.valueOf(value));
         }
 
-        return value != null;
+        return null != value;
     }
 
     private String formatValue(Object value) {
@@ -198,18 +198,18 @@ public abstract class JReleaserModelPrinter {
             return b ? green(String.valueOf(b)) : red(String.valueOf(b));
         } else if (value instanceof Number) {
             return cyan(String.valueOf(value));
-        } else if (value != null) {
+        } else if (null != value) {
             String s = String.valueOf(value);
             if (secret && !UNSET.equals(s)) {
                 s = HIDE;
             }
 
             String r = parseAsBoolean(s);
-            if (r != null) return r;
+            if (null != r) return r;
             r = parseAsInteger(s);
-            if (r != null) return r;
+            if (null != r) return r;
             r = parseAsDouble(s);
-            if (r != null) return r;
+            if (null != r) return r;
 
             return secret ? magenta(s) : yellow(s);
         }

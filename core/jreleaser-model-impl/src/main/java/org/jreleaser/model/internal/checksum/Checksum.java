@@ -112,7 +112,7 @@ public final class Checksum extends AbstractModelObject<Checksum> implements Dom
     }
 
     public boolean isIndividual() {
-        return individual != null && individual;
+        return null != individual && individual;
     }
 
     public void setIndividual(Boolean individual) {
@@ -120,7 +120,7 @@ public final class Checksum extends AbstractModelObject<Checksum> implements Dom
     }
 
     public boolean isIndividualSet() {
-        return individual != null;
+        return null != individual;
     }
 
     public Set<Algorithm> getAlgorithms() {
@@ -133,7 +133,7 @@ public final class Checksum extends AbstractModelObject<Checksum> implements Dom
     }
 
     public boolean isFiles() {
-        return files == null || files;
+        return null == files || files;
     }
 
     public void setFiles(Boolean files) {
@@ -141,7 +141,7 @@ public final class Checksum extends AbstractModelObject<Checksum> implements Dom
     }
 
     public boolean isFilesSet() {
-        return files != null;
+        return null != files;
     }
 
     @Override

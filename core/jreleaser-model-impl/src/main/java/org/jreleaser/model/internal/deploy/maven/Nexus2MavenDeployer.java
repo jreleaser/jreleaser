@@ -188,7 +188,7 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
     }
 
     public boolean isCloseRepository() {
-        return closeRepository != null && closeRepository;
+        return null != closeRepository && closeRepository;
     }
 
     public void setCloseRepository(Boolean closeRepository) {
@@ -196,11 +196,11 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
     }
 
     public boolean isCloseRepositorySet() {
-        return closeRepository != null;
+        return null != closeRepository;
     }
 
     public boolean isReleaseRepository() {
-        return releaseRepository != null && releaseRepository;
+        return null != releaseRepository && releaseRepository;
     }
 
     public void setReleaseRepository(Boolean releaseRepository) {
@@ -208,7 +208,7 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
     }
 
     public boolean isReleaseRepositorySet() {
-        return releaseRepository != null;
+        return null != releaseRepository;
     }
 
     public Integer getTransitionDelay() {

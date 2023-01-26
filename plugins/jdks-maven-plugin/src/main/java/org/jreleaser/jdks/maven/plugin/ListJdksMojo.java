@@ -33,7 +33,7 @@ public class ListJdksMojo extends AbstractJdksMojo {
     public void execute() throws MojoExecutionException, MojoFailureException {
         Banner.display(project, getLog());
 
-        if (jdks == null || jdks.isEmpty()) return;
+        if (null == jdks || jdks.isEmpty()) return;
         validate();
 
         for (Jdk jdk : jdks) {

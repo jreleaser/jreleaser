@@ -53,7 +53,7 @@ abstract class AbstractGenerator implements Generator {
         try {
             String path = createRelativePath(context, fileName());
             String text = generateConfig(context);
-            if (text != null && !text.isEmpty()) {
+            if (null != text && !text.isEmpty()) {
                 logInfo(context, "writing to: " + StandardLocation.CLASS_OUTPUT + "/" + path);
                 ProcessorUtil.generate(StandardLocation.CLASS_OUTPUT, path, text, context);
             }
@@ -77,7 +77,7 @@ abstract class AbstractGenerator implements Generator {
         Map<String, String> options = context.getProcessingEnv().getOptions();
         String id = options.get(Constants.OPTION_PROJECT_PATH);
         String relativeName = Constants.BASE_PATH;
-        if (id == null) {
+        if (null == id) {
             id = "jreleaser-generated";
         }
         relativeName += id + "/";
@@ -110,7 +110,7 @@ abstract class AbstractGenerator implements Generator {
                 return elementTypeName(arrayType.getComponentType()) + "[]";
             }
         }, null);
-        if (result == null) {
+        if (null == result) {
             return typeMirror.toString();
         }
         return result;

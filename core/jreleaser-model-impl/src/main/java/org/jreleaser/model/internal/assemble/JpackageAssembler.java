@@ -292,11 +292,11 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
     }
 
     public boolean isAttachPlatformSet() {
-        return attachPlatform != null;
+        return null != attachPlatform;
     }
 
     public boolean isAttachPlatform() {
-        return attachPlatform != null && attachPlatform;
+        return null != attachPlatform && attachPlatform;
     }
 
     public void setAttachPlatform(Boolean attachPlatform) {
@@ -304,11 +304,11 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
     }
 
     public boolean isVerboseSet() {
-        return verbose != null;
+        return null != verbose;
     }
 
     public boolean isVerbose() {
-        return verbose != null && verbose;
+        return null != verbose && verbose;
     }
 
     public void setVerbose(Boolean verbose) {
@@ -1001,7 +1001,7 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
         }
 
         public boolean isShortcut() {
-            return shortcut != null && shortcut;
+            return null != shortcut && shortcut;
         }
 
         public void setShortcut(Boolean shortcut) {
@@ -1137,7 +1137,7 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
         }
 
         public boolean isConsole() {
-            return console != null && console;
+            return null != console && console;
         }
 
         public void setConsole(Boolean console) {
@@ -1145,7 +1145,7 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
         }
 
         public boolean isDirChooser() {
-            return dirChooser != null && dirChooser;
+            return null != dirChooser && dirChooser;
         }
 
         public void setDirChooser(Boolean dirChooser) {
@@ -1153,7 +1153,7 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
         }
 
         public boolean isMenu() {
-            return menu != null && menu;
+            return null != menu && menu;
         }
 
         public void setMenu(Boolean menu) {
@@ -1161,7 +1161,7 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
         }
 
         public boolean isPerUserInstall() {
-            return perUserInstall != null && perUserInstall;
+            return null != perUserInstall && perUserInstall;
         }
 
         public void setPerUserInstall(Boolean perUserInstall) {
@@ -1169,7 +1169,7 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
         }
 
         public boolean isShortcut() {
-            return shortcut != null && shortcut;
+            return null != shortcut && shortcut;
         }
 
         public void setShortcut(Boolean shortcut) {
@@ -1353,7 +1353,7 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
         }
 
         public boolean isSign() {
-            return sign != null && sign;
+            return null != sign && sign;
         }
 
         public void setSign(Boolean sign) {

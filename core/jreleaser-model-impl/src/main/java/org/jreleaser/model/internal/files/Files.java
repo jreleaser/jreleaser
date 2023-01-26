@@ -153,7 +153,7 @@ public final class Files extends AbstractModelObject<Files> implements Domain, A
 
     @Override
     public boolean isActiveSet() {
-        return active != null;
+        return null != active;
     }
 
     public boolean isEmpty() {

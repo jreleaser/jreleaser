@@ -281,7 +281,7 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
 
     @Override
     public boolean isContinueOnError() {
-        return continueOnError != null && continueOnError;
+        return null != continueOnError && continueOnError;
     }
 
     @Override
@@ -291,7 +291,7 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
 
     @Override
     public boolean isContinueOnErrorSet() {
-        return continueOnError != null;
+        return null != continueOnError;
     }
 
     @Override
@@ -529,7 +529,7 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
         }
 
         public boolean isVersionedSubfolders() {
-            return versionedSubfolders != null && versionedSubfolders;
+            return null != versionedSubfolders && versionedSubfolders;
         }
 
         public void setVersionedSubfolders(Boolean versionedSubfolders) {
@@ -537,7 +537,7 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
         }
 
         public boolean isVersionedSubfoldersSet() {
-            return versionedSubfolders != null;
+            return null != versionedSubfolders;
         }
 
         @Override

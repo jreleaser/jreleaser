@@ -152,7 +152,7 @@ public final class CommandHooks extends AbstractModelObject<CommandHooks> implem
 
     @Override
     public boolean isActiveSet() {
-        return active != null;
+        return null != active;
     }
 
     public List<CommandHook> getBefore() {

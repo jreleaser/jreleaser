@@ -117,7 +117,7 @@ public final class Screenshot extends AbstractModelObject<Screenshot> implements
     }
 
     public boolean isPrimary() {
-        return primary != null && primary;
+        return null != primary && primary;
     }
 
     public void setPrimary(Boolean primary) {

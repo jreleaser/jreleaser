@@ -53,7 +53,7 @@ public class User {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (null == o || getClass() != o.getClass()) return false;
         User user = (User) o;
         return username.equals(user.username) &&
             email.equals(user.email) &&

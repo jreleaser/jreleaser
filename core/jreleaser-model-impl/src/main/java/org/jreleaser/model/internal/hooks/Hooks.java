@@ -114,7 +114,7 @@ public final class Hooks extends AbstractModelObject<Hooks> implements Domain, A
 
     @Override
     public boolean isActiveSet() {
-        return active != null;
+        return null != active;
     }
 
     public CommandHooks getCommand() {

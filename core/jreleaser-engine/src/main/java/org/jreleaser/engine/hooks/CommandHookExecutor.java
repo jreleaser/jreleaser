@@ -103,7 +103,7 @@ public final class CommandHookExecutor {
                     if (!hook.isContinueOnError()) {
                         throw new JReleaserException(RB.$("ERROR_command_hook_unexpected_error"), e);
                     } else {
-                        if (e.getCause() != null) {
+                        if (null != e.getCause()) {
                             context.getLogger().warn(e.getCause().getMessage());
                         } else {
                             context.getLogger().warn(e.getMessage());

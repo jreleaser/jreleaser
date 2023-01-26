@@ -187,7 +187,7 @@ public final class Assemble extends AbstractModelObject<Assemble> implements Dom
 
     @Override
     public boolean isActiveSet() {
-        return active != null;
+        return null != active;
     }
 
     public List<ArchiveAssembler> getActiveArchives() {

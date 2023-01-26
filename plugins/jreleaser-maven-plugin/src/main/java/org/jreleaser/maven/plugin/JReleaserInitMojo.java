@@ -75,7 +75,7 @@ public class JReleaserInitMojo extends AbstractMojo {
             return;
         }
 
-        if (outputDirectory == null) {
+        if (null == outputDirectory) {
             outputDirectory = project.getBasedir();
         }
 
@@ -85,7 +85,7 @@ public class JReleaserInitMojo extends AbstractMojo {
         } catch (IllegalStateException e) {
             throw new JReleaserException($("ERROR_unexpected_error"), e);
         } finally {
-            if (logger != null) logger.close();
+            if (null != logger) logger.close();
         }
     }
 

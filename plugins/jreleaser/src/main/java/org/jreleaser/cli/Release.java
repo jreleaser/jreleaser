@@ -54,47 +54,47 @@ public class Release extends AbstractPlatformAwareModelCommand<Main> {
         AutoConfigGroup autoConfig;
 
         String[] includedDistributions() {
-            return include != null ? include.includedDistributions : null;
+            return null != include ? include.includedDistributions : null;
         }
 
         String[] excludedDistributions() {
-            return exclude != null ? exclude.excludedDistributions : null;
+            return null != exclude ? exclude.excludedDistributions : null;
         }
 
         String[] includedDeployerTypes() {
-            return include != null ? include.includedDeployerTypes : null;
+            return null != include ? include.includedDeployerTypes : null;
         }
 
         String[] includedDeployerNames() {
-            return include != null ? include.includedDeployerNames : null;
+            return null != include ? include.includedDeployerNames : null;
         }
 
         String[] excludedDeployerTypes() {
-            return exclude != null ? exclude.excludedDeployerTypes : null;
+            return null != exclude ? exclude.excludedDeployerTypes : null;
         }
 
         String[] excludedDeployerNames() {
-            return exclude != null ? exclude.excludedDeployerNames : null;
+            return null != exclude ? exclude.excludedDeployerNames : null;
         }
 
         String[] includedUploaderTypes() {
-            return include != null ? include.includedUploaderTypes : null;
+            return null != include ? include.includedUploaderTypes : null;
         }
 
         String[] includedUploaderNames() {
-            return include != null ? include.includedUploaderNames : null;
+            return null != include ? include.includedUploaderNames : null;
         }
 
         String[] excludedUploaderTypes() {
-            return exclude != null ? exclude.excludedUploaderTypes : null;
+            return null != exclude ? exclude.excludedUploaderTypes : null;
         }
 
         String[] excludedUploaderNames() {
-            return exclude != null ? exclude.excludedUploaderNames : null;
+            return null != exclude ? exclude.excludedUploaderNames : null;
         }
 
         boolean isAutoConfig() {
-            return autoConfig != null && autoConfig.autoConfig;
+            return null != autoConfig && autoConfig.autoConfig;
         }
     }
 
@@ -270,7 +270,7 @@ public class Release extends AbstractPlatformAwareModelCommand<Main> {
 
     @Override
     protected void execute() {
-        if (composite == null || !composite.isAutoConfig()) {
+        if (null == composite || !composite.isAutoConfig()) {
             super.execute();
             return;
         }
@@ -327,7 +327,7 @@ public class Release extends AbstractPlatformAwareModelCommand<Main> {
 
     private Set<UpdateSection> collectUpdateSections() {
         Set<UpdateSection> set = new LinkedHashSet<>();
-        if (composite.autoConfig.updateSections != null && composite.autoConfig.updateSections.length > 0) {
+        if (null != composite.autoConfig.updateSections && composite.autoConfig.updateSections.length > 0) {
             for (String updateSection : composite.autoConfig.updateSections) {
                 set.add(UpdateSection.of(updateSection.trim()));
             }

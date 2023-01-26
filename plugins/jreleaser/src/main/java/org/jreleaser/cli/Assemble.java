@@ -41,19 +41,19 @@ public class Assemble extends AbstractPlatformAwareModelCommand<Main> {
         Exclude exclude;
 
         String[] includedAssemblers() {
-            return include != null ? include.includedAssemblers : null;
+            return null != include ? include.includedAssemblers : null;
         }
 
         String[] includedDistributions() {
-            return include != null ? include.includedDistributions : null;
+            return null != include ? include.includedDistributions : null;
         }
 
         String[] excludedAssemblers() {
-            return exclude != null ? exclude.excludedAssemblers : null;
+            return null != exclude ? exclude.excludedAssemblers : null;
         }
 
         String[] excludedDistributions() {
-            return exclude != null ? exclude.excludedDistributions : null;
+            return null != exclude ? exclude.excludedDistributions : null;
         }
     }
 

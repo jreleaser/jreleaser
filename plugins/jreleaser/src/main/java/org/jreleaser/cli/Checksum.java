@@ -40,11 +40,11 @@ public class Checksum extends AbstractPlatformAwareModelCommand<Main> {
         Exclude exclude;
 
         String[] includedDistributions() {
-            return include != null ? include.includedDistributions : null;
+            return null != include ? include.includedDistributions : null;
         }
 
         String[] excludedDistributions() {
-            return exclude != null ? exclude.excludedDistributions : null;
+            return null != exclude ? exclude.excludedDistributions : null;
         }
     }
 

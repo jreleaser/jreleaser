@@ -37,7 +37,7 @@ abstract class AbstractNativeImageProcessor extends AbstractProcessor {
     @Override
     public SourceVersion getSupportedSourceVersion() {
         SupportedSourceVersion ssv = this.getClass().getAnnotation(SupportedSourceVersion.class);
-        if (ssv == null) {
+        if (null == ssv) {
             return SourceVersion.latest();
         } else {
             return ssv.value();

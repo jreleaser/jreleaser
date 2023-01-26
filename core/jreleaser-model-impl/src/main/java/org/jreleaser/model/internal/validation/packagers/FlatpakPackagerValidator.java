@@ -141,7 +141,7 @@ public final class FlatpakPackagerValidator {
         }
         for (int i = 0; i < packager.getIcons().size(); i++) {
             Icon icon = packager.getIcons().get(i);
-            if (icon.getWidth() != null && !icon.getWidth().equals(icon.getHeight())) {
+            if (null != icon.getWidth() && !icon.getWidth().equals(icon.getHeight())) {
                 errors.configuration(RB.$("validation_must_be_equal",
                     "distribution." + distribution.getName() + ".flatpak.icons[" + i + "].width", icon.getWidth(),
                     "distribution." + distribution.getName() + ".flatpak.icons[" + i + "].height", icon.getHeight()));

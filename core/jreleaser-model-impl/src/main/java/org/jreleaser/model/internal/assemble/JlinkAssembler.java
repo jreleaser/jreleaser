@@ -349,7 +349,7 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
     }
 
     public boolean isCopyJars() {
-        return copyJars == null || copyJars;
+        return null == copyJars || copyJars;
     }
 
     public void setCopyJars(Boolean copyJars) {
@@ -357,7 +357,7 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
     }
 
     public boolean isCopyJarsSet() {
-        return copyJars != null;
+        return null != copyJars;
     }
 
     @Override
@@ -444,7 +444,7 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
         }
 
         public boolean isIgnoreMissingDeps() {
-            return ignoreMissingDeps != null && ignoreMissingDeps;
+            return null != ignoreMissingDeps && ignoreMissingDeps;
         }
 
         public void setIgnoreMissingDeps(Boolean ignoreMissingDeps) {
@@ -452,11 +452,11 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
         }
 
         public boolean isIgnoreMissingDepsSet() {
-            return ignoreMissingDeps != null;
+            return null != ignoreMissingDeps;
         }
 
         public boolean isUseWildcardInPath() {
-            return useWildcardInPath == null || useWildcardInPath;
+            return null == useWildcardInPath || useWildcardInPath;
         }
 
         public void setUseWildcardInPath(Boolean useWildcardInPath) {
@@ -464,7 +464,7 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
         }
 
         public boolean isUseWildcardInPathSet() {
-            return useWildcardInPath != null;
+            return null != useWildcardInPath;
         }
 
         public Set<String> getTargets() {
@@ -478,7 +478,7 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
 
         @Override
         public boolean isEnabled() {
-            return enabled != null && enabled;
+            return null != enabled && enabled;
         }
 
         @Override
@@ -488,7 +488,7 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
 
         @Override
         public boolean isEnabledSet() {
-            return enabled != null;
+            return null != enabled;
         }
 
         @Override

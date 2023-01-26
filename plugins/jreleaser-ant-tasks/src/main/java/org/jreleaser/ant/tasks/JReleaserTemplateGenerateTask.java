@@ -123,7 +123,7 @@ public class JReleaserTemplateGenerateTask extends Task {
             logger.trace(e);
             throw new JReleaserException("Unexpected error", e);
         } finally {
-            if (logger != null) logger.close();
+            if (null != logger) logger.close();
         }
     }
 

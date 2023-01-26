@@ -43,27 +43,27 @@ public class Upload extends AbstractPlatformAwareModelCommand<Main> {
         Exclude exclude;
 
         String[] includedUploaderTypes() {
-            return include != null ? include.includedUploaderTypes : null;
+            return null != include ? include.includedUploaderTypes : null;
         }
 
         String[] includedUploaderNames() {
-            return include != null ? include.includedUploaderNames : null;
+            return null != include ? include.includedUploaderNames : null;
         }
 
         String[] includedDistributions() {
-            return include != null ? include.includedDistributions : null;
+            return null != include ? include.includedDistributions : null;
         }
 
         String[] excludedUploaderTypes() {
-            return exclude != null ? exclude.excludedUploaderTypes : null;
+            return null != exclude ? exclude.excludedUploaderTypes : null;
         }
 
         String[] excludedUploaderNames() {
-            return exclude != null ? exclude.excludedUploaderNames : null;
+            return null != exclude ? exclude.excludedUploaderNames : null;
         }
 
         String[] excludedDistributions() {
-            return exclude != null ? exclude.excludedDistributions : null;
+            return null != exclude ? exclude.excludedDistributions : null;
         }
     }
 

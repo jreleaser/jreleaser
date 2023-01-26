@@ -209,7 +209,7 @@ public final class SdkmanAnnouncer extends AbstractAnnouncer<SdkmanAnnouncer, or
     }
 
     public boolean isCommandSet() {
-        return command != null;
+        return null != command;
     }
 
     public boolean isMajor() {

@@ -52,7 +52,7 @@ final class Banner {
         try {
             File jreleaserDir = new File(System.getProperty("user.home"));
             String envJreleaserDir = System.getenv("JRELEASER_DIR");
-            if (envJreleaserDir != null && !envJreleaserDir.isEmpty()) {
+            if (null != envJreleaserDir && !envJreleaserDir.isEmpty()) {
                 File dir = new File(envJreleaserDir);
                 if (dir.exists()) {
                     jreleaserDir = dir;

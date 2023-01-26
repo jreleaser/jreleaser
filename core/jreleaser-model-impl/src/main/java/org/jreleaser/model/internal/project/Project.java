@@ -319,7 +319,7 @@ public final class Project extends AbstractModelObject<Project> implements Domai
     }
 
     public String getVersionPattern() {
-        return versionPattern != null ? versionPattern.toString() : "";
+        return null != versionPattern ? versionPattern.toString() : "";
     }
 
     public void setVersionPattern(VersionPattern versionPattern) {
@@ -816,7 +816,7 @@ public final class Project extends AbstractModelObject<Project> implements Domai
         }
 
         public boolean isFullChangelog() {
-            return fullChangelog != null && fullChangelog;
+            return null != fullChangelog && fullChangelog;
         }
 
         public void setFullChangelog(Boolean fullChangelog) {
@@ -824,7 +824,7 @@ public final class Project extends AbstractModelObject<Project> implements Domai
         }
 
         public boolean isFullChangelogSet() {
-            return fullChangelog != null;
+            return null != fullChangelog;
         }
 
         @Override
@@ -1217,7 +1217,7 @@ public final class Project extends AbstractModelObject<Project> implements Domai
 
         @Override
         public void merge(VersionPattern source) {
-            if (source != null) {
+            if (null != source) {
                 this.type = merge(this.type, source.type);
                 this.format = merge(this.format, source.format);
             }

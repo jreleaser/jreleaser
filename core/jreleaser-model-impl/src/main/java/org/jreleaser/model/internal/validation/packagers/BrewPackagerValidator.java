@@ -143,7 +143,7 @@ public final class BrewPackagerValidator {
     }
 
     private static void validateCask(JReleaserContext context, Distribution distribution, BrewPackager packager, BrewPackager.Cask cask, Errors errors) {
-        if (cask == null || cask.isEnabledSet() && !cask.isEnabled()) {
+        if (null == cask || cask.isEnabledSet() && !cask.isEnabled()) {
             return;
         }
 

@@ -246,7 +246,7 @@ BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> 
             }
 
             // On OSX, use intel binary for arm if there's no match
-            if (osxIntelArtifact != null && osxArmArtifact == null) {
+            if (null != osxIntelArtifact && null == osxArmArtifact) {
                 String artifactUrl = resolveArtifactUrl(distribution, osxIntelArtifact);
                 String artifactFile = osxIntelArtifact.getEffectivePath().getFileName().toString();
                 String artifactFileName = getFilename(artifactFile, FileType.getSupportedExtensions());

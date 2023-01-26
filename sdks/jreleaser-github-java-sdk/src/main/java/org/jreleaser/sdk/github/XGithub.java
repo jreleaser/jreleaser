@@ -104,9 +104,9 @@ class XGithub {
         logger.debug(RB.$("git.user.lookup"), name, email);
 
         String username = getPrivateEmailUserId(email);
-        if (username != null) {
+        if (null != username) {
             GhUser user = api.getUser(username);
-            if (user != null) {
+            if (null != user) {
                 return Optional.of(new User(user.getLogin(), email, user.getHtmlUrl()));
             }
         }

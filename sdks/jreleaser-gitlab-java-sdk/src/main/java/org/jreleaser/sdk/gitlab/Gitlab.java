@@ -239,7 +239,7 @@ class Gitlab {
             List<GlMilestone> milestones = api.findMilestoneByTitle(projectIdentifier, CollectionUtils.<String, Object>map()
                 .e("title", milestoneName));
 
-            if (milestones == null || milestones.isEmpty()) {
+            if (null == milestones || milestones.isEmpty()) {
                 return Optional.empty();
             }
 
@@ -261,7 +261,7 @@ class Gitlab {
             List<GlMilestone> milestones = api.findMilestoneByTitle(projectIdentifier, CollectionUtils.<String, Object>map()
                 .e("title", milestoneName));
 
-            if (milestones == null || milestones.isEmpty()) {
+            if (null == milestones || milestones.isEmpty()) {
                 return Optional.empty();
             }
 
@@ -311,7 +311,7 @@ class Gitlab {
                 List<GlProject> projects = api.getProject(u.getId(), CollectionUtils.<String, Object>map()
                     .e("search", projectName));
 
-                if (projects == null || projects.isEmpty()) {
+                if (null == projects || projects.isEmpty()) {
                     throw new RestAPIException(404, RB.$("ERROR_project_not_exist", projectName));
                 }
 
@@ -431,13 +431,13 @@ class Gitlab {
         logger.debug(RB.$("git.user.lookup"), name, email);
 
         List<GlUser> users = api.searchUser(CollectionUtils.<String, String>mapOf("scope", "users", "search", email));
-        if (users != null && !users.isEmpty()) {
+        if (null != users && !users.isEmpty()) {
             GlUser user = users.get(0);
             return Optional.of(new User(user.getUsername(), email, user.getWebUrl()));
         }
 
         users = api.searchUser(CollectionUtils.<String, String>mapOf("scope", "users", "search", name));
-        if (users != null && !users.isEmpty()) {
+        if (null != users && !users.isEmpty()) {
             GlUser user = users.get(0);
             if (name.equals(user.getName())) {
                 return Optional.of(new User(user.getUsername(), email, user.getWebUrl()));

@@ -54,7 +54,7 @@ public class CustomVersion implements Version<CustomVersion> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (null == o || getClass() != o.getClass()) return false;
         CustomVersion v = (CustomVersion) o;
         return version.equals(v.version);
     }

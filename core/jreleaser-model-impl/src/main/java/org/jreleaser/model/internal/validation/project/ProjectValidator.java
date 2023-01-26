@@ -147,7 +147,7 @@ public final class ProjectValidator {
         }
 
         // FIXME: extension
-        if (isBlank(project.getLinks().getLicense()) && context.getModel().getCommit() != null) {
+        if (isBlank(project.getLinks().getLicense()) && null != context.getModel().getCommit()) {
             findLicenseFile(context.getBasedir())
                 .ifPresent(path -> {
                     BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
@@ -173,7 +173,7 @@ public final class ProjectValidator {
             }
 
             if (isBlank(project.getCopyright())) {
-                if (project.getInceptionYear() != null &&
+                if (null != project.getInceptionYear() &&
                     !project.getAuthors().isEmpty()) {
                     project.setCopyright(
                         project.getInceptionYear() + " " +
@@ -193,7 +193,7 @@ public final class ProjectValidator {
         }
 
         if (isBlank(project.getCopyright())) {
-            if (project.getInceptionYear() != null &&
+            if (null != project.getInceptionYear() &&
                 !project.getAuthors().isEmpty()) {
                 project.setCopyright(
                     project.getInceptionYear() + " " +

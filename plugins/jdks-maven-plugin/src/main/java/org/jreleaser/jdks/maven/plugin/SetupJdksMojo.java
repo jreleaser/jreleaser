@@ -67,7 +67,7 @@ public class SetupJdksMojo extends AbstractJdksMojo {
         Banner.display(project, getLog());
         if (skip) return;
 
-        if (jdks == null || jdks.isEmpty()) return;
+        if (null == jdks || jdks.isEmpty()) return;
         validate();
 
         JdkHelper jdkHelper = new JdkHelper(project, getLog(), outputDirectory,

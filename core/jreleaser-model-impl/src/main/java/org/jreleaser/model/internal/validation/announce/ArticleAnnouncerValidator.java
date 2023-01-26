@@ -107,7 +107,7 @@ public final class ArticleAnnouncerValidator {
             errors.configuration(RB.$("validation_is_not_a_directory", "announce.article.templateDirectory", article.getTemplateDirectory()));
         }
 
-        if (templateDirectoryFile.listFiles() == null || templateDirectoryFile.listFiles().length == 0) {
+        if (null == templateDirectoryFile.listFiles() || templateDirectoryFile.listFiles().length == 0) {
             errors.configuration(RB.$("validation_directory_is_empty", "announce.article.templateDirectory", article.getTemplateDirectory()));
         }
 

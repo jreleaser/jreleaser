@@ -60,7 +60,7 @@ public final class SdkmanAnnouncerValidator {
         }
 
         Boolean set = (Boolean) sdkman.getExtraProperties().get(MAGIC_SET);
-        if (set != null && set) {
+        if (null != set && set) {
             context.getLogger().debug(RB.$("validation.disabled"));
             sdkman.disable();
             return;

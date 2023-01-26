@@ -122,7 +122,7 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
 
     @Override
     public boolean isActiveSet() {
-        return active != null;
+        return null != active;
     }
 
     @Override

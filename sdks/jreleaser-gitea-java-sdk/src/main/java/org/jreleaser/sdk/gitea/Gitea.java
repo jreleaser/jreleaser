@@ -195,7 +195,7 @@ public class Gitea {
         try {
             GtMilestone milestone = api.findMilestoneByTitle(owner, repo, milestoneName);
 
-            if (milestone == null) {
+            if (null == milestone) {
                 return Optional.empty();
             }
 
@@ -215,7 +215,7 @@ public class Gitea {
         try {
             GtMilestone milestone = api.findMilestoneByTitle(owner, repo, milestoneName);
 
-            if (milestone == null) {
+            if (null == milestone) {
                 return Optional.empty();
             }
 

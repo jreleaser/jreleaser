@@ -77,7 +77,7 @@ public class GitSdk {
 
         File dir = basedir;
 
-        while (dir != null) {
+        while (null != dir) {
             try {
                 return Git.open(dir);
             } catch (RepositoryNotFoundException e) {
@@ -206,7 +206,7 @@ public class GitSdk {
             Iterable<RevCommit> commits = git.log().add(getObjectId(git, tag))
                 .setMaxCount(1)
                 .call();
-            if (commits == null) {
+            if (null == commits) {
                 throw new EmptyCommitException(RB.$("ERROR_git_commit_not_found", tag.getName()));
             }
             Iterator<RevCommit> iterator = commits.iterator();
@@ -221,7 +221,7 @@ public class GitSdk {
 
     public ObjectId getObjectId(Git git, Ref ref) throws IOException {
         Ref peeled = git.getRepository().getRefDatabase().peel(ref);
-        return peeled.getPeeledObjectId() != null ? peeled.getPeeledObjectId() : peeled.getObjectId();
+        return null != peeled.getPeeledObjectId() ? peeled.getPeeledObjectId() : peeled.getObjectId();
     }
 
     public void deleteTag(String tagName) throws IOException {

@@ -41,7 +41,7 @@ class ProxyConfigGenerator extends AbstractGenerator {
         Set<String> collector = new LinkedHashSet<>();
 
         for (Element element : context.getElements()) {
-            if (element.getAnnotation(ProxyConfig.class) != null) {
+            if (null != element.getAnnotation(ProxyConfig.class)) {
                 String className = elementTypeName(element.asType());
                 collector.add(className);
             }

@@ -481,7 +481,7 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
     }
 
     protected void safePut(TemplateContext dest, String key, Object value) {
-        if (value instanceof CharSequence && isNotBlank(String.valueOf(value)) || value != null) {
+        if (value instanceof CharSequence && isNotBlank(String.valueOf(value)) || null != value) {
             dest.set(key, value);
         }
     }

@@ -44,19 +44,19 @@ public class Download extends AbstractModelCommand<Main> {
         Exclude exclude;
 
         String[] includedDownloaderTypes() {
-            return include != null ? include.includedDownloaderTypes : null;
+            return null != include ? include.includedDownloaderTypes : null;
         }
 
         String[] includedDownloaderNames() {
-            return include != null ? include.includedDownloaderNames : null;
+            return null != include ? include.includedDownloaderNames : null;
         }
 
         String[] excludedDownloaderTypes() {
-            return exclude != null ? exclude.excludedDownloaderTypes : null;
+            return null != exclude ? exclude.excludedDownloaderTypes : null;
         }
 
         String[] excludedDownloaderNames() {
-            return exclude != null ? exclude.excludedDownloaderNames : null;
+            return null != exclude ? exclude.excludedDownloaderNames : null;
         }
     }
 

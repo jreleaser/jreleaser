@@ -262,7 +262,7 @@ public final class DockerPackagerValidator {
             errors.configuration(RB.$("validation_must_not_be_empty", element + ".matchers"));
         }
 
-        if (spec.getArtifact() == null) {
+        if (null == spec.getArtifact()) {
             context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
             spec.disable();
             return;

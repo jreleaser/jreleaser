@@ -72,7 +72,7 @@ public class Repository {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (null == o || getClass() != o.getClass()) return false;
         Repository that = (Repository) o;
         return kind.equals(that.kind) &&
             owner.equals(that.owner) &&

@@ -135,7 +135,7 @@ public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A ext
 
     @Override
     public boolean isExported() {
-        return exported == null || exported;
+        return null == exported || exported;
     }
 
     @Override
@@ -170,7 +170,7 @@ public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A ext
 
     @Override
     public boolean isActiveSet() {
-        return active != null;
+        return null != active;
     }
 
     @Override

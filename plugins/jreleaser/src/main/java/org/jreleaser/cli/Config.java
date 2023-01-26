@@ -66,18 +66,18 @@ public class Config extends AbstractPlatformAwareModelCommand<Main> {
     }
 
     private boolean download() {
-        return exclusive != null && exclusive.download;
+        return null != exclusive && exclusive.download;
     }
 
     private boolean assembly() {
-        return exclusive != null && exclusive.assembly;
+        return null != exclusive && exclusive.assembly;
     }
 
     private boolean changelog() {
-        return exclusive != null && exclusive.changelog;
+        return null != exclusive && exclusive.changelog;
     }
 
     private boolean announce() {
-        return exclusive != null && exclusive.announce;
+        return null != exclusive && exclusive.announce;
     }
 }

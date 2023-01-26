@@ -124,14 +124,14 @@ public final class Artifacts {
     }
 
     public static TemplateContext artifactProps(Artifact artifact, TemplateContext props) {
-        if (artifact.getEffectivePath() != null) {
+        if (null != artifact.getEffectivePath()) {
             return resolvedArtifactProps(artifact, props);
         }
         return unresolvedArtifactProps(artifact, props);
     }
 
     public static TemplateContext artifactProps(Artifact artifact, Distribution distribution, TemplateContext props) {
-        if (artifact.getEffectivePath() != null) {
+        if (null != artifact.getEffectivePath()) {
             return resolvedArtifactProps(artifact, distribution, props);
         }
         return unresolvedArtifactProps(artifact, props);

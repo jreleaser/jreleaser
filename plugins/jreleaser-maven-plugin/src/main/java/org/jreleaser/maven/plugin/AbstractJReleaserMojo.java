@@ -119,7 +119,7 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
     }
 
     protected JReleaserModel convertModel() {
-        JReleaserModel jreleaserModel = jreleaser != null ? jreleaser : new JReleaserModel();
+        JReleaserModel jreleaserModel = null != jreleaser ? jreleaser : new JReleaserModel();
         return JReleaserModelConfigurer.configure(jreleaserModel, project, session);
     }
 
@@ -228,7 +228,7 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
 
     protected List<String> collectEntries(String[] input, boolean lowerCase) {
         List<String> list = new ArrayList<>();
-        if (input != null && input.length > 0) {
+        if (null != input && input.length > 0) {
             for (String s : input) {
                 if (isNotBlank(s)) {
                     s = s.trim();

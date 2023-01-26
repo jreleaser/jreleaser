@@ -265,7 +265,7 @@ public final class Artifact extends AbstractModelObject<Artifact> implements Dom
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (null == o || getClass() != o.getClass()) return false;
         Artifact that = (Artifact) o;
         return path.equals(that.path);
     }

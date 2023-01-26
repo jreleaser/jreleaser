@@ -97,7 +97,7 @@ public class ChronVer implements Version<ChronVer> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (null == o || getClass() != o.getClass()) return false;
         ChronVer version = (ChronVer) o;
         return year == version.year &&
             month == version.month &&
@@ -239,7 +239,7 @@ public class ChronVer implements Version<ChronVer> {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (null == o || getClass() != o.getClass()) return false;
             Changeset changeset = (Changeset) o;
             return identifier.equals(changeset.identifier);
         }
@@ -251,7 +251,7 @@ public class ChronVer implements Version<ChronVer> {
 
         @Override
         public int compareTo(Changeset other) {
-            if (other == null) return -1;
+            if (null == other) return -1;
             if (isEmpty() && other.isEmpty()) return 0;
             if (isEmpty() && !other.isEmpty()) return 1;
             if (!isEmpty() && other.isEmpty()) return -1;

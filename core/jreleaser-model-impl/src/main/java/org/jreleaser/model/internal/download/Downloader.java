@@ -93,7 +93,7 @@ public interface Downloader<A extends org.jreleaser.model.api.download.Downloade
 
         @Override
         public boolean isEnabled() {
-            return enabled != null && enabled;
+            return null != enabled && enabled;
         }
 
         @Override
@@ -103,11 +103,11 @@ public interface Downloader<A extends org.jreleaser.model.api.download.Downloade
 
         @Override
         public boolean isEnabledSet() {
-            return enabled != null;
+            return null != enabled;
         }
 
         public boolean isSkipRootEntry() {
-            return skipRootEntry != null && skipRootEntry;
+            return null != skipRootEntry && skipRootEntry;
         }
 
         public void setSkipRootEntry(Boolean skipRootEntry) {
@@ -115,7 +115,7 @@ public interface Downloader<A extends org.jreleaser.model.api.download.Downloade
         }
 
         public boolean isSkipRootEntrySet() {
-            return skipRootEntry != null;
+            return null != skipRootEntry;
         }
 
         @Override

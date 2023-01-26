@@ -90,7 +90,7 @@ public final class ModelConfigurer {
     private static void autoConfigureGithub(JReleaserContext context, Repository repository) {
         BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
 
-        if (service != null) {
+        if (null != service) {
             if (!(service instanceof GithubReleaser)) {
                 context.getModel().getRelease().getReleaser().setMatch(false);
                 context.getModel().getRelease().getReleaser().setSkipTag(true);
@@ -107,7 +107,7 @@ public final class ModelConfigurer {
     private static void autoConfigureGitlab(JReleaserContext context, Repository repository) {
         BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
 
-        if (service != null) {
+        if (null != service) {
             if (!(service instanceof GitlabReleaser)) {
                 context.getModel().getRelease().getReleaser().setMatch(false);
                 context.getModel().getRelease().getReleaser().setSkipTag(true);
@@ -124,7 +124,7 @@ public final class ModelConfigurer {
     private static void autoConfigureCodeberg(JReleaserContext context, Repository repository) {
         BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
 
-        if (service != null) {
+        if (null != service) {
             if (!(service instanceof CodebergReleaser)) {
                 context.getModel().getRelease().getReleaser().setMatch(false);
                 context.getModel().getRelease().getReleaser().setSkipTag(true);
@@ -141,7 +141,7 @@ public final class ModelConfigurer {
     private static void autoConfigureOther(JReleaserContext context, Repository repository) {
         BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
 
-        if (service != null) {
+        if (null != service) {
             fillGitProperties(context.getLogger(), service, repository, context.getModel().getCommit());
         }
     }

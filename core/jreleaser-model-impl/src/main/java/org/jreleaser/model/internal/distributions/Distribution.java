@@ -323,7 +323,7 @@ public final class Distribution extends Packagers<Distribution> implements Domai
 
     @Override
     public boolean isActiveSet() {
-        return active != null;
+        return null != active;
     }
 
     public Platform getPlatform() {

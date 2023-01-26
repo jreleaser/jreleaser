@@ -64,23 +64,23 @@ public final class TemplateContext {
     }
 
     public void setAll(TemplateContext other) {
-        if (other != null) properties.putAll(other.properties);
+        if (null != other) properties.putAll(other.properties);
     }
 
     public <V> void setAll(Map<String, V> props) {
-        if (props == null || props.isEmpty()) return;
+        if (null == props || props.isEmpty()) return;
         props.forEach(this::set);
     }
 
     public <V> V set(String key, V value) {
         V previousValue = (V) properties.get(key);
-        if (value != null) properties.put(key, value);
+        if (null != value) properties.put(key, value);
         return previousValue;
     }
 
     public <V> V set(String key, V value, V defaultValue) {
         V previousValue = (V) properties.get(key);
-        if (value != null && defaultValue != null) properties.put(key, value);
+        if (null != value && null != defaultValue) properties.put(key, value);
         return previousValue;
     }
 

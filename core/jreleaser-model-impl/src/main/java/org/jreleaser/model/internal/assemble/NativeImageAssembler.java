@@ -526,7 +526,7 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
 
         @Override
         public boolean isActiveSet() {
-            return active != null;
+            return null != active;
         }
 
         public String getVersion() {

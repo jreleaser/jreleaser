@@ -214,7 +214,7 @@ public final class WebhookAnnouncer extends AbstractAnnouncer<WebhookAnnouncer, 
     }
 
     public boolean isStructuredMessage() {
-        return structuredMessage != null && structuredMessage;
+        return null != structuredMessage && structuredMessage;
     }
 
     public void setStructuredMessage(Boolean structuredMessage) {

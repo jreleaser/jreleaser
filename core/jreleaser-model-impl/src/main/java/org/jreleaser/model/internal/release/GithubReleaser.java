@@ -300,7 +300,7 @@ public final class GithubReleaser extends BaseReleaser<org.jreleaser.model.api.r
     }
 
     public boolean isDraft() {
-        return draft != null && draft;
+        return null != draft && draft;
     }
 
     public void setDraft(Boolean draft) {
@@ -308,7 +308,7 @@ public final class GithubReleaser extends BaseReleaser<org.jreleaser.model.api.r
     }
 
     public boolean isDraftSet() {
-        return draft != null;
+        return null != draft;
     }
 
     public String getDiscussionCategoryName() {
@@ -378,7 +378,7 @@ public final class GithubReleaser extends BaseReleaser<org.jreleaser.model.api.r
 
         @Override
         public boolean isEnabled() {
-            return enabled != null && enabled;
+            return null != enabled && enabled;
         }
 
         @Override
@@ -388,7 +388,7 @@ public final class GithubReleaser extends BaseReleaser<org.jreleaser.model.api.r
 
         @Override
         public boolean isEnabledSet() {
-            return enabled != null;
+            return null != enabled;
         }
 
         public String getConfigurationFile() {

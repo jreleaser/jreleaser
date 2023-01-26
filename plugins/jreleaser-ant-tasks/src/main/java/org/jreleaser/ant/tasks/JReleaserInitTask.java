@@ -59,7 +59,7 @@ public class JReleaserInitTask extends Task {
         } catch (IllegalStateException e) {
             throw new JReleaserException($("ERROR_unexpected_error"), e);
         } finally {
-            if (logger != null) logger.close();
+            if (null != logger) logger.close();
         }
     }
 

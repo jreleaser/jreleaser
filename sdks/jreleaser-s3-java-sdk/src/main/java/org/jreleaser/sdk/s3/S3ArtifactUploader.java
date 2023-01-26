@@ -151,10 +151,10 @@ public class S3ArtifactUploader extends AbstractArtifactUploader<org.jreleaser.m
             }
 
             Map<String, String> headers = uploader.getHeaders();
-            if (headers != null) {
+            if (null != headers) {
                 ClientConfiguration clientConfiguration = new ClientConfiguration();
                 for (Map.Entry<String, String> header : headers.entrySet()) {
-                    if (header.getKey() != null && header.getValue() != null) {
+                    if (null != header.getKey() && null != header.getValue()) {
                         clientConfiguration.addHeader(header.getKey(), header.getValue());
                     }
                 }

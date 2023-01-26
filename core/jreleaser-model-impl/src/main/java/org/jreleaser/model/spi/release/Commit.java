@@ -73,7 +73,7 @@ public class Commit {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (null == o || getClass() != o.getClass()) return false;
         Commit that = (Commit) o;
         return shortHash.equals(that.shortHash) &&
             fullHash.equals(that.fullHash) &&

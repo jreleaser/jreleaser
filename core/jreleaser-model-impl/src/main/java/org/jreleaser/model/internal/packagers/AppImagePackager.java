@@ -283,7 +283,7 @@ public final class AppImagePackager extends AbstractRepositoryPackager<org.jrele
     }
 
     public boolean isRequiresTerminal() {
-        return requiresTerminal != null && requiresTerminal;
+        return null != requiresTerminal && requiresTerminal;
     }
 
     public void setRequiresTerminal(Boolean requiresTerminal) {
@@ -291,7 +291,7 @@ public final class AppImagePackager extends AbstractRepositoryPackager<org.jrele
     }
 
     public boolean isRequiresTerminalSet() {
-        return requiresTerminal != null;
+        return null != requiresTerminal;
     }
 
     public List<Screenshot> getScreenshots() {

@@ -202,7 +202,7 @@ public final class DockerSpec extends AbstractDockerConfiguration<DockerSpec> im
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("matchers", matchers);
-        if (artifact != null) {
+        if (null != artifact) {
             props.put("artifact", artifact.asMap(full));
         }
     }

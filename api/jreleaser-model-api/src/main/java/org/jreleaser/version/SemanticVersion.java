@@ -128,7 +128,7 @@ public class SemanticVersion implements Version<SemanticVersion> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (null == o || getClass() != o.getClass()) return false;
         SemanticVersion version = (SemanticVersion) o;
         return pattern.pattern().equals(version.pattern.pattern()) &&
             major == version.major &&

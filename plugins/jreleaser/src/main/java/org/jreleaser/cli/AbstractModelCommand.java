@@ -89,7 +89,7 @@ public abstract class AbstractModelCommand<C extends IO> extends AbstractLogging
         } else {
             Path directory = Paths.get(".").normalize();
             Optional<Path> file = resolveConfigFileAt(directory);
-            if (!file.isPresent() && basedir != null) {
+            if (!file.isPresent() && null != basedir) {
                 file = resolveConfigFileAt(basedir);
             }
             actualConfigFile = file.orElse(null);
@@ -230,7 +230,7 @@ public abstract class AbstractModelCommand<C extends IO> extends AbstractLogging
     protected Properties collectProperties() {
         Properties props = new Properties();
 
-        if (properties != null && properties.length > 0) {
+        if (null != properties && properties.length > 0) {
             for (String property : properties) {
                 if (property.contains("=")) {
                     int d = property.indexOf('=');

@@ -141,7 +141,7 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
 
     @Override
     public boolean isActiveSet() {
-        return active != null;
+        return null != active;
     }
 
     @Override
@@ -187,7 +187,7 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
 
     @Override
     public boolean isSign() {
-        return sign != null && sign;
+        return null != sign && sign;
     }
 
     @Override
@@ -197,12 +197,12 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
 
     @Override
     public boolean isSignSet() {
-        return sign != null;
+        return null != sign;
     }
 
     @Override
     public boolean isVerifyPom() {
-        return verifyPom != null && verifyPom;
+        return null != verifyPom && verifyPom;
     }
 
     @Override
@@ -212,12 +212,12 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
 
     @Override
     public boolean isVerifyPomSet() {
-        return verifyPom != null;
+        return null != verifyPom;
     }
 
     @Override
     public boolean isApplyMavenCentralRules() {
-        return applyMavenCentralRules != null && applyMavenCentralRules;
+        return null != applyMavenCentralRules && applyMavenCentralRules;
     }
 
     @Override
@@ -227,7 +227,7 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
 
     @Override
     public boolean isApplyMavenCentralRulesSet() {
-        return applyMavenCentralRules != null;
+        return null != applyMavenCentralRules;
     }
 
     @Override

@@ -48,27 +48,27 @@ public class TemplateGenerate extends AbstractLoggingCommand<Template> {
         Packagers packagers;
 
         String announcerName() {
-            return announcers != null ? announcers.announcerName : null;
+            return null != announcers ? announcers.announcerName : null;
         }
 
         String assemblerType() {
-            return assemblers != null ? assemblers.assemblerType : null;
+            return null != assemblers ? assemblers.assemblerType : null;
         }
 
         String assemblerName() {
-            return assemblers != null ? assemblers.assemblerName : null;
+            return null != assemblers ? assemblers.assemblerName : null;
         }
 
         String packagerName() {
-            return packagers != null ? packagers.packagerName : null;
+            return null != packagers ? packagers.packagerName : null;
         }
 
         String distributionName() {
-            return packagers != null ? packagers.distributionName : null;
+            return null != packagers ? packagers.distributionName : null;
         }
 
         org.jreleaser.model.Distribution.DistributionType distributionType() {
-            return packagers != null ? packagers.distributionType : null;
+            return null != packagers ? packagers.distributionType : null;
         }
     }
 
@@ -149,7 +149,7 @@ public class TemplateGenerate extends AbstractLoggingCommand<Template> {
         } catch (TemplateGenerationException e) {
             throw new JReleaserException($("ERROR_unexpected_error"), e);
         } finally {
-            if (logger != null) logger.close();
+            if (null != logger) logger.close();
         }
     }
 

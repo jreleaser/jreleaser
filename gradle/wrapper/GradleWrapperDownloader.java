@@ -89,7 +89,7 @@ public final class GradleWrapperDownloader {
             System.out.printf("⬇️  Downloading %s%n", urlString);
         }
 
-        if (System.getenv("GRADLEW_USERNAME") != null && System.getenv("GRADLEW_PASSWORD") != null) {
+        if (null != System.getenv("GRADLEW_USERNAME") && null != System.getenv("GRADLEW_PASSWORD")) {
             var username = System.getenv("GRADLEW_USERNAME");
             var password = System.getenv("GRADLEW_PASSWORD").toCharArray();
             Authenticator.setDefault(new Authenticator() {

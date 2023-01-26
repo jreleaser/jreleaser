@@ -191,7 +191,7 @@ public final class Upload extends AbstractModelObject<Upload> implements Domain,
 
     @Override
     public boolean isEnabled() {
-        return enabled && active != null;
+        return enabled && null != active;
     }
 
     @Deprecated
@@ -230,7 +230,7 @@ public final class Upload extends AbstractModelObject<Upload> implements Domain,
 
     @Override
     public boolean isActiveSet() {
-        return active != null;
+        return null != active;
     }
 
     public Optional<? extends Uploader<?>> getUploader(String type, String name) {

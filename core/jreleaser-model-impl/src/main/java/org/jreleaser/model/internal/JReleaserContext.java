@@ -642,7 +642,7 @@ public class JReleaserContext {
     }
 
     private List<String> normalize(List<String> list) {
-        if (list == null || list.isEmpty()) return Collections.emptyList();
+        if (null == list || list.isEmpty()) return Collections.emptyList();
 
         List<String> tmp = new ArrayList<>(list);
         for (int i = 0; i < tmp.size(); i++) {
@@ -893,14 +893,14 @@ public class JReleaserContext {
         props.put(KEY_TIMESTAMP, model.getTimestamp());
         props.put(KEY_PLATFORM, PlatformUtils.getCurrentFull());
         props.put(KEY_PLATFORM_REPLACED, model.getPlatform().applyReplacements(PlatformUtils.getCurrentFull()));
-        if (model.getCommit() != null) {
+        if (null != model.getCommit()) {
             props.put(KEY_COMMIT_SHORT_HASH, model.getCommit().getShortHash());
             props.put(KEY_COMMIT_FULL_HASH, model.getCommit().getFullHash());
         }
         props.put(KEY_PROJECT_NAME, project.getName());
         props.put(KEY_PROJECT_VERSION, project.getVersion());
         props.put(KEY_PROJECT_SNAPSHOT, String.valueOf(project.isSnapshot()));
-        if (model.getCommit() != null) {
+        if (null != model.getCommit()) {
             BaseReleaser<?, ?> releaser = model.getRelease().getReleaser();
             props.put(KEY_TAG_NAME, releaser.getEffectiveTagName(model));
             String previousTagName = releaser.getResolvedPreviousTagName(model);

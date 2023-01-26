@@ -68,7 +68,7 @@ public class JReleaserGpgSigner extends GpgSigner implements GpgObjectSigner {
         Provider bcProvider = Security.getProvider("BC");
         Security.removeProvider("BC");
         Security.setProperty("crypto.policy", "unlimited");
-        Security.addProvider(bcProvider != null ? bcProvider : new BouncyCastleProvider());
+        Security.addProvider(null != bcProvider ? bcProvider : new BouncyCastleProvider());
     }
 
     private final JReleaserContext context;

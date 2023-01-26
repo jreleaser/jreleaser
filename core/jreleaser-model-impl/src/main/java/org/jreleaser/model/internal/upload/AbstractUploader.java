@@ -130,7 +130,7 @@ public abstract class AbstractUploader<A extends org.jreleaser.model.api.upload.
 
     @Override
     public boolean isActiveSet() {
-        return active != null;
+        return null != active;
     }
 
     @Override
@@ -181,7 +181,7 @@ public abstract class AbstractUploader<A extends org.jreleaser.model.api.upload.
 
     @Override
     public boolean isArtifacts() {
-        return artifacts == null || artifacts;
+        return null == artifacts || artifacts;
     }
 
     @Override
@@ -191,12 +191,12 @@ public abstract class AbstractUploader<A extends org.jreleaser.model.api.upload.
 
     @Override
     public boolean isArtifactsSet() {
-        return artifacts != null;
+        return null != artifacts;
     }
 
     @Override
     public boolean isFiles() {
-        return files == null || files;
+        return null == files || files;
     }
 
     @Override
@@ -206,12 +206,12 @@ public abstract class AbstractUploader<A extends org.jreleaser.model.api.upload.
 
     @Override
     public boolean isFilesSet() {
-        return files != null;
+        return null != files;
     }
 
     @Override
     public boolean isSignatures() {
-        return signatures == null || signatures;
+        return null == signatures || signatures;
     }
 
     @Override
@@ -221,17 +221,17 @@ public abstract class AbstractUploader<A extends org.jreleaser.model.api.upload.
 
     @Override
     public boolean isSignaturesSet() {
-        return signatures != null;
+        return null != signatures;
     }
 
     @Override
     public boolean isChecksumsSet() {
-        return checksums != null;
+        return null != checksums;
     }
 
     @Override
     public boolean isChecksums() {
-        return checksums == null || checksums;
+        return null == checksums || checksums;
     }
 
     @Override

@@ -468,7 +468,7 @@ public class JReleaserModel {
         props.setAll(environment.getProperties());
         props.setAll(environment.getSourcedProperties());
         props.set(Constants.KEY_TIMESTAMP, timestamp);
-        if (commit != null) {
+        if (null != commit) {
             props.set(Constants.KEY_COMMIT_SHORT_HASH, commit.getShortHash());
             props.set(Constants.KEY_COMMIT_FULL_HASH, commit.getFullHash());
         }

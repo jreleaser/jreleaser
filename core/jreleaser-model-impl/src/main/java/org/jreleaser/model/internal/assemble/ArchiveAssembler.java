@@ -199,11 +199,11 @@ public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, 
     }
 
     public boolean isAttachPlatformSet() {
-        return attachPlatform != null;
+        return null != attachPlatform;
     }
 
     public boolean isAttachPlatform() {
-        return attachPlatform != null && attachPlatform;
+        return null != attachPlatform && attachPlatform;
     }
 
     public void setAttachPlatform(Boolean attachPlatform) {

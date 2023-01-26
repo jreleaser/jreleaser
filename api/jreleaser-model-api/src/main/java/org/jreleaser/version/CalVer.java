@@ -218,7 +218,7 @@ public class CalVer implements Version<CalVer> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (null == o || getClass() != o.getClass()) return false;
         CalVer version = (CalVer) o;
         return Objects.equals(pattern, version.pattern) &&
             Objects.equals(year, version.year) &&

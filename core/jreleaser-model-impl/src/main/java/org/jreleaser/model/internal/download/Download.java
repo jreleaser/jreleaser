@@ -131,7 +131,7 @@ public final class Download extends AbstractModelObject<Download> implements Dom
 
     @Override
     public boolean isEnabled() {
-        return enabled && active != null;
+        return enabled && null != active;
     }
 
     @Override
@@ -162,7 +162,7 @@ public final class Download extends AbstractModelObject<Download> implements Dom
 
     @Override
     public boolean isActiveSet() {
-        return active != null;
+        return null != active;
     }
 
     public List<FtpDownloader> getActiveFtps() {

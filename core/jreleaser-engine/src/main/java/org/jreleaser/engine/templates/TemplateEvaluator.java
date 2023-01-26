@@ -106,7 +106,7 @@ public class TemplateEvaluator {
 
         try {
             File inputDirectoryFile = inputDirectory.toFile();
-            if (inputDirectoryFile.listFiles() == null || inputDirectoryFile.listFiles().length == 0) {
+            if (null == inputDirectoryFile.listFiles() || inputDirectoryFile.listFiles().length == 0) {
                 throw fail(RB.$("validation_directory_is_empty", "inputDirectory", inputDirectory));
             }
 

@@ -209,7 +209,7 @@ public final class MacportsPackager extends AbstractRepositoryPackager<org.jrele
     public List<String> getResolvedMaintainers(JReleaserContext context) {
         if (maintainers.isEmpty()) {
             GithubReleaser github = context.getModel().getRelease().getGithub();
-            if (github != null) {
+            if (null != github) {
                 String maintainer = github.getUsername();
                 if (isNotBlank(maintainer)) {
                     maintainers.add("@" + maintainer);

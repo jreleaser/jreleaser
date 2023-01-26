@@ -120,7 +120,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
 
     @Override
     public boolean isActiveSet() {
-        return active != null;
+        return null != active;
     }
 
     @Override
@@ -212,7 +212,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
 
     @Override
     public void setImageNames(Set<String> imageNames) {
-        if (imageNames != null) {
+        if (null != imageNames) {
             this.imageNames.clear();
             this.imageNames.addAll(imageNames);
         }
@@ -232,7 +232,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
 
     @Override
     public void setBuildArgs(List<String> buildArgs) {
-        if (buildArgs != null) {
+        if (null != buildArgs) {
             this.buildArgs.clear();
             this.buildArgs.addAll(buildArgs);
         }
@@ -252,7 +252,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
 
     @Override
     public void setPreCommands(List<String> preCommands) {
-        if (preCommands != null) {
+        if (null != preCommands) {
             this.preCommands.clear();
             this.preCommands.addAll(preCommands);
         }
@@ -265,7 +265,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
 
     @Override
     public void setPostCommands(List<String> postCommands) {
-        if (postCommands != null) {
+        if (null != postCommands) {
             this.postCommands.clear();
             this.postCommands.addAll(postCommands);
         }
@@ -278,7 +278,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
 
     @Override
     public void setRegistries(Set<? extends Registry> registries) {
-        if (registries != null) {
+        if (null != registries) {
             this.registries.clear();
             this.registries.addAll(registries);
         }
@@ -293,7 +293,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
 
     @Override
     public boolean isUseLocalArtifact() {
-        return useLocalArtifact == null || useLocalArtifact;
+        return null == useLocalArtifact || useLocalArtifact;
     }
 
     @Override
@@ -303,7 +303,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
 
     @Override
     public boolean isUseLocalArtifactSet() {
-        return useLocalArtifact != null;
+        return null != useLocalArtifact;
     }
 
     @Override
