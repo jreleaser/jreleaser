@@ -74,6 +74,8 @@ set WRAPPER_JAR="%APP_HOME%\gradle\wrapper\gradle-wrapper.jar"
 @REM https://services.gradle.org/distributions/
 @REM This allows using the gradle wrapper in projects that prohibit checking in binary data.
 @REM Copied and modified from the Maven wrapper
+set GRADLEWD_SOURCE="%APP_HOME%\gradle\wrapper\GradleWrapperDownloader.java"
+set GRADLEWD_CLASS="%APP_HOME%\gradle\wrapper\GradleWrapperDownloader.class"
 if exist %WRAPPER_JAR% (
     if "%GRADLEW_VERBOSE%" == "true" (
         echo "Found %WRAPPER_JAR%"
@@ -83,11 +85,8 @@ if exist %WRAPPER_JAR% (
         echo "Couldn't find %WRAPPER_JAR%, downloading it ..."
     )
 
-    set GRADLEWD_SOURCE="%APP_HOME%\gradle\wrapper\GradleWrapperDownloader.java"
-    set GRADLEWD_CLASS="%APP_HOME%\gradle\wrapper\GradleWrapperDownloader.class"
-
     if exist "%GRADLEWD_SOURCE%" (
-        if not exist "%GRADLEWD_CLASS% "(
+        if not exist "%GRADLEWD_CLASS%" (
             if "%GRADLEW_VERBOSE%" == "true" (
               echo " - Compiling GradleWrapperDownloader.java ..."
             )

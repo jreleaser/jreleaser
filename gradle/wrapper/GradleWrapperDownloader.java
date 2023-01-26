@@ -51,7 +51,11 @@ public final class GradleWrapperDownloader {
         var dir = args[0].replace("..", ""); // Sanitize path
         var projectBasedir = Paths.get(dir).toAbsolutePath().normalize();
         if (!Files.isDirectory(projectBasedir, LinkOption.NOFOLLOW_LINKS)) {
-            System.out.printf("❌ Directory '%s' does not exist%n", projectBasedir);
+            if (isWindows()) {
+                System.out.printf("Directory '%s' does not exist%n", projectBasedir);
+            } else {
+                System.out.printf("❌ Directory '%s' does not exist%n", projectBasedir);
+            }
             System.exit(1);
         }
 
@@ -68,14 +72,22 @@ public final class GradleWrapperDownloader {
 
             System.exit(0);
         } catch (Exception e) {
-            System.err.println("❌ Could not setup Gradle wrapper");
+            if (isWindows()) {
+                System.err.println("Could not setup Gradle wrapper");
+            } else {
+                System.err.println("❌ Could not setup Gradle wrapper");
+            }
             e.printStackTrace();
             System.exit(1);
         }
     }
 
     private static void downloadDistribution(String urlString, Path destination) throws IOException {
-        System.out.printf("⬇️  Downloading %s%n", urlString);
+        if (isWindows()) {
+            System.out.printf("Downloading %s%n", urlString);
+        } else {
+            System.out.printf("⬇️  Downloading %s%n", urlString);
+        }
 
         if (System.getenv("GRADLEW_USERNAME") != null && System.getenv("GRADLEW_PASSWORD") != null) {
             var username = System.getenv("GRADLEW_USERNAME");
@@ -95,7 +107,11 @@ public final class GradleWrapperDownloader {
     }
 
     private static void unpackDistribution(Path distributionZipPath, File destinationDir) throws IOException {
-        System.out.printf("📦 Unpacking %s%n", distributionZipPath.getFileName());
+        if (isWindows()) {
+            System.out.printf("Unpacking %s%n", distributionZipPath.getFileName());
+        } else {
+            System.out.printf("📦 Unpacking %s%n", distributionZipPath.getFileName());
+        }
 
         var distributionFile = distributionZipPath.toFile();
         try (var zipFile = new ZipFile(distributionFile)) {
@@ -130,7 +146,11 @@ public final class GradleWrapperDownloader {
     }
 
     private static Path generateWrapperProject(Path parent) throws IOException {
-        System.out.println("📝 Creating wrapper project");
+        if (isWindows()) {
+            System.out.println("Creating wrapper project");
+        } else {
+            System.out.println("📝 Creating wrapper project");
+        }
 
         var wrapperProjectPath = parent.resolve("wrapper-project");
         Files.createDirectories(wrapperProjectPath);
@@ -139,7 +159,11 @@ public final class GradleWrapperDownloader {
     }
 
     private static void generateWrapper(Path distributionPath, Path wrapperProjectPath) throws Exception {
-        System.out.println("👷‍ Generating wrapper");
+        if (isWindows()) {
+            System.out.println("Generating wrapper");
+        } else {
+            System.out.println("👷‍ Generating wrapper");
+        }
 
         var ext = isWindows() ? ".bat" : "";
         var launchScript = distributionPath.toAbsolutePath() + "/bin/gradle" + ext;
@@ -155,7 +179,11 @@ public final class GradleWrapperDownloader {
 
     private static void copyWrapperJar(Path wrapperProjectPath, Path projectBasedir) throws IOException {
         var destinationDir = projectBasedir.resolve("gradle/wrapper");
-        System.out.printf("🚚 Copying gradle-wrapper.jar to %s%n", destinationDir);
+        if (isWindows()) {
+            System.out.printf("Copying gradle-wrapper.jar to %s%n", destinationDir);
+        } else {
+            System.out.printf("🚚 Copying gradle-wrapper.jar to %s%n", destinationDir);
+        }
 
         Files.copy(wrapperProjectPath.resolve("gradle/wrapper/gradle-wrapper.jar"),
             destinationDir.resolve("gradle-wrapper.jar"),
