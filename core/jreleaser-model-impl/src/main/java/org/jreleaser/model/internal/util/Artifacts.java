@@ -418,7 +418,9 @@ public final class Artifacts {
         return false;
     }
 
-    public static Path checkAndCopyFile(JReleaserContext context, Path src, Path dest) throws JReleaserException {
+    public static Path checkAndCopyFile(JReleaserContext context, Path src, Path dest, boolean optional) throws JReleaserException {
+        if (!java.nio.file.Files.exists(src) && optional) return null;
+
         if (null == dest) return src;
 
         if (!java.nio.file.Files.exists(dest)) {
@@ -459,9 +461,11 @@ public final class Artifacts {
         // resolve artifacts
         for (Artifact artifact : files.getArtifacts()) {
             if (!context.isPlatformSelected(artifact)) continue;
-            artifact.activate();
-            artifact.getEffectivePath(context);
-            paths.add(artifact);
+            Path effectivePath = artifact.getEffectivePath(context);
+            if (null != effectivePath) {
+                artifact.activate();
+                paths.add(artifact);
+            }
         }
 
         // resolve globs

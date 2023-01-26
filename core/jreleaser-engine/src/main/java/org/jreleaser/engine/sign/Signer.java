@@ -361,7 +361,8 @@ public final class Signer {
 
         if (signing.isFiles()) {
             for (Artifact artifact : Artifacts.resolveFiles(context)) {
-                if (!artifact.isActive() || artifact.extraPropertyIsTrue(KEY_SKIP_SIGNING)) continue;
+                if (!artifact.isActive() || artifact.extraPropertyIsTrue(KEY_SKIP_SIGNING) ||
+                    artifact.isOptional(context) && !artifact.resolvedPathExists()) continue;
                 Path input = artifact.getEffectivePath(context);
                 Path output = signaturesDirectory.resolve(input.getFileName().toString().concat(extension));
                 SigningUtils.FilePair pair = new SigningUtils.FilePair(input, output);
@@ -376,6 +377,7 @@ public final class Signer {
                 for (Artifact artifact : distribution.getArtifacts()) {
                     if (!artifact.isActive() || artifact.extraPropertyIsTrue(KEY_SKIP_SIGNING)) continue;
                     Path input = artifact.getEffectivePath(context, distribution);
+                    if (artifact.isOptional(context) && !artifact.resolvedPathExists()) continue;
                     Path output = signaturesDirectory.resolve(input.getFileName().toString().concat(extension));
                     SigningUtils.FilePair pair = new SigningUtils.FilePair(input, output);
                     if (!forceSign) pair.setValid(validator.test(pair));

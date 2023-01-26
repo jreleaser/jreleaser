@@ -350,6 +350,13 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
             .collect(toList());
     }
 
+    @Override
+    public List<Artifact> resolveNonOptionalArtifacts(JReleaserContext context, Distribution distribution) {
+        return resolveCandidateArtifacts(context, distribution).stream()
+            .filter(artifact -> artifact.resolvedPathExists() && !artifact.isOptional(context))
+            .collect(toList());
+    }
+
     private boolean isNotSkipped(Artifact artifact) {
         return isFalse(artifact.getExtraProperties().get(SKIP_DOCKER));
     }

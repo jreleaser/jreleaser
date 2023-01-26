@@ -50,6 +50,8 @@ public interface Packager<A extends org.jreleaser.model.api.packagers.Packager> 
 
     List<Artifact> resolveCandidateArtifacts(JReleaserContext context, Distribution distribution);
 
+    List<Artifact> resolveNonOptionalArtifacts(JReleaserContext context, Distribution distribution);
+
     boolean isSnapshotSupported();
 
     boolean isContinueOnError();

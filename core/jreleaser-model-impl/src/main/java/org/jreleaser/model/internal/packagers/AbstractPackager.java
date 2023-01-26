@@ -112,6 +112,13 @@ public abstract class AbstractPackager<A extends org.jreleaser.model.api.package
             .collect(toList());
     }
 
+    @Override
+    public List<Artifact> resolveNonOptionalArtifacts(JReleaserContext context, Distribution distribution) {
+        return resolveCandidateArtifacts(context, distribution).stream()
+            .filter(artifact -> artifact.resolvedPathExists() && !artifact.isOptional(context))
+            .collect(toList());
+    }
+
     protected abstract boolean isNotSkipped(Artifact artifact);
 
     @Override

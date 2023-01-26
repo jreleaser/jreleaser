@@ -92,7 +92,8 @@ public abstract class AbstractReleaserBuilder<R extends Releaser> implements Rel
 
         if (service.isFiles()) {
             for (Artifact artifact : Artifacts.resolveFiles(context)) {
-                if (!artifact.isActive() || artifact.extraPropertyIsTrue(KEY_SKIP_RELEASE)) continue;
+                if (!artifact.isActive() || artifact.extraPropertyIsTrue(KEY_SKIP_RELEASE) ||
+                    artifact.isOptional(context) && !artifact.resolvedPathExists()) continue;
                 Path path = artifact.getEffectivePath(context);
                 assets.add(Asset.file(Artifact.of(path, artifact.getExtraProperties())));
                 if (service.isChecksums() && isIndividual(context, artifact) &&
@@ -111,7 +112,8 @@ public abstract class AbstractReleaserBuilder<R extends Releaser> implements Rel
                     continue;
                 }
                 for (Artifact artifact : distribution.getArtifacts()) {
-                    if (!artifact.isActive() || artifact.extraPropertyIsTrue(KEY_SKIP_RELEASE)) continue;
+                    if (!artifact.isActive() || artifact.extraPropertyIsTrue(KEY_SKIP_RELEASE) ||
+                        artifact.isOptional(context) && !artifact.resolvedPathExists()) continue;
                     Path path = artifact.getEffectivePath(context, distribution);
                     assets.add(Asset.file(Artifact.of(path, artifact.getExtraProperties()), distribution));
                     if (service.isChecksums() && isIndividual(context, distribution, artifact)) {

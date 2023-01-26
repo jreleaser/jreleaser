@@ -31,6 +31,7 @@ public interface Constants {
     String JRELEASER_USER_HOME = "JRELEASER_USER_HOME";
     String XDG_CONFIG_HOME = "XDG_CONFIG_HOME";
     String XDG_CACHE_HOME = "XDG_CACHE_HOME";
+    String OPTIONAL = "optional";
 
     // General
     String KEY_ZONED_DATE_TIME_NOW = "__ZonedDateTime_now__";
