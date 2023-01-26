@@ -419,9 +419,7 @@ public final class Artifacts {
     }
 
     public static Path checkAndCopyFile(JReleaserContext context, Path src, Path dest, boolean optional) throws JReleaserException {
-        if (!java.nio.file.Files.exists(src) && optional) return null;
-
-        if (null == dest) return src;
+        if (!java.nio.file.Files.exists(src) && optional || null == dest) return src;
 
         if (!java.nio.file.Files.exists(dest)) {
             context.getLogger().debug(RB.$("artifacts.not.exists"),
