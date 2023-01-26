@@ -27,10 +27,6 @@ import org.jreleaser.util.FileUtils;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -74,47 +70,14 @@ public class SpecPackagerProcessor extends AbstractRepositoryPackagerProcessor<S
         }
 
         try {
-            List<String> entries = FileUtils.inspectArchive(artifactPath);
+            FileUtils.CategorizedArchive categorizedArchive = FileUtils.categorizeUnixArchive(artifactFileName,
+                distribution.getExecutable().resolveWindowsExtension(),
+                artifactPath);
 
-            Set<String> directories = new LinkedHashSet<>();
-            List<String> binaries = new ArrayList<>();
-            List<String> files = new ArrayList<>();
-
-            entries.stream()
-                // skip Windows executables
-                .filter(e -> !e.endsWith(distribution.getExecutable().resolveWindowsExtension()))
-                // skip directories
-                .filter(e -> !e.endsWith("/"))
-                // remove root from name
-                .map(e -> e.substring(artifactFileName.length() + 1))
-                // match only binaries
-                .filter(e -> e.startsWith("bin/"))
-                .sorted()
-                .forEach(entry -> {
-                    String[] parts = entry.split("/");
-                    binaries.add(parts[1]);
-                });
-
-            entries.stream()
-                // skip Windows executables
-                .filter(e -> !e.endsWith(distribution.getExecutable().resolveWindowsExtension()))
-                // skip directories
-                .filter(e -> !e.endsWith("/"))
-                // remove root from name
-                .map(e -> e.substring(artifactFileName.length() + 1))
-                // skip executables
-                .filter(e -> !e.startsWith("bin/"))
-                .sorted()
-                .forEach(entry -> {
-                    String[] parts = entry.split("/");
-                    if (parts.length > 1) directories.add(parts[0]);
-                    files.add(entry);
-                });
-
+            props.set(KEY_SPEC_DIRECTORIES, categorizedArchive.getDirectories());
+            props.set(KEY_SPEC_BINARIES, categorizedArchive.getBinaries());
+            props.set(KEY_SPEC_FILES, categorizedArchive.getFiles());
             props.set(KEY_PROJECT_VERSION, context.getModel().getProject().version().toRpmVersion());
-            props.set(KEY_SPEC_DIRECTORIES, directories);
-            props.set(KEY_SPEC_BINARIES, binaries);
-            props.set(KEY_SPEC_FILES, files);
         } catch (IOException e) {
             throw new PackagerProcessingException("ERROR", e);
         }

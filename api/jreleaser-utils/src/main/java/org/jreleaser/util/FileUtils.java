@@ -65,6 +65,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.Enumeration;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -81,6 +82,8 @@ import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
+import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableSet;
 import static org.jreleaser.util.FileType.TAR;
 import static org.jreleaser.util.FileType.TAR_BZ2;
 import static org.jreleaser.util.FileType.TAR_GZ;
@@ -599,6 +602,47 @@ public final class FileUtils {
         }
     }
 
+    public static CategorizedArchive categorizeUnixArchive(String artifactFileName, String windowsExtension, Path archive) throws IOException {
+        List<String> entries = FileUtils.inspectArchive(archive);
+
+        Set<String> directories = new LinkedHashSet<>();
+        List<String> binaries = new ArrayList<>();
+        List<String> files = new ArrayList<>();
+
+        entries.stream()
+            // skip Windows executables
+            .filter(e -> !e.endsWith(windowsExtension))
+            // skip directories
+            .filter(e -> !e.endsWith("/"))
+            // remove root from name
+            .map(e -> e.substring(artifactFileName.length() + 1))
+            // match only binaries
+            .filter(e -> e.startsWith("bin/"))
+            .sorted()
+            .forEach(entry -> {
+                String[] parts = entry.split("/");
+                binaries.add(parts[1]);
+            });
+
+        entries.stream()
+            // skip Windows executables
+            .filter(e -> !e.endsWith(windowsExtension))
+            // skip directories
+            .filter(e -> !e.endsWith("/"))
+            // remove root from name
+            .map(e -> e.substring(artifactFileName.length() + 1))
+            // skip executables
+            .filter(e -> !e.startsWith("bin/"))
+            .sorted()
+            .forEach(entry -> {
+                String[] parts = entry.split("/");
+                if (parts.length > 1) directories.add(parts[0]);
+                files.add(entry);
+            });
+
+        return new CategorizedArchive(directories, binaries, files);
+    }
+
     public static List<String> inspectArchiveCompressed(Path src) throws IOException {
         String filename = src.getFileName().toString();
         String artifactFileName = getFilename(filename, FileType.getSupportedExtensions());
@@ -740,6 +784,30 @@ public final class FileUtils {
         FileTreeCopy copier = new FileTreeCopy(logger, source, target, filter);
         Files.walkFileTree(source, copier);
         return copier.isSuccessful();
+    }
+
+    public static class CategorizedArchive {
+        private final Set<String> directories = new LinkedHashSet<>();
+        private final List<String> binaries = new ArrayList<>();
+        private final List<String> files = new ArrayList<>();
+
+        public CategorizedArchive(Set<String> directories, List<String> binaries, List<String> files) {
+            this.directories.addAll(directories);
+            this.binaries.addAll(binaries);
+            this.files.addAll(files);
+        }
+
+        public Set<String> getDirectories() {
+            return unmodifiableSet(directories);
+        }
+
+        public List<String> getBinaries() {
+            return unmodifiableList(binaries);
+        }
+
+        public List<String> getFiles() {
+            return unmodifiableList(files);
+        }
     }
 
     private static class FileTreeCopy implements FileVisitor<Path> {
