@@ -66,12 +66,11 @@ import static org.jreleaser.model.Constants.KEY_ARTIFACT_PLATFORM;
 import static org.jreleaser.model.Constants.KEY_ARTIFACT_PLATFORM_REPLACED;
 import static org.jreleaser.model.Constants.KEY_ARTIFACT_VERSION;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_ARCHIVE_FORMAT;
-import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_EXTENSION;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_FORMAT;
-import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_NAME;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_PLATFORM;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_PLATFORM_REPLACED;
+import static org.jreleaser.model.Constants.KEY_PLATFORM;
 import static org.jreleaser.model.Constants.KEY_PROJECT_EFFECTIVE_VERSION;
 import static org.jreleaser.model.Constants.KEY_PROJECT_VERSION;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
@@ -140,8 +139,8 @@ public final class Artifacts {
     public static TemplateContext unresolvedArtifactProps(Artifact artifact, TemplateContext props) {
         props.setAll(artifact.getExtraProperties());
         props.setAll(artifact.getResolvedExtraProperties());
-        props.set("platform", artifact.getPlatform());
-        props.set("artifactPlatform", artifact.getPlatform());
+        props.set(KEY_PLATFORM, artifact.getPlatform());
+        props.set(KEY_ARTIFACT_PLATFORM, artifact.getPlatform());
         return props;
     }
 
@@ -182,7 +181,7 @@ public final class Artifacts {
 
         String platform = artifact.getPlatform();
         if (isNotBlank(platform)) {
-            props.set("platform", platform);
+            props.set(KEY_PLATFORM, platform);
             props.set(KEY_ARTIFACT_PLATFORM, platform);
             if (platform.contains("-")) {
                 String[] parts = platform.split("-");
@@ -195,56 +194,20 @@ public final class Artifacts {
     }
 
     public static TemplateContext resolvedArtifactProps(Artifact artifact, Distribution distribution, TemplateContext props) {
-        props.setAll(artifact.getExtraProperties());
-        props.setAll(artifact.getResolvedExtraProperties());
+        resolvedArtifactProps(artifact, props);
 
-        String artifactFile = artifact.getEffectivePath().getFileName().toString();
-        String artifactFileName = getFilename(artifactFile, FileType.getSupportedExtensions());
-        props.set(KEY_ARTIFACT_FILE, artifactFile);
-        props.set(KEY_ARTIFACT_FILE_NAME, artifactFileName);
-        props.set(KEY_DISTRIBUTION_ARTIFACT_FILE, artifactFile);
-        props.set(KEY_DISTRIBUTION_ARTIFACT_FILE_NAME, artifactFileName);
+        String artifactFile = props.get(KEY_ARTIFACT_FILE);
+        String artifactFileName = props.get(KEY_ARTIFACT_FILE_NAME);
 
         if (!artifactFile.equals(artifactFileName)) {
-            String artifactExtension = artifactFile.substring(artifactFileName.length());
-            String artifactFileFormat = artifactExtension.substring(1);
-            props.set(KEY_ARTIFACT_FILE_EXTENSION, artifactExtension);
-            props.set(KEY_ARTIFACT_FILE_FORMAT, artifactFileFormat);
+            String artifactExtension = props.get(KEY_ARTIFACT_FILE_EXTENSION);
+            String artifactFileFormat = props.get(KEY_ARTIFACT_FILE_FORMAT);
             props.set(KEY_DISTRIBUTION_ARTIFACT_FILE_EXTENSION, artifactExtension);
             props.set(KEY_DISTRIBUTION_ARTIFACT_FILE_FORMAT, artifactFileFormat);
             props.set(KEY_DISTRIBUTION_ARTIFACT_ARCHIVE_FORMAT, artifactFileFormat);
         }
 
-        String artifactName = "";
-        String projectVersion = props.get(KEY_PROJECT_EFFECTIVE_VERSION);
-        if (isNotBlank(projectVersion) && artifactFileName.contains(projectVersion)) {
-            artifactName = artifactFileName.substring(0, artifactFileName.indexOf(projectVersion));
-            if (artifactName.endsWith("-")) {
-                artifactName = artifactName.substring(0, artifactName.length() - 1);
-            }
-            props.set(KEY_ARTIFACT_VERSION, projectVersion);
-        }
-        projectVersion = props.get(KEY_PROJECT_VERSION);
-        if (isBlank(artifactName) && isNotBlank(projectVersion) && artifactFileName.contains(projectVersion)) {
-            artifactName = artifactFileName.substring(0, artifactFileName.indexOf(projectVersion));
-            if (artifactName.endsWith("-")) {
-                artifactName = artifactName.substring(0, artifactName.length() - 1);
-            }
-            props.set(KEY_ARTIFACT_VERSION, projectVersion);
-        }
-        props.set(KEY_ARTIFACT_NAME, artifactName);
-
         String platform = artifact.getPlatform();
-        if (isNotBlank(platform)) {
-            props.set("platform", platform);
-            props.set(KEY_ARTIFACT_PLATFORM, platform);
-            if (platform.contains("-")) {
-                String[] parts = platform.split("-");
-                props.set(KEY_ARTIFACT_OS, parts[0]);
-                props.set(KEY_ARTIFACT_ARCH, parts[1]);
-            }
-        }
-
         String platformReplaced = distribution.getPlatform().applyReplacements(platform);
         if (isNotBlank(platformReplaced)) props.set(KEY_ARTIFACT_PLATFORM_REPLACED, platformReplaced);
         if (isNotBlank(platform)) props.set(KEY_DISTRIBUTION_ARTIFACT_PLATFORM, platform);

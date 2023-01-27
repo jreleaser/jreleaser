@@ -17,11 +17,14 @@
  */
 package org.jreleaser.sdk.commons;
 
+import feign.form.FormData;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.api.signing.SigningException;
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.spi.deploy.DeployException;
 import org.jreleaser.model.spi.deploy.maven.MavenDeployer;
+import org.jreleaser.model.spi.upload.UploadException;
 import org.jreleaser.sdk.command.CommandException;
 import org.jreleaser.sdk.signing.SigningUtils;
 import org.jreleaser.sdk.tool.PomChecker;
@@ -50,6 +53,7 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -288,6 +292,49 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
                 throw new JReleaserException(RB.$("ERROR_unexpected_error_calculate_checksum", deployable.getFilename()), e);
             }
         }
+    }
+
+    protected void deployPackages() throws DeployException {
+        Set<Deployable> deployables = collectDeployables();
+        if (deployables.isEmpty()) {
+            context.getLogger().info(RB.$("artifacts.no.match"));
+        }
+
+        D deployer = getDeployer();
+        String baseUrl = deployer.getResolvedUrl(context.fullProps());
+        String token = deployer.getPassword();
+
+        // delete existing packages (if any)
+        deleteExistingPackages(baseUrl, token, deployables);
+
+        for (Deployable deployable : deployables) {
+            Path localPath = Paths.get(deployable.getStagingRepository(), deployable.getPath(), deployable.getFilename());
+            context.getLogger().info(" - {}", deployable.getFilename());
+
+            if (!context.isDryrun()) {
+                try {
+                    Map<String, String> headers = new LinkedHashMap<>();
+                    headers.put("Authorization", "Bearer " + token);
+                    FormData data = ClientUtils.toFormData(localPath);
+
+                    String url = baseUrl + deployable.getFullDeployPath();
+                    ClientUtils.putFile(context.getLogger(),
+                        url,
+                        deployer.getConnectTimeout(),
+                        deployer.getReadTimeout(),
+                        data,
+                        headers);
+                } catch (IOException | UploadException e) {
+                    context.getLogger().trace(e);
+                    throw new DeployException(RB.$("ERROR_unexpected_deploy",
+                        context.getBasedir().relativize(localPath)), e);
+                }
+            }
+        }
+    }
+
+    protected void deleteExistingPackages(String baseUrl, String token, Set<Deployable> deployables) throws DeployException {
+        // noop
     }
 
     public static class Deployable implements Comparable<Deployable> {

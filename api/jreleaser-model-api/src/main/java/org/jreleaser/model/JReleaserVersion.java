@@ -21,6 +21,8 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.ResourceBundle;
 
+import static org.jreleaser.util.IoUtils.newPrintWriter;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -47,22 +49,7 @@ public class JReleaserVersion {
     }
 
     public static void banner(PrintStream out, boolean full) {
-        if (full) {
-            out.println(SEPARATOR);
-            out.printf(JRELEASER_FORMAT, JRELEASER_VERSION);
-
-            String jvm = System.getProperty("java.version") + " (" +
-                System.getProperty("java.vendor") + " " +
-                System.getProperty("java.vm.version") + ")";
-
-            out.println(SEPARATOR);
-            out.printf("Build time:   %s %s%n", BUILD_DATE, BUILD_TIME);
-            out.println("Revision:     " + BUILD_REVISION);
-            out.println("JVM:          " + jvm);
-            out.println(SEPARATOR);
-        } else {
-            out.printf(JRELEASER_FORMAT, JRELEASER_VERSION);
-        }
+        banner(newPrintWriter(out), full);
     }
 
     public static void banner(PrintWriter out) {

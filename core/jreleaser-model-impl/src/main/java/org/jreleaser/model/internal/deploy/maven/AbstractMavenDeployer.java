@@ -313,6 +313,7 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
 
     protected abstract void asMap(boolean full, Map<String, Object> props);
 
+    @Override
     public String getResolvedUrl(TemplateContext props) {
         props.set("username", username);
         props.set("owner", username);

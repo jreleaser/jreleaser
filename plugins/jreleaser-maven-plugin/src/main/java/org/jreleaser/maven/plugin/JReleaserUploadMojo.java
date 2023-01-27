@@ -31,7 +31,7 @@ import org.jreleaser.workflow.Workflows;
  * @since 0.3.0
  */
 @Mojo(name = "upload")
-public class JReleaserUploadMojo extends AbstractPlatformAwareJReleaserMojo {
+public class JReleaserUploadMojo extends AbstractPlatformAwareMojo {
     /**
      * Include an uploader by type.
      */

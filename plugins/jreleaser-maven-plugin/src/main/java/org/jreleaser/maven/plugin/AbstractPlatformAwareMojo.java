@@ -28,7 +28,7 @@ import java.util.List;
  * @author Andres Almiray
  * @since 0.6.0
  */
-abstract class AbstractPlatformAwareJReleaserMojo extends AbstractJReleaserMojo {
+abstract class AbstractPlatformAwareMojo extends AbstractJReleaserMojo {
     /**
      * Activates paths matching the current platform.
      */

@@ -17,8 +17,6 @@
  */
 package org.jreleaser.maven.plugin;
 
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.jreleaser.model.internal.JReleaserContext;
@@ -31,19 +29,7 @@ import org.jreleaser.workflow.Workflows;
  * @since 0.1.0
  */
 @Mojo(name = "sign")
-public class JReleaserSignMojo extends AbstractPlatformAwareJReleaserMojo {
-    /**
-     * Include a distribution.
-     */
-    @Parameter(property = "jreleaser.distributions")
-    private String[] includedDistributions;
-
-    /**
-     * Exclude a distribution.
-     */
-    @Parameter(property = "jreleaser.excluded.distributions")
-    private String[] excludedDistributions;
-
+public class JReleaserSignMojo extends AbstractDistributionMojo {
     /**
      * Skip execution.
      */
@@ -51,16 +37,12 @@ public class JReleaserSignMojo extends AbstractPlatformAwareJReleaserMojo {
     private boolean skip;
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        Banner.display(project, getLog());
-        if (skip) {
-            getLog().info("Execution has been explicitly skipped.");
-            return;
-        }
-
-        JReleaserContext context = createContext();
-        context.setIncludedDistributions(collectEntries(includedDistributions));
-        context.setExcludedDistributions(collectEntries(excludedDistributions));
+    protected void doExecute(JReleaserContext context) {
         Workflows.sign(context).execute();
+    }
+
+    @Override
+    protected boolean isSkip() {
+        return skip;
     }
 }

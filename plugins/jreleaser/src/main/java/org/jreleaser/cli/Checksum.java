@@ -21,60 +21,15 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.workflow.Workflows;
 import picocli.CommandLine;
 
-import java.util.Set;
-
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 @CommandLine.Command(name = "checksum")
-public class Checksum extends AbstractPlatformAwareModelCommand<Main> {
-    @CommandLine.ArgGroup
-    Composite composite;
-
-    static class Composite {
-        @CommandLine.ArgGroup(exclusive = false, order = 1,
-            headingKey = "include.filter.header")
-        Include include;
-
-        @CommandLine.ArgGroup(exclusive = false, order = 2,
-            headingKey = "exclude.filter.header")
-        Exclude exclude;
-
-        String[] includedDistributions() {
-            return null != include ? include.includedDistributions : null;
-        }
-
-        String[] excludedDistributions() {
-            return null != exclude ? exclude.excludedDistributions : null;
-        }
-    }
-
-    static class Include {
-        @CommandLine.Option(names = {"-d", "--distribution"},
-            paramLabel = "<distribution>")
-        String[] includedDistributions;
-    }
-
-    static class Exclude {
-        @CommandLine.Option(names = {"-xd", "--exclude-distribution"},
-            paramLabel = "<distribution>")
-        String[] excludedDistributions;
-    }
-
-    @Override
-    protected void collectCandidateDeprecatedArgs(Set<AbstractCommand<Main>.DeprecatedArg> args) {
-        super.collectCandidateDeprecatedArgs(args);
-        args.add(new DeprecatedArg("-d", "--distribution", "1.5.0"));
-        args.add(new DeprecatedArg("-xd", "--exclude-distribution", "1.5.0"));
-    }
-
+public class Checksum extends AbstractDistributionModelCommand<Main> {
     @Override
     protected void doExecute(JReleaserContext context) {
-        if (null != composite) {
-            context.setIncludedDistributions(collectEntries(composite.includedDistributions()));
-            context.setExcludedDistributions(collectEntries(composite.excludedDistributions()));
-        }
+        super.doExecute(context);
         Workflows.checksum(context).execute();
     }
 }

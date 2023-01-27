@@ -65,7 +65,7 @@ final class Banner {
 
         try {
             File parent = new File(System.getProperty("user.home"), "/.m2/caches");
-            File markerFile = getMarkerFile(parent, INSTANCE);
+            File markerFile = getMarkerFile(parent);
             if (!markerFile.exists()) {
                 if (!quiet) log.info(INSTANCE.message);
                 markerFile.getParentFile().mkdirs();
@@ -106,13 +106,13 @@ final class Banner {
         }
     }
 
-    private static File getMarkerFile(File parent, Banner b) {
+    private static File getMarkerFile(File parent) {
         return new File(parent,
             "jreleaser" +
                 File.separator +
-                b.productId +
+                INSTANCE.productId +
                 File.separator +
-                b.productVersion +
+                INSTANCE.productVersion +
                 File.separator +
                 "marker.txt");
     }

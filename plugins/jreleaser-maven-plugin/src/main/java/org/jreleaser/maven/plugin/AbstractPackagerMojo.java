@@ -19,31 +19,25 @@ package org.jreleaser.maven.plugin;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
-import org.jreleaser.workflow.Workflows;
 
 /**
- * Assemble all distributions.
- *
  * @author Andres Almiray
- * @since 0.2.0
+ * @since 1.5.0
  */
-@Mojo(name = "assemble")
-public class JReleaserAssembleMojo extends AbstractPlatformAwareMojo {
+abstract class AbstractPackagerMojo extends AbstractPlatformAwareMojo {
     /**
-     * Include an assembler.
+     * Include a packager.
      */
-    @Parameter(property = "jreleaser.assemblers")
-    private String[] includedAssemblers;
+    @Parameter(property = "jreleaser.packagers")
+    private String[] includedPackagers;
 
     /**
-     * Exclude an assembler.
+     * Exclude a packager.
      */
-    @Parameter(property = "jreleaser.excluded.assemblers")
-    private String[] excludedAssemblers;
+    @Parameter(property = "jreleaser.excluded.packagers")
+    private String[] excludedPackagers;
 
     /**
      * Include a distribution.
@@ -57,30 +51,23 @@ public class JReleaserAssembleMojo extends AbstractPlatformAwareMojo {
     @Parameter(property = "jreleaser.excluded.distributions")
     private String[] excludedDistributions;
 
-    /**
-     * Skip execution.
-     */
-    @Parameter(property = "jreleaser.assemble.skip")
-    private boolean skip;
-
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         Banner.display(project, getLog());
-        if (skip) {
+        if (isSkip()) {
             getLog().info("Execution has been explicitly skipped.");
             return;
         }
 
         JReleaserContext context = createContext();
-        context.setIncludedAssemblers(collectEntries(includedAssemblers, true));
+        context.setIncludedPackagers(collectEntries(includedPackagers, true));
         context.setIncludedDistributions(collectEntries(includedDistributions));
-        context.setExcludedAssemblers(collectEntries(excludedAssemblers, true));
+        context.setExcludedPackagers(collectEntries(excludedPackagers, true));
         context.setExcludedDistributions(collectEntries(excludedDistributions));
-        Workflows.assemble(context).execute();
+        doExecute(context);
     }
 
-    @Override
-    protected Mode getMode() {
-        return Mode.ASSEMBLE;
-    }
+    protected abstract void doExecute(JReleaserContext context);
+
+    protected abstract boolean isSkip();
 }

@@ -17,21 +17,13 @@
  */
 package org.jreleaser.sdk.gitea;
 
-import feign.form.FormData;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.spi.deploy.DeployException;
-import org.jreleaser.model.spi.upload.UploadException;
 import org.jreleaser.sdk.commons.AbstractMavenDeployer;
-import org.jreleaser.sdk.commons.ClientUtils;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -63,48 +55,14 @@ public class GiteaMavenDeployer extends AbstractMavenDeployer<org.jreleaser.mode
 
     @Override
     public void deploy(String name) throws DeployException {
-        Set<Deployable> deployables = collectDeployables();
-        if (deployables.isEmpty()) {
-            context.getLogger().info(RB.$("artifacts.no.match"));
-        }
+        deployPackages();
+    }
 
-        String baseUrl = deployer.getResolvedUrl(context.fullProps());
-        String token = deployer.getPassword();
-
-        // delete existing packages (if any)
+    @Override
+    protected void deleteExistingPackages(String baseUrl, String token, Set<Deployable> deployables) throws DeployException {
         for (Deployable deployable : deployables) {
             if (deployable.getFilename().endsWith(".pom")) {
                 deletePackage(baseUrl, token, deployable);
-            }
-        }
-
-        for (Deployable deployable : deployables) {
-            if (!deployable.getFilename().endsWith(".jar") &&
-                !deployable.getFilename().endsWith(".pom")) {
-                continue;
-            }
-
-            Path localPath = Paths.get(deployable.getStagingRepository(), deployable.getPath(), deployable.getFilename());
-            context.getLogger().info(" - {}", deployable.getFilename());
-
-            if (!context.isDryrun()) {
-                try {
-                    Map<String, String> headers = new LinkedHashMap<>();
-                    headers.put("Authorization", "token " + token);
-                    FormData data = ClientUtils.toFormData(localPath);
-
-                    String url = baseUrl + deployable.getFullDeployPath();
-                    ClientUtils.putFile(context.getLogger(),
-                        url,
-                        deployer.getConnectTimeout(),
-                        deployer.getReadTimeout(),
-                        data,
-                        headers);
-                } catch (IOException | UploadException e) {
-                    context.getLogger().trace(e);
-                    throw new DeployException(RB.$("ERROR_unexpected_deploy",
-                        context.getBasedir().relativize(localPath)), e);
-                }
             }
         }
     }
