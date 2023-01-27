@@ -192,26 +192,16 @@ public class Gitea {
     public Optional<GtMilestone> findMilestoneByName(String owner, String repo, String milestoneName) {
         logger.debug(RB.$("git.milestone.lookup"), milestoneName, owner, repo);
 
-        try {
-            GtMilestone milestone = api.findMilestoneByTitle(owner, repo, milestoneName);
-
-            if (null == milestone) {
-                return Optional.empty();
-            }
-
-            return "open".equals(milestone.getState()) ? Optional.of(milestone) : Optional.empty();
-        } catch (RestAPIException e) {
-            if (e.isNotFound()) {
-                // ok
-                return Optional.empty();
-            }
-            throw e;
-        }
+        return findMilestone(owner, repo, milestoneName, "open");
     }
 
     public Optional<GtMilestone> findClosedMilestoneByName(String owner, String repo, String milestoneName) {
         logger.debug(RB.$("git.milestone.lookup.closed"), milestoneName, owner, repo);
 
+        return findMilestone(owner, repo, milestoneName, "closed");
+    }
+
+    private Optional<GtMilestone> findMilestone(String owner, String repo, String milestoneName, String state) {
         try {
             GtMilestone milestone = api.findMilestoneByTitle(owner, repo, milestoneName);
 
@@ -219,7 +209,7 @@ public class Gitea {
                 return Optional.empty();
             }
 
-            return "closed".equals(milestone.getState()) ? Optional.of(milestone) : Optional.empty();
+            return state.equals(milestone.getState()) ? Optional.of(milestone) : Optional.empty();
         } catch (RestAPIException e) {
             if (e.isNotFound()) {
                 // ok
@@ -352,7 +342,7 @@ public class Gitea {
             try {
                 api.uploadAsset(owner, repo, release.getId(), toFormData(asset.getPath()));
             } catch (RestAPIException e) {
-                logger.error(" " + RB.$("git.upload.asset.failure"), asset.getFilename());
+                logger.error(" " + RB.$("git.update.asset.failure"), asset.getFilename());
                 throw e;
             }
         }

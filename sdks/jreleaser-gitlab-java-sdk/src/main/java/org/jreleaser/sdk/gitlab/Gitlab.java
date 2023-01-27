@@ -235,28 +235,16 @@ class Gitlab {
     Optional<GlMilestone> findMilestoneByName(String owner, String repo, Integer projectIdentifier, String milestoneName) {
         logger.debug(RB.$("git.milestone.lookup"), milestoneName, owner, repo);
 
-        try {
-            List<GlMilestone> milestones = api.findMilestoneByTitle(projectIdentifier, CollectionUtils.<String, Object>map()
-                .e("title", milestoneName));
-
-            if (null == milestones || milestones.isEmpty()) {
-                return Optional.empty();
-            }
-
-            GlMilestone milestone = milestones.get(0);
-            return "active".equals(milestone.getState()) ? Optional.of(milestone) : Optional.empty();
-        } catch (RestAPIException e) {
-            if (e.isNotFound() || e.isForbidden()) {
-                // ok
-                return Optional.empty();
-            }
-            throw e;
-        }
+        return findMilestone(projectIdentifier, milestoneName, "active");
     }
 
     Optional<GlMilestone> findClosedMilestoneByName(String owner, String repo, Integer projectIdentifier, String milestoneName) {
         logger.debug(RB.$("git.milestone.lookup.closed"), milestoneName, owner, repo);
 
+        return findMilestone(projectIdentifier, milestoneName, "closed");
+    }
+
+    private Optional<GlMilestone> findMilestone(Integer projectIdentifier, String milestoneName, String state) {
         try {
             List<GlMilestone> milestones = api.findMilestoneByTitle(projectIdentifier, CollectionUtils.<String, Object>map()
                 .e("title", milestoneName));
@@ -266,7 +254,7 @@ class Gitlab {
             }
 
             GlMilestone milestone = milestones.get(0);
-            return "closed".equals(milestone.getState()) ? Optional.of(milestone) : Optional.empty();
+            return state.equals(milestone.getState()) ? Optional.of(milestone) : Optional.empty();
         } catch (RestAPIException e) {
             if (e.isNotFound() || e.isForbidden()) {
                 // ok

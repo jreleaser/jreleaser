@@ -143,18 +143,18 @@ class Github {
     Optional<GHMilestone> findMilestoneByName(String owner, String repo, String milestoneName) throws IOException {
         logger.debug(RB.$("git.milestone.lookup"), milestoneName, owner, repo);
 
-        GHRepository repository = findRepository(owner, repo);
-        PagedIterable<GHMilestone> milestones = repository.listMilestones(GHIssueState.OPEN);
-        return StreamSupport.stream(milestones.spliterator(), false)
-            .filter(m -> milestoneName.equals(m.getTitle()))
-            .findFirst();
+        return findMilestone(owner, repo, milestoneName, GHIssueState.OPEN);
     }
 
     Optional<GHMilestone> findClosedMilestoneByName(String owner, String repo, String milestoneName) throws IOException {
         logger.debug(RB.$("git.milestone.lookup.closed"), milestoneName, owner, repo);
 
+        return findMilestone(owner, repo, milestoneName, GHIssueState.CLOSED);
+    }
+
+    private Optional<GHMilestone> findMilestone(String owner, String repo, String milestoneName, GHIssueState state) throws IOException {
         GHRepository repository = findRepository(owner, repo);
-        PagedIterable<GHMilestone> milestones = repository.listMilestones(GHIssueState.CLOSED);
+        PagedIterable<GHMilestone> milestones = repository.listMilestones(state);
         return StreamSupport.stream(milestones.spliterator(), false)
             .filter(m -> milestoneName.equals(m.getTitle()))
             .findFirst();
@@ -192,20 +192,7 @@ class Github {
                 continue;
             }
 
-            logger.info(" " + RB.$("git.upload.asset"), asset.getFilename());
-            try {
-                GHAsset ghasset = release.uploadAsset(asset.getPath().toFile(), MediaType.parse(tika.detect(asset.getPath())).toString());
-                if (!"uploaded".equalsIgnoreCase(ghasset.getState())) {
-                    logger.warn(" " + RB.$("git.upload.asset.failure"), asset.getFilename());
-                }
-            } catch (GHIOException ghioe) {
-                logger.trace(ghioe);
-                if ("Stream Closed".equals(ghioe.getMessage())) {
-                    logger.warn(" " + RB.$("git.upload.asset.stream.closed"), asset.getFilename());
-                } else {
-                    throw ghioe;
-                }
-            }
+            uploadOrUpdateAsset(release, asset, "git.upload.asset", "git.upload.asset.failure");
         }
     }
 
@@ -216,18 +203,23 @@ class Github {
                 continue;
             }
 
-            logger.debug(" " + RB.$("git.delete.asset"), asset.getFilename());
-            try {
-                existingAssets.get(asset.getFilename()).delete();
-            } catch (IOException e) {
-                logger.error(" " + RB.$("git.delete.asset.failure"), asset.getFilename());
-                throw e;
-            }
+            uploadOrUpdateAsset(release, asset, "git.delete.asset", "git.update.asset.failure");
+        }
+    }
 
-            logger.info(" " + RB.$("git.update.asset"), asset.getFilename());
+    private void uploadOrUpdateAsset(GHRelease release, Asset asset, String operationMessageKey, String operationErrorMessageKey) throws IOException {
+        logger.info(" " + RB.$(operationMessageKey), asset.getFilename());
+        try {
             GHAsset ghasset = release.uploadAsset(asset.getPath().toFile(), MediaType.parse(tika.detect(asset.getPath())).toString());
             if (!"uploaded".equalsIgnoreCase(ghasset.getState())) {
-                logger.warn(" " + RB.$("git.update.asset.failure"), asset.getFilename());
+                logger.warn(" " + RB.$(operationErrorMessageKey), asset.getFilename());
+            }
+        } catch (GHIOException ghioe) {
+            logger.trace(ghioe);
+            if ("Stream Closed".equals(ghioe.getMessage())) {
+                logger.warn(" " + RB.$("git.upload.asset.stream.closed"), asset.getFilename());
+            } else {
+                throw ghioe;
             }
         }
     }
