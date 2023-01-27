@@ -75,12 +75,7 @@ public class ArtifactoryMavenDeployer extends AbstractMavenDeployer<org.jrelease
         String password = deployer.getPassword();
 
         for (Deployable deployable : deployables) {
-            if (!deployable.getFilename().endsWith(".jar") &&
-                !deployable.getFilename().endsWith(".pom") &&
-                !deployable.getFilename().endsWith(".asc")) {
-                continue;
-            }
-
+            if (deployable.isChecksum()) continue;
             Path localPath = Paths.get(deployable.getStagingRepository(), deployable.getPath(), deployable.getFilename());
             context.getLogger().info(" - {}", deployable.getFilename());
 

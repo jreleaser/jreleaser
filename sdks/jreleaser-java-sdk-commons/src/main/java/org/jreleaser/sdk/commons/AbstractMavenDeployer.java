@@ -83,6 +83,11 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
     private static final String PACKAGING_POM = "pom";
     private static final String PACKAGING_MAVEN_ARCHETYPE = "maven-archetype";
     private static final String MAVEN_METADATA_XML = "maven-metadata.xml";
+    private static final String EXT_JAR = ".jar";
+    private static final String EXT_POM = ".pom";
+    private static final String EXT_ASC = ".asc";
+    private static final String EXT_MODULE = ".module";
+    private static final String[] EXT_CHECKSUMS = {".md5", ".sha1", ".sha256", ".sha512"};
 
     protected final JReleaserContext context;
 
@@ -145,7 +150,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
 
         // 1st check jar, sources, javadoc if applicable
         for (Deployable deployable : deployablesMap.values()) {
-            if (!deployable.getFilename().endsWith("." + PACKAGING_POM)) {
+            if (!deployable.getFilename().endsWith(EXT_POM)) {
                 continue;
             }
 
@@ -153,7 +158,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
             base = base.substring(0, base.length() - 4);
 
             if (deployable.requiresJar()) {
-                Deployable derived = deployable.deriveByFilename(PACKAGING_JAR, base + ".jar");
+                Deployable derived = deployable.deriveByFilename(PACKAGING_JAR, base + EXT_JAR);
                 if (!deployablesMap.containsKey(derived.getFullDeployPath())) {
                     errors.configuration(RB.$("validation_is_missing", derived.getFilename()));
                 }
@@ -192,7 +197,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
 
         // 2nd check pom
         for (Deployable deployable : deployablesMap.values()) {
-            if (!deployable.getFilename().endsWith("." + PACKAGING_POM)) {
+            if (!deployable.getFilename().endsWith(EXT_POM)) {
                 continue;
             }
 
@@ -234,12 +239,9 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
         }
 
         for (Deployable deployable : deployablesMap.values()) {
-            if (!deployable.getFilename().endsWith(".jar") &&
-                !deployable.getFilename().endsWith(".pom")) {
-                continue;
-            }
+            if (deployable.isSignature() || deployable.isChecksum()) continue;
 
-            Deployable signedDeployable = deployable.deriveByFilename(deployable.getFilename() + ".asc");
+            Deployable signedDeployable = deployable.deriveByFilename(deployable.getFilename() + EXT_ASC);
             if (deployablesMap.containsKey(signedDeployable.getFullDeployPath())) {
                 continue;
             }
@@ -258,14 +260,9 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
 
     private void checksumDeployables(Map<String, Deployable> deployablesMap, Set<Deployable> deployables) {
         for (Deployable deployable : deployablesMap.values()) {
-            if (!deployable.getFilename().endsWith(".jar") &&
-                !deployable.getFilename().endsWith(".pom") &&
-                !deployable.getFilename().endsWith(".asc") &&
-                !deployable.getFilename().endsWith(".xml")) {
-                continue;
-            }
+            if (deployable.isChecksum()) continue;
 
-            if (deployable.getFilename().endsWith(".asc")) {
+            if (deployable.getFilename().endsWith(EXT_ASC)) {
                 // remove checksum for signature files
                 for (Algorithm algorithm : ALGORITHMS) {
                     Deployable checksumDeployable = deployable.deriveByFilename(deployable.getFilename() + "." + algorithm.formatted());
@@ -308,6 +305,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
         deleteExistingPackages(baseUrl, token, deployables);
 
         for (Deployable deployable : deployables) {
+            if (deployable.isSignature() || deployable.isChecksum()) continue;
             Path localPath = Paths.get(deployable.getStagingRepository(), deployable.getPath(), deployable.getFilename());
             context.getLogger().info(" - {}", deployable.getFilename());
 
@@ -452,6 +450,17 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
             if (null == o) return -1;
             return getFullDeployPath().compareTo(o.getFullDeployPath());
         }
+
+        public boolean isSignature() {
+            return filename.endsWith(EXT_ASC);
+        }
+
+        public boolean isChecksum() {
+            for (String ext : EXT_CHECKSUMS) {
+                if (filename.endsWith(ext)) return true;
+            }
+            return false;
+        }
     }
 
     private class DeployableCollector extends SimpleFileVisitor<Path> {
@@ -464,18 +473,21 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
             this.root = root;
 
             FileSystem fileSystem = FileSystems.getDefault();
-            String[] extensions = {".jar", ".jar.asc", ".pom", ".pom.asc"};
-            String[] checksums = {".md5", ".sha1", ".sha256", ".sha512"};
+            String[] extensions = {
+                EXT_JAR, EXT_JAR + EXT_ASC,
+                EXT_POM, EXT_POM + EXT_ASC,
+                EXT_MODULE, EXT_MODULE + EXT_ASC
+            };
             for (String ext : extensions) {
                 matchers.add(fileSystem.getPathMatcher("glob:**/*" + ext));
-                for (String cs : checksums) {
+                for (String cs : EXT_CHECKSUMS) {
                     matchers.add(fileSystem.getPathMatcher("glob:**/*" + ext + cs));
                 }
             }
 
             if (projectIsSnapshot) {
                 matchers.add(fileSystem.getPathMatcher("glob:**/" + MAVEN_METADATA_XML));
-                for (String cs : checksums) {
+                for (String cs : EXT_CHECKSUMS) {
                     matchers.add(fileSystem.getPathMatcher("glob:**/" + MAVEN_METADATA_XML + cs));
                 }
             }
@@ -497,8 +509,8 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
 
         private String resolvePackaging(Path artifactPath) {
             // only inspect if artifactPath ends with .pom
-            if (artifactPath.getFileName().toString().endsWith("." + PACKAGING_JAR)) return PACKAGING_JAR;
-            if (!artifactPath.getFileName().toString().endsWith("." + PACKAGING_POM)) return "";
+            if (artifactPath.getFileName().toString().endsWith(EXT_JAR)) return PACKAGING_JAR;
+            if (!artifactPath.getFileName().toString().endsWith(EXT_POM)) return "";
 
             try {
                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
