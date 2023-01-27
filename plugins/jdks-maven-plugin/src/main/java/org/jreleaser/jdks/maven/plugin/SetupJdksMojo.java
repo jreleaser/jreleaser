@@ -20,7 +20,6 @@ package org.jreleaser.jdks.maven.plugin;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -63,13 +62,7 @@ public class SetupJdksMojo extends AbstractJdksMojo {
     private ArchiverManager archiverManager;
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        Banner.display(project, getLog());
-        if (skip) return;
-
-        if (null == jdks || jdks.isEmpty()) return;
-        validate();
-
+    protected void doExecute() throws MojoExecutionException {
         JdkHelper jdkHelper = new JdkHelper(project, getLog(), outputDirectory,
             session, pluginManager, archiverManager);
 

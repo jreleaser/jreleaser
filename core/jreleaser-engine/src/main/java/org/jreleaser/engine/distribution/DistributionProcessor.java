@@ -57,73 +57,31 @@ public class DistributionProcessor {
     public void prepareDistribution() throws PackagerProcessingException {
         Distribution distribution = context.getModel().findDistribution(distributionName);
         Packager<?> packager = distribution.findPackager(packagerName);
-        if (!packager.isEnabled()) {
-            context.getLogger().debug(RB.$("distributions.skip.distribution"), distributionName);
-            return;
-        }
-
-        PackagerProcessor<Packager<?>> packagerProcessor = PackagerProcessors.findProcessor(context, packager);
-        if (!packagerProcessor.supportsDistribution(distribution)) {
-            context.getLogger().info(RB.$("distributions.not.supported.distribution"), distributionName, distribution.getType());
-            return;
-        }
-
-        context.getLogger().info(RB.$("distributions.apply.action.distribution"), RB.$("distributions.action.preparing"), distributionName);
-
-        try {
-            packagerProcessor.prepareDistribution(distribution, initProps());
-        } catch (PackagerProcessingException tpe) {
-            if (packager.isContinueOnError()) {
-                packager.fail();
-                context.getLogger().warn(RB.$("distributions.failure"), tpe.getMessage());
-                context.getLogger().trace(tpe);
-            } else {
-                throw tpe;
-            }
-        }
+        executeProcessor(distribution, packager, false, RB.$("distributions.action.preparing"),
+            packagerProcessor -> packagerProcessor.prepareDistribution(distribution, initProps()));
     }
 
     public void packageDistribution() throws PackagerProcessingException {
         Distribution distribution = context.getModel().findDistribution(distributionName);
         Packager<?> packager = distribution.findPackager(packagerName);
-        if (!packager.isEnabled()) {
-            context.getLogger().debug(RB.$("distributions.skip.distribution"), distributionName);
-            return;
-        }
-        if (packager.isFailed()) {
-            context.getLogger().warn(RB.$("distributions.previous.failure"));
-            return;
-        }
-
-        PackagerProcessor<Packager<?>> packagerProcessor = PackagerProcessors.findProcessor(context, packager);
-        if (!packagerProcessor.supportsDistribution(distribution)) {
-            context.getLogger().info(RB.$("distributions.not.supported.distribution"), distributionName, distribution.getType());
-            return;
-        }
-
-        context.getLogger().info(RB.$("distributions.apply.action.distribution"), RB.$("distributions.action.packaging"), distributionName);
-
-        try {
-            packagerProcessor.packageDistribution(distribution, initProps());
-        } catch (PackagerProcessingException tpe) {
-            if (packager.isContinueOnError()) {
-                packager.fail();
-                context.getLogger().warn(RB.$("distributions.failure"), tpe.getMessage());
-                context.getLogger().trace(tpe);
-            } else {
-                throw tpe;
-            }
-        }
+        executeProcessor(distribution, packager, true, RB.$("distributions.action.packaging"),
+            packagerProcessor -> packagerProcessor.packageDistribution(distribution, initProps()));
     }
 
     public void publishDistribution() throws PackagerProcessingException {
         Distribution distribution = context.getModel().findDistribution(distributionName);
         Packager<?> packager = distribution.findPackager(packagerName);
+        executeProcessor(distribution, packager, true, RB.$("distributions.action.publishing"),
+            packagerProcessor -> packagerProcessor.publishDistribution(distribution, initProps()));
+    }
+
+    private void executeProcessor(Distribution distribution, Packager<?> packager, boolean checkFailed, String action, ProcessorFunction function) throws PackagerProcessingException {
         if (!packager.isEnabled()) {
             context.getLogger().debug(RB.$("distributions.skip.distribution"), distributionName);
             return;
         }
-        if (packager.isFailed()) {
+
+        if (checkFailed && packager.isFailed()) {
             context.getLogger().warn(RB.$("distributions.previous.failure"));
             return;
         }
@@ -134,17 +92,17 @@ public class DistributionProcessor {
             return;
         }
 
-        context.getLogger().info(RB.$("distributions.apply.action.distribution"), RB.$("distributions.action.publishing"), distributionName);
+        context.getLogger().info(RB.$("distributions.apply.action.distribution"), action, distributionName);
 
         try {
-            packagerProcessor.publishDistribution(distribution, initProps());
-        } catch (PackagerProcessingException tpe) {
+            function.process(packagerProcessor);
+        } catch (PackagerProcessingException ppe) {
             if (packager.isContinueOnError()) {
                 packager.fail();
-                context.getLogger().warn(RB.$("distributions.failure"), tpe.getMessage());
-                context.getLogger().trace(tpe);
+                context.getLogger().warn(RB.$("distributions.failure"), ppe.getMessage());
+                context.getLogger().trace(ppe);
             } else {
-                throw tpe;
+                throw ppe;
             }
         }
     }
@@ -164,6 +122,10 @@ public class DistributionProcessor {
 
     public static DistributionProcessorBuilder builder() {
         return new DistributionProcessorBuilder();
+    }
+
+    interface ProcessorFunction {
+        void process(PackagerProcessor<Packager<?>> packagerProcessor) throws PackagerProcessingException;
     }
 
     public static class PackagingAction {

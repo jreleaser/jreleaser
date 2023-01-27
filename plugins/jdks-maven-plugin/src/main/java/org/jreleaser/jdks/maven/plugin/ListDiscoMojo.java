@@ -17,24 +17,12 @@
  */
 package org.jreleaser.jdks.maven.plugin;
 
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.sdk.disco.Disco;
 import org.jreleaser.sdk.disco.RestAPIException;
-import org.jreleaser.util.Errors;
 
-import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.List;
 
 /**
@@ -44,76 +32,11 @@ import java.util.List;
  * @since 0.9.0
  */
 @Mojo(name = "list-disco")
-public class ListDiscoMojo extends AbstractMojo {
-    @Parameter(defaultValue = "${project}", readonly = true, required = true)
-    protected MavenProject project;
-
-    @Parameter(required = true)
-    protected List<Pkg> pkgs;
-
-    @Parameter(property = "disco.output.directory", defaultValue = "${project.build.directory}/jdks")
-    private File outputDirectory;
-
-    @Parameter(defaultValue = "${session}")
-    private MavenSession session;
-
-    @Component
-    private BuildPluginManager pluginManager;
-
-    @Parameter(property = "disco.setup.connect.timeout")
-    private int connectTimeout;
-
-    @Parameter(property = "disco.setup.read.timeout")
-    private int readTimeout;
-
-    /**
-     * Skip execution.
-     */
-    @Parameter(property = "disco.setup.skip")
-    private boolean skip;
-
-    @Component
-    private ArchiverManager archiverManager;
-
+public class ListDiscoMojo extends AbstractDiscoMojo {
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        Banner.display(project, getLog());
-        if (skip) return;
-
-        if (null == pkgs || pkgs.isEmpty()) return;
-        validate();
-
-        Disco disco = initializeDisco();
-
+    protected void doExecute(Disco disco) throws MojoExecutionException {
         for (Pkg pkg : pkgs) {
             printPkg(pkg, disco);
-        }
-    }
-
-    private Disco initializeDisco() throws MojoExecutionException {
-        try {
-            return new Disco(new JReleaserLoggerAdapter(getLog()), connectTimeout, readTimeout);
-        } catch (RuntimeException e) {
-            throw new MojoExecutionException("Could not initialize Disco client", e);
-        }
-    }
-
-    private void validate() throws MojoFailureException {
-        if (connectTimeout <= 0 || connectTimeout > 300) {
-            connectTimeout = 20;
-        }
-        if (readTimeout <= 0 || readTimeout > 300) {
-            readTimeout = 60;
-        }
-
-        Errors errors = new Errors();
-        pkgs.forEach(pkg -> pkg.validate(errors));
-
-        if (errors.hasErrors()) {
-            StringWriter s = new StringWriter();
-            PrintWriter w = new PrintWriter(s, true);
-            errors.logErrors(w);
-            throw new MojoFailureException(s.toString());
         }
     }
 

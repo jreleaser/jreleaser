@@ -18,16 +18,14 @@
 package org.jreleaser.config.toml;
 
 import com.fasterxml.jackson.dataformat.toml.TomlMapper;
+import org.jreleaser.config.AbstractJReleaserConfigParser;
 import org.jreleaser.config.JReleaserConfigParser;
 import org.jreleaser.model.internal.JReleaserModel;
 import org.kordamp.jipsy.annotations.ServiceProviderFor;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.util.Map;
-
-import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -35,25 +33,9 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
 @ServiceProviderFor(JReleaserConfigParser.class)
-public class TomlJReleaserConfigParser implements JReleaserConfigParser {
-    @Override
-    public String getPreferredFileExtension() {
-        return "toml";
-    }
-
-    @Override
-    public boolean supports(Path configFile) {
-        return supports(configFile.getFileName().toString());
-    }
-
-    @Override
-    public boolean supports(String resource) {
-        return isNotBlank(resource) && resource.endsWith(".toml");
-    }
-
-    @Override
-    public void validate(Path configFile) throws IOException {
-        // noop
+public class TomlJReleaserConfigParser extends AbstractJReleaserConfigParser {
+    public TomlJReleaserConfigParser() {
+        super("toml");
     }
 
     @Override

@@ -141,41 +141,7 @@ public class TemplateGenerator {
         }
 
         Map<String, TemplateResource> templates = TemplateUtils.resolveTemplates(logger, assemblerType, assemblerType, false);
-        for (Map.Entry<String, TemplateResource> template : templates.entrySet()) {
-            Path outputFile = output.resolve(template.getKey());
-            logger.info(RB.$("templates.writing.file"), outputFile.toAbsolutePath());
-
-            try {
-                Files.createDirectories(outputFile.getParent());
-            } catch (IOException e) {
-                throw fail(e);
-            }
-
-            TemplateResource value = template.getValue();
-
-            if (value.isReader()) {
-                try (Writer fileWriter = Files.newBufferedWriter(outputFile, overwrite ? CREATE : CREATE_NEW, WRITE, TRUNCATE_EXISTING);
-                     BufferedWriter decoratedWriter = new VersionDecoratingWriter(fileWriter)) {
-                    IOUtils.copy(value.getReader(), decoratedWriter);
-                } catch (FileAlreadyExistsException e) {
-                    logger.error(RB.$("templates.file_exists.error"), outputFile.toAbsolutePath());
-                    return null;
-                } catch (Exception e) {
-                    throw fail(e);
-                }
-            } else {
-                try (OutputStream outputStream = new FileOutputStream(outputFile.toFile())) {
-                    IOUtils.copy(value.getInputStream(), outputStream);
-                } catch (FileAlreadyExistsException e) {
-                    logger.error(RB.$("templates.file_exists.error"), outputFile.toAbsolutePath());
-                    return null;
-                } catch (Exception e) {
-                    throw fail(e);
-                }
-            }
-        }
-
-        return output;
+        return generateTemplates(templates, output);
     }
 
     private Path generatePackager() throws TemplateGenerationException {
@@ -195,6 +161,10 @@ public class TemplateGenerator {
         }
 
         Map<String, TemplateResource> templates = TemplateUtils.resolveTemplates(logger, distributionType.name(), packagerName, snapshot);
+        return generateTemplates(templates, output);
+    }
+
+    private Path generateTemplates(Map<String, TemplateResource> templates, Path output) throws TemplateGenerationException {
         for (Map.Entry<String, TemplateResource> template : templates.entrySet()) {
             Path outputFile = output.resolve(template.getKey());
             logger.info(RB.$("templates.writing.file"), outputFile.toAbsolutePath());

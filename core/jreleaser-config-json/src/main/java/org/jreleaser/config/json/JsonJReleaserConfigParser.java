@@ -18,16 +18,14 @@
 package org.jreleaser.config.json;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.jreleaser.config.AbstractJReleaserConfigParser;
 import org.jreleaser.config.JReleaserConfigParser;
 import org.jreleaser.model.internal.JReleaserModel;
 import org.kordamp.jipsy.annotations.ServiceProviderFor;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.util.Map;
-
-import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -35,25 +33,9 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
 @ServiceProviderFor(JReleaserConfigParser.class)
-public class JsonJReleaserConfigParser implements JReleaserConfigParser {
-    @Override
-    public String getPreferredFileExtension() {
-        return "json";
-    }
-
-    @Override
-    public boolean supports(Path configFile) {
-        return supports(configFile.getFileName().toString());
-    }
-
-    @Override
-    public boolean supports(String resource) {
-        return isNotBlank(resource) && resource.endsWith(".json");
-    }
-
-    @Override
-    public void validate(Path configFile) throws IOException {
-        // noop
+public class JsonJReleaserConfigParser extends AbstractJReleaserConfigParser {
+    public JsonJReleaserConfigParser() {
+        super("json");
     }
 
     @Override

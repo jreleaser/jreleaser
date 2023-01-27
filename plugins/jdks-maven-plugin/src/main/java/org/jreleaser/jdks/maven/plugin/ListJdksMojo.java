@@ -18,7 +18,6 @@
 package org.jreleaser.jdks.maven.plugin;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 
 /**
@@ -30,12 +29,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 @Mojo(name = "list-jdks")
 public class ListJdksMojo extends AbstractJdksMojo {
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        Banner.display(project, getLog());
-
-        if (null == jdks || jdks.isEmpty()) return;
-        validate();
-
+    protected void doExecute() throws MojoExecutionException {
         for (Jdk jdk : jdks) {
             printJdk(jdk);
         }

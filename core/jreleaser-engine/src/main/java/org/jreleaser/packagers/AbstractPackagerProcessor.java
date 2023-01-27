@@ -18,6 +18,7 @@
 package org.jreleaser.packagers;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.model.Stereotype;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.distributions.Distribution;
@@ -43,6 +44,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import static java.util.stream.Collectors.toList;
@@ -484,5 +486,15 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
         if (value instanceof CharSequence && isNotBlank(String.valueOf(value)) || null != value) {
             dest.set(key, value);
         }
+    }
+
+    protected Optional<Stereotype> resolveStereotype(String fileName) {
+        for (Stereotype stereotype : packager.getSupportedStereotypes()) {
+            if (fileName.startsWith(stereotype.toString() + "-")) {
+                return Optional.of(stereotype);
+            }
+        }
+
+        return Optional.empty();
     }
 }

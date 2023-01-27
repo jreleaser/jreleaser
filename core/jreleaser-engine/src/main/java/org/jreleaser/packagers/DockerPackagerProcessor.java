@@ -197,44 +197,30 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
             if (docker.getBuildx().isEnabled()) {
                 // create builder if needed
                 createBuildxBuilder(props, docker);
-
-                // command line
-                Command cmd = buildxBuildCommand(props, docker);
-                if (!cmd.hasArg("-q") && !cmd.hasArg("--quiet")) {
-                    cmd.arg("--quiet");
-                }
-                cmd.arg("--file");
-                cmd.arg(workingDirectory.resolve("Dockerfile").toAbsolutePath().toString());
-                for (String tag : tags) {
-                    cmd.arg("--tag");
-                    cmd.arg(tag);
-                }
-                cmd.arg(workingDirectory.toAbsolutePath().toString());
-                context.getLogger().debug(String.join(" ", cmd.getArgs()));
-
-                // execute
-                executeCommand(cmd);
+                configureAndExecuteBuildCommand(buildxBuildCommand(props, docker), workingDirectory, tags);
             } else {
-                // command line
-                Command cmd = buildCommand(props, docker);
-                if (!cmd.hasArg("-q") && !cmd.hasArg("--quiet")) {
-                    cmd.arg("--quiet");
-                }
-                cmd.arg("--file");
-                cmd.arg(workingDirectory.resolve("Dockerfile").toAbsolutePath().toString());
-                for (String tag : tags) {
-                    cmd.arg("--tag");
-                    cmd.arg(tag);
-                }
-                cmd.arg(workingDirectory.toAbsolutePath().toString());
-                context.getLogger().debug(String.join(" ", cmd.getArgs()));
-
-                // execute
-                executeCommand(cmd);
+                configureAndExecuteBuildCommand(buildCommand(props, docker), workingDirectory, tags);
             }
         } catch (IOException e) {
             throw new PackagerProcessingException(e);
         }
+    }
+
+    private void configureAndExecuteBuildCommand(Command cmd, Path workingDirectory, List<String> tags) throws PackagerProcessingException {
+        if (!cmd.hasArg("-q") && !cmd.hasArg("--quiet")) {
+            cmd.arg("--quiet");
+        }
+        cmd.arg("--file");
+        cmd.arg(workingDirectory.resolve("Dockerfile").toAbsolutePath().toString());
+        for (String tag : tags) {
+            cmd.arg("--tag");
+            cmd.arg(tag);
+        }
+        cmd.arg(workingDirectory.toAbsolutePath().toString());
+        context.getLogger().debug(String.join(" ", cmd.getArgs()));
+
+        // execute
+        executeCommand(cmd);
     }
 
     private void createBuildxBuilder(TemplateContext props, DockerConfiguration docker) throws PackagerProcessingException {

@@ -23,7 +23,6 @@ import org.jreleaser.engine.release.Releasers;
 import org.jreleaser.model.Stereotype;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Artifact;
-import org.jreleaser.model.internal.common.Icon;
 import org.jreleaser.model.internal.common.Screenshot;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.FlatpakPackager;
@@ -36,15 +35,8 @@ import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.util.FileUtils;
 
 import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Optional;
-import java.util.Set;
-import java.util.regex.Pattern;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -77,10 +69,10 @@ import static org.jreleaser.model.Constants.KEY_SPEC_BINARIES;
 import static org.jreleaser.model.Constants.KEY_SPEC_DIRECTORIES;
 import static org.jreleaser.model.Constants.KEY_SPEC_FILES;
 import static org.jreleaser.model.Constants.SKIP_OPENJDK;
-import static org.jreleaser.mustache.Templates.resolveTemplate;
+import static org.jreleaser.packagers.AppdataUtils.isReleaseIncluded;
+import static org.jreleaser.packagers.AppdataUtils.resolveIcons;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.StringUtils.getFilename;
-import static org.jreleaser.util.StringUtils.getFilenameExtension;
 import static org.jreleaser.util.StringUtils.isFalse;
 
 /**
@@ -127,7 +119,7 @@ public class FlatpakPackagerProcessor extends AbstractRepositoryPackagerProcesso
             props.set(KEY_FLATPAK_RELEASES, Releasers.releaserFor(context)
                 .listReleases(releaser.getOwner(), releaser.getName()).stream()
                 .filter(r -> isReleaseIncluded(packager.getSkipReleases(), r.getVersion().toString()))
-                .map(r -> Release.of(r.getUrl(), r.getVersion().toString(), r.getPublishedAt()))
+                .map(r -> AppdataUtils.Release.of(r.getUrl(), r.getVersion().toString(), r.getPublishedAt()))
                 .collect(toList()));
         } catch (IOException e) {
             throw new PackagerProcessingException(RB.$("ERROR_unexpected_error"), e);
@@ -139,29 +131,7 @@ public class FlatpakPackagerProcessor extends AbstractRepositoryPackagerProcesso
 
         context.getLogger().debug(RB.$("packager.fetch.icons"));
         props.set(KEY_FLATPACK_ICONS, packager.getIcons());
-        for (Icon icon : packager.getIcons()) {
-            // check if exists
-            String iconUrl = resolveTemplate(icon.getUrl(), props);
-            String iconExt = getFilenameExtension(iconUrl);
-            Path iconPath = Paths.get(packager.getTemplateDirectory(), "icons",
-                icon.getWidth() + "x" + icon.getHeight(),
-                distribution.getExecutable().getName() + "." + iconExt);
-            iconPath = context.getBasedir().resolve(iconPath);
-
-            if (!Files.exists(iconPath)) {
-                // download
-                context.getLogger().debug("{} -> {}", iconUrl, context.relativizeToBasedir(iconPath));
-                try {
-                    org.apache.commons.io.FileUtils.copyURLToFile(
-                        new URL(iconUrl),
-                        iconPath.toFile(),
-                        20000,
-                        60000);
-                } catch (IOException e) {
-                    throw new PackagerProcessingException(RB.$("ERROR_unexpected_download", iconUrl), e);
-                }
-            }
-        }
+        resolveIcons(context, packager, distribution, props, packager.getIcons());
     }
 
     @Override
@@ -231,63 +201,5 @@ public class FlatpakPackagerProcessor extends AbstractRepositoryPackagerProcesso
         }
 
         writeFile(content, outputFile);
-    }
-
-    private boolean isReleaseIncluded(Set<String> skipReleases, String version) {
-        if (null == skipReleases || skipReleases.isEmpty()) {
-            return true;
-        }
-
-        // 1. exact match
-        if (skipReleases.contains(version)) {
-            return false;
-        }
-
-        // 2. regex match
-        for (String regex : skipReleases) {
-            Pattern p = Pattern.compile(regex);
-            if (p.matcher(version).matches()) return false;
-        }
-
-        return true;
-    }
-
-    private Optional<Stereotype> resolveStereotype(String fileName) {
-        for (Stereotype stereotype : packager.getSupportedStereotypes()) {
-            if (fileName.startsWith(stereotype.toString() + "-")) {
-                return Optional.of(stereotype);
-            }
-        }
-
-        return Optional.empty();
-    }
-
-    public static class Release {
-        private final String url;
-        private final String version;
-        private final String date;
-
-        private Release(String url, String version, String date) {
-            this.url = url;
-            this.version = version;
-            this.date = date;
-        }
-
-        public String getUrl() {
-            return url;
-        }
-
-        public String getVersion() {
-            return version;
-        }
-
-        public String getDate() {
-            return date;
-        }
-
-        public static Release of(String url, String version, Date date) {
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-            return new Release(url, version, format.format(date));
-        }
     }
 }
