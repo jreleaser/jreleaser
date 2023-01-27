@@ -1,7 +1,7 @@
 # {{jreleaserCreationStamp}}
 class {{brewFormulaName}} < Formula
   desc "{{projectDescription}}"
-  homepage "{{projectWebsite}}"
+  homepage "{{projectLinkHomepage}}"
   url "{{distributionUrl}}"
   version "{{projectVersion}}"
   sha256 "{{distributionChecksumSha256}}"

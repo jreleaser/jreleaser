@@ -6,6 +6,6 @@
 {{changelog}}
 ----
 
-Please report any issues at {{issueTrackerUrl}}
+Please report any issues at {{projectLinkBugTracker}}
 
 Cheers!

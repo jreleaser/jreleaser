@@ -1,7 +1,7 @@
 # {{jreleaserCreationStamp}}
 cask "{{brewCaskName}}" do
   desc "{{projectDescription}}"
-  homepage "{{projectWebsite}}"
+  homepage "{{projectLinkHomepage}}"
   url "{{distributionUrl}}",
       verified: "{{repoHost}}"
   version "{{projectVersion}}"

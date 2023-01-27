@@ -17,7 +17,7 @@ supported_archs  noarch
 description      {{projectDescription}}
 long_description {{projectLongDescription}}
 
-homepage         {{projectWebsite}}
+homepage         {{projectLinkHomepage}}
 github.tarball_from releases
 use_zip          yes
 

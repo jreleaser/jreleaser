@@ -7,7 +7,7 @@ food = {
     name = name,
     description = "{{projectDescription}}",
     license = "{{projectLicense}}",
-    homepage = "{{projectWebsite}}",
+    homepage = "{{projectLinkHomepage}}",
     version = version,
     packages = {
     {{#gofishPackages}}

@@ -2,7 +2,7 @@
 
 # asdf-{{distributionName}} [![Build]({{asdfPluginRepoUrl}}/actions/workflows/build.yml/badge.svg)]({{asdfPluginRepoUrl}}/actions/workflows/build.yml)
 
-[{{distributionName}}]({{projectWebsite}}) plugin for the [asdf version manager](https://asdf-vm.com).
+[{{distributionName}}]({{projectLinkHomepage}}) plugin for the [asdf version manager](https://asdf-vm.com).
 
 </div>
 

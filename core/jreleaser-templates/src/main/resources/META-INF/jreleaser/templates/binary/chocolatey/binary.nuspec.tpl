@@ -10,16 +10,16 @@
     <description>{{projectLongDescription}}</description>
     <!-- optional -->
     <title>{{chocolateyTitle}}</title>
-    <projectUrl>{{projectWebsite}}</projectUrl>
+    <projectUrl>{{projectLinkHomepage}}</projectUrl>
     <copyright>{{projectCopyright}}</copyright>
-    <licenseUrl>{{projectLicenseUrl}}</licenseUrl>
+    <licenseUrl>{{projectLinkLicense}}</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <tags>{{distributionTagsBySpace}}</tags>
     <summary>{{projectDescription}}</summary>
     <projectSourceUrl>{{repoUrl}}</projectSourceUrl>
     <packageSourceUrl>{{chocolateyPackageSourceUrl}}</packageSourceUrl>
-    <docsUrl>{{projectDocsUrl}}</docsUrl>
-    <bugTrackerUrl>{{issueTrackerUrl}}</bugTrackerUrl>
+    <docsUrl>{{projectLinkDocumentation}}</docsUrl>
+    <bugTrackerUrl>{{projectLinkBugTracker}}</bugTrackerUrl>
     <releaseNotes>{{releaseNotesUrl}}</releaseNotes>
     {{#chocolateyIconUrl}}<iconUrl>{{.}}</iconUrl>{{/chocolateyIconUrl}}
   </metadata>

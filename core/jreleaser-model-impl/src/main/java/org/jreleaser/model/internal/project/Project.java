@@ -1108,9 +1108,10 @@ public final class Project extends AbstractModelObject<Project> implements Domai
             props.set(PROJECT_LINK + "Faq", faq);
             props.set(PROJECT_LINK + "Help", help);
             props.set(PROJECT_LINK + "Donation", donation);
-            props.set(PROJECT_LINK + "translate", translate);
-            props.set(PROJECT_LINK + "contact", contact);
-            props.set(PROJECT_LINK + "contribute", contribute);
+            props.set(PROJECT_LINK + "Translate", translate);
+            props.set(PROJECT_LINK + "Contact", contact);
+            props.set(PROJECT_LINK + "Contribute", contribute);
+            // TODO: Remove these in 2.0.0
             props.set(Constants.KEY_PROJECT_WEBSITE, homepage);
             props.set(Constants.KEY_PROJECT_DOCS_URL, documentation);
             props.set(Constants.KEY_PROJECT_LICENSE_URL, license);
@@ -1119,13 +1120,15 @@ public final class Project extends AbstractModelObject<Project> implements Domai
         public Collection<LinkTemplate> asLinkTemplates() {
             List<LinkTemplate> links = new ArrayList<>();
             if (isNotBlank(homepage)) links.add(new LinkTemplate("homepage", homepage));
+            if (isNotBlank(documentation)) links.add(new LinkTemplate("documentation", documentation));
+            if (isNotBlank(license)) links.add(new LinkTemplate("license", license));
             if (isNotBlank(bugTracker)) links.add(new LinkTemplate("bugtracker", bugTracker));
+            if (isNotBlank(vcsBrowser)) links.add(new LinkTemplate("vcs-browser", vcsBrowser));
             if (isNotBlank(faq)) links.add(new LinkTemplate("faq", faq));
             if (isNotBlank(help)) links.add(new LinkTemplate("help", help));
             if (isNotBlank(donation)) links.add(new LinkTemplate("donation", donation));
             if (isNotBlank(translate)) links.add(new LinkTemplate("translate", translate));
             if (isNotBlank(contact)) links.add(new LinkTemplate("contact", contact));
-            if (isNotBlank(vcsBrowser)) links.add(new LinkTemplate("vcs-browser", vcsBrowser));
             if (isNotBlank(contribute)) links.add(new LinkTemplate("contribute", contribute));
             return links;
         }

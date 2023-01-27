@@ -17,7 +17,7 @@ supported_archs  noarch
 description      {{projectDescription}}
 long_description {{projectLongDescription}}
 
-homepage         {{projectWebsite}}
+homepage         {{projectLinkHomepage}}
 
 master_sites     {{macportsDistributionUrl}}
 distname         {{macportsDistname}}

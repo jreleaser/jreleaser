@@ -8,4 +8,4 @@
 🦊 Update existing assets when posting a release to GitLab is now supported
 💻 Updates to CLI flags such as options to reject artifacts by platform; define context properties via environment variables
 📝 Full list of changes available at the {{milestoneName}} milestone {{projectLinkVcsBrowser}}/milestones?state=closed
-🙏 As always, feedback is welcome. Feel free to raise a ticket at {{issueTrackerUrl}}
+🙏 As always, feedback is welcome. Feel free to raise a ticket at {{projectLinkBugTracker}}

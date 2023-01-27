@@ -16,7 +16,7 @@ supported_archs  x86_64
 description      {{projectDescription}}
 long_description {{projectLongDescription}}
 
-homepage         {{projectWebsite}}
+homepage         {{projectLinkHomepage}}
 
 master_sites     {{macportsDistributionUrl}}
 distname         {{macportsDistname}}

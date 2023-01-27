@@ -5,7 +5,7 @@ Release:   {{specRelease}}
 Summary:   {{projectDescription}}
 
 License:   {{projectLicense}}
-URL:       {{projectWebsite}}
+URL:       {{projectLinkHomepage}}
 Source0:   {{distributionUrl}}
 
 BuildArch: noarch
