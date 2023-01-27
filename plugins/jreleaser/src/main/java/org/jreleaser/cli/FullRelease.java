@@ -21,6 +21,8 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.workflow.Workflows;
 import picocli.CommandLine;
 
+import java.util.Set;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -157,6 +159,25 @@ public class FullRelease extends AbstractPlatformAwareModelCommand<Main> {
         @CommandLine.Option(names = {"-xa", "--exclude-announcer"},
             paramLabel = "<announcer>")
         String[] excludedAnnouncers;
+    }
+
+    @Override
+    protected void collectCandidateDeprecatedArgs(Set<AbstractCommand<Main>.DeprecatedArg> args) {
+        super.collectCandidateDeprecatedArgs(args);
+        args.add(new DeprecatedArg("-a", "--announcer", "1.5.0"));
+        args.add(new DeprecatedArg("-xa", "--exclude-announcer", "1.5.0"));
+        args.add(new DeprecatedArg("-d", "--distribution", "1.5.0"));
+        args.add(new DeprecatedArg("-xd", "--exclude-distribution", "1.5.0"));
+        args.add(new DeprecatedArg("-p", "--packager", "1.5.0"));
+        args.add(new DeprecatedArg("-xp", "--exclude-packager", "1.5.0"));
+        args.add(new DeprecatedArg("-y", "--deployer", "1.5.0"));
+        args.add(new DeprecatedArg("-yn", "--deployer-name", "1.5.0"));
+        args.add(new DeprecatedArg("-xy", "--exclude-deployer", "1.5.0"));
+        args.add(new DeprecatedArg("-xyn", "--exclude-deployer-name", "1.5.0"));
+        args.add(new DeprecatedArg("-u", "--uploader", "1.5.0"));
+        args.add(new DeprecatedArg("-un", "--uploader-name", "1.5.0"));
+        args.add(new DeprecatedArg("-xu", "--exclude-uploader", "1.5.0"));
+        args.add(new DeprecatedArg("-xun", "--exclude-uploader-name", "1.5.0"));
     }
 
     @Override

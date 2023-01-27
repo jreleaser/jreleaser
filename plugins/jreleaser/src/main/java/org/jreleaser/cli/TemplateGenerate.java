@@ -24,6 +24,7 @@ import picocli.CommandLine;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Set;
 
 /**
  * @author Andres Almiray
@@ -117,6 +118,21 @@ public class TemplateGenerate extends AbstractLoggingCommand<Template> {
 
     @CommandLine.Option(names = {"-sn", "--snapshot"})
     boolean snapshot;
+
+
+    @Override
+    protected void collectCandidateDeprecatedArgs(Set<AbstractCommand<Template>.DeprecatedArg> args) {
+        super.collectCandidateDeprecatedArgs(args);
+        args.add(new DeprecatedArg("-sn", "--snapshot", "1.5.0"));
+        args.add(new DeprecatedArg("-d", "--distribution", "1.5.0"));
+        args.add(new DeprecatedArg("-xd", "--exclude-distribution", "1.5.0"));
+        args.add(new DeprecatedArg("-p", "--packager", "1.5.0"));
+        args.add(new DeprecatedArg("-xp", "--exclude-packager", "1.5.0"));
+        args.add(new DeprecatedArg("-a", "--announcer", "1.5.0"));
+        args.add(new DeprecatedArg("-s", "--assembler", "1.5.0"));
+        args.add(new DeprecatedArg("-st", "--assembler-type", "1.5.0"));
+        args.add(new DeprecatedArg("-dt", "--distribution-type", "1.5.0"));
+    }
 
     @Override
     protected void execute() {

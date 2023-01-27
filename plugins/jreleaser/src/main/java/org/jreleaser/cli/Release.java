@@ -251,6 +251,21 @@ public class Release extends AbstractPlatformAwareModelCommand<Main> {
     }
 
     @Override
+    protected void collectCandidateDeprecatedArgs(Set<AbstractCommand<Main>.DeprecatedArg> args) {
+        super.collectCandidateDeprecatedArgs(args);
+        args.add(new DeprecatedArg("-d", "--distribution", "1.5.0"));
+        args.add(new DeprecatedArg("-xd", "--exclude-distribution", "1.5.0"));
+        args.add(new DeprecatedArg("-y", "--deployer", "1.5.0"));
+        args.add(new DeprecatedArg("-yn", "--deployer-name", "1.5.0"));
+        args.add(new DeprecatedArg("-xy", "--exclude-deployer", "1.5.0"));
+        args.add(new DeprecatedArg("-xyn", "--exclude-deployer-name", "1.5.0"));
+        args.add(new DeprecatedArg("-u", "--uploader", "1.5.0"));
+        args.add(new DeprecatedArg("-un", "--uploader-name", "1.5.0"));
+        args.add(new DeprecatedArg("-xu", "--exclude-uploader", "1.5.0"));
+        args.add(new DeprecatedArg("-xun", "--exclude-uploader-name", "1.5.0"));
+    }
+
+    @Override
     protected JReleaserContext createContext() {
         JReleaserContext context = super.createContext();
         if (null != composite) {

@@ -22,6 +22,8 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.workflow.Workflows;
 import picocli.CommandLine;
 
+import java.util.Set;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -62,6 +64,13 @@ public class Announce extends AbstractModelCommand<Main> {
         @CommandLine.Option(names = {"-xa", "--exclude-announcer"},
             paramLabel = "<announcer>")
         String[] excludedAnnouncers;
+    }
+
+    @Override
+    protected void collectCandidateDeprecatedArgs(Set<AbstractCommand<Main>.DeprecatedArg> args) {
+        super.collectCandidateDeprecatedArgs(args);
+        args.add(new DeprecatedArg("-a", "--announcer", "1.5.0"));
+        args.add(new DeprecatedArg("-xa", "--exclude-announcer", "1.5.0"));
     }
 
     @Override

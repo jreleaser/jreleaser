@@ -23,6 +23,7 @@ import picocli.CommandLine;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Andres Almiray
@@ -40,6 +41,14 @@ public abstract class AbstractPlatformAwareModelCommand<C extends IO> extends Ab
     @CommandLine.Option(names = {"-rp", "--reject-platform"},
         paramLabel = "<platform>")
     String[] rejectedPlatforms;
+
+    @Override
+    protected void collectCandidateDeprecatedArgs(Set<AbstractCommand<C>.DeprecatedArg> args) {
+        super.collectCandidateDeprecatedArgs(args);
+        args.add(new DeprecatedArg("-scp", "--select-current-platform", "1.5.0"));
+        args.add(new DeprecatedArg("-sp", "--select-platform", "1.5.0"));
+        args.add(new DeprecatedArg("-rp", "--reject-platform", "1.5.0"));
+    }
 
     @Override
     protected List<String> collectSelectedPlatforms() {

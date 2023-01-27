@@ -30,6 +30,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import static org.jreleaser.model.JReleaserOutput.JRELEASER_QUIET;
@@ -81,6 +82,11 @@ abstract class AbstractLoggingCommand<C extends IO> extends AbstractCommand<C> i
         }
 
         Banner.display(parent().getErr());
+    }
+
+    @Override
+    protected void collectCandidateDeprecatedArgs(Set<AbstractCommand<C>.DeprecatedArg> args) {
+        args.add(new DeprecatedArg("-od", "--output-directory", "1.5.0"));
     }
 
     protected void initLogger() {

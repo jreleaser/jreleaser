@@ -18,8 +18,8 @@
 package org.jreleaser.cli;
 
 import org.jreleaser.engine.context.ModelValidator;
-import org.jreleaser.model.api.JReleaserContext;
 import org.jreleaser.engine.templates.TemplateEvaluator;
+import org.jreleaser.model.api.JReleaserContext;
 import picocli.CommandLine;
 
 import java.nio.file.Path;

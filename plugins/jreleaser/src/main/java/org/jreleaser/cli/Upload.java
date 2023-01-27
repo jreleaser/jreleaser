@@ -21,6 +21,8 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.workflow.Workflows;
 import picocli.CommandLine;
 
+import java.util.Set;
+
 /**
  * @author Andres Almiray
  * @since 0.3.0
@@ -93,6 +95,17 @@ public class Upload extends AbstractPlatformAwareModelCommand<Main> {
         @CommandLine.Option(names = {"-xd", "--exclude-distribution"},
             paramLabel = "<distribution>")
         String[] excludedDistributions;
+    }
+
+    @Override
+    protected void collectCandidateDeprecatedArgs(Set<AbstractCommand<Main>.DeprecatedArg> args) {
+        super.collectCandidateDeprecatedArgs(args);
+        args.add(new DeprecatedArg("-d", "--distribution", "1.5.0"));
+        args.add(new DeprecatedArg("-xd", "--exclude-distribution", "1.5.0"));
+        args.add(new DeprecatedArg("-u", "--uploader", "1.5.0"));
+        args.add(new DeprecatedArg("-un", "--uploader-name", "1.5.0"));
+        args.add(new DeprecatedArg("-xu", "--exclude-uploader", "1.5.0"));
+        args.add(new DeprecatedArg("-xun", "--exclude-uploader-name", "1.5.0"));
     }
 
     @Override

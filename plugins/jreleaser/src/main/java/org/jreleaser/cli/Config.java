@@ -23,6 +23,8 @@ import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import picocli.CommandLine;
 
+import java.util.Set;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -47,6 +49,13 @@ public class Config extends AbstractPlatformAwareModelCommand<Main> {
 
         @CommandLine.Option(names = {"-d", "--download"}, required = true)
         boolean download;
+    }
+
+    @Override
+    protected void collectCandidateDeprecatedArgs(Set<AbstractCommand<Main>.DeprecatedArg> args) {
+        super.collectCandidateDeprecatedArgs(args);
+        args.add(new DeprecatedArg("-a", "--assembly", "1.5.0"));
+        args.add(new DeprecatedArg("-d", "--download", "1.5.0"));
     }
 
     @Override

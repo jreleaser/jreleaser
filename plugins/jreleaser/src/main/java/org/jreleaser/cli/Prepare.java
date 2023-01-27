@@ -21,6 +21,8 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.workflow.Workflows;
 import picocli.CommandLine;
 
+import java.util.Set;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -74,6 +76,15 @@ public class Prepare extends AbstractPlatformAwareModelCommand<Main> {
         @CommandLine.Option(names = {"-xp", "--exclude-packager"},
             paramLabel = "<packager>")
         String[] excludedPackagers;
+    }
+
+    @Override
+    protected void collectCandidateDeprecatedArgs(Set<AbstractCommand<Main>.DeprecatedArg> args) {
+        super.collectCandidateDeprecatedArgs(args);
+        args.add(new DeprecatedArg("-d", "--distribution", "1.5.0"));
+        args.add(new DeprecatedArg("-xd", "--exclude-distribution", "1.5.0"));
+        args.add(new DeprecatedArg("-p", "--packager", "1.5.0"));
+        args.add(new DeprecatedArg("-xp", "--exclude-packager", "1.5.0"));
     }
 
     @Override

@@ -22,6 +22,8 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.workflow.Workflows;
 import picocli.CommandLine;
 
+import java.util.Set;
+
 import static org.jreleaser.model.api.JReleaserContext.Mode.DEPLOY;
 
 /**
@@ -80,6 +82,15 @@ public class Deploy extends AbstractModelCommand<Main> {
         @CommandLine.Option(names = {"-xyn", "--exclude-deployer-name"},
             paramLabel = "<name>")
         String[] excludedDeployerNames;
+    }
+
+    @Override
+    protected void collectCandidateDeprecatedArgs(Set<AbstractCommand<Main>.DeprecatedArg> args) {
+        super.collectCandidateDeprecatedArgs(args);
+        args.add(new DeprecatedArg("-y", "--deployer", "1.5.0"));
+        args.add(new DeprecatedArg("-yn", "--deployer-name", "1.5.0"));
+        args.add(new DeprecatedArg("-xy", "--exclude-deployer", "1.5.0"));
+        args.add(new DeprecatedArg("-xyn", "--exclude-deployer-name", "1.5.0"));
     }
 
     @Override
