@@ -109,7 +109,7 @@ public class JdkHelper {
             executeMojo(
                 plugin("com.googlecode.maven-download-plugin",
                     "download-maven-plugin",
-                    "1.6.7"),
+                    "1.6.8"),
                 goal("wget"),
                 configuration(
                     element("uri", jdk.getUrl()),
