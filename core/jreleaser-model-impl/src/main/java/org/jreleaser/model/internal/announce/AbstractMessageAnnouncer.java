@@ -39,12 +39,12 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 1.5.0
  */
 public abstract class AbstractMessageAnnouncer<S extends AbstractMessageAnnouncer<S, A>, A extends org.jreleaser.model.api.announce.Announcer> extends AbstractAnnouncer<S, A> {
-    private static final long serialVersionUID = -1145080614191430174L;
+    private static final long serialVersionUID = -6198150578785334265L;
 
     private String message;
     private String messageTemplate;
 
-    public AbstractMessageAnnouncer(String type) {
+    protected AbstractMessageAnnouncer(String type) {
         super(type);
     }
 

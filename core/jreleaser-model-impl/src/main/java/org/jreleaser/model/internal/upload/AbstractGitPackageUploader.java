@@ -31,14 +31,14 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 1.5.0
  */
 public abstract class AbstractGitPackageUploader<A extends org.jreleaser.model.api.upload.Uploader, S extends AbstractGitPackageUploader<A, S>> extends AbstractUploader<A, S> {
-    private static final long serialVersionUID = 6055369253524185977L;
+    private static final long serialVersionUID = -9172635937307460363L;
 
     private String host;
     private String token;
     private String packageName;
     private String packageVersion;
 
-    public AbstractGitPackageUploader(String type) {
+    protected AbstractGitPackageUploader(String type) {
         super(type);
     }
 

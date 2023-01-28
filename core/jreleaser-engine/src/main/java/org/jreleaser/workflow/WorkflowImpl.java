@@ -126,7 +126,6 @@ class WorkflowImpl implements Workflow {
                             break;
                         }
                     }
-                    break;
                 }
 
                 if (!failure) {
