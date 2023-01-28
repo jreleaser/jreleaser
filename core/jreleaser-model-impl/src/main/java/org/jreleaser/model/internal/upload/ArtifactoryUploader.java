@@ -212,7 +212,11 @@ public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.mo
     }
 
     public Http.Authorization resolveAuthorization() {
-        return delegate.resolveAuthorization();
+        if (null == delegate.getAuthorization()) {
+            delegate.setAuthorization(Http.Authorization.BEARER);
+        }
+
+        return delegate.getAuthorization();
     }
 
     public List<ArtifactoryRepository> getRepositories() {

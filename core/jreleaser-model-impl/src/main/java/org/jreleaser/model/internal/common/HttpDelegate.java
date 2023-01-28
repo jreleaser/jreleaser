@@ -18,7 +18,6 @@
 package org.jreleaser.model.internal.common;
 
 import org.jreleaser.model.Http;
-import org.jreleaser.model.internal.upload.HttpUploader;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
@@ -76,7 +75,7 @@ public final class HttpDelegate extends AbstractModelObject<HttpDelegate> implem
     }
 
     public void setMethod(String method) {
-        this.method = HttpUploader.Method.of(method);
+        this.method = Http.Method.of(method);
     }
 
     public Http.Authorization getAuthorization() {
