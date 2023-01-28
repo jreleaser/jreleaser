@@ -1,22 +1,15 @@
 JReleaser {{projectVersion}} is now available! This release brings plenty of features and bug fixes
 
-**Deploy:** Adjustments to Nexus2 support now let you deploy snapshot artifacts to Nexus2 servers and Maven Central.
+**Environment:** Several properties may not be set using either System Properties or environment variables; review the
+_Environment` section of each DSL element in the [Reference]({{projectLinkDocumentation}}/reference). Additionally, local
+`.env` files may be used to define environment variables. A new [env]({{projectLinkDocumentation}}/reference/environment.html#_inspection)
+command may be used to display System property names and environment variable names in use.
 
-**Mastodon:** Message threads can now be posted to Mastodon. You may set a list of messages or a path to a file that
-contains the messages.
+**Docker:** New capabilities such as reusing an existing buildx builder, allow login into registries outside of the tool,
+useful when running in CI.
 
-**Docker:** Multi-platform support is now available via buildx. For the time being only JAVA_BINARY and SINGLE_JAR
-distributions are supported.
+**Templates:** Arbitrary templates may now be evaluated using the `template eval` command {{projectLinkDocumentation}}/tools/jreleaser-cli.html#_template_eval
 
-**Distribution:** New flat-binary distribution may be used to release binaries without packaging them in archives. Several
-package managers support this new distribution type.
+**CLI:** Updates to CLI flags following the Command Line Interface Guidelines document https://github.com/jreleaser/jreleaser/issues/1185
 
-**Assemble:** The new `java-archive` assembler may be used to create JAVA_BINARY distributions instead of using Maven's
-appassembler/assembly plugins or Gradle's application/distribution plugins.
-
-**Changelog:** Conventional-Commit preset can handle BREAKING CHANGE footer, referenced issues, and additional trailing
-elements. Be ware that it now also applies a custom format by default.
-
-**GitLab:** Update existing assets when posting an updated release. This aligns GitLab support with GitHub/Gitea.
-
-[🚀Changelog](https://github.com/jreleaser/jreleaser/releases/tag/{{tagName}})
+[🚀 Changelog](https://github.com/jreleaser/jreleaser/releases/tag/{{tagName}})
