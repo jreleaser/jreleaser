@@ -169,14 +169,6 @@ public class JdkHelper {
         return filename.substring(0, filename.lastIndexOf('.'));
     }
 
-    private String toHex(byte[] barr) {
-        StringBuilder result = new StringBuilder();
-        for (byte b : barr) {
-            result.append(String.format("%02X", b));
-        }
-        return result.toString();
-    }
-
     private void extractJdk(File jdkExtractDirectory, Jdk jdk) throws MojoExecutionException {
         File inputFile = new File(jdkExtractDirectory, getFilename(jdk));
 

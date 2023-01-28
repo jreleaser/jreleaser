@@ -200,28 +200,22 @@ public final class ChocolateyPackagerValidator {
 
         String tag = version.getTag();
 
-        boolean integer = false;
-        boolean date = false;
         // tag is either an integer
         try {
             Integer.parseInt(tag);
-            integer = true;
 
             // or follows the yyyyMMdd format
             if (tag.length() == 8) {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
                 try {
                     dateFormat.parse(tag);
-                    date = true;
                 } catch (ParseException e) {
+                    // potentially tag could be an 8 digit integer that does not
+                    // map to a date in yyyyMMdd format
                     throw new IllegalArgumentException();
                 }
             }
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException();
-        }
-
-        if (!date && !integer) {
             throw new IllegalArgumentException();
         }
     }
