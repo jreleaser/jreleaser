@@ -65,7 +65,7 @@ public final class WebhooksAnnouncerValidator {
             webhooks.setActive(Active.NEVER);
         }
 
-        if (!webhooks.resolveEnabled(context.getModel().getProject())) {
+        if (!webhooks.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
         }
     }
@@ -75,7 +75,7 @@ public final class WebhooksAnnouncerValidator {
         resolveActivatable(context, webhook,
             listOf("announce.webhooks." + webhook.getName(), "announce.webhooks"),
             "NEVER");
-        if (!webhook.resolveEnabled(context.getModel().getProject())) {
+        if (!webhook.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return false;
         }

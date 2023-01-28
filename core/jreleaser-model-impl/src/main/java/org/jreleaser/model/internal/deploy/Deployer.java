@@ -33,7 +33,7 @@ public interface Deployer<A extends org.jreleaser.model.api.deploy.Deployer> ext
 
     void setName(String name);
 
-    boolean resolveEnabled(Project project);
+    boolean resolveEnabledWithSnapshot(Project project);
 
     A asImmutable();
 }

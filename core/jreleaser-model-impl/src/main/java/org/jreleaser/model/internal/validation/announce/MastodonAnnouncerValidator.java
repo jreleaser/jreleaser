@@ -44,7 +44,7 @@ public final class MastodonAnnouncerValidator {
     public static void validateMastodon(JReleaserContext context, MastodonAnnouncer mastodon, Errors errors) {
         context.getLogger().debug("announce.mastodon");
         resolveActivatable(context, mastodon, "announce.mastodon", "NEVER");
-        if (!mastodon.resolveEnabled(context.getModel().getProject())) {
+        if (!mastodon.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }

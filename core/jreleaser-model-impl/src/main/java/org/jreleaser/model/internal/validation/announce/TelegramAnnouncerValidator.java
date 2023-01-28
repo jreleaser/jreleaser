@@ -47,7 +47,7 @@ public final class TelegramAnnouncerValidator {
     public static void validateTelegram(JReleaserContext context, TelegramAnnouncer telegram, Errors errors) {
         context.getLogger().debug("announce.telegram");
         resolveActivatable(context, telegram, "announce.telegram", "NEVER");
-        if (!telegram.resolveEnabled(context.getModel().getProject())) {
+        if (!telegram.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }

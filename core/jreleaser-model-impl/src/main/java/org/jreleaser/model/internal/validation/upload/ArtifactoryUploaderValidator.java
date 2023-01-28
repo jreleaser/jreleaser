@@ -57,7 +57,7 @@ public final class ArtifactoryUploaderValidator {
         resolveActivatable(context, artifactory,
             listOf("upload.artifactory." + artifactory.getName(), "upload.artifactory"),
             "NEVER");
-        if (!artifactory.resolveEnabled(context.getModel().getProject())) {
+        if (!artifactory.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
@@ -145,7 +145,7 @@ public final class ArtifactoryUploaderValidator {
             if (!repository.isActiveSet()) {
                 repository.setActive(artifactory.getActive());
             }
-            repository.resolveEnabled(context.getModel().getProject());
+            repository.resolveEnabledWithSnapshot(context.getModel().getProject());
         }
 
         if (artifactory.getRepositories().stream().noneMatch(ArtifactoryUploader.ArtifactoryRepository::isEnabled)) {

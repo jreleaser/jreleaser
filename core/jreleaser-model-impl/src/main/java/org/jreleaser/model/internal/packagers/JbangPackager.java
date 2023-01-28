@@ -239,7 +239,7 @@ public final class JbangPackager extends AbstractRepositoryPackager<org.jrelease
         }
 
         @Override
-        public boolean resolveEnabled(Project project) {
+        public boolean resolveEnabledWithSnapshot(Project project) {
             enabledSet(null != getActive() && getActive().check(project));
             return isEnabled();
         }

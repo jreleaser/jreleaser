@@ -98,7 +98,6 @@ public final class ChocolateyPackagerValidator {
         validateCommitAuthor(packager, parentPackager);
         ChocolateyPackager.ChocolateyRepository bucket = packager.getBucket();
         validateTap(context, distribution, bucket, parentPackager.getBucket(), "chocolatey.bucket");
-        bucket.resolveEnabled(model.getProject());
         validateTemplate(context, distribution, packager, parentPackager, errors);
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);

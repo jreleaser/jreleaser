@@ -89,7 +89,6 @@ public final class ScoopPackagerValidator {
         validateCommitAuthor(packager, parentPackager);
         ScoopPackager.ScoopRepository bucket = packager.getBucket();
         validateTap(context, distribution, bucket, parentPackager.getBucket(), "scoop.bucket");
-        bucket.resolveEnabled(model.getProject());
         validateTemplate(context, distribution, packager, parentPackager, errors);
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);

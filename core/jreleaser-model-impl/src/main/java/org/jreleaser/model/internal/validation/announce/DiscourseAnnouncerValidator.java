@@ -48,7 +48,7 @@ public final class DiscourseAnnouncerValidator {
     public static void validateDiscourse(JReleaserContext context, DiscourseAnnouncer discourse, Errors errors) {
         context.getLogger().debug("announce.discourse");
         resolveActivatable(context, discourse, "announce.discourse", "NEVER");
-        if (!discourse.resolveEnabled(context.getModel().getProject())) {
+        if (!discourse.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }

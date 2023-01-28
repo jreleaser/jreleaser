@@ -102,7 +102,6 @@ public final class BrewPackagerValidator {
         validateCommitAuthor(packager, parentPackager);
         BrewPackager.HomebrewTap tap = packager.getTap();
         validateTap(context, distribution, tap, parentPackager.getTap(), "brew.tap");
-        tap.resolveEnabled(model.getProject());
         validateTemplate(context, distribution, packager, parentPackager, errors);
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);

@@ -109,7 +109,6 @@ public final class DockerPackagerValidator {
             repository.setName(project.getName() + "-docker");
         }
         validateTap(context, distribution, repository, parentPackager.getRepositoryTap(), "docker.repository");
-        repository.resolveEnabled(model.getProject());
 
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);

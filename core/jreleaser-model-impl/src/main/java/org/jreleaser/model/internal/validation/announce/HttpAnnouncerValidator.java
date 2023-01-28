@@ -66,7 +66,7 @@ public final class HttpAnnouncerValidator {
             http.setActive(Active.NEVER);
         }
 
-        if (!http.resolveEnabled(context.getModel().getProject())) {
+        if (!http.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
         }
     }
@@ -76,7 +76,7 @@ public final class HttpAnnouncerValidator {
         resolveActivatable(context, announcer,
             listOf("announce.http." + announcer.getName(), "announce.http"),
             "NEVER");
-        if (!announcer.resolveEnabled(context.getModel().getProject())) {
+        if (!announcer.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return false;
         }

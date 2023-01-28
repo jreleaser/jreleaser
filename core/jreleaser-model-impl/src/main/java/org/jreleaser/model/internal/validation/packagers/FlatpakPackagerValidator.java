@@ -189,7 +189,6 @@ public final class FlatpakPackagerValidator {
         validateCommitAuthor(packager, parentPackager);
         FlatpakPackager.FlatpakRepository repository = packager.getRepository();
         validateTap(context, distribution, repository, parentPackager.getRepository(), "flatpak.repository");
-        repository.resolveEnabled(model.getProject());
         validateTemplate(context, distribution, packager, parentPackager, errors);
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);

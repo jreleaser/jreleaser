@@ -107,7 +107,6 @@ public final class SpecPackagerValidator {
         validateCommitAuthor(packager, parentPackager);
         SpecPackager.SpecRepository repository = packager.getRepository();
         validateTap(context, distribution, repository, parentPackager.getRepository(), "spec.repository");
-        repository.resolveEnabled(model.getProject());
         validateTemplate(context, distribution, packager, parentPackager, errors);
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);

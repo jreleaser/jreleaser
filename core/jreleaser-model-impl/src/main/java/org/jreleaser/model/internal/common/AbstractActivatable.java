@@ -21,11 +21,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.project.Project;
 
+import java.io.Serializable;
+
 /**
  * @author Andres Almiray
  * @since 1.5.0
  */
-public abstract class AbstractActivatable<S extends AbstractActivatable<S>> extends AbstractModelObject<S> implements Activatable {
+public abstract class AbstractActivatable<S extends AbstractActivatable<S>> extends AbstractModelObject<S> implements Activatable, Serializable {
+    private static final long serialVersionUID = -4546036141213581709L;
+
     @JsonIgnore
     private boolean enabled;
     private Active active;
@@ -52,11 +56,17 @@ public abstract class AbstractActivatable<S extends AbstractActivatable<S>> exte
     }
 
     @Override
-    public boolean resolveEnabled(Project project) {
+    public boolean resolveEnabledWithSnapshot(Project project) {
         enabled = null != active && active.check(project);
         if (project.isSnapshot() && !isSnapshotSupported()) {
             enabled = false;
         }
+        return enabled;
+    }
+
+    @Override
+    public boolean resolveEnabled(Project project) {
+        enabled = null != active && active.check(project);
         return enabled;
     }
 
