@@ -117,7 +117,6 @@ public final class MacportsPackagerValidator {
         validateCommitAuthor(packager, parentPackager);
         MacportsPackager.MacportsRepository repository = packager.getRepository();
         validateTap(context, distribution, repository, parentPackager.getRepository(), "macports.repository");
-        repository.resolveEnabled(model.getProject());
         validateTemplate(context, distribution, packager, parentPackager, errors);
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);

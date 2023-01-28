@@ -59,7 +59,7 @@ public final class HttpUploaderValidator {
         resolveActivatable(context, http,
             listOf("upload.http." + http.getName(), "upload.http"),
             "NEVER");
-        if (!http.resolveEnabled(context.getModel().getProject())) {
+        if (!http.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }

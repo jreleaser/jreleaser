@@ -58,7 +58,7 @@ public final class SftpUploaderValidator {
         resolveActivatable(context, sftp,
             listOf("upload.sftp." + sftp.getName(), "upload.sftp"),
             "NEVER");
-        if (!sftp.resolveEnabled(context.getModel().getProject())) {
+        if (!sftp.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }

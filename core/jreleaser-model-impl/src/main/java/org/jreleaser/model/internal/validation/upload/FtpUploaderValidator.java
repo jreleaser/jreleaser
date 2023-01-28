@@ -58,7 +58,7 @@ public final class FtpUploaderValidator {
         resolveActivatable(context, ftp,
             listOf("upload.ftp." + ftp.getName(), "upload.ftp"),
             "NEVER");
-        if (!ftp.resolveEnabled(context.getModel().getProject())) {
+        if (!ftp.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }

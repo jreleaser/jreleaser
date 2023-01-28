@@ -49,7 +49,7 @@ public final class SdkmanAnnouncerValidator {
             .findFirst()
             .ifPresent(distribution -> sdkman.setActive(Active.ALWAYS));
 
-        if (!sdkman.resolveEnabled(context.getModel().getProject())) {
+        if (!sdkman.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }

@@ -46,7 +46,7 @@ public final class GoogleChatAnnouncerValidator {
     public static void validateGoogleChat(JReleaserContext context, GoogleChatAnnouncer googleChat, Errors errors) {
         context.getLogger().debug("announce.googleChat");
         resolveActivatable(context, googleChat, "announce.google.chat", "NEVER");
-        if (!googleChat.resolveEnabled(context.getModel().getProject())) {
+        if (!googleChat.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }

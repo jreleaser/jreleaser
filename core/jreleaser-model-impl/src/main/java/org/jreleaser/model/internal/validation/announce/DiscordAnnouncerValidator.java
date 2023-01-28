@@ -46,7 +46,7 @@ public final class DiscordAnnouncerValidator {
     public static void validateDiscord(JReleaserContext context, DiscordAnnouncer discord, Errors errors) {
         context.getLogger().debug("announce.discord");
         resolveActivatable(context, discord, "announce.discord", "NEVER");
-        if (!discord.resolveEnabled(context.getModel().getProject())) {
+        if (!discord.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }

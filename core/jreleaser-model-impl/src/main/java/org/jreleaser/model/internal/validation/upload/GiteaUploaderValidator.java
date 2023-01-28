@@ -58,7 +58,7 @@ public final class GiteaUploaderValidator {
         resolveActivatable(context, gitea,
             listOf("upload.gitea." + gitea.getName(), "upload.gitea"),
             "NEVER");
-        if (!gitea.resolveEnabled(context.getModel().getProject())) {
+        if (!gitea.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }

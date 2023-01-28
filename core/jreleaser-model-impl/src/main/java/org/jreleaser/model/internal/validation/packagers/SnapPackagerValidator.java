@@ -91,7 +91,6 @@ public final class SnapPackagerValidator {
         validateCommitAuthor(packager, parentPackager);
         SnapPackager.SnapRepository snap = packager.getSnap();
         validateTap(context, distribution, snap, parentPackager.getSnap(), "snap.snap");
-        snap.resolveEnabled(model.getProject());
         if (isBlank(snap.getName())) {
             snap.setName(distribution.getName() + "-snap");
         }

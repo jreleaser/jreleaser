@@ -46,7 +46,7 @@ public final class TeamsAnnouncerValidator {
     public static void validateTeams(JReleaserContext context, TeamsAnnouncer teams, Errors errors) {
         context.getLogger().debug("announce.teams");
         resolveActivatable(context, teams, "announce.teams", "NEVER");
-        if (!teams.resolveEnabled(context.getModel().getProject())) {
+        if (!teams.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }

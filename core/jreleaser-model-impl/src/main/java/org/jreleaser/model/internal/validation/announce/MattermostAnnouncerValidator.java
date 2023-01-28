@@ -46,7 +46,7 @@ public final class MattermostAnnouncerValidator {
     public static void validateMattermost(JReleaserContext context, MattermostAnnouncer mattermost, Errors errors) {
         context.getLogger().debug("announce.mattermost");
         resolveActivatable(context, mattermost, "announce.mattermost", "NEVER");
-        if (!mattermost.resolveEnabled(context.getModel().getProject())) {
+        if (!mattermost.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }

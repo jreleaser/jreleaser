@@ -101,7 +101,6 @@ public final class AsdfPackagerValidator {
         validateCommitAuthor(packager, parentPackager);
         AsdfPackager.AsdfRepository repository = packager.getRepository();
         validateTap(context, distribution, repository, parentPackager.getRepository(), "asdf.repository");
-        repository.resolveEnabled(model.getProject());
         validateTemplate(context, distribution, packager, parentPackager, errors);
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);

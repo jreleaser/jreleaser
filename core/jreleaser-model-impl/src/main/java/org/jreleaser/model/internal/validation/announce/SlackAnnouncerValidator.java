@@ -47,7 +47,7 @@ public final class SlackAnnouncerValidator {
     public static void validateSlack(JReleaserContext context, SlackAnnouncer slack, Errors errors) {
         context.getLogger().debug("announce.slack");
         resolveActivatable(context, slack, "announce.slack", "NEVER");
-        if (!slack.resolveEnabled(context.getModel().getProject())) {
+        if (!slack.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }

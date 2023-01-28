@@ -59,7 +59,7 @@ public final class S3UploaderValidator {
         resolveActivatable(context, s3,
             listOf("upload.s3." + s3.getName(), "upload.s3"),
             "NEVER");
-        if (!s3.resolveEnabled(context.getModel().getProject())) {
+        if (!s3.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }

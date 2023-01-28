@@ -58,7 +58,7 @@ public final class GitlabUploaderValidator {
         resolveActivatable(context, gitlab,
             listOf("upload.gitlab." + gitlab.getName(), "upload.gitlab"),
             "NEVER");
-        if (!gitlab.resolveEnabled(context.getModel().getProject())) {
+        if (!gitlab.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }

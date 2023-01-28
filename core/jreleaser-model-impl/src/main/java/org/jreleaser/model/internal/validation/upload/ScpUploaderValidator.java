@@ -58,7 +58,7 @@ public final class ScpUploaderValidator {
         resolveActivatable(context, scp,
             listOf("upload.scp." + scp.getName(), "upload.scp"),
             "NEVER");
-        if (!scp.resolveEnabled(context.getModel().getProject())) {
+        if (!scp.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }

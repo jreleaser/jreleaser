@@ -201,6 +201,7 @@ public final class Validator {
                                    RepositoryTap tap, RepositoryTap parentTap, String property, String activeDefaultValue) {
         String distributionName = distribution.getName();
         resolveActivatable(context, tap, "distributions." + distributionName + "." + property, activeDefaultValue);
+        tap.resolveEnabled(context.getModel().getProject());
 
         validateOwner(tap, parentTap);
 

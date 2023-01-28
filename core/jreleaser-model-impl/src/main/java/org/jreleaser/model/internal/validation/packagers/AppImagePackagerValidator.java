@@ -173,7 +173,6 @@ public final class AppImagePackagerValidator {
         validateCommitAuthor(packager, parentPackager);
         AppImagePackager.AppImageRepository repository = packager.getRepository();
         validateTap(context, distribution, repository, parentPackager.getRepository(), "appImage.repository");
-        repository.resolveEnabled(model.getProject());
         validateTemplate(context, distribution, packager, parentPackager, errors);
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);

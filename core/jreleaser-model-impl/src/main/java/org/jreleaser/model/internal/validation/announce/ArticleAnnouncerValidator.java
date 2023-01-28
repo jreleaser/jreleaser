@@ -44,7 +44,7 @@ public final class ArticleAnnouncerValidator {
     public static void validateArticle(JReleaserContext context, ArticleAnnouncer article, Errors errors) {
         context.getLogger().debug("announce.article");
         resolveActivatable(context, article, "announce.article", "NEVER");
-        if (!article.resolveEnabled(context.getModel().getProject())) {
+        if (!article.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }

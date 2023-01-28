@@ -68,7 +68,6 @@ public final class JbangPackagerValidator {
         validateCommitAuthor(packager, parentPackager);
         JbangPackager.JbangRepository catalog = packager.getCatalog();
         validateTap(context, distribution, catalog, parentPackager.getCatalog(), "jbang.catalog", "ALWAYS");
-        catalog.resolveEnabled(model.getProject());
         validateTemplate(context, distribution, packager, parentPackager, errors);
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);

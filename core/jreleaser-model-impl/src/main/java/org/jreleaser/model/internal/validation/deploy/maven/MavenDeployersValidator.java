@@ -61,7 +61,7 @@ public final class MavenDeployersValidator {
         if (mode.validateDeploy() || mode.validateConfig()) {
             boolean activeSet = maven.isActiveSet();
             resolveActivatable(context, maven, "deploy.maven", "ALWAYS");
-            maven.resolveEnabled(context.getModel().getProject());
+            maven.resolveEnabledWithSnapshot(context.getModel().getProject());
 
             if (maven.isEnabled()) {
                 boolean enabled = !maven.getActiveArtifactories().isEmpty() ||
@@ -93,7 +93,7 @@ public final class MavenDeployersValidator {
             listOf("deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName(),
                 "deploy.maven." + mavenDeployer.getType()),
             "NEVER");
-        if (!mavenDeployer.resolveEnabled(context.getModel().getProject())) {
+        if (!mavenDeployer.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }

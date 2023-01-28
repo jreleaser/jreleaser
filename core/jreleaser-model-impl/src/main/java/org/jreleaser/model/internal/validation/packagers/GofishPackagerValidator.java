@@ -91,7 +91,6 @@ public final class GofishPackagerValidator {
         validateCommitAuthor(packager, parentPackager);
         GofishPackager.GofishRepository repository = packager.getRepository();
         validateTap(context, distribution, repository, parentPackager.getRepository(), "gofish.repository");
-        repository.resolveEnabled(model.getProject());
         validateTemplate(context, distribution, packager, parentPackager, errors);
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);
