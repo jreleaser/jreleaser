@@ -18,7 +18,6 @@
 package org.jreleaser.model.internal.download;
 
 import org.jreleaser.model.Active;
-import org.jreleaser.model.Http;
 import org.jreleaser.model.internal.common.HttpDelegate;
 
 import java.util.List;
@@ -32,8 +31,9 @@ import static org.jreleaser.model.api.download.HttpDownloader.TYPE;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public final class HttpDownloader extends AbstractDownloader<org.jreleaser.model.api.download.HttpDownloader, HttpDownloader> implements Http {
-    private static final long serialVersionUID = -179088512392537272L;
+public final class HttpDownloader extends AbstractDownloader<org.jreleaser.model.api.download.HttpDownloader, HttpDownloader>
+    implements org.jreleaser.model.internal.common.Http {
+    private static final long serialVersionUID = -3365213730876579690L;
 
     private final HttpDelegate delegate = new HttpDelegate();
 
@@ -138,6 +138,7 @@ public final class HttpDownloader extends AbstractDownloader<org.jreleaser.model
         return delegate.getUsername();
     }
 
+    @Override
     public void setUsername(String username) {
         delegate.setUsername(username);
     }
@@ -147,6 +148,7 @@ public final class HttpDownloader extends AbstractDownloader<org.jreleaser.model
         return delegate.getPassword();
     }
 
+    @Override
     public void setPassword(String password) {
         delegate.setPassword(password);
     }
@@ -156,10 +158,12 @@ public final class HttpDownloader extends AbstractDownloader<org.jreleaser.model
         return delegate.getAuthorization();
     }
 
+    @Override
     public void setAuthorization(Authorization authorization) {
         delegate.setAuthorization(authorization);
     }
 
+    @Override
     public void setAuthorization(String authorization) {
         delegate.setAuthorization(authorization);
     }
@@ -177,6 +181,7 @@ public final class HttpDownloader extends AbstractDownloader<org.jreleaser.model
         delegate.asMap(props);
     }
 
+    @Override
     public Authorization resolveAuthorization() {
         return delegate.resolveAuthorization();
     }

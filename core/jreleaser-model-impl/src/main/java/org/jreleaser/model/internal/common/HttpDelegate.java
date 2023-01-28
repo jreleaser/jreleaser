@@ -31,8 +31,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 1.5.0
  */
-public final class HttpDelegate extends AbstractModelObject<HttpDelegate> implements Serializable {
-    private static final long serialVersionUID = 6067002719379369883L;
+public final class HttpDelegate extends AbstractModelObject<HttpDelegate> implements org.jreleaser.model.internal.common.Http, Serializable {
+    private static final long serialVersionUID = 4594339452100983408L;
 
     private final Map<String, String> headers = new LinkedHashMap<>();
 
@@ -50,18 +50,22 @@ public final class HttpDelegate extends AbstractModelObject<HttpDelegate> implem
         setHeaders(merge(this.headers, source.headers));
     }
 
+    @Override
     public String getUsername() {
         return username;
     }
 
+    @Override
     public void setUsername(String username) {
         this.username = username;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
 
+    @Override
     public void setPassword(String password) {
         this.password = password;
     }
@@ -78,14 +82,17 @@ public final class HttpDelegate extends AbstractModelObject<HttpDelegate> implem
         this.method = Http.Method.of(method);
     }
 
+    @Override
     public Http.Authorization getAuthorization() {
         return authorization;
     }
 
+    @Override
     public void setAuthorization(Http.Authorization authorization) {
         this.authorization = authorization;
     }
 
+    @Override
     public void setAuthorization(String authorization) {
         this.authorization = Http.Authorization.of(authorization);
     }
@@ -106,6 +113,7 @@ public final class HttpDelegate extends AbstractModelObject<HttpDelegate> implem
         props.put("headers", headers);
     }
 
+    @Override
     public Http.Authorization resolveAuthorization() {
         if (null == authorization) {
             authorization = Http.Authorization.NONE;

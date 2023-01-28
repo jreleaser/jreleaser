@@ -21,11 +21,11 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.upload.FtpUploader;
+import org.jreleaser.model.internal.validation.common.FtpValidator;
 import org.jreleaser.util.Errors;
 
 import java.util.Map;
 
-import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
 import static org.jreleaser.util.CollectionUtils.listOf;
@@ -70,61 +70,10 @@ public final class FtpUploaderValidator {
             return;
         }
 
-        String baseKey1 = "upload.ftp." + ftp.getName();
-        String baseKey2 = "upload.ftp";
-        String baseKey3 = "ftp." + ftp.getName();
-        String baseKey4 = "ftp";
-
-        ftp.setUsername(
-            checkProperty(context,
-                listOf(
-                    baseKey1 + ".username",
-                    baseKey2 + ".username",
-                    baseKey3 + ".username",
-                    baseKey4 + ".username"),
-                baseKey1 + ".username",
-                ftp.getUsername(),
-                errors,
-                context.isDryrun()));
-
-        ftp.setPassword(
-            checkProperty(context,
-                listOf(
-                    baseKey1 + ".password",
-                    baseKey2 + ".password",
-                    baseKey3 + ".password",
-                    baseKey4 + ".password"),
-                baseKey1 + ".password",
-                ftp.getPassword(),
-                errors,
-                context.isDryrun()));
-
-        ftp.setHost(
-            checkProperty(context,
-                listOf(
-                    baseKey1 + ".host",
-                    baseKey2 + ".host",
-                    baseKey3 + ".host",
-                    baseKey4 + ".host"),
-                baseKey1 + ".host",
-                ftp.getHost(),
-                errors,
-                context.isDryrun()));
-
-        ftp.setPort(
-            checkProperty(context,
-                listOf(
-                    baseKey1 + ".port",
-                    baseKey2 + ".port",
-                    baseKey3 + ".port",
-                    baseKey4 + ".port"),
-                baseKey1 + ".port",
-                ftp.getPort(),
-                errors,
-                context.isDryrun()));
+        FtpValidator.validateFtp(context, ftp, "upload", ftp.getName(), errors, context.isDryrun());
 
         if (isBlank(ftp.getPath())) {
-            errors.configuration(RB.$("validation_must_not_be_blank", baseKey1 + ".path"));
+            errors.configuration(RB.$("validation_must_not_be_blank", "upload.ftp." + ftp.getName() + ".path"));
         }
         validateTimeout(ftp);
     }

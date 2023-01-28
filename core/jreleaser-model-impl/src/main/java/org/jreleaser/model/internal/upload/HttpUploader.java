@@ -29,8 +29,9 @@ import static org.jreleaser.model.api.upload.HttpUploader.TYPE;
  * @author Andres Almiray
  * @since 0.4.0
  */
-public final class HttpUploader extends AbstractWebUploader<org.jreleaser.model.api.upload.HttpUploader, HttpUploader> {
-    private static final long serialVersionUID = -5780371964038705675L;
+public final class HttpUploader extends AbstractWebUploader<org.jreleaser.model.api.upload.HttpUploader, HttpUploader>
+    implements org.jreleaser.model.internal.common.Http {
+    private static final long serialVersionUID = 3851047281417864436L;
 
     private final HttpDelegate delegate = new HttpDelegate();
 
@@ -163,6 +164,7 @@ public final class HttpUploader extends AbstractWebUploader<org.jreleaser.model.
         return delegate.getUsername();
     }
 
+    @Override
     public void setUsername(String username) {
         delegate.setUsername(username);
     }
@@ -172,6 +174,7 @@ public final class HttpUploader extends AbstractWebUploader<org.jreleaser.model.
         return delegate.getPassword();
     }
 
+    @Override
     public void setPassword(String password) {
         delegate.setPassword(password);
     }
@@ -193,10 +196,12 @@ public final class HttpUploader extends AbstractWebUploader<org.jreleaser.model.
         return delegate.getAuthorization();
     }
 
+    @Override
     public void setAuthorization(Authorization authorization) {
         delegate.setAuthorization(authorization);
     }
 
+    @Override
     public void setAuthorization(String authorization) {
         delegate.setAuthorization(authorization);
     }
@@ -210,6 +215,7 @@ public final class HttpUploader extends AbstractWebUploader<org.jreleaser.model.
         delegate.setHeaders(headers);
     }
 
+    @Override
     public Authorization resolveAuthorization() {
         return delegate.resolveAuthorization();
     }

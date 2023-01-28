@@ -20,7 +20,6 @@ package org.jreleaser.model.internal.announce;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Constants;
-import org.jreleaser.model.Http;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.HttpDelegate;
@@ -41,8 +40,8 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
  * @author Andres Almiray
  * @since 1.3.0
  */
-public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer, org.jreleaser.model.api.announce.HttpAnnouncer> implements Http {
-    private static final long serialVersionUID = 622344466463412058L;
+public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer, org.jreleaser.model.api.announce.HttpAnnouncer> implements org.jreleaser.model.internal.common.Http {
+    private static final long serialVersionUID = -8348542653717001938L;
 
     private final HttpDelegate delegate = new HttpDelegate();
     private String url;
@@ -210,6 +209,7 @@ public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer, org.jr
         return delegate.getUsername();
     }
 
+    @Override
     public void setUsername(String username) {
         delegate.setUsername(username);
     }
@@ -219,6 +219,7 @@ public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer, org.jr
         return delegate.getPassword();
     }
 
+    @Override
     public void setPassword(String password) {
         delegate.setPassword(password);
     }
@@ -240,10 +241,12 @@ public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer, org.jr
         return delegate.getAuthorization();
     }
 
+    @Override
     public void setAuthorization(Authorization authorization) {
         delegate.setAuthorization(authorization);
     }
 
+    @Override
     public void setAuthorization(String authorization) {
         delegate.setAuthorization(authorization);
     }

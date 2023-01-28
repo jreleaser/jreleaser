@@ -80,6 +80,7 @@ public final class ArtifactoryUploaderValidator {
         String baseKey2 = "upload.artifactory";
         String baseKey3 = "artifactory." + artifactory.getName();
         String baseKey4 = "artifactory";
+
         artifactory.setHost(
             checkProperty(context,
                 listOf(

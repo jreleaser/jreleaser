@@ -24,12 +24,12 @@ import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.announce.HttpAnnouncer;
 import org.jreleaser.model.internal.announce.HttpAnnouncers;
+import org.jreleaser.model.internal.validation.common.HttpValidator;
 import org.jreleaser.util.Errors;
 
 import java.nio.file.Files;
 import java.util.Map;
 
-import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
 import static org.jreleaser.util.CollectionUtils.listOf;
@@ -94,48 +94,7 @@ public final class HttpAnnouncerValidator {
             announcer.setMethod(Http.Method.PUT);
         }
 
-        String baseKey1 = "announce.http." + announcer.getName();
-        String baseKey2 = "http." + announcer.getName();
-        switch (announcer.resolveAuthorization()) {
-            case BEARER:
-                announcer.setPassword(
-                    checkProperty(context,
-                        listOf(
-                            baseKey1 + ".password",
-                            baseKey2 + ".password"),
-                        baseKey1 + ".password",
-                        announcer.getPassword(),
-                        errors,
-                        context.isDryrun()));
-
-                if (isBlank(announcer.getBearerKeyword())) {
-                    announcer.setBearerKeyword("Bearer");
-                }
-                break;
-            case BASIC:
-                announcer.setUsername(
-                    checkProperty(context,
-                        listOf(
-                            baseKey1 + ".username",
-                            baseKey2 + ".username"),
-                        baseKey1 + ".username",
-                        announcer.getPassword(),
-                        errors,
-                        context.isDryrun()));
-
-                announcer.setPassword(
-                    checkProperty(context,
-                        listOf(
-                            baseKey1 + ".password",
-                            baseKey2 + ".password"),
-                        baseKey1 + ".password",
-                        announcer.getPassword(),
-                        errors,
-                        context.isDryrun()));
-                break;
-            case NONE:
-                break;
-        }
+        HttpValidator.validateHttp(context, announcer, "announce", announcer.getName(), errors);
 
         String defaultPayloadTemplate = DEFAULT_TPL + "/http/" + announcer.getName() + ".tpl";
         if (isBlank(announcer.getPayload()) && isBlank(announcer.getPayloadTemplate())) {

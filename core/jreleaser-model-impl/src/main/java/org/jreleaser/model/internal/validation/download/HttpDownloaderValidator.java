@@ -22,11 +22,11 @@ import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.download.Downloader;
 import org.jreleaser.model.internal.download.HttpDownloader;
+import org.jreleaser.model.internal.validation.common.HttpValidator;
 import org.jreleaser.util.Errors;
 
 import java.util.Map;
 
-import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
 import static org.jreleaser.util.CollectionUtils.listOf;
@@ -64,62 +64,16 @@ public final class HttpDownloaderValidator {
             return;
         }
 
-        String baseKey1 = "download.http." + http.getName();
-        String baseKey2 = "download.http";
-        String baseKey3 = "http." + http.getName();
-        String baseKey4 = "http";
-        switch (http.resolveAuthorization()) {
-            case BEARER:
-                http.setPassword(
-                    checkProperty(context,
-                        listOf(
-                            baseKey1 + ".password",
-                            baseKey2 + ".password",
-                            baseKey3 + ".password",
-                            baseKey4 + ".password"),
-                        baseKey1 + ".password",
-                        http.getPassword(),
-                        errors,
-                        context.isDryrun()));
-                break;
-            case BASIC:
-                http.setUsername(
-                    checkProperty(context,
-                        listOf(
-                            baseKey1 + ".username",
-                            baseKey2 + ".username",
-                            baseKey3 + ".username",
-                            baseKey4 + ".username"),
-                        baseKey1 + ".username",
-                        http.getUsername(),
-                        errors,
-                        context.isDryrun()));
-
-                http.setPassword(
-                    checkProperty(context,
-                        listOf(
-                            baseKey1 + ".password",
-                            baseKey2 + ".password",
-                            baseKey3 + ".password",
-                            baseKey4 + ".password"),
-                        baseKey1 + ".password",
-                        http.getPassword(),
-                        errors,
-                        context.isDryrun()));
-                break;
-            case NONE:
-                break;
-        }
-
+        HttpValidator.validateHttp(context, http, "download", http.getName(), errors);
         validateTimeout(http);
 
         if (http.getAssets().isEmpty()) {
-            errors.configuration(RB.$("validation_must_not_be_empty", baseKey1 + ".assets"));
+            errors.configuration(RB.$("validation_must_not_be_empty", "download.http." + http.getName() + ".assets"));
         } else {
             int index = 0;
             for (Downloader.Asset asset : http.getAssets()) {
                 if (isBlank(asset.getInput())) {
-                    errors.configuration(RB.$("validation_must_not_be_null", baseKey1 + ".asset[" + (index++) + "].input"));
+                    errors.configuration(RB.$("validation_must_not_be_null", "download.http." + http.getName() + ".asset[" + (index++) + "].input"));
                 }
             }
         }

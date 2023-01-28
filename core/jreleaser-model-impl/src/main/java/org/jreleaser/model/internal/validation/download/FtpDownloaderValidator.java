@@ -22,11 +22,11 @@ import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.download.Downloader;
 import org.jreleaser.model.internal.download.FtpDownloader;
+import org.jreleaser.model.internal.validation.common.FtpValidator;
 import org.jreleaser.util.Errors;
 
 import java.util.Map;
 
-import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
 import static org.jreleaser.util.CollectionUtils.listOf;
@@ -65,67 +65,16 @@ public final class FtpDownloaderValidator {
         }
 
         // allow anonymous access
-        String baseKey1 = "download.ftp." + ftp.getName();
-        String baseKey2 = "download.ftp";
-        String baseKey3 = "ftp." + ftp.getName();
-        String baseKey4 = "ftp";
-        ftp.setUsername(
-            checkProperty(context,
-                listOf(
-                    baseKey1 + ".username",
-                    baseKey2 + ".username",
-                    baseKey3 + ".username",
-                    baseKey4 + ".username"),
-                baseKey1 + ".username",
-                ftp.getUsername(),
-                errors,
-                true));
-
-        ftp.setPassword(
-            checkProperty(context,
-                listOf(
-                    baseKey1 + ".password",
-                    baseKey2 + ".password",
-                    baseKey3 + ".password",
-                    baseKey4 + ".password"),
-                baseKey1 + ".password",
-                ftp.getPassword(),
-                errors,
-                true));
-
-        ftp.setHost(
-            checkProperty(context,
-                listOf(
-                    baseKey1 + ".host",
-                    baseKey2 + ".host",
-                    baseKey3 + ".host",
-                    baseKey4 + ".host"),
-                baseKey1 + ".host",
-                ftp.getHost(),
-                errors,
-                context.isDryrun()));
-
-        ftp.setPort(
-            checkProperty(context,
-                listOf(
-                    baseKey1 + ".port",
-                    baseKey2 + ".port",
-                    baseKey3 + ".port",
-                    baseKey4 + ".port"),
-                baseKey1 + ".port",
-                ftp.getPort(),
-                errors,
-                context.isDryrun()));
-
+        FtpValidator.validateFtp(context, ftp, "upload", ftp.getName(), errors, true);
         validateTimeout(ftp);
 
         if (ftp.getAssets().isEmpty()) {
-            errors.configuration(RB.$("validation_must_not_be_empty", baseKey1 + ".assets"));
+            errors.configuration(RB.$("validation_must_not_be_empty", "download.ftp." + ftp.getName() + ".assets"));
         } else {
             int index = 0;
             for (Downloader.Asset asset : ftp.getAssets()) {
                 if (isBlank(asset.getInput())) {
-                    errors.configuration(RB.$("validation_must_not_be_null", baseKey1 + ".asset[" + (index++) + "].input"));
+                    errors.configuration(RB.$("validation_must_not_be_null", "download.ftp." + ftp.getName() + ".asset[" + (index++) + "].input"));
                 }
             }
         }

@@ -45,8 +45,9 @@ import static org.jreleaser.util.StringUtils.getFilename;
  * @author Andres Almiray
  * @since 0.3.0
  */
-public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.model.api.upload.ArtifactoryUploader, ArtifactoryUploader> {
-    private static final long serialVersionUID = -8663764147786060926L;
+public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.model.api.upload.ArtifactoryUploader, ArtifactoryUploader>
+    implements org.jreleaser.model.internal.common.Http {
+    private static final long serialVersionUID = 3514827122618864142L;
 
     private final HttpDelegate delegate = new HttpDelegate();
     private final List<ArtifactoryRepository> repositories = new ArrayList<>();
@@ -175,6 +176,11 @@ public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.mo
         setRepositories(merge(this.repositories, source.repositories));
     }
 
+    @Override
+    public Map<String, String> getHeaders() {
+        return delegate.getHeaders();
+    }
+
     public String getHost() {
         return host;
     }
@@ -183,34 +189,42 @@ public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.mo
         this.host = host;
     }
 
+    @Override
     public String getUsername() {
         return delegate.getUsername();
     }
 
+    @Override
     public void setUsername(String username) {
         delegate.setUsername(username);
     }
 
+    @Override
     public String getPassword() {
         return delegate.getPassword();
     }
 
+    @Override
     public void setPassword(String password) {
         delegate.setPassword(password);
     }
 
+    @Override
     public Http.Authorization getAuthorization() {
         return delegate.getAuthorization();
     }
 
+    @Override
     public void setAuthorization(Http.Authorization authorization) {
         delegate.setAuthorization(authorization);
     }
 
+    @Override
     public void setAuthorization(String authorization) {
         delegate.setAuthorization(authorization);
     }
 
+    @Override
     public Http.Authorization resolveAuthorization() {
         if (null == delegate.getAuthorization()) {
             delegate.setAuthorization(Http.Authorization.BEARER);
