@@ -28,20 +28,18 @@ for group in api core plugins sdks
 do
     for project in `ls $group`
     do
-      echo "== $group/$project"
+      echo " - $group/$project"
       sourcesDir="${PWD}/${group}/${project}/src/main/groovy"
       if [ ! -d "$sourcesDir" ];
       then
         sourcesDir="${PWD}/${group}/${project}/src/main/java"
       fi
-      echo "sources: $sourcesDir"
 
       classesDir="${PWD}/${group}/${project}/build/classes/groovy/main"
       if [ ! -d "$classesDir" ];
       then
         classesDir="${PWD}/${group}/${project}/build/classes/java/main"
       fi
-      echo "classes: $classesDir"
 
       if [ -z "$CLASSES" ];
       then
