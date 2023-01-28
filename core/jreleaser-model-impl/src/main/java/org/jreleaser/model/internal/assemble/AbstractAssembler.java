@@ -18,13 +18,11 @@
 package org.jreleaser.model.internal.assemble;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.jreleaser.model.Active;
 import org.jreleaser.model.Stereotype;
-import org.jreleaser.model.internal.common.AbstractModelObject;
+import org.jreleaser.model.internal.common.AbstractActivatable;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.FileSet;
 import org.jreleaser.model.internal.platform.Platform;
-import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.mustache.TemplateContext;
 
 import java.util.ArrayList;
@@ -43,8 +41,8 @@ import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A extends org.jreleaser.model.api.assemble.Assembler> extends AbstractModelObject<S> implements Assembler<A> {
-    private static final long serialVersionUID = -6289912910924286903L;
+public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A extends org.jreleaser.model.api.assemble.Assembler> extends AbstractActivatable<S> implements Assembler<A> {
+    private static final long serialVersionUID = 8376910418156286094L;
 
     @JsonIgnore
     private final Set<Artifact> outputs = new LinkedHashSet<>();
@@ -55,9 +53,7 @@ public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A ext
     private final String type;
     @JsonIgnore
     private String name;
-    @JsonIgnore
-    private boolean enabled;
-    private Active active;
+
     private Boolean exported;
     private Stereotype stereotype;
 
@@ -67,8 +63,7 @@ public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A ext
 
     @Override
     public void merge(S source) {
-        this.active = merge(this.active, source.getActive());
-        this.enabled = merge(this.enabled, source.isEnabled());
+        super.merge(source);
         this.exported = merge(this.exported, source.isExported());
         this.name = merge(this.name, source.getName());
         this.platform.merge(source.getPlatform());
@@ -108,22 +103,6 @@ public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A ext
     }
 
     @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    @Override
-    public void disable() {
-        active = Active.NEVER;
-        enabled = false;
-    }
-
-    public boolean resolveEnabled(Project project) {
-        enabled = null != active && active.check(project);
-        return enabled;
-    }
-
-    @Override
     public Platform getPlatform() {
         return platform;
     }
@@ -151,26 +130,6 @@ public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A ext
     @Override
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Override
-    public Active getActive() {
-        return active;
-    }
-
-    @Override
-    public void setActive(Active active) {
-        this.active = active;
-    }
-
-    @Override
-    public void setActive(String str) {
-        setActive(Active.of(str));
-    }
-
-    @Override
-    public boolean isActiveSet() {
-        return null != active;
     }
 
     @Override
@@ -242,7 +201,7 @@ public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A ext
         Map<String, Object> props = new LinkedHashMap<>();
         props.put("enabled", isEnabled());
         props.put("exported", isExported());
-        props.put("active", active);
+        props.put("active", getActive());
         props.put("stereotype", stereotype);
         if (full || platform.isSet()) props.put("platform", platform.asMap(full));
         asMap(full, props);

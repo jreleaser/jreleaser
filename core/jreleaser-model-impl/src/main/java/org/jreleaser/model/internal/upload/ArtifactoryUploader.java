@@ -20,11 +20,9 @@ package org.jreleaser.model.internal.upload;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Http;
 import org.jreleaser.model.internal.JReleaserContext;
-import org.jreleaser.model.internal.common.AbstractModelObject;
-import org.jreleaser.model.internal.common.Activatable;
+import org.jreleaser.model.internal.common.AbstractActivatable;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.Domain;
-import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.mustache.Templates;
 import org.jreleaser.util.FileType;
@@ -50,7 +48,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.3.0
  */
 public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.model.api.upload.ArtifactoryUploader, ArtifactoryUploader> {
-    private static final long serialVersionUID = -8107525740451541910L;
+    private static final long serialVersionUID = -4204661054766593354L;
 
     private final List<ArtifactoryRepository> repositories = new ArrayList<>();
     private String host;
@@ -286,13 +284,11 @@ public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.mo
         return "";
     }
 
-    public static final class ArtifactoryRepository extends AbstractModelObject<ArtifactoryRepository> implements Domain, Activatable {
-        private static final long serialVersionUID = 112708885585709294L;
+    public static final class ArtifactoryRepository extends AbstractActivatable<ArtifactoryRepository> implements Domain {
+        private static final long serialVersionUID = -8740453953809523210L;
 
         private final Set<FileType> fileTypes = new LinkedHashSet<>();
 
-        private Active active;
-        private boolean enabled;
         private String path;
 
         private final org.jreleaser.model.api.upload.ArtifactoryUploader.ArtifactoryRepository immutable = new org.jreleaser.model.api.upload.ArtifactoryUploader.ArtifactoryRepository() {
@@ -310,7 +306,7 @@ public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.mo
 
             @Override
             public Active getActive() {
-                return active;
+                return ArtifactoryRepository.this.getActive();
             }
 
             @Override
@@ -330,46 +326,9 @@ public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.mo
 
         @Override
         public void merge(ArtifactoryRepository source) {
-            this.active = merge(this.active, source.active);
-            this.enabled = merge(this.enabled, source.enabled);
+            super.merge(source);
             this.path = merge(this.path, source.path);
             setFileTypes(source.fileTypes);
-        }
-
-        @Override
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        @Override
-        public void disable() {
-            active = Active.NEVER;
-            enabled = false;
-        }
-
-        public boolean resolveEnabled(Project project) {
-            enabled = null != active && active.check(project);
-            return enabled;
-        }
-
-        @Override
-        public Active getActive() {
-            return active;
-        }
-
-        @Override
-        public void setActive(Active active) {
-            this.active = active;
-        }
-
-        @Override
-        public void setActive(String str) {
-            setActive(Active.of(str));
-        }
-
-        @Override
-        public boolean isActiveSet() {
-            return null != active;
         }
 
         public String getPath() {
@@ -397,14 +356,14 @@ public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.mo
         public Map<String, Object> asMap(boolean full) {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("enabled", isEnabled());
-            map.put("active", active);
+            map.put("active", getActive());
             map.put("path", path);
             map.put("fileTypes", fileTypes);
             return map;
         }
 
         public boolean handles(Artifact artifact) {
-            if (!enabled) return false;
+            if (!isEnabled()) return false;
             if (fileTypes.isEmpty()) return true;
 
             String artifactFileName = artifact.getResolvedPath().getFileName().toString();

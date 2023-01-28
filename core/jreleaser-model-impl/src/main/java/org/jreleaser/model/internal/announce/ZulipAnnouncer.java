@@ -44,7 +44,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public final class ZulipAnnouncer extends AbstractAnnouncer<ZulipAnnouncer, org.jreleaser.model.api.announce.ZulipAnnouncer> {
-    private static final long serialVersionUID = -4115677283031495196L;
+    private static final long serialVersionUID = -5716713518495824255L;
 
     private String account;
     private String apiKey;

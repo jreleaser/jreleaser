@@ -148,31 +148,31 @@ jobs:
           ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser download -PoutputDir=out --dry-run
           echo "::endgroup::"
           echo "::group::➡️ checksum"
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser checksum -PoutputDir=out -scp
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser checksum -PoutputDir=out --select-current-platform
           echo "::endgroup::"
           echo "::group::➡️ sign"
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser sign -PoutputDir=out -scp
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser sign -PoutputDir=out --select-current-platform
           echo "::endgroup::"
           echo "::group::➡️ deploy"
           ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser deploy -PoutputDir=out --dry-run
           echo "::endgroup::"
           echo "::group::➡️ upload"
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser upload -scp -PoutputDir=out --dry-run
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser upload --select-current-platform -PoutputDir=out --dry-run
           echo "::endgroup::"
           echo "::group::➡️ release"
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser release -scp -PoutputDir=out --dry-run
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser release --select-current-platform -PoutputDir=out --dry-run
           echo "::endgroup::"
           echo "::group::➡️ prepare"
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser prepare -scp -PoutputDir=out ${{ matrix.job.args }}
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser prepare --select-current-platform -PoutputDir=out ${{ matrix.job.args }}
           echo "::endgroup::"
           echo "::group::➡️ package"
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser package -scp -PoutputDir=out ${{ matrix.job.args }}
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser package --select-current-platform -PoutputDir=out ${{ matrix.job.args }}
           echo "::endgroup::"
           echo "::group::➡️ publish"
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser publish -scp -PoutputDir=out --dry-run ${{ matrix.job.args }}
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser publish --select-current-platform -PoutputDir=out --dry-run ${{ matrix.job.args }}
           echo "::endgroup::"
           echo "::group::➡️ full-release"
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser full-release -PoutputDir=out -scp --dry-run ${{ matrix.job.args }}
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser full-release -PoutputDir=out --select-current-platform --dry-run ${{ matrix.job.args }}
           echo "::endgroup::"
           echo "::group::➡️ announce"
           ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser announce -PoutputDir=out --dry-run
@@ -336,31 +336,31 @@ jobs:
           java $JAVA_OPTS -jar jreleaser.jar download -PoutputDir=out --dry-run
           echo "::endgroup::"
           echo "::group::➡️ checksum"
-          java $JAVA_OPTS -jar jreleaser.jar checksum -PoutputDir=out -scp
+          java $JAVA_OPTS -jar jreleaser.jar checksum -PoutputDir=out --select-current-platform
           echo "::endgroup::"
           echo "::group::➡️ sign"
-          java $JAVA_OPTS -jar jreleaser.jar sign -PoutputDir=out -scp
+          java $JAVA_OPTS -jar jreleaser.jar sign -PoutputDir=out --select-current-platform
           echo "::endgroup::"
           echo "::group::➡️ deploy"
           java $JAVA_OPTS -jar jreleaser.jar deploy -PoutputDir=out --dry-run
           echo "::endgroup::"
           echo "::group::➡️ upload"
-          java $JAVA_OPTS -jar jreleaser.jar upload -scp -PoutputDir=out --dry-run
+          java $JAVA_OPTS -jar jreleaser.jar upload --select-current-platform -PoutputDir=out --dry-run
           echo "::endgroup::"
           echo "::group::➡️ release"
-          java $JAVA_OPTS -jar jreleaser.jar release -scp -PoutputDir=out --dry-run
+          java $JAVA_OPTS -jar jreleaser.jar release --select-current-platform -PoutputDir=out --dry-run
           echo "::endgroup::"
           echo "::group::➡️ prepare"
-          java $JAVA_OPTS -jar jreleaser.jar prepare -scp -PoutputDir=out ${{ matrix.job.args }}
+          java $JAVA_OPTS -jar jreleaser.jar prepare --select-current-platform -PoutputDir=out ${{ matrix.job.args }}
           echo "::endgroup::"
           echo "::group::➡️ package"
-          java $JAVA_OPTS -jar jreleaser.jar package -scp -PoutputDir=out ${{ matrix.job.args }}
+          java $JAVA_OPTS -jar jreleaser.jar package --select-current-platform -PoutputDir=out ${{ matrix.job.args }}
           echo "::endgroup::"
           echo "::group::➡️ publish"
-          java $JAVA_OPTS -jar jreleaser.jar publish -scp -PoutputDir=out --dry-run ${{ matrix.job.args }}
+          java $JAVA_OPTS -jar jreleaser.jar publish --select-current-platform -PoutputDir=out --dry-run ${{ matrix.job.args }}
           echo "::endgroup::"
           echo "::group::➡️ full-release"
-          java $JAVA_OPTS -jar jreleaser.jar full-release -PoutputDir=out -scp --dry-run ${{ matrix.job.args }}
+          java $JAVA_OPTS -jar jreleaser.jar full-release -PoutputDir=out --select-current-platform --dry-run ${{ matrix.job.args }}
           echo "::endgroup::"
           echo "::group::➡️ announce"
           java $JAVA_OPTS -jar jreleaser.jar announce -PoutputDir=out --dry-run

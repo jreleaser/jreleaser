@@ -38,4 +38,6 @@ public interface Activatable {
     void disable();
 
     boolean resolveEnabled(Project project);
+
+    boolean isSnapshotSupported();
 }

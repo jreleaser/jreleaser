@@ -46,7 +46,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public final class TwitterAnnouncer extends AbstractAnnouncer<TwitterAnnouncer, org.jreleaser.model.api.announce.TwitterAnnouncer> {
-    private static final long serialVersionUID = -8841484657067120352L;
+    private static final long serialVersionUID = -5723247167488210082L;
 
     private final List<String> statuses = new ArrayList<>();
     private String consumerKey;

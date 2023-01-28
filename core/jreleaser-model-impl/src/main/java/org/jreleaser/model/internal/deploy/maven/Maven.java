@@ -17,12 +17,11 @@
  */
 package org.jreleaser.model.internal.deploy.maven;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
+import org.jreleaser.model.internal.common.AbstractActivatable;
 import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.common.Activatable;
 import org.jreleaser.model.internal.common.Domain;
-import org.jreleaser.model.internal.project.Project;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,8 +39,8 @@ import static java.util.stream.Collectors.toMap;
  * @author Andres Almiray
  * @since 1.3.0
  */
-public final class Maven extends AbstractModelObject<Maven> implements Domain, Activatable {
-    private static final long serialVersionUID = 5399032127872975911L;
+public final class Maven extends AbstractActivatable<Maven> implements Domain, Activatable {
+    private static final long serialVersionUID = -5182407369285778096L;
 
     private final Map<String, ArtifactoryMavenDeployer> artifactory = new LinkedHashMap<>();
     private final Map<String, GiteaMavenDeployer> gitea = new LinkedHashMap<>();
@@ -49,10 +48,6 @@ public final class Maven extends AbstractModelObject<Maven> implements Domain, A
     private final Map<String, GitlabMavenDeployer> gitlab = new LinkedHashMap<>();
     private final Map<String, Nexus2MavenDeployer> nexus2 = new LinkedHashMap<>();
     private final Pomchecker pomchecker = new Pomchecker();
-
-    private Active active;
-    @JsonIgnore
-    private boolean enabled = true;
 
     private final org.jreleaser.model.api.deploy.maven.Maven immutable = new org.jreleaser.model.api.deploy.maven.Maven() {
         private static final long serialVersionUID = -4093252379809403524L;
@@ -120,7 +115,7 @@ public final class Maven extends AbstractModelObject<Maven> implements Domain, A
 
         @Override
         public Active getActive() {
-            return active;
+            return Maven.this.getActive();
         }
 
         @Override
@@ -134,14 +129,17 @@ public final class Maven extends AbstractModelObject<Maven> implements Domain, A
         }
     };
 
+    public Maven() {
+        enabledSet(true);
+    }
+
     public org.jreleaser.model.api.deploy.maven.Maven asImmutable() {
         return immutable;
     }
 
     @Override
     public void merge(Maven source) {
-        this.active = merge(this.active, source.active);
-        this.enabled = merge(this.enabled, source.enabled);
+        super.merge(source);
         setArtifactory(mergeModel(this.artifactory, source.artifactory));
         setGitea(mergeModel(this.gitea, source.gitea));
         setGithub(mergeModel(this.github, source.github));
@@ -156,42 +154,6 @@ public final class Maven extends AbstractModelObject<Maven> implements Domain, A
             !github.isEmpty() ||
             !gitlab.isEmpty() ||
             !nexus2.isEmpty();
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled && null != active;
-    }
-
-    @Override
-    public void disable() {
-        active = Active.NEVER;
-        enabled = false;
-    }
-
-    public boolean resolveEnabled(Project project) {
-        enabled = null != active && active.check(project);
-        return enabled;
-    }
-
-    @Override
-    public Active getActive() {
-        return active;
-    }
-
-    @Override
-    public void setActive(Active active) {
-        this.active = active;
-    }
-
-    @Override
-    public void setActive(String str) {
-        setActive(Active.of(str));
-    }
-
-    @Override
-    public boolean isActiveSet() {
-        return null != active;
     }
 
     public Optional<ArtifactoryMavenDeployer> getActiveArtifactory(String name) {
@@ -345,8 +307,8 @@ public final class Maven extends AbstractModelObject<Maven> implements Domain, A
     @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
-        map.put("enabled", enabled);
-        map.put("active", active);
+        map.put("enabled", isEnabled());
+        map.put("active", getActive());
         map.put("pomchecker", pomchecker.asMap(full));
 
         List<Map<String, Object>> artifactory = this.artifactory.values()

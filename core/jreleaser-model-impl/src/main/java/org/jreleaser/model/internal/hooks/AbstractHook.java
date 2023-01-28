@@ -17,10 +17,7 @@
  */
 package org.jreleaser.model.internal.hooks;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.jreleaser.model.Active;
-import org.jreleaser.model.internal.common.AbstractModelObject;
-import org.jreleaser.model.internal.project.Project;
+import org.jreleaser.model.internal.common.AbstractActivatable;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -29,61 +26,17 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 1.2.0
  */
-public abstract class AbstractHook<S extends AbstractHook<S>> extends AbstractModelObject<S> implements Hook {
-    private static final long serialVersionUID = -3265357320500610025L;
+public abstract class AbstractHook<S extends AbstractHook<S>> extends AbstractActivatable<S> implements Hook {
+    private static final long serialVersionUID = 6965171105893505193L;
 
     private final Filter filter = new Filter();
     private Boolean continueOnError;
-    private Active active;
-    @JsonIgnore
-    private boolean enabled;
 
     @Override
     public void merge(S source) {
-        this.active = merge(this.active, source.getActive());
-        this.enabled = merge(this.enabled, source.isEnabled());
+        super.merge(source);
         this.continueOnError = merge(this.continueOnError, source.isContinueOnError());
         setFilter(source.getFilter());
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    protected void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public boolean resolveEnabled(Project project) {
-        enabled = null != active && active.check(project);
-        return enabled;
-    }
-
-    @Override
-    public void disable() {
-        active = Active.NEVER;
-        enabled = false;
-    }
-
-    @Override
-    public Active getActive() {
-        return active;
-    }
-
-    @Override
-    public void setActive(Active active) {
-        this.active = active;
-    }
-
-    @Override
-    public void setActive(String str) {
-        setActive(Active.of(str));
-    }
-
-    @Override
-    public boolean isActiveSet() {
-        return null != active;
     }
 
     @Override
@@ -115,7 +68,7 @@ public abstract class AbstractHook<S extends AbstractHook<S>> extends AbstractMo
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
-        map.put("active", active);
+        map.put("active", getActive());
         map.put("continueOnError", isContinueOnError());
         Map<String, Object> filterAsMap = filter.asMap(full);
         if (full || !filterAsMap.isEmpty()) {

@@ -37,7 +37,7 @@ import static java.util.stream.Collectors.toSet;
  * @since 0.4.0
  */
 public final class DockerSpec extends AbstractDockerConfiguration<DockerSpec> implements Domain {
-    private static final long serialVersionUID = 3990523023493032498L;
+    private static final long serialVersionUID = 5373884037924711407L;
 
     private final Map<String, Object> matchers = new LinkedHashMap<>();
     private Artifact artifact;

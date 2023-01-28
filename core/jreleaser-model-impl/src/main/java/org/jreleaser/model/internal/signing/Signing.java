@@ -17,13 +17,11 @@
  */
 package org.jreleaser.model.internal.signing;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.common.AbstractActivatable;
 import org.jreleaser.model.internal.common.AbstractModelObject;
-import org.jreleaser.model.internal.common.Activatable;
 import org.jreleaser.model.internal.common.Domain;
-import org.jreleaser.model.internal.project.Project;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -44,15 +42,12 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public final class Signing extends AbstractModelObject<Signing> implements Domain, Activatable {
-    private static final long serialVersionUID = -307970953006860587L;
+public final class Signing extends AbstractActivatable<Signing> implements Domain {
+    private static final long serialVersionUID = 4520483266921339349L;
 
     private final Command command = new Command();
     private final Cosign cosign = new Cosign();
 
-    private Active active;
-    @JsonIgnore
-    private boolean enabled;
     private Boolean armored;
     private Boolean verify;
     private String publicKey;
@@ -123,7 +118,7 @@ public final class Signing extends AbstractModelObject<Signing> implements Domai
 
         @Override
         public Active getActive() {
-            return active;
+            return Signing.this.getActive();
         }
 
         @Override
@@ -143,8 +138,7 @@ public final class Signing extends AbstractModelObject<Signing> implements Domai
 
     @Override
     public void merge(Signing source) {
-        this.active = merge(this.active, source.active);
-        this.enabled = merge(this.enabled, source.enabled);
+        super.merge(source);
         this.armored = merge(this.armored, source.armored);
         this.verify = merge(this.verify, source.verify);
         this.publicKey = merge(this.publicKey, source.publicKey);
@@ -158,47 +152,11 @@ public final class Signing extends AbstractModelObject<Signing> implements Domai
         setCosign(source.cosign);
     }
 
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    @Override
-    public void disable() {
-        active = Active.NEVER;
-        enabled = false;
-    }
-
-    public boolean resolveEnabled(Project project) {
-        enabled = null != active && active.check(project);
-        return enabled;
-    }
-
     public org.jreleaser.model.Signing.Mode resolveMode() {
         if (null == mode) {
             mode = org.jreleaser.model.Signing.Mode.MEMORY;
         }
         return mode;
-    }
-
-    @Override
-    public Active getActive() {
-        return active;
-    }
-
-    @Override
-    public void setActive(Active active) {
-        this.active = active;
-    }
-
-    @Override
-    public void setActive(String str) {
-        setActive(Active.of(str));
-    }
-
-    @Override
-    public boolean isActiveSet() {
-        return null != active;
     }
 
     public boolean isArmored() {
@@ -319,7 +277,7 @@ public final class Signing extends AbstractModelObject<Signing> implements Domai
 
         Map<String, Object> props = new LinkedHashMap<>();
         props.put("enabled", isEnabled());
-        props.put("active", active);
+        props.put("active", getActive());
         props.put("armored", isArmored());
         props.put("verify", isVerify());
         props.put("mode", mode);

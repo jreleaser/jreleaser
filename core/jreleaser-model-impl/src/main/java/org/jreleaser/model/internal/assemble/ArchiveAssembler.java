@@ -44,7 +44,7 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
  * @since 0.8.0
  */
 public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, org.jreleaser.model.api.assemble.ArchiveAssembler> {
-    private static final long serialVersionUID = -5357543355978214383L;
+    private static final long serialVersionUID = 8451661914162002081L;
 
     private final Set<Archive.Format> formats = new LinkedHashSet<>();
 

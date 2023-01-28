@@ -45,7 +45,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 1.3.0
  */
 public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer, org.jreleaser.model.api.announce.HttpAnnouncer> implements Http {
-    private static final long serialVersionUID = 5967843162096874445L;
+    private static final long serialVersionUID = 5228834948343872651L;
 
     private final Map<String, String> headers = new LinkedHashMap<>();
     private String url;

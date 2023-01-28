@@ -203,6 +203,14 @@ class Github {
                 continue;
             }
 
+            logger.debug(" " + RB.$("git.delete.asset"), asset.getFilename());
+            try {
+                existingAssets.get(asset.getFilename()).delete();
+            } catch (IOException e) {
+                logger.error(" " + RB.$("git.delete.asset.failure"), asset.getFilename());
+                throw e;
+            }
+
             uploadOrUpdateAsset(release, asset, "git.delete.asset", "git.update.asset.failure");
         }
     }

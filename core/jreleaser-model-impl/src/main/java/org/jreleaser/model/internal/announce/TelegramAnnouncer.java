@@ -44,7 +44,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.8.0
  */
 public final class TelegramAnnouncer extends AbstractAnnouncer<TelegramAnnouncer, org.jreleaser.model.api.announce.TelegramAnnouncer> {
-    private static final long serialVersionUID = -7942186218415757885L;
+    private static final long serialVersionUID = 7313922490204895975L;
 
     private String token;
     private String chatId;

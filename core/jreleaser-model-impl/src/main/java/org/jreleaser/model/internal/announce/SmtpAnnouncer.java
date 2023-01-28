@@ -48,7 +48,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public final class SmtpAnnouncer extends AbstractAnnouncer<SmtpAnnouncer, org.jreleaser.model.api.announce.SmtpAnnouncer> {
-    private static final long serialVersionUID = -1477687439659358188L;
+    private static final long serialVersionUID = -9081427023891923561L;
 
     private final Map<String, String> properties = new LinkedHashMap<>();
 

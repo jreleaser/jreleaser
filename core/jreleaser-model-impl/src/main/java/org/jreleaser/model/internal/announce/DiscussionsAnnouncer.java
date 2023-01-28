@@ -40,7 +40,7 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
  * @since 0.1.0
  */
 public final class DiscussionsAnnouncer extends AbstractAnnouncer<DiscussionsAnnouncer, org.jreleaser.model.api.announce.DiscussionsAnnouncer> {
-    private static final long serialVersionUID = 4154059408306645873L;
+    private static final long serialVersionUID = 3832146296747592322L;
 
     private String organization;
     private String team;

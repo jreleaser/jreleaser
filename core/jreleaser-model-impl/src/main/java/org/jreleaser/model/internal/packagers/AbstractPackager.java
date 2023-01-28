@@ -18,10 +18,9 @@
 package org.jreleaser.model.internal.packagers;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.jreleaser.model.Active;
 import org.jreleaser.model.Stereotype;
 import org.jreleaser.model.internal.JReleaserContext;
-import org.jreleaser.model.internal.common.AbstractModelObject;
+import org.jreleaser.model.internal.common.AbstractActivatable;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.project.Project;
@@ -43,15 +42,12 @@ import static org.jreleaser.model.Distribution.DistributionType.FLAT_BINARY;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class AbstractPackager<A extends org.jreleaser.model.api.packagers.Packager, S extends AbstractPackager<A, S>> extends AbstractModelObject<S> implements Packager<A> {
-    private static final long serialVersionUID = -4463822744538116865L;
+public abstract class AbstractPackager<A extends org.jreleaser.model.api.packagers.Packager, S extends AbstractPackager<A, S>> extends AbstractActivatable<S> implements Packager<A> {
+    private static final long serialVersionUID = -2469546551256308253L;
 
     @JsonIgnore
     private final String type;
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
-    @JsonIgnore
-    private boolean enabled;
-    private Active active;
     private Boolean continueOnError;
     private String downloadUrl;
     @JsonIgnore
@@ -63,8 +59,7 @@ public abstract class AbstractPackager<A extends org.jreleaser.model.api.package
 
     @Override
     public void merge(S source) {
-        this.active = merge(this.active, source.getActive());
-        this.enabled = merge(this.enabled, source.isEnabled());
+        super.merge(source);
         this.continueOnError = merge(this.continueOnError, source.isContinueOnError());
         this.downloadUrl = merge(this.downloadUrl, source.getDownloadUrl());
         this.failed = source.isFailed();
@@ -132,17 +127,6 @@ public abstract class AbstractPackager<A extends org.jreleaser.model.api.package
     }
 
     @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    @Override
-    public void disable() {
-        active = Active.NEVER;
-        enabled = false;
-    }
-
-    @Override
     public boolean isContinueOnError() {
         return null != continueOnError && continueOnError;
     }
@@ -158,38 +142,12 @@ public abstract class AbstractPackager<A extends org.jreleaser.model.api.package
     }
 
     @Override
-    public boolean resolveEnabled(Project project) {
-        enabled = null != active && active.check(project);
-        return enabled;
-    }
-
-    @Override
     public boolean resolveEnabled(Project project, Distribution distribution) {
-        enabled = null != active && active.check(project);
+        resolveEnabled(project);
         if (!supportsDistribution(distribution.getType())) {
-            enabled = false;
+            disable();
         }
-        return enabled;
-    }
-
-    @Override
-    public Active getActive() {
-        return active;
-    }
-
-    @Override
-    public void setActive(Active active) {
-        this.active = active;
-    }
-
-    @Override
-    public void setActive(String str) {
-        setActive(Active.of(str));
-    }
-
-    @Override
-    public boolean isActiveSet() {
-        return null != active;
+        return isEnabled();
     }
 
     @Override
@@ -229,7 +187,7 @@ public abstract class AbstractPackager<A extends org.jreleaser.model.api.package
 
         Map<String, Object> props = new LinkedHashMap<>();
         props.put("enabled", isEnabled());
-        props.put("active", active);
+        props.put("active", getActive());
         props.put("continueOnError", isContinueOnError());
         props.put("downloadUrl", downloadUrl);
         asMap(full, props);

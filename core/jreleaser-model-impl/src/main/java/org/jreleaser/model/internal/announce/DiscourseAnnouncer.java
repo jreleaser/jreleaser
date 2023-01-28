@@ -43,7 +43,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 1.3.0
  */
 public final class DiscourseAnnouncer extends AbstractAnnouncer<DiscourseAnnouncer, org.jreleaser.model.api.announce.DiscourseAnnouncer> {
-    private static final long serialVersionUID = -8948508622306503243L;
+    private static final long serialVersionUID = 7088306095879056103L;
 
     private String host;
     private String apiKey;

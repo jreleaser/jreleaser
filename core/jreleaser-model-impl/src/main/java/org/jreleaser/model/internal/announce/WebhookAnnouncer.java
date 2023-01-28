@@ -43,7 +43,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.5.0
  */
 public final class WebhookAnnouncer extends AbstractAnnouncer<WebhookAnnouncer, org.jreleaser.model.api.announce.WebhookAnnouncer> {
-    private static final long serialVersionUID = 3768821724964181104L;
+    private static final long serialVersionUID = 771685577904254805L;
 
     private String webhook;
     private String message;

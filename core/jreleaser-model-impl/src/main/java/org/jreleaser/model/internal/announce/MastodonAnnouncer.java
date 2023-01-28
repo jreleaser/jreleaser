@@ -45,7 +45,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.4.0
  */
 public final class MastodonAnnouncer extends AbstractAnnouncer<MastodonAnnouncer, org.jreleaser.model.api.announce.MastodonAnnouncer> {
-    private static final long serialVersionUID = -3861331728740142122L;
+    private static final long serialVersionUID = 9152609285615015647L;
 
     private final List<String> statuses = new ArrayList<>();
     private String host;

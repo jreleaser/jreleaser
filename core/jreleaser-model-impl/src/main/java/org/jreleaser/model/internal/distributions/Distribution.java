@@ -17,7 +17,6 @@
  */
 package org.jreleaser.model.internal.distributions;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.JReleaserException;
@@ -31,7 +30,6 @@ import org.jreleaser.model.internal.common.Java;
 import org.jreleaser.model.internal.packagers.Packager;
 import org.jreleaser.model.internal.packagers.Packagers;
 import org.jreleaser.model.internal.platform.Platform;
-import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.version.SemanticVersion;
 
@@ -76,7 +74,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public final class Distribution extends Packagers<Distribution> implements Domain, Activatable, ExtraProperties {
-    private static final long serialVersionUID = -2280223853953568007L;
+    private static final long serialVersionUID = -1492592986871135365L;
 
     private final List<String> tags = new ArrayList<>();
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
@@ -85,9 +83,6 @@ public final class Distribution extends Packagers<Distribution> implements Domai
     private final Platform platform = new Platform();
     private final Executable executable = new Executable();
 
-    private Active active;
-    @JsonIgnore
-    private boolean enabled;
     private String name;
     private org.jreleaser.model.Distribution.DistributionType type = org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
     private Stereotype stereotype;
@@ -144,7 +139,7 @@ public final class Distribution extends Packagers<Distribution> implements Domai
 
         @Override
         public Active getActive() {
-            return active;
+            return Distribution.this.getActive();
         }
 
         @Override
@@ -241,8 +236,6 @@ public final class Distribution extends Packagers<Distribution> implements Domai
     @Override
     public void merge(Distribution source) {
         super.merge(source);
-        this.active = merge(this.active, source.active);
-        this.enabled = merge(this.enabled, source.enabled);
         this.name = merge(this.name, source.name);
         this.type = merge(this.type, source.type);
         this.stereotype = merge(this.stereotype, source.stereotype);
@@ -288,42 +281,6 @@ public final class Distribution extends Packagers<Distribution> implements Domai
             props.set(KEY_DISTRIBUTION_JAVA_VERSION_BUILD, "");
         }
         return props;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    @Override
-    public void disable() {
-        active = Active.NEVER;
-        enabled = false;
-    }
-
-    public boolean resolveEnabled(Project project) {
-        enabled = null != active && active.check(project);
-        return enabled;
-    }
-
-    @Override
-    public Active getActive() {
-        return active;
-    }
-
-    @Override
-    public void setActive(Active active) {
-        this.active = active;
-    }
-
-    @Override
-    public void setActive(String str) {
-        setActive(Active.of(str));
-    }
-
-    @Override
-    public boolean isActiveSet() {
-        return null != active;
     }
 
     public Platform getPlatform() {
@@ -503,7 +460,7 @@ public final class Distribution extends Packagers<Distribution> implements Domai
 
         Map<String, Object> props = new LinkedHashMap<>();
         props.put("enabled", isEnabled());
-        props.put("active", active);
+        props.put("active", getActive());
         props.put("type", type);
         props.put("executable", executable.asMap(full));
         if (full || platform.isSet()) props.put("platform", platform.asMap(full));

@@ -32,7 +32,7 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
  * @since 1.2.0
  */
 public final class CommandHook extends AbstractHook<CommandHook> {
-    private static final long serialVersionUID = -3088744643196315501L;
+    private static final long serialVersionUID = 6669599201326933824L;
 
     private String cmd;
 

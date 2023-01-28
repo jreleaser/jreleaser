@@ -313,13 +313,8 @@ public class Gitea {
                 continue;
             }
 
-            logger.info(" " + RB.$("git.upload.asset"), asset.getFilename());
-            try {
-                api.uploadAsset(owner, repo, release.getId(), toFormData(asset.getPath()));
-            } catch (RestAPIException e) {
-                logger.error(" " + RB.$("git.upload.asset.failure"), asset.getFilename());
-                throw e;
-            }
+            uploadOrUpdateAsset(asset, owner, repo, release,
+                "git.upload.asset", "git.upload.asset.failure");
         }
     }
 
@@ -338,13 +333,18 @@ public class Gitea {
                 throw e;
             }
 
-            logger.info(" " + RB.$("git.update.asset"), asset.getFilename());
-            try {
-                api.uploadAsset(owner, repo, release.getId(), toFormData(asset.getPath()));
-            } catch (RestAPIException e) {
-                logger.error(" " + RB.$("git.update.asset.failure"), asset.getFilename());
-                throw e;
-            }
+            uploadOrUpdateAsset(asset, owner, repo, release,
+                "git.update.asset", "git.update.asset.failure");
+        }
+    }
+
+    private void uploadOrUpdateAsset(Asset asset, String owner, String repo, GtRelease release, String operationMessageKey, String operationErrorMessageKey) throws IOException {
+        logger.info(" " + RB.$(operationMessageKey), asset.getFilename());
+        try {
+            api.uploadAsset(owner, repo, release.getId(), toFormData(asset.getPath()));
+        } catch (RestAPIException e) {
+            logger.error(" " + RB.$(operationErrorMessageKey), asset.getFilename());
+            throw e;
         }
     }
 

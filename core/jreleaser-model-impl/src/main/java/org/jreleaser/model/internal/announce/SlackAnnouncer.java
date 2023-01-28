@@ -44,7 +44,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public final class SlackAnnouncer extends AbstractAnnouncer<SlackAnnouncer, org.jreleaser.model.api.announce.SlackAnnouncer> {
-    private static final long serialVersionUID = 1381380804088705522L;
+    private static final long serialVersionUID = 7372618153307601818L;
 
     private String token;
     private String webhook;

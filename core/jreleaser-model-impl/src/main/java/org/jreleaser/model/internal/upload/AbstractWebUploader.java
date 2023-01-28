@@ -30,7 +30,7 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
  * @since 0.8.0
  */
 public abstract class AbstractWebUploader<A extends org.jreleaser.model.api.upload.WebUploader, S extends AbstractWebUploader<A, S>> extends AbstractUploader<A, S> implements WebUploader<A> {
-    private static final long serialVersionUID = 7045667920984330826L;
+    private static final long serialVersionUID = 4426002573676915317L;
 
     private String uploadUrl;
     private String downloadUrl;

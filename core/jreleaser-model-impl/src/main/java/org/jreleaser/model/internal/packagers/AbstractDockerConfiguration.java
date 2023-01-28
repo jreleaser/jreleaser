@@ -17,12 +17,8 @@
  */
 package org.jreleaser.model.internal.packagers;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.jreleaser.model.Active;
-import org.jreleaser.model.internal.common.AbstractModelObject;
-import org.jreleaser.model.internal.common.Activatable;
+import org.jreleaser.model.internal.common.AbstractActivatable;
 import org.jreleaser.model.internal.common.ExtraProperties;
-import org.jreleaser.model.internal.project.Project;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,9 +34,9 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.4.0
  */
-public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfiguration<S>> extends AbstractModelObject<S>
-    implements DockerConfiguration, ExtraProperties, Activatable {
-    private static final long serialVersionUID = 6814437516100086960L;
+public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfiguration<S>> extends AbstractActivatable<S>
+    implements DockerConfiguration, ExtraProperties {
+    private static final long serialVersionUID = 5019043597748290797L;
 
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private final Map<String, String> labels = new LinkedHashMap<>();
@@ -52,17 +48,13 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
     private final List<String> skipTemplates = new ArrayList<>();
     private final Buildx buildx = new Buildx();
 
-    @JsonIgnore
-    private boolean enabled;
-    private Active active;
     private String templateDirectory;
     private Boolean useLocalArtifact;
     private String baseImage;
 
     @Override
     public void merge(S source) {
-        this.active = merge(this.active, source.getActive());
-        this.enabled = merge(this.enabled, source.isEnabled());
+        super.merge(source);
         this.templateDirectory = merge(this.templateDirectory, source.getTemplateDirectory());
         setSkipTemplates(merge(this.skipTemplates, source.getSkipTemplates()));
         setExtraProperties(merge(this.extraProperties, source.getExtraProperties()));
@@ -80,47 +72,6 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
     @Override
     public String getPrefix() {
         return TYPE;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    @Override
-    public void disable() {
-        active = Active.NEVER;
-        enabled = false;
-    }
-
-    protected void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    @Override
-    public boolean resolveEnabled(Project project) {
-        enabled = null != active && active.check(project);
-        return enabled;
-    }
-
-    @Override
-    public Active getActive() {
-        return active;
-    }
-
-    @Override
-    public void setActive(Active active) {
-        this.active = active;
-    }
-
-    @Override
-    public void setActive(String str) {
-        setActive(Active.of(str));
-    }
-
-    @Override
-    public boolean isActiveSet() {
-        return null != active;
     }
 
     @Override
@@ -322,7 +273,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
 
         Map<String, Object> props = new LinkedHashMap<>();
         props.put("enabled", isEnabled());
-        props.put("active", active);
+        props.put("active", getActive());
         props.put("templateDirectory", templateDirectory);
         props.put("skipTemplates", skipTemplates);
         props.put("useLocalArtifact", isUseLocalArtifact());

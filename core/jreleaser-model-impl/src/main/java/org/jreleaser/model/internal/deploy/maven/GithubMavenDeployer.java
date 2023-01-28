@@ -33,7 +33,7 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
  * @since 1.3.0
  */
 public final class GithubMavenDeployer extends AbstractMavenDeployer<GithubMavenDeployer, org.jreleaser.model.api.deploy.maven.GithubMavenDeployer> {
-    private static final long serialVersionUID = 7453425593383154500L;
+    private static final long serialVersionUID = 5073629187876822221L;
 
     private String repository;
 

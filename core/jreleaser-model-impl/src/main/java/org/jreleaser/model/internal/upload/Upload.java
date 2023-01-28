@@ -17,16 +17,13 @@
  */
 package org.jreleaser.model.internal.upload;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.JReleaserContext;
-import org.jreleaser.model.internal.common.AbstractModelObject;
-import org.jreleaser.model.internal.common.Activatable;
+import org.jreleaser.model.internal.common.AbstractActivatable;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.common.ExtraProperties;
 import org.jreleaser.model.internal.distributions.Distribution;
-import org.jreleaser.model.internal.project.Project;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -47,8 +44,8 @@ import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSepar
  * @author Andres Almiray
  * @since 0.3.0
  */
-public final class Upload extends AbstractModelObject<Upload> implements Domain, Activatable {
-    private static final long serialVersionUID = -7894546875482014801L;
+public final class Upload extends AbstractActivatable<Upload> implements Domain {
+    private static final long serialVersionUID = -8267239230459971399L;
 
     private final Map<String, ArtifactoryUploader> artifactory = new LinkedHashMap<>();
     private final Map<String, FtpUploader> ftp = new LinkedHashMap<>();
@@ -58,10 +55,6 @@ public final class Upload extends AbstractModelObject<Upload> implements Domain,
     private final Map<String, S3Uploader> s3 = new LinkedHashMap<>();
     private final Map<String, ScpUploader> scp = new LinkedHashMap<>();
     private final Map<String, SftpUploader> sftp = new LinkedHashMap<>();
-
-    private Active active;
-    @JsonIgnore
-    private boolean enabled = true;
 
     private final org.jreleaser.model.api.upload.Upload immutable = new org.jreleaser.model.api.upload.Upload() {
         private static final long serialVersionUID = -1954880769141203693L;
@@ -157,7 +150,7 @@ public final class Upload extends AbstractModelObject<Upload> implements Domain,
 
         @Override
         public Active getActive() {
-            return active;
+            return Upload.this.getActive();
         }
 
         @Override
@@ -171,14 +164,17 @@ public final class Upload extends AbstractModelObject<Upload> implements Domain,
         }
     };
 
+    public Upload() {
+        enabledSet(true);
+    }
+
     public org.jreleaser.model.api.upload.Upload asImmutable() {
         return immutable;
     }
 
     @Override
     public void merge(Upload source) {
-        this.active = merge(this.active, source.active);
-        this.enabled = merge(this.enabled, source.enabled);
+        super.merge(source);
         setArtifactory(mergeModel(this.artifactory, source.artifactory));
         setFtp(mergeModel(this.ftp, source.ftp));
         setGitea(mergeModel(this.gitea, source.gitea));
@@ -189,48 +185,12 @@ public final class Upload extends AbstractModelObject<Upload> implements Domain,
         setSftp(mergeModel(this.sftp, source.sftp));
     }
 
-    @Override
-    public boolean isEnabled() {
-        return enabled && null != active;
-    }
-
     @Deprecated
     public void setEnabled(Boolean enabled) {
         nag("upload.enabled is deprecated since 1.1.0 and will be removed in 2.0.0");
         if (null != enabled) {
-            this.active = enabled ? Active.ALWAYS : Active.NEVER;
+            setActive(enabled ? Active.ALWAYS : Active.NEVER);
         }
-    }
-
-    @Override
-    public void disable() {
-        active = Active.NEVER;
-        enabled = false;
-    }
-
-    public boolean resolveEnabled(Project project) {
-        enabled = null != active && active.check(project);
-        return enabled;
-    }
-
-    @Override
-    public Active getActive() {
-        return active;
-    }
-
-    @Override
-    public void setActive(Active active) {
-        this.active = active;
-    }
-
-    @Override
-    public void setActive(String str) {
-        setActive(Active.of(str));
-    }
-
-    @Override
-    public boolean isActiveSet() {
-        return null != active;
     }
 
     public Optional<? extends Uploader<?>> getUploader(String type, String name) {
@@ -490,8 +450,8 @@ public final class Upload extends AbstractModelObject<Upload> implements Domain,
     @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
-        map.put("enabled", enabled);
-        map.put("active", active);
+        map.put("enabled", isEnabled());
+        map.put("active", getActive());
 
         List<Map<String, Object>> artifactory = this.artifactory.values()
             .stream()

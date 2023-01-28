@@ -18,12 +18,10 @@
 package org.jreleaser.model.internal.upload;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.JReleaserContext;
-import org.jreleaser.model.internal.common.AbstractModelObject;
+import org.jreleaser.model.internal.common.AbstractActivatable;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.ExtraProperties;
-import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.internal.util.Artifacts;
 import org.jreleaser.mustache.TemplateContext;
 
@@ -43,17 +41,14 @@ import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSepar
  * @author Andres Almiray
  * @since 0.3.0
  */
-public abstract class AbstractUploader<A extends org.jreleaser.model.api.upload.Uploader, S extends AbstractUploader<A, S>> extends AbstractModelObject<S> implements Uploader<A>, ExtraProperties {
-    private static final long serialVersionUID = -8631531179588203881L;
+public abstract class AbstractUploader<A extends org.jreleaser.model.api.upload.Uploader, S extends AbstractUploader<A, S>> extends AbstractActivatable<S> implements Uploader<A>, ExtraProperties {
+    private static final long serialVersionUID = 8274857458153227069L;
 
     @JsonIgnore
     private final String type;
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     @JsonIgnore
     private String name;
-    @JsonIgnore
-    private boolean enabled;
-    private Active active;
     private int connectTimeout;
     private int readTimeout;
     private Boolean artifacts;
@@ -67,8 +62,7 @@ public abstract class AbstractUploader<A extends org.jreleaser.model.api.upload.
 
     @Override
     public void merge(S source) {
-        this.active = merge(this.active, source.getActive());
-        this.enabled = merge(this.enabled, source.isEnabled());
+        super.merge(source);
         this.name = merge(this.name, source.getName());
         this.connectTimeout = merge(this.getConnectTimeout(), source.getConnectTimeout());
         this.readTimeout = merge(this.getReadTimeout(), source.getReadTimeout());
@@ -85,25 +79,6 @@ public abstract class AbstractUploader<A extends org.jreleaser.model.api.upload.
     }
 
     @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    @Override
-    public void disable() {
-        active = Active.NEVER;
-        enabled = false;
-    }
-
-    public boolean resolveEnabled(Project project) {
-        enabled = null != active && active.check(project);
-        if (project.isSnapshot() && !isSnapshotSupported()) {
-            enabled = false;
-        }
-        return enabled;
-    }
-
-    @Override
     public String getName() {
         return name;
     }
@@ -111,26 +86,6 @@ public abstract class AbstractUploader<A extends org.jreleaser.model.api.upload.
     @Override
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Override
-    public Active getActive() {
-        return active;
-    }
-
-    @Override
-    public void setActive(Active active) {
-        this.active = active;
-    }
-
-    @Override
-    public void setActive(String str) {
-        setActive(Active.of(str));
-    }
-
-    @Override
-    public boolean isActiveSet() {
-        return null != active;
     }
 
     @Override
@@ -245,7 +200,7 @@ public abstract class AbstractUploader<A extends org.jreleaser.model.api.upload.
 
         Map<String, Object> props = new LinkedHashMap<>();
         props.put("enabled", isEnabled());
-        props.put("active", active);
+        props.put("active", getActive());
         props.put("connectTimeout", connectTimeout);
         props.put("readTimeout", readTimeout);
         props.put("artifacts", isArtifacts());

@@ -18,9 +18,7 @@
 package org.jreleaser.model.internal.packagers;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.jreleaser.model.Active;
-import org.jreleaser.model.internal.common.AbstractModelObject;
-import org.jreleaser.model.internal.project.Project;
+import org.jreleaser.model.internal.common.AbstractActivatable;
 import org.jreleaser.mustache.TemplateContext;
 
 import java.util.LinkedHashMap;
@@ -35,12 +33,9 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> extends AbstractModelObject<S> implements RepositoryTap {
-    private static final long serialVersionUID = -561174331408057874L;
+public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> extends AbstractActivatable<S> implements RepositoryTap {
+    private static final long serialVersionUID = 4164695459074006526L;
 
-    private Active active;
-    @JsonIgnore
-    private boolean enabled;
     @JsonIgnore
     private final String basename;
     @JsonIgnore
@@ -73,8 +68,7 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
 
     @Override
     public void merge(S source) {
-        this.active = merge(this.active, source.getActive());
-        this.enabled = merge(this.enabled, source.isEnabled());
+        super.merge(source);
         this.owner = merge(this.owner, source.getOwner());
         this.name = merge(this.name, source.getName());
         this.tagName = merge(this.tagName, source.getTagName());
@@ -82,47 +76,6 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
         this.username = merge(this.username, source.getUsername());
         this.token = merge(this.token, source.getToken());
         this.commitMessage = merge(this.commitMessage, source.getCommitMessage());
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    @Override
-    public void disable() {
-        active = Active.NEVER;
-        enabled = false;
-    }
-
-    @Override
-    public boolean resolveEnabled(Project project) {
-        enabled = null != active && active.check(project);
-        return enabled;
-    }
-
-    protected void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    @Override
-    public Active getActive() {
-        return active;
-    }
-
-    @Override
-    public void setActive(Active active) {
-        this.active = active;
-    }
-
-    @Override
-    public void setActive(String str) {
-        setActive(Active.of(str));
-    }
-
-    @Override
-    public boolean isActiveSet() {
-        return null != active;
     }
 
     @Override
@@ -222,7 +175,7 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
-        map.put("active", active);
+        map.put("active", getActive());
         map.put("owner", owner);
         map.put("name", getResolvedName());
         map.put("tagName", tagName);

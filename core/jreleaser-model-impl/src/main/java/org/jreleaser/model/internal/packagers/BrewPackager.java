@@ -67,7 +67,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser.model.api.packagers.BrewPackager, BrewPackager> {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
-    private static final long serialVersionUID = 6672298465123577661L;
+    private static final long serialVersionUID = -7661418498079285220L;
 
     static {
         Set<String> extensions = setOf(ZIP.extension());

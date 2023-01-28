@@ -33,7 +33,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public final class SdkmanAnnouncer extends AbstractAnnouncer<SdkmanAnnouncer, org.jreleaser.model.api.announce.SdkmanAnnouncer> {
-    private static final long serialVersionUID = 4952849468692642471L;
+    private static final long serialVersionUID = 6870988423400683133L;
 
     private String consumerKey;
     private String consumerToken;

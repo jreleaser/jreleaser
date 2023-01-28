@@ -46,11 +46,15 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 @Deprecated
 public final class GoogleChatAnnouncer extends AbstractAnnouncer<GoogleChatAnnouncer, org.jreleaser.model.api.announce.GoogleChatAnnouncer> {
+    private static final long serialVersionUID = -3299515972880177372L;
+
     private String webhook;
     private String message;
     private String messageTemplate;
 
     private final org.jreleaser.model.api.announce.GoogleChatAnnouncer immutable = new org.jreleaser.model.api.announce.GoogleChatAnnouncer() {
+        private static final long serialVersionUID = 6073740451816678256L;
+
         @Override
         public String getType() {
             return org.jreleaser.model.api.announce.GoogleChatAnnouncer.TYPE;

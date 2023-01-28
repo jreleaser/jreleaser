@@ -35,7 +35,7 @@ import static org.jreleaser.model.api.announce.HttpAnnouncers.TYPE;
  * @since 1.3.0
  */
 public final class HttpAnnouncers extends AbstractAnnouncer<HttpAnnouncers, org.jreleaser.model.api.announce.HttpAnnouncers> {
-    private static final long serialVersionUID = -447592522304823495L;
+    private static final long serialVersionUID = 405669380510527157L;
 
     private final Map<String, HttpAnnouncer> httpAnnouncers = new LinkedHashMap<>();
 

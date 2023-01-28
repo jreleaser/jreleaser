@@ -17,14 +17,11 @@
  */
 package org.jreleaser.model.internal.announce;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.JReleaserException;
-import org.jreleaser.model.internal.common.AbstractModelObject;
-import org.jreleaser.model.internal.common.Activatable;
+import org.jreleaser.model.internal.common.AbstractActivatable;
 import org.jreleaser.model.internal.common.Domain;
-import org.jreleaser.model.internal.project.Project;
 
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -38,8 +35,8 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public final class Announce extends AbstractModelObject<Announce> implements Domain, Activatable {
-    private static final long serialVersionUID = -7824255325400377999L;
+public final class Announce extends AbstractActivatable<Announce> implements Domain {
+    private static final long serialVersionUID = -6868967233400028691L;
 
     private final ArticleAnnouncer article = new ArticleAnnouncer();
     private final DiscordAnnouncer discord = new DiscordAnnouncer();
@@ -58,10 +55,6 @@ public final class Announce extends AbstractModelObject<Announce> implements Dom
     private final TwitterAnnouncer twitter = new TwitterAnnouncer();
     private final WebhooksAnnouncer webhooks = new WebhooksAnnouncer();
     private final ZulipAnnouncer zulip = new ZulipAnnouncer();
-
-    private Active active;
-    @JsonIgnore
-    private boolean enabled = true;
 
     private final org.jreleaser.model.api.announce.Announce immutable = new org.jreleaser.model.api.announce.Announce() {
         private static final long serialVersionUID = 5983475776968116269L;
@@ -158,7 +151,7 @@ public final class Announce extends AbstractModelObject<Announce> implements Dom
 
         @Override
         public Active getActive() {
-            return active;
+            return Announce.this.getActive();
         }
 
         @Override
@@ -172,14 +165,17 @@ public final class Announce extends AbstractModelObject<Announce> implements Dom
         }
     };
 
+    public Announce() {
+        enabledSet(true);
+    }
+
     public org.jreleaser.model.api.announce.Announce asImmutable() {
         return immutable;
     }
 
     @Override
     public void merge(Announce source) {
-        this.active = merge(this.active, source.active);
-        this.enabled = merge(this.enabled, source.enabled);
+        super.merge(source);
         setArticle(source.article);
         setDiscord(source.discord);
         setDiscourse(source.discourse);
@@ -199,48 +195,12 @@ public final class Announce extends AbstractModelObject<Announce> implements Dom
         setConfiguredWebhooks(source.webhooks);
     }
 
-    @Override
-    public boolean isEnabled() {
-        return enabled && null != active;
-    }
-
     @Deprecated
     public void setEnabled(Boolean enabled) {
         nag("announce.enabled is deprecated since 1.1.0 and will be removed in 2.0.0");
         if (null != enabled) {
-            this.active = enabled ? Active.ALWAYS : Active.NEVER;
+            setActive(enabled ? Active.ALWAYS : Active.NEVER);
         }
-    }
-
-    @Override
-    public void disable() {
-        active = Active.NEVER;
-        enabled = false;
-    }
-
-    public boolean resolveEnabled(Project project) {
-        enabled = null != active && active.check(project);
-        return enabled;
-    }
-
-    @Override
-    public Active getActive() {
-        return active;
-    }
-
-    @Override
-    public void setActive(Active active) {
-        this.active = active;
-    }
-
-    @Override
-    public void setActive(String str) {
-        setActive(Active.of(str));
-    }
-
-    @Override
-    public boolean isActiveSet() {
-        return null != active;
     }
 
     public ArticleAnnouncer getArticle() {
@@ -418,7 +378,7 @@ public final class Announce extends AbstractModelObject<Announce> implements Dom
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
-        map.put("active", active);
+        map.put("active", getActive());
         map.putAll(article.asMap(full));
         map.putAll(discord.asMap(full));
         map.putAll(discourse.asMap(full));

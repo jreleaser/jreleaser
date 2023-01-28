@@ -71,7 +71,5 @@ public interface MavenDeployer<A extends org.jreleaser.model.api.deploy.maven.Ma
 
     Http.Authorization resolveAuthorization();
 
-    boolean isSnapshotAllowed();
-
     String getResolvedUrl(TemplateContext props);
 }

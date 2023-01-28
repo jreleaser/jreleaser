@@ -34,7 +34,7 @@ public final class JReleaserOutput {
 
     public static void nag(String msg) {
         if (!isQuiet()) {
-            System.out.println(msg);
+            System.err.println("🚨 " + msg);
         }
     }
 }

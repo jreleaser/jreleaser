@@ -36,7 +36,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 1.1.0
  */
 public final class HttpDownloader extends AbstractDownloader<org.jreleaser.model.api.download.HttpDownloader, HttpDownloader> implements Http {
-    private static final long serialVersionUID = -2133185020490422565L;
+    private static final long serialVersionUID = -3460744168451893260L;
 
     private final Map<String, String> headers = new LinkedHashMap<>();
     private String username;

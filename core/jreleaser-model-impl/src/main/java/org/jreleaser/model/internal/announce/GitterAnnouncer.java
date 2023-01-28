@@ -46,11 +46,15 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 @Deprecated
 public final class GitterAnnouncer extends AbstractAnnouncer<GitterAnnouncer, org.jreleaser.model.api.announce.GitterAnnouncer> {
+    private static final long serialVersionUID = -6229255736623561012L;
+
     private String webhook;
     private String message;
     private String messageTemplate;
 
     private final org.jreleaser.model.api.announce.GitterAnnouncer immutable = new org.jreleaser.model.api.announce.GitterAnnouncer() {
+        private static final long serialVersionUID = 1454055966678754000L;
+
         @Override
         public String getType() {
             return org.jreleaser.model.api.announce.GitterAnnouncer.TYPE;

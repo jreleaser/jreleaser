@@ -51,7 +51,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 1.4.0
  */
 public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAssembler, org.jreleaser.model.api.assemble.JavaArchiveAssembler> {
-    private static final long serialVersionUID = -4060683029719902130L;
+    private static final long serialVersionUID = 4143674954322344767L;
 
     private final Set<Archive.Format> formats = new LinkedHashSet<>();
     private final List<Glob> jars = new ArrayList<>();

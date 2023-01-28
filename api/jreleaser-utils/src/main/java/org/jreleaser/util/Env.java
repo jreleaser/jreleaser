@@ -59,7 +59,9 @@ public final class Env {
         if (!key.startsWith(JRELEASER_SYS_PREFIX)) {
             key = JRELEASER_SYS_PREFIX + key;
         }
-        return key.replace("_", ".")
+        return key.replace(" ", ".")
+            .replace("-", ".")
+            .replace("_", ".")
             .toLowerCase(Locale.ENGLISH);
     }
 

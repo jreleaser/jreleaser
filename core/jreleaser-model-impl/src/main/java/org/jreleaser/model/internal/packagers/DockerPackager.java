@@ -66,7 +66,7 @@ import static org.jreleaser.util.StringUtils.isFalse;
  */
 public final class DockerPackager extends AbstractDockerConfiguration<DockerPackager> implements RepositoryPackager<org.jreleaser.model.api.packagers.DockerPackager>, CommitAuthorAware {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
-    private static final long serialVersionUID = -6156759704738854921L;
+    private static final long serialVersionUID = 8245232605884798697L;
 
     static {
         Set<String> extensions = setOf(ZIP.extension());
@@ -262,9 +262,9 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
 
     @Override
     public boolean resolveEnabled(Project project, Distribution distribution) {
-        setEnabled(null != getActive() && getActive().check(project));
+        resolveEnabled(project);
         if (!supportsDistribution(distribution.getType())) {
-            setEnabled(false);
+            disable();
         }
         return isEnabled();
     }

@@ -39,7 +39,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.8.0
  */
 public final class S3Uploader extends AbstractUploader<org.jreleaser.model.api.upload.S3Uploader, S3Uploader> {
-    private static final long serialVersionUID = -5548554055867278251L;
+    private static final long serialVersionUID = 2634650056338097232L;
 
     private final Map<String, String> headers = new LinkedHashMap<>();
 

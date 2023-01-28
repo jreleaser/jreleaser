@@ -36,7 +36,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.8.0
  */
 public abstract class AbstractJavaAssembler<S extends AbstractJavaAssembler<S, A>, A extends org.jreleaser.model.api.assemble.Assembler> extends AbstractAssembler<S, A> implements JavaAssembler<A> {
-    private static final long serialVersionUID = 3050290416625742135L;
+    private static final long serialVersionUID = 2179940356901485892L;
 
     private final Artifact mainJar = new Artifact();
     private final List<Glob> jars = new ArrayList<>();

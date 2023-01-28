@@ -46,11 +46,15 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 @Deprecated
 public final class DiscordAnnouncer extends AbstractAnnouncer<DiscordAnnouncer, org.jreleaser.model.api.announce.DiscordAnnouncer> {
+    private static final long serialVersionUID = -1205041807456011585L;
+
     private String webhook;
     private String message;
     private String messageTemplate;
 
     private final org.jreleaser.model.api.announce.DiscordAnnouncer immutable = new org.jreleaser.model.api.announce.DiscordAnnouncer() {
+        private static final long serialVersionUID = 5364040532192292063L;
+
         @Override
         public String getType() {
             return org.jreleaser.model.api.announce.DiscordAnnouncer.TYPE;

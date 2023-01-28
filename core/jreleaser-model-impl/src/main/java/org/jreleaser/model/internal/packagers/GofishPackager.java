@@ -53,6 +53,7 @@ import static org.jreleaser.util.StringUtils.isFalse;
  */
 public final class GofishPackager extends AbstractRepositoryPackager<org.jreleaser.model.api.packagers.GofishPackager, GofishPackager> {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
+    private static final long serialVersionUID = -4053286282850852250L;
 
     static {
         Set<String> extensions = setOf(
@@ -71,6 +72,8 @@ public final class GofishPackager extends AbstractRepositoryPackager<org.jreleas
     private final GofishRepository repository = new GofishRepository();
 
     private final org.jreleaser.model.api.packagers.GofishPackager immutable = new org.jreleaser.model.api.packagers.GofishPackager() {
+        private static final long serialVersionUID = 7575986906210858224L;
+
         @Override
         public org.jreleaser.model.api.packagers.PackagerRepository getRepository() {
             return repository.asImmutable();

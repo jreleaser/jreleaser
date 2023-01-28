@@ -46,12 +46,16 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 @Deprecated
 public final class MattermostAnnouncer extends AbstractAnnouncer<MattermostAnnouncer, org.jreleaser.model.api.announce.MattermostAnnouncer> {
+    private static final long serialVersionUID = 73791517096556844L;
+
     private String webhook;
     private String message;
     private String messageTemplate;
     private Boolean structuredMessage;
 
     private final org.jreleaser.model.api.announce.MattermostAnnouncer immutable = new org.jreleaser.model.api.announce.MattermostAnnouncer() {
+        private static final long serialVersionUID = -3761533403365622892L;
+
         @Override
         public String getType() {
             return org.jreleaser.model.api.announce.MattermostAnnouncer.TYPE;

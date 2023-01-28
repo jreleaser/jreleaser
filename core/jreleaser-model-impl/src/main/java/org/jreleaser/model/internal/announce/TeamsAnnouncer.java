@@ -45,10 +45,14 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 @Deprecated
 public final class TeamsAnnouncer extends AbstractAnnouncer<TeamsAnnouncer, org.jreleaser.model.api.announce.TeamsAnnouncer> {
+    private static final long serialVersionUID = 6059830637979259885L;
+
     private String webhook;
     private String messageTemplate;
 
     private final org.jreleaser.model.api.announce.TeamsAnnouncer immutable = new org.jreleaser.model.api.announce.TeamsAnnouncer() {
+        private static final long serialVersionUID = -6163001411466953843L;
+
         @Override
         public String getType() {
             return org.jreleaser.model.api.announce.TeamsAnnouncer.TYPE;

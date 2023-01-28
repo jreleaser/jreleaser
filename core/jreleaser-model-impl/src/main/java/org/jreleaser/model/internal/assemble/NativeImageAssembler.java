@@ -17,19 +17,17 @@
  */
 package org.jreleaser.model.internal.assemble;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Archive;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Stereotype;
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.common.AbstractActivatable;
 import org.jreleaser.model.internal.common.AbstractModelObject;
-import org.jreleaser.model.internal.common.Activatable;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.common.FileSet;
 import org.jreleaser.model.internal.common.Glob;
-import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.util.PlatformUtils;
 
@@ -442,14 +440,10 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
         void setArgs(List<String> args);
     }
 
-    public static final class Upx extends AbstractModelObject<Upx> implements Domain, Activatable {
-        private static final long serialVersionUID = -8620628719023438997L;
+    public static final class Upx extends AbstractActivatable<Upx> implements Domain {
+        private static final long serialVersionUID = -4962541080085819348L;
 
         private final List<String> args = new ArrayList<>();
-
-        @JsonIgnore
-        private boolean enabled;
-        private Active active;
         private String version;
 
         private final org.jreleaser.model.api.assemble.NativeImageAssembler.Upx immutable = new org.jreleaser.model.api.assemble.NativeImageAssembler.Upx() {
@@ -467,7 +461,7 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
 
             @Override
             public Active getActive() {
-                return active;
+                return Upx.this.getActive();
             }
 
             @Override
@@ -487,46 +481,9 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
 
         @Override
         public void merge(Upx source) {
-            this.active = this.merge(this.active, source.active);
-            this.enabled = this.merge(this.enabled, source.enabled);
+            super.merge(source);
             this.version = this.merge(this.version, source.version);
             setArgs(merge(this.args, source.args));
-        }
-
-        @Override
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        @Override
-        public void disable() {
-            active = Active.NEVER;
-            enabled = false;
-        }
-
-        public boolean resolveEnabled(Project project) {
-            enabled = null != active && active.check(project);
-            return enabled;
-        }
-
-        @Override
-        public Active getActive() {
-            return active;
-        }
-
-        @Override
-        public void setActive(Active active) {
-            this.active = active;
-        }
-
-        @Override
-        public void setActive(String str) {
-            setActive(Active.of(str));
-        }
-
-        @Override
-        public boolean isActiveSet() {
-            return null != active;
         }
 
         public String getVersion() {
@@ -552,7 +509,7 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
 
             Map<String, Object> props = new LinkedHashMap<>();
             props.put("enabled", isEnabled());
-            props.put("active", active);
+            props.put("active", getActive());
             props.put("version", version);
 
             return props;

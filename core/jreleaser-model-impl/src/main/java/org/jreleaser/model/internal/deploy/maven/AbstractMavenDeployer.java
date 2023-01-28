@@ -18,11 +18,9 @@
 package org.jreleaser.model.internal.deploy.maven;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.jreleaser.model.Active;
 import org.jreleaser.model.Http;
-import org.jreleaser.model.internal.common.AbstractModelObject;
+import org.jreleaser.model.internal.common.AbstractActivatable;
 import org.jreleaser.model.internal.common.ExtraProperties;
-import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.mustache.TemplateContext;
 
 import java.util.ArrayList;
@@ -40,8 +38,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 1.3.0
  */
-public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A>, A extends org.jreleaser.model.api.deploy.maven.MavenDeployer> extends AbstractModelObject<S> implements MavenDeployer<A>, ExtraProperties {
-    private static final long serialVersionUID = 3587064586626120587L;
+public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A>, A extends org.jreleaser.model.api.deploy.maven.MavenDeployer> extends AbstractActivatable<S> implements MavenDeployer<A>, ExtraProperties {
+    private static final long serialVersionUID = -6005127064517111267L;
 
     @JsonIgnore
     private final String type;
@@ -49,9 +47,6 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
     private final List<String> stagingRepositories = new ArrayList<>();
     @JsonIgnore
     private String name;
-    @JsonIgnore
-    private boolean enabled;
-    private Active active;
     private int connectTimeout;
     private int readTimeout;
     private Boolean sign;
@@ -68,8 +63,7 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
 
     @Override
     public void merge(S source) {
-        this.active = merge(this.active, source.getActive());
-        this.enabled = merge(this.enabled, source.isEnabled());
+        super.merge(source);
         this.name = merge(this.name, source.getName());
         this.connectTimeout = merge(this.getConnectTimeout(), source.getConnectTimeout());
         this.readTimeout = merge(this.getReadTimeout(), source.getReadTimeout());
@@ -90,27 +84,7 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
     }
 
     @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    @Override
-    public void disable() {
-        active = Active.NEVER;
-        enabled = false;
-    }
-
-    @Override
-    public boolean resolveEnabled(Project project) {
-        enabled = null != active && active.check(project);
-        if (project.isSnapshot() && !isSnapshotAllowed()) {
-            enabled = false;
-        }
-        return enabled;
-    }
-
-    @Override
-    public boolean isSnapshotAllowed() {
+    public boolean isSnapshotSupported() {
         return false;
     }
 
@@ -122,26 +96,6 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
     @Override
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Override
-    public Active getActive() {
-        return active;
-    }
-
-    @Override
-    public void setActive(Active active) {
-        this.active = active;
-    }
-
-    @Override
-    public void setActive(String str) {
-        setActive(Active.of(str));
-    }
-
-    @Override
-    public boolean isActiveSet() {
-        return null != active;
     }
 
     @Override
@@ -292,7 +246,7 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
 
         Map<String, Object> props = new LinkedHashMap<>();
         props.put("enabled", isEnabled());
-        props.put("active", active);
+        props.put("active", getActive());
         props.put("connectTimeout", connectTimeout);
         props.put("readTimeout", readTimeout);
         props.put("authorization", authorization);

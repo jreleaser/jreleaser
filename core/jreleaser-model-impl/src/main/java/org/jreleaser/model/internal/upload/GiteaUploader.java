@@ -36,8 +36,9 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 1.2.0
  */
 public final class GiteaUploader extends AbstractUploader<org.jreleaser.model.api.upload.GiteaUploader, GiteaUploader> {
-    private static final long serialVersionUID = -1973308102002316354L;
     private static final String DOWNLOAD_URL = "https://{{host}}/api/packages/{{owner}}/generic/{{packageName}}/{{packageVersion}}/{{artifactFile}}";
+    private static final long serialVersionUID = 6871010939362667394L;
+
     private String host;
     private String owner;
     private String token;

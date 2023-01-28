@@ -18,9 +18,7 @@
 package org.jreleaser.model.internal.download;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.jreleaser.model.Active;
-import org.jreleaser.model.internal.common.AbstractModelObject;
-import org.jreleaser.model.internal.project.Project;
+import org.jreleaser.model.internal.common.AbstractActivatable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,8 +30,8 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public abstract class AbstractDownloader<A extends org.jreleaser.model.api.download.Downloader, S extends AbstractDownloader<A, S>> extends AbstractModelObject<S> implements Downloader<A> {
-    private static final long serialVersionUID = 1444643272006843006L;
+public abstract class AbstractDownloader<A extends org.jreleaser.model.api.download.Downloader, S extends AbstractDownloader<A, S>> extends AbstractActivatable<S> implements Downloader<A> {
+    private static final long serialVersionUID = -4493344175741414422L;
 
     @JsonIgnore
     private final String type;
@@ -41,9 +39,6 @@ public abstract class AbstractDownloader<A extends org.jreleaser.model.api.downl
     private final List<Asset> assets = new ArrayList<>();
     @JsonIgnore
     private String name;
-    @JsonIgnore
-    private boolean enabled;
-    private Active active;
     private Integer connectTimeout;
     private Integer readTimeout;
 
@@ -53,9 +48,8 @@ public abstract class AbstractDownloader<A extends org.jreleaser.model.api.downl
 
     @Override
     public void merge(S source) {
+        super.merge(source);
         this.name = merge(this.name, source.getName());
-        this.active = merge(this.active, source.getActive());
-        this.enabled = merge(this.enabled, source.isEnabled());
         this.connectTimeout = merge(this.connectTimeout, source.getConnectTimeout());
         this.readTimeout = merge(this.readTimeout, source.getReadTimeout());
         setExtraProperties(merge(this.extraProperties, source.getExtraProperties()));
@@ -68,22 +62,6 @@ public abstract class AbstractDownloader<A extends org.jreleaser.model.api.downl
     }
 
     @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    @Override
-    public void disable() {
-        active = Active.NEVER;
-        enabled = false;
-    }
-
-    public boolean resolveEnabled(Project project) {
-        enabled = null != active && active.check(project);
-        return enabled;
-    }
-
-    @Override
     public String getName() {
         return name;
     }
@@ -91,26 +69,6 @@ public abstract class AbstractDownloader<A extends org.jreleaser.model.api.downl
     @Override
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Override
-    public Active getActive() {
-        return active;
-    }
-
-    @Override
-    public void setActive(Active active) {
-        this.active = active;
-    }
-
-    @Override
-    public void setActive(String str) {
-        setActive(Active.of(str));
-    }
-
-    @Override
-    public boolean isActiveSet() {
-        return null != active;
     }
 
     @Override
@@ -178,7 +136,7 @@ public abstract class AbstractDownloader<A extends org.jreleaser.model.api.downl
 
         Map<String, Object> props = new LinkedHashMap<>();
         props.put("enabled", isEnabled());
-        props.put("active", active);
+        props.put("active", getActive());
         props.put("connectTimeout", connectTimeout);
         props.put("readTimeout", readTimeout);
         asMap(full, props);

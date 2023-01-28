@@ -35,7 +35,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 1.1.0
  */
 public final class FtpDownloader extends AbstractDownloader<org.jreleaser.model.api.download.FtpDownloader, FtpDownloader> implements Ftp {
-    private static final long serialVersionUID = -4601112710782126715L;
+    private static final long serialVersionUID = 484815062275702428L;
 
     private String username;
     private String password;

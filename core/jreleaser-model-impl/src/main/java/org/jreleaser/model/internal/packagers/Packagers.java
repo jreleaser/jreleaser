@@ -17,7 +17,7 @@
  */
 package org.jreleaser.model.internal.packagers;
 
-import org.jreleaser.model.internal.common.AbstractModelObject;
+import org.jreleaser.model.internal.common.AbstractActivatable;
 import org.jreleaser.model.internal.common.Domain;
 
 import java.util.LinkedHashMap;
@@ -29,8 +29,8 @@ import static java.util.Collections.unmodifiableMap;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class Packagers<S extends Packagers<S>> extends AbstractModelObject<S> implements Domain {
-    private static final long serialVersionUID = -3860225912405368405L;
+public class Packagers<S extends Packagers<S>> extends AbstractActivatable<S> implements Domain {
+    private static final long serialVersionUID = -5034803500410129807L;
 
     protected final AppImagePackager appImage = new AppImagePackager();
     protected final AsdfPackager asdf = new AsdfPackager();
@@ -142,6 +142,7 @@ public class Packagers<S extends Packagers<S>> extends AbstractModelObject<S> im
 
     @Override
     public void merge(S source) {
+        super.merge(source);
         setAppImage(source.appImage);
         setAsdf(source.asdf);
         setBrew(source.brew);

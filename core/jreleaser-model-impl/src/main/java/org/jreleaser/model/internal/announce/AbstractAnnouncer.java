@@ -18,9 +18,7 @@
 package org.jreleaser.model.internal.announce;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.jreleaser.model.Active;
-import org.jreleaser.model.internal.common.AbstractModelObject;
-import org.jreleaser.model.internal.project.Project;
+import org.jreleaser.model.internal.common.AbstractActivatable;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -30,15 +28,12 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class AbstractAnnouncer<S extends AbstractAnnouncer<S, A>, A extends org.jreleaser.model.api.announce.Announcer> extends AbstractModelObject<S> implements Announcer<A> {
-    private static final long serialVersionUID = 3953189533357675271L;
+public abstract class AbstractAnnouncer<S extends AbstractAnnouncer<S, A>, A extends org.jreleaser.model.api.announce.Announcer> extends AbstractActivatable<S> implements Announcer<A> {
+    private static final long serialVersionUID = 9045634651862485708L;
 
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     @JsonIgnore
     private String name;
-    @JsonIgnore
-    private boolean enabled;
-    private Active active;
     private Integer connectTimeout;
     private Integer readTimeout;
 
@@ -48,8 +43,7 @@ public abstract class AbstractAnnouncer<S extends AbstractAnnouncer<S, A>, A ext
 
     @Override
     public void merge(S source) {
-        this.active = merge(this.active, source.getActive());
-        this.enabled = merge(this.enabled, source.isEnabled());
+        super.merge(source);
         this.connectTimeout = merge(this.connectTimeout, source.getConnectTimeout());
         this.readTimeout = merge(this.readTimeout, source.getReadTimeout());
         setExtraProperties(merge(this.extraProperties, source.getExtraProperties()));
@@ -60,7 +54,7 @@ public abstract class AbstractAnnouncer<S extends AbstractAnnouncer<S, A>, A ext
     }
 
     protected boolean isSet() {
-        return null != active ||
+        return super.isSet() ||
             null != connectTimeout ||
             null != readTimeout ||
             !extraProperties.isEmpty();
@@ -69,45 +63,6 @@ public abstract class AbstractAnnouncer<S extends AbstractAnnouncer<S, A>, A ext
     @Override
     public String getPrefix() {
         return getName();
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    @Override
-    public void disable() {
-        active = Active.NEVER;
-        enabled = false;
-    }
-
-    public boolean resolveEnabled(Project project) {
-        enabled = null != active && active.check(project);
-        if (project.isSnapshot() && !isSnapshotSupported()) {
-            enabled = false;
-        }
-        return enabled;
-    }
-
-    @Override
-    public Active getActive() {
-        return active;
-    }
-
-    @Override
-    public void setActive(Active active) {
-        this.active = active;
-    }
-
-    @Override
-    public void setActive(String str) {
-        setActive(Active.of(str));
-    }
-
-    @Override
-    public boolean isActiveSet() {
-        return null != active;
     }
 
     @Override
@@ -162,7 +117,7 @@ public abstract class AbstractAnnouncer<S extends AbstractAnnouncer<S, A>, A ext
 
         Map<String, Object> props = new LinkedHashMap<>();
         props.put("enabled", isEnabled());
-        props.put("active", active);
+        props.put("active", getActive());
         props.put("connectTimeout", connectTimeout);
         props.put("readTimeout", readTimeout);
         asMap(full, props);
