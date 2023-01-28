@@ -18,31 +18,23 @@
 package org.jreleaser.model.internal.upload;
 
 import org.jreleaser.model.Active;
-import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.mustache.TemplateContext;
 
 import java.util.Map;
 
 import static java.util.Collections.unmodifiableMap;
-import static org.jreleaser.model.Constants.HIDE;
-import static org.jreleaser.model.Constants.UNSET;
 import static org.jreleaser.model.api.upload.GitlabUploader.TYPE;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
-import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
  * @since 1.2.0
  */
-public final class GitlabUploader extends AbstractUploader<org.jreleaser.model.api.upload.GitlabUploader, GitlabUploader> {
+public final class GitlabUploader extends AbstractGitPackageUploader<org.jreleaser.model.api.upload.GitlabUploader, GitlabUploader> {
     private static final String DOWNLOAD_URL = "https://{{host}}/api/v4/projects/{{projectIdentifier}}/packages/generic/{{packageName}}/{{packageVersion}}/{{artifactFile}}";
-    private static final long serialVersionUID = 3566725168330435194L;
+    private static final long serialVersionUID = 5043963981384840431L;
 
-    private String host;
-    private String token;
-    private String packageName;
-    private String packageVersion;
     private String projectIdentifier;
 
     private final org.jreleaser.model.api.upload.GitlabUploader immutable = new org.jreleaser.model.api.upload.GitlabUploader() {
@@ -50,22 +42,22 @@ public final class GitlabUploader extends AbstractUploader<org.jreleaser.model.a
 
         @Override
         public String getHost() {
-            return host;
+            return GitlabUploader.this.getHost();
         }
 
         @Override
         public String getToken() {
-            return token;
+            return GitlabUploader.this.getToken();
         }
 
         @Override
         public String getPackageName() {
-            return packageName;
+            return GitlabUploader.this.getPackageName();
         }
 
         @Override
         public String getPackageVersion() {
-            return packageVersion;
+            return GitlabUploader.this.getPackageVersion();
         }
 
         @Override
@@ -157,43 +149,7 @@ public final class GitlabUploader extends AbstractUploader<org.jreleaser.model.a
     @Override
     public void merge(GitlabUploader source) {
         super.merge(source);
-        this.host = merge(this.host, source.host);
-        this.token = merge(this.token, source.token);
-        this.packageName = merge(this.packageName, source.packageName);
-        this.packageVersion = merge(this.packageVersion, source.packageVersion);
         this.projectIdentifier = merge(this.projectIdentifier, source.projectIdentifier);
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
-
-    public String getPackageName() {
-        return packageName;
-    }
-
-    public void setPackageName(String packageName) {
-        this.packageName = packageName;
-    }
-
-    public String getPackageVersion() {
-        return packageVersion;
-    }
-
-    public void setPackageVersion(String packageVersion) {
-        this.packageVersion = packageVersion;
     }
 
     public String getProjectIdentifier() {
@@ -206,30 +162,18 @@ public final class GitlabUploader extends AbstractUploader<org.jreleaser.model.a
 
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
-        props.put("host", host);
-        props.put("token", isNotBlank(token) ? HIDE : UNSET);
-        props.put("packageName", packageName);
-        props.put("packageVersion", packageVersion);
+        super.asMap(full, props);
         props.put("projectIdentifier", projectIdentifier);
-    }
-
-    @Override
-    public String getResolvedDownloadUrl(JReleaserContext context, Artifact artifact) {
-        return getResolvedDownloadUrl(context.fullProps(), artifact);
     }
 
     @Override
     public String getResolvedDownloadUrl(TemplateContext props, Artifact artifact) {
         TemplateContext p = new TemplateContext(artifactProps(props, artifact));
         p.setAll(getResolvedExtraProperties());
-        p.set("host", host);
-        p.set("packageName", packageName);
-        p.set("packageVersion", packageVersion);
-        p.set("projectIdentifier", projectIdentifier);
+        p.set("host", getHost());
+        p.set("packageName", getPackageName());
+        p.set("packageVersion", getPackageVersion());
+        p.set("projectIdentifier", getProjectIdentifier());
         return resolveTemplate(DOWNLOAD_URL, p);
-    }
-
-    public String getResolvedUploadUrl(JReleaserContext context, Artifact artifact) {
-        return getResolvedDownloadUrl(context, artifact);
     }
 }

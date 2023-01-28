@@ -23,36 +23,29 @@ import org.jreleaser.model.Constants;
 import org.jreleaser.model.Http;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.common.HttpDelegate;
 import org.jreleaser.mustache.TemplateContext;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Path;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static java.util.Collections.unmodifiableMap;
-import static org.jreleaser.model.Constants.HIDE;
 import static org.jreleaser.model.Constants.KEY_TAG_NAME;
-import static org.jreleaser.model.Constants.UNSET;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplate;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
-import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
  * @since 1.3.0
  */
 public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer, org.jreleaser.model.api.announce.HttpAnnouncer> implements Http {
-    private static final long serialVersionUID = 5228834948343872651L;
+    private static final long serialVersionUID = 622344466463412058L;
 
-    private final Map<String, String> headers = new LinkedHashMap<>();
+    private final HttpDelegate delegate = new HttpDelegate();
     private String url;
-    private String username;
-    private String password;
-    private Authorization authorization;
-    private Method method;
     private String payload;
     private String payloadTemplate;
     private String bearerKeyword;
@@ -67,7 +60,7 @@ public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer, org.jr
 
         @Override
         public Method getMethod() {
-            return null;
+            return HttpAnnouncer.this.getMethod();
         }
 
         @Override
@@ -87,17 +80,17 @@ public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer, org.jr
 
         @Override
         public String getUsername() {
-            return username;
+            return HttpAnnouncer.this.getUsername();
         }
 
         @Override
         public String getPassword() {
-            return password;
+            return HttpAnnouncer.this.getPassword();
         }
 
         @Override
         public Authorization getAuthorization() {
-            return authorization;
+            return HttpAnnouncer.this.getAuthorization();
         }
 
         @Override
@@ -107,7 +100,7 @@ public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer, org.jr
 
         @Override
         public Map<String, String> getHeaders() {
-            return unmodifiableMap(headers);
+            return unmodifiableMap(HttpAnnouncer.this.getHeaders());
         }
 
         @Override
@@ -168,28 +161,16 @@ public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer, org.jr
     @Override
     public void merge(HttpAnnouncer source) {
         super.merge(source);
+        this.delegate.merge(this.delegate);
         this.url = merge(this.url, source.url);
-        this.username = merge(this.username, source.username);
-        this.password = merge(this.password, source.password);
-        this.authorization = merge(this.authorization, source.authorization);
         this.bearerKeyword = merge(this.bearerKeyword, source.bearerKeyword);
-        this.method = merge(this.method, source.method);
         this.payload = merge(this.payload, source.payload);
         this.payloadTemplate = merge(this.payloadTemplate, source.payloadTemplate);
-        setHeaders(merge(this.headers, source.headers));
     }
 
     @Override
     public String getPrefix() {
         return "http";
-    }
-
-    public Authorization resolveAuthorization() {
-        if (null == authorization) {
-            authorization = Authorization.NONE;
-        }
-
-        return authorization;
     }
 
     public String getResolvedUrl(JReleaserContext context) {
@@ -226,33 +207,54 @@ public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer, org.jr
 
     @Override
     public String getUsername() {
-        return username;
+        return delegate.getUsername();
     }
 
     public void setUsername(String username) {
-        this.username = username;
+        delegate.setUsername(username);
     }
 
     @Override
     public String getPassword() {
-        return password;
+        return delegate.getPassword();
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        delegate.setPassword(password);
+    }
+
+    public Method getMethod() {
+        return delegate.getMethod();
+    }
+
+    public void setMethod(Method method) {
+        delegate.setMethod(method);
+    }
+
+    public void setMethod(String method) {
+        delegate.setMethod(method);
     }
 
     @Override
     public Authorization getAuthorization() {
-        return authorization;
+        return delegate.getAuthorization();
     }
 
     public void setAuthorization(Authorization authorization) {
-        this.authorization = authorization;
+        delegate.setAuthorization(authorization);
     }
 
     public void setAuthorization(String authorization) {
-        this.authorization = Authorization.of(authorization);
+        delegate.setAuthorization(authorization);
+    }
+
+    @Override
+    public Map<String, String> getHeaders() {
+        return delegate.getHeaders();
+    }
+
+    public void setHeaders(Map<String, String> headers) {
+        delegate.setHeaders(headers);
     }
 
     public String getBearerKeyword() {
@@ -263,25 +265,8 @@ public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer, org.jr
         this.bearerKeyword = bearerKeyword;
     }
 
-    public Method getMethod() {
-        return method;
-    }
-
-    public void setMethod(Method method) {
-        this.method = method;
-    }
-
-    public void setMethod(String method) {
-        this.method = Method.of(method);
-    }
-
-    @Override
-    public Map<String, String> getHeaders() {
-        return headers;
-    }
-
-    public void setHeaders(Map<String, String> headers) {
-        this.headers.putAll(headers);
+    public Authorization resolveAuthorization() {
+        return delegate.resolveAuthorization();
     }
 
     public String getUrl() {
@@ -311,12 +296,8 @@ public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer, org.jr
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("url", url);
-        props.put("authorization", authorization);
+        delegate.asMap(props);
         props.put("bearerKeyword", bearerKeyword);
-        props.put("method", method);
-        props.put("username", isNotBlank(username) ? HIDE : UNSET);
-        props.put("password", isNotBlank(password) ? HIDE : UNSET);
-        props.put("headers", headers);
         props.put("payload", payload);
         props.put("payloadTemplate", payloadTemplate);
     }

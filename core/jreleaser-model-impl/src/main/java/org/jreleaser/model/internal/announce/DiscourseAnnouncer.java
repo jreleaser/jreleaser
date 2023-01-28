@@ -17,23 +17,16 @@
  */
 package org.jreleaser.model.internal.announce;
 
-import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
-import org.jreleaser.model.Constants;
-import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.mustache.TemplateContext;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.nio.file.Path;
 import java.util.Map;
 
 import static java.util.Collections.unmodifiableMap;
 import static org.jreleaser.model.Constants.HIDE;
 import static org.jreleaser.model.Constants.UNSET;
 import static org.jreleaser.model.api.announce.DiscourseAnnouncer.TYPE;
-import static org.jreleaser.mustache.MustacheUtils.applyTemplate;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -42,16 +35,14 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author shblue21
  * @since 1.3.0
  */
-public final class DiscourseAnnouncer extends AbstractAnnouncer<DiscourseAnnouncer, org.jreleaser.model.api.announce.DiscourseAnnouncer> {
-    private static final long serialVersionUID = 7088306095879056103L;
+public final class DiscourseAnnouncer extends AbstractMessageAnnouncer<DiscourseAnnouncer, org.jreleaser.model.api.announce.DiscourseAnnouncer> {
+    private static final long serialVersionUID = 1521072015436279873L;
 
     private String host;
     private String apiKey;
     private String username;
     private String categoryName;
     private String title;
-    private String message;
-    private String messageTemplate;
 
     private final org.jreleaser.model.api.announce.DiscourseAnnouncer immutable = new org.jreleaser.model.api.announce.DiscourseAnnouncer() {
         private static final long serialVersionUID = -913374837542980481L;
@@ -88,12 +79,12 @@ public final class DiscourseAnnouncer extends AbstractAnnouncer<DiscourseAnnounc
 
         @Override
         public String getMessage() {
-            return message;
+            return DiscourseAnnouncer.this.getMessage();
         }
 
         @Override
         public String getMessageTemplate() {
-            return messageTemplate;
+            return DiscourseAnnouncer.this.getMessageTemplate();
         }
 
         @Override
@@ -159,40 +150,12 @@ public final class DiscourseAnnouncer extends AbstractAnnouncer<DiscourseAnnounc
         this.username = merge(this.username, source.username);
         this.categoryName = merge(this.categoryName, source.categoryName);
         this.title = merge(this.title, source.title);
-        this.message = merge(this.message, source.message);
-        this.messageTemplate = merge(this.messageTemplate, source.messageTemplate);
     }
 
     public String getResolvedTitle(JReleaserContext context) {
         TemplateContext props = context.fullProps();
         applyTemplates(props, getResolvedExtraProperties());
         return resolveTemplate(title, props);
-    }
-
-    public String getResolvedMessage(JReleaserContext context) {
-        TemplateContext props = context.fullProps();
-        applyTemplates(props, getResolvedExtraProperties());
-        return resolveTemplate(message, props);
-    }
-
-    public String getResolvedMessageTemplate(JReleaserContext context, TemplateContext extraProps) {
-        TemplateContext props = context.fullProps();
-        applyTemplates(props, getResolvedExtraProperties());
-        props.set(Constants.KEY_TAG_NAME, context.getModel().getRelease().getReleaser()
-            .getEffectiveTagName(context.getModel()));
-        props.set(Constants.KEY_PREVIOUS_TAG_NAME,
-            context.getModel().getRelease().getReleaser()
-                .getResolvedPreviousTagName(context.getModel()));
-        props.setAll(extraProps);
-
-        Path templatePath = context.getBasedir().resolve(messageTemplate);
-        try {
-            Reader reader = java.nio.file.Files.newBufferedReader(templatePath);
-            return applyTemplate(reader, props);
-        } catch (IOException e) {
-            throw new JReleaserException(RB.$("ERROR_unexpected_error_reading_template",
-                context.relativizeToBasedir(templatePath)));
-        }
     }
 
     public String getHost() {
@@ -235,22 +198,6 @@ public final class DiscourseAnnouncer extends AbstractAnnouncer<DiscourseAnnounc
         this.title = title;
     }
 
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public String getMessageTemplate() {
-        return messageTemplate;
-    }
-
-    public void setMessageTemplate(String messageTemplate) {
-        this.messageTemplate = messageTemplate;
-    }
-
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("host", host);
@@ -258,7 +205,6 @@ public final class DiscourseAnnouncer extends AbstractAnnouncer<DiscourseAnnounc
         props.put("username", isNotBlank(username) ? HIDE : UNSET);
         props.put("categoryName", categoryName);
         props.put("title", title);
-        props.put("message", message);
-        props.put("messageTemplate", messageTemplate);
+        super.asMap(full, props);
     }
 }

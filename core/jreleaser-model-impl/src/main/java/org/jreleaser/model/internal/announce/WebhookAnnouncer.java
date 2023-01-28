@@ -17,38 +17,24 @@
  */
 package org.jreleaser.model.internal.announce;
 
-import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
-import org.jreleaser.model.Constants;
-import org.jreleaser.model.JReleaserException;
-import org.jreleaser.model.internal.JReleaserContext;
-import org.jreleaser.mustache.TemplateContext;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.nio.file.Path;
 import java.util.Map;
 
 import static java.util.Collections.unmodifiableMap;
 import static org.jreleaser.model.Constants.HIDE;
-import static org.jreleaser.model.Constants.KEY_TAG_NAME;
 import static org.jreleaser.model.Constants.UNSET;
-import static org.jreleaser.mustache.MustacheUtils.applyTemplate;
-import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
-import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
  * @since 0.5.0
  */
-public final class WebhookAnnouncer extends AbstractAnnouncer<WebhookAnnouncer, org.jreleaser.model.api.announce.WebhookAnnouncer> {
+public final class WebhookAnnouncer extends AbstractMessageAnnouncer<WebhookAnnouncer, org.jreleaser.model.api.announce.WebhookAnnouncer> {
     private static final long serialVersionUID = 771685577904254805L;
 
     private String webhook;
-    private String message;
     private String messageProperty;
-    private String messageTemplate;
     private Boolean structuredMessage;
 
     private final org.jreleaser.model.api.announce.WebhookAnnouncer immutable = new org.jreleaser.model.api.announce.WebhookAnnouncer() {
@@ -66,7 +52,7 @@ public final class WebhookAnnouncer extends AbstractAnnouncer<WebhookAnnouncer, 
 
         @Override
         public String getMessage() {
-            return message;
+            return WebhookAnnouncer.this.getMessage();
         }
 
         @Override
@@ -76,7 +62,7 @@ public final class WebhookAnnouncer extends AbstractAnnouncer<WebhookAnnouncer, 
 
         @Override
         public String getMessageTemplate() {
-            return messageTemplate;
+            return WebhookAnnouncer.this.getMessageTemplate();
         }
 
         @Override
@@ -144,36 +130,8 @@ public final class WebhookAnnouncer extends AbstractAnnouncer<WebhookAnnouncer, 
         super.merge(source);
         setName(merge(this.getName(), source.getName()));
         this.webhook = merge(this.webhook, source.webhook);
-        this.message = merge(this.message, source.message);
-        this.messageTemplate = merge(this.messageTemplate, source.messageTemplate);
         this.messageProperty = merge(this.messageProperty, source.messageProperty);
         this.structuredMessage = merge(this.structuredMessage, source.structuredMessage);
-    }
-
-    public String getResolvedMessage(JReleaserContext context) {
-        TemplateContext props = context.fullProps();
-        applyTemplates(props, getResolvedExtraProperties());
-        return resolveTemplate(message, props);
-    }
-
-    public String getResolvedMessageTemplate(JReleaserContext context, TemplateContext extraProps) {
-        TemplateContext props = context.fullProps();
-        applyTemplates(props, getResolvedExtraProperties());
-        props.set(KEY_TAG_NAME, context.getModel().getRelease().getReleaser()
-            .getEffectiveTagName(context.getModel()));
-        props.set(Constants.KEY_PREVIOUS_TAG_NAME,
-            context.getModel().getRelease().getReleaser()
-                .getResolvedPreviousTagName(context.getModel()));
-        props.setAll(extraProps);
-
-        Path templatePath = context.getBasedir().resolve(messageTemplate);
-        try {
-            Reader reader = java.nio.file.Files.newBufferedReader(templatePath);
-            return applyTemplate(reader, props);
-        } catch (IOException e) {
-            throw new JReleaserException(RB.$("ERROR_unexpected_error_reading_template",
-                context.relativizeToBasedir(templatePath)));
-        }
     }
 
     @Override
@@ -189,28 +147,12 @@ public final class WebhookAnnouncer extends AbstractAnnouncer<WebhookAnnouncer, 
         this.webhook = webhook;
     }
 
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
     public String getMessageProperty() {
         return messageProperty;
     }
 
     public void setMessageProperty(String messageProperty) {
         this.messageProperty = messageProperty;
-    }
-
-    public String getMessageTemplate() {
-        return messageTemplate;
-    }
-
-    public void setMessageTemplate(String messageTemplate) {
-        this.messageTemplate = messageTemplate;
     }
 
     public boolean isStructuredMessage() {
@@ -224,9 +166,8 @@ public final class WebhookAnnouncer extends AbstractAnnouncer<WebhookAnnouncer, 
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("webhook", isNotBlank(webhook) ? HIDE : UNSET);
-        props.put("message", message);
+        super.asMap(full, props);
         props.put("messageProperty", messageProperty);
-        props.put("messageTemplate", messageTemplate);
         props.put("structuredMessage", isStructuredMessage());
     }
 }

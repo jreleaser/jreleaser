@@ -23,6 +23,7 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.AbstractActivatable;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.Domain;
+import org.jreleaser.model.internal.common.HttpDelegate;
 import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.mustache.Templates;
 import org.jreleaser.util.FileType;
@@ -38,23 +39,18 @@ import java.util.Set;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toList;
-import static org.jreleaser.model.Constants.HIDE;
-import static org.jreleaser.model.Constants.UNSET;
 import static org.jreleaser.util.StringUtils.getFilename;
-import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
  * @since 0.3.0
  */
 public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.model.api.upload.ArtifactoryUploader, ArtifactoryUploader> {
-    private static final long serialVersionUID = -4204661054766593354L;
+    private static final long serialVersionUID = -8663764147786060926L;
 
+    private final HttpDelegate delegate = new HttpDelegate();
     private final List<ArtifactoryRepository> repositories = new ArrayList<>();
     private String host;
-    private String username;
-    private String password;
-    private Http.Authorization authorization;
 
     private final org.jreleaser.model.api.upload.ArtifactoryUploader immutable = new org.jreleaser.model.api.upload.ArtifactoryUploader() {
         private static final long serialVersionUID = -6040496931102283198L;
@@ -68,17 +64,17 @@ public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.mo
 
         @Override
         public String getUsername() {
-            return username;
+            return ArtifactoryUploader.this.getUsername();
         }
 
         @Override
         public String getPassword() {
-            return password;
+            return ArtifactoryUploader.this.getPassword();
         }
 
         @Override
         public Http.Authorization getAuthorization() {
-            return authorization;
+            return ArtifactoryUploader.this.getAuthorization();
         }
 
         @Override
@@ -175,9 +171,7 @@ public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.mo
     public void merge(ArtifactoryUploader source) {
         super.merge(source);
         this.host = merge(this.host, source.host);
-        this.username = merge(this.username, source.username);
-        this.password = merge(this.password, source.password);
-        this.authorization = merge(this.authorization, source.authorization);
+        this.delegate.merge(source.delegate);
         setRepositories(merge(this.repositories, source.repositories));
     }
 
@@ -190,31 +184,35 @@ public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.mo
     }
 
     public String getUsername() {
-        return username;
+        return delegate.getUsername();
     }
 
     public void setUsername(String username) {
-        this.username = username;
+        delegate.setUsername(username);
     }
 
     public String getPassword() {
-        return password;
+        return delegate.getPassword();
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        delegate.setPassword(password);
     }
 
     public Http.Authorization getAuthorization() {
-        return authorization;
+        return delegate.getAuthorization();
     }
 
     public void setAuthorization(Http.Authorization authorization) {
-        this.authorization = authorization;
+        delegate.setAuthorization(authorization);
     }
 
     public void setAuthorization(String authorization) {
-        this.authorization = Http.Authorization.of(authorization);
+        delegate.setAuthorization(authorization);
+    }
+
+    public Http.Authorization resolveAuthorization() {
+        return delegate.resolveAuthorization();
     }
 
     public List<ArtifactoryRepository> getRepositories() {
@@ -234,23 +232,13 @@ public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.mo
 
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
-        props.put("authorization", authorization);
         props.put("host", host);
-        props.put("username", isNotBlank(username) ? HIDE : UNSET);
-        props.put("password", isNotBlank(password) ? HIDE : UNSET);
+        delegate.asMap(props);
         List<Map<String, Object>> repositories = this.repositories.stream()
             .filter(d -> full || d.isEnabled())
             .map(d -> d.asMap(full))
             .collect(toList());
         if (!repositories.isEmpty()) props.put("repositories", repositories);
-    }
-
-    public Http.Authorization resolveAuthorization() {
-        if (null == authorization) {
-            authorization = Http.Authorization.BEARER;
-        }
-
-        return authorization;
     }
 
     @Override

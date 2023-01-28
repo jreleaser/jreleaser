@@ -17,17 +17,11 @@
  */
 package org.jreleaser.model.internal.announce;
 
-import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
-import org.jreleaser.model.Constants;
-import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.Mail;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.mustache.TemplateContext;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -38,7 +32,6 @@ import static org.jreleaser.model.Constants.KEY_PREVIOUS_TAG_NAME;
 import static org.jreleaser.model.Constants.KEY_TAG_NAME;
 import static org.jreleaser.model.Constants.UNSET;
 import static org.jreleaser.model.api.announce.SmtpAnnouncer.TYPE;
-import static org.jreleaser.mustache.MustacheUtils.applyTemplate;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -47,8 +40,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public final class SmtpAnnouncer extends AbstractAnnouncer<SmtpAnnouncer, org.jreleaser.model.api.announce.SmtpAnnouncer> {
-    private static final long serialVersionUID = -9081427023891923561L;
+public final class SmtpAnnouncer extends AbstractMessageAnnouncer<SmtpAnnouncer, org.jreleaser.model.api.announce.SmtpAnnouncer> {
+    private static final long serialVersionUID = 8158533914621631647L;
 
     private final Map<String, String> properties = new LinkedHashMap<>();
 
@@ -63,8 +56,6 @@ public final class SmtpAnnouncer extends AbstractAnnouncer<SmtpAnnouncer, org.jr
     private String cc;
     private String bcc;
     private String subject;
-    private String message;
-    private String messageTemplate;
     private Mail.MimeType mimeType;
 
     private final org.jreleaser.model.api.announce.SmtpAnnouncer immutable = new org.jreleaser.model.api.announce.SmtpAnnouncer() {
@@ -132,12 +123,12 @@ public final class SmtpAnnouncer extends AbstractAnnouncer<SmtpAnnouncer, org.jr
 
         @Override
         public String getMessage() {
-            return message;
+            return SmtpAnnouncer.this.getMessage();
         }
 
         @Override
         public String getMessageTemplate() {
-            return messageTemplate;
+            return SmtpAnnouncer.this.getMessageTemplate();
         }
 
         @Override
@@ -219,8 +210,6 @@ public final class SmtpAnnouncer extends AbstractAnnouncer<SmtpAnnouncer, org.jr
         this.cc = merge(this.cc, source.cc);
         this.bcc = merge(this.bcc, source.bcc);
         this.subject = merge(this.subject, source.subject);
-        this.message = merge(this.message, source.message);
-        this.messageTemplate = merge(this.messageTemplate, source.messageTemplate);
         this.mimeType = merge(this.mimeType, source.mimeType);
         setProperties(merge(this.properties, source.properties));
     }
@@ -231,34 +220,6 @@ public final class SmtpAnnouncer extends AbstractAnnouncer<SmtpAnnouncer, org.jr
         props.set(KEY_TAG_NAME, context.getModel().getRelease().getReleaser().getEffectiveTagName(context.getModel()));
         props.set(KEY_PREVIOUS_TAG_NAME, context.getModel().getRelease().getReleaser().getResolvedPreviousTagName(context.getModel()));
         return resolveTemplate(subject, props);
-    }
-
-    public String getResolvedMessage(JReleaserContext context) {
-        TemplateContext props = context.fullProps();
-        applyTemplates(props, getResolvedExtraProperties());
-        props.set(KEY_TAG_NAME, context.getModel().getRelease().getReleaser().getEffectiveTagName(context.getModel()));
-        props.set(KEY_PREVIOUS_TAG_NAME, context.getModel().getRelease().getReleaser().getResolvedPreviousTagName(context.getModel()));
-        return resolveTemplate(message, props);
-    }
-
-    public String getResolvedMessageTemplate(JReleaserContext context, TemplateContext extraProps) {
-        TemplateContext props = context.fullProps();
-        applyTemplates(props, getResolvedExtraProperties());
-        props.set(KEY_TAG_NAME, context.getModel().getRelease().getReleaser()
-            .getEffectiveTagName(context.getModel()));
-        props.set(Constants.KEY_PREVIOUS_TAG_NAME,
-            context.getModel().getRelease().getReleaser()
-                .getResolvedPreviousTagName(context.getModel()));
-        props.setAll(extraProps);
-
-        Path templatePath = context.getBasedir().resolve(messageTemplate);
-        try {
-            Reader reader = java.nio.file.Files.newBufferedReader(templatePath);
-            return applyTemplate(reader, props);
-        } catch (IOException e) {
-            throw new JReleaserException(RB.$("ERROR_unexpected_error_reading_template",
-                context.relativizeToBasedir(templatePath)));
-        }
     }
 
     public Mail.Transport getTransport() {
@@ -359,22 +320,6 @@ public final class SmtpAnnouncer extends AbstractAnnouncer<SmtpAnnouncer, org.jr
         this.subject = subject;
     }
 
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public String getMessageTemplate() {
-        return messageTemplate;
-    }
-
-    public void setMessageTemplate(String messageTemplate) {
-        this.messageTemplate = messageTemplate;
-    }
-
     public Mail.MimeType getMimeType() {
         return mimeType;
     }
@@ -410,8 +355,7 @@ public final class SmtpAnnouncer extends AbstractAnnouncer<SmtpAnnouncer, org.jr
         props.put("cc", cc);
         props.put("bcc", bcc);
         props.put("subject", subject);
-        props.put("message", message);
-        props.put("messageTemplate", messageTemplate);
+        super.asMap(full, props);
         props.put("mimeType", mimeType);
         props.put("properties", properties);
     }

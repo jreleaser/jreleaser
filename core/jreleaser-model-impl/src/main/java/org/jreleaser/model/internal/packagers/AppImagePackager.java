@@ -25,9 +25,7 @@ import org.jreleaser.model.internal.common.Icon;
 import org.jreleaser.model.internal.common.Screenshot;
 import org.jreleaser.util.PlatformUtils;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -59,9 +57,9 @@ import static org.jreleaser.util.StringUtils.isFalse;
  * @author Andres Almiray
  * @since 1.2.0
  */
-public final class AppImagePackager extends AbstractRepositoryPackager<org.jreleaser.model.api.packagers.AppImagePackager, AppImagePackager> {
+public final class AppImagePackager extends AbstractAppdataPackager<org.jreleaser.model.api.packagers.AppImagePackager, AppImagePackager> {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
-    private static final long serialVersionUID = 577455998009820304L;
+    private static final long serialVersionUID = -5619053700424178633L;
 
     static {
         Set<String> extensions = setOf(
@@ -80,12 +78,6 @@ public final class AppImagePackager extends AbstractRepositoryPackager<org.jrele
     }
 
     private final AppImageRepository repository = new AppImageRepository();
-    private final List<Screenshot> screenshots = new ArrayList<>();
-    private final List<Icon> icons = new ArrayList<>();
-    private final List<String> categories = new ArrayList<>();
-    private final Set<String> skipReleases = new LinkedHashSet<>();
-    private String componentId;
-    private String developerName;
     private Boolean requiresTerminal;
 
     private final org.jreleaser.model.api.packagers.AppImagePackager immutable = new org.jreleaser.model.api.packagers.AppImagePackager() {
@@ -96,17 +88,17 @@ public final class AppImagePackager extends AbstractRepositoryPackager<org.jrele
 
         @Override
         public String getComponentId() {
-            return componentId;
+            return AppImagePackager.this.getComponentId();
         }
 
         @Override
         public List<String> getCategories() {
-            return unmodifiableList(categories);
+            return unmodifiableList(AppImagePackager.this.getCategories());
         }
 
         @Override
         public String getDeveloperName() {
-            return developerName;
+            return AppImagePackager.this.getDeveloperName();
         }
 
         @Override
@@ -117,7 +109,7 @@ public final class AppImagePackager extends AbstractRepositoryPackager<org.jrele
         @Override
         public List<? extends org.jreleaser.model.api.common.Screenshot> getScreenshots() {
             if (null == screenshots) {
-                screenshots = AppImagePackager.this.screenshots.stream()
+                screenshots = AppImagePackager.this.getScreenshots().stream()
                     .map(Screenshot::asImmutable)
                     .collect(toList());
             }
@@ -127,7 +119,7 @@ public final class AppImagePackager extends AbstractRepositoryPackager<org.jrele
         @Override
         public List<? extends org.jreleaser.model.api.common.Icon> getIcons() {
             if (null == icons) {
-                icons = AppImagePackager.this.icons.stream()
+                icons = AppImagePackager.this.getIcons().stream()
                     .map(Icon::asImmutable)
                     .collect(toList());
             }
@@ -136,7 +128,7 @@ public final class AppImagePackager extends AbstractRepositoryPackager<org.jrele
 
         @Override
         public Set<String> getSkipReleases() {
-            return unmodifiableSet(skipReleases);
+            return unmodifiableSet(AppImagePackager.this.getSkipReleases());
         }
 
         @Override
@@ -242,44 +234,13 @@ public final class AppImagePackager extends AbstractRepositoryPackager<org.jrele
     @Override
     public void merge(AppImagePackager source) {
         super.merge(source);
-        this.componentId = merge(this.componentId, source.componentId);
-        this.developerName = merge(this.developerName, source.developerName);
         this.requiresTerminal = merge(this.requiresTerminal, source.requiresTerminal);
         setRepository(source.repository);
-        setCategories(merge(this.categories, source.categories));
-        setScreenshots(merge(this.screenshots, source.screenshots));
-        setIcons(merge(this.icons, source.icons));
-        setSkipReleases(merge(this.skipReleases, source.skipReleases));
     }
 
     @Override
     public Set<Stereotype> getSupportedStereotypes() {
         return setOf(Stereotype.CLI, Stereotype.DESKTOP);
-    }
-
-    public String getComponentId() {
-        return componentId;
-    }
-
-    public void setComponentId(String componentId) {
-        this.componentId = componentId;
-    }
-
-    public List<String> getCategories() {
-        return categories;
-    }
-
-    public void setCategories(List<String> tags) {
-        this.categories.clear();
-        this.categories.addAll(tags);
-    }
-
-    public String getDeveloperName() {
-        return developerName;
-    }
-
-    public void setDeveloperName(String developerName) {
-        this.developerName = developerName;
     }
 
     public boolean isRequiresTerminal() {
@@ -294,45 +255,6 @@ public final class AppImagePackager extends AbstractRepositoryPackager<org.jrele
         return null != requiresTerminal;
     }
 
-    public List<Screenshot> getScreenshots() {
-        return screenshots;
-    }
-
-    public void setScreenshots(List<Screenshot> screenshots) {
-        this.screenshots.clear();
-        this.screenshots.addAll(screenshots);
-    }
-
-    public void addScreenshot(Screenshot screenshot) {
-        if (null != screenshot) {
-            this.screenshots.add(screenshot);
-        }
-    }
-
-    public List<Icon> getIcons() {
-        return icons;
-    }
-
-    public void setIcons(List<Icon> icons) {
-        this.icons.clear();
-        this.icons.addAll(icons);
-    }
-
-    public void addIcon(Icon icon) {
-        if (null != icon) {
-            this.icons.add(icon);
-        }
-    }
-
-    public Set<String> getSkipReleases() {
-        return skipReleases;
-    }
-
-    public void setSkipReleases(Set<String> tags) {
-        this.skipReleases.clear();
-        this.skipReleases.addAll(tags);
-    }
-
     public AppImageRepository getRepository() {
         return repository;
     }
@@ -344,23 +266,7 @@ public final class AppImagePackager extends AbstractRepositoryPackager<org.jrele
     @Override
     protected void asMap(boolean full, Map<String, Object> map) {
         super.asMap(full, map);
-        map.put("componentId", componentId);
-        map.put("categories", categories);
-        map.put("developerName", developerName);
         map.put("requiresTerminal", isRequiresTerminal());
-        Map<String, Map<String, Object>> sm = new LinkedHashMap<>();
-        int i = 0;
-        for (Screenshot screenshot : screenshots) {
-            sm.put("screenshot " + (i++), screenshot.asMap(full));
-        }
-        map.put("screenshots", sm);
-        sm = new LinkedHashMap<>();
-        i = 0;
-        for (Icon icon : icons) {
-            sm.put("icon " + (i++), icon.asMap(full));
-        }
-        map.put("icons", sm);
-        map.put("skipReleases", skipReleases);
         map.put("repository", repository.asMap(full));
     }
 

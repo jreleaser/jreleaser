@@ -74,8 +74,9 @@ public final class Deploy extends AbstractActivatable<Deploy> implements Domain 
         setMaven(source.maven);
     }
 
+    @Override
     public boolean isSet() {
-        return maven.isSet();
+        return super.isSet() || maven.isSet();
     }
 
     public Maven getMaven() {

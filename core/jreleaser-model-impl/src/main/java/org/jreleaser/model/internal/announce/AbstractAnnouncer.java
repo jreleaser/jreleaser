@@ -53,6 +53,7 @@ public abstract class AbstractAnnouncer<S extends AbstractAnnouncer<S, A>, A ext
         this.name = name;
     }
 
+    @Override
     protected boolean isSet() {
         return super.isSet() ||
             null != connectTimeout ||

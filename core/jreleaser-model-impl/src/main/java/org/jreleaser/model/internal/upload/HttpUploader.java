@@ -18,35 +18,28 @@
 package org.jreleaser.model.internal.upload;
 
 import org.jreleaser.model.Active;
+import org.jreleaser.model.internal.common.HttpDelegate;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static java.util.Collections.unmodifiableMap;
-import static org.jreleaser.model.Constants.HIDE;
-import static org.jreleaser.model.Constants.UNSET;
 import static org.jreleaser.model.api.upload.HttpUploader.TYPE;
-import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
  * @since 0.4.0
  */
 public final class HttpUploader extends AbstractWebUploader<org.jreleaser.model.api.upload.HttpUploader, HttpUploader> {
-    private static final long serialVersionUID = -2372935050836857644L;
+    private static final long serialVersionUID = -5780371964038705675L;
 
-    private final Map<String, String> headers = new LinkedHashMap<>();
-    private String username;
-    private String password;
-    private Authorization authorization;
-    private Method method;
+    private final HttpDelegate delegate = new HttpDelegate();
 
     private final org.jreleaser.model.api.upload.HttpUploader immutable = new org.jreleaser.model.api.upload.HttpUploader() {
         private static final long serialVersionUID = 3000310615738273509L;
 
         @Override
         public Method getMethod() {
-            return method;
+            return HttpUploader.this.getMethod();
         }
 
         @Override
@@ -61,22 +54,22 @@ public final class HttpUploader extends AbstractWebUploader<org.jreleaser.model.
 
         @Override
         public String getUsername() {
-            return username;
+            return HttpUploader.this.getUsername();
         }
 
         @Override
         public String getPassword() {
-            return password;
+            return HttpUploader.this.getPassword();
         }
 
         @Override
         public Authorization getAuthorization() {
-            return authorization;
+            return HttpUploader.this.getAuthorization();
         }
 
         @Override
         public Map<String, String> getHeaders() {
-            return unmodifiableMap(headers);
+            return unmodifiableMap(HttpUploader.this.getHeaders());
         }
 
         @Override
@@ -162,79 +155,67 @@ public final class HttpUploader extends AbstractWebUploader<org.jreleaser.model.
     @Override
     public void merge(HttpUploader source) {
         super.merge(source);
-        this.username = merge(this.username, source.username);
-        this.password = merge(this.password, source.password);
-        this.authorization = merge(this.authorization, source.authorization);
-        this.method = merge(this.method, source.method);
-        setHeaders(merge(this.headers, source.headers));
+        this.delegate.merge(source.delegate);
     }
 
     @Override
     public String getUsername() {
-        return username;
+        return delegate.getUsername();
     }
 
     public void setUsername(String username) {
-        this.username = username;
+        delegate.setUsername(username);
     }
 
     @Override
     public String getPassword() {
-        return password;
+        return delegate.getPassword();
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        delegate.setPassword(password);
+    }
+
+    public Method getMethod() {
+        return delegate.getMethod();
+    }
+
+    public void setMethod(Method method) {
+        delegate.setMethod(method);
+    }
+
+    public void setMethod(String method) {
+        delegate.setMethod(method);
     }
 
     @Override
     public Authorization getAuthorization() {
-        return authorization;
+        return delegate.getAuthorization();
     }
 
     public void setAuthorization(Authorization authorization) {
-        this.authorization = authorization;
+        delegate.setAuthorization(authorization);
     }
 
     public void setAuthorization(String authorization) {
-        this.authorization = Authorization.of(authorization);
-    }
-
-    public Method getMethod() {
-        return method;
-    }
-
-    public void setMethod(Method method) {
-        this.method = method;
-    }
-
-    public void setMethod(String method) {
-        this.method = HttpUploader.Method.of(method);
+        delegate.setAuthorization(authorization);
     }
 
     @Override
     public Map<String, String> getHeaders() {
-        return headers;
+        return delegate.getHeaders();
     }
 
     public void setHeaders(Map<String, String> headers) {
-        this.headers.putAll(headers);
+        delegate.setHeaders(headers);
+    }
+
+    public Authorization resolveAuthorization() {
+        return delegate.resolveAuthorization();
     }
 
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
-        props.put("authorization", authorization);
-        props.put("method", method);
-        props.put("username", isNotBlank(username) ? HIDE : UNSET);
-        props.put("password", isNotBlank(password) ? HIDE : UNSET);
-        props.put("headers", headers);
-    }
-
-    public Authorization resolveAuthorization() {
-        if (null == authorization) {
-            authorization = Authorization.NONE;
-        }
-
-        return authorization;
+        delegate.asMap(props);
     }
 }

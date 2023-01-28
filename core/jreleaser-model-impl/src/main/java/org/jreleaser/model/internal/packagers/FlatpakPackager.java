@@ -26,7 +26,6 @@ import org.jreleaser.model.internal.common.Icon;
 import org.jreleaser.model.internal.common.Screenshot;
 import org.jreleaser.util.PlatformUtils;
 
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -58,9 +57,9 @@ import static org.jreleaser.util.StringUtils.isFalse;
  * @author Andres Almiray
  * @since 1.2.0
  */
-public final class FlatpakPackager extends AbstractRepositoryPackager<org.jreleaser.model.api.packagers.FlatpakPackager, FlatpakPackager> {
+public final class FlatpakPackager extends AbstractAppdataPackager<org.jreleaser.model.api.packagers.FlatpakPackager, FlatpakPackager> {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
-    private static final long serialVersionUID = -4671519237661633232L;
+    private static final long serialVersionUID = 1676752377583110248L;
 
     static {
         Set<String> extensions = setOf(
@@ -78,14 +77,8 @@ public final class FlatpakPackager extends AbstractRepositoryPackager<org.jrelea
     }
 
     private final FlatpakRepository repository = new FlatpakRepository();
-    private final List<Screenshot> screenshots = new ArrayList<>();
-    private final List<String> categories = new ArrayList<>();
-    private final List<Icon> icons = new ArrayList<>();
     private final Set<String> sdkExtensions = new LinkedHashSet<>();
     private final Set<String> finishArgs = new LinkedHashSet<>();
-    private final Set<String> skipReleases = new LinkedHashSet<>();
-    private String componentId;
-    private String developerName;
     private Flatpak.Runtime runtime;
     private String runtimeVersion;
 
@@ -97,17 +90,17 @@ public final class FlatpakPackager extends AbstractRepositoryPackager<org.jrelea
 
         @Override
         public String getComponentId() {
-            return componentId;
+            return FlatpakPackager.this.getComponentId();
         }
 
         @Override
         public List<String> getCategories() {
-            return unmodifiableList(categories);
+            return unmodifiableList(FlatpakPackager.this.getCategories());
         }
 
         @Override
         public String getDeveloperName() {
-            return developerName;
+            return FlatpakPackager.this.getDeveloperName();
         }
 
         @Override
@@ -133,7 +126,7 @@ public final class FlatpakPackager extends AbstractRepositoryPackager<org.jrelea
         @Override
         public List<? extends org.jreleaser.model.api.common.Screenshot> getScreenshots() {
             if (null == screenshots) {
-                screenshots = FlatpakPackager.this.screenshots.stream()
+                screenshots = FlatpakPackager.this.getScreenshots().stream()
                     .map(Screenshot::asImmutable)
                     .collect(toList());
             }
@@ -143,7 +136,7 @@ public final class FlatpakPackager extends AbstractRepositoryPackager<org.jrelea
         @Override
         public List<? extends org.jreleaser.model.api.common.Icon> getIcons() {
             if (null == icons) {
-                icons = FlatpakPackager.this.icons.stream()
+                icons = FlatpakPackager.this.getIcons().stream()
                     .map(Icon::asImmutable)
                     .collect(toList());
             }
@@ -152,7 +145,7 @@ public final class FlatpakPackager extends AbstractRepositoryPackager<org.jrelea
 
         @Override
         public Set<String> getSkipReleases() {
-            return unmodifiableSet(skipReleases);
+            return unmodifiableSet(FlatpakPackager.this.getSkipReleases());
         }
 
         @Override
@@ -258,47 +251,16 @@ public final class FlatpakPackager extends AbstractRepositoryPackager<org.jrelea
     @Override
     public void merge(FlatpakPackager source) {
         super.merge(source);
-        this.componentId = merge(this.componentId, source.componentId);
-        this.developerName = merge(this.developerName, source.developerName);
         this.runtime = merge(this.runtime, source.runtime);
         this.runtimeVersion = merge(this.runtimeVersion, source.runtimeVersion);
         setSdkExtensions(merge(this.sdkExtensions, source.sdkExtensions));
         setFinishArgs(merge(this.finishArgs, source.finishArgs));
         setRepository(source.repository);
-        setCategories(merge(this.categories, source.categories));
-        setScreenshots(merge(this.screenshots, source.screenshots));
-        setIcons(merge(this.icons, source.icons));
-        setSkipReleases(merge(this.skipReleases, source.skipReleases));
     }
 
     @Override
     public Set<Stereotype> getSupportedStereotypes() {
         return setOf(Stereotype.CLI, Stereotype.DESKTOP);
-    }
-
-    public String getComponentId() {
-        return componentId;
-    }
-
-    public void setComponentId(String componentId) {
-        this.componentId = componentId;
-    }
-
-    public List<String> getCategories() {
-        return categories;
-    }
-
-    public void setCategories(List<String> tags) {
-        this.categories.clear();
-        this.categories.addAll(tags);
-    }
-
-    public String getDeveloperName() {
-        return developerName;
-    }
-
-    public void setDeveloperName(String developerName) {
-        this.developerName = developerName;
     }
 
     public Flatpak.Runtime getRuntime() {
@@ -339,45 +301,6 @@ public final class FlatpakPackager extends AbstractRepositoryPackager<org.jrelea
         this.finishArgs.addAll(finishArgs);
     }
 
-    public List<Screenshot> getScreenshots() {
-        return screenshots;
-    }
-
-    public void setScreenshots(List<Screenshot> screenshots) {
-        this.screenshots.clear();
-        this.screenshots.addAll(screenshots);
-    }
-
-    public void addScreenshot(Screenshot screenshot) {
-        if (null != screenshot) {
-            this.screenshots.add(screenshot);
-        }
-    }
-
-    public List<Icon> getIcons() {
-        return icons;
-    }
-
-    public void setIcons(List<Icon> icons) {
-        this.icons.clear();
-        this.icons.addAll(icons);
-    }
-
-    public void addIcon(Icon icon) {
-        if (null != icon) {
-            this.icons.add(icon);
-        }
-    }
-
-    public Set<String> getSkipReleases() {
-        return skipReleases;
-    }
-
-    public void setSkipReleases(Set<String> tags) {
-        this.skipReleases.clear();
-        this.skipReleases.addAll(tags);
-    }
-
     public FlatpakRepository getRepository() {
         return repository;
     }
@@ -389,26 +312,10 @@ public final class FlatpakPackager extends AbstractRepositoryPackager<org.jrelea
     @Override
     protected void asMap(boolean full, Map<String, Object> map) {
         super.asMap(full, map);
-        map.put("componentId", componentId);
-        map.put("categories", categories);
-        map.put("developerName", developerName);
         map.put("runtime", runtime);
         map.put("runtimeVersion", runtimeVersion);
         map.put("sdkExtensions", sdkExtensions);
         map.put("finishArgs", finishArgs);
-        Map<String, Map<String, Object>> sm = new LinkedHashMap<>();
-        int i = 0;
-        for (Screenshot screenshot : screenshots) {
-            sm.put("screenshot " + (i++), screenshot.asMap(full));
-        }
-        map.put("screenshots", sm);
-        sm = new LinkedHashMap<>();
-        i = 0;
-        for (Icon icon : icons) {
-            sm.put("icon " + (i++), icon.asMap(full));
-        }
-        map.put("icons", sm);
-        map.put("skipReleases", skipReleases);
         map.put("repository", repository.asMap(full));
     }
 

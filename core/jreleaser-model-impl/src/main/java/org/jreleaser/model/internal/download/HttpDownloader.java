@@ -19,29 +19,23 @@ package org.jreleaser.model.internal.download;
 
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Http;
+import org.jreleaser.model.internal.common.HttpDelegate;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.unmodifiableMap;
 import static java.util.stream.Collectors.toList;
-import static org.jreleaser.model.Constants.HIDE;
-import static org.jreleaser.model.Constants.UNSET;
 import static org.jreleaser.model.api.download.HttpDownloader.TYPE;
-import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
  * @since 1.1.0
  */
 public final class HttpDownloader extends AbstractDownloader<org.jreleaser.model.api.download.HttpDownloader, HttpDownloader> implements Http {
-    private static final long serialVersionUID = -3460744168451893260L;
+    private static final long serialVersionUID = -179088512392537272L;
 
-    private final Map<String, String> headers = new LinkedHashMap<>();
-    private String username;
-    private String password;
-    private Authorization authorization;
+    private final HttpDelegate delegate = new HttpDelegate();
 
     private final org.jreleaser.model.api.download.HttpDownloader immutable = new org.jreleaser.model.api.download.HttpDownloader() {
         private static final long serialVersionUID = -1955685895966905403L;
@@ -50,17 +44,17 @@ public final class HttpDownloader extends AbstractDownloader<org.jreleaser.model
 
         @Override
         public String getUsername() {
-            return username;
+            return HttpDownloader.this.getUsername();
         }
 
         @Override
         public String getPassword() {
-            return password;
+            return HttpDownloader.this.getPassword();
         }
 
         @Override
         public Authorization getAuthorization() {
-            return authorization;
+            return HttpDownloader.this.getAuthorization();
         }
 
         @Override
@@ -136,69 +130,59 @@ public final class HttpDownloader extends AbstractDownloader<org.jreleaser.model
     @Override
     public void merge(HttpDownloader source) {
         super.merge(source);
-        this.username = merge(this.username, source.username);
-        this.password = merge(this.password, source.password);
-        this.authorization = merge(this.authorization, source.authorization);
-        setHeaders(merge(this.headers, source.headers));
+        delegate.merge(source.delegate);
     }
 
     @Override
     public String getUsername() {
-        return username;
+        return delegate.getUsername();
     }
 
     public void setUsername(String username) {
-        this.username = username;
+        delegate.setUsername(username);
     }
 
     @Override
     public String getPassword() {
-        return password;
+        return delegate.getPassword();
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        delegate.setPassword(password);
     }
 
     @Override
-    public Http.Authorization getAuthorization() {
-        return authorization;
+    public Authorization getAuthorization() {
+        return delegate.getAuthorization();
     }
 
-    public void setAuthorization(Http.Authorization authorization) {
-        this.authorization = authorization;
+    public void setAuthorization(Authorization authorization) {
+        delegate.setAuthorization(authorization);
     }
 
     public void setAuthorization(String authorization) {
-        this.authorization = Http.Authorization.of(authorization);
+        delegate.setAuthorization(authorization);
     }
 
     @Override
     public Map<String, String> getHeaders() {
-        return headers;
+        return delegate.getHeaders();
     }
 
     public void setHeaders(Map<String, String> headers) {
-        this.headers.putAll(headers);
+        delegate.setHeaders(headers);
     }
 
-    public void addHeaders(Map<String, String> headers) {
-        this.headers.putAll(headers);
+    public void asMap(Map<String, Object> props) {
+        delegate.asMap(props);
+    }
+
+    public Authorization resolveAuthorization() {
+        return delegate.resolveAuthorization();
     }
 
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
-        props.put("authorization", authorization);
-        props.put("username", isNotBlank(username) ? HIDE : UNSET);
-        props.put("password", isNotBlank(password) ? HIDE : UNSET);
-        props.put("headers", headers);
-    }
-
-    public Http.Authorization resolveAuthorization() {
-        if (null == authorization) {
-            authorization = Http.Authorization.NONE;
-        }
-
-        return authorization;
+        delegate.asMap(props);
     }
 }

@@ -19,31 +19,21 @@ package org.jreleaser.model.internal.upload;
 
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Artifact;
+import org.jreleaser.model.internal.common.SshDelegate;
 import org.jreleaser.mustache.TemplateContext;
 
 import java.util.Map;
 
-import static org.jreleaser.model.Constants.HIDE;
-import static org.jreleaser.model.Constants.UNSET;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
-import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
  * @since 1.1.0
  */
 public abstract class AbstractSshUploader<A extends org.jreleaser.model.api.upload.SshUploader, S extends AbstractSshUploader<A, S>> extends AbstractUploader<A, S> implements SshUploader<A> {
-    private static final long serialVersionUID = 87163094730572790L;
+    private static final long serialVersionUID = 9028661488115999432L;
 
-    private String username;
-    private String password;
-    private String host;
-    private Integer port;
-    private String knownHostsFile;
-    private String publicKey;
-    private String privateKey;
-    private String passphrase;
-    private String fingerprint;
+    private final SshDelegate delegate = new SshDelegate();
     private String path;
     private String downloadUrl;
 
@@ -51,18 +41,14 @@ public abstract class AbstractSshUploader<A extends org.jreleaser.model.api.uplo
         super(type);
     }
 
+    protected SshDelegate delegate() {
+        return delegate;
+    }
+
     @Override
     public void merge(S source) {
         super.merge(source);
-        this.username = merge(this.username, source.getUsername());
-        this.password = merge(this.password, source.getPassword());
-        this.host = merge(this.host, source.getHost());
-        this.port = merge(this.port, source.getPort());
-        this.knownHostsFile = merge(this.knownHostsFile, source.getKnownHostsFile());
-        this.publicKey = merge(this.publicKey, source.getPublicKey());
-        this.privateKey = merge(this.privateKey, source.getPrivateKey());
-        this.passphrase = merge(this.passphrase, source.getPassphrase());
-        this.fingerprint = merge(this.fingerprint, source.getFingerprint());
+        this.delegate.merge(source.delegate());
         this.path = merge(this.path, source.getPath());
         this.downloadUrl = merge(this.downloadUrl, source.getDownloadUrl());
     }
@@ -108,105 +94,97 @@ public abstract class AbstractSshUploader<A extends org.jreleaser.model.api.uplo
 
     @Override
     public String getUsername() {
-        return username;
+        return delegate.getUsername();
     }
 
     @Override
     public void setUsername(String username) {
-        this.username = username;
+        delegate.setUsername(username);
     }
 
     @Override
     public String getPassword() {
-        return password;
+        return delegate.getPassword();
     }
 
     @Override
     public void setPassword(String password) {
-        this.password = password;
+        delegate.setPassword(password);
     }
 
     @Override
     public String getHost() {
-        return host;
+        return delegate.getHost();
     }
 
     @Override
     public void setHost(String host) {
-        this.host = host;
+        delegate.setHost(host);
     }
 
     @Override
     public Integer getPort() {
-        return port;
+        return delegate.getPort();
     }
 
     @Override
     public void setPort(Integer port) {
-        this.port = port;
+        delegate.setPort(port);
     }
 
     @Override
     public String getKnownHostsFile() {
-        return knownHostsFile;
+        return delegate.getKnownHostsFile();
     }
 
     @Override
     public void setKnownHostsFile(String knownHostsFile) {
-        this.knownHostsFile = knownHostsFile;
+        delegate.setKnownHostsFile(knownHostsFile);
     }
 
     @Override
     public String getPublicKey() {
-        return publicKey;
+        return delegate.getPublicKey();
     }
 
     @Override
     public void setPublicKey(String publicKey) {
-        this.publicKey = publicKey;
+        delegate.setPublicKey(publicKey);
     }
 
     @Override
     public String getPrivateKey() {
-        return privateKey;
+        return delegate.getPrivateKey();
     }
 
     @Override
     public void setPrivateKey(String privateKey) {
-        this.privateKey = privateKey;
+        delegate.setPrivateKey(privateKey);
     }
 
     @Override
     public String getPassphrase() {
-        return passphrase;
+        return delegate.getPassphrase();
     }
 
     @Override
     public void setPassphrase(String passphrase) {
-        this.passphrase = passphrase;
+        delegate.setPassphrase(passphrase);
     }
 
     @Override
     public String getFingerprint() {
-        return fingerprint;
+        return delegate.getFingerprint();
     }
 
     @Override
     public void setFingerprint(String fingerprint) {
-        this.fingerprint = fingerprint;
+        delegate.setFingerprint(fingerprint);
     }
 
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
-        props.put("host", isNotBlank(host) ? HIDE : UNSET);
-        props.put("port", getPort());
-        props.put("username", isNotBlank(username) ? HIDE : UNSET);
-        props.put("password", isNotBlank(password) ? HIDE : UNSET);
-        props.put("knownHostsFile", knownHostsFile);
-        props.put("publicKey", isNotBlank(publicKey) ? HIDE : UNSET);
-        props.put("privateKey", isNotBlank(privateKey) ? HIDE : UNSET);
-        props.put("passphrase", isNotBlank(passphrase) ? HIDE : UNSET);
-        props.put("fingerprint", isNotBlank(fingerprint) ? HIDE : UNSET);
+        delegate.asMap(props);
         props.put("path", path);
         props.put("downloadUrl", downloadUrl);
     }

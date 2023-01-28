@@ -148,8 +148,10 @@ public final class Maven extends AbstractActivatable<Maven> implements Domain, A
         setPomchecker(source.pomchecker);
     }
 
+    @Override
     public boolean isSet() {
-        return !artifactory.isEmpty() ||
+        return super.isSet() ||
+            !artifactory.isEmpty() ||
             !gitea.isEmpty() ||
             !github.isEmpty() ||
             !gitlab.isEmpty() ||

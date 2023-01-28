@@ -17,39 +17,25 @@
  */
 package org.jreleaser.model.internal.announce;
 
-import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
-import org.jreleaser.model.Constants;
-import org.jreleaser.model.JReleaserException;
-import org.jreleaser.model.internal.JReleaserContext;
-import org.jreleaser.mustache.TemplateContext;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.nio.file.Path;
 import java.util.Map;
 
 import static java.util.Collections.unmodifiableMap;
 import static org.jreleaser.model.Constants.HIDE;
-import static org.jreleaser.model.Constants.KEY_TAG_NAME;
 import static org.jreleaser.model.Constants.UNSET;
 import static org.jreleaser.model.api.announce.TelegramAnnouncer.TYPE;
-import static org.jreleaser.mustache.MustacheUtils.applyTemplate;
-import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
-import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
  * @since 0.8.0
  */
-public final class TelegramAnnouncer extends AbstractAnnouncer<TelegramAnnouncer, org.jreleaser.model.api.announce.TelegramAnnouncer> {
-    private static final long serialVersionUID = 7313922490204895975L;
+public final class TelegramAnnouncer extends AbstractMessageAnnouncer<TelegramAnnouncer, org.jreleaser.model.api.announce.TelegramAnnouncer> {
+    private static final long serialVersionUID = -2583758348750365323L;
 
     private String token;
     private String chatId;
-    private String message;
-    private String messageTemplate;
 
     private final org.jreleaser.model.api.announce.TelegramAnnouncer immutable = new org.jreleaser.model.api.announce.TelegramAnnouncer() {
         private static final long serialVersionUID = -5918930180588439497L;
@@ -71,12 +57,12 @@ public final class TelegramAnnouncer extends AbstractAnnouncer<TelegramAnnouncer
 
         @Override
         public String getMessage() {
-            return message;
+            return TelegramAnnouncer.this.getMessage();
         }
 
         @Override
         public String getMessageTemplate() {
-            return messageTemplate;
+            return TelegramAnnouncer.this.getMessageTemplate();
         }
 
         @Override
@@ -139,34 +125,6 @@ public final class TelegramAnnouncer extends AbstractAnnouncer<TelegramAnnouncer
         super.merge(source);
         this.token = merge(this.token, source.token);
         this.chatId = merge(this.chatId, source.chatId);
-        this.message = merge(this.message, source.message);
-        this.messageTemplate = merge(this.messageTemplate, source.messageTemplate);
-    }
-
-    public String getResolvedMessage(JReleaserContext context) {
-        TemplateContext props = context.fullProps();
-        applyTemplates(props, getResolvedExtraProperties());
-        return resolveTemplate(message, props);
-    }
-
-    public String getResolvedMessageTemplate(JReleaserContext context, TemplateContext extraProps) {
-        TemplateContext props = context.fullProps();
-        applyTemplates(props, getResolvedExtraProperties());
-        props.set(KEY_TAG_NAME, context.getModel().getRelease().getReleaser()
-            .getEffectiveTagName(context.getModel()));
-        props.set(Constants.KEY_PREVIOUS_TAG_NAME,
-            context.getModel().getRelease().getReleaser()
-                .getResolvedPreviousTagName(context.getModel()));
-        props.setAll(extraProps);
-
-        Path templatePath = context.getBasedir().resolve(messageTemplate);
-        try {
-            Reader reader = java.nio.file.Files.newBufferedReader(templatePath);
-            return applyTemplate(reader, props);
-        } catch (IOException e) {
-            throw new JReleaserException(RB.$("ERROR_unexpected_error_reading_template",
-                context.relativizeToBasedir(templatePath)));
-        }
     }
 
     public String getToken() {
@@ -185,27 +143,10 @@ public final class TelegramAnnouncer extends AbstractAnnouncer<TelegramAnnouncer
         this.chatId = chatId;
     }
 
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public String getMessageTemplate() {
-        return messageTemplate;
-    }
-
-    public void setMessageTemplate(String messageTemplate) {
-        this.messageTemplate = messageTemplate;
-    }
-
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("token", isNotBlank(token) ? HIDE : UNSET);
         props.put("chatId", isNotBlank(chatId) ? HIDE : UNSET);
-        props.put("message", message);
-        props.put("messageTemplate", messageTemplate);
+        super.asMap(full, props);
     }
 }
