@@ -191,7 +191,6 @@ public class FlatpakPackagerProcessor extends AbstractRepositoryPackagerProcesso
 
         Path outputFile = outputDirectory.resolve(fileName);
 
-        // noop
         if ("app.yml".equals(fileName)) {
             outputFile = outputDirectory.resolve(getPackager().getComponentId() + ".yml");
         } else if ("app.desktop".equals(fileName)) {

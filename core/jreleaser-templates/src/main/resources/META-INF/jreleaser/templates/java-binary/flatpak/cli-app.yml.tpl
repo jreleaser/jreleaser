@@ -17,12 +17,12 @@ finish-args:
   {{/flatpakFinishArgs}}
 {{/flatpakHasFinishArgs}}
 modules:
-{{#flatpakIncludeOpendJdk}}
+{{#flatpakIncludeOpenJdk}}
   - name: openjdk
     buildsystem: simple
     build-commands:
       - /usr/lib/sdk/openjdk/install.sh
-{{/flatpakIncludeOpendJdk}}
+{{/flatpakIncludeOpenJdk}}
   - name: {{distributionExecutable}}
     buildsystem: simple
     build-commands:

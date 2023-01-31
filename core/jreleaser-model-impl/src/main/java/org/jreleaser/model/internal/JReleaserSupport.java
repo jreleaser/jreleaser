@@ -79,6 +79,7 @@ public final class JReleaserSupport {
         set.add(org.jreleaser.model.api.packagers.SdkmanPackager.TYPE);
         set.add(org.jreleaser.model.api.packagers.SnapPackager.TYPE);
         set.add(org.jreleaser.model.api.packagers.SpecPackager.TYPE);
+        set.add(org.jreleaser.model.api.packagers.WingetPackager.TYPE);
         return unmodifiableSet(set);
     }
 

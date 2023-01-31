@@ -327,7 +327,31 @@ public interface Constants {
     String KEY_FLATPAK_RUNTIME = "flatpakRuntime";
     String KEY_FLATPAK_RUNTIME_VERSION = "flatpakRuntimeVersion";
     String KEY_FLATPAK_SDK = "flatpakSdk";
-    String KEY_FLATPAK_INCLUDE_OPENJDK = "flatpakIncludeOpendJdk";
+    String KEY_FLATPAK_INCLUDE_OPENJDK = "flatpakIncludeOpenJdk";
+
+    // winget
+    String KEY_WINGET_PACKAGE_IDENTIFIER = "wingetPackageIdentifier";
+    String KEY_WINGET_PACKAGE_NAME = "wingetPackageName";
+    String KEY_WINGET_PACKAGE_VERSION = "wingetPackageVersion";
+    String KEY_WINGET_PACKAGE_URL = "wingetPackageUrl";
+    String KEY_WINGET_PACKAGE_LOCALE = "wingetPackageLocale";
+    String KEY_WINGET_PUBLISHER_NAME = "wingetPackagePublisher";
+    String KEY_WINGET_PUBLISHER_URL = "wingetPublisherUrl";
+    String KEY_WINGET_PUBLISHER_SUPPORT_URL = "wingetPublisherSupportUrl";
+    String KEY_WINGET_DEFAULT_LOCALE = "wingetDefaultLocale";
+    String KEY_WINGET_AUTHOR = "wingetAuthor";
+    String KEY_WINGET_MONIKER = "wingetMoniker";
+    String KEY_WINGET_MINIMUM_OS_VERSION = "wingetMinimumOsVersion";
+    String KEY_WINGET_PRODUCT_CODE = "wingetProductCode";
+    String KEY_WINGET_HAS_TAGS = "wingetHasTags";
+    String KEY_WINGET_TAGS = "wingetTags";
+    String KEY_WINGET_MANIFEST_TYPE = "wingetManifestType";
+    String KEY_WINGET_INSTALLER_TYPE = "wingetInstallerType";
+    String KEY_WINGET_SCOPE= "wingetScope";
+    String KEY_WINGET_INSTALL_MODES= "wingetInstallModes";
+    String KEY_WINGET_UPGRADE_BEHAVIOR= "wingetUpgradeBehavior";
+    String KEY_WINGET_RELEASE_DATE= "wingetReleaseDate";
+    String KEY_WINGET_INSTALLER_ARCHITECTURE= "wingetInstallerArchitecture";
 
     // Gofish
     String KEY_GOFISH_PACKAGES = "gofishPackages";

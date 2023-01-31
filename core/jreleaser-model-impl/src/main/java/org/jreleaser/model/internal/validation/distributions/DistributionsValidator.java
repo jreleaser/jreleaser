@@ -55,6 +55,8 @@ import static org.jreleaser.model.internal.validation.packagers.SdkmanPackagerVa
 import static org.jreleaser.model.internal.validation.packagers.SdkmanPackagerValidator.validateSdkman;
 import static org.jreleaser.model.internal.validation.packagers.SnapPackagerValidator.validateSnap;
 import static org.jreleaser.model.internal.validation.packagers.SpecPackagerValidator.validateSpec;
+import static org.jreleaser.model.internal.validation.packagers.WingetPackagerValidator.postValidateWinget;
+import static org.jreleaser.model.internal.validation.packagers.WingetPackagerValidator.validateWinget;
 import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -213,6 +215,7 @@ public final class DistributionsValidator {
         validateSdkman(context, distribution, distribution.getSdkman(), errors);
         validateSnap(context, distribution, distribution.getSnap(), errors);
         validateSpec(context, distribution, distribution.getSpec(), errors);
+        validateWinget(context, distribution, distribution.getWinget(), errors);
     }
 
     private static boolean selectArtifactsByPlatform(JReleaserContext context, Distribution distribution) {
@@ -349,5 +352,6 @@ public final class DistributionsValidator {
         context.getLogger().debug("distribution.{}", distribution.getName());
 
         postValidateChocolatey(context, distribution, distribution.getChocolatey(), errors);
+        postValidateWinget(context, distribution, distribution.getWinget(), errors);
     }
 }

@@ -23,6 +23,7 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.TemplatePackager;
 import org.jreleaser.model.spi.packagers.PackagerProcessingException;
+import org.jreleaser.mustache.MustacheUtils;
 import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.templates.TemplateResource;
 import org.jreleaser.util.FileUtils;
@@ -39,7 +40,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
-import static org.jreleaser.mustache.MustacheUtils.applyTemplate;
 import static org.jreleaser.templates.TemplateUtils.resolveAndMergeTemplates;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.FileUtils.createDirectoriesWithFullAccess;
@@ -93,7 +93,7 @@ public abstract class AbstractTemplatePackagerProcessor<T extends TemplatePackag
             TemplateResource value = entry.getValue();
             if (value.isReader()) {
                 context.getLogger().debug(RB.$("packager.evaluate.template"), filename, distributionName, packagerName);
-                String content = applyTemplate(value.getReader(), props);
+                String content = applyTemplate(filename, value.getReader(), props);
                 if (!content.endsWith(System.lineSeparator())) {
                     content += System.lineSeparator();
                 }
@@ -111,6 +111,10 @@ public abstract class AbstractTemplatePackagerProcessor<T extends TemplatePackag
                 context.getBasedir(),
                 prepareDirectory, path -> path.getFileName().startsWith("LICENSE"));
         }
+    }
+
+    protected String applyTemplate(String fileName, Reader reader, TemplateContext props) {
+        return MustacheUtils.applyTemplate(reader, props);
     }
 
     public boolean isSkipped(String filename) {

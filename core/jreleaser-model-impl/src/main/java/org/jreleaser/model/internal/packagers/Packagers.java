@@ -30,7 +30,7 @@ import static java.util.Collections.unmodifiableMap;
  * @since 0.1.0
  */
 public class Packagers<S extends Packagers<S>> extends AbstractActivatable<S> implements Domain {
-    private static final long serialVersionUID = -5034803500410129807L;
+    private static final long serialVersionUID = -3865388447433152980L;
 
     protected final AppImagePackager appImage = new AppImagePackager();
     protected final AsdfPackager asdf = new AsdfPackager();
@@ -45,9 +45,10 @@ public class Packagers<S extends Packagers<S>> extends AbstractActivatable<S> im
     protected final SdkmanPackager sdkman = new SdkmanPackager();
     protected final SnapPackager snap = new SnapPackager();
     protected final SpecPackager spec = new SpecPackager();
+    protected final WingetPackager winget = new WingetPackager();
 
     private final org.jreleaser.model.api.packagers.Packagers immutable = new org.jreleaser.model.api.packagers.Packagers() {
-        private static final long serialVersionUID = 5183532997114141029L;
+        private static final long serialVersionUID = 4269097370946118575L;
 
         @Override
         public org.jreleaser.model.api.packagers.AppImagePackager getAppImage() {
@@ -115,6 +116,11 @@ public class Packagers<S extends Packagers<S>> extends AbstractActivatable<S> im
         }
 
         @Override
+        public org.jreleaser.model.api.packagers.WingetPackager getWinget() {
+            return winget.asImmutable();
+        }
+
+        @Override
         public Map<String, Object> asMap(boolean full) {
             return unmodifiableMap(Packagers.this.asMap(full));
         }
@@ -137,7 +143,8 @@ public class Packagers<S extends Packagers<S>> extends AbstractActivatable<S> im
             scoop.isEnabled() ||
             sdkman.isEnabled() ||
             snap.isEnabled() ||
-            spec.isEnabled();
+            spec.isEnabled() ||
+            winget.isEnabled();
     }
 
     @Override
@@ -156,6 +163,7 @@ public class Packagers<S extends Packagers<S>> extends AbstractActivatable<S> im
         setSdkman(source.sdkman);
         setSnap(source.snap);
         setSpec(source.spec);
+        setWinget(source.winget);
     }
 
     public AppImagePackager getAppImage() {
@@ -262,6 +270,14 @@ public class Packagers<S extends Packagers<S>> extends AbstractActivatable<S> im
         this.spec.merge(spec);
     }
 
+    public WingetPackager getWinget() {
+        return winget;
+    }
+
+    public void setWinget(WingetPackager winget) {
+        this.winget.merge(winget);
+    }
+
     @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
@@ -278,6 +294,7 @@ public class Packagers<S extends Packagers<S>> extends AbstractActivatable<S> im
         map.putAll(sdkman.asMap(full));
         map.putAll(snap.asMap(full));
         map.putAll(spec.asMap(full));
+        map.putAll(winget.asMap(full));
         return map;
     }
 }

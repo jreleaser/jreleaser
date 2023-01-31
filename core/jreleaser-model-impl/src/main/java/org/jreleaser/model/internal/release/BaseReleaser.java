@@ -837,7 +837,6 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
             return null != enabled;
         }
 
-
         public Set<UpdateSection> getSections() {
             return sections;
         }

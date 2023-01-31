@@ -37,6 +37,7 @@ import org.jreleaser.model.internal.packagers.MacportsPackager
 import org.jreleaser.model.internal.packagers.ScoopPackager
 import org.jreleaser.model.internal.packagers.SnapPackager
 import org.jreleaser.model.internal.packagers.SpecPackager
+import org.jreleaser.model.internal.packagers.WingetPackager
 
 import javax.inject.Inject
 
@@ -168,6 +169,12 @@ class TapImpl implements Tap {
 
     JbangPackager.JbangRepository toJbangCatalog() {
         JbangPackager.JbangRepository tap = new JbangPackager.JbangRepository()
+        convert(tap)
+        tap
+    }
+
+    WingetPackager.WingetRepository toWingetRepository() {
+        WingetPackager.WingetRepository tap = new WingetPackager.WingetRepository()
         convert(tap)
         tap
     }

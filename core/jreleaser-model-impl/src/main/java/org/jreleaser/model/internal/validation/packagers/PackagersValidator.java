@@ -158,6 +158,11 @@ public final class PackagersValidator {
         packagers.getSpec().getRepository().setTapName(gitService.getOwner() + "-spec");
 
         validateSdkman(context, packagers.getSdkman());
+
+        validatePackager(context,
+            packagers.getWinget(),
+            packagers.getWinget().getRepository()
+        );
     }
 
     private static void validateSdkman(JReleaserContext context, SdkmanPackager packager) {

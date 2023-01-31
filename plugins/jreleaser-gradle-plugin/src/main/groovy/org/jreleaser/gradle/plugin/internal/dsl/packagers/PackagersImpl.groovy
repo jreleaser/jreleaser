@@ -34,6 +34,7 @@ import org.jreleaser.gradle.plugin.dsl.packagers.ScoopPackager
 import org.jreleaser.gradle.plugin.dsl.packagers.SdkmanPackager
 import org.jreleaser.gradle.plugin.dsl.packagers.SnapPackager
 import org.jreleaser.gradle.plugin.dsl.packagers.SpecPackager
+import org.jreleaser.gradle.plugin.dsl.packagers.WingetPackager
 import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
@@ -58,6 +59,7 @@ class PackagersImpl implements Packagers {
     final SdkmanPackagerImpl sdkman
     final SnapPackagerImpl snap
     final SpecPackagerImpl spec
+    final WingetPackagerImpl winget
 
     @Inject
     PackagersImpl(ObjectFactory objects) {
@@ -74,6 +76,7 @@ class PackagersImpl implements Packagers {
         sdkman = objects.newInstance(SdkmanPackagerImpl, objects)
         snap = objects.newInstance(SnapPackagerImpl, objects)
         spec = objects.newInstance(SpecPackagerImpl, objects)
+        winget = objects.newInstance(WingetPackagerImpl, objects)
     }
 
     @Override
@@ -142,6 +145,11 @@ class PackagersImpl implements Packagers {
     }
 
     @Override
+    void winget(Action<? super WingetPackager> action) {
+        action.execute(winget)
+    }
+
+    @Override
     void appImage(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = AppImagePackager) Closure<Void> action) {
         ConfigureUtil.configure(action, appImage)
     }
@@ -206,6 +214,11 @@ class PackagersImpl implements Packagers {
         ConfigureUtil.configure(action, spec)
     }
 
+    @Override
+    void winget(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = WingetPackager) Closure<Void> action) {
+        ConfigureUtil.configure(action, winget)
+    }
+
     org.jreleaser.model.internal.packagers.Packagers toModel() {
         org.jreleaser.model.internal.packagers.Packagers packagers = new org.jreleaser.model.internal.packagers.Packagers()
         if (appImage.isSet()) packagers.appImage = appImage.toModel()
@@ -221,6 +234,7 @@ class PackagersImpl implements Packagers {
         if (sdkman.isSet()) packagers.sdkman = sdkman.toModel()
         if (snap.isSet()) packagers.snap = snap.toModel()
         if (spec.isSet()) packagers.spec = spec.toModel()
+        if (winget.isSet()) packagers.winget = winget.toModel()
         packagers
     }
 }

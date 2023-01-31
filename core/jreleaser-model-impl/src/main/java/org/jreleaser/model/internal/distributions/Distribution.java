@@ -88,7 +88,7 @@ public final class Distribution extends Packagers<Distribution> implements Domai
     private Stereotype stereotype;
 
     private final org.jreleaser.model.api.distributions.Distribution immutable = new org.jreleaser.model.api.distributions.Distribution() {
-        private static final long serialVersionUID = -5130197186070603201L;
+        private static final long serialVersionUID = -3718386189666939473L;
 
         private Set<? extends org.jreleaser.model.api.common.Artifact> artifacts;
 
@@ -220,6 +220,11 @@ public final class Distribution extends Packagers<Distribution> implements Domai
         @Override
         public org.jreleaser.model.api.packagers.SpecPackager getSpec() {
             return spec.asImmutable();
+        }
+
+        @Override
+        public org.jreleaser.model.api.packagers.WingetPackager getWinget() {
+            return winget.asImmutable();
         }
 
         @Override
@@ -449,6 +454,8 @@ public final class Distribution extends Packagers<Distribution> implements Domai
                 return (T) getSnap();
             case org.jreleaser.model.api.packagers.SpecPackager.TYPE:
                 return (T) getSpec();
+            case org.jreleaser.model.api.packagers.WingetPackager.TYPE:
+                return (T) getWinget();
             default:
                 throw new JReleaserException(RB.$("ERROR_unsupported_packager", name));
         }

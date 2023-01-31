@@ -43,6 +43,7 @@ import org.jreleaser.gradle.plugin.dsl.packagers.ScoopPackager
 import org.jreleaser.gradle.plugin.dsl.packagers.SdkmanPackager
 import org.jreleaser.gradle.plugin.dsl.packagers.SnapPackager
 import org.jreleaser.gradle.plugin.dsl.packagers.SpecPackager
+import org.jreleaser.gradle.plugin.dsl.packagers.WingetPackager
 import org.jreleaser.gradle.plugin.dsl.platform.Platform
 import org.jreleaser.gradle.plugin.internal.dsl.common.ArtifactImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.ExecutableImpl
@@ -60,6 +61,7 @@ import org.jreleaser.gradle.plugin.internal.dsl.packagers.ScoopPackagerImpl
 import org.jreleaser.gradle.plugin.internal.dsl.packagers.SdkmanPackagerImpl
 import org.jreleaser.gradle.plugin.internal.dsl.packagers.SnapPackagerImpl
 import org.jreleaser.gradle.plugin.internal.dsl.packagers.SpecPackagerImpl
+import org.jreleaser.gradle.plugin.internal.dsl.packagers.WingetPackagerImpl
 import org.jreleaser.gradle.plugin.internal.dsl.platform.PlatformImpl
 import org.jreleaser.model.Active
 import org.jreleaser.model.Distribution.DistributionType
@@ -101,6 +103,7 @@ class DistributionImpl implements Distribution {
     final SdkmanPackagerImpl sdkman
     final SnapPackagerImpl snap
     final SpecPackagerImpl spec
+    final WingetPackagerImpl winget
 
     final NamedDomainObjectContainer<ArtifactImpl> artifacts
 
@@ -139,6 +142,7 @@ class DistributionImpl implements Distribution {
         sdkman = objects.newInstance(SdkmanPackagerImpl, objects)
         snap = objects.newInstance(SnapPackagerImpl, objects)
         spec = objects.newInstance(SpecPackagerImpl, objects)
+        winget = objects.newInstance(WingetPackagerImpl, objects)
     }
 
     @Override
@@ -249,6 +253,11 @@ class DistributionImpl implements Distribution {
     }
 
     @Override
+    void winget(Action<? super WingetPackager> action) {
+        action.execute(winget)
+    }
+
+    @Override
     void setActive(String str) {
         if (isNotBlank(str)) {
             active.set(Active.of(str.trim()))
@@ -340,6 +349,11 @@ class DistributionImpl implements Distribution {
         ConfigureUtil.configure(action, spec)
     }
 
+    @Override
+    void winget(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = WingetPackager) Closure<Void> action) {
+        ConfigureUtil.configure(action, winget)
+    }
+
     org.jreleaser.model.internal.distributions.Distribution toModel() {
         org.jreleaser.model.internal.distributions.Distribution distribution = new org.jreleaser.model.internal.distributions.Distribution()
         distribution.name = name
@@ -367,6 +381,7 @@ class DistributionImpl implements Distribution {
         if (sdkman.isSet()) distribution.sdkman = sdkman.toModel()
         if (snap.isSet()) distribution.snap = snap.toModel()
         if (spec.isSet()) distribution.spec = spec.toModel()
+        if (winget.isSet()) distribution.winget = winget.toModel()
         distribution
     }
 

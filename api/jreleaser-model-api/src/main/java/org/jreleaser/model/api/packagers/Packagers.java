@@ -49,4 +49,6 @@ public interface Packagers extends Domain {
     SnapPackager getSnap();
 
     SpecPackager getSpec();
+
+    WingetPackager getWinget();
 }
