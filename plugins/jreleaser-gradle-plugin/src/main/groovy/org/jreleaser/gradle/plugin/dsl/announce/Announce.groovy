@@ -41,6 +41,8 @@ interface Announce extends Activatable {
 
     GoogleChatAnnouncer getGoogleChat()
 
+    LinkedinAnnouncer getLinkedin()
+
     @Deprecated
     SmtpAnnouncer getMail()
 
@@ -78,6 +80,8 @@ interface Announce extends Activatable {
 
     void googleChat(Action<? super GoogleChatAnnouncer> action)
 
+    void linkedin(Action<? super LinkedinAnnouncer> action)
+
     void http(Action<? super NamedDomainObjectContainer<HttpAnnouncer>> action)
 
     void mail(Action<? super SmtpAnnouncer> action)
@@ -113,6 +117,8 @@ interface Announce extends Activatable {
     void gitter(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = GitterAnnouncer) Closure<Void> action)
 
     void googleChat(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = GoogleChatAnnouncer) Closure<Void> action)
+
+    void linkedin(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = LinkedinAnnouncer) Closure<Void> action)
 
     void http(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 

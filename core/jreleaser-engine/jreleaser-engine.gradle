@@ -40,6 +40,7 @@ dependencies {
     api project(':jreleaser-discourse-java-sdk')
     api project(':jreleaser-gitter-java-sdk')
     api project(':jreleaser-google-chat-java-sdk')
+    api project(':jreleaser-linkedin-java-sdk')
     api project(':jreleaser-smtp-java-sdk')
     api project(':jreleaser-mastodon-java-sdk')
     api project(':jreleaser-mattermost-java-sdk')

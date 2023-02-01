@@ -36,7 +36,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.1.0
  */
 public final class Announce extends AbstractActivatable<Announce> implements Domain {
-    private static final long serialVersionUID = -6868967233400028691L;
+    private static final long serialVersionUID = -6058903517417564327L;
 
     private final ArticleAnnouncer article = new ArticleAnnouncer();
     private final DiscordAnnouncer discord = new DiscordAnnouncer();
@@ -44,6 +44,7 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
     private final DiscussionsAnnouncer discussions = new DiscussionsAnnouncer();
     private final GitterAnnouncer gitter = new GitterAnnouncer();
     private final GoogleChatAnnouncer googleChat = new GoogleChatAnnouncer();
+    private final LinkedinAnnouncer linkedin = new LinkedinAnnouncer();
     private final HttpAnnouncers http = new HttpAnnouncers();
     private final SmtpAnnouncer smtp = new SmtpAnnouncer();
     private final MastodonAnnouncer mastodon = new MastodonAnnouncer();
@@ -57,7 +58,7 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
     private final ZulipAnnouncer zulip = new ZulipAnnouncer();
 
     private final org.jreleaser.model.api.announce.Announce immutable = new org.jreleaser.model.api.announce.Announce() {
-        private static final long serialVersionUID = 5983475776968116269L;
+        private static final long serialVersionUID = 2116386621001490270L;
 
         @Override
         public org.jreleaser.model.api.announce.ArticleAnnouncer getArticle() {
@@ -87,6 +88,11 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         @Override
         public org.jreleaser.model.api.announce.GoogleChatAnnouncer getGoogleChat() {
             return googleChat.asImmutable();
+        }
+
+        @Override
+        public org.jreleaser.model.api.announce.LinkedinAnnouncer getLinkedInAnnouncer() {
+            return linkedin.asImmutable();
         }
 
         @Override
@@ -181,6 +187,7 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         setDiscourse(source.discourse);
         setDiscussions(source.discussions);
         setGitter(source.gitter);
+        setLinkedin(source.linkedin);
         setGoogleChat(source.googleChat);
         setConfiguredHttp(source.http);
         setSmtp(source.smtp);
@@ -249,6 +256,14 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
 
     public void setGoogleChat(GoogleChatAnnouncer googleChat) {
         this.googleChat.merge(googleChat);
+    }
+
+    public LinkedinAnnouncer getLinkedin() {
+        return linkedin;
+    }
+
+    public void setLinkedin(LinkedinAnnouncer linkedin) {
+        this.linkedin.merge(linkedin);
     }
 
     @Deprecated
@@ -385,6 +400,7 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         map.putAll(discussions.asMap(full));
         map.putAll(gitter.asMap(full));
         map.putAll(googleChat.asMap(full));
+        map.putAll(linkedin.asMap(full));
         map.putAll(http.asMap(full));
         map.putAll(smtp.asMap(full));
         map.putAll(mastodon.asMap(full));
@@ -421,6 +437,8 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
                 return (A) getGitter();
             case org.jreleaser.model.api.announce.GoogleChatAnnouncer.TYPE:
                 return (A) getGoogleChat();
+            case org.jreleaser.model.api.announce.LinkedinAnnouncer.TYPE:
+                return (A) getLinkedin();
             case org.jreleaser.model.api.announce.HttpAnnouncers.TYPE:
                 return (A) getConfiguredHttp();
             case org.jreleaser.model.api.announce.SmtpAnnouncer.TYPE:

@@ -22,6 +22,7 @@ import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
 import static com.github.tomakehurst.wiremock.client.WireMock.containing;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
+import static com.github.tomakehurst.wiremock.client.WireMock.or;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
@@ -35,6 +36,10 @@ public final class WireMockStubs {
         verifyRequestContains(postRequestedFor(urlEqualTo(endpoint)), maybeJson);
     }
 
+    public static void verifyJsonPostContains(String endpoint, String maybeJson) {
+        verifyJsonRequestContains(postRequestedFor(urlEqualTo(endpoint)), maybeJson);
+    }
+
     public static void verifyRequest(RequestPatternBuilder builder, String maybeJson) {
         verify(builder.withHeader("Content-Type", containing("application/x-www-form-urlencoded"))
             .withHeader("Accept", equalTo("*/*"))
@@ -44,6 +49,12 @@ public final class WireMockStubs {
     public static void verifyRequestContains(RequestPatternBuilder builder, String maybeJson) {
         verify(builder.withHeader("Content-Type", containing("application/x-www-form-urlencoded"))
             .withHeader("Accept", equalTo("*/*"))
+            .withRequestBody(maybeJson.startsWith("{") ? containing(maybeJson.substring(1, maybeJson.length() - 1)) : containing(maybeJson)));
+    }
+
+    public static void verifyJsonRequestContains(RequestPatternBuilder builder, String maybeJson) {
+        verify(builder.withHeader("Content-Type", containing("application/json"))
+            .withHeader("Accept", or(equalTo("*/*"), equalTo("application/json")))
             .withRequestBody(maybeJson.startsWith("{") ? containing(maybeJson.substring(1, maybeJson.length() - 1)) : containing(maybeJson)));
     }
 }

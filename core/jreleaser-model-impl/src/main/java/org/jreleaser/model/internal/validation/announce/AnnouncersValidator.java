@@ -30,6 +30,7 @@ import static org.jreleaser.model.internal.validation.announce.DiscussionsAnnoun
 import static org.jreleaser.model.internal.validation.announce.GitterAnnouncerValidator.validateGitter;
 import static org.jreleaser.model.internal.validation.announce.GoogleChatAnnouncerValidator.validateGoogleChat;
 import static org.jreleaser.model.internal.validation.announce.HttpAnnouncerValidator.validateHttpAnnouncers;
+import static org.jreleaser.model.internal.validation.announce.LinkedinAnnouncerValidator.validateLinkedin;
 import static org.jreleaser.model.internal.validation.announce.MastodonAnnouncerValidator.validateMastodon;
 import static org.jreleaser.model.internal.validation.announce.MattermostAnnouncerValidator.validateMattermost;
 import static org.jreleaser.model.internal.validation.announce.SdkmanAnnouncerValidator.validateSdkmanAnnouncer;
@@ -66,6 +67,7 @@ public final class AnnouncersValidator {
         validateDiscourse(context, announce.getDiscourse(), errors);
         validateGitter(context, announce.getGitter(), errors);
         validateGoogleChat(context, announce.getGoogleChat(), errors);
+        validateLinkedin(context, announce.getLinkedin(), errors);
         validateHttpAnnouncers(context, mode, announce.getConfiguredHttp(), errors);
         validateSmtp(context, announce.getSmtp(), errors);
         validateMastodon(context, announce.getMastodon(), errors);
@@ -89,6 +91,7 @@ public final class AnnouncersValidator {
                 announce.getDiscussions().isEnabled() ||
                 announce.getGitter().isEnabled() ||
                 announce.getGoogleChat().isEnabled() ||
+                announce.getLinkedin().isEnabled() ||
                 announce.getConfiguredHttp().isEnabled() ||
                 announce.getSmtp().isEnabled() ||
                 announce.getMastodon().isEnabled() ||

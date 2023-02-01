@@ -39,6 +39,8 @@ public interface Announce extends Domain, Activatable {
 
     GoogleChatAnnouncer getGoogleChat();
 
+    LinkedinAnnouncer getLinkedInAnnouncer();
+
     @Deprecated
     SmtpAnnouncer getMail();
 

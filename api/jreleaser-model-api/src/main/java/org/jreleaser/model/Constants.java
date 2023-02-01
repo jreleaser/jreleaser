@@ -353,6 +353,10 @@ public interface Constants {
     String KEY_WINGET_RELEASE_DATE= "wingetReleaseDate";
     String KEY_WINGET_INSTALLER_ARCHITECTURE= "wingetInstallerArchitecture";
 
+    // Linkedin
+    String KEY_LINKEDIN_OWNER = "linkedinOwner";
+    String KEY_LINKEDIN_SUBJECT = "linkedinSubject";
+
     // Gofish
     String KEY_GOFISH_PACKAGES = "gofishPackages";
 

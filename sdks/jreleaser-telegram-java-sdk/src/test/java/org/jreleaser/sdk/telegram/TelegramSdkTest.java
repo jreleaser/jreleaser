@@ -57,8 +57,6 @@ class TelegramSdkTest {
         // when:
         sdk.sendMessage("announce", "App 1.0.0 has been released");
 
-        System.out.println(WireMock.findUnmatchedRequests());
-
         // then:
         verifyPostContains(API_HOST_PREFIX + SEND_MESSAGE_ENDPOINT,
             "chat_id=announce");
