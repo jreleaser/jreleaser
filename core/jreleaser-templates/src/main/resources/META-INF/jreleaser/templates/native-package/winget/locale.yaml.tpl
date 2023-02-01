@@ -19,7 +19,7 @@ Moniker: {{wingetMoniker}}
 {{#wingetHasTags}}
 Tags:
   {{#wingetTags}}
-    - {{.}}
+  - {{.}}
   {{/wingetTags}}
 {{/wingetHasTags}}
 ReleaseNotesUrl: {{releaseNotesUrl}}

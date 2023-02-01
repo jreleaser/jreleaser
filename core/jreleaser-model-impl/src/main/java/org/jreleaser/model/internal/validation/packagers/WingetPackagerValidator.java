@@ -42,6 +42,7 @@ import static org.jreleaser.model.internal.validation.common.Validator.validateC
 import static org.jreleaser.model.internal.validation.common.Validator.validateTap;
 import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -179,7 +180,8 @@ public final class WingetPackagerValidator {
                 packager.getPackage().setIdentifier(vendor + "." + packager.getPackage().getName());
             }
         }
-        if (!PATTERN_PACKAGE_IDENTIFIER.matcher(packager.getPackage().getIdentifier()).matches()) {
+        if (isNotBlank(packager.getPackage().getIdentifier()) &&
+            !PATTERN_PACKAGE_IDENTIFIER.matcher(packager.getPackage().getIdentifier()).matches()) {
             errors.configuration(RB.$("validation_is_invalid",
                 "distribution." + distribution.getName() + ".winget.package.identifier", packager.getPackage().getIdentifier()));
         }

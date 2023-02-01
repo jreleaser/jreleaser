@@ -12,7 +12,7 @@ InstallModes:
 {{/wingetInstallModes}}
 UpgradeBehavior: {{wingetUpgradeBehavior}}
 Commands:
-- {{distributionExecutableName}}
+  - {{distributionExecutableName}}
 ReleaseDate: {{wingetReleaseDate}}
 Installers:
   - Architecture: {{wingetInstallerArchitecture}}

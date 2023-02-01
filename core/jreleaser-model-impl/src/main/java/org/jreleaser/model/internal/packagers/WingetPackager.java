@@ -228,6 +228,9 @@ public final class WingetPackager extends AbstractRepositoryPackager<org.jreleas
         this.moniker = merge(this.moniker, source.moniker);
         this.minimumOsVersion = merge(this.minimumOsVersion, source.minimumOsVersion);
         this.productCode = merge(this.productCode, source.productCode);
+        setPackage(source._package);
+        setPublisher(source.publisher);
+        setInstaller(source.installer);
         setRepository(source.repository);
         setTags(merge(this.tags, source.tags));
     }

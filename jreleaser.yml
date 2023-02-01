@@ -31,6 +31,7 @@ project:
   license: Apache-2.0
   inceptionYear: 2020
   stereotype: cli
+  vendor: JReleaser
   screenshots:
     - url: https://jreleaser.org/images/app-full-release-command.png
       caption: JReleaser in action
@@ -377,6 +378,16 @@ distributions:
 
   jreleaser-installer:
     type: NATIVE_PACKAGE
+    winget:
+      active: RELEASE
+      package:
+        name: jreleaser
+      repository:
+        active: ALWAYS
+        commitMessage: 'jreleaser {{tagName}}'
+    executable:
+      name: jreleaser
+      windowsExtension: exe
     artifacts:
       - path: '{{jpackageDir}}/JReleaser-{{projectVersionNumber}}-osx-x86_64.pkg'
         transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}-osx-x86_64.pkg'

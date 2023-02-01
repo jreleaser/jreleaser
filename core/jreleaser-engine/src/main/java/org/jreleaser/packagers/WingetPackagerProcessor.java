@@ -21,16 +21,20 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.WingetPackager;
 import org.jreleaser.model.spi.packagers.PackagerProcessingException;
+import org.jreleaser.mustache.MustacheUtils;
 import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.util.PlatformUtils;
 
 import java.io.Reader;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_PLATFORM;
+import static org.jreleaser.model.Constants.KEY_PROJECT_LONG_DESCRIPTION;
 import static org.jreleaser.model.Constants.KEY_WINGET_AUTHOR;
 import static org.jreleaser.model.Constants.KEY_WINGET_DEFAULT_LOCALE;
 import static org.jreleaser.model.Constants.KEY_WINGET_HAS_TAGS;
@@ -73,6 +77,13 @@ public class WingetPackagerProcessor extends AbstractRepositoryPackagerProcessor
 
     @Override
     protected void fillPackagerProperties(TemplateContext props, Distribution distribution) {
+        String desc = context.getModel().getProject().getLongDescription();
+        desc = Arrays.stream(desc.split(System.lineSeparator()))
+            .map(line -> "  " + line)
+            .collect(Collectors.joining(System.lineSeparator()));
+        props.set(KEY_PROJECT_LONG_DESCRIPTION,
+            MustacheUtils.passThrough("|" + System.lineSeparator() + desc));
+
         props.set(KEY_WINGET_DEFAULT_LOCALE, packager.getDefaultLocale());
         props.set(KEY_WINGET_AUTHOR, packager.getAuthor());
         props.set(KEY_WINGET_MONIKER, resolveTemplate(packager.getMoniker(), props));
