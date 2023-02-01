@@ -60,7 +60,7 @@ jobs:
         uses: jreleaser/release-action@v1
         with:
           version: early-access
-          arguments: assemble -s jlink
+          arguments: assemble --assembler jlink
         env:
           JRELEASER_PROJECT_VERSION: ${{ inputs.project-version }}
 

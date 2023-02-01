@@ -77,7 +77,7 @@ jobs:
         uses: jreleaser/release-action@v1
         with:
           version: early-access
-          arguments: assemble -s jpackage -scp
+          arguments: assemble --assembler jpackage --select-current-platform
         env:
           JRELEASER_PROJECT_VERSION: ${{ inputs.project-version }}
 

@@ -178,14 +178,14 @@ jobs:
           ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser announce -PoutputDir=out --dry-run
           echo "::endgroup::"
           echo "::group::➡️ template generate"
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser template generate -a discord
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser template generate -st jlink -s app-standalone
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser template generate -p brew -d app
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser template generate --announcer discord
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser template generate --assembler-type jlink --assembler-name app-standalone
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser template generate --packager brew --distribution app
           echo "::endgroup::"
           echo "::group::➡️ init"
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser init -o -f yml
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser init -o -f toml
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser init -o -f json
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser init --overwrite --format yml
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser init --overwrite --format toml
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser init --overwrite --format json
           echo "::endgroup::"
           echo "::group::➡️ auto-config"
           ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser release --auto-config --dry-run
@@ -366,14 +366,14 @@ jobs:
           java $JAVA_OPTS -jar jreleaser.jar announce -PoutputDir=out --dry-run
           echo "::endgroup::"
           echo "::group::➡️ template generate"
-          java $JAVA_OPTS -jar jreleaser.jar template generate -a discord
-          java $JAVA_OPTS -jar jreleaser.jar template generate -st jlink -s app-standalone
-          java $JAVA_OPTS -jar jreleaser.jar template generate -p brew -d app
+          java $JAVA_OPTS -jar jreleaser.jar template generate --announcer discord
+          java $JAVA_OPTS -jar jreleaser.jar template generate --assembler-type jlink --assembler-name app-standalone
+          java $JAVA_OPTS -jar jreleaser.jar template generate --packager brew --distribution app
           echo "::endgroup::"
           echo "::group::➡️ init"
-          java $JAVA_OPTS -jar jreleaser.jar init -o -f yml
-          java $JAVA_OPTS -jar jreleaser.jar init -o -f toml
-          java $JAVA_OPTS -jar jreleaser.jar init -o -f json
+          java $JAVA_OPTS -jar jreleaser.jar init --overwrite --format yml
+          java $JAVA_OPTS -jar jreleaser.jar init --overwrite --format toml
+          java $JAVA_OPTS -jar jreleaser.jar init --overwrite --format json
           echo "::endgroup::"
           echo "::group::➡️ auto-config"
           java $JAVA_OPTS -jar jreleaser.jar release --auto-config --dry-run
