@@ -44,6 +44,7 @@ import static org.jreleaser.model.Distribution.DistributionType.NATIVE_PACKAGE;
 import static org.jreleaser.model.api.packagers.WingetPackager.SKIP_WINGET;
 import static org.jreleaser.model.api.packagers.WingetPackager.TYPE;
 import static org.jreleaser.util.CollectionUtils.setOf;
+import static org.jreleaser.util.FileType.EXE;
 import static org.jreleaser.util.FileType.MSI;
 import static org.jreleaser.util.StringUtils.isFalse;
 
@@ -56,7 +57,7 @@ public final class WingetPackager extends AbstractRepositoryPackager<org.jreleas
     private static final long serialVersionUID = 3773118573465356496L;
 
     static {
-        SUPPORTED.put(NATIVE_PACKAGE, setOf(MSI.extension()));
+        SUPPORTED.put(NATIVE_PACKAGE, setOf(MSI.extension(), EXE.extension()));
     }
 
     private final WingetRepository repository = new WingetRepository();
@@ -539,7 +540,7 @@ public final class WingetPackager extends AbstractRepositoryPackager<org.jreleas
         private static final long serialVersionUID = -5585999592531263933L;
 
         private final Set<Mode> modes = new LinkedHashSet<>();
-        private Type type = Type.MSI;
+        private Type type = Type.WIX;
         private Scope scope = Scope.MACHINE;
         private UpgradeBehavior upgradeBehavior = UpgradeBehavior.INSTALL;
         private String command;
