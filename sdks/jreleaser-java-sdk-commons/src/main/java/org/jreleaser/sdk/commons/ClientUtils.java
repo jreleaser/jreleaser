@@ -56,6 +56,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Collections.emptyMap;
 import static java.util.Objects.requireNonNull;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -133,9 +134,18 @@ public final class ClientUtils {
                                int connectTimeout,
                                int readTimeout,
                                String message) throws AnnounceException {
+        post(logger, webhookUrl, connectTimeout, readTimeout, message, emptyMap());
+    }
+
+    public static void post(JReleaserLogger logger,
+                            String theUrl,
+                            int connectTimeout,
+                            int readTimeout,
+                            String message,
+                            Map<String, String> headers) throws AnnounceException {
         try {
             // create URL
-            URL url = new URL(webhookUrl);
+            URL url = new URL(theUrl);
             // open connection
             logger.debug(RB.$("webhook.connection.open"));
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -147,9 +157,10 @@ public final class ClientUtils {
             connection.setInstanceFollowRedirects(true);
 
             connection.setRequestMethod("POST");
+            connection.addRequestProperty("User-Agent", "JReleaser/" + JReleaserVersion.getPlainVersion());
             connection.addRequestProperty("Content-Type", "application/json");
             connection.addRequestProperty("Accept", "application/json");
-            connection.addRequestProperty("User-Agent", "JReleaser/" + JReleaserVersion.getPlainVersion());
+            headers.forEach(connection::addRequestProperty);
             connection.setDoOutput(true);
 
             // write message

@@ -73,7 +73,7 @@ public final class LinkedinAnnouncerValidator {
                 context.isDryrun()));
 
         if (isBlank(linkedin.getSubject())) {
-            linkedin.setSubject("{{projectCapitalizedName}} {{projectVersion}} released");
+            linkedin.setSubject("{{projectNameCapitalized}} {{projectVersion}} released");
         }
 
         if (isBlank(linkedin.getMessage()) && isBlank(linkedin.getMessageTemplate())) {

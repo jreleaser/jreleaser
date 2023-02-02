@@ -27,7 +27,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class Message {
     private String owner;
     private String subject;
-    private String text;
+    private Text text;
 
     public String getOwner() {
         return owner;
@@ -45,18 +45,34 @@ public class Message {
         this.subject = subject;
     }
 
-    public String getText() {
+    public Text getText() {
         return text;
     }
 
-    public void setText(String text) {
+    public void setText(Text text) {
         this.text = text;
     }
 
     public static Message of(String subject, String text) {
         Message message = new Message();
         message.subject = subject;
-        message.text = text;
+        message.text = new Text(text);
         return message;
+    }
+
+    public static final class Text {
+        private String text;
+
+        public Text(String text) {
+            this.text = text;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public void setText(String text) {
+            this.text = text;
+        }
     }
 }

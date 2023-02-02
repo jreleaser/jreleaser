@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
@@ -45,8 +46,10 @@ class LinkedinSdkTest {
     void testMessageWithImplicitOwner() throws LinkedinException {
         // given:
         stubFor(get(urlEqualTo(ME_ENDPOINT))
+            .withHeader("Authorization", equalTo("Bearer TOKEN"))
             .willReturn(okJson("{\"id\":\"324_kGGaLE\"}")));
         stubFor(post(urlEqualTo(SHARES_ENDPOINT))
+            //.withHeader("Authorization", equalTo("Bearer TOKEN"))
             .willReturn(okJson("{\"id\":\"6275832358189047808\"}")));
 
         LinkedinSdk sdk = LinkedinSdk
@@ -66,7 +69,9 @@ class LinkedinSdkTest {
             "{\n" +
                 "  \"owner\" : \"urn:li:person:324_kGGaLE\",\n" +
                 "  \"subject\" : \"App 1.0.0 released\",\n" +
-                "  \"text\" : \"App 1.0.0 has been released\"\n" +
+                "  \"text\" : {\n" +
+                "    \"text\" : \"App 1.0.0 has been released\"\n" +
+                "  }\n" +
                 "}");
     }
 
@@ -74,6 +79,7 @@ class LinkedinSdkTest {
     void testMessageWithExplicitOwner() throws LinkedinException {
         // given:
         stubFor(post(urlEqualTo(SHARES_ENDPOINT))
+            .withHeader("Authorization", equalTo("Bearer TOKEN"))
             .willReturn(okJson("{\"id\":\"6275832358189047808\"}")));
 
         LinkedinSdk sdk = LinkedinSdk
@@ -93,7 +99,9 @@ class LinkedinSdkTest {
             "{\n" +
                 "  \"owner\" : \"urn:li:person:324_kGGaLE\",\n" +
                 "  \"subject\" : \"App 1.0.0 released\",\n" +
-                "  \"text\" : \"App 1.0.0 has been released\"\n" +
+                "  \"text\" : {\n" +
+                "    \"text\" : \"App 1.0.0 has been released\"\n" +
+                "  }\n" +
                 "}");
     }
 
@@ -180,8 +188,10 @@ class LinkedinSdkTest {
     void testDryrun() throws LinkedinException {
         // given:
         stubFor(get(urlEqualTo(ME_ENDPOINT))
+            .withHeader("Authorization", equalTo("Bearer TOKEN"))
             .willReturn(okJson("{\"id\":\"324_kGGaLE\"}")));
         stubFor(post(urlEqualTo(SHARES_ENDPOINT))
+            .withHeader("Authorization", equalTo("Bearer TOKEN"))
             .willReturn(okJson("{\"id\":\"6275832358189047808\"}")));
 
         LinkedinSdk sdk = LinkedinSdk
@@ -205,8 +215,10 @@ class LinkedinSdkTest {
     void testError() {
         // given:
         stubFor(get(urlEqualTo(ME_ENDPOINT))
+            .withHeader("Authorization", equalTo("Bearer TOKEN"))
             .willReturn(aResponse().withStatus(400)));
         stubFor(post(urlEqualTo(SHARES_ENDPOINT))
+            .withHeader("Authorization", equalTo("Bearer TOKEN"))
             .willReturn(aResponse().withStatus(400)));
 
         LinkedinSdk sdk = LinkedinSdk

@@ -13,6 +13,8 @@ useful when running in CI.
 
 **Templates:** Arbitrary templates may now be evaluated using the `template eval` [command]({{projectLinkDocumentation}}/tools/jreleaser-cli.html#_template_eval)
 
+**Announce:** Releases may not be announced to Linkedin {{projectLinkDocumentation}}/reference/announce/linkedin.html
+
 **CLI:** Updates to CLI flags following the Command Line Interface Guidelines document https://github.com/jreleaser/jreleaser/issues/1185
 
 [🚀 Changelog](https://github.com/jreleaser/jreleaser/releases/tag/{{tagName}})

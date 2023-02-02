@@ -4,6 +4,7 @@
 🪟 Winget, the preferred package manager for Windows, is now supported for NATIVE_PACKAGE distributions {{projectLinkDocumentation}}/reference/packagers/winget.html
 🐳 Reuse an existing buildx builder. Enable login outside the tool {{projectLinkDocumentation}}/reference/packagers/docker.html
 🗒  Arbitrary templates may now be evaluated using the `template eval` command {{projectLinkDocumentation}}/tools/jreleaser-cli.html#_template_eval
+📣 Announce releases to Linkedin {{projectLinkDocumentation}}/reference/announce/linkedin.html
 💻 Updates to CLI flags following the Command Line Interface Guidelines https://github.com/jreleaser/jreleaser/issues/1185
 🚨 Watch out for deprecations introduced in this release. Be sure to follow migration instructions.
 📝 Full list of changes available at the {{milestoneName}} milestone {{projectLinkVcsBrowser}}/milestones?state=closed

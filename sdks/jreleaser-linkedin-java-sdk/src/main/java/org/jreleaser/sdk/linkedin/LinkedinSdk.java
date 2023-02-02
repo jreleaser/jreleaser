@@ -28,6 +28,8 @@ import org.jreleaser.sdk.linkedin.api.LinkedinAPI;
 import org.jreleaser.sdk.linkedin.api.Message;
 import org.jreleaser.sdk.linkedin.api.Profile;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
@@ -47,22 +49,24 @@ public class LinkedinSdk {
     private final int connectTimeout;
     private final int readTimeout;
     private final String apiHost;
+    private final String accessToken;
 
     private LinkedinSdk(JReleaserLogger logger,
                         String apiHost,
+                        String accessToken,
                         int connectTimeout,
                         int readTimeout,
                         boolean dryrun) {
-        requireNonNull(logger, "'logger' must not be null");
-        requireNonBlank(apiHost, "'apiHost' must not be blank");
+        this.logger = requireNonNull(logger, "'logger' must not be null");
+        this.apiHost = requireNonBlank(apiHost, "'apiHost' must not be blank");
+        this.accessToken = requireNonBlank(accessToken, "'accessToken' must not be blank");
 
-        this.logger = logger;
-        this.apiHost = apiHost;
         this.connectTimeout = connectTimeout;
         this.readTimeout = readTimeout;
         this.dryrun = dryrun;
 
         this.api = ClientUtils.builder(logger, connectTimeout, readTimeout)
+            .requestInterceptor(template -> template.header("Authorization", String.format("Bearer %s", accessToken)))
             .target(LinkedinAPI.class, apiHost);
 
         this.logger.debug(RB.$("workflow.dryrun"), dryrun);
@@ -85,6 +89,8 @@ public class LinkedinSdk {
     public void share(String owner, String subject, String text, TemplateContext props) throws AnnounceException, LinkedinException {
         logger.debug("linkedin.subject: " + subject);
 
+        if (dryrun) return;
+
         if (isNotBlank(owner)) {
             props.set(KEY_LINKEDIN_OWNER, owner);
         } else {
@@ -93,11 +99,14 @@ public class LinkedinSdk {
         }
         text = Templates.resolveTemplate(text, props);
 
-        ClientUtils.webhook(logger,
+        Map<String, String> headers = new LinkedHashMap<>();
+        headers.put("Authorization", String.format("Bearer %s", accessToken));
+        ClientUtils.post(logger,
             apiHost + "/shares",
             connectTimeout,
             readTimeout,
-            text);
+            text,
+            headers);
     }
 
     private void wrap(Runnable runnable) throws LinkedinException {
@@ -177,6 +186,7 @@ public class LinkedinSdk {
             return new LinkedinSdk(
                 logger,
                 apiHost,
+                accessToken,
                 connectTimeout,
                 readTimeout,
                 dryrun);
