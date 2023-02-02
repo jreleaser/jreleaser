@@ -22,6 +22,7 @@ import org.gradle.api.Action
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
@@ -58,6 +59,7 @@ class ChangelogImpl implements Changelog {
     final HideImpl hide
     final ContributorsImpl contributors
     final AppendImpl append
+    final MapProperty<String, Object> extraProperties
 
     private final List<CategoryImpl> categories = []
     private final List<LabelerImpl> labelers = []
@@ -85,6 +87,7 @@ class ChangelogImpl implements Changelog {
         hide = objects.newInstance(HideImpl, objects)
         contributors = objects.newInstance(ContributorsImpl, objects)
         append = objects.newInstance(AppendImpl, objects)
+        extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
     }
 
     @Override
@@ -125,7 +128,8 @@ class ChangelogImpl implements Changelog {
             !replacers.isEmpty() ||
             contributors.isSet() ||
             hide.isSet() ||
-            append.isSet()
+            append.isSet() ||
+            extraProperties.present
     }
 
     @Override
@@ -257,6 +261,7 @@ class ChangelogImpl implements Changelog {
         changelog.hide = hide.toModel()
         changelog.contributors = contributors.toModel()
         changelog.append = append.toModel()
+        if (extraProperties.present) changelog.extraProperties.putAll(extraProperties.get())
         changelog
     }
 

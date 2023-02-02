@@ -24,6 +24,7 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.common.EnabledAware;
+import org.jreleaser.model.internal.common.ExtraProperties;
 import org.jreleaser.model.internal.project.Project;
 
 import java.io.IOException;
@@ -54,9 +55,10 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public final class Changelog extends AbstractModelObject<Changelog> implements Domain, EnabledAware {
-    private static final long serialVersionUID = 4043071800577311864L;
+public final class Changelog extends AbstractModelObject<Changelog> implements Domain, EnabledAware, ExtraProperties {
+    private static final long serialVersionUID = -2693712593082430980L;
 
+    private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private final Set<String> includeLabels = new LinkedHashSet<>();
     private final Set<String> excludeLabels = new LinkedHashSet<>();
     private final Set<Category> categories = new TreeSet<>(Category.ORDER_COMPARATOR);
@@ -80,7 +82,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
     private String preset;
 
     private final org.jreleaser.model.api.release.Changelog immutable = new org.jreleaser.model.api.release.Changelog() {
-        private static final long serialVersionUID = 796060231164279450L;
+        private static final long serialVersionUID = 3830727279862963658L;
 
         private Set<? extends org.jreleaser.model.api.release.Changelog.Category> categories;
         private List<? extends org.jreleaser.model.api.release.Changelog.Replacer> replacers;
@@ -149,6 +151,16 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
                     .collect(toSet());
             }
             return labelers;
+        }
+
+        @Override
+        public String getPrefix() {
+            return Changelog.this.getPrefix();
+        }
+
+        @Override
+        public Map<String, Object> getExtraProperties() {
+            return unmodifiableMap(Changelog.this.getExtraProperties());
         }
 
         @Override
@@ -230,7 +242,8 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
             isNotBlank(contributorsTitleFormat) ||
             isNotBlank(content) ||
             isNotBlank(contentTemplate) ||
-            isNotBlank(preset);
+            isNotBlank(preset) ||
+            !extraProperties.isEmpty();
     }
 
     @Override
@@ -255,6 +268,12 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
         setHide(source.hide);
         setContributors(source.contributors);
         setAppend(source.append);
+        setExtraProperties(merge(this.extraProperties, source.getExtraProperties()));
+    }
+
+    @Override
+    public String getPrefix() {
+        return "changelog";
     }
 
     public boolean resolveFormatted(Project project) {
@@ -465,6 +484,22 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
     }
 
     @Override
+    public Map<String, Object> getExtraProperties() {
+        return extraProperties;
+    }
+
+    @Override
+    public void setExtraProperties(Map<String, Object> extraProperties) {
+        this.extraProperties.clear();
+        this.extraProperties.putAll(extraProperties);
+    }
+
+    @Override
+    public void addExtraProperties(Map<String, Object> extraProperties) {
+        this.extraProperties.putAll(extraProperties);
+    }
+
+    @Override
     public Map<String, Object> asMap(boolean full) {
         if (!full && !isEnabled()) return Collections.emptyMap();
 
@@ -507,6 +542,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
             m.put("replacer " + (i++), replacer.asMap(full));
         }
         map.put("replacers", m);
+        map.put("extraProperties", getResolvedExtraProperties());
 
         return map;
     }

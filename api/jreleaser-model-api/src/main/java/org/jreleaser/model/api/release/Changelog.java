@@ -20,6 +20,7 @@ package org.jreleaser.model.api.release;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.api.common.Domain;
 import org.jreleaser.model.api.common.EnabledAware;
+import org.jreleaser.model.api.common.ExtraProperties;
 
 import java.util.Comparator;
 import java.util.List;
@@ -29,7 +30,7 @@ import java.util.Set;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface Changelog extends Domain, EnabledAware {
+public interface Changelog extends Domain, EnabledAware, ExtraProperties {
     boolean isLinks();
 
     boolean isSkipMergeCommits();

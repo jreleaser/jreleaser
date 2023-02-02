@@ -380,6 +380,7 @@ public class ChangelogGenerator {
         String issueTracker = releaser.getResolvedIssueTrackerUrl(context.getModel(), true);
 
         TemplateContext props = context.fullProps();
+        props.setAll(changelog.getResolvedExtraProperties());
         StringBuilder changes = new StringBuilder();
         for (Changelog.Category category : changelog.getCategories()) {
             String categoryKey = category.getKey();

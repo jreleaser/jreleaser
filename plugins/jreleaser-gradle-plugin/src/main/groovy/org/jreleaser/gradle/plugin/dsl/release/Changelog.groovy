@@ -22,6 +22,7 @@ import org.gradle.api.Action
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
+import org.jreleaser.gradle.plugin.dsl.common.ExtraProperties
 import org.jreleaser.model.Active
 
 /**
@@ -30,7 +31,7 @@ import org.jreleaser.model.Active
  * @since 0.1.0
  */
 @CompileStatic
-interface Changelog {
+interface Changelog extends ExtraProperties {
     Property<org.jreleaser.model.Changelog.Sort> getSort()
 
     Property<Boolean> getEnabled()
