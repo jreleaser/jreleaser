@@ -808,6 +808,55 @@
     "allPublicMethods": true
   },
   {
+    "name": "org.kohsuke.github.GHBranch",
+    "allDeclaredFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.kohsuke.github.GHBranch$Commit",
+    "allDeclaredFields": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.kohsuke.github.GHBranchProtection",
+    "allDeclaredFields": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.kohsuke.github.GHBranchProtection$EnforceAdmins",
+    "allDeclaredFields": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.kohsuke.github.GHBranchProtection$RequiredReviews",
+    "allDeclaredFields": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.kohsuke.github.GHBranchProtection$RequiredSignatures",
+    "allDeclaredFields": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.kohsuke.github.GHBranchProtection$RequiredStatusChecks",
+    "allDeclaredFields": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.kohsuke.github.GHBranchProtection$Restrictions",
+    "allDeclaredFields": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true
+  },
+  {
     "name": "org.kohsuke.github.GHCommit",
     "allDeclaredFields": true,
     "allPublicConstructors": true,
@@ -856,6 +905,58 @@
     "allPublicMethods": true
   },
   {
+    "name": "org.kohsuke.github.GHIssue",
+    "allDeclaredFields": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.kohsuke.github.GHIssue$PullRequest",
+    "allDeclaredFields": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.kohsuke.github.GHIssueState",
+    "allDeclaredFields": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.kohsuke.github.GHLabel",
+    "allDeclaredFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.kohsuke.github.GHLabel$Creator",
+    "allDeclaredFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.kohsuke.github.GHLabel$Setter",
+    "allDeclaredFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.kohsuke.github.GHLabel$Updater",
+    "allDeclaredFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.kohsuke.github.GHLicense",
+    "allDeclaredFields": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true
+  },
+  {
     "name": "org.kohsuke.github.GHLicense",
     "allDeclaredFields": true,
     "allPublicConstructors": true,
@@ -874,7 +975,32 @@
     "allPublicMethods": true
   },
   {
+    "name": "org.kohsuke.github.GHMyself$RepositoryListFilter",
+    "allDeclaredFields": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true
+  },
+  {
     "name": "org.kohsuke.github.GHObject",
+    "allDeclaredFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.kohsuke.github.GHOrganization",
+    "allDeclaredFields": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.kohsuke.github.GHOrganization$Permission",
+    "allDeclaredFields": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.kohsuke.github.GHOrganization$Role",
     "allDeclaredFields": true,
     "allPublicConstructors": true,
     "allPublicMethods": true
@@ -904,13 +1030,81 @@
     "allPublicMethods": true
   },
   {
+    "name": "org.kohsuke.github.GHReleaseUpdater",
+    "allDeclaredFields": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true
+  },
+  {
     "name": "org.kohsuke.github.GHRepository",
     "allDeclaredFields": true,
     "allPublicConstructors": true,
     "allPublicMethods": true
   },
   {
+    "name": "org.kohsuke.github.GHRepository$CollaboratorAffilition",
+    "allDeclaredFields": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.kohsuke.github.GHRepository$Contributor",
+    "allDeclaredFields": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.kohsuke.github.GHRepository$ForkSort",
+    "allDeclaredFields": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true
+  },
+  {
     "name": "org.kohsuke.github.GHRepository$GHRepoPermission",
+    "allDeclaredFields": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.kohsuke.github.GHRepository$Setter",
+    "allDeclaredFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.kohsuke.github.GHRepository$Topics",
+    "allDeclaredFields": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.kohsuke.github.GHRepository$Updater",
+    "allDeclaredFields": true,
+    "allPublicConstructors": true,
+    "allDeclaredConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.kohsuke.github.GHRepository$Visibility",
+    "allDeclaredFields": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.kohsuke.github.GHTeam",
+    "allDeclaredFields": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.kohsuke.github.GHTeam$Privacy",
+    "allDeclaredFields": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true
+  },
+  {
+    "name": "org.kohsuke.github.GHTeam$Role",
     "allDeclaredFields": true,
     "allPublicConstructors": true,
     "allPublicMethods": true
@@ -946,6 +1140,12 @@
   },
   {
     "name": "org.slf4j.impl.StaticLoggerBinder"
+  },
+  {
+    "name": " org.yaml.snakeyaml.parser.ParserImpl",
+    "allDeclaredFields": true,
+    "allPublicConstructors": true,
+    "allPublicMethods": true
   },
   {
     "name": "org.yaml.snakeyaml.tokens.ScalarToken",
