@@ -20,8 +20,6 @@ package org.jreleaser.sdk.linkedin;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.spi.announce.AnnounceException;
-import org.jreleaser.mustache.TemplateContext;
-import org.jreleaser.mustache.Templates;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.linkedin.api.LinkedinAPI;
@@ -86,18 +84,17 @@ public class LinkedinSdk {
         });
     }
 
-    public void share(String owner, String subject, String text, TemplateContext props) throws AnnounceException, LinkedinException {
+    public void share(String owner, String subject, String text) throws AnnounceException, LinkedinException {
         logger.debug("linkedin.subject: " + subject);
 
         if (dryrun) return;
 
         if (isNotBlank(owner)) {
-            props.set(KEY_LINKEDIN_OWNER, owner);
+            text = text.replace("{{" + KEY_LINKEDIN_OWNER + "}}", owner);
         } else {
             Profile profile = wrap(api::getProfile);
-            props.set(KEY_LINKEDIN_OWNER, profile.urn());
+            text = text.replace("{{" + KEY_LINKEDIN_OWNER + "}}", profile.urn());
         }
-        text = Templates.resolveTemplate(text, props);
 
         Map<String, String> headers = new LinkedHashMap<>();
         headers.put("Authorization", String.format("Bearer %s", accessToken));

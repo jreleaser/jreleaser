@@ -20,9 +20,11 @@ package org.jreleaser.sdk.linkedin;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.spi.announce.AnnounceException;
 import org.jreleaser.model.spi.announce.Announcer;
+import org.jreleaser.mustache.MustacheUtils;
 import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.linkedin.api.Message;
 
+import static org.jreleaser.model.Constants.KEY_LINKEDIN_OWNER;
 import static org.jreleaser.model.Constants.KEY_LINKEDIN_SUBJECT;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -85,8 +87,10 @@ public class LinkedinAnnouncer implements Announcer<org.jreleaser.model.api.anno
             } else {
                 TemplateContext props = context.fullProps();
                 props.set(KEY_LINKEDIN_SUBJECT, subject);
+                props.set(KEY_LINKEDIN_OWNER, MustacheUtils.passThrough("{{" + KEY_LINKEDIN_OWNER + "}}"));
                 applyTemplates(props, linkedin.getResolvedExtraProperties());
-                sdk.share(owner, subject, text, props);
+                text = MustacheUtils.applyTemplate(text, props);
+                sdk.share(owner, subject, text);
             }
         } catch (LinkedinException e) {
             throw new AnnounceException(e);

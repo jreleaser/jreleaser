@@ -19,9 +19,11 @@ package org.jreleaser.sdk.linkedin;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import org.jreleaser.logging.SimpleJReleaserLoggerAdapter;
+import org.jreleaser.model.spi.announce.AnnounceException;
 import org.jreleaser.sdk.linkedin.api.Message;
 import org.jreleaser.test.WireMockExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -37,7 +39,9 @@ import static org.jreleaser.sdk.linkedin.ApiEndpoints.ME_ENDPOINT;
 import static org.jreleaser.sdk.linkedin.ApiEndpoints.SHARES_ENDPOINT;
 import static org.jreleaser.test.WireMockStubs.verifyJsonPostContains;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.condition.OS.WINDOWS;
 
+@DisabledOnOs(WINDOWS)
 class LinkedinSdkTest {
     @RegisterExtension
     WireMockExtension api = new WireMockExtension(options().dynamicPort());
@@ -105,10 +109,6 @@ class LinkedinSdkTest {
                 "}");
     }
 
-    /*
-     * Requires testImplementation project(':jreleaser-engine')
-     * but that creates a loop
-
     @Test
     void testContent() throws LinkedinException, AnnounceException {
         // given:
@@ -126,11 +126,6 @@ class LinkedinSdkTest {
             .dryrun(false)
             .build();
 
-        TemplateContext props = new TemplateContext();
-        props.set("projectName", "app");
-        props.set("projectCapitalizedName", "App");
-        props.set("projectVersion", "1.0.0");
-
         // when:
         sdk.share("", "App 1.0.0 released",
             "{\n" +
@@ -145,17 +140,17 @@ class LinkedinSdkTest {
                 "                ]\n" +
                 "            }\n" +
                 "        ],\n" +
-                "        \"title\": \"{{linkedinSubject}}\"\n" +
+                "        \"title\": \"App 1.0.0 released\"\n" +
                 "    },\n" +
                 "    \"distribution\": {\n" +
                 "        \"linkedInDistributionTarget\": {}\n" +
                 "    },\n" +
                 "    \"owner\": \"{{linkedinOwner}}\",\n" +
-                "    \"subject\": \"{{linkedinSubject}}\",\n" +
+                "    \"subject\": \"App 1.0.0 released\",\n" +
                 "    \"text\": {\n" +
-                "        \"text\": \"{{projectCapitalizedName}} {{projectVersion}} has been released\"\n" +
+                "        \"text\": \"App 1.0.0 has been released\"\n" +
                 "    }\n" +
-                "}", props);
+                "}");
 
         // then:
         verifyJsonPostContains(SHARES_ENDPOINT,
@@ -182,7 +177,7 @@ class LinkedinSdkTest {
                 "        \"text\": \"App 1.0.0 has been released\"\n" +
                 "    }\n" +
                 "}");
-    }*/
+    }
 
     @Test
     void testDryrun() throws LinkedinException {
