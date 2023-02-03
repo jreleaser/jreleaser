@@ -180,6 +180,14 @@ projects {
                 compileOnly project(':jreleaser-nativeimage-annotations')
                 annotationProcessor project(':jreleaser-nativeimage-processor')
             }
+
+            if (!(project.findProperty('automatic.module.name.skip') ?: false).toBoolean()) {
+                jar {
+                    manifest {
+                        attributes('Automatic-Module-Name': project.findProperty('automatic.module.name'))
+                    }
+                }
+            }
         }
     }
 }

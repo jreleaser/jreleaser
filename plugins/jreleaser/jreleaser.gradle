@@ -24,6 +24,12 @@ application {
     mainClass = 'org.jreleaser.cli.Main'
 }
 
+jar {
+    manifest {
+        attributes('Automatic-Module-Name': project.findProperty('automatic.module.name'))
+    }
+}
+
 startScripts {
     classpath = files('$APP_HOME/lib/*')
 }
