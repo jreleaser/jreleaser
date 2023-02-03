@@ -42,6 +42,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -60,6 +61,7 @@ import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
+import static org.jreleaser.model.Constants.KEY_CATEGORIZE_SCOPES;
 import static org.jreleaser.model.Constants.KEY_CHANGELOG_CHANGES;
 import static org.jreleaser.model.Constants.KEY_CHANGELOG_CONTRIBUTORS;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplate;
@@ -70,6 +72,7 @@ import static org.jreleaser.sdk.git.ChangelogProvider.storeIssues;
 import static org.jreleaser.sdk.git.GitSdk.extractTagName;
 import static org.jreleaser.util.ComparatorUtils.lessThan;
 import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.StringUtils.isTrue;
 import static org.jreleaser.util.StringUtils.normalizeRegexPattern;
 import static org.jreleaser.util.StringUtils.stripMargin;
 import static org.jreleaser.util.StringUtils.toSafeRegexPattern;
@@ -392,11 +395,46 @@ public class ChangelogGenerator {
 
             final String categoryFormat = resolveCommitFormat(changelog, category);
 
-            changes.append(categories.get(categoryKey).stream()
-                    .map(c -> resolveTemplate(categoryFormat, c.asContext(changelog.isLinks(), commitsUrl, issueTracker)))
-                    .collect(joining(lineSeparator)))
-                .append(lineSeparator)
-                .append(lineSeparator());
+            if (isConventionalCommits(changelog) && isCategorizeScopes(changelog)) {
+                Map<String, List<Commit>> scopes = categories.get(categoryKey).stream()
+                    .collect(groupingBy(commit -> {
+                        ConventionalCommit cc = (ConventionalCommit) commit;
+                        return isNotBlank(cc.ccScope) ? cc.ccScope : UNCATEGORIZED;
+                    }));
+
+                scopes.keySet().stream().sorted()
+                    .filter(scope -> !UNCATEGORIZED.equals(scope))
+                    .forEach(scope -> {
+                        changes.append("**")
+                            .append(scope)
+                            .append("**")
+                            .append(lineSeparator)
+                            .append(scopes.get(scope).stream()
+                                .map(c -> {
+                                    ((ConventionalCommit) c).ccScope = ""; // clear scope
+                                    return resolveTemplate(categoryFormat, c.asContext(changelog.isLinks(), commitsUrl, issueTracker));
+                                })
+                                .collect(joining(lineSeparator)))
+                            .append(lineSeparator)
+                            .append(lineSeparator());
+                    });
+
+                if (scopes.containsKey(UNCATEGORIZED)) {
+                    // add unscoped header only if there are more than uncategorized commits
+                    if (scopes.size() > 1) changes.append("**unscoped**");
+                    changes.append(lineSeparator).append(scopes.get(UNCATEGORIZED).stream()
+                            .map(c -> resolveTemplate(categoryFormat, c.asContext(changelog.isLinks(), commitsUrl, issueTracker)))
+                            .collect(joining(lineSeparator)))
+                        .append(lineSeparator)
+                        .append(lineSeparator());
+                }
+            } else {
+                changes.append(categories.get(categoryKey).stream()
+                        .map(c -> resolveTemplate(categoryFormat, c.asContext(changelog.isLinks(), commitsUrl, issueTracker)))
+                        .collect(joining(lineSeparator)))
+                    .append(lineSeparator)
+                    .append(lineSeparator());
+            }
         }
 
         if (!changelog.getHide().isUncategorized() && categories.containsKey(UNCATEGORIZED)) {
@@ -428,6 +466,15 @@ public class ChangelogGenerator {
         context.getChangelog().setFormattedContributors(formattedContributors.toString());
 
         return applyReplacers(context, changelog, stripMargin(applyTemplate(changelog.getResolvedContentTemplate(context), props)));
+    }
+
+    private boolean isConventionalCommits(Changelog changelog) {
+        return isNotBlank(changelog.getPreset()) &&
+            "conventional-commits".equals(changelog.getPreset().toLowerCase(Locale.ENGLISH).trim());
+    }
+
+    private boolean isCategorizeScopes(Changelog changelog) {
+        return isTrue(changelog.getExtraProperties().get(KEY_CATEGORIZE_SCOPES));
     }
 
     private String resolveCommitFormat(Changelog changelog, Changelog.Category category) {

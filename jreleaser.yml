@@ -68,6 +68,8 @@ release:
       contributors:
         format: '- {{contributorName}}{{#contributorUsernameAsLink}} ({{.}}){{/contributorUsernameAsLink}}'
       contentTemplate: 'src/jreleaser/changelog.tpl'
+      extraProperties:
+        categorizeScopes: true
       labelers:
         - label: 'i18n'
           title: 'regex:^(?:i18n(?:\(.*\))?!?):\s.*'
