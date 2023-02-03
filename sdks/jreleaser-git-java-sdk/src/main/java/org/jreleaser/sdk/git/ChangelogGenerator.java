@@ -404,20 +404,18 @@ public class ChangelogGenerator {
 
                 scopes.keySet().stream().sorted()
                     .filter(scope -> !UNCATEGORIZED.equals(scope))
-                    .forEach(scope -> {
-                        changes.append("**")
-                            .append(scope)
-                            .append("**")
-                            .append(lineSeparator)
-                            .append(scopes.get(scope).stream()
-                                .map(c -> {
-                                    ((ConventionalCommit) c).ccScope = ""; // clear scope
-                                    return resolveTemplate(categoryFormat, c.asContext(changelog.isLinks(), commitsUrl, issueTracker));
-                                })
-                                .collect(joining(lineSeparator)))
-                            .append(lineSeparator)
-                            .append(lineSeparator());
-                    });
+                    .forEach(scope -> changes.append("**")
+                        .append(scope)
+                        .append("**")
+                        .append(lineSeparator)
+                        .append(scopes.get(scope).stream()
+                            .map(c -> {
+                                ((ConventionalCommit) c).ccScope = ""; // clear scope
+                                return resolveTemplate(categoryFormat, c.asContext(changelog.isLinks(), commitsUrl, issueTracker));
+                            })
+                            .collect(joining(lineSeparator)))
+                        .append(lineSeparator)
+                        .append(lineSeparator()));
 
                 if (scopes.containsKey(UNCATEGORIZED)) {
                     // add unscoped header only if there are more than uncategorized commits

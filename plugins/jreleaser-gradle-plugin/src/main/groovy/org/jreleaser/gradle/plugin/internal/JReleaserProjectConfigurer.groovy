@@ -379,7 +379,7 @@ class JReleaserProjectConfigurer {
         if (isBlank(model.project.java.artifactId)) model.project.java.artifactId = project.name
         if (isBlank(model.project.java.groupId)) model.project.java.groupId = project.group.toString()
         if (!model.project.java.multiProjectSet) {
-            model.project.java.multiProject = project.rootProject.childProjects.size() > 0
+            model.project.java.multiProject = !project.rootProject.childProjects.isEmpty()
         }
 
         if (isBlank(model.project.java.mainClass)) {

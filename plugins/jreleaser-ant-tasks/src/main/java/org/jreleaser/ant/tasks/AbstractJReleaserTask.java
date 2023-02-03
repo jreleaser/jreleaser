@@ -244,7 +244,7 @@ abstract class AbstractJReleaserTask extends Task {
 
     protected List<String> collectEntries(List<String> input, boolean lowerCase) {
         List<String> list = new ArrayList<>();
-        if (null != input && input.size() > 0) {
+        if (null != input && !input.isEmpty()) {
             for (String s : input) {
                 if (isNotBlank(s)) {
                     if (!s.contains("-") && lowerCase) {
