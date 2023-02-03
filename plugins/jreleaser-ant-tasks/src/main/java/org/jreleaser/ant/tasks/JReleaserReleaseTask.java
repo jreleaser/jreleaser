@@ -119,12 +119,12 @@ public class JReleaserReleaseTask extends AbstractDistributionAwareJReleaserTask
 
     @Override
     protected void doExecute(JReleaserContext context) {
-        context.setIncludedDeployerTypes(deployerTypes);
-        context.setExcludedDeployerTypes(excludedDeployerTypes);
+        context.setIncludedDeployerTypes(collectEntries(deployerTypes, true));
+        context.setExcludedDeployerTypes(collectEntries(excludedDeployerTypes, true));
         context.setIncludedDeployerNames(deployerNames);
         context.setExcludedDeployerNames(excludedDeployerNames);
-        context.setIncludedUploaderTypes(uploaderTypes);
-        context.setExcludedUploaderTypes(excludedUploaderTypes);
+        context.setIncludedUploaderTypes(collectEntries(uploaderTypes, true));
+        context.setExcludedUploaderTypes(collectEntries(excludedUploaderTypes, true));
         context.setIncludedUploaderNames(uploaderNames);
         context.setExcludedUploaderNames(excludedUploaderNames);
         Workflows.release(setupContext(context)).execute();

@@ -53,8 +53,8 @@ public abstract class AbstractPackagerAwareJReleaserTask extends AbstractDistrib
     @Override
     protected JReleaserContext setupContext(JReleaserContext context) {
         super.setupContext(context);
-        context.setIncludedPackagers(packagers);
-        context.setExcludedPackagers(excludedPackagers);
+        context.setIncludedPackagers(collectEntries(packagers, true));
+        context.setExcludedPackagers(collectEntries(excludedPackagers, true));
         return context;
     }
 }

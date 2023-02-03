@@ -54,8 +54,8 @@ public class JReleaserAnnounceTask extends AbstractJReleaserTask {
 
     @Override
     protected void doExecute(JReleaserContext context) {
-        context.setIncludedAnnouncers(announcers);
-        context.setExcludedAnnouncers(excludedAnnouncers);
+        context.setIncludedAnnouncers(collectEntries(announcers, true));
+        context.setExcludedAnnouncers(collectEntries(excludedAnnouncers, true));
         Workflows.announce(context).execute();
     }
 

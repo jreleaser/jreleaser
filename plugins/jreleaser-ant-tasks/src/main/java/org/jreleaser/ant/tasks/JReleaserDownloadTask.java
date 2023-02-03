@@ -76,8 +76,8 @@ public class JReleaserDownloadTask extends AbstractJReleaserTask {
 
     @Override
     protected void doExecute(JReleaserContext context) {
-        context.setIncludedDownloaderTypes(downloaderTypes);
-        context.setExcludedDownloaderTypes(excludedDownloaderTypes);
+        context.setIncludedDownloaderTypes(collectEntries(downloaderTypes, true));
+        context.setExcludedDownloaderTypes(collectEntries(excludedDownloaderTypes, true));
         context.setIncludedDownloaderNames(downloaderNames);
         context.setExcludedDownloaderNames(excludedDownloaderNames);
         Workflows.download(context).execute();

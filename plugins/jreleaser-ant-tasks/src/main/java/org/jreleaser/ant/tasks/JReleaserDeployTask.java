@@ -78,8 +78,8 @@ public class JReleaserDeployTask extends AbstractJReleaserTask {
 
     @Override
     protected void doExecute(JReleaserContext context) {
-        context.setIncludedDeployerTypes(deployerTypes);
-        context.setExcludedDeployerTypes(excludedDeployerTypes);
+        context.setIncludedDeployerTypes(collectEntries(deployerTypes, true));
+        context.setExcludedDeployerTypes(collectEntries(excludedDeployerTypes, true));
         context.setIncludedDeployerNames(deployerNames);
         context.setExcludedDeployerNames(excludedDeployerNames);
         Workflows.deploy(context).execute();

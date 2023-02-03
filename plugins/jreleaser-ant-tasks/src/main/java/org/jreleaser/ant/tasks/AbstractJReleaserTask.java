@@ -238,16 +238,18 @@ abstract class AbstractJReleaserTask extends Task {
         return Collections.emptyList();
     }
 
-    protected List<String> collectEntries(String[] input) {
+    protected List<String> collectEntries(List<String> input) {
         return collectEntries(input, false);
     }
 
-    protected List<String> collectEntries(String[] input, boolean lowerCase) {
+    protected List<String> collectEntries(List<String> input, boolean lowerCase) {
         List<String> list = new ArrayList<>();
-        if (null != input && input.length > 0) {
+        if (null != input && input.size() > 0) {
             for (String s : input) {
                 if (isNotBlank(s)) {
-                    s = s.trim();
+                    if (!s.contains("-") && lowerCase) {
+                        s = StringUtils.getHyphenatedName(s);
+                    }
                     list.add(lowerCase ? s.toLowerCase(Locale.ENGLISH) : s);
                 }
             }

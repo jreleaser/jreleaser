@@ -141,16 +141,16 @@ public class JReleaserFullReleaseTask extends AbstractPackagerAwareJReleaserTask
 
     @Override
     protected void doExecute(JReleaserContext context) {
-        context.setIncludedDeployerTypes(deployerTypes);
-        context.setExcludedDeployerTypes(excludedDeployerTypes);
+        context.setIncludedDeployerTypes(collectEntries(deployerTypes, true));
+        context.setExcludedDeployerTypes(collectEntries(excludedDeployerTypes, true));
         context.setIncludedDeployerNames(deployerNames);
         context.setExcludedDeployerNames(excludedDeployerNames);
-        context.setIncludedUploaderTypes(uploaderTypes);
-        context.setExcludedUploaderTypes(excludedUploaderTypes);
+        context.setIncludedUploaderTypes(collectEntries(uploaderTypes, true));
+        context.setExcludedUploaderTypes(collectEntries(excludedUploaderTypes, true));
         context.setIncludedUploaderNames(uploaderNames);
         context.setExcludedUploaderNames(excludedUploaderNames);
-        context.setIncludedAnnouncers(announcers);
-        context.setExcludedAnnouncers(excludedAnnouncers);
+        context.setIncludedAnnouncers(collectEntries(announcers, true));
+        context.setExcludedAnnouncers(collectEntries(excludedAnnouncers, true));
         Workflows.fullRelease(setupContext(context)).execute();
     }
 }

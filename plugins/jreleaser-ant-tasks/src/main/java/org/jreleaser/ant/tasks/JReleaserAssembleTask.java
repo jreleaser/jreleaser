@@ -54,8 +54,8 @@ public class JReleaserAssembleTask extends AbstractDistributionAwareJReleaserTas
 
     @Override
     protected void doExecute(JReleaserContext context) {
-        context.setIncludedAssemblers(assemblers);
-        context.setExcludedAssemblers(excludedAssemblers);
+        context.setIncludedAssemblers(collectEntries(assemblers, true));
+        context.setExcludedAssemblers(collectEntries(excludedAssemblers, true));
         Workflows.assemble(setupContext(context)).execute();
     }
 

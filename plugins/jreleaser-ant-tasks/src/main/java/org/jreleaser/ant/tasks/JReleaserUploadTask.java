@@ -75,8 +75,8 @@ public class JReleaserUploadTask extends AbstractDistributionAwareJReleaserTask 
 
     @Override
     protected void doExecute(JReleaserContext context) {
-        context.setIncludedUploaderTypes(uploaderTypes);
-        context.setExcludedUploaderTypes(excludedUploaderTypes);
+        context.setIncludedUploaderTypes(collectEntries(uploaderTypes, true));
+        context.setExcludedUploaderTypes(collectEntries(excludedUploaderTypes, true));
         context.setIncludedUploaderNames(uploaderNames);
         context.setExcludedUploaderNames(excludedUploaderNames);
         Workflows.upload(setupContext(context)).execute();

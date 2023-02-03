@@ -231,7 +231,9 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
         if (null != input && input.length > 0) {
             for (String s : input) {
                 if (isNotBlank(s)) {
-                    s = s.trim();
+                    if (!s.contains("-") && lowerCase) {
+                        s = StringUtils.getHyphenatedName(s);
+                    }
                     list.add(lowerCase ? s.toLowerCase(Locale.ENGLISH) : s);
                 }
             }

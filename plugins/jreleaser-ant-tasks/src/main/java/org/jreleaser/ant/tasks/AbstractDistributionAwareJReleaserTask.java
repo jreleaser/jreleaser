@@ -51,8 +51,8 @@ public abstract class AbstractDistributionAwareJReleaserTask extends AbstractPla
     }
 
     protected JReleaserContext setupContext(JReleaserContext context) {
-        context.setIncludedDistributions(distributions);
-        context.setExcludedDistributions(excludedDistributions);
+        context.setIncludedDistributions(collectEntries(distributions));
+        context.setExcludedDistributions(collectEntries(excludedDistributions));
         return context;
     }
 }
