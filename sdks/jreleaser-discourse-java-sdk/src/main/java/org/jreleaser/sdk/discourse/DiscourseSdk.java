@@ -124,7 +124,7 @@ public class DiscourseSdk {
         void run() throws DiscourseException;
     }
 
-    static class Builder {
+    public static class Builder {
         private final JReleaserLogger logger;
         private boolean dryrun;
         private String userName;

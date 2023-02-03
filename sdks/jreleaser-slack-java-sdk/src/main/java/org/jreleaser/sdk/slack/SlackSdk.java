@@ -88,7 +88,7 @@ public class SlackSdk {
         return new Builder(logger);
     }
 
-    static class Builder {
+    public static class Builder {
         private final JReleaserLogger logger;
         private boolean dryrun;
         private String token;
