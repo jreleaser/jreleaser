@@ -18,6 +18,7 @@
 package org.jreleaser.model.internal.validation.assemble;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.model.Archive;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.JlinkAssembler;
@@ -166,6 +167,9 @@ public final class JlinkAssemblerValidator {
         }
         if (isBlank(jlink.getMainJar().getPath())) {
             errors.configuration(RB.$("validation_must_not_be_null", "jlink." + jlink.getName() + ".mainJar.path"));
+        }
+        if (null == jlink.getArchiveFormat()) {
+            jlink.setArchiveFormat(Archive.Format.ZIP);
         }
 
         validateGlobs(
