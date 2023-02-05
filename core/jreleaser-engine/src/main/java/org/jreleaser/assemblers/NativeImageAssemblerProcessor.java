@@ -18,6 +18,7 @@
 package org.jreleaser.assemblers;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.model.Archive;
 import org.jreleaser.model.Constants;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.NativeImageAssembler;
@@ -45,6 +46,7 @@ import java.util.stream.Collectors;
 
 import static org.jreleaser.assemblers.AssemblerUtils.copyJars;
 import static org.jreleaser.assemblers.AssemblerUtils.readJavaVersion;
+import static org.jreleaser.model.Constants.KEY_ARCHIVE_FORMAT;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -198,7 +200,12 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
             copyFiles(context, distDirectory);
             copyFileSets(context, distDirectory);
 
-            Path imageArchive = assembleDirectory.resolve(finalImageName + "." + assembler.getArchiveFormat().extension());
+            String str = assembler.getGraal().getExtraProperties()
+                .getOrDefault(KEY_ARCHIVE_FORMAT, assembler.getArchiveFormat())
+                .toString();
+            Archive.Format archiveFormat = Archive.Format.of(str);
+
+            Path imageArchive = assembleDirectory.resolve(finalImageName + "." + archiveFormat.extension());
             FileUtils.packArchive(tempDirectory, imageArchive, context.getModel().resolveArchiveTimestamp());
 
             context.getLogger().debug("- {}", imageArchive.getFileName());
