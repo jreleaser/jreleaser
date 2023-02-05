@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.api.assemble;
 
+import org.jreleaser.model.Archive;
 import org.jreleaser.model.api.common.Artifact;
 import org.jreleaser.model.api.common.Domain;
 import org.jreleaser.model.api.common.EnabledAware;
@@ -38,6 +39,8 @@ public interface JlinkAssembler extends Assembler, JavaAssembler {
     String getImageName();
 
     String getImageNameTransform();
+
+    Archive.Format getArchiveFormat();
 
     Set<? extends Artifact> getTargetJdks();
 

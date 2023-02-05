@@ -182,6 +182,7 @@ public interface Constants {
     String KEY_ARTIFACT_ARCH = "artifactArch";
     String KEY_ARTIFACT_SIZE = "artifactSize";
     String KEY_ARTIFACT_ARCHIVE_FORMAT = "artifactArchiveFormat";
+    String KEY_ARCHIVE_FORMAT = "archiveFormat";
 
     // AppImage
     String KEY_APPIMAGE_REPO_OWNER = "appImageRepoOwner";

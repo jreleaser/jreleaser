@@ -28,6 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import static org.jreleaser.model.Constants.KEY_ARCHIVE_FORMAT;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -64,7 +65,7 @@ public final class JlinkAssemblerResolver {
             String platform = targetJdk.getPlatform();
             String platformReplaced = jlink.getPlatform().applyReplacements(platform);
             String str = targetJdk.getExtraProperties()
-                .getOrDefault("archiveFormat", "ZIP")
+                .getOrDefault(KEY_ARCHIVE_FORMAT, jlink.getArchiveFormat())
                 .toString();
             Archive.Format archiveFormat = Archive.Format.of(str);
 

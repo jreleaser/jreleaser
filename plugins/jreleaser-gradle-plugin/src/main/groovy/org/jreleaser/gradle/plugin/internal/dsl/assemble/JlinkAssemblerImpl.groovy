@@ -33,6 +33,7 @@ import org.jreleaser.gradle.plugin.internal.dsl.common.ArtifactImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.JavaImpl
 import org.jreleaser.gradle.plugin.internal.dsl.platform.PlatformImpl
 import org.jreleaser.model.Active
+import org.jreleaser.model.Archive
 import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
@@ -49,6 +50,7 @@ class JlinkAssemblerImpl extends AbstractJavaAssembler implements JlinkAssembler
     String name
     final Property<String> imageName
     final Property<String> imageNameTransform
+    final Property<Archive.Format> archiveFormat
     final Property<Boolean> copyJars
     final ListProperty<String> args
     final SetProperty<String> moduleNames
@@ -66,6 +68,7 @@ class JlinkAssemblerImpl extends AbstractJavaAssembler implements JlinkAssembler
 
         imageName = objects.property(String).convention(Providers.<String> notDefined())
         imageNameTransform = objects.property(String).convention(Providers.<String> notDefined())
+        archiveFormat = objects.property(Archive.Format).convention(Archive.Format.ZIP)
         copyJars = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         args = objects.listProperty(String).convention(Providers.<List<String>> notDefined())
         moduleNames = objects.setProperty(String).convention(Providers.<Set<String>> notDefined())
@@ -84,6 +87,13 @@ class JlinkAssemblerImpl extends AbstractJavaAssembler implements JlinkAssembler
                 artifact
             }
         })
+    }
+
+    @Override
+    void setArchiveFormat(String str) {
+        if (isNotBlank(str)) {
+            this.archiveFormat.set(Archive.Format.of(str.trim()))
+        }
     }
 
     @Internal
@@ -153,6 +163,7 @@ class JlinkAssemblerImpl extends AbstractJavaAssembler implements JlinkAssembler
         jlink.args = (List<String>) args.getOrElse([])
         if (jdeps.isSet()) jlink.jdeps = jdeps.toModel()
         if (jdk.isSet()) jlink.jdk = jdk.toModel()
+        jlink.archiveFormat = archiveFormat.get()
         jlink.java = java.toModel()
         jlink.platform = platform.toModel()
         if (imageName.present) jlink.imageName = imageName.get()

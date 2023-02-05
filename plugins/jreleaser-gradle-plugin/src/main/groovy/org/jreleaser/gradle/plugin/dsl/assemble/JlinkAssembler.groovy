@@ -23,6 +23,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.jreleaser.gradle.plugin.dsl.common.Artifact
+import org.jreleaser.model.Archive
 
 /**
  *
@@ -34,6 +35,10 @@ interface JlinkAssembler extends JavaAssembler {
     Property<String> getImageName()
 
     Property<String> getImageNameTransform()
+
+    Property<Archive.Format> getArchiveFormat()
+
+    void setArchiveFormat(String str)
 
     Property<Boolean> getCopyJars()
 

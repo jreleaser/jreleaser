@@ -18,6 +18,7 @@
 package org.jreleaser.model.internal.assemble;
 
 import org.jreleaser.model.Active;
+import org.jreleaser.model.Archive;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Stereotype;
 import org.jreleaser.model.internal.JReleaserContext;
@@ -50,7 +51,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.2.0
  */
 public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, org.jreleaser.model.api.assemble.JlinkAssembler> {
-    private static final long serialVersionUID = -4001565972495119198L;
+    private static final long serialVersionUID = -5831054689759186447L;
 
     private final Set<Artifact> targetJdks = new LinkedHashSet<>();
     private final Set<String> moduleNames = new LinkedHashSet<>();
@@ -61,10 +62,11 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
 
     private String imageName;
     private String imageNameTransform;
+    private Archive.Format archiveFormat;
     private Boolean copyJars;
 
     private final org.jreleaser.model.api.assemble.JlinkAssembler immutable = new org.jreleaser.model.api.assemble.JlinkAssembler() {
-        private static final long serialVersionUID = -1953894547371342764L;
+        private static final long serialVersionUID = 6364491730669488507L;
 
         private List<? extends org.jreleaser.model.api.common.FileSet> fileSets;
         private Set<? extends org.jreleaser.model.api.common.Artifact> outputs;
@@ -90,6 +92,11 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
         @Override
         public String getImageNameTransform() {
             return imageNameTransform;
+        }
+
+        @Override
+        public Archive.Format getArchiveFormat() {
+            return archiveFormat;
         }
 
         @Override
@@ -252,6 +259,7 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
         super.merge(source);
         this.imageName = merge(this.imageName, source.imageName);
         this.imageNameTransform = merge(this.imageNameTransform, source.imageNameTransform);
+        this.archiveFormat = merge(this.archiveFormat, source.archiveFormat);
         this.copyJars = merge(this.copyJars, source.copyJars);
         setJdeps(source.jdeps);
         setJdk(source.jdk);
@@ -304,6 +312,18 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
 
     public void setImageNameTransform(String imageNameTransform) {
         this.imageNameTransform = imageNameTransform;
+    }
+
+    public Archive.Format getArchiveFormat() {
+        return archiveFormat;
+    }
+
+    public void setArchiveFormat(Archive.Format archiveFormat) {
+        this.archiveFormat = archiveFormat;
+    }
+
+    public void setArchiveFormat(String archiveFormat) {
+        this.archiveFormat = Archive.Format.of(archiveFormat);
     }
 
     public Set<Artifact> getTargetJdks() {
@@ -365,6 +385,7 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
         super.asMap(full, props);
         props.put("imageName", imageName);
         props.put("imageNameTransform", imageNameTransform);
+        props.put("archiveFormat", archiveFormat);
         props.put("moduleNames", moduleNames);
         props.put("additionalModuleNames", additionalModuleNames);
         props.put("args", args);

@@ -46,6 +46,7 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toSet;
 import static org.jreleaser.assemblers.AssemblerUtils.copyJars;
 import static org.jreleaser.assemblers.AssemblerUtils.readJavaVersion;
+import static org.jreleaser.model.Constants.KEY_ARCHIVE_FORMAT;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.FileUtils.listFilesAndConsume;
@@ -117,7 +118,7 @@ public class JlinkAssemblerProcessor extends AbstractJavaAssemblerProcessor<org.
             context.getLogger().debug(RB.$("assembler.module.names"), moduleNames);
 
             String str = targetJdk.getExtraProperties()
-                .getOrDefault("archiveFormat", "ZIP")
+                .getOrDefault(KEY_ARCHIVE_FORMAT, assembler.getArchiveFormat())
                 .toString();
             Archive.Format archiveFormat = Archive.Format.of(str);
 
