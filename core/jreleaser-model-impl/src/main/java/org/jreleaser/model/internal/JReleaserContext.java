@@ -40,6 +40,7 @@ import org.jreleaser.model.api.signing.SigningException;
 import org.jreleaser.model.api.upload.Uploader;
 import org.jreleaser.model.internal.assemble.JavaArchiveAssembler;
 import org.jreleaser.model.internal.assemble.JavaAssembler;
+import org.jreleaser.model.internal.assemble.NativeImageAssembler;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.internal.release.BaseReleaser;
@@ -47,6 +48,7 @@ import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.signing.FilesKeyring;
 import org.jreleaser.sdk.signing.InMemoryKeyring;
 import org.jreleaser.util.Errors;
+import org.jreleaser.util.FileType;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.StringUtils;
 import org.jreleaser.version.SemanticVersion;
@@ -507,6 +509,9 @@ public class JReleaserContext {
             if (assembler instanceof JavaAssembler) {
                 distribution.getExecutable().setName(((JavaAssembler<?>) assembler).getExecutable());
                 distribution.setJava(((JavaAssembler<?>) assembler).getJava());
+                if (assembler instanceof NativeImageAssembler) {
+                    distribution.getExecutable().setWindowsExtension(FileType.EXE.type());
+                }
             } else if (assembler instanceof JavaArchiveAssembler) {
                 JavaArchiveAssembler javaArchiveAssembler = (JavaArchiveAssembler) assembler;
                 distribution.getExecutable().setName(javaArchiveAssembler.getExecutable().getName());

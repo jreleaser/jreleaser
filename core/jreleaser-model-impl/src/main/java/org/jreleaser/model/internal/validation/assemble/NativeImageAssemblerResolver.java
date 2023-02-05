@@ -18,6 +18,7 @@
 package org.jreleaser.model.internal.validation.assemble;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.model.Archive;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.NativeImageAssembler;
 import org.jreleaser.model.internal.common.Artifact;
@@ -27,6 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import static org.jreleaser.model.Constants.KEY_ARCHIVE_FORMAT;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -48,31 +50,38 @@ public final class NativeImageAssemblerResolver {
     }
 
     private static void resolveNativeImageOutputs(JReleaserContext context, NativeImageAssembler nativeImage, Errors errors) {
-        if (!context.isPlatformSelected(nativeImage.getGraal())) return;
+        Path baseOutputDirectory = context.getAssembleDirectory()
+            .resolve(nativeImage.getName())
+            .resolve(nativeImage.getType());
 
         String imageName = nativeImage.getResolvedImageName(context);
         if (isNotBlank(nativeImage.getImageNameTransform())) {
             imageName = nativeImage.getResolvedImageNameTransform(context);
         }
 
-        String platform = nativeImage.getGraal().getPlatform();
-        String platformReplaced = nativeImage.getPlatform().applyReplacements(platform);
+        for (Artifact graalJdk : nativeImage.getGraalJdks()) {
+            if (!context.isPlatformSelected(graalJdk)) continue;
 
-        Path image = context.getAssembleDirectory()
-            .resolve(nativeImage.getName())
-            .resolve(nativeImage.getType())
-            .resolve(imageName + "-" +
-                platformReplaced + "." +
-                nativeImage.getArchiveFormat().extension());
+            String platform = graalJdk.getPlatform();
+            String platformReplaced = nativeImage.getPlatform().applyReplacements(platform);
+            String str = graalJdk.getExtraProperties()
+                .getOrDefault(KEY_ARCHIVE_FORMAT, nativeImage.getArchiveFormat())
+                .toString();
+            Archive.Format archiveFormat = Archive.Format.of(str);
 
-        if (!Files.exists(image)) {
-            errors.assembly(RB.$("validation_missing_assembly",
-                nativeImage.getType(), nativeImage.getName(), nativeImage.getName()));
-        } else {
-            Artifact artifact = Artifact.of(image, platform);
-            artifact.setExtraProperties(nativeImage.getExtraProperties());
-            artifact.activate();
-            nativeImage.addOutput(artifact);
+            Path image = baseOutputDirectory
+                .resolve(imageName + "-" + platformReplaced + "." + archiveFormat.extension())
+                .toAbsolutePath();
+
+            if (!Files.exists(image)) {
+                errors.assembly(RB.$("validation_missing_assembly",
+                    nativeImage.getType(), nativeImage.getName(), nativeImage.getName()));
+            } else {
+                Artifact artifact = Artifact.of(image, platform);
+                artifact.setExtraProperties(nativeImage.getExtraProperties());
+                artifact.activate();
+                nativeImage.addOutput(artifact);
+            }
         }
     }
 }
