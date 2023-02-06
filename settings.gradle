@@ -98,6 +98,7 @@ enforce {
             "com.google.code.findbugs:jsr305:$jsr305Version",
             "com.google.errorprone:error_prone_annotations:$errorproneVersion",
             "com.google.guava:guava:$guavaVersion",
+            "com.googlecode.javaewah:JavaEWAH:$javaEWAHVersion",
             "com.sun.mail:jakarta.mail:$mailApiVersion",
             "commons-codec:commons-codec:$commonsCodecVersion",
             "commons-io:commons-io:$commonsIoVersion",
