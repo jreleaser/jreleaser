@@ -119,7 +119,7 @@ enforce {
             "org.bouncycastle:bcutil-jdk15on:$bouncyCastleVersion",
             "org.checkerframework:checker-qual:$checkerqualVersion",
             "org.codehaus.plexus:plexus-classworlds:$classworldsVersion",
-            "org.codehaus.plexus:plexus-component-annotations:2.1.0",
+            "org.codehaus.plexus:plexus-component-annotations:$plexusAnnotationsVersion",
             "org.codehaus.plexus:plexus-utils:$plexusVersion",
             "org.hamcrest:hamcrest-core:$hamcrestVersion",
             "org.hamcrest:hamcrest:$hamcrestVersion",
