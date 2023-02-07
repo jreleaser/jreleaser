@@ -38,7 +38,7 @@ public final class GitlabUploader extends AbstractGitPackageUploader<org.jreleas
     private String projectIdentifier;
 
     private final org.jreleaser.model.api.upload.GitlabUploader immutable = new org.jreleaser.model.api.upload.GitlabUploader() {
-        private static final long serialVersionUID = 7721607213181794594L;
+        private static final long serialVersionUID = -7870246763484590832L;
 
         @Override
         public String getHost() {
@@ -98,6 +98,11 @@ public final class GitlabUploader extends AbstractGitPackageUploader<org.jreleas
         @Override
         public boolean isChecksums() {
             return GitlabUploader.this.isChecksums();
+        }
+
+        @Override
+        public boolean isCatalogs() {
+            return GitlabUploader.this.isCatalogs();
         }
 
         @Override

@@ -18,6 +18,7 @@
 package org.jreleaser.sdk.commons;
 
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.catalog.sbom.SbomCataloger;
 import org.jreleaser.model.internal.checksum.Checksum;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.ExtraProperties;
@@ -26,13 +27,16 @@ import org.jreleaser.model.internal.signing.Signing;
 import org.jreleaser.model.internal.upload.ArtifactoryUploader;
 import org.jreleaser.model.internal.upload.Uploader;
 import org.jreleaser.model.internal.util.Artifacts;
+import org.jreleaser.model.spi.catalog.sbom.SbomCatalogerProcessorHelper;
 import org.jreleaser.model.spi.upload.ArtifactUploader;
 import org.jreleaser.util.Algorithm;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.jreleaser.model.Constants.KEY_PLATFORM_REPLACED;
 import static org.jreleaser.model.api.checksum.Checksum.INDIVIDUAL_CHECKSUM;
@@ -52,8 +56,8 @@ public abstract class AbstractArtifactUploader<A extends org.jreleaser.model.api
         this.context = context;
     }
 
-    protected List<Artifact> collectArtifacts() {
-        List<Artifact> artifacts = new ArrayList<>();
+    protected Set<Artifact> collectArtifacts() {
+        Set<Artifact> artifacts = new LinkedHashSet<>();
         List<String> keys = getUploader().resolveSkipKeys();
         Checksum checksum = context.getModel().getChecksum();
         boolean uploadChecksums = getUploader().isChecksums() && !(getUploader() instanceof ArtifactoryUploader);
@@ -112,6 +116,14 @@ public abstract class AbstractArtifactUploader<A extends org.jreleaser.model.api
             }
         }
 
+        if (getUploader().isCatalogs()) {
+            List<? extends SbomCataloger<?>> catalogers = context.getModel().getCatalog().getSbom().findAllActiveSbomCatalogers();
+            for (SbomCataloger<?> cataloger : catalogers) {
+                if (!cataloger.getPack().isEnabled()) continue;
+                artifacts.addAll(SbomCatalogerProcessorHelper.resolveArtifacts(context, cataloger));
+            }
+        }
+
         Signing signing = context.getModel().getSigning();
         if (getUploader().isSignatures() && signing.isEnabled()) {
             String extension = signing.getSignatureExtension();
@@ -131,6 +143,10 @@ public abstract class AbstractArtifactUploader<A extends org.jreleaser.model.api
             }
 
             artifacts.addAll(signatures);
+        }
+
+        if (getUploader().isCatalogs()) {
+            artifacts.addAll(SbomCatalogerProcessorHelper.resolveArtifacts(context));
         }
 
         return artifacts;

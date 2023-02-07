@@ -70,6 +70,7 @@ abstract class BaseReleaserImpl implements BaseReleaser {
     final Property<Boolean> artifacts
     final Property<Boolean> files
     final Property<Boolean> checksums
+    final Property<Boolean> catalogs
     final Property<Boolean> signatures
     final Property<Boolean> overwrite
     final Property<Active> uploadAssets
@@ -107,6 +108,7 @@ abstract class BaseReleaserImpl implements BaseReleaser {
         artifacts = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         files = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         checksums = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+        catalogs = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         signatures = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         overwrite = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         uploadAssets = objects.property(Active).convention(Providers.<Active> notDefined())
@@ -144,6 +146,7 @@ abstract class BaseReleaserImpl implements BaseReleaser {
             artifacts.present ||
             files.present ||
             checksums.present ||
+            catalogs.present ||
             signatures.present ||
             overwrite.present ||
             update.isSet() ||
@@ -233,6 +236,7 @@ abstract class BaseReleaserImpl implements BaseReleaser {
         if (artifacts.present) service.artifacts = artifacts.get()
         if (files.present) service.files = files.get()
         if (checksums.present) service.checksums = checksums.get()
+        if (catalogs.present) service.catalogs = catalogs.get()
         if (signatures.present) service.signatures = signatures.get()
         if (uploadAssets.present) service.uploadAssets = uploadAssets.get()
         if (sign.present) service.sign = sign.get()

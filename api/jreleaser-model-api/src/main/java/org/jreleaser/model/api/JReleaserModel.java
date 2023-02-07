@@ -19,6 +19,7 @@ package org.jreleaser.model.api;
 
 import org.jreleaser.model.api.announce.Announce;
 import org.jreleaser.model.api.assemble.Assemble;
+import org.jreleaser.model.api.catalog.Catalog;
 import org.jreleaser.model.api.checksum.Checksum;
 import org.jreleaser.model.api.common.Domain;
 import org.jreleaser.model.api.deploy.Deploy;
@@ -76,6 +77,8 @@ public interface JReleaserModel extends Domain {
     Signing getSigning();
 
     Files getFiles();
+
+    Catalog getCatalog();
 
     Map<String, ? extends Distribution> getDistributions();
 

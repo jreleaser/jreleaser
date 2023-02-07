@@ -85,6 +85,8 @@ interface BaseReleaser extends Releaser {
 
     Property<Boolean> getChecksums()
 
+    Property<Boolean> getCatalogs()
+
     Property<Boolean> getSignatures()
 
     Property<Boolean> getOverwrite()

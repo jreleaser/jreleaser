@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * @author Andres Almiray
@@ -40,7 +41,7 @@ import java.util.Optional;
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class GenericGitReleaser extends AbstractReleaser<org.jreleaser.model.api.release.GenericGitReleaser> {
-    public GenericGitReleaser(JReleaserContext context, List<Asset> assets) {
+    public GenericGitReleaser(JReleaserContext context, Set<Asset> assets) {
         super(context, assets);
     }
 

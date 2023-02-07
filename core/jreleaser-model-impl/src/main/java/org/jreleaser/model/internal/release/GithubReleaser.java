@@ -39,7 +39,7 @@ public final class GithubReleaser extends BaseReleaser<org.jreleaser.model.api.r
     private String discussionCategoryName;
 
     private final org.jreleaser.model.api.release.GithubReleaser immutable = new org.jreleaser.model.api.release.GithubReleaser() {
-        private static final long serialVersionUID = -4917130438022026501L;
+        private static final long serialVersionUID = 3386673738149277175L;
 
         @Override
         public boolean isPrerelease() {
@@ -229,6 +229,11 @@ public final class GithubReleaser extends BaseReleaser<org.jreleaser.model.api.r
         @Override
         public boolean isChecksums() {
             return GithubReleaser.this.isChecksums();
+        }
+
+        @Override
+        public boolean isCatalogs() {
+            return GithubReleaser.this.isCatalogs();
         }
 
         @Override

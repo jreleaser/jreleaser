@@ -349,11 +349,11 @@ public interface Constants {
     String KEY_WINGET_TAGS = "wingetTags";
     String KEY_WINGET_MANIFEST_TYPE = "wingetManifestType";
     String KEY_WINGET_INSTALLER_TYPE = "wingetInstallerType";
-    String KEY_WINGET_SCOPE= "wingetScope";
-    String KEY_WINGET_INSTALL_MODES= "wingetInstallModes";
-    String KEY_WINGET_UPGRADE_BEHAVIOR= "wingetUpgradeBehavior";
-    String KEY_WINGET_RELEASE_DATE= "wingetReleaseDate";
-    String KEY_WINGET_INSTALLER_ARCHITECTURE= "wingetInstallerArchitecture";
+    String KEY_WINGET_SCOPE = "wingetScope";
+    String KEY_WINGET_INSTALL_MODES = "wingetInstallModes";
+    String KEY_WINGET_UPGRADE_BEHAVIOR = "wingetUpgradeBehavior";
+    String KEY_WINGET_RELEASE_DATE = "wingetReleaseDate";
+    String KEY_WINGET_INSTALLER_ARCHITECTURE = "wingetInstallerArchitecture";
 
     // Linkedin
     String KEY_LINKEDIN_OWNER = "linkedinOwner";
@@ -373,6 +373,7 @@ public interface Constants {
     String KEY_BASE_OUTPUT_DIRECTORY = "baseOutputDirectory";
     String KEY_OUTPUT_DIRECTORY = "outputDirectory";
     String KEY_CHECKSUMS_DIRECTORY = "checksumDirectory";
+    String KEY_CATALOGS_DIRECTORY = "catalogsDirectory";
     String KEY_SIGNATURES_DIRECTORY = "signaturesDirectory";
     String KEY_ASSEMBLE_DIRECTORY = "assembleDirectory";
     String KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY = "distributionAssembleDirectory";
@@ -384,4 +385,7 @@ public interface Constants {
     String KEY_DISTRIBUTION_PACKAGE_DIRECTORY = "distributionPackageDirectory";
 
     String KEY_GRAALVM_NAGIVE_IMAGE = "graalVMNativeImage";
+
+    String SKIP_SBOM = "skipSbom";
+    String SKIP_SBOM_SYFT = "skipSbomSyft";
 }

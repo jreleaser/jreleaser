@@ -52,7 +52,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Releaser, S extends BaseReleaser<A, S>> extends AbstractModelObject<S> implements Releaser<A> {
-    private static final long serialVersionUID = -8766074471785244397L;
+    private static final long serialVersionUID = -8672937544539013287L;
 
     @JsonIgnore
     private final String serviceName;
@@ -84,19 +84,20 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
     private String previousTagName;
     private String releaseName;
     private String branch;
-    private Boolean sign;
-    private Boolean skipTag;
-    private Boolean skipRelease;
-    private Boolean overwrite;
+    protected Boolean sign;
+    protected Boolean skipTag;
+    protected Boolean skipRelease;
+    protected Boolean overwrite;
     private String apiEndpoint;
     private int connectTimeout;
     private int readTimeout;
-    private Boolean artifacts;
-    private Boolean files;
-    private Boolean checksums;
-    private Boolean signatures;
+    protected Boolean artifacts;
+    protected Boolean files;
+    protected Boolean checksums;
+    protected Boolean signatures;
+    protected Boolean catalogs;
     private Active uploadAssets;
-    private Boolean uploadAssetsEnabled;
+    protected Boolean uploadAssetsEnabled;
     @JsonIgnore
     private String cachedTagName;
     @JsonIgnore
@@ -140,19 +141,20 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
         this.previousTagName = merge(this.previousTagName, source.getPreviousTagName());
         this.releaseName = merge(this.releaseName, source.getReleaseName());
         this.branch = merge(this.branch, source.getBranch());
-        this.sign = merge(this.sign, source.isSign());
-        this.skipTag = merge(this.skipTag, source.isSkipTag());
-        this.skipRelease = merge(this.skipRelease, source.isSkipRelease());
-        this.overwrite = merge(this.overwrite, source.isOverwrite());
+        this.sign = merge(this.sign, source.sign);
+        this.skipTag = merge(this.skipTag, source.skipTag);
+        this.skipRelease = merge(this.skipRelease, source.skipRelease);
+        this.overwrite = merge(this.overwrite, source.overwrite);
         this.apiEndpoint = merge(this.apiEndpoint, source.getApiEndpoint());
         this.connectTimeout = merge(this.getConnectTimeout(), source.getConnectTimeout());
         this.readTimeout = merge(this.getReadTimeout(), source.getReadTimeout());
-        this.artifacts = merge(this.artifacts, source.isArtifacts());
-        this.files = merge(this.files, source.isFiles());
-        this.checksums = merge(this.checksums, source.isChecksums());
-        this.signatures = merge(this.signatures, source.isSignatures());
+        this.artifacts = merge(this.artifacts, source.artifacts);
+        this.files = merge(this.files, source.files);
+        this.checksums = merge(this.checksums, source.checksums);
+        this.signatures = merge(this.signatures, source.signatures);
+        this.catalogs = merge(this.catalogs, source.catalogs);
         this.uploadAssets = merge(this.uploadAssets, source.getUploadAssets());
-        this.uploadAssetsEnabled = merge(this.uploadAssetsEnabled, source.getUploadAssetsEnabled());
+        this.uploadAssetsEnabled = merge(this.uploadAssetsEnabled, source.uploadAssetsEnabled);
         setCommitAuthor(source.getCommitAuthor());
         setUpdate(source.getUpdate());
         setPrerelease(source.getPrerelease());
@@ -613,6 +615,18 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
         this.checksums = checksums;
     }
 
+    public boolean isCatalogsSet() {
+        return null != catalogs;
+    }
+
+    public boolean isCatalogs() {
+        return null == catalogs || catalogs;
+    }
+
+    public void setCatalogs(Boolean catalogs) {
+        this.catalogs = catalogs;
+    }
+
     public boolean isSignaturesSet() {
         return null != signatures;
     }
@@ -655,6 +669,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
             map.put("artifacts", isArtifacts());
             map.put("files", isFiles());
             map.put("checksums", isChecksums());
+            map.put("catalogs", isCatalogs());
             map.put("signatures", isSignatures());
             map.put("repoUrl", repoUrl);
             map.put("repoCloneUrl", repoCloneUrl);

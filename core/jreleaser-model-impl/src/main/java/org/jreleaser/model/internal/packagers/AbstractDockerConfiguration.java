@@ -36,7 +36,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfiguration<S>> extends AbstractActivatable<S>
     implements DockerConfiguration, ExtraProperties {
-    private static final long serialVersionUID = 5019043597748290797L;
+    private static final long serialVersionUID = 3786927554708927771L;
 
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private final Map<String, String> labels = new LinkedHashMap<>();
@@ -49,7 +49,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
     private final Buildx buildx = new Buildx();
 
     private String templateDirectory;
-    private Boolean useLocalArtifact;
+    protected Boolean useLocalArtifact;
     private String baseImage;
 
     @Override
@@ -59,7 +59,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
         setSkipTemplates(merge(this.skipTemplates, source.getSkipTemplates()));
         setExtraProperties(merge(this.extraProperties, source.getExtraProperties()));
         this.baseImage = merge(this.baseImage, source.getBaseImage());
-        this.useLocalArtifact = merge(this.useLocalArtifact, source.isUseLocalArtifact());
+        this.useLocalArtifact = merge(this.useLocalArtifact, source.useLocalArtifact);
         setImageNames(merge(this.imageNames, source.getImageNames()));
         setBuildArgs(merge(this.buildArgs, source.getBuildArgs()));
         setPreCommands(merge(this.preCommands, source.getPreCommands()));

@@ -40,4 +40,6 @@ interface Uploader extends Activatable, ExtraProperties {
     Property<Boolean> getSignatures()
 
     Property<Boolean> getChecksums()
+
+    Property<Boolean> getCatalogs()
 }

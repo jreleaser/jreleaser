@@ -64,6 +64,12 @@ public interface Uploader<A extends org.jreleaser.model.api.upload.Uploader> ext
 
     void setChecksums(Boolean checksums);
 
+    boolean isCatalogs();
+
+    void setCatalogs(Boolean catalogs);
+
+    boolean isCatalogsSet();
+
     List<String> resolveSkipKeys();
 
     A asImmutable();

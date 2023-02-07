@@ -21,6 +21,7 @@ import org.jreleaser.extensions.api.ExtensionPoint;
 import org.jreleaser.model.api.JReleaserContext;
 import org.jreleaser.model.api.announce.Announcer;
 import org.jreleaser.model.api.assemble.Assembler;
+import org.jreleaser.model.api.catalog.Cataloger;
 import org.jreleaser.model.api.deploy.Deployer;
 import org.jreleaser.model.api.distributions.Distribution;
 import org.jreleaser.model.api.download.Downloader;
@@ -80,6 +81,15 @@ public interface WorkflowListener extends ExtensionPoint {
      * @param assembler the executing assembler.
      */
     void onAssembleStep(ExecutionEvent event, JReleaserContext context, Assembler assembler);
+
+    /**
+     * Triggered when a cataloger starts/ends/fails.
+     *
+     * @param event     event metadata.
+     * @param context   the execution context.
+     * @param cataloger the executing cataloger.
+     */
+    void onCatalogStep(ExecutionEvent event, JReleaserContext context, Cataloger cataloger);
 
     /**
      * Triggered when a deployer starts/ends/fails.

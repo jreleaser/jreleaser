@@ -91,6 +91,10 @@
             classname="org.jreleaser.ant.tasks.JReleaserDeployTask"/>
 
     <taskdef
+            name="catalog"
+            classname="org.jreleaser.ant.tasks.JReleaserCatalogTask"/>
+
+    <taskdef
             name="upload"
             classname="org.jreleaser.ant.tasks.JReleaserUploadTask"/>
 

@@ -50,6 +50,7 @@
     <property name="jreleaser.assemblers" value=""/>
     <property name="jreleaser.distributions" value=""/>
     <property name="jreleaser.packagers" value=""/>
+    <property name="jreleaser.catalogers" value=""/>
     <property name="jreleaser.deployer.types" value=""/>
     <property name="jreleaser.deployer.names" value=""/>
     <property name="jreleaser.uploader.types" value=""/>
@@ -59,6 +60,7 @@
     <property name="jreleaser.excluded.announcers" value=""/>
     <property name="jreleaser.excluded.assemblers" value=""/>
     <property name="jreleaser.excluded.distributions" value=""/>
+    <property name="jreleaser.excluded.catalogers" value=""/>
     <property name="jreleaser.excluded.packagers" value=""/>
     <property name="jreleaser.excluded.deployer.types" value=""/>
     <property name="jreleaser.excluded.deployer.names" value=""/>
@@ -187,7 +189,9 @@
                                 uploaderTypes="${jreleaser.uploader.types}"
                                 excludedUploaderTypes="${jreleaser.excluded.uploader.types}"
                                 uploaderNames="${jreleaser.uploader.types}"
-                                excludedUploaderNames="${jreleaser.excluded.uploader.names}"/>
+                                excludedUploaderNames="${jreleaser.excluded.uploader.names}"
+                                catalogers="${jreleaser.catalogers}"
+                                excludedCatalogers="${jreleaser.excluded.catalogers}"/>
     </target>
 
     <target name="jreleaser-json-schema">
@@ -262,7 +266,9 @@
                            uploaderTypes="${jreleaser.uploader.types}"
                            excludedUploaderTypes="${jreleaser.excluded.uploader.types}"
                            uploaderNames="${jreleaser.uploader.types}"
-                           excludedUploaderNames="${jreleaser.excluded.uploader.names}"/>
+                           excludedUploaderNames="${jreleaser.excluded.uploader.names}"
+                           catalogers="${jreleaser.catalogers}"
+                           excludedCatalogers="${jreleaser.excluded.catalogers}"/>
     </target>
 
     <target name="jreleaser-sign">
@@ -292,6 +298,21 @@
                           excludedDeployerNames="${jreleaser.excluded.deployer.names}"/>
     </target>
 
+    <target name="jreleaser-catalog">
+        <jreleaser:catalog dryrun="${jreleaser.dry.run}"
+                           selectCurrentPlatform="${jreleaser.select.current.platform}"
+                           gitRootSearch="${jreleaser.git.root.search}"
+                           strict="${jreleaser.strict}"
+                           skip="${jreleaser.skip}"
+                           basedir="${jreleaser.basedir}"
+                           configFile="${jreleaser.config.file}"
+                           outputDir="${jreleaser.outputdir}"
+                           distributions="${jreleaser.distributions}"
+                           excludedDistributions="${jreleaser.excluded.distributions}"
+                           catalogers="${jreleaser.catalogers}"
+                           excludedCatalogers="${jreleaser.excluded.catalogers}"/>
+    </target>
+
     <target name="jreleaser-upload">
         <jreleaser:upload dryrun="${jreleaser.dry.run}"
                           selectCurrentPlatform="${jreleaser.select.current.platform}"
@@ -306,7 +327,9 @@
                           uploaderTypes="${jreleaser.uploader.types}"
                           excludedUploaderTypes="${jreleaser.excluded.uploader.types}"
                           uploaderNames="${jreleaser.uploader.types}"
-                          excludedUploaderNames="${jreleaser.excluded.uploader.names}"/>
+                          excludedUploaderNames="${jreleaser.excluded.uploader.names}"
+                          catalogers="${jreleaser.catalogers}"
+                          excludedCatalogers="${jreleaser.excluded.catalogers}"/>
     </target>
 
     <target name="jreleaser-download">

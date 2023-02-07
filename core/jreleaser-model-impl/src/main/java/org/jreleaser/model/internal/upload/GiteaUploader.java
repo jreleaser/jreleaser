@@ -38,7 +38,7 @@ public final class GiteaUploader extends AbstractGitPackageUploader<org.jrelease
     private String owner;
 
     private final org.jreleaser.model.api.upload.GiteaUploader immutable = new org.jreleaser.model.api.upload.GiteaUploader() {
-        private static final long serialVersionUID = -449985306983964476L;
+        private static final long serialVersionUID = -7859608360457491380L;
 
         @Override
         public String getHost() {
@@ -98,6 +98,11 @@ public final class GiteaUploader extends AbstractGitPackageUploader<org.jrelease
         @Override
         public boolean isChecksums() {
             return GiteaUploader.this.isChecksums();
+        }
+
+        @Override
+        public boolean isCatalogs() {
+            return GiteaUploader.this.isCatalogs();
         }
 
         @Override

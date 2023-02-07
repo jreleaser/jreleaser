@@ -50,8 +50,8 @@ import static org.jreleaser.util.StringUtils.isTrue;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public final class Artifact extends AbstractModelObject<Artifact> implements Domain, ExtraProperties {
-    private static final long serialVersionUID = 9102641760704662391L;
+public final class Artifact extends AbstractModelObject<Artifact> implements Domain, ExtraProperties, Comparable<Artifact> {
+
 
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     @JsonIgnore
@@ -273,6 +273,12 @@ public final class Artifact extends AbstractModelObject<Artifact> implements Dom
     @Override
     public int hashCode() {
         return Objects.hash(path);
+    }
+
+    @Override
+    public int compareTo(Artifact o) {
+        if (null == o) return -1;
+        return path.compareTo(o.path);
     }
 
     public void mergeExtraProperties(Map<String, Object> extraProperties) {

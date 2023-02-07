@@ -32,7 +32,7 @@ public final class SftpUploader extends AbstractSshUploader<org.jreleaser.model.
     private static final long serialVersionUID = -1747846855467388566L;
 
     private final org.jreleaser.model.api.upload.SftpUploader immutable = new org.jreleaser.model.api.upload.SftpUploader() {
-        private static final long serialVersionUID = -7331208873409466189L;
+        private static final long serialVersionUID = -3588257846441022384L;
 
         @Override
         public String getPath() {
@@ -122,6 +122,11 @@ public final class SftpUploader extends AbstractSshUploader<org.jreleaser.model.
         @Override
         public boolean isChecksums() {
             return SftpUploader.this.isChecksums();
+        }
+
+        @Override
+        public boolean isCatalogs() {
+            return SftpUploader.this.isCatalogs();
         }
 
         @Override

@@ -147,6 +147,9 @@ jobs:
           echo "::group::➡️ download"
           ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser download -PoutputDir=out --dry-run
           echo "::endgroup::"
+          echo "::group::➡️ catalog"
+          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser catalog -PoutputDir=out --select-current-platform
+          echo "::endgroup::"
           echo "::group::➡️ checksum"
           ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser checksum -PoutputDir=out --select-current-platform
           echo "::endgroup::"
@@ -334,6 +337,9 @@ jobs:
           echo "::endgroup::"
           echo "::group::➡️ download"
           java $JAVA_OPTS -jar jreleaser.jar download -PoutputDir=out --dry-run
+          echo "::endgroup::"
+          echo "::group::➡️ catalog"
+          java $JAVA_OPTS -jar jreleaser.jar catalog -PoutputDir=out --select-current-platform
           echo "::endgroup::"
           echo "::group::➡️ checksum"
           java $JAVA_OPTS -jar jreleaser.jar checksum -PoutputDir=out --select-current-platform
@@ -524,6 +530,9 @@ jobs:
           echo "::group::➡️ download"
           ant jreleaser-download -DoutputDir=build -Djreleaser.dry.run=true
           echo "::endgroup::"
+          echo "::group::➡️ catalog"
+          ant jreleaser-catalog -DoutputDir=build -Djreleaser.select.current.platform=true
+          echo "::endgroup::"
           echo "::group::➡️ checksum"
           ant jreleaser-checksum -DoutputDir=build -Djreleaser.select.current.platform=true
           echo "::endgroup::"
@@ -705,6 +714,9 @@ jobs:
           echo "::endgroup::"
           echo "::group::➡️ download"
           ./gradlew jreleaserDownload -PoutputDir=build -S
+          echo "::endgroup::"
+          echo "::group::➡️ catalog"
+          ./gradlew jreleaserCatalog -PoutputDir=build --select-current-platform -S
           echo "::endgroup::"
           echo "::group::➡️ checksum"
           ./gradlew jreleaserChecksum -PoutputDir=build --select-current-platform -S
@@ -905,6 +917,9 @@ jobs:
           echo "::endgroup::"
           echo "::group::➡️ download"
           ./mvnw -B -ntp jreleaser:download -DoutputDir=target -Djreleaser.dry.run=true
+          echo "::endgroup::"
+          echo "::group::➡️ catalog"
+          ./mvnw -B -ntp jreleaser:catalog -DoutputDir=target -Djreleaser.select.current.platform=true
           echo "::endgroup::"
           echo "::group::➡️ checksum"
           ./mvnw -B -ntp jreleaser:checksum -DoutputDir=target -Djreleaser.select.current.platform=true

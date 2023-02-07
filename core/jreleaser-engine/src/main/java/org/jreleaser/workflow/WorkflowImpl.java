@@ -72,6 +72,8 @@ class WorkflowImpl implements Workflow {
         logFilters("workflow.excluded.assemblers", context.getExcludedAssemblers());
         logFilters("workflow.included.distributions", context.getIncludedDistributions());
         logFilters("workflow.excluded.distributions", context.getExcludedDistributions());
+        logFilters("workflow.included.catalogers", context.getIncludedCatalogers());
+        logFilters("workflow.excluded.catalogers", context.getExcludedCatalogers());
         logFilters("workflow.included.packagers", context.getIncludedPackagers());
         logFilters("workflow.excluded.packagers", context.getExcludedPackagers());
         logFilters("workflow.included.deployer.types", context.getIncludedDeployerTypes());

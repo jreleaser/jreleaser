@@ -115,6 +115,8 @@ public interface Releaser extends Domain, EnabledAware, CommitAuthorAware, Owner
 
     boolean isChecksums();
 
+    boolean isCatalogs();
+
     boolean isSignatures();
 
     Active getUploadAssets();

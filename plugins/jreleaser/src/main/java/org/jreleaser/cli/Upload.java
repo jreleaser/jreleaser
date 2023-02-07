@@ -67,6 +67,14 @@ public class Upload extends AbstractPlatformAwareModelCommand<Main> {
         String[] excludedDistributions() {
             return null != exclude ? exclude.excludedDistributions : null;
         }
+
+        String[] includedCatalogers() {
+            return null != include ? include.includedCatalogers : null;
+        }
+
+        String[] excludedCatalogers() {
+            return null != exclude ? exclude.excludedCatalogers : null;
+        }
     }
 
     static class Include {
@@ -81,6 +89,9 @@ public class Upload extends AbstractPlatformAwareModelCommand<Main> {
         @CommandLine.Option(names = {"-d", "--distribution"},
             paramLabel = "<distribution>")
         String[] includedDistributions;
+        @CommandLine.Option(names = {"--cataloger"},
+            paramLabel = "<cataloger>")
+        String[] includedCatalogers;
     }
 
     static class Exclude {
@@ -95,6 +106,9 @@ public class Upload extends AbstractPlatformAwareModelCommand<Main> {
         @CommandLine.Option(names = {"-xd", "--exclude-distribution"},
             paramLabel = "<distribution>")
         String[] excludedDistributions;
+        @CommandLine.Option(names = {"--exclude-cataloger"},
+            paramLabel = "<cataloger>")
+        String[] excludedCatalogers;
     }
 
     @Override
@@ -114,9 +128,11 @@ public class Upload extends AbstractPlatformAwareModelCommand<Main> {
             context.setIncludedUploaderTypes(collectEntries(composite.includedUploaderTypes(), true));
             context.setIncludedUploaderNames(collectEntries(composite.includedUploaderNames()));
             context.setIncludedDistributions(collectEntries(composite.includedDistributions()));
+            context.setIncludedCatalogers(collectEntries(composite.includedCatalogers(), true));
             context.setExcludedUploaderTypes(collectEntries(composite.excludedUploaderTypes(), true));
             context.setExcludedUploaderNames(collectEntries(composite.excludedUploaderNames()));
             context.setExcludedDistributions(collectEntries(composite.excludedDistributions()));
+            context.setExcludedCatalogers(collectEntries(composite.excludedCatalogers(), true));
         }
         Workflows.upload(context).execute();
     }

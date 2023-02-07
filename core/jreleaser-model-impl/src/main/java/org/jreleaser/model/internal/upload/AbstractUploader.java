@@ -42,7 +42,7 @@ import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSepar
  * @since 0.3.0
  */
 public abstract class AbstractUploader<A extends org.jreleaser.model.api.upload.Uploader, S extends AbstractUploader<A, S>> extends AbstractActivatable<S> implements Uploader<A>, ExtraProperties {
-    private static final long serialVersionUID = 8274857458153227069L;
+    private static final long serialVersionUID = 2011958303607038304L;
 
     @JsonIgnore
     private final String type;
@@ -51,10 +51,11 @@ public abstract class AbstractUploader<A extends org.jreleaser.model.api.upload.
     private String name;
     private int connectTimeout;
     private int readTimeout;
-    private Boolean artifacts;
-    private Boolean files;
-    private Boolean signatures;
-    private Boolean checksums;
+    protected Boolean artifacts;
+    protected Boolean files;
+    protected Boolean signatures;
+    protected Boolean checksums;
+    protected Boolean catalogs;
 
     protected AbstractUploader(String type) {
         this.type = type;
@@ -66,10 +67,11 @@ public abstract class AbstractUploader<A extends org.jreleaser.model.api.upload.
         this.name = merge(this.name, source.getName());
         this.connectTimeout = merge(this.getConnectTimeout(), source.getConnectTimeout());
         this.readTimeout = merge(this.getReadTimeout(), source.getReadTimeout());
-        this.artifacts = merge(this.artifacts, source.isArtifacts());
-        this.files = merge(this.files, source.isFiles());
-        this.signatures = merge(this.signatures, source.isSignatures());
-        this.checksums = merge(this.checksums, source.isChecksums());
+        this.artifacts = merge(this.artifacts, source.artifacts);
+        this.files = merge(this.files, source.files);
+        this.signatures = merge(this.signatures, source.signatures);
+        this.checksums = merge(this.checksums, source.checksums);
+        this.catalogs = merge(this.catalogs, source.catalogs);
         setExtraProperties(merge(this.extraProperties, source.getExtraProperties()));
     }
 
@@ -195,6 +197,21 @@ public abstract class AbstractUploader<A extends org.jreleaser.model.api.upload.
     }
 
     @Override
+    public boolean isCatalogsSet() {
+        return null != catalogs;
+    }
+
+    @Override
+    public boolean isCatalogs() {
+        return null == catalogs || catalogs;
+    }
+
+    @Override
+    public void setCatalogs(Boolean catalogs) {
+        this.catalogs = catalogs;
+    }
+
+    @Override
     public Map<String, Object> asMap(boolean full) {
         if (!full && !isEnabled()) return Collections.emptyMap();
 
@@ -207,6 +224,7 @@ public abstract class AbstractUploader<A extends org.jreleaser.model.api.upload.
         props.put("files", isFiles());
         props.put("signatures", isSignatures());
         props.put("checksums", isChecksums());
+        props.put("catalogs", isCatalogs());
         asMap(full, props);
         props.put("extraProperties", getResolvedExtraProperties());
 

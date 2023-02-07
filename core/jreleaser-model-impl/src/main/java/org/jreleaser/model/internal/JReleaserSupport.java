@@ -116,4 +116,10 @@ public final class JReleaserSupport {
         set.add(org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.TYPE);
         return unmodifiableSet(set);
     }
+
+    public static Set<String> supportedSbomCatalogers() {
+        Set<String> set = new LinkedHashSet<>();
+        set.add(org.jreleaser.model.api.catalog.sbom.SyftSbomCataloger.TYPE);
+        return unmodifiableSet(set);
+    }
 }

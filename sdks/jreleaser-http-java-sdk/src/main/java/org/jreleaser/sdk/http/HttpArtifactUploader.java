@@ -32,8 +32,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Base64;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
@@ -67,7 +67,7 @@ public class HttpArtifactUploader extends AbstractArtifactUploader<org.jreleaser
 
     @Override
     public void upload(String name) throws UploadException {
-        List<Artifact> artifacts = collectArtifacts();
+        Set<Artifact> artifacts = collectArtifacts();
         if (artifacts.isEmpty()) {
             context.getLogger().info(RB.$("artifacts.no.match"));
         }

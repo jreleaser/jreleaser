@@ -44,11 +44,12 @@ import org.jreleaser.sdk.gitea.api.GtRepository;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import static org.jreleaser.mustache.Templates.resolveTemplate;
@@ -63,7 +64,7 @@ import static org.jreleaser.util.StringUtils.uncapitalize;
 public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.release.CodebergReleaser> {
     private final org.jreleaser.model.internal.release.CodebergReleaser codeberg;
 
-    public CodebergReleaser(JReleaserContext context, List<Asset> assets) {
+    public CodebergReleaser(JReleaserContext context, Set<Asset> assets) {
         super(context, assets);
         codeberg = context.getModel().getRelease().getCodeberg();
     }
@@ -389,8 +390,8 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
     }
 
     private void updateAssets(Gitea api, GtRelease release) throws IOException {
-        List<Asset> assetsToBeUpdated = new ArrayList<>();
-        List<Asset> assetsToBeUploaded = new ArrayList<>();
+        Set<Asset> assetsToBeUpdated = new TreeSet<>();
+        Set<Asset> assetsToBeUploaded = new TreeSet<>();
 
         Map<String, GtAsset> existingAssets = api.listAssets(codeberg.getOwner(), codeberg.getName(), release);
         Map<String, Asset> assetsToBePublished = new LinkedHashMap<>();

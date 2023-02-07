@@ -99,6 +99,14 @@ public class FullRelease extends AbstractPlatformAwareModelCommand<Main> {
         String[] excludedAnnouncers() {
             return null != exclude ? exclude.excludedAnnouncers : null;
         }
+
+        String[] includedCatalogers() {
+            return null != include ? include.includedCatalogers : null;
+        }
+
+        String[] excludedCatalogers() {
+            return null != exclude ? exclude.excludedCatalogers : null;
+        }
     }
 
     static class Include {
@@ -129,6 +137,10 @@ public class FullRelease extends AbstractPlatformAwareModelCommand<Main> {
         @CommandLine.Option(names = {"-a", "--announcer"},
             paramLabel = "<announcer>")
         String[] includedAnnouncers;
+
+        @CommandLine.Option(names = {"--cataloger"},
+            paramLabel = "<cataloger>")
+        String[] includedCatalogers;
     }
 
     static class Exclude {
@@ -159,6 +171,10 @@ public class FullRelease extends AbstractPlatformAwareModelCommand<Main> {
         @CommandLine.Option(names = {"-xa", "--exclude-announcer"},
             paramLabel = "<announcer>")
         String[] excludedAnnouncers;
+
+        @CommandLine.Option(names = {"--exclude-cataloger"},
+            paramLabel = "<cataloger>")
+        String[] excludedCatalogers;
     }
 
     @Override
@@ -189,6 +205,7 @@ public class FullRelease extends AbstractPlatformAwareModelCommand<Main> {
             context.setIncludedUploaderNames(collectEntries(composite.includedUploaderNames()));
             context.setIncludedDistributions(collectEntries(composite.includedDistributions()));
             context.setIncludedPackagers(collectEntries(composite.includedPackagers(), true));
+            context.setIncludedCatalogers(collectEntries(composite.includedCatalogers(), true));
             context.setIncludedAnnouncers(collectEntries(composite.includedAnnouncers(), true));
             context.setExcludedDeployerTypes(collectEntries(composite.excludedDeployerTypes(), true));
             context.setExcludedDeployerNames(collectEntries(composite.excludedDeployerNames()));
@@ -197,6 +214,7 @@ public class FullRelease extends AbstractPlatformAwareModelCommand<Main> {
             context.setExcludedDistributions(collectEntries(composite.excludedDistributions()));
             context.setExcludedPackagers(collectEntries(composite.excludedPackagers(), true));
             context.setExcludedAnnouncers(collectEntries(composite.excludedAnnouncers(), true));
+            context.setExcludedCatalogers(collectEntries(composite.excludedCatalogers(), true));
         }
         Workflows.fullRelease(context).execute();
     }

@@ -22,6 +22,7 @@ import org.jreleaser.model.api.signing.Keyring;
 import org.jreleaser.model.api.signing.SigningException;
 import org.jreleaser.mustache.TemplateContext;
 
+import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -29,7 +30,7 @@ import java.util.List;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface JReleaserContext {
+public interface JReleaserContext extends Serializable {
     String BASEDIR = "BASEDIR";
     String DRY_RUN = "DRY_RUN";
     String GIT_ROOT_SEARCH = "GIT_ROOT_SEARCH";
@@ -53,6 +54,8 @@ public interface JReleaserContext {
     Path getOutputDirectory();
 
     Path getChecksumsDirectory();
+
+    Path getCatalogsDirectory();
 
     Path getSignaturesDirectory();
 

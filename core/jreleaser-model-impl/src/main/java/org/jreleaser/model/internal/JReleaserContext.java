@@ -29,6 +29,7 @@ import org.jreleaser.model.Signing;
 import org.jreleaser.model.api.JReleaserCommand;
 import org.jreleaser.model.api.announce.Announcer;
 import org.jreleaser.model.api.assemble.Assembler;
+import org.jreleaser.model.api.catalog.Cataloger;
 import org.jreleaser.model.api.deploy.Deployer;
 import org.jreleaser.model.api.distributions.Distribution;
 import org.jreleaser.model.api.download.Downloader;
@@ -55,6 +56,7 @@ import org.jreleaser.version.SemanticVersion;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -113,7 +115,9 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class JReleaserContext {
+public class JReleaserContext implements Serializable {
+    private static final long serialVersionUID = -6182757355756729953L;
+
     private final JReleaserLogger logger;
     private final JReleaserModel model;
     private final Path basedir;
@@ -129,6 +133,7 @@ public class JReleaserContext {
     private final List<String> rejectedPlatforms = new ArrayList<>();
     private final List<String> includedAnnouncers = new ArrayList<>();
     private final List<String> includedAssemblers = new ArrayList<>();
+    private final List<String> includedCatalogers = new ArrayList<>();
     private final List<String> includedDistributions = new ArrayList<>();
     private final List<String> includedPackagers = new ArrayList<>();
     private final List<String> includedDownloaderTypes = new ArrayList<>();
@@ -139,6 +144,7 @@ public class JReleaserContext {
     private final List<String> includedUploaderNames = new ArrayList<>();
     private final List<String> excludedAnnouncers = new ArrayList<>();
     private final List<String> excludedAssemblers = new ArrayList<>();
+    private final List<String> excludedCatalogers = new ArrayList<>();
     private final List<String> excludedDistributions = new ArrayList<>();
     private final List<String> excludedPackagers = new ArrayList<>();
     private final List<String> excludedDownloaderTypes = new ArrayList<>();
@@ -154,6 +160,8 @@ public class JReleaserContext {
     private JReleaserCommand command;
 
     private final org.jreleaser.model.api.JReleaserContext immutable = new org.jreleaser.model.api.JReleaserContext() {
+        //private static final long serialVersionUID = -3617750863286236964L;
+
         @Override
         public Path relativize(Path basedir, Path other) {
             return JReleaserContext.this.relativize(basedir, other);
@@ -192,6 +200,11 @@ public class JReleaserContext {
         @Override
         public Path getChecksumsDirectory() {
             return JReleaserContext.this.getChecksumsDirectory();
+        }
+
+        @Override
+        public Path getCatalogsDirectory() {
+            return JReleaserContext.this.getCatalogsDirectory();
         }
 
         @Override
@@ -395,6 +408,7 @@ public class JReleaserContext {
             logger.debug(RB.$("context.path.set", Constants.KEY_BASE_OUTPUT_DIRECTORY, getOutputDirectory().getParent()));
             logger.debug(RB.$("context.path.set", Constants.KEY_OUTPUT_DIRECTORY, getOutputDirectory()));
             logger.debug(RB.$("context.path.set", Constants.KEY_CHECKSUMS_DIRECTORY, getChecksumsDirectory()));
+            logger.debug(RB.$("context.path.set", Constants.KEY_CATALOGS_DIRECTORY, getCatalogsDirectory()));
             logger.debug(RB.$("context.path.set", Constants.KEY_SIGNATURES_DIRECTORY, getSignaturesDirectory()));
             logger.debug(RB.$("context.path.set", Constants.KEY_PREPARE_DIRECTORY, getPrepareDirectory()));
             logger.debug(RB.$("context.path.set", Constants.KEY_PACKAGE_DIRECTORY, getPackageDirectory()));
@@ -598,6 +612,10 @@ public class JReleaserContext {
         return outputDirectory.resolve("checksums");
     }
 
+    public Path getCatalogsDirectory() {
+        return outputDirectory.resolve("catalogs");
+    }
+
     public Path getSignaturesDirectory() {
         return outputDirectory.resolve("signatures");
     }
@@ -686,6 +704,15 @@ public class JReleaserContext {
     public void setIncludedAssemblers(List<String> includedAssemblerTypes) {
         this.includedAssemblers.clear();
         this.includedAssemblers.addAll(normalize(includedAssemblerTypes));
+    }
+
+    public List<String> getIncludedCatalogers() {
+        return includedCatalogers;
+    }
+
+    public void setIncludedCatalogers(List<String> includedCatalogers) {
+        this.includedCatalogers.clear();
+        this.includedCatalogers.addAll(normalize(includedCatalogers));
     }
 
     public List<String> getIncludedDistributions() {
@@ -778,6 +805,15 @@ public class JReleaserContext {
         this.excludedAssemblers.addAll(normalize(excludedAssemblerTypes));
     }
 
+    public List<String> getExcludedCatalogers() {
+        return excludedCatalogers;
+    }
+
+    public void setExcludedCatalogers(List<String> excludedCatalogers) {
+        this.excludedCatalogers.clear();
+        this.excludedCatalogers.addAll(normalize(excludedCatalogers));
+    }
+
     public List<String> getExcludedDistributions() {
         return excludedDistributions;
     }
@@ -864,6 +900,7 @@ public class JReleaserContext {
         props.set(Constants.KEY_BASE_OUTPUT_DIRECTORY, getOutputDirectory().getParent());
         props.set(Constants.KEY_OUTPUT_DIRECTORY, getOutputDirectory());
         props.set(Constants.KEY_CHECKSUMS_DIRECTORY, getChecksumsDirectory());
+        props.set(Constants.KEY_CATALOGS_DIRECTORY, getCatalogsDirectory());
         props.set(Constants.KEY_SIGNATURES_DIRECTORY, getSignaturesDirectory());
         props.set(Constants.KEY_PREPARE_DIRECTORY, getPrepareDirectory());
         props.set(Constants.KEY_PACKAGE_DIRECTORY, getPackageDirectory());
@@ -1036,6 +1073,16 @@ public class JReleaserContext {
         }
     }
 
+    public void fireCatalogStepEvent(ExecutionEvent event, Cataloger cataloger) throws WorkflowListenerException {
+        for (WorkflowListener workflowListener : workflowListeners) {
+            try {
+                workflowListener.onCatalogStep(event, this.asImmutable(), cataloger);
+            } catch (RuntimeException e) {
+                throw new WorkflowListenerException(workflowListener, e);
+            }
+        }
+    }
+
     public void fireDeployStepEvent(ExecutionEvent event, Deployer deployer) throws WorkflowListenerException {
         for (WorkflowListener workflowListener : workflowListeners) {
             try {
@@ -1146,7 +1193,9 @@ public class JReleaserContext {
         }
     }
 
-    public static class Changelog {
+    public static class Changelog implements Serializable {
+        private static final long serialVersionUID = 6481720135300486220L;
+
         private String resolvedChangelog;
         private String formattedChanges;
         private String formattedContributors;

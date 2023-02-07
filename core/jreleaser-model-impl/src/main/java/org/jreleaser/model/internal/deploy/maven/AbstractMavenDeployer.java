@@ -39,7 +39,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 1.3.0
  */
 public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A>, A extends org.jreleaser.model.api.deploy.maven.MavenDeployer> extends AbstractActivatable<S> implements MavenDeployer<A>, ExtraProperties {
-    private static final long serialVersionUID = -6005127064517111267L;
+    private static final long serialVersionUID = -1018438777546427061L;
 
     @JsonIgnore
     private final String type;
@@ -49,9 +49,9 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
     private String name;
     private int connectTimeout;
     private int readTimeout;
-    private Boolean sign;
-    private Boolean verifyPom;
-    private Boolean applyMavenCentralRules;
+    protected Boolean sign;
+    protected Boolean verifyPom;
+    protected Boolean applyMavenCentralRules;
     private String url;
     private String username;
     private String password;
@@ -67,9 +67,9 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
         this.name = merge(this.name, source.getName());
         this.connectTimeout = merge(this.getConnectTimeout(), source.getConnectTimeout());
         this.readTimeout = merge(this.getReadTimeout(), source.getReadTimeout());
-        this.sign = merge(this.sign, source.isSign());
-        this.verifyPom = merge(this.verifyPom, source.isVerifyPom());
-        this.applyMavenCentralRules = merge(this.applyMavenCentralRules, source.isApplyMavenCentralRules());
+        this.sign = merge(this.sign, source.sign);
+        this.verifyPom = merge(this.verifyPom, source.verifyPom);
+        this.applyMavenCentralRules = merge(this.applyMavenCentralRules, source.applyMavenCentralRules);
         this.url = merge(this.url, source.getUrl());
         this.username = merge(this.username, source.getUsername());
         this.password = merge(this.password, source.getPassword());

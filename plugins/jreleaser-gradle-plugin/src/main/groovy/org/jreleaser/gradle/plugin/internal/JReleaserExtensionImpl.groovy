@@ -31,6 +31,7 @@ import org.jreleaser.engine.context.ContextCreator
 import org.jreleaser.gradle.plugin.JReleaserExtension
 import org.jreleaser.gradle.plugin.dsl.announce.Announce
 import org.jreleaser.gradle.plugin.dsl.assemble.Assemble
+import org.jreleaser.gradle.plugin.dsl.catalog.Catalog
 import org.jreleaser.gradle.plugin.dsl.checksum.Checksum
 import org.jreleaser.gradle.plugin.dsl.deploy.Deploy
 import org.jreleaser.gradle.plugin.dsl.distributions.Distribution
@@ -47,6 +48,7 @@ import org.jreleaser.gradle.plugin.dsl.signing.Signing
 import org.jreleaser.gradle.plugin.dsl.upload.Upload
 import org.jreleaser.gradle.plugin.internal.dsl.announce.AnnounceImpl
 import org.jreleaser.gradle.plugin.internal.dsl.assemble.AssembleImpl
+import org.jreleaser.gradle.plugin.internal.dsl.catalog.CatalogImpl
 import org.jreleaser.gradle.plugin.internal.dsl.checksum.ChecksumImpl
 import org.jreleaser.gradle.plugin.internal.dsl.deploy.DeployImpl
 import org.jreleaser.gradle.plugin.internal.dsl.distributions.DistributionImpl
@@ -89,6 +91,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     final PlatformImpl platform
     final ReleaseImpl release
     final DeployImpl deploy
+    final CatalogImpl catalog
     final UploadImpl upload
     final DownloadImpl download
     final PackagersImpl packagers
@@ -120,6 +123,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         platform = objects.newInstance(PlatformImpl, objects)
         release = objects.newInstance(ReleaseImpl, objects)
         deploy = objects.newInstance(DeployImpl, objects)
+        catalog = objects.newInstance(CatalogImpl, objects)
         upload = objects.newInstance(UploadImpl, objects)
         download = objects.newInstance(DownloadImpl, objects)
         packagers = objects.newInstance(PackagersImpl, objects)
@@ -187,6 +191,11 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     @Override
     void deploy(Action<? super Deploy> action) {
         action.execute(deploy)
+    }
+
+    @Override
+    void catalog(Action<? super Catalog> action) {
+        action.execute(catalog)
     }
 
     @Override
@@ -265,6 +274,11 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     }
 
     @Override
+    void catalog(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Catalog) Closure<Void> action) {
+        ConfigureUtil.configure(action, catalog)
+    }
+
+    @Override
     void deploy(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Deploy) Closure<Void> action) {
         ConfigureUtil.configure(action, deploy)
     }
@@ -333,6 +347,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         jreleaser.platform = platform.toModel()
         jreleaser.release = release.toModel()
         jreleaser.deploy = deploy.toModel()
+        jreleaser.catalog = catalog.toModel()
         jreleaser.upload = upload.toModel()
         jreleaser.download = download.toModel()
         jreleaser.packagers = packagers.toModel()

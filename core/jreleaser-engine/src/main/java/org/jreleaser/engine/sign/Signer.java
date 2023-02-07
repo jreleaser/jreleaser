@@ -30,10 +30,12 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.api.signing.Keyring;
 import org.jreleaser.model.api.signing.SigningException;
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.catalog.sbom.SbomCataloger;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.signing.Signing;
 import org.jreleaser.model.internal.util.Artifacts;
+import org.jreleaser.model.spi.catalog.sbom.SbomCatalogerProcessorHelper;
 import org.jreleaser.sdk.signing.GpgCommandSigner;
 import org.jreleaser.sdk.signing.SigningUtils;
 import org.jreleaser.sdk.tool.Cosign;
@@ -49,9 +51,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.stream.Collectors.toList;
 import static org.jreleaser.model.api.signing.Signing.KEY_SKIP_SIGNING;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -99,7 +101,7 @@ public final class Signer {
 
         files = files.stream()
             .filter(SigningUtils.FilePair::isInvalid)
-            .collect(Collectors.toList());
+            .collect(toList());
 
         if (files.isEmpty()) {
             context.getLogger().info(RB.$("signing.up.to.date"));
@@ -151,7 +153,7 @@ public final class Signer {
 
         files = files.stream()
             .filter(SigningUtils.FilePair::isInvalid)
-            .collect(Collectors.toList());
+            .collect(toList());
 
         if (files.isEmpty()) {
             context.getLogger().info(RB.$("signing.up.to.date"));
@@ -178,7 +180,7 @@ public final class Signer {
 
         files = files.stream()
             .filter(SigningUtils.FilePair::isInvalid)
-            .collect(Collectors.toList());
+            .collect(toList());
 
         if (files.isEmpty()) {
             context.getLogger().info(RB.$("signing.up.to.date"));
@@ -378,6 +380,20 @@ public final class Signer {
                     if (!artifact.isActive() || artifact.extraPropertyIsTrue(KEY_SKIP_SIGNING)) continue;
                     Path input = artifact.getEffectivePath(context, distribution);
                     if (artifact.isOptional(context) && !artifact.resolvedPathExists()) continue;
+                    Path output = signaturesDirectory.resolve(input.getFileName().toString().concat(extension));
+                    SigningUtils.FilePair pair = new SigningUtils.FilePair(input, output);
+                    if (!forceSign) pair.setValid(validator.test(pair));
+                    files.add(pair);
+                }
+            }
+        }
+
+        if (signing.isCatalogs()) {
+            List<? extends SbomCataloger<?>> catalogers = context.getModel().getCatalog().getSbom().findAllActiveSbomCatalogers();
+            for (SbomCataloger<?> cataloger : catalogers) {
+                if (!cataloger.getPack().isEnabled()) continue;
+                for (Artifact artifact : SbomCatalogerProcessorHelper.resolveArtifacts(context, cataloger)) {
+                    Path input = artifact.getEffectivePath(context);
                     Path output = signaturesDirectory.resolve(input.getFileName().toString().concat(extension));
                     SigningUtils.FilePair pair = new SigningUtils.FilePair(input, output);
                     if (!forceSign) pair.setValid(validator.test(pair));

@@ -33,7 +33,7 @@ public class GiteaReleaser extends BaseReleaser<org.jreleaser.model.api.release.
     private Boolean draft;
 
     private final org.jreleaser.model.api.release.GiteaReleaser immutable = new org.jreleaser.model.api.release.GiteaReleaser() {
-        private static final long serialVersionUID = -4771633429376290348L;
+        private static final long serialVersionUID = -5748013316146333676L;
 
         @Override
         public boolean isPrerelease() {
@@ -213,6 +213,11 @@ public class GiteaReleaser extends BaseReleaser<org.jreleaser.model.api.release.
         @Override
         public boolean isChecksums() {
             return GiteaReleaser.this.isChecksums();
+        }
+
+        @Override
+        public boolean isCatalogs() {
+            return GiteaReleaser.this.isCatalogs();
         }
 
         @Override

@@ -27,15 +27,15 @@ import java.util.Map;
  * @since 1.2.0
  */
 public abstract class AbstractHook<S extends AbstractHook<S>> extends AbstractActivatable<S> implements Hook {
-    private static final long serialVersionUID = 6965171105893505193L;
+    private static final long serialVersionUID = -8314368794997861783L;
 
     private final Filter filter = new Filter();
-    private Boolean continueOnError;
+    protected Boolean continueOnError;
 
     @Override
     public void merge(S source) {
         super.merge(source);
-        this.continueOnError = merge(this.continueOnError, source.isContinueOnError());
+        this.continueOnError = merge(this.continueOnError, source.continueOnError);
         setFilter(source.getFilter());
     }
 

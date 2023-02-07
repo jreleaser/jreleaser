@@ -44,6 +44,7 @@ abstract class AbstractUploader implements Uploader {
     final Property<Boolean> files
     final Property<Boolean> signatures
     final Property<Boolean> checksums
+    final Property<Boolean> catalogs
     final MapProperty<String, Object> extraProperties
 
     @Inject
@@ -56,6 +57,7 @@ abstract class AbstractUploader implements Uploader {
         files = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         signatures = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         checksums = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+        catalogs = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
     }
 
     @Internal
@@ -67,6 +69,7 @@ abstract class AbstractUploader implements Uploader {
             artifacts.present ||
             files.present ||
             checksums.present ||
+            catalogs.present ||
             signatures.present
     }
 
@@ -86,5 +89,6 @@ abstract class AbstractUploader implements Uploader {
         if (files.present) uploader.files = files.get()
         if (signatures.present) uploader.signatures = signatures.get()
         if (checksums.present) uploader.checksums = checksums.get()
+        if (catalogs.present) uploader.catalogs = catalogs.get()
     }
 }

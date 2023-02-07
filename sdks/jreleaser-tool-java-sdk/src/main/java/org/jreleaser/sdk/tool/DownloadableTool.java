@@ -180,7 +180,7 @@ public class DownloadableTool {
         if (isNotBlank(executablePath)) executablePath = resolveTemplate(executablePath, props);
 
         Path test = dest;
-        if (unpack) {
+        if (unpack && isNotBlank(executablePath)) {
             test = dest.resolve(executablePath);
         }
         test = test.resolve(exec).toAbsolutePath();
@@ -205,7 +205,11 @@ public class DownloadableTool {
             if (unpack) {
                 FileUtils.unpackArchive(destination, dest, false);
                 logger.debug(RB.$("tool.unpacked", filename));
-                executable = dest.resolve(executablePath).resolve(exec).toAbsolutePath();
+                if (isNotBlank(executablePath)) {
+                    executable = dest.resolve(executablePath).resolve(exec).toAbsolutePath();
+                } else {
+                    executable = dest.resolve(exec).toAbsolutePath();
+                }
             } else {
                 Path executableFile = dest.resolve(exec);
                 Files.move(destination, executableFile);

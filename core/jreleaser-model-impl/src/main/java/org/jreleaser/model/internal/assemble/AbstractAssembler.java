@@ -60,7 +60,7 @@ public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A ext
     private String name;
 
     private String templateDirectory;
-    private Boolean exported;
+    protected Boolean exported;
     private Stereotype stereotype;
 
     protected AbstractAssembler(String type) {
@@ -70,7 +70,7 @@ public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A ext
     @Override
     public void merge(S source) {
         super.merge(source);
-        this.exported = merge(this.exported, source.isExported());
+        this.exported = merge(this.exported, source.exported);
         this.name = merge(this.name, source.getName());
         this.platform.merge(source.getPlatform());
         this.stereotype = merge(this.stereotype, source.getStereotype());

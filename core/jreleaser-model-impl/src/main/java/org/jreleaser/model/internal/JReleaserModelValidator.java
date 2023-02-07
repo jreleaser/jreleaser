@@ -23,6 +23,7 @@ import org.jreleaser.util.Errors;
 import static org.jreleaser.model.internal.validation.announce.AnnouncersValidator.validateAnnouncers;
 import static org.jreleaser.model.internal.validation.assemble.AssemblersValidator.postValidateAssemblers;
 import static org.jreleaser.model.internal.validation.assemble.AssemblersValidator.validateAssemblers;
+import static org.jreleaser.model.internal.validation.catalog.CatalogValidator.validateCatalog;
 import static org.jreleaser.model.internal.validation.checksum.ChecksumValidator.validateChecksum;
 import static org.jreleaser.model.internal.validation.deploy.DeployValidator.validateDeploy;
 import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.postValidateDistributions;
@@ -77,6 +78,7 @@ public final class JReleaserModelValidator {
         validatePackagers(context, mode, errors);
         validateDistributions(context, mode, errors);
         validateFiles(context, mode, errors);
+        validateCatalog(context, mode, errors);
         validateAnnouncers(context, mode, errors);
 
         context.getLogger().setPrefix("postvalidation");

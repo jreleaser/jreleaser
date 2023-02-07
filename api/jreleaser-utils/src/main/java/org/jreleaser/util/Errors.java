@@ -20,6 +20,7 @@ package org.jreleaser.util;
 import org.jreleaser.logging.JReleaserLogger;
 
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.LinkedHashSet;
 import java.util.Objects;
@@ -29,7 +30,9 @@ import java.util.Set;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public class Errors {
+public class Errors implements Serializable {
+    private static final long serialVersionUID = -8016988438210723225L;
+
     private final Set<Error> assemblyErrors = new LinkedHashSet<>();
     private final Set<Error> configurationErrors = new LinkedHashSet<>();
     private final Set<Error> warnings = new LinkedHashSet<>();
@@ -98,7 +101,9 @@ public class Errors {
         WARNING
     }
 
-    public static class Error {
+    public static class Error implements Serializable {
+        private static final long serialVersionUID = -9011553489507569322L;
+
         private final Kind kind;
         private final String message;
 

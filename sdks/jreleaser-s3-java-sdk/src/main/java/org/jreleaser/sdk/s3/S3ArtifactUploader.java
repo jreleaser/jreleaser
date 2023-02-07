@@ -43,8 +43,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static java.nio.file.StandardOpenOption.READ;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -80,7 +80,7 @@ public class S3ArtifactUploader extends AbstractArtifactUploader<org.jreleaser.m
 
     @Override
     public void upload(String name) throws UploadException {
-        List<Artifact> artifacts = collectArtifacts();
+        Set<Artifact> artifacts = collectArtifacts();
         if (artifacts.isEmpty()) {
             context.getLogger().info(RB.$("artifacts.no.match"));
         }

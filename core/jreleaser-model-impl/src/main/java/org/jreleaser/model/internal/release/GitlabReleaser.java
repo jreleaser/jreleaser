@@ -40,7 +40,7 @@ public final class GitlabReleaser extends BaseReleaser<org.jreleaser.model.api.r
     private String projectIdentifier;
 
     private final org.jreleaser.model.api.release.GitlabReleaser immutable = new org.jreleaser.model.api.release.GitlabReleaser() {
-        private static final long serialVersionUID = 5455037714043718567L;
+        private static final long serialVersionUID = 338295653785071184L;
 
         @Override
         public boolean isPrerelease() {
@@ -230,6 +230,11 @@ public final class GitlabReleaser extends BaseReleaser<org.jreleaser.model.api.r
         @Override
         public boolean isChecksums() {
             return GitlabReleaser.this.isChecksums();
+        }
+
+        @Override
+        public boolean isCatalogs() {
+            return GitlabReleaser.this.isCatalogs();
         }
 
         @Override

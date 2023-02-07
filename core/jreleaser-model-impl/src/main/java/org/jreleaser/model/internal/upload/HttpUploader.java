@@ -36,7 +36,7 @@ public final class HttpUploader extends AbstractWebUploader<org.jreleaser.model.
     private final HttpDelegate delegate = new HttpDelegate();
 
     private final org.jreleaser.model.api.upload.HttpUploader immutable = new org.jreleaser.model.api.upload.HttpUploader() {
-        private static final long serialVersionUID = 3000310615738273509L;
+        private static final long serialVersionUID = -2422450427549788470L;
 
         @Override
         public Method getMethod() {
@@ -106,6 +106,11 @@ public final class HttpUploader extends AbstractWebUploader<org.jreleaser.model.
         @Override
         public boolean isChecksums() {
             return HttpUploader.this.isChecksums();
+        }
+
+        @Override
+        public boolean isCatalogs() {
+            return HttpUploader.this.isCatalogs();
         }
 
         @Override

@@ -50,9 +50,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.StreamSupport;
 
 import static org.jreleaser.sdk.git.GitSdk.REFS_TAGS;
@@ -185,7 +185,7 @@ class Github {
             .createRelease(tagName);
     }
 
-    void uploadAssets(GHRelease release, List<Asset> assets) throws IOException {
+    void uploadAssets(GHRelease release, Set<Asset> assets) throws IOException {
         for (Asset asset : assets) {
             if (0 == Files.size(asset.getPath()) || !Files.exists(asset.getPath())) {
                 // do not upload empty or non existent files
@@ -196,7 +196,7 @@ class Github {
         }
     }
 
-    void updateAssets(GHRelease release, List<Asset> assets, Map<String, GHAsset> existingAssets) throws IOException {
+    void updateAssets(GHRelease release, Set<Asset> assets, Map<String, GHAsset> existingAssets) throws IOException {
         for (Asset asset : assets) {
             if (0 == Files.size(asset.getPath()) || !Files.exists(asset.getPath())) {
                 // do not upload empty or non existent files

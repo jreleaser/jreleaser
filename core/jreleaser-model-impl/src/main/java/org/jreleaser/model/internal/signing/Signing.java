@@ -43,7 +43,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public final class Signing extends AbstractActivatable<Signing> implements Domain {
-    private static final long serialVersionUID = 4520483266921339349L;
+    private static final long serialVersionUID = -7440879442726925285L;
 
     private final Command command = new Command();
     private final Cosign cosign = new Cosign();
@@ -57,9 +57,10 @@ public final class Signing extends AbstractActivatable<Signing> implements Domai
     private Boolean artifacts;
     private Boolean files;
     private Boolean checksums;
+    private Boolean catalogs;
 
     private final org.jreleaser.model.api.signing.Signing immutable = new org.jreleaser.model.api.signing.Signing() {
-        private static final long serialVersionUID = 6133653522072601397L;
+        private static final long serialVersionUID = -3565614952776622685L;
 
         @Override
         public boolean isArmored() {
@@ -107,6 +108,11 @@ public final class Signing extends AbstractActivatable<Signing> implements Domai
         }
 
         @Override
+        public boolean isCatalogs() {
+            return Signing.this.isCatalogs();
+        }
+
+        @Override
         public Command getCommand() {
             return command.asImmutable();
         }
@@ -148,6 +154,7 @@ public final class Signing extends AbstractActivatable<Signing> implements Domai
         this.artifacts = merge(this.artifacts, source.artifacts);
         this.files = merge(this.files, source.files);
         this.checksums = merge(this.checksums, source.checksums);
+        this.catalogs = merge(this.catalogs, source.catalogs);
         setCommand(source.command);
         setCosign(source.cosign);
     }
@@ -255,6 +262,18 @@ public final class Signing extends AbstractActivatable<Signing> implements Domai
         this.checksums = checksums;
     }
 
+    public boolean isCatalogsSet() {
+        return null != catalogs;
+    }
+
+    public boolean isCatalogs() {
+        return null == catalogs || catalogs;
+    }
+
+    public void setCatalogs(Boolean catalogs) {
+        this.catalogs = catalogs;
+    }
+
     public Command getCommand() {
         return command;
     }
@@ -284,6 +303,7 @@ public final class Signing extends AbstractActivatable<Signing> implements Domai
         props.put("artifacts", isArtifacts());
         props.put("files", isFiles());
         props.put("checksums", isChecksums());
+        props.put("catalogs", isCatalogs());
         props.put("passphrase", isNotBlank(passphrase) ? HIDE : UNSET);
 
         if (mode == org.jreleaser.model.Signing.Mode.COMMAND) {

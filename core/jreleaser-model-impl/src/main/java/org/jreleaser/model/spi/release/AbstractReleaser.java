@@ -21,8 +21,8 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.release.BaseReleaser;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * @author Andres Almiray
@@ -30,9 +30,9 @@ import java.util.List;
  */
 public abstract class AbstractReleaser<A extends org.jreleaser.model.api.release.Releaser> implements Releaser<A> {
     protected final JReleaserContext context;
-    protected final List<Asset> assets = new ArrayList<>();
+    protected final Set<Asset> assets = new TreeSet<>();
 
-    protected AbstractReleaser(JReleaserContext context, List<Asset> assets) {
+    protected AbstractReleaser(JReleaserContext context, Set<Asset> assets) {
         this.context = context;
         this.assets.addAll(assets);
     }

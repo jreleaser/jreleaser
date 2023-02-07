@@ -30,6 +30,7 @@ import org.jreleaser.gradle.plugin.internal.JReleaserProjectConfigurer
 import org.jreleaser.gradle.plugin.tasks.JReleaseAutoConfigReleaseTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserAnnounceTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserAssembleTask
+import org.jreleaser.gradle.plugin.tasks.JReleaserCatalogTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserChangelogTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserChecksumTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserConfigTask
@@ -210,6 +211,15 @@ class JReleaserPlugin implements Plugin<Project> {
                 void execute(JReleaserDeployTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Deploys all artifacts'
+                }
+            })
+
+        project.tasks.register(JReleaserCatalogTask.NAME, JReleaserCatalogTask,
+            new Action<JReleaserCatalogTask>() {
+                @Override
+                void execute(JReleaserCatalogTask t) {
+                    t.group = JRELEASER_GROUP
+                    t.description = 'Catalogs all artifacts and files'
                 }
             })
 

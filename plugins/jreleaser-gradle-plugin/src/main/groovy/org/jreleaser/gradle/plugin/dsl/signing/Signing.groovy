@@ -51,6 +51,8 @@ interface Signing extends Activatable {
 
     Property<Boolean> getChecksums()
 
+    Property<Boolean> getCatalogs()
+
     Command getCommand()
 
     Cosign getCosign()

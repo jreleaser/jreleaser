@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
+import java.util.Set;
 
 /**
  * @author Andres Almiray
@@ -60,7 +60,7 @@ public class FtpArtifactUploader extends AbstractArtifactUploader<org.jreleaser.
 
     @Override
     public void upload(String name) throws UploadException {
-        List<Artifact> artifacts = collectArtifacts();
+        Set<Artifact> artifacts = collectArtifacts();
         if (artifacts.isEmpty()) {
             context.getLogger().info(RB.$("artifacts.no.match"));
         }

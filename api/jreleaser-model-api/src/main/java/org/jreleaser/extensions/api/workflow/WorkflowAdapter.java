@@ -20,6 +20,7 @@ package org.jreleaser.extensions.api.workflow;
 import org.jreleaser.model.api.JReleaserContext;
 import org.jreleaser.model.api.announce.Announcer;
 import org.jreleaser.model.api.assemble.Assembler;
+import org.jreleaser.model.api.catalog.Cataloger;
 import org.jreleaser.model.api.deploy.Deployer;
 import org.jreleaser.model.api.distributions.Distribution;
 import org.jreleaser.model.api.download.Downloader;
@@ -62,6 +63,11 @@ public class WorkflowAdapter implements WorkflowListener {
 
     @Override
     public void onAssembleStep(ExecutionEvent event, JReleaserContext context, Assembler assembler) {
+        // noop
+    }
+
+    @Override
+    public void onCatalogStep(ExecutionEvent event, JReleaserContext context, Cataloger cataloger) {
         // noop
     }
 

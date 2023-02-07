@@ -54,7 +54,7 @@ public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.mo
     private String host;
 
     private final org.jreleaser.model.api.upload.ArtifactoryUploader immutable = new org.jreleaser.model.api.upload.ArtifactoryUploader() {
-        private static final long serialVersionUID = -6040496931102283198L;
+        private static final long serialVersionUID = -2363532627193458751L;
 
         private List<? extends org.jreleaser.model.api.upload.ArtifactoryUploader.ArtifactoryRepository> repositories;
 
@@ -121,6 +121,11 @@ public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.mo
         @Override
         public boolean isChecksums() {
             return ArtifactoryUploader.this.isChecksums();
+        }
+
+        @Override
+        public boolean isCatalogs() {
+            return ArtifactoryUploader.this.isCatalogs();
         }
 
         @Override

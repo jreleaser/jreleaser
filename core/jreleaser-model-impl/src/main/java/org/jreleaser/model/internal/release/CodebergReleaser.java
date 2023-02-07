@@ -33,7 +33,7 @@ public class CodebergReleaser extends BaseReleaser<org.jreleaser.model.api.relea
     private Boolean draft;
 
     private final org.jreleaser.model.api.release.CodebergReleaser immutable = new org.jreleaser.model.api.release.CodebergReleaser() {
-        private static final long serialVersionUID = 404713458541214377L;
+        private static final long serialVersionUID = -6491682401927274247L;
 
         @Override
         public boolean isPrerelease() {
@@ -213,6 +213,11 @@ public class CodebergReleaser extends BaseReleaser<org.jreleaser.model.api.relea
         @Override
         public boolean isChecksums() {
             return CodebergReleaser.this.isChecksums();
+        }
+
+        @Override
+        public boolean isCatalogs() {
+            return CodebergReleaser.this.isCatalogs();
         }
 
         @Override

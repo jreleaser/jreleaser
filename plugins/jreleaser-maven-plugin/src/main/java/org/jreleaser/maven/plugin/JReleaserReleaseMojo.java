@@ -93,6 +93,18 @@ public class JReleaserReleaseMojo extends AbstractPlatformAwareMojo {
     private String[] excludedUploaderNames;
 
     /**
+     * Include an cataloger.
+     */
+    @Parameter(property = "jreleaser.catalogers")
+    private String[] includedCatalogers;
+
+    /**
+     * Exclude an cataloger.
+     */
+    @Parameter(property = "jreleaser.excluded.catalogers")
+    private String[] excludedCatalogers;
+
+    /**
      * Skip execution.
      */
     @Parameter(property = "jreleaser.release.skip")
@@ -112,11 +124,13 @@ public class JReleaserReleaseMojo extends AbstractPlatformAwareMojo {
         context.setIncludedUploaderTypes(collectEntries(includedUploaders, true));
         context.setIncludedUploaderNames(collectEntries(includedUploaderNames));
         context.setIncludedDistributions(collectEntries(includedDistributions));
+        context.setIncludedCatalogers(collectEntries(includedCatalogers, true));
         context.setExcludedDeployerTypes(collectEntries(excludedDeployers, true));
         context.setExcludedDeployerNames(collectEntries(excludedDeployerNames));
         context.setExcludedUploaderTypes(collectEntries(excludedUploaders, true));
         context.setExcludedUploaderNames(collectEntries(excludedUploaderNames));
         context.setExcludedDistributions(collectEntries(excludedDistributions));
+        context.setExcludedCatalogers(collectEntries(excludedCatalogers, true));
         Workflows.release(context).execute();
     }
 }

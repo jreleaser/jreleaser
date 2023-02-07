@@ -53,7 +53,7 @@ public final class S3Uploader extends AbstractUploader<org.jreleaser.model.api.u
     private String sessionToken;
 
     private final org.jreleaser.model.api.upload.S3Uploader immutable = new org.jreleaser.model.api.upload.S3Uploader() {
-        private static final long serialVersionUID = 1914562093969256669L;
+        private static final long serialVersionUID = -3263159021072324345L;
 
         @Override
         public String getRegion() {
@@ -133,6 +133,11 @@ public final class S3Uploader extends AbstractUploader<org.jreleaser.model.api.u
         @Override
         public boolean isChecksums() {
             return S3Uploader.this.isChecksums();
+        }
+
+        @Override
+        public boolean isCatalogs() {
+            return S3Uploader.this.isCatalogs();
         }
 
         @Override

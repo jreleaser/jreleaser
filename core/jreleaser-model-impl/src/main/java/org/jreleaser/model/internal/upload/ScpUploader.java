@@ -32,7 +32,7 @@ public final class ScpUploader extends AbstractSshUploader<org.jreleaser.model.a
     private static final long serialVersionUID = -6887462905710198298L;
 
     private final org.jreleaser.model.api.upload.ScpUploader immutable = new org.jreleaser.model.api.upload.ScpUploader() {
-        private static final long serialVersionUID = -8857037637920388079L;
+        private static final long serialVersionUID = 3793298601082284442L;
 
         @Override
         public String getPath() {
@@ -122,6 +122,11 @@ public final class ScpUploader extends AbstractSshUploader<org.jreleaser.model.a
         @Override
         public boolean isChecksums() {
             return ScpUploader.this.isChecksums();
+        }
+
+        @Override
+        public boolean isCatalogs() {
+            return ScpUploader.this.isCatalogs();
         }
 
         @Override

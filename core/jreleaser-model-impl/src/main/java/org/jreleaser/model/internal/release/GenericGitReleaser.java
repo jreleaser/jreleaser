@@ -31,7 +31,7 @@ public final class GenericGitReleaser extends BaseReleaser<org.jreleaser.model.a
     private static final long serialVersionUID = -2400306764813478894L;
 
     private final org.jreleaser.model.api.release.GenericGitReleaser immutable = new org.jreleaser.model.api.release.GenericGitReleaser() {
-        private static final long serialVersionUID = 6940631975402037540L;
+        private static final long serialVersionUID = -3537373210121424970L;
 
         @Override
         public boolean isPrerelease() {
@@ -206,6 +206,11 @@ public final class GenericGitReleaser extends BaseReleaser<org.jreleaser.model.a
         @Override
         public boolean isChecksums() {
             return GenericGitReleaser.this.isChecksums();
+        }
+
+        @Override
+        public boolean isCatalogs() {
+            return GenericGitReleaser.this.isCatalogs();
         }
 
         @Override

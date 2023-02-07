@@ -197,6 +197,7 @@ class MavenImpl implements Maven {
     org.jreleaser.model.internal.deploy.maven.Maven toModel() {
         org.jreleaser.model.internal.deploy.maven.Maven maven = new org.jreleaser.model.internal.deploy.maven.Maven()
         if (active.present) maven.active = active.get()
+        maven.pomchecker = pomchecker.toModel()
 
         artifactory.each { maven.addArtifactory(((ArtifactoryMavenDeployerImpl) it).toModel()) }
         azure.each { maven.addAzure(((AzureMavenDeployerImpl) it).toModel()) }

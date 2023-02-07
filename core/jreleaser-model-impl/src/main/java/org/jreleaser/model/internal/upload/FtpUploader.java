@@ -42,7 +42,7 @@ public final class FtpUploader extends AbstractUploader<org.jreleaser.model.api.
     private String downloadUrl;
 
     private final org.jreleaser.model.api.upload.FtpUploader immutable = new org.jreleaser.model.api.upload.FtpUploader() {
-        private static final long serialVersionUID = -4604559893590203612L;
+        private static final long serialVersionUID = -1377876046305087409L;
 
         @Override
         public String getPath() {
@@ -107,6 +107,11 @@ public final class FtpUploader extends AbstractUploader<org.jreleaser.model.api.
         @Override
         public boolean isChecksums() {
             return FtpUploader.this.isChecksums();
+        }
+
+        @Override
+        public boolean isCatalogs() {
+            return FtpUploader.this.isCatalogs();
         }
 
         @Override

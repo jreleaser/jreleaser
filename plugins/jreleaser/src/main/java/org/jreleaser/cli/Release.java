@@ -93,6 +93,14 @@ public class Release extends AbstractPlatformAwareModelCommand<Main> {
             return null != exclude ? exclude.excludedUploaderNames : null;
         }
 
+        String[] includedCatalogers() {
+            return null != include ? include.includedCatalogers : null;
+        }
+
+        String[] excludedCatalogers() {
+            return null != exclude ? exclude.excludedCatalogers : null;
+        }
+
         boolean isAutoConfig() {
             return null != autoConfig && autoConfig.autoConfig;
         }
@@ -118,6 +126,10 @@ public class Release extends AbstractPlatformAwareModelCommand<Main> {
         @CommandLine.Option(names = {"-un", "--uploader-name"},
             paramLabel = "<name>")
         String[] includedUploaderNames;
+
+        @CommandLine.Option(names = {"--cataloger"},
+            paramLabel = "<cataloger>")
+        String[] includedCatalogers;
     }
 
     static class Exclude {
@@ -140,6 +152,10 @@ public class Release extends AbstractPlatformAwareModelCommand<Main> {
         @CommandLine.Option(names = {"-xun", "--exclude-uploader-name"},
             paramLabel = "<name>")
         String[] excludedUploaderNames;
+
+        @CommandLine.Option(names = {"--exclude-cataloger"},
+            paramLabel = "<cataloger>")
+        String[] excludedCatalogers;
     }
 
     static class AutoConfigGroup {
@@ -274,11 +290,13 @@ public class Release extends AbstractPlatformAwareModelCommand<Main> {
             context.setIncludedDeployerNames(collectEntries(composite.includedDeployerNames()));
             context.setIncludedUploaderTypes(collectEntries(composite.includedUploaderTypes(), true));
             context.setIncludedUploaderNames(collectEntries(composite.includedUploaderNames()));
+            context.setIncludedCatalogers(collectEntries(composite.includedCatalogers(), true));
             context.setExcludedDistributions(collectEntries(composite.excludedDistributions()));
             context.setExcludedDeployerTypes(collectEntries(composite.excludedDeployerTypes(), true));
             context.setExcludedDeployerNames(collectEntries(composite.excludedDeployerNames()));
             context.setExcludedUploaderTypes(collectEntries(composite.excludedUploaderTypes(), true));
             context.setExcludedUploaderNames(collectEntries(composite.excludedUploaderNames()));
+            context.setExcludedCatalogers(collectEntries(composite.excludedCatalogers(), true));
         }
         return context;
     }

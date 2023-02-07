@@ -57,6 +57,8 @@ public interface Signing extends Domain, Activatable {
 
     boolean isChecksums();
 
+    boolean isCatalogs();
+
     Command getCommand();
 
     Cosign getCosign();

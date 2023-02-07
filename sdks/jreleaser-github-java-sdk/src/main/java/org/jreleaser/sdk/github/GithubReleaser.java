@@ -59,6 +59,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import static org.jreleaser.mustache.Templates.resolveTemplate;
@@ -77,7 +78,7 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
 
     private final org.jreleaser.model.internal.release.GithubReleaser github;
 
-    public GithubReleaser(JReleaserContext context, List<Asset> assets) {
+    public GithubReleaser(JReleaserContext context, Set<Asset> assets) {
         super(context, assets);
         github = context.getModel().getRelease().getGithub();
     }
@@ -483,8 +484,8 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
     private void updateAssets(Github api, GHRelease release) throws IOException {
         org.jreleaser.model.internal.release.GithubReleaser github = context.getModel().getRelease().getGithub();
 
-        List<Asset> assetsToBeUpdated = new ArrayList<>();
-        List<Asset> assetsToBeUploaded = new ArrayList<>();
+        Set<Asset> assetsToBeUpdated = new TreeSet<>();
+        Set<Asset> assetsToBeUploaded = new TreeSet<>();
 
         Map<String, GHAsset> existingAssets = api.listAssets(github.getOwner(), github.getName(), release);
         Map<String, Asset> assetsToBePublished = new LinkedHashMap<>();

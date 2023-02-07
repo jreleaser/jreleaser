@@ -43,11 +43,12 @@ import org.jreleaser.sdk.gitea.api.GtRepository;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 import static org.jreleaser.mustache.Templates.resolveTemplate;
@@ -62,7 +63,7 @@ import static org.jreleaser.util.StringUtils.uncapitalize;
 public class GiteaReleaser extends AbstractReleaser<org.jreleaser.model.api.release.GiteaReleaser> {
     private final org.jreleaser.model.internal.release.GiteaReleaser gitea;
 
-    public GiteaReleaser(JReleaserContext context, List<Asset> assets) {
+    public GiteaReleaser(JReleaserContext context, Set<Asset> assets) {
         super(context, assets);
         gitea = context.getModel().getRelease().getGitea();
     }
@@ -388,8 +389,8 @@ public class GiteaReleaser extends AbstractReleaser<org.jreleaser.model.api.rele
     }
 
     private void updateAssets(Gitea api, GtRelease release) throws IOException {
-        List<Asset> assetsToBeUpdated = new ArrayList<>();
-        List<Asset> assetsToBeUploaded = new ArrayList<>();
+        Set<Asset> assetsToBeUpdated = new TreeSet<>();
+        Set<Asset> assetsToBeUploaded = new TreeSet<>();
 
         Map<String, GtAsset> existingAssets = api.listAssets(gitea.getOwner(), gitea.getName(), release);
         Map<String, Asset> assetsToBePublished = new LinkedHashMap<>();

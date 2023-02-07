@@ -43,12 +43,12 @@ import static org.jreleaser.model.Distribution.DistributionType.FLAT_BINARY;
  * @since 0.1.0
  */
 public abstract class AbstractPackager<A extends org.jreleaser.model.api.packagers.Packager, S extends AbstractPackager<A, S>> extends AbstractActivatable<S> implements Packager<A> {
-    private static final long serialVersionUID = -2469546551256308253L;
+    private static final long serialVersionUID = 7367030829067542491L;
 
     @JsonIgnore
     private final String type;
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
-    private Boolean continueOnError;
+    protected Boolean continueOnError;
     private String downloadUrl;
     @JsonIgnore
     private boolean failed;
@@ -60,7 +60,7 @@ public abstract class AbstractPackager<A extends org.jreleaser.model.api.package
     @Override
     public void merge(S source) {
         super.merge(source);
-        this.continueOnError = merge(this.continueOnError, source.isContinueOnError());
+        this.continueOnError = merge(this.continueOnError, source.continueOnError);
         this.downloadUrl = merge(this.downloadUrl, source.getDownloadUrl());
         this.failed = source.isFailed();
         setExtraProperties(merge(this.extraProperties, source.getExtraProperties()));

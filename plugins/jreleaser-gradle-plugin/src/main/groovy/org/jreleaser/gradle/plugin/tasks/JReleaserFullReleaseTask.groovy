@@ -78,6 +78,14 @@ abstract class JReleaserFullReleaseTask extends AbstractJReleaserPackagerTask {
     @Optional
     final ListProperty<String> excludedAnnouncers
 
+    @Input
+    @Optional
+    final ListProperty<String> catalogers
+
+    @Input
+    @Optional
+    final ListProperty<String> excludedCatalogers
+
     @Inject
     JReleaserFullReleaseTask(ObjectFactory objects) {
         super(objects)
@@ -91,6 +99,8 @@ abstract class JReleaserFullReleaseTask extends AbstractJReleaserPackagerTask {
         excludedUploaderNames = objects.listProperty(String).convention([])
         announcers = objects.listProperty(String).convention([])
         excludedAnnouncers = objects.listProperty(String).convention([])
+        catalogers = objects.listProperty(String).convention([])
+        excludedCatalogers = objects.listProperty(String).convention([])
     }
 
     @Option(option = 'deployer', description = 'Include a deployer by type (OPTIONAL).')
@@ -143,6 +153,16 @@ abstract class JReleaserFullReleaseTask extends AbstractJReleaserPackagerTask {
         this.excludedAnnouncers.set(excludedAnnouncers)
     }
 
+    @Option(option = 'cataloger', description = 'Include a cataloger (OPTIONAL).')
+    void setCataloger(List<String> cataloges) {
+        this.catalogers.set(cataloges)
+    }
+
+    @Option(option = 'exclude-cataloger', description = 'Exclude a cataloger (OPTIONAL).')
+    void setExcludeCataloger(List<String> excludedCatalogers) {
+        this.excludedCatalogers.set(excludedCatalogers)
+    }
+
     @TaskAction
     void performAction() {
         JReleaserContext ctx = setupContext()
@@ -156,6 +176,8 @@ abstract class JReleaserFullReleaseTask extends AbstractJReleaserPackagerTask {
         ctx.excludedUploaderNames = excludedUploaderNames.orNull
         ctx.includedAnnouncers = announcers.orNull
         ctx.excludedAnnouncers = excludedAnnouncers.orNull
+        ctx.includedCatalogers = catalogers.orNull
+        ctx.excludedCatalogers = excludedCatalogers.orNull
         Workflows.fullRelease(ctx).execute()
     }
 }

@@ -50,6 +50,7 @@ class SigningImpl implements Signing {
     final Property<Boolean> artifacts
     final Property<Boolean> files
     final Property<Boolean> checksums
+    final Property<Boolean> catalogs
     final Command command
     final Cosign cosign
 
@@ -65,6 +66,7 @@ class SigningImpl implements Signing {
         artifacts = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         files = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         checksums = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+        catalogs = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         command = objects.newInstance(CommandImpl, objects)
         cosign = objects.newInstance(CosignImpl, objects)
     }
@@ -79,6 +81,7 @@ class SigningImpl implements Signing {
             artifacts.present ||
             files.present ||
             checksums.present ||
+            catalogs.present ||
             secretKey.present ||
             ((CommandImpl) command).isSet() ||
             ((CosignImpl) cosign).isSet()
@@ -130,6 +133,7 @@ class SigningImpl implements Signing {
         if (artifacts.present) signing.artifacts = artifacts.get()
         if (files.present) signing.files = files.get()
         if (checksums.present) signing.checksums = checksums.get()
+        if (catalogs.present) signing.catalogs = catalogs.get()
         signing.command = ((CommandImpl) command).toModel()
         signing.cosign = ((CosignImpl) cosign).toModel()
         signing

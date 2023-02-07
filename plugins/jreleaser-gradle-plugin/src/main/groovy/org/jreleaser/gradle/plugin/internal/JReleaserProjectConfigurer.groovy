@@ -31,6 +31,7 @@ import org.jreleaser.gradle.plugin.JReleaserExtension
 import org.jreleaser.gradle.plugin.tasks.JReleaseAutoConfigReleaseTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserAnnounceTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserAssembleTask
+import org.jreleaser.gradle.plugin.tasks.JReleaserCatalogTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserChangelogTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserChecksumTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserConfigTask
@@ -207,6 +208,20 @@ class JReleaserProjectConfigurer {
             new Action<JReleaserDeployTask>() {
                 @Override
                 void execute(JReleaserDeployTask t) {
+                    t.outputDirectory.set(outputDirectory)
+                    t.dryrun.set(extension.dryrun)
+                    t.gitRootSearch.set(extension.gitRootSearch)
+                    t.strict.set(extension.strict)
+                    t.model.set(model)
+                    t.jlogger.set(loggerProvider)
+                    t.usesService(loggerProvider)
+                }
+            })
+
+        project.tasks.named(JReleaserCatalogTask.NAME, JReleaserCatalogTask,
+            new Action<JReleaserCatalogTask>() {
+                @Override
+                void execute(JReleaserCatalogTask t) {
                     t.outputDirectory.set(outputDirectory)
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)

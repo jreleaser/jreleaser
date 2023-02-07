@@ -18,19 +18,24 @@
 package org.jreleaser.model.spi.release;
 
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.catalog.sbom.SbomCataloger;
 import org.jreleaser.model.internal.checksum.Checksum;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.release.BaseReleaser;
 import org.jreleaser.model.internal.signing.Signing;
 import org.jreleaser.model.internal.util.Artifacts;
+import org.jreleaser.model.spi.catalog.sbom.SbomCatalogerProcessorHelper;
 import org.jreleaser.util.Algorithm;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import static java.util.Objects.requireNonNull;
 import static org.jreleaser.model.api.checksum.Checksum.INDIVIDUAL_CHECKSUM;
@@ -44,8 +49,8 @@ import static org.jreleaser.util.StringUtils.isTrue;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public abstract class AbstractReleaserBuilder<R extends Releaser> implements ReleaserBuilder<R> {
-    protected final List<Asset> assets = new ArrayList<>();
+public abstract class AbstractReleaserBuilder<R extends Releaser<?>> implements ReleaserBuilder<R> {
+    protected final Set<Asset> assets = new TreeSet<>();
     protected JReleaserContext context;
 
     @Override
@@ -87,7 +92,7 @@ public abstract class AbstractReleaserBuilder<R extends Releaser> implements Rel
             return this;
         }
 
-        List<Asset> assets = new ArrayList<>();
+        Set<Asset> assets = new LinkedHashSet<>();
         Checksum checksum = context.getModel().getChecksum();
 
         if (service.isFiles()) {
@@ -137,6 +142,16 @@ public abstract class AbstractReleaserBuilder<R extends Releaser> implements Rel
             }
         }
 
+        if (service.isCatalogs()) {
+            List<? extends SbomCataloger<?>> catalogers = context.getModel().getCatalog().getSbom().findAllActiveSbomCatalogers();
+            for (SbomCataloger<?> cataloger : catalogers) {
+                if (!cataloger.getPack().isEnabled()) continue;
+                SbomCatalogerProcessorHelper.resolveArtifacts(context, cataloger).stream()
+                    .map(Asset::catalog)
+                    .forEach(assets::add);
+            }
+        }
+
         Signing signing = context.getModel().getSigning();
         if (signing.isEnabled() && service.isSignatures()) {
             boolean signaturesAdded = false;
@@ -155,6 +170,12 @@ public abstract class AbstractReleaserBuilder<R extends Releaser> implements Rel
                 Path publicKeyFile = signing.getCosign().getResolvedPublicKeyFilePath(context);
                 assets.add(Asset.signature(Artifact.of(publicKeyFile)));
             }
+        }
+
+        if (service.isCatalogs()) {
+            SbomCatalogerProcessorHelper.resolveArtifacts(context).stream()
+                .map(Asset::catalog)
+                .forEach(assets::add);
         }
 
         assets.forEach(this::addReleaseAsset);

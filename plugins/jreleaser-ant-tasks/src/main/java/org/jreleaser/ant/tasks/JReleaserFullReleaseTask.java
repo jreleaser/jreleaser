@@ -38,6 +38,8 @@ public class JReleaserFullReleaseTask extends AbstractPackagerAwareJReleaserTask
     private final List<String> excludedUploaderNames = new ArrayList<>();
     private final List<String> announcers = new ArrayList<>();
     private final List<String> excludedAnnouncers = new ArrayList<>();
+    private final List<String> catalogers = new ArrayList<>();
+    private final List<String> excludedCatalogers = new ArrayList<>();
 
     public void setDeployerTypes(String deployerTypes) {
         this.deployerTypes.addAll(expandAndCollect(deployerTypes));
@@ -139,6 +141,26 @@ public class JReleaserFullReleaseTask extends AbstractPackagerAwareJReleaserTask
         }
     }
 
+    public void setCatalogers(String catalogers) {
+        this.catalogers.addAll(expandAndCollect(catalogers));
+    }
+
+    public void setExcludedCatalogers(String excludedCatalogers) {
+        this.excludedCatalogers.addAll(expandAndCollect(excludedCatalogers));
+    }
+
+    public void setCatalogers(List<String> catalogers) {
+        if (null != catalogers) {
+            this.catalogers.addAll(catalogers);
+        }
+    }
+
+    public void setExcludedCatalogers(List<String> excludedCatalogers) {
+        if (null != excludedCatalogers) {
+            this.excludedCatalogers.addAll(excludedCatalogers);
+        }
+    }
+
     @Override
     protected void doExecute(JReleaserContext context) {
         context.setIncludedDeployerTypes(collectEntries(deployerTypes, true));
@@ -151,6 +173,8 @@ public class JReleaserFullReleaseTask extends AbstractPackagerAwareJReleaserTask
         context.setExcludedUploaderNames(excludedUploaderNames);
         context.setIncludedAnnouncers(collectEntries(announcers, true));
         context.setExcludedAnnouncers(collectEntries(excludedAnnouncers, true));
+        context.setIncludedCatalogers(collectEntries(catalogers, true));
+        context.setExcludedCatalogers(collectEntries(excludedCatalogers, true));
         Workflows.fullRelease(setupContext(context)).execute();
     }
 }

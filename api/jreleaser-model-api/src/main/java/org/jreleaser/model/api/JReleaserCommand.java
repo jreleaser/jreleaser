@@ -28,6 +28,7 @@ public enum JReleaserCommand {
     ASSEMBLE,
     CHANGELOG,
     CHECKSUM,
+    CATALOG,
     SIGN,
     DEPLOY,
     UPLOAD,
@@ -56,6 +57,7 @@ public enum JReleaserCommand {
 
     public static boolean supportsChecksum(JReleaserCommand command) {
         return CHECKSUM == command ||
+            CATALOG == command ||
             SIGN == command ||
             UPLOAD == command ||
             RELEASE == command ||

@@ -25,6 +25,7 @@ import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.model.internal.announce.Announce;
 import org.jreleaser.model.internal.assemble.Assemble;
+import org.jreleaser.model.internal.catalog.Catalog;
 import org.jreleaser.model.internal.checksum.Checksum;
 import org.jreleaser.model.internal.deploy.Deploy;
 import org.jreleaser.model.internal.distributions.Distribution;
@@ -82,6 +83,7 @@ public class JReleaserModel {
     private final Checksum checksum = new Checksum();
     private final Signing signing = new Signing();
     private final Files files = new Files();
+    private final Catalog catalog = new Catalog();
     private final Map<String, Distribution> distributions = new LinkedHashMap<>();
     private final Map<String, Extension> extensions = new LinkedHashMap<>();
 
@@ -179,6 +181,11 @@ public class JReleaserModel {
         @Override
         public org.jreleaser.model.api.files.Files getFiles() {
             return files.asImmutable();
+        }
+
+        @Override
+        public org.jreleaser.model.api.catalog.Catalog getCatalog() {
+            return catalog.asImmutable();
         }
 
         @Override
@@ -349,6 +356,14 @@ public class JReleaserModel {
         this.files.merge(files);
     }
 
+    public Catalog getCatalog() {
+        return catalog;
+    }
+
+    public void setCatalog(Catalog catalog) {
+        this.catalog.merge(catalog);
+    }
+
     public List<Distribution> getActiveDistributions() {
         return distributions.values().stream()
             .filter(Distribution::isEnabled)
@@ -428,6 +443,7 @@ public class JReleaserModel {
         if (full || assemble.isEnabled()) map.put("assemble", assemble.asMap(full));
         if (full || deploy.isEnabled()) map.put("deploy", deploy.asMap(full));
         if (full || upload.isEnabled()) map.put("upload", upload.asMap(full));
+        if (full || catalog.isEnabled()) map.put("catalog", catalog.asMap(full));
 
         List<Map<String, Object>> distributions = this.distributions.values()
             .stream()

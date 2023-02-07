@@ -40,4 +40,6 @@ public interface Uploader extends Domain, Activatable, TimeoutAware, ExtraProper
     boolean isSignatures();
 
     boolean isChecksums();
+
+    boolean isCatalogs();
 }

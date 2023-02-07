@@ -24,6 +24,7 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.announce.Announce
 import org.jreleaser.gradle.plugin.dsl.assemble.Assemble
+import org.jreleaser.gradle.plugin.dsl.catalog.Catalog
 import org.jreleaser.gradle.plugin.dsl.checksum.Checksum
 import org.jreleaser.gradle.plugin.dsl.deploy.Deploy
 import org.jreleaser.gradle.plugin.dsl.distributions.Distribution
@@ -70,6 +71,8 @@ interface JReleaserExtension {
 
     Deploy getDeploy()
 
+    Catalog getCatalog()
+
     Upload getUpload()
 
     Download getDownload()
@@ -102,6 +105,8 @@ interface JReleaserExtension {
 
     void deploy(Action<? super Deploy> action)
 
+    void catalog(Action<? super Catalog> action)
+
     void upload(Action<? super Upload> action)
 
     void download(Action<? super Download> action)
@@ -133,6 +138,8 @@ interface JReleaserExtension {
     void release(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Release) Closure<Void> action)
 
     void deploy(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Deploy) Closure<Void> action)
+
+    void catalog(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Catalog) Closure<Void> action)
 
     void upload(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Upload) Closure<Void> action)
 

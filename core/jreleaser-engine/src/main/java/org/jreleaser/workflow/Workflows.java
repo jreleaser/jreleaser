@@ -53,9 +53,17 @@ public final class Workflows {
         ));
     }
 
+    public static Workflow catalog(JReleaserContext context) {
+        context.setCommand(JReleaserCommand.CATALOG);
+        return new WorkflowImpl(context, singletonList(
+            new CatalogWorkflowItem()
+        ));
+    }
+
     public static Workflow checksum(JReleaserContext context) {
         context.setCommand(JReleaserCommand.CHECKSUM);
-        return new WorkflowImpl(context, singletonList(
+        return new WorkflowImpl(context, asList(
+            new CatalogWorkflowItem(),
             new ChecksumWorkflowItem()
         ));
     }
@@ -63,6 +71,7 @@ public final class Workflows {
     public static Workflow sign(JReleaserContext context) {
         context.setCommand(JReleaserCommand.SIGN);
         return new WorkflowImpl(context, asList(
+            new CatalogWorkflowItem(),
             new ChecksumWorkflowItem(),
             new SignWorkflowItem()
         ));
@@ -78,6 +87,7 @@ public final class Workflows {
     public static Workflow upload(JReleaserContext context) {
         context.setCommand(JReleaserCommand.UPLOAD);
         return new WorkflowImpl(context, asList(
+            new CatalogWorkflowItem(),
             new ChecksumWorkflowItem(),
             new SignWorkflowItem(),
             new UploadWorkflowItem()
@@ -88,6 +98,7 @@ public final class Workflows {
         context.setCommand(JReleaserCommand.RELEASE);
         return new WorkflowImpl(context, asList(
             new ChangelogWorkflowItem(),
+            new CatalogWorkflowItem(),
             new ChecksumWorkflowItem(),
             new SignWorkflowItem(),
             new DeployWorkflowItem(),
@@ -135,6 +146,7 @@ public final class Workflows {
         context.setCommand(JReleaserCommand.FULL_RELEASE);
         return new WorkflowImpl(context, asList(
             new ChangelogWorkflowItem(),
+            new CatalogWorkflowItem(),
             new ChecksumWorkflowItem(),
             new SignWorkflowItem(),
             new DeployWorkflowItem(),
