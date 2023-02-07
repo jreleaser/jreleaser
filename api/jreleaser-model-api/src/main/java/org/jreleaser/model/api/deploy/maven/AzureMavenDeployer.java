@@ -17,31 +17,10 @@
  */
 package org.jreleaser.model.api.deploy.maven;
 
-import org.jreleaser.model.api.common.Activatable;
-import org.jreleaser.model.api.common.Domain;
-
-import java.util.Map;
-
 /**
  * @author Andres Almiray
- * @since 1.3.0
+ * @since 1.5.0
  */
-public interface Maven extends Domain, Activatable {
-    Pomchecker getPomchecker();
-
-    Map<String, ? extends ArtifactoryMavenDeployer> getArtifactory();
-
-    Map<String, ? extends AzureMavenDeployer> getAzure();
-
-    Map<String, ? extends GiteaMavenDeployer> getGitea();
-
-    Map<String, ? extends GithubMavenDeployer> getGithub();
-
-    Map<String, ? extends GitlabMavenDeployer> getGitlab();
-
-    Map<String, ? extends Nexus2MavenDeployer> getNexus2();
-
-    interface Pomchecker extends Domain {
-        String getVersion();
-    }
+public interface AzureMavenDeployer extends MavenDeployer {
+    String TYPE = "azure";
 }

@@ -109,6 +109,7 @@ public final class JReleaserSupport {
     public static Set<String> supportedMavenDeployers() {
         Set<String> set = new LinkedHashSet<>();
         set.add(org.jreleaser.model.api.deploy.maven.ArtifactoryMavenDeployer.TYPE);
+        set.add(org.jreleaser.model.api.deploy.maven.AzureMavenDeployer.TYPE);
         set.add(org.jreleaser.model.api.deploy.maven.GiteaMavenDeployer.TYPE);
         set.add(org.jreleaser.model.api.deploy.maven.GithubMavenDeployer.TYPE);
         set.add(org.jreleaser.model.api.deploy.maven.GitlabMavenDeployer.TYPE);

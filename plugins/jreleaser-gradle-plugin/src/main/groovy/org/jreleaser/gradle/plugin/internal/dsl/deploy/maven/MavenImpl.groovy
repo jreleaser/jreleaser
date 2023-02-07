@@ -26,6 +26,7 @@ import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.deploy.maven.ArtifactoryMavenDeployer
+import org.jreleaser.gradle.plugin.dsl.deploy.maven.AzureMavenDeployer
 import org.jreleaser.gradle.plugin.dsl.deploy.maven.GiteaMavenDeployer
 import org.jreleaser.gradle.plugin.dsl.deploy.maven.GithubMavenDeployer
 import org.jreleaser.gradle.plugin.dsl.deploy.maven.GitlabMavenDeployer
@@ -47,6 +48,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 class MavenImpl implements Maven {
     final Property<Active> active
     final NamedDomainObjectContainer<ArtifactoryMavenDeployer> artifactory
+    final NamedDomainObjectContainer<AzureMavenDeployer> azure
     final NamedDomainObjectContainer<GiteaMavenDeployer> gitea
     final NamedDomainObjectContainer<GithubMavenDeployer> github
     final NamedDomainObjectContainer<GitlabMavenDeployer> gitlab
@@ -63,6 +65,15 @@ class MavenImpl implements Maven {
             @Override
             ArtifactoryMavenDeployer create(String name) {
                 ArtifactoryMavenDeployerImpl a = objects.newInstance(ArtifactoryMavenDeployerImpl, objects)
+                a.name = name
+                return a
+            }
+        })
+
+        azure = objects.domainObjectContainer(AzureMavenDeployer, new NamedDomainObjectFactory<AzureMavenDeployer>() {
+            @Override
+            AzureMavenDeployer create(String name) {
+                AzureMavenDeployerImpl a = objects.newInstance(AzureMavenDeployerImpl, objects)
                 a.name = name
                 return a
             }
@@ -118,6 +129,11 @@ class MavenImpl implements Maven {
     }
 
     @Override
+    void azure(Action<? super NamedDomainObjectContainer<AzureMavenDeployer>> action) {
+        action.execute(azure)
+    }
+
+    @Override
     void gitea(Action<? super NamedDomainObjectContainer<GiteaMavenDeployer>> action) {
         action.execute(gitea)
     }
@@ -145,6 +161,11 @@ class MavenImpl implements Maven {
     @Override
     void artifactory(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, artifactory)
+    }
+
+    @Override
+    void azure(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
+        ConfigureUtil.configure(action, azure)
     }
 
     @Override
@@ -178,6 +199,7 @@ class MavenImpl implements Maven {
         if (active.present) maven.active = active.get()
 
         artifactory.each { maven.addArtifactory(((ArtifactoryMavenDeployerImpl) it).toModel()) }
+        azure.each { maven.addAzure(((AzureMavenDeployerImpl) it).toModel()) }
         gitea.each { maven.addGitea(((GiteaMavenDeployerImpl) it).toModel()) }
         github.each { maven.addGithub(((GithubMavenDeployerImpl) it).toModel()) }
         gitlab.each { maven.addGitlab(((GitlabMavenDeployerImpl) it).toModel()) }

@@ -32,6 +32,8 @@ import org.jreleaser.gradle.plugin.dsl.common.Activatable
 interface Maven extends Activatable {
     NamedDomainObjectContainer<ArtifactoryMavenDeployer> getArtifactory()
 
+    NamedDomainObjectContainer<AzureMavenDeployer> getAzure()
+
     NamedDomainObjectContainer<GiteaMavenDeployer> getGitea()
 
     NamedDomainObjectContainer<GithubMavenDeployer> getGithub()
@@ -42,6 +44,8 @@ interface Maven extends Activatable {
 
     void artifactory(Action<? super NamedDomainObjectContainer<ArtifactoryMavenDeployer>> action)
 
+    void azure(Action<? super NamedDomainObjectContainer<AzureMavenDeployer>> action)
+
     void gitea(Action<? super NamedDomainObjectContainer<GiteaMavenDeployer>> action)
 
     void github(Action<? super NamedDomainObjectContainer<GithubMavenDeployer>> action)
@@ -51,6 +55,8 @@ interface Maven extends Activatable {
     void nexus2(Action<? super NamedDomainObjectContainer<Nexus2MavenDeployer>> action)
 
     void artifactory(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
+
+    void azure(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 
     void gitea(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 

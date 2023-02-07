@@ -74,7 +74,7 @@ public class GiteaMavenDeployer extends AbstractMavenDeployer<org.jreleaser.mode
             url = new URL(baseUrl);
         } catch (MalformedURLException e) {
             context.getLogger().trace(e);
-            throw new DeployException(RB.$("ERROR_unexpected_deploy", deployable.getGav()), e);
+            throw new DeployException(RB.$("ERROR_unexpected_deploy", deployable.getGav(), e.getMessage()), e);
         }
 
         StringBuilder theUrl = new StringBuilder(url.getProtocol())

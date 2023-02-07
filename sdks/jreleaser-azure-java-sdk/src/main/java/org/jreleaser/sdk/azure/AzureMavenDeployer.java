@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.sdk.artifactory;
+package org.jreleaser.sdk.azure;
 
 import feign.form.FormData;
 import org.jreleaser.bundle.RB;
@@ -24,8 +24,6 @@ import org.jreleaser.model.spi.deploy.DeployException;
 import org.jreleaser.model.spi.upload.UploadException;
 import org.jreleaser.sdk.commons.AbstractMavenDeployer;
 import org.jreleaser.sdk.commons.ClientUtils;
-import org.jreleaser.util.Algorithm;
-import org.jreleaser.util.ChecksumUtils;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -39,28 +37,28 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @author Andres Almiray
- * @since 1.3.0
+ * @since 1.5.0
  */
-public class ArtifactoryMavenDeployer extends AbstractMavenDeployer<org.jreleaser.model.api.deploy.maven.ArtifactoryMavenDeployer, org.jreleaser.model.internal.deploy.maven.ArtifactoryMavenDeployer> {
-    private org.jreleaser.model.internal.deploy.maven.ArtifactoryMavenDeployer deployer;
+public class AzureMavenDeployer extends AbstractMavenDeployer<org.jreleaser.model.api.deploy.maven.AzureMavenDeployer, org.jreleaser.model.internal.deploy.maven.AzureMavenDeployer> {
+    private org.jreleaser.model.internal.deploy.maven.AzureMavenDeployer deployer;
 
-    public ArtifactoryMavenDeployer(JReleaserContext context) {
+    public AzureMavenDeployer(JReleaserContext context) {
         super(context);
     }
 
     @Override
-    public org.jreleaser.model.internal.deploy.maven.ArtifactoryMavenDeployer getDeployer() {
+    public org.jreleaser.model.internal.deploy.maven.AzureMavenDeployer getDeployer() {
         return deployer;
     }
 
     @Override
-    public void setDeployer(org.jreleaser.model.internal.deploy.maven.ArtifactoryMavenDeployer deployer) {
+    public void setDeployer(org.jreleaser.model.internal.deploy.maven.AzureMavenDeployer deployer) {
         this.deployer = deployer;
     }
 
     @Override
     public String getType() {
-        return org.jreleaser.model.api.deploy.maven.ArtifactoryMavenDeployer.TYPE;
+        return org.jreleaser.model.api.deploy.maven.AzureMavenDeployer.TYPE;
     }
 
     @Override
@@ -79,7 +77,6 @@ public class ArtifactoryMavenDeployer extends AbstractMavenDeployer<org.jrelease
         }
 
         for (Deployable deployable : deployables) {
-            if (deployable.isChecksum()) continue;
             Path localPath = Paths.get(deployable.getStagingRepository(), deployable.getPath(), deployable.getFilename());
             context.getLogger().info(" - {}", deployable.getFilename());
 
@@ -102,11 +99,6 @@ public class ArtifactoryMavenDeployer extends AbstractMavenDeployer<org.jrelease
                             // noop
                     }
 
-                    headers.put("X-Checksum-Deploy", "false");
-                    headers.put("X-Checksum-Sha1", ChecksumUtils.checksum(Algorithm.SHA_1, data.getData()));
-                    headers.put("X-Checksum-Sha256", ChecksumUtils.checksum(Algorithm.SHA_256, data.getData()));
-                    headers.put("X-Checksum", ChecksumUtils.checksum(Algorithm.MD5, data.getData()));
-
                     String url = baseUrl + deployable.getFullDeployPath();
                     ClientUtils.putFile(context.getLogger(),
                         url,
@@ -117,7 +109,7 @@ public class ArtifactoryMavenDeployer extends AbstractMavenDeployer<org.jrelease
                 } catch (IOException | UploadException e) {
                     context.getLogger().trace(e);
                     throw new DeployException(RB.$("ERROR_unexpected_deploy",
-                        context.getBasedir().relativize(localPath)), e);
+                        context.getBasedir().relativize(localPath), e.getMessage(), e.getMessage()), e);
                 }
             }
         }

@@ -114,7 +114,7 @@ public class Nexus2MavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
                 } catch (Nexus2Exception e) {
                     context.getLogger().trace(e);
                     throw new DeployException(RB.$("ERROR_unexpected_deploy",
-                        context.getBasedir().relativize(deployable.getLocalPath())), e);
+                        context.getBasedir().relativize(deployable.getLocalPath()), e.getMessage()), e);
                 }
             }
         }

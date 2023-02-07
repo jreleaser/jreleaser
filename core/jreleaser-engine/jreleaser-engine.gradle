@@ -57,8 +57,9 @@ dependencies {
     api project(':jreleaser-gitea-java-sdk')
     api project(':jreleaser-codeberg-java-sdk')
     api project(':jreleaser-genericgit-java-sdk')
-    // download/upload
+    // download/upload/deploy
     api project(':jreleaser-artifactory-java-sdk')
+    api project(':jreleaser-azure-java-sdk')
     api project(':jreleaser-nexus2-java-sdk')
     api project(':jreleaser-ftp-java-sdk')
     api project(':jreleaser-http-java-sdk')

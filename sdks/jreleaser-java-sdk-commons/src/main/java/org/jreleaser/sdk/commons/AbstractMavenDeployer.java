@@ -325,7 +325,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
                 } catch (IOException | UploadException e) {
                     context.getLogger().trace(e);
                     throw new DeployException(RB.$("ERROR_unexpected_deploy",
-                        context.getBasedir().relativize(localPath)), e);
+                        context.getBasedir().relativize(localPath), e.getMessage()), e);
                 }
             }
         }
