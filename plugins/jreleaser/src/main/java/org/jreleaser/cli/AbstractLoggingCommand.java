@@ -56,10 +56,10 @@ abstract class AbstractLoggingCommand<C extends IO> extends AbstractCommand<C> i
     @CommandLine.Option(names = {"-q", "--quiet"})
     boolean quiet;
 
-    @CommandLine.Option(names = {"-b", "--basedir"})
+    @CommandLine.Option(names = {"-b", "--basedir"}, paramLabel = "<directory>")
     Path basedir;
 
-    @CommandLine.Option(names = {"-od", "--output-directory"})
+    @CommandLine.Option(names = {"-od", "--output-directory"}, paramLabel = "<directory>")
     Path outputdir;
 
     protected ColorizedJReleaserLoggerAdapter.Level level = ColorizedJReleaserLoggerAdapter.Level.INFO;

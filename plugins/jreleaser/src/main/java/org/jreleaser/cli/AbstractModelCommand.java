@@ -51,7 +51,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public abstract class AbstractModelCommand<C extends IO> extends AbstractLoggingCommand<C> {
-    @CommandLine.Option(names = {"-c", "--config-file"})
+    @CommandLine.Option(names = {"-c", "--config-file"}, paramLabel = "<file>")
     Path configFile;
 
     @CommandLine.Option(names = {"-grs", "--git-root-search"})

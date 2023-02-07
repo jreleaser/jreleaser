@@ -146,56 +146,56 @@ public class Release extends AbstractPlatformAwareModelCommand<Main> {
         @CommandLine.Option(names = {"--auto-config"})
         boolean autoConfig;
 
-        @CommandLine.Option(names = {"--project-name"})
+        @CommandLine.Option(names = {"--project-name"}, paramLabel = "<name>")
         String projectName;
 
-        @CommandLine.Option(names = {"--project-version"})
+        @CommandLine.Option(names = {"--project-version"}, paramLabel = "<version>")
         String projectVersion;
 
-        @CommandLine.Option(names = {"--project-version-pattern"})
+        @CommandLine.Option(names = {"--project-version-pattern"}, paramLabel = "<pattern>")
         String projectVersionPattern;
 
-        @CommandLine.Option(names = {"--project-snapshot-pattern"})
+        @CommandLine.Option(names = {"--project-snapshot-pattern"}, paramLabel = "<pattern>")
         String projectSnapshotPattern;
 
-        @CommandLine.Option(names = {"--project-snapshot-label"})
+        @CommandLine.Option(names = {"--project-snapshot-label"}, paramLabel = "<label>")
         String projectSnapshotLabel;
 
         @CommandLine.Option(names = {"--project-snapshot-full-changelog"})
         boolean projectSnapshotFullChangelog;
 
-        @CommandLine.Option(names = {"--project-copyright"})
+        @CommandLine.Option(names = {"--project-copyright"}, paramLabel = "<copyright>")
         String projectCopyright;
 
-        @CommandLine.Option(names = {"--project-description"})
+        @CommandLine.Option(names = {"--project-description"}, paramLabel = "<description>")
         String projectDescription;
 
-        @CommandLine.Option(names = {"--project-inception-year"})
+        @CommandLine.Option(names = {"--project-inception-year"}, paramLabel = "<year>")
         String projectInceptionYear;
 
-        @CommandLine.Option(names = {"--project-stereotype"})
+        @CommandLine.Option(names = {"--project-stereotype"}, paramLabel = "<stereotype>")
         String projectStereotype;
 
         @CommandLine.Option(names = {"--author"},
                 paramLabel = "<author>")
         String[] authors;
 
-        @CommandLine.Option(names = {"--tag-name"})
+        @CommandLine.Option(names = {"--tag-name"}, paramLabel = "<tag>")
         String tagName;
 
-        @CommandLine.Option(names = {"--previous-tag-name"})
+        @CommandLine.Option(names = {"--previous-tag-name"}, paramLabel = "<tag>")
         String previousTagName;
 
-        @CommandLine.Option(names = {"--release-name"})
+        @CommandLine.Option(names = {"--release-name"}, paramLabel = "<name>")
         String releaseName;
 
-        @CommandLine.Option(names = {"--milestone-name"})
+        @CommandLine.Option(names = {"--milestone-name"}, paramLabel = "<name>")
         String milestoneName;
 
         @CommandLine.Option(names = {"--prerelease"})
         boolean prerelease;
 
-        @CommandLine.Option(names = {"--prerelease-pattern"})
+        @CommandLine.Option(names = {"--prerelease-pattern"}, paramLabel = "<pattern>")
         String prereleasePattern;
 
         @CommandLine.Option(names = {"--draft"})
@@ -229,10 +229,10 @@ public class Release extends AbstractPlatformAwareModelCommand<Main> {
         @CommandLine.Option(names = {"--username"})
         String username;
 
-        @CommandLine.Option(names = {"--commit-author-name"})
+        @CommandLine.Option(names = {"--commit-author-name"}, paramLabel = "<name>")
         String commitAuthorName;
 
-        @CommandLine.Option(names = {"--commit-author-email"})
+        @CommandLine.Option(names = {"--commit-author-email"}, paramLabel = "<email>")
         String commitAuthorEmail;
 
         @CommandLine.Option(names = {"--signing-enabled"})

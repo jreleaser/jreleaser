@@ -51,14 +51,14 @@ public class TemplateEval extends AbstractPlatformAwareModelCommand<Template> {
     Composite composite;
 
     static class Composite {
-        @CommandLine.Option(names = {"--input-file"})
+        @CommandLine.Option(names = {"--input-file"}, paramLabel = "<file>")
         Path inputFile;
 
-        @CommandLine.Option(names = {"--input-directory"})
+        @CommandLine.Option(names = {"--input-directory"}, paramLabel = "<directory>")
         Path inputDirectory;
     }
 
-    @CommandLine.Option(names = {"--target-directory"}, required = true)
+    @CommandLine.Option(names = {"--target-directory"}, paramLabel = "<directory>", required = true)
     Path targetDirectory;
 
     @CommandLine.Option(names = {"-o", "--overwrite"})

@@ -83,13 +83,13 @@ public class TemplateGenerate extends AbstractLoggingCommand<Template> {
 
     static class Assemblers {
         @CommandLine.Option(names = {"-st", "--assembler-type"},
-            paramLabel = "<assembler-type>",
+            paramLabel = "<type>",
             descriptionKey = "assembler.type",
             required = true)
         String assemblerType;
 
         @CommandLine.Option(names = {"-s", "--assembler-name"},
-            paramLabel = "<assembler-name>",
+            paramLabel = "<name>",
             descriptionKey = "assembler.name",
             required = true)
         String assemblerName;

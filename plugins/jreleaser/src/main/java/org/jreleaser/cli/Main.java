@@ -29,7 +29,8 @@ import java.io.PrintWriter;
 @CommandLine.Command(name = "jreleaser",
     subcommands = {Env.class, Init.class, Config.class, Template.class,
         Download.class, Assemble.class, Changelog.class,
-        Checksum.class, Sign.class, Deploy.class, Upload.class,
+        Checksum.class, Sign.class,
+        Deploy.class, Upload.class,
         Release.class, Prepare.class, Package.class,
         Publish.class, Announce.class, FullRelease.class,
         AutoComplete.GenerateCompletion.class,
@@ -73,6 +74,8 @@ public class Main extends BaseCommand implements Runnable, IO {
         Main cmd = new Main();
         CommandLine commandLine = new CommandLine(cmd);
         commandLine.setCaseInsensitiveEnumValuesAllowed(true);
+        commandLine.setUsageHelpWidth(110);
+        commandLine.setUsageHelpLongOptionsMaxWidth(42);
         cmd.out = commandLine.getOut();
         cmd.err = commandLine.getErr();
         return execute(commandLine, args);
@@ -82,6 +85,8 @@ public class Main extends BaseCommand implements Runnable, IO {
         Main cmd = new Main();
         CommandLine commandLine = new CommandLine(cmd);
         commandLine.setCaseInsensitiveEnumValuesAllowed(true);
+        commandLine.setUsageHelpWidth(110);
+        commandLine.setUsageHelpLongOptionsMaxWidth(42);
         commandLine.setOut(out);
         commandLine.setErr(err);
         cmd.out = out;
