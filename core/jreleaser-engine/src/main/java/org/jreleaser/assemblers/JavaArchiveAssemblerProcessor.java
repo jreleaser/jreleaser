@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static java.util.stream.Collectors.toSet;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplate;
 import static org.jreleaser.templates.TemplateUtils.resolveAndMergeTemplates;
 import static org.jreleaser.templates.TemplateUtils.resolveTemplates;
@@ -106,21 +107,17 @@ public class JavaArchiveAssemblerProcessor extends AbstractAssemblerProcessor<or
         context.getLogger().debug(RB.$("assembler.copy.jars"), context.relativizeToBasedir(jarsDirectory));
         copyJars(context, assembler, jarsDirectory);
 
-        // copy launcher
+        // copy launcher(s)
         Path binDirectory = archiveDirectory.resolve("bin");
         try {
             Files.createDirectories(binDirectory);
 
-            String executableName = assembler.getExecutable().getName();
-
-            Path launcher = inputsDirectory.resolve("bin").resolve(executableName.concat(".bat"));
-            Files.copy(launcher,
-                binDirectory.resolve(executableName.concat("." + assembler.getExecutable().getWindowsExtension())));
-
-            launcher = inputsDirectory.resolve("bin").resolve(executableName);
-            Files.copy(launcher, binDirectory.resolve(executableName));
-
-            FileUtils.grantExecutableAccess(launcher);
+            Set<Path> launchers = Files.list(inputsDirectory.resolve("bin")).collect(toSet());
+            for (Path srcLauncher : launchers) {
+                Path destLauncher = binDirectory.resolve(srcLauncher.getFileName());
+                Files.copy(srcLauncher, destLauncher);
+                FileUtils.grantExecutableAccess(destLauncher);
+            }
         } catch (IOException e) {
             throw new AssemblerProcessingException(RB.$("ERROR_assembler_copy_launcher",
                 context.relativizeToBasedir(binDirectory)), e);
@@ -183,12 +180,12 @@ public class JavaArchiveAssemblerProcessor extends AbstractAssemblerProcessor<or
         return paths;
     }
 
-    private void writeFile(String content, TemplateContext props, String fileName)
-        throws AssemblerProcessingException {
+    private void writeFile(String content, TemplateContext props, String fileName) throws AssemblerProcessingException {
         fileName = trimTplExtension(fileName);
 
         Path outputDirectory = props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
         Path inputsDirectory = outputDirectory.resolve("inputs");
+
         try {
             Files.createDirectories(inputsDirectory);
         } catch (IOException e) {
@@ -197,9 +194,9 @@ public class JavaArchiveAssemblerProcessor extends AbstractAssemblerProcessor<or
 
         String executableName = assembler.getExecutable().getName();
 
-        Path outputFile = "launcher.bat".equals(fileName) ?
-            inputsDirectory.resolve("bin").resolve(executableName.concat(".bat")) :
-            "launcher".equals(fileName) ?
+        Path outputFile = "bin/launcher.bat".equals(fileName) ?
+            inputsDirectory.resolve("bin").resolve(executableName.concat("." + assembler.getExecutable().getWindowsExtension())) :
+            "bin/launcher".equals(fileName) ?
                 inputsDirectory.resolve("bin").resolve(executableName) :
                 inputsDirectory.resolve(fileName);
 
