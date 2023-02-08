@@ -211,7 +211,7 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
             try {
                 Files.createDirectories(binDirectory);
 
-                Set<Path> launchers = Files.list(inputsDirectory.resolve(BIN_DIRECTORY)).collect(toSet());
+                Set<Path> launchers = listFilesAndProcess(inputsDirectory.resolve(BIN_DIRECTORY), files -> files.collect(toSet()));
                 for (Path srcLauncher : launchers) {
                     Path destLauncher = binDirectory.resolve(srcLauncher.getFileName());
                     Files.copy(srcLauncher, destLauncher);
