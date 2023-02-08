@@ -22,7 +22,6 @@ import org.jreleaser.model.Archive;
 import org.jreleaser.model.Constants;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.NativeImageAssembler;
-import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.spi.assemble.AssemblerProcessingException;
 import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.command.Command;
@@ -47,13 +46,14 @@ import java.util.stream.Collectors;
 import static org.jreleaser.assemblers.AssemblerUtils.copyJars;
 import static org.jreleaser.assemblers.AssemblerUtils.readJavaVersion;
 import static org.jreleaser.model.Constants.KEY_ARCHIVE_FORMAT;
+import static org.jreleaser.util.FileType.EXE;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
  * @since 0.2.0
  */
-public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcessor<org.jreleaser.model.api.assemble.NativeImageAssembler, NativeImageAssembler> {
+public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<org.jreleaser.model.api.assemble.NativeImageAssembler, NativeImageAssembler> {
     private static final String KEY_GRAALVM_VERSION = "GRAALVM_VERSION";
 
     public NativeImageAssemblerProcessor(JReleaserContext context) {
@@ -72,8 +72,8 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
         String platform = assembler.getGraal().getPlatform();
         // copy jars to assembly
         Path assembleDirectory = props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
-        Path jarsDirectory = assembleDirectory.resolve("jars");
-        Path universalJarsDirectory = jarsDirectory.resolve("universal");
+        Path jarsDirectory = assembleDirectory.resolve(JARS_DIRECTORY);
+        Path universalJarsDirectory = jarsDirectory.resolve(UNIVERSAL_DIRECTORY);
         context.getLogger().debug(RB.$("assembler.copy.jars"), context.relativizeToBasedir(universalJarsDirectory));
         Set<Path> jars = copyJars(context, assembler, universalJarsDirectory, "");
         Path platformJarsDirectory = jarsDirectory.resolve(platform);
@@ -90,7 +90,7 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
             imageName = assembler.getResolvedImageNameTransform(context);
         }
 
-        nativeImage(assembleDirectory, graalPath, jars, imageName);
+        nativeImage(props, assembleDirectory, graalPath, jars, imageName);
     }
 
     private void installNativeImage(Path graalPath) throws AssemblerProcessingException {
@@ -101,7 +101,7 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
 
         if (!Files.exists(nativeImageExecutable)) {
             Path guExecutable = graalPath
-                .resolve("bin")
+                .resolve(BIN_DIRECTORY)
                 .resolve(PlatformUtils.isWindows() ? "gu.cmd" : "gu")
                 .toAbsolutePath();
 
@@ -117,7 +117,7 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
 
     private void installComponents(Path graalPath) throws AssemblerProcessingException {
         Path guExecutable = graalPath
-            .resolve("bin")
+            .resolve(BIN_DIRECTORY)
             .resolve(PlatformUtils.isWindows() ? "gu.cmd" : "gu")
             .toAbsolutePath();
 
@@ -132,14 +132,14 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
         }
     }
 
-    private Artifact nativeImage(Path assembleDirectory, Path graalPath, Set<Path> jars, String imageName) throws AssemblerProcessingException {
+    private void nativeImage(TemplateContext props, Path assembleDirectory, Path graalPath, Set<Path> jars, String imageName) throws AssemblerProcessingException {
         String platform = assembler.getGraal().getPlatform();
         String platformReplaced = assembler.getPlatform().applyReplacements(platform);
         String finalImageName = imageName + "-" + platformReplaced;
 
         String executable = assembler.getExecutable();
         if (PlatformUtils.isWindows()) {
-            executable += ".exe";
+            executable += EXE.extension();
         }
         context.getLogger().info("- {}", finalImageName);
 
@@ -191,12 +191,13 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
             Path tempDirectory = Files.createTempDirectory("jreleaser");
             Path distDirectory = tempDirectory.resolve(finalImageName);
             Files.createDirectories(distDirectory);
-            Path binDirectory = distDirectory.resolve("bin");
+            Path binDirectory = distDirectory.resolve(BIN_DIRECTORY);
             Files.createDirectories(binDirectory);
             Files.copy(image, binDirectory.resolve(image.getFileName()));
             FileUtils.copyFiles(context.getLogger(),
                 context.getBasedir(),
-                distDirectory, path -> path.getFileName().startsWith("LICENSE"));
+                distDirectory, path -> path.getFileName().startsWith(LICENSE));
+            copyTemplates(context, props, distDirectory);
             copyFiles(context, distDirectory);
             copyFileSets(context, distDirectory);
 
@@ -209,8 +210,6 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
             FileUtils.packArchive(tempDirectory, imageArchive, context.getModel().resolveArchiveTimestamp());
 
             context.getLogger().debug("- {}", imageArchive.getFileName());
-
-            return Artifact.of(imageArchive, platform);
         } catch (IOException e) {
             throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
         }
@@ -259,11 +258,5 @@ public class NativeImageAssemblerProcessor extends AbstractJavaAssemblerProcesso
         } catch (IOException e) {
             throw new AssemblerProcessingException(RB.$("ERROR_assembler_invalid_graal_release_file", release.toAbsolutePath()), e);
         }
-    }
-
-    @Override
-    protected void writeFile(String content, TemplateContext props, String fileName)
-        throws AssemblerProcessingException {
-        // noop
     }
 }

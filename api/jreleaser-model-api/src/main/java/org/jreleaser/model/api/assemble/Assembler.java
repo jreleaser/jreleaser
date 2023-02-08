@@ -24,6 +24,7 @@ import org.jreleaser.model.api.common.Artifact;
 import org.jreleaser.model.api.common.Domain;
 import org.jreleaser.model.api.common.ExtraProperties;
 import org.jreleaser.model.api.common.FileSet;
+import org.jreleaser.model.api.common.Glob;
 import org.jreleaser.model.api.platform.Platform;
 
 import java.util.List;
@@ -45,6 +46,10 @@ public interface Assembler extends Domain, Activatable, ExtraProperties {
     boolean isExported();
 
     String getName();
+
+    String getTemplateDirectory();
+
+    List<? extends Glob> getFiles();
 
     List<? extends FileSet> getFileSets();
 

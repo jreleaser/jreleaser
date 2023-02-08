@@ -21,6 +21,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectFactory
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.MapProperty
@@ -28,8 +29,11 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.assemble.Assembler
 import org.jreleaser.gradle.plugin.dsl.common.FileSet
+import org.jreleaser.gradle.plugin.dsl.common.Glob
 import org.jreleaser.gradle.plugin.dsl.platform.Platform
+import org.jreleaser.gradle.plugin.internal.dsl.common.ArtifactImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.FileSetImpl
+import org.jreleaser.gradle.plugin.internal.dsl.common.GlobImpl
 import org.jreleaser.model.Active
 import org.jreleaser.model.Stereotype
 import org.kordamp.gradle.util.ConfigureUtil
@@ -49,7 +53,9 @@ abstract class AbstractAssembler implements Assembler {
     final Property<Active> active
     final Property<Stereotype> stereotype
     final MapProperty<String, Object> extraProperties
-    final NamedDomainObjectContainer<FileSetImpl> fileSets
+    final DirectoryProperty templateDirectory
+    private final NamedDomainObjectContainer<FileSetImpl> fileSets
+    private final NamedDomainObjectContainer<GlobImpl> files
 
     @Inject
     AbstractAssembler(ObjectFactory objects) {
@@ -57,6 +63,15 @@ abstract class AbstractAssembler implements Assembler {
         active = objects.property(Active).convention(Providers.<Active> notDefined())
         stereotype = objects.property(Stereotype).convention(Providers.<Stereotype> notDefined())
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
+
+        files = objects.domainObjectContainer(GlobImpl, new NamedDomainObjectFactory<GlobImpl>() {
+            @Override
+            GlobImpl create(String name) {
+                GlobImpl glob = objects.newInstance(GlobImpl, objects)
+                glob.name = name
+                glob
+            }
+        })
 
         fileSets = objects.domainObjectContainer(FileSetImpl, new NamedDomainObjectFactory<FileSetImpl>() {
             @Override
@@ -73,7 +88,9 @@ abstract class AbstractAssembler implements Assembler {
         exported.present ||
             active.present ||
             extraProperties.present ||
-            !fileSets.isEmpty()
+            templateDirectory.present ||
+            !fileSets.isEmpty() ||
+            !files.isEmpty()
     }
 
     @Override
@@ -91,6 +108,16 @@ abstract class AbstractAssembler implements Assembler {
     }
 
     @Override
+    void setTemplateDirectory(String templateDirectory) {
+        this.templateDirectory.set(new File(templateDirectory))
+    }
+
+    @Override
+    void files(Action<? super Glob> action) {
+        action.execute(files.maybeCreate("files-${files.size()}".toString()))
+    }
+
+    @Override
     void fileSet(Action<? super FileSet> action) {
         action.execute(fileSets.maybeCreate("fileSet-${fileSets.size()}".toString()))
     }
@@ -98,6 +125,11 @@ abstract class AbstractAssembler implements Assembler {
     @Override
     void platform(Action<? super Platform> action) {
         action.execute(platform)
+    }
+
+    @Override
+    void files(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Glob) Closure<Void> action) {
+        ConfigureUtil.configure(action, files.maybeCreate("files-${files.size()}".toString()))
     }
 
     @Override
@@ -115,8 +147,14 @@ abstract class AbstractAssembler implements Assembler {
         if (active.present) assembler.active = active.get()
         if (stereotype.present) assembler.stereotype = stereotype.get()
         if (extraProperties.present) assembler.extraProperties.putAll(extraProperties.get())
+        for (GlobImpl glob : files) {
+            assembler.addFile(glob.toModel())
+        }
         for (FileSetImpl fileSet : fileSets) {
             assembler.addFileSet(fileSet.toModel())
+        }
+        if (templateDirectory.present) {
+            assembler.templateDirectory = templateDirectory.get().asFile.toPath().toString()
         }
     }
 }

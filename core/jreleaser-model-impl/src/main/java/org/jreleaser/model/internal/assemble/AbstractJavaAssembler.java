@@ -36,15 +36,13 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.8.0
  */
 public abstract class AbstractJavaAssembler<S extends AbstractJavaAssembler<S, A>, A extends org.jreleaser.model.api.assemble.Assembler> extends AbstractAssembler<S, A> implements JavaAssembler<A> {
-    private static final long serialVersionUID = 2179940356901485892L;
+    private static final long serialVersionUID = -1293187422642323327L;
 
     private final Artifact mainJar = new Artifact();
     private final List<Glob> jars = new ArrayList<>();
-    private final List<Glob> files = new ArrayList<>();
     private final Java java = new Java();
 
     private String executable;
-    private String templateDirectory;
 
     protected AbstractJavaAssembler(String type) {
         super(type);
@@ -54,11 +52,9 @@ public abstract class AbstractJavaAssembler<S extends AbstractJavaAssembler<S, A
     public void merge(S source) {
         super.merge(source);
         this.executable = merge(this.executable, source.getExecutable());
-        this.templateDirectory = merge(this.templateDirectory, source.getTemplateDirectory());
         setJava(source.getJava());
         setMainJar(source.getMainJar());
         setJars(merge(this.jars, source.getJars()));
-        setFiles(merge(this.files, source.getFiles()));
     }
 
     @Override
@@ -96,16 +92,6 @@ public abstract class AbstractJavaAssembler<S extends AbstractJavaAssembler<S, A
     @Override
     public void setExecutable(String executable) {
         this.executable = executable;
-    }
-
-    @Override
-    public String getTemplateDirectory() {
-        return templateDirectory;
-    }
-
-    @Override
-    public void setTemplateDirectory(String templateDirectory) {
-        this.templateDirectory = templateDirectory;
     }
 
     @Override
@@ -152,43 +138,14 @@ public abstract class AbstractJavaAssembler<S extends AbstractJavaAssembler<S, A
     }
 
     @Override
-    public List<Glob> getFiles() {
-        return files;
-    }
-
-    @Override
-    public void setFiles(List<Glob> files) {
-        this.files.clear();
-        this.files.addAll(files);
-    }
-
-    @Override
-    public void addFiles(List<Glob> files) {
-        this.files.addAll(files);
-    }
-
-    @Override
-    public void addFile(Glob file) {
-        if (null != file) {
-            this.files.add(file);
-        }
-    }
-
-    @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("executable", executable);
-        props.put("templateDirectory", templateDirectory);
         props.put("mainJar", mainJar.asMap(full));
         Map<String, Map<String, Object>> mappedJars = new LinkedHashMap<>();
         for (int i = 0; i < jars.size(); i++) {
             mappedJars.put("glob " + i, jars.get(i).asMap(full));
         }
         props.put("jars", mappedJars);
-        Map<String, Map<String, Object>> mappedFiles = new LinkedHashMap<>();
-        for (int i = 0; i < files.size(); i++) {
-            mappedFiles.put("glob " + i, files.get(i).asMap(full));
-        }
-        props.put("files", mappedFiles);
         props.put("extraProperties", getResolvedExtraProperties());
         if (java.isEnabled()) {
             props.put("java", java.asMap(full));

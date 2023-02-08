@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
 
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.groupingBy;
-import static org.jreleaser.model.internal.validation.common.TemplateValidator.validateTemplate;
+import static org.jreleaser.model.internal.validation.assemble.AssemblersValidator.validateJavaAssembler;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -86,10 +86,6 @@ public final class JpackageAssemblerValidator {
         if (!jpackage.resolveEnabled(project)) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
-        }
-
-        if (null == jpackage.getStereotype()) {
-            jpackage.setStereotype(context.getModel().getProject().getStereotype());
         }
 
         JpackageAssembler.PlatformPackager packager = jpackage.getResolvedPlatformPackager();
@@ -233,9 +229,7 @@ public final class JpackageAssemblerValidator {
             applicationPackage.setCopyright(project.getCopyright());
         }
 
-        if (mode == Mode.ASSEMBLE) {
-            validateTemplate(context, jpackage, errors);
-        }
+        validateJavaAssembler(context, mode, jpackage, errors, false);
 
         if (isBlank(packager.getAppName())) {
             packager.setAppName(jpackage.getApplicationPackage().getAppName());

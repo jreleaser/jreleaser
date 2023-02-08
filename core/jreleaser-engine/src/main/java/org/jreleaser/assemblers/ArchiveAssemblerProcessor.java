@@ -44,17 +44,24 @@ public class ArchiveAssemblerProcessor extends AbstractAssemblerProcessor<org.jr
         Path assembleDirectory = props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
         String archiveName = assembler.getResolvedArchiveName(context);
 
-        Path workDirectory = assembleDirectory.resolve("work");
+        Path inputsDirectory = assembleDirectory.resolve(INPUTS_DIRECTORY);
+        Path workDirectory = assembleDirectory.resolve(WORK_DIRECTORY);
         Path archiveDirectory = workDirectory.resolve(archiveName);
 
         try {
+            FileUtils.deleteFiles(inputsDirectory);
             FileUtils.deleteFiles(workDirectory);
             Files.createDirectories(archiveDirectory);
         } catch (IOException e) {
             throw new AssemblerProcessingException(RB.$("ERROR_assembler_delete_archive", archiveName), e);
         }
+
+        // copy templates
+        copyTemplates(context, props, archiveDirectory);
+
         // copy fileSets
         context.getLogger().debug(RB.$("assembler.copy.files"), context.relativizeToBasedir(archiveDirectory));
+        copyFiles(context, archiveDirectory);
         copyFileSets(context, archiveDirectory);
 
         // run archive x format

@@ -17,30 +17,40 @@
  */
 package org.jreleaser.assemblers;
 
+import org.apache.commons.io.IOUtils;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Constants;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.Assembler;
 import org.jreleaser.model.internal.common.FileSet;
+import org.jreleaser.model.internal.common.Glob;
 import org.jreleaser.model.spi.assemble.AssemblerProcessingException;
 import org.jreleaser.model.spi.assemble.AssemblerProcessor;
 import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.command.Command;
 import org.jreleaser.sdk.command.CommandException;
 import org.jreleaser.sdk.command.CommandExecutor;
+import org.jreleaser.templates.TemplateResource;
 import org.jreleaser.util.FileUtils;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
+import static org.jreleaser.mustache.MustacheUtils.applyTemplate;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
+import static org.jreleaser.templates.TemplateUtils.resolveAndMergeTemplates;
+import static org.jreleaser.templates.TemplateUtils.resolveTemplates;
+import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.FileUtils.createDirectoriesWithFullAccess;
 import static org.jreleaser.util.FileUtils.grantFullAccess;
 import static org.jreleaser.util.PlatformUtils.isWindows;
@@ -52,6 +62,13 @@ import static org.jreleaser.util.StringUtils.quote;
  * @since 0.2.0
  */
 public abstract class AbstractAssemblerProcessor<A extends org.jreleaser.model.api.assemble.Assembler, S extends Assembler<A>> implements AssemblerProcessor<A, S> {
+    public static final String BIN_DIRECTORY = "bin";
+    public static final String LICENSE = "LICENSE";
+    public static final String UNIVERSAL_DIRECTORY = "universal";
+    public static final String INPUTS_DIRECTORY = "inputs";
+    public static final String WORK_DIRECTORY = "work";
+    public static final String JARS_DIRECTORY = "jars";
+
     protected final JReleaserContext context;
     protected S assembler;
 
@@ -168,6 +185,88 @@ public abstract class AbstractAssemblerProcessor<A extends org.jreleaser.model.a
         } catch (CommandException e) {
             throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
         }
+    }
+
+    protected void copyTemplates(JReleaserContext context, TemplateContext props, Path targetDirectory) throws AssemblerProcessingException {
+        try {
+            context.getLogger().debug(RB.$("packager.resolve.templates"), assembler.getType(), assembler.getName());
+            Map<String, TemplateResource> templates = resolveAndMergeTemplates(context.getLogger(),
+                assembler.getType(),
+                assembler.getType(),
+                context.getModel().getProject().isSnapshot(),
+                context.getBasedir().resolve(getAssembler().getTemplateDirectory()));
+            templates.putAll(resolveTemplates(context.getBasedir().resolve(getAssembler().getTemplateDirectory())));
+
+            for (Map.Entry<String, TemplateResource> entry : templates.entrySet()) {
+                String key = entry.getKey();
+                TemplateResource value = entry.getValue();
+
+                if (value.isReader()) {
+                    context.getLogger().debug(RB.$("packager.evaluate.template"), key, assembler.getName(), assembler.getType());
+                    String content = applyTemplate(value.getReader(), props, key);
+                    context.getLogger().debug(RB.$("packager.write.template"), key, assembler.getName(), assembler.getType());
+                    writeFile(content, props, targetDirectory, key);
+                } else {
+                    context.getLogger().debug(RB.$("packager.write.template"), key, assembler.getName(), assembler.getType());
+                    writeFile(IOUtils.toByteArray(value.getInputStream()), props, targetDirectory, key);
+                }
+            }
+        } catch (IllegalArgumentException | IOException e) {
+            throw new AssemblerProcessingException(e);
+        }
+    }
+
+    protected void writeFile(byte[] content, TemplateContext props, Path targetDirectory, String fileName) throws AssemblerProcessingException {
+        try {
+            Files.createDirectories(targetDirectory);
+        } catch (IOException e) {
+            throw new AssemblerProcessingException(RB.$("ERROR_assembler_create_directories"), e);
+        }
+
+        Path outputFile = targetDirectory.resolve(fileName);
+        writeFile(content, outputFile);
+    }
+
+    protected void writeFile(String content, TemplateContext props, Path targetDirectory, String fileName) throws AssemblerProcessingException {
+        fileName = trimTplExtension(fileName);
+
+        try {
+            Files.createDirectories(targetDirectory);
+        } catch (IOException e) {
+            throw new AssemblerProcessingException(RB.$("ERROR_assembler_create_directories"), e);
+        }
+
+        Path outputFile = resolveOutputFile(props, targetDirectory, fileName);
+
+        writeFile(content, outputFile);
+    }
+
+    protected Path resolveOutputFile(TemplateContext props, Path inputsDirectory, String fileName) throws AssemblerProcessingException {
+        return inputsDirectory.resolve(fileName);
+    }
+
+    protected Set<Path> copyFiles(JReleaserContext context, Path destination) throws AssemblerProcessingException {
+        Set<Path> paths = new LinkedHashSet<>();
+
+        // resolve all first
+        for (Glob glob : assembler.getFiles()) {
+            glob.getResolvedArtifacts(context).stream()
+                .map(artifact -> artifact.getResolvedPath(context, assembler))
+                .forEach(paths::add);
+        }
+
+        // copy all next
+        try {
+            Files.createDirectories(destination);
+            for (Path path : paths) {
+                context.getLogger().debug(RB.$("assembler.copying"), path.getFileName());
+                Files.copy(path, destination.resolve(path.getFileName()), REPLACE_EXISTING);
+            }
+        } catch (IOException e) {
+            throw new AssemblerProcessingException(RB.$("ERROR_assembler_copying_files"), e);
+        }
+
+        return paths;
     }
 
     protected void copyFileSets(JReleaserContext context, Path destination) throws AssemblerProcessingException {

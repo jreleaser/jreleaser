@@ -19,7 +19,7 @@ package org.jreleaser.model.internal.validation.common;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.internal.JReleaserContext;
-import org.jreleaser.model.internal.assemble.JavaAssembler;
+import org.jreleaser.model.internal.assemble.Assembler;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.DockerPackager;
 import org.jreleaser.model.internal.packagers.DockerSpec;
@@ -69,7 +69,7 @@ public final class TemplateValidator {
         }
     }
 
-    public static void validateTemplate(JReleaserContext context, JavaAssembler<?> assembler, Errors errors) {
+    public static void validateTemplate(JReleaserContext context, Assembler<?> assembler, Errors errors) {
         String defaultTemplateDirectory = "src/jreleaser/assemblers/" + assembler.getName() + "/" + assembler.getType();
         if (isNotBlank(assembler.getTemplateDirectory()) &&
             !defaultTemplateDirectory.equals(assembler.getTemplateDirectory().trim()) &&

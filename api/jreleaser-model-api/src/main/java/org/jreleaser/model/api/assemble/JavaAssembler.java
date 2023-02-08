@@ -30,13 +30,9 @@ import java.util.List;
 public interface JavaAssembler extends Assembler {
     String getExecutable();
 
-    String getTemplateDirectory();
-
     Java getJava();
 
     Artifact getMainJar();
 
     List<? extends Glob> getJars();
-
-    List<? extends Glob> getFiles();
 }

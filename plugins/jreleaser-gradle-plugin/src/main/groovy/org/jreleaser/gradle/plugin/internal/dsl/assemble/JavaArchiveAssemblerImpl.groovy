@@ -21,7 +21,6 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectFactory
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
@@ -53,21 +52,18 @@ class JavaArchiveAssemblerImpl extends AbstractAssembler implements JavaArchiveA
     String name
     final Property<String> archiveName
     final SetProperty<Archive.Format> formats
-    final DirectoryProperty templateDirectory
     final JavaImpl java
     final ExecutableImpl executable
     final ArtifactImpl mainJar
     final PlatformImpl platform
 
     private final NamedDomainObjectContainer<GlobImpl> jars
-    private final NamedDomainObjectContainer<GlobImpl> files
 
     @Inject
     JavaArchiveAssemblerImpl(ObjectFactory objects) {
         super(objects)
         archiveName = objects.property(String).convention(Providers.<String> notDefined())
         formats = objects.setProperty(Archive.Format).convention(Providers.<Set<Archive.Format>> notDefined())
-        templateDirectory = objects.directoryProperty().convention(Providers.notDefined())
         executable = objects.newInstance(ExecutableImpl, objects)
         java = objects.newInstance(JavaImpl, objects)
         mainJar = objects.newInstance(ArtifactImpl, objects)
@@ -75,15 +71,6 @@ class JavaArchiveAssemblerImpl extends AbstractAssembler implements JavaArchiveA
         platform = objects.newInstance(PlatformImpl, objects)
 
         jars = objects.domainObjectContainer(GlobImpl, new NamedDomainObjectFactory<GlobImpl>() {
-            @Override
-            GlobImpl create(String name) {
-                GlobImpl glob = objects.newInstance(GlobImpl, objects)
-                glob.name = name
-                glob
-            }
-        })
-
-        files = objects.domainObjectContainer(GlobImpl, new NamedDomainObjectFactory<GlobImpl>() {
             @Override
             GlobImpl create(String name) {
                 GlobImpl glob = objects.newInstance(GlobImpl, objects)
@@ -101,14 +88,7 @@ class JavaArchiveAssemblerImpl extends AbstractAssembler implements JavaArchiveA
             executable.isSet() ||
             java.isSet() ||
             mainJar.isSet() ||
-            templateDirectory.present ||
-            !jars.isEmpty() ||
-            !files.isEmpty()
-    }
-
-    @Override
-    void setTemplateDirectory(String templateDirectory) {
-        this.templateDirectory.set(new File(templateDirectory))
+            !jars.isEmpty()
     }
 
     @Override
@@ -139,11 +119,6 @@ class JavaArchiveAssemblerImpl extends AbstractAssembler implements JavaArchiveA
     }
 
     @Override
-    void files(Action<? super Glob> action) {
-        action.execute(files.maybeCreate("files-${files.size()}".toString()))
-    }
-
-    @Override
     void java(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = org.jreleaser.gradle.plugin.dsl.assemble.JavaArchiveAssembler.Java) Closure<Void> action) {
         ConfigureUtil.configure(action, java)
     }
@@ -163,11 +138,6 @@ class JavaArchiveAssemblerImpl extends AbstractAssembler implements JavaArchiveA
         ConfigureUtil.configure(action, jars.maybeCreate("jars-${jars.size()}".toString()))
     }
 
-    @Override
-    void files(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Glob) Closure<Void> action) {
-        ConfigureUtil.configure(action, files.maybeCreate("files-${files.size()}".toString()))
-    }
-
     org.jreleaser.model.internal.assemble.JavaArchiveAssembler toModel() {
         org.jreleaser.model.internal.assemble.JavaArchiveAssembler assembler = new org.jreleaser.model.internal.assemble.JavaArchiveAssembler()
         assembler.name = name
@@ -179,12 +149,6 @@ class JavaArchiveAssemblerImpl extends AbstractAssembler implements JavaArchiveA
         assembler.java = java.toModel()
         for (GlobImpl glob : jars) {
             assembler.addJar(glob.toModel())
-        }
-        for (GlobImpl glob : files) {
-            assembler.addFile(glob.toModel())
-        }
-        if (templateDirectory.present) {
-            assembler.templateDirectory = templateDirectory.get().asFile.toPath().toString()
         }
         assembler
     }

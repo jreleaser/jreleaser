@@ -23,13 +23,12 @@ import org.jreleaser.model.Distribution;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.ArchiveAssembler;
-import org.jreleaser.model.internal.common.FileSet;
 import org.jreleaser.util.Errors;
 
 import java.util.Map;
 
+import static org.jreleaser.model.internal.validation.assemble.AssemblersValidator.validateAssembler;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
-import static org.jreleaser.model.internal.validation.common.Validator.validateFileSet;
 import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -77,9 +76,6 @@ public final class ArchiveAssemblerValidator {
         if (null == archive.getDistributionType()) {
             archive.setDistributionType(Distribution.DistributionType.BINARY);
         }
-        if (null == archive.getStereotype()) {
-            archive.setStereotype(context.getModel().getProject().getStereotype());
-        }
 
         if (isBlank(archive.getArchiveName())) {
             archive.setArchiveName("{{distributionName}}-{{projectVersion}}");
@@ -91,11 +87,8 @@ public final class ArchiveAssemblerValidator {
 
         if (archive.getFileSets().isEmpty()) {
             errors.configuration(RB.$("validation_archive_empty_fileset", archive.getName()));
-        } else {
-            int i = 0;
-            for (FileSet fileSet : archive.getFileSets()) {
-                validateFileSet(mode, archive, fileSet, i++, errors);
-            }
         }
+
+        validateAssembler(context, mode, archive, errors);
     }
 }

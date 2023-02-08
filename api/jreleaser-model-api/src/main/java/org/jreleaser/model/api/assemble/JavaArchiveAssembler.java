@@ -37,17 +37,13 @@ public interface JavaArchiveAssembler extends Assembler {
 
     Set<Archive.Format> getFormats();
 
-    String getTemplateDirectory();
+    Java getJava();
 
     Artifact getMainJar();
-
-    Java getJava();
 
     Executable getExecutable();
 
     List<? extends Glob> getJars();
-
-    List<? extends Glob> getFiles();
 
     interface Java extends Domain {
         String getMainClass();

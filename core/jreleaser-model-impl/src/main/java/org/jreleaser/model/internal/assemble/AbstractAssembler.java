@@ -22,6 +22,7 @@ import org.jreleaser.model.Stereotype;
 import org.jreleaser.model.internal.common.AbstractActivatable;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.FileSet;
+import org.jreleaser.model.internal.common.Glob;
 import org.jreleaser.model.internal.platform.Platform;
 import org.jreleaser.mustache.TemplateContext;
 
@@ -42,18 +43,20 @@ import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
  * @since 0.2.0
  */
 public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A extends org.jreleaser.model.api.assemble.Assembler> extends AbstractActivatable<S> implements Assembler<A> {
-    private static final long serialVersionUID = 8376910418156286094L;
+    private static final long serialVersionUID = -1346230206999871902L;
 
     @JsonIgnore
     private final Set<Artifact> outputs = new LinkedHashSet<>();
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private final List<FileSet> fileSets = new ArrayList<>();
+    private final List<Glob> files = new ArrayList<>();
     private final Platform platform = new Platform();
     @JsonIgnore
     private final String type;
     @JsonIgnore
     private String name;
 
+    private String templateDirectory;
     private Boolean exported;
     private Stereotype stereotype;
 
@@ -68,8 +71,10 @@ public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A ext
         this.name = merge(this.name, source.getName());
         this.platform.merge(source.getPlatform());
         this.stereotype = merge(this.stereotype, source.getStereotype());
+        this.templateDirectory = merge(this.templateDirectory, source.getTemplateDirectory());
         setOutputs(merge(this.outputs, source.getOutputs()));
         setFileSets(merge(this.fileSets, source.getFileSets()));
+        setFiles(merge(this.files, source.getFiles()));
         setExtraProperties(merge(this.extraProperties, source.getExtraProperties()));
     }
 
@@ -110,6 +115,16 @@ public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A ext
     @Override
     public void setPlatform(Platform platform) {
         this.platform.merge(platform);
+    }
+
+    @Override
+    public String getTemplateDirectory() {
+        return templateDirectory;
+    }
+
+    @Override
+    public void setTemplateDirectory(String templateDirectory) {
+        this.templateDirectory = templateDirectory;
     }
 
     @Override
@@ -172,6 +187,29 @@ public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A ext
     }
 
     @Override
+    public List<Glob> getFiles() {
+        return files;
+    }
+
+    @Override
+    public void setFiles(List<Glob> files) {
+        this.files.clear();
+        this.files.addAll(files);
+    }
+
+    @Override
+    public void addFiles(List<Glob> files) {
+        this.files.addAll(files);
+    }
+
+    @Override
+    public void addFile(Glob file) {
+        if (null != file) {
+            this.files.add(file);
+        }
+    }
+
+    @Override
     public List<FileSet> getFileSets() {
         return fileSets;
     }
@@ -205,6 +243,12 @@ public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A ext
         props.put("stereotype", stereotype);
         if (full || platform.isSet()) props.put("platform", platform.asMap(full));
         asMap(full, props);
+        props.put("templateDirectory", templateDirectory);
+        Map<String, Map<String, Object>> mappedFiles = new LinkedHashMap<>();
+        for (int i = 0; i < files.size(); i++) {
+            mappedFiles.put("glob " + i, files.get(i).asMap(full));
+        }
+        props.put("files", mappedFiles);
         Map<String, Map<String, Object>> mappedFileSets = new LinkedHashMap<>();
         for (int i = 0; i < fileSets.size(); i++) {
             mappedFileSets.put("fileSet " + i, fileSets.get(i).asMap(full));

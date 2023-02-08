@@ -22,15 +22,13 @@ import org.jreleaser.model.Archive;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.JavaArchiveAssembler;
-import org.jreleaser.model.internal.common.FileSet;
 import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.util.Errors;
 
-import java.nio.file.Files;
 import java.util.Map;
 
+import static org.jreleaser.model.internal.validation.assemble.AssemblersValidator.validateAssembler;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
-import static org.jreleaser.model.internal.validation.common.Validator.validateFileSet;
 import static org.jreleaser.model.internal.validation.common.Validator.validateGlobs;
 import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -75,10 +73,6 @@ public final class JavaArchiveAssemblerValidator {
             return;
         }
 
-        if (null == archive.getStereotype()) {
-            archive.setStereotype(context.getModel().getProject().getStereotype());
-        }
-
         if (isBlank(archive.getArchiveName())) {
             archive.setArchiveName("{{distributionName}}-{{projectVersion}}");
         }
@@ -104,26 +98,7 @@ public final class JavaArchiveAssemblerValidator {
                 errors);
         }
 
-        validateGlobs(
-            archive.getFiles(),
-            "java-archive." + archive.getName() + ".files",
-            errors);
-
-        int i = 0;
-        for (FileSet fileSet : archive.getFileSets()) {
-            validateFileSet(mode, archive, fileSet, i++, errors);
-        }
-
-        String defaultTemplateDirectory = "src/jreleaser/assemblers/" + archive.getName() + "/" + archive.getType();
-        if (isNotBlank(archive.getTemplateDirectory()) &&
-            !defaultTemplateDirectory.equals(archive.getTemplateDirectory().trim()) &&
-            !Files.exists(context.getBasedir().resolve(archive.getTemplateDirectory().trim()))) {
-            errors.configuration(RB.$("validation_directory_not_exist",
-                archive.getType() + "." + archive.getName() + ".template", archive.getTemplateDirectory()));
-        }
-        if (isBlank(archive.getTemplateDirectory())) {
-            archive.setTemplateDirectory(defaultTemplateDirectory);
-        }
+        validateAssembler(context, mode, archive, errors);
 
         context.getLogger().debug("assemble.java-archive.{}.java", archive.getName());
 

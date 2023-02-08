@@ -23,7 +23,6 @@ import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.NativeImageAssembler;
 import org.jreleaser.model.internal.common.Artifact;
-import org.jreleaser.model.internal.common.FileSet;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.PlatformUtils;
 
@@ -32,10 +31,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import static java.util.stream.Collectors.groupingBy;
-import static org.jreleaser.model.internal.validation.common.TemplateValidator.validateTemplate;
+import static org.jreleaser.model.internal.validation.assemble.AssemblersValidator.validateJavaAssembler;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
-import static org.jreleaser.model.internal.validation.common.Validator.validateFileSet;
-import static org.jreleaser.model.internal.validation.common.Validator.validateGlobs;
 import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -152,33 +149,11 @@ public final class NativeImageAssemblerValidator {
             }
         }
 
-        if (isBlank(nativeImage.getMainJar().getPath())) {
-            errors.configuration(RB.$("validation_must_not_be_null", "nativeImage." + nativeImage.getName() + ".mainJar.path"));
-        }
         if (null == nativeImage.getArchiveFormat()) {
             nativeImage.setArchiveFormat(Archive.Format.ZIP);
         }
 
-        validateGlobs(
-            nativeImage.getJars(),
-            "nativeImage." + nativeImage.getName() + ".jars",
-            errors);
-
-        validateGlobs(
-            nativeImage.getFiles(),
-            "nativeImage." + nativeImage.getName() + ".files",
-            errors);
-
-        if (mode == Mode.ASSEMBLE) {
-            validateTemplate(context, nativeImage, errors);
-        }
-
-        if (!nativeImage.getFileSets().isEmpty()) {
-            i = 0;
-            for (FileSet fileSet : nativeImage.getFileSets()) {
-                validateFileSet(mode, nativeImage, fileSet, i++, errors);
-            }
-        }
+        validateJavaAssembler(context, mode, nativeImage, errors, true);
 
         nativeImage.getComponents().remove("native-image");
 

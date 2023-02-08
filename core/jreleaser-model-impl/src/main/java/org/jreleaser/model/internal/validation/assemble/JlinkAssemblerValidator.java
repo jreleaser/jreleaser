@@ -23,7 +23,6 @@ import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.JlinkAssembler;
 import org.jreleaser.model.internal.common.Artifact;
-import org.jreleaser.model.internal.common.FileSet;
 import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.PlatformUtils;
@@ -33,10 +32,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import static java.util.stream.Collectors.groupingBy;
-import static org.jreleaser.model.internal.validation.common.TemplateValidator.validateTemplate;
+import static org.jreleaser.model.internal.validation.assemble.AssemblersValidator.validateJavaAssembler;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
-import static org.jreleaser.model.internal.validation.common.Validator.validateFileSet;
-import static org.jreleaser.model.internal.validation.common.Validator.validateGlobs;
 import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -76,9 +73,6 @@ public final class JlinkAssemblerValidator {
         if (isBlank(jlink.getName())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "jlink.name"));
             return;
-        }
-        if (null == jlink.getStereotype()) {
-            jlink.setStereotype(context.getModel().getProject().getStereotype());
         }
 
         context.getLogger().debug("assemble.jlink.{}.java", jlink.getName());
@@ -165,33 +159,12 @@ public final class JlinkAssemblerValidator {
             errors.configuration(RB.$("validation_is_null", "jlink." + jlink.getName() + ".mainJar"));
             return;
         }
-        if (isBlank(jlink.getMainJar().getPath())) {
-            errors.configuration(RB.$("validation_must_not_be_null", "jlink." + jlink.getName() + ".mainJar.path"));
-        }
+
         if (null == jlink.getArchiveFormat()) {
             jlink.setArchiveFormat(Archive.Format.ZIP);
         }
 
-        validateGlobs(
-            jlink.getJars(),
-            "jlink." + jlink.getName() + ".jars",
-            errors);
-
-        validateGlobs(
-            jlink.getFiles(),
-            "jlink." + jlink.getName() + ".files",
-            errors);
-
-        if (mode == Mode.ASSEMBLE) {
-            validateTemplate(context, jlink, errors);
-        }
-
-        if (!jlink.getFileSets().isEmpty()) {
-            i = 0;
-            for (FileSet fileSet : jlink.getFileSets()) {
-                validateFileSet(mode, jlink, fileSet, i++, errors);
-            }
-        }
+        validateJavaAssembler(context, mode, jlink, errors, true);
 
         if (!jlink.getJdeps().isEnabledSet()) {
             jlink.getJdeps().setEnabled(true);

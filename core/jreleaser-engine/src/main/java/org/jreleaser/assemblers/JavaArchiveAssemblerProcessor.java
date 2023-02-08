@@ -17,7 +17,6 @@
  */
 package org.jreleaser.assemblers;
 
-import org.apache.commons.io.IOUtils;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Archive;
 import org.jreleaser.model.Constants;
@@ -26,22 +25,16 @@ import org.jreleaser.model.internal.assemble.JavaArchiveAssembler;
 import org.jreleaser.model.internal.common.Glob;
 import org.jreleaser.model.spi.assemble.AssemblerProcessingException;
 import org.jreleaser.mustache.TemplateContext;
-import org.jreleaser.templates.TemplateResource;
 import org.jreleaser.util.FileUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static java.util.stream.Collectors.toSet;
-import static org.jreleaser.mustache.MustacheUtils.applyTemplate;
-import static org.jreleaser.templates.TemplateUtils.resolveAndMergeTemplates;
-import static org.jreleaser.templates.TemplateUtils.resolveTemplates;
-import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -58,8 +51,8 @@ public class JavaArchiveAssemblerProcessor extends AbstractAssemblerProcessor<or
         Path assembleDirectory = props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
         String archiveName = assembler.getResolvedArchiveName(context);
 
-        Path inputsDirectory = assembleDirectory.resolve("inputs");
-        Path workDirectory = assembleDirectory.resolve("work");
+        Path inputsDirectory = assembleDirectory.resolve(INPUTS_DIRECTORY);
+        Path workDirectory = assembleDirectory.resolve(WORK_DIRECTORY);
         Path archiveDirectory = workDirectory.resolve(archiveName);
 
         try {
@@ -70,32 +63,8 @@ public class JavaArchiveAssemblerProcessor extends AbstractAssemblerProcessor<or
             throw new AssemblerProcessingException(RB.$("ERROR_assembler_delete_archive", archiveName), e);
         }
 
-        try {
-            context.getLogger().debug(RB.$("packager.resolve.templates"), assembler.getType(), assembler.getName());
-            Map<String, TemplateResource> templates = resolveAndMergeTemplates(context.getLogger(),
-                assembler.getType(),
-                assembler.getType(),
-                context.getModel().getProject().isSnapshot(),
-                context.getBasedir().resolve(getAssembler().getTemplateDirectory()));
-            templates.putAll(resolveTemplates(context.getBasedir().resolve(getAssembler().getTemplateDirectory())));
-
-            for (Map.Entry<String, TemplateResource> entry : templates.entrySet()) {
-                String key = entry.getKey();
-                TemplateResource value = entry.getValue();
-
-                if (value.isReader()) {
-                    context.getLogger().debug(RB.$("packager.evaluate.template"), key, assembler.getName(), assembler.getType());
-                    String content = applyTemplate(value.getReader(), props, key);
-                    context.getLogger().debug(RB.$("packager.write.template"), key, assembler.getName(), assembler.getType());
-                    writeFile(content, props, key);
-                } else {
-                    context.getLogger().debug(RB.$("packager.write.template"), key, assembler.getName(), assembler.getType());
-                    writeFile(IOUtils.toByteArray(value.getInputStream()), props, key);
-                }
-            }
-        } catch (IllegalArgumentException | IOException e) {
-            throw new AssemblerProcessingException(e);
-        }
+        // copy templates
+        copyTemplates(context, props, archiveDirectory);
 
         // copy files
         context.getLogger().debug(RB.$("assembler.copy.files"), context.relativizeToBasedir(archiveDirectory));
@@ -108,11 +77,11 @@ public class JavaArchiveAssemblerProcessor extends AbstractAssemblerProcessor<or
         copyJars(context, assembler, jarsDirectory);
 
         // copy launcher(s)
-        Path binDirectory = archiveDirectory.resolve("bin");
+        Path binDirectory = archiveDirectory.resolve(BIN_DIRECTORY);
         try {
             Files.createDirectories(binDirectory);
 
-            Set<Path> launchers = Files.list(inputsDirectory.resolve("bin")).collect(toSet());
+            Set<Path> launchers = Files.list(inputsDirectory.resolve(BIN_DIRECTORY)).collect(toSet());
             for (Path srcLauncher : launchers) {
                 Path destLauncher = binDirectory.resolve(srcLauncher.getFileName());
                 Files.copy(srcLauncher, destLauncher);
@@ -156,67 +125,18 @@ public class JavaArchiveAssemblerProcessor extends AbstractAssemblerProcessor<or
         }
     }
 
-    private Set<Path> copyFiles(JReleaserContext context, Path destination) throws AssemblerProcessingException {
-        Set<Path> paths = new LinkedHashSet<>();
-
-        // resolve all first
-        for (Glob glob : assembler.getFiles()) {
-            glob.getResolvedArtifacts(context).stream()
-                .map(artifact -> artifact.getResolvedPath(context, assembler))
-                .forEach(paths::add);
-        }
-
-        // copy all next
-        try {
-            Files.createDirectories(destination);
-            for (Path path : paths) {
-                context.getLogger().debug(RB.$("assembler.copying"), path.getFileName());
-                Files.copy(path, destination.resolve(path.getFileName()), REPLACE_EXISTING);
-            }
-        } catch (IOException e) {
-            throw new AssemblerProcessingException(RB.$("ERROR_assembler_copying_files"), e);
-        }
-
-        return paths;
-    }
-
-    private void writeFile(String content, TemplateContext props, String fileName) throws AssemblerProcessingException {
-        fileName = trimTplExtension(fileName);
-
-        Path outputDirectory = props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
-        Path inputsDirectory = outputDirectory.resolve("inputs");
-
-        try {
-            Files.createDirectories(inputsDirectory);
-        } catch (IOException e) {
-            throw new AssemblerProcessingException(RB.$("ERROR_assembler_create_directories"), e);
-        }
-
+    @Override
+    protected Path resolveOutputFile(TemplateContext props, Path inputsDirectory, String fileName) throws AssemblerProcessingException {
         String executableName = assembler.getExecutable().getName();
 
-        Path outputFile = "bin/launcher.bat".equals(fileName) ?
-            inputsDirectory.resolve("bin").resolve(executableName.concat("." + assembler.getExecutable().getWindowsExtension())) :
+        return "bin/launcher.bat".equals(fileName) ?
+            inputsDirectory.resolve(BIN_DIRECTORY).resolve(executableName.concat("." + assembler.getExecutable().getWindowsExtension())) :
             "bin/launcher".equals(fileName) ?
-                inputsDirectory.resolve("bin").resolve(executableName) :
+                inputsDirectory.resolve(BIN_DIRECTORY).resolve(executableName) :
                 inputsDirectory.resolve(fileName);
-
-        writeFile(content, outputFile);
     }
 
-    private void writeFile(byte[] content, TemplateContext props, String fileName) throws AssemblerProcessingException {
-        Path outputDirectory = props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
-        Path inputsDirectory = outputDirectory.resolve("inputs");
-        try {
-            Files.createDirectories(inputsDirectory);
-        } catch (IOException e) {
-            throw new AssemblerProcessingException(RB.$("ERROR_assembler_create_directories"), e);
-        }
-
-        Path outputFile = inputsDirectory.resolve(fileName);
-        writeFile(content, outputFile);
-    }
-
-    private static Set<Path> copyJars(JReleaserContext context, JavaArchiveAssembler assembler, Path jarsDirectory) throws AssemblerProcessingException {
+    private void copyJars(JReleaserContext context, JavaArchiveAssembler assembler, Path jarsDirectory) throws AssemblerProcessingException {
         Set<Path> paths = new LinkedHashSet<>();
 
         if (isNotBlank(assembler.getMainJar().getPath())) {
@@ -239,7 +159,5 @@ public class JavaArchiveAssemblerProcessor extends AbstractAssemblerProcessor<or
         } catch (IOException e) {
             throw new AssemblerProcessingException(RB.$("ERROR_assembler_copying_jars"), e);
         }
-
-        return paths;
     }
 }

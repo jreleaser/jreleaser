@@ -43,7 +43,7 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.jreleaser.assemblers.AssemblerUtils.copyJars;
 import static org.jreleaser.assemblers.AssemblerUtils.readJavaVersion;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
-import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
+import static org.jreleaser.util.FileType.JAR;
 import static org.jreleaser.util.FileUtils.listFilesAndProcess;
 import static org.jreleaser.util.PlatformUtils.isWindows;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -52,7 +52,9 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.10.0
  */
-public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<org.jreleaser.model.api.assemble.JpackageAssembler, JpackageAssembler> {
+public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.jreleaser.model.api.assemble.JpackageAssembler, JpackageAssembler> {
+    private static final String FILES_DIRECTORY = "files";
+
     public JpackageAssemblerProcessor(JReleaserContext context) {
         super(context);
     }
@@ -72,11 +74,12 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<o
         String platform = packager.getJdk().getPlatform();
 
         Path assembleDirectory = props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
-        Path workDirectory = assembleDirectory.resolve("work-" + platform);
-        Path inputsDirectory = workDirectory.resolve("inputs");
-        Path filesDirectory = inputsDirectory.resolve("files");
+        Path workDirectory = assembleDirectory.resolve(WORK_DIRECTORY + "-" + platform);
+        Path inputsDirectory = workDirectory.resolve(INPUTS_DIRECTORY);
+        Path filesDirectory = inputsDirectory.resolve(FILES_DIRECTORY);
 
         // copy files to inputs
+        copyTemplates(context, props, filesDirectory);
         copyFiles(context, filesDirectory);
         copyFileSets(context, filesDirectory);
 
@@ -141,8 +144,9 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<o
 
         try {
             if (!FileUtils.copyFilesRecursive(context.getLogger(), originalImage, adjustedImage, path -> {
-                boolean pathIsJar = path.getFileName().toString().endsWith(".jar") && path.getParent().getFileName().toString().equals("jars");
-                boolean pathIsExecutable = path.getFileName().toString().equals(context.getModel().getAssemble().findJlink(assembler.getJlink()).getExecutable());
+                String fileName = path.getFileName().toString();
+                boolean pathIsJar = fileName.endsWith(JAR.extension()) && path.getParent().getFileName().toString().equals(JARS_DIRECTORY);
+                boolean pathIsExecutable = fileName.equals(context.getModel().getAssemble().findJlink(assembler.getJlink()).getExecutable());
                 return pathIsJar || pathIsExecutable;
             })) {
                 throw new IOException(RB.$("ERROR_assembler_adjusting_image", adjustedImage));
@@ -169,7 +173,7 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<o
                 context.relativizeToBasedir(packagerDirectory)), e);
         }
 
-        Path inputsDirectory = workDirectory.resolve("inputs");
+        Path inputsDirectory = workDirectory.resolve(INPUTS_DIRECTORY);
 
         Optional<Artifact> runtimeImageByPlatform = assembler.findRuntimeImageByPlatform(platform);
         if (!runtimeImageByPlatform.isPresent()) {
@@ -183,7 +187,7 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<o
         String copyright = assembler.getApplicationPackage().getCopyright();
 
         Path jpackageExecutable = jdkPath
-            .resolve("bin")
+            .resolve(BIN_DIRECTORY)
             .resolve(isWindows() ? "jpackage.exe" : "jpackage")
             .toAbsolutePath();
 
@@ -193,7 +197,7 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<o
             .arg("--dest")
             .arg(assembleDirectory.toAbsolutePath().toString())
             .arg("--input")
-            .arg(inputsDirectory.resolve("files").toAbsolutePath().toString())
+            .arg(inputsDirectory.resolve(FILES_DIRECTORY).toAbsolutePath().toString())
             .arg("--name")
             .arg(maybeQuote(appName))
             .arg("--runtime-image")
@@ -407,16 +411,5 @@ public class JpackageAssemblerProcessor extends AbstractJavaAssemblerProcessor<o
 
         cmd.arg("--icon")
             .arg(maybeQuote(inputsDirectory.resolve(assembler.getName() + ".ico").toAbsolutePath().toString()));
-    }
-
-    @Override
-    protected void writeFile(String content, TemplateContext props, String fileName)
-        throws AssemblerProcessingException {
-        fileName = trimTplExtension(fileName);
-
-        Path outputDirectory = props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
-        Path outputFile = outputDirectory.resolve(fileName);
-
-        writeFile(content, outputFile);
     }
 }

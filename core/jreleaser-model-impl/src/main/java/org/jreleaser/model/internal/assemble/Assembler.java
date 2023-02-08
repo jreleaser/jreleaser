@@ -24,6 +24,7 @@ import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.common.ExtraProperties;
 import org.jreleaser.model.internal.common.FileSet;
+import org.jreleaser.model.internal.common.Glob;
 import org.jreleaser.model.internal.platform.Platform;
 import org.jreleaser.mustache.TemplateContext;
 
@@ -65,6 +66,10 @@ public interface Assembler<A extends org.jreleaser.model.api.assemble.Assembler>
 
     TemplateContext props();
 
+    String getTemplateDirectory();
+
+    void setTemplateDirectory(String templateDirectory);
+
     List<FileSet> getFileSets();
 
     void setFileSets(List<FileSet> fileSets);
@@ -72,6 +77,14 @@ public interface Assembler<A extends org.jreleaser.model.api.assemble.Assembler>
     void addFileSets(List<FileSet> files);
 
     void addFileSet(FileSet file);
+
+    List<Glob> getFiles();
+
+    void setFiles(List<Glob> files);
+
+    void addFiles(List<Glob> files);
+
+    void addFile(Glob file);
 
     A asImmutable();
 }

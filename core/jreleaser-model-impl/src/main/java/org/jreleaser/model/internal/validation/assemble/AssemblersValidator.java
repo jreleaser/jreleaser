@@ -22,10 +22,13 @@ import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.ArchiveAssembler;
 import org.jreleaser.model.internal.assemble.Assemble;
+import org.jreleaser.model.internal.assemble.Assembler;
 import org.jreleaser.model.internal.assemble.JavaArchiveAssembler;
+import org.jreleaser.model.internal.assemble.JavaAssembler;
 import org.jreleaser.model.internal.assemble.JlinkAssembler;
 import org.jreleaser.model.internal.assemble.JpackageAssembler;
 import org.jreleaser.model.internal.assemble.NativeImageAssembler;
+import org.jreleaser.model.internal.common.FileSet;
 import org.jreleaser.util.Errors;
 
 import java.util.ArrayList;
@@ -39,7 +42,11 @@ import static org.jreleaser.model.internal.validation.assemble.JlinkAssemblerVal
 import static org.jreleaser.model.internal.validation.assemble.JpackageAssemblerValidator.postValidateJpackage;
 import static org.jreleaser.model.internal.validation.assemble.JpackageAssemblerValidator.validateJpackage;
 import static org.jreleaser.model.internal.validation.assemble.NativeImageAssemblerValidator.validateNativeImage;
+import static org.jreleaser.model.internal.validation.common.TemplateValidator.validateTemplate;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
+import static org.jreleaser.model.internal.validation.common.Validator.validateFileSet;
+import static org.jreleaser.model.internal.validation.common.Validator.validateGlobs;
+import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
@@ -117,5 +124,45 @@ public final class AssemblersValidator {
         context.getLogger().debug("assemble");
 
         postValidateJpackage(context);
+    }
+
+    public static void validateAssembler(JReleaserContext context, Mode mode, Assembler<?> assembler, Errors errors) {
+        if (null == assembler.getStereotype()) {
+            assembler.setStereotype(context.getModel().getProject().getStereotype());
+        }
+
+        validateGlobs(
+            assembler.getFiles(),
+            assembler.getType() + "." + assembler.getName() + ".files",
+            errors);
+
+        int i = 0;
+        for (FileSet fileSet : assembler.getFileSets()) {
+            validateFileSet(mode, assembler, fileSet, i++, errors);
+        }
+
+        if (mode == Mode.ASSEMBLE) {
+            validateTemplate(context, assembler, errors);
+        }
+    }
+
+    public static void validateJavaAssembler(JReleaserContext context, Mode mode, JavaAssembler<?> assembler, Errors errors, boolean checkMainJar) {
+        validateAssembler(context, mode, assembler, errors);
+
+        if (checkMainJar) {
+            if (null == assembler.getMainJar()) {
+                errors.configuration(RB.$("validation_is_null", assembler.getType() + "." + assembler.getName() + ".mainJar"));
+                return;
+            }
+
+            if (isBlank(assembler.getMainJar().getPath())) {
+                errors.configuration(RB.$("validation_must_not_be_null", assembler.getType() + "." + assembler.getName() + ".mainJar.path"));
+            }
+        }
+
+        validateGlobs(
+            assembler.getJars(),
+            assembler.getType() + "." + assembler.getName() + ".jars",
+            errors);
     }
 }

@@ -37,10 +37,6 @@ import org.jreleaser.model.Archive.Format
 interface JavaArchiveAssembler extends Assembler {
     Property<String> getArchiveName()
 
-    DirectoryProperty getTemplateDirectory()
-
-    void setTemplateDirectory(String templateDirectory)
-
     SetProperty<Format> getFormats()
 
     void format(String format)
@@ -57,8 +53,6 @@ interface JavaArchiveAssembler extends Assembler {
 
     void jars(Action<? super Glob> action)
 
-    void files(Action<? super Glob> action)
-
     void java(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Java) Closure<Void> action)
 
     void mainJar(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
@@ -66,8 +60,6 @@ interface JavaArchiveAssembler extends Assembler {
     void executable(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Executable) Closure<Void> action)
 
     void jars(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Glob) Closure<Void> action)
-
-    void files(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Glob) Closure<Void> action)
 
     interface Java {
         Property<String> getMainModule()

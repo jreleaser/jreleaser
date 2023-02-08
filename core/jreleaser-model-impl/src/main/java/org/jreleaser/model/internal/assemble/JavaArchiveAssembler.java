@@ -51,17 +51,15 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 1.4.0
  */
 public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAssembler, org.jreleaser.model.api.assemble.JavaArchiveAssembler> {
-    private static final long serialVersionUID = 4143674954322344767L;
+    private static final long serialVersionUID = 6337590566349527052L;
 
     private final Set<Archive.Format> formats = new LinkedHashSet<>();
     private final List<Glob> jars = new ArrayList<>();
-    private final List<Glob> files = new ArrayList<>();
     private final Java java = new Java();
     private final Executable executable = new Executable();
     private final Artifact mainJar = new Artifact();
 
     private String archiveName;
-    private String templateDirectory;
 
     private final org.jreleaser.model.api.assemble.JavaArchiveAssembler immutable = new org.jreleaser.model.api.assemble.JavaArchiveAssembler() {
         private static final long serialVersionUID = -5871153107080301721L;
@@ -113,7 +111,7 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
 
         @Override
         public String getTemplateDirectory() {
-            return templateDirectory;
+            return JavaArchiveAssembler.this.getTemplateDirectory();
         }
 
         @Override
@@ -164,7 +162,7 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
         @Override
         public List<? extends org.jreleaser.model.api.common.Glob> getFiles() {
             if (null == files) {
-                files = JavaArchiveAssembler.this.files.stream()
+                files = JavaArchiveAssembler.this.getFiles().stream()
                     .map(Glob::asImmutable)
                     .collect(toList());
             }
@@ -215,13 +213,11 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
     public void merge(JavaArchiveAssembler source) {
         super.merge(source);
         this.archiveName = merge(source.archiveName, source.archiveName);
-        this.templateDirectory = merge(this.templateDirectory, source.templateDirectory);
         setFormats(merge(this.formats, source.formats));
         setExecutable(source.executable);
         setJava(source.java);
         setMainJar(source.mainJar);
         setJars(merge(this.jars, source.jars));
-        setFiles(merge(this.files, source.files));
     }
 
     public String getResolvedArchiveName(JReleaserContext context) {
@@ -236,14 +232,6 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
 
     public void setArchiveName(String archiveName) {
         this.archiveName = archiveName;
-    }
-
-    public String getTemplateDirectory() {
-        return templateDirectory;
-    }
-
-    public void setTemplateDirectory(String templateDirectory) {
-        this.templateDirectory = templateDirectory;
     }
 
     public Java getJava() {
@@ -306,30 +294,10 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
         }
     }
 
-    public List<Glob> getFiles() {
-        return files;
-    }
-
-    public void setFiles(List<Glob> files) {
-        this.files.clear();
-        this.files.addAll(files);
-    }
-
-    public void addFiles(List<Glob> files) {
-        this.files.addAll(files);
-    }
-
-    public void addFile(Glob file) {
-        if (null != file) {
-            this.files.add(file);
-        }
-    }
-
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("archiveName", archiveName);
         props.put("formats", formats);
-        props.put("templateDirectory", templateDirectory);
         props.put("executable", executable.asMap(full));
         props.put("mainJar", mainJar.asMap(full));
         Map<String, Object> javaMap = java.asMap(full);
@@ -339,11 +307,6 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
             mappedJars.put("glob " + i, jars.get(i).asMap(full));
         }
         props.put("jars", mappedJars);
-        Map<String, Map<String, Object>> mappedFiles = new LinkedHashMap<>();
-        for (int i = 0; i < files.size(); i++) {
-            mappedFiles.put("glob " + i, files.get(i).asMap(full));
-        }
-        props.put("files", mappedFiles);
     }
 
     public static final class Java extends AbstractModelObject<org.jreleaser.model.internal.assemble.JavaArchiveAssembler.Java> implements Domain {

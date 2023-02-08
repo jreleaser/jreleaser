@@ -21,7 +21,6 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectFactory
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
@@ -44,17 +43,14 @@ import javax.inject.Inject
 @CompileStatic
 abstract class AbstractJavaAssembler extends AbstractAssembler implements JavaAssembler {
     final Property<String> executable
-    final DirectoryProperty templateDirectory
 
     private final ArtifactImpl mainJar
     private final NamedDomainObjectContainer<GlobImpl> jars
-    private final NamedDomainObjectContainer<GlobImpl> files
 
     @Inject
     AbstractJavaAssembler(ObjectFactory objects) {
         super(objects)
         executable = objects.property(String).convention(Providers.<String> notDefined())
-        templateDirectory = objects.directoryProperty().convention(Providers.notDefined())
         mainJar = objects.newInstance(ArtifactImpl, objects)
         mainJar.setName('mainJar')
 
@@ -66,20 +62,6 @@ abstract class AbstractJavaAssembler extends AbstractAssembler implements JavaAs
                 glob
             }
         })
-
-        files = objects.domainObjectContainer(GlobImpl, new NamedDomainObjectFactory<GlobImpl>() {
-            @Override
-            GlobImpl create(String name) {
-                GlobImpl glob = objects.newInstance(GlobImpl, objects)
-                glob.name = name
-                glob
-            }
-        })
-    }
-
-    @Override
-    void setTemplateDirectory(String templateDirectory) {
-        this.templateDirectory.set(new File(templateDirectory))
     }
 
     @Internal
@@ -87,9 +69,7 @@ abstract class AbstractJavaAssembler extends AbstractAssembler implements JavaAs
         super.isSet() ||
             executable.present ||
             mainJar.isSet() ||
-            templateDirectory.present ||
-            !jars.isEmpty() ||
-            !files.isEmpty()
+            !jars.isEmpty()
     }
 
     @Override
@@ -108,11 +88,6 @@ abstract class AbstractJavaAssembler extends AbstractAssembler implements JavaAs
     }
 
     @Override
-    void files(Action<? super Glob> action) {
-        action.execute(files.maybeCreate("files-${files.size()}".toString()))
-    }
-
-    @Override
     void java(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Java) Closure<Void> action) {
         ConfigureUtil.configure(action, java)
     }
@@ -127,23 +102,12 @@ abstract class AbstractJavaAssembler extends AbstractAssembler implements JavaAs
         ConfigureUtil.configure(action, jars.maybeCreate("jars-${jars.size()}".toString()))
     }
 
-    @Override
-    void files(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Glob) Closure<Void> action) {
-        ConfigureUtil.configure(action, files.maybeCreate("files-${files.size()}".toString()))
-    }
-
     protected <A extends org.jreleaser.model.internal.assemble.JavaAssembler> void fillProperties(A assembler) {
         super.fillProperties(assembler)
         if (mainJar.isSet()) assembler.mainJar = mainJar.toModel()
         for (GlobImpl glob : jars) {
             assembler.addJar(glob.toModel())
         }
-        for (GlobImpl glob : files) {
-            assembler.addFile(glob.toModel())
-        }
         if (executable.present) assembler.executable = executable.get()
-        if (templateDirectory.present) {
-            assembler.templateDirectory = templateDirectory.get().asFile.toPath().toString()
-        }
     }
 }

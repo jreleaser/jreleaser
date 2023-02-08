@@ -20,10 +20,12 @@ package org.jreleaser.gradle.plugin.dsl.assemble
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.common.Activatable
 import org.jreleaser.gradle.plugin.dsl.common.ExtraProperties
 import org.jreleaser.gradle.plugin.dsl.common.FileSet
+import org.jreleaser.gradle.plugin.dsl.common.Glob
 import org.jreleaser.gradle.plugin.dsl.platform.Platform
 import org.jreleaser.model.Stereotype
 
@@ -38,15 +40,21 @@ interface Assembler extends Activatable, ExtraProperties {
 
     Property<Stereotype> getStereotype()
 
-    NamedDomainObjectContainer<FileSet> getFileSets()
+    DirectoryProperty getTemplateDirectory()
+
+    void setTemplateDirectory(String templateDirectory)
 
     Platform getPlatform()
 
     void setStereotype(String str)
 
+    void files(Action<? super Glob> action)
+
     void fileSet(Action<? super FileSet> action)
 
     void platform(Action<? super Platform> action)
+
+    void files(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Glob) Closure<Void> action)
 
     void fileSet(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = FileSet) Closure<Void> action)
 

@@ -24,6 +24,7 @@ import org.jreleaser.model.Stereotype;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.FileSet;
+import org.jreleaser.model.internal.common.Glob;
 import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.util.PlatformUtils;
 
@@ -53,9 +54,10 @@ public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, 
     private Distribution.DistributionType distributionType;
 
     private final org.jreleaser.model.api.assemble.ArchiveAssembler immutable = new org.jreleaser.model.api.assemble.ArchiveAssembler() {
-        private static final long serialVersionUID = 2328211292902490488L;
+        private static final long serialVersionUID = 272538469214082140L;
 
         private List<? extends org.jreleaser.model.api.common.FileSet> fileSets;
+        private List<? extends org.jreleaser.model.api.common.Glob> files;
         private Set<? extends org.jreleaser.model.api.common.Artifact> outputs;
 
         @Override
@@ -104,6 +106,11 @@ public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, 
         }
 
         @Override
+        public String getTemplateDirectory() {
+            return ArchiveAssembler.this.getTemplateDirectory();
+        }
+
+        @Override
         public List<? extends org.jreleaser.model.api.common.FileSet> getFileSets() {
             if (null == fileSets) {
                 fileSets = ArchiveAssembler.this.getFileSets().stream()
@@ -111,6 +118,16 @@ public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, 
                     .collect(toList());
             }
             return fileSets;
+        }
+
+        @Override
+        public List<? extends org.jreleaser.model.api.common.Glob> getFiles() {
+            if (null == files) {
+                files = ArchiveAssembler.this.getFiles().stream()
+                    .map(Glob::asImmutable)
+                    .collect(toList());
+            }
+            return files;
         }
 
         @Override
