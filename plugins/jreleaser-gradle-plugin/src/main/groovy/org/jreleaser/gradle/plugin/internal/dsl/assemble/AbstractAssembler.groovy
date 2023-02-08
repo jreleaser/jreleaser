@@ -26,12 +26,12 @@ import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.assemble.Assembler
 import org.jreleaser.gradle.plugin.dsl.common.FileSet
 import org.jreleaser.gradle.plugin.dsl.common.Glob
 import org.jreleaser.gradle.plugin.dsl.platform.Platform
-import org.jreleaser.gradle.plugin.internal.dsl.common.ArtifactImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.FileSetImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.GlobImpl
 import org.jreleaser.model.Active
@@ -54,6 +54,7 @@ abstract class AbstractAssembler implements Assembler {
     final Property<Stereotype> stereotype
     final MapProperty<String, Object> extraProperties
     final DirectoryProperty templateDirectory
+    final SetProperty<String> skipTemplates
     private final NamedDomainObjectContainer<FileSetImpl> fileSets
     private final NamedDomainObjectContainer<GlobImpl> files
 
@@ -63,6 +64,8 @@ abstract class AbstractAssembler implements Assembler {
         active = objects.property(Active).convention(Providers.<Active> notDefined())
         stereotype = objects.property(Stereotype).convention(Providers.<Stereotype> notDefined())
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
+        templateDirectory = objects.directoryProperty().convention(Providers.notDefined())
+        skipTemplates = objects.setProperty(String).convention(Providers.<Set<String>> notDefined())
 
         files = objects.domainObjectContainer(GlobImpl, new NamedDomainObjectFactory<GlobImpl>() {
             @Override
@@ -89,6 +92,7 @@ abstract class AbstractAssembler implements Assembler {
             active.present ||
             extraProperties.present ||
             templateDirectory.present ||
+            skipTemplates.present ||
             !fileSets.isEmpty() ||
             !files.isEmpty()
     }
@@ -110,6 +114,13 @@ abstract class AbstractAssembler implements Assembler {
     @Override
     void setTemplateDirectory(String templateDirectory) {
         this.templateDirectory.set(new File(templateDirectory))
+    }
+
+    @Override
+    void skipTemplate(String template) {
+        if (isNotBlank(template)) {
+            skipTemplates.add(template.trim())
+        }
     }
 
     @Override
@@ -154,7 +165,8 @@ abstract class AbstractAssembler implements Assembler {
             assembler.addFileSet(fileSet.toModel())
         }
         if (templateDirectory.present) {
-            assembler.templateDirectory = templateDirectory.get().asFile.toPath().toString()
+            assembler.templateDirectory = templateDirectory.get().asFile.toPath().toAbsolutePath().toString()
         }
+        assembler.skipTemplates = (Set<String>) skipTemplates.getOrElse([] as Set<String>)
     }
 }

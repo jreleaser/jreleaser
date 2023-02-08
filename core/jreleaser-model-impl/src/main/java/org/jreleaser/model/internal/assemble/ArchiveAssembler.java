@@ -54,7 +54,7 @@ public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, 
     private Distribution.DistributionType distributionType;
 
     private final org.jreleaser.model.api.assemble.ArchiveAssembler immutable = new org.jreleaser.model.api.assemble.ArchiveAssembler() {
-        private static final long serialVersionUID = 272538469214082140L;
+        private static final long serialVersionUID = -5132972839376360067L;
 
         private List<? extends org.jreleaser.model.api.common.FileSet> fileSets;
         private List<? extends org.jreleaser.model.api.common.Glob> files;
@@ -108,6 +108,11 @@ public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, 
         @Override
         public String getTemplateDirectory() {
             return ArchiveAssembler.this.getTemplateDirectory();
+        }
+
+        @Override
+        public Set<String> getSkipTemplates() {
+            return unmodifiableSet(ArchiveAssembler.this.getSkipTemplates());
         }
 
         @Override

@@ -62,7 +62,7 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
     private String archiveName;
 
     private final org.jreleaser.model.api.assemble.JavaArchiveAssembler immutable = new org.jreleaser.model.api.assemble.JavaArchiveAssembler() {
-        private static final long serialVersionUID = -5871153107080301721L;
+        private static final long serialVersionUID = -7266402712485615466L;
 
         private List<? extends org.jreleaser.model.api.common.FileSet> fileSets;
         private Set<? extends org.jreleaser.model.api.common.Artifact> outputs;
@@ -112,6 +112,11 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
         @Override
         public String getTemplateDirectory() {
             return JavaArchiveAssembler.this.getTemplateDirectory();
+        }
+
+        @Override
+        public Set<String> getSkipTemplates() {
+            return unmodifiableSet(JavaArchiveAssembler.this.getSkipTemplates());
         }
 
         @Override

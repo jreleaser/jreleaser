@@ -66,7 +66,7 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
     private Boolean copyJars;
 
     private final org.jreleaser.model.api.assemble.JlinkAssembler immutable = new org.jreleaser.model.api.assemble.JlinkAssembler() {
-        private static final long serialVersionUID = 6364491730669488507L;
+        private static final long serialVersionUID = -8993180763040901890L;
 
         private List<? extends org.jreleaser.model.api.common.FileSet> fileSets;
         private Set<? extends org.jreleaser.model.api.common.Artifact> outputs;
@@ -132,6 +132,11 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
         @Override
         public String getTemplateDirectory() {
             return JlinkAssembler.this.getTemplateDirectory();
+        }
+
+        @Override
+        public Set<String> getSkipTemplates() {
+            return unmodifiableSet(JlinkAssembler.this.getSkipTemplates());
         }
 
         @Override

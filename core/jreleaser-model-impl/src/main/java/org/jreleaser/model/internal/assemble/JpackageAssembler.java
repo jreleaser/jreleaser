@@ -68,7 +68,7 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
     private Boolean verbose;
 
     private final org.jreleaser.model.api.assemble.JpackageAssembler immutable = new org.jreleaser.model.api.assemble.JpackageAssembler() {
-        private static final long serialVersionUID = -6928916996645508470L;
+        private static final long serialVersionUID = 3228187730950683421L;
 
         private Set<? extends org.jreleaser.model.api.common.Artifact> runtimeImages;
         private Set<? extends org.jreleaser.model.api.assemble.JpackageAssembler.PlatformPackager> platformPackagers;
@@ -147,6 +147,11 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
         @Override
         public String getTemplateDirectory() {
             return JpackageAssembler.this.getTemplateDirectory();
+        }
+
+        @Override
+        public Set<String> getSkipTemplates() {
+            return unmodifiableSet(JpackageAssembler.this.getSkipTemplates());
         }
 
         @Override

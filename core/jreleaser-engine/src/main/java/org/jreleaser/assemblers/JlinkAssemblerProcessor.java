@@ -353,13 +353,13 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
     }
 
     @Override
-    protected Path resolveOutputFile(TemplateContext props, Path inputsDirectory, String fileName) throws AssemblerProcessingException {
+    protected Path resolveOutputFile(TemplateContext props, Path targetDirectory, String fileName) throws AssemblerProcessingException {
         String executableName = assembler.getExecutable();
 
         return "bin/launcher.bat".equals(fileName) ?
-            inputsDirectory.resolve(BIN_DIRECTORY).resolve(executableName.concat(BAT.extension())) :
+            targetDirectory.resolve(BIN_DIRECTORY).resolve(executableName.concat(BAT.extension())) :
             "bin/launcher".equals(fileName) ?
-                inputsDirectory.resolve(BIN_DIRECTORY).resolve(executableName) :
-                inputsDirectory.resolve(fileName);
+                targetDirectory.resolve(BIN_DIRECTORY).resolve(executableName) :
+                targetDirectory.resolve(fileName);
     }
 }

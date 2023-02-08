@@ -37,13 +37,14 @@ import java.util.Set;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_NAME;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_STEREOTYPE;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
  * @since 0.2.0
  */
 public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A extends org.jreleaser.model.api.assemble.Assembler> extends AbstractActivatable<S> implements Assembler<A> {
-    private static final long serialVersionUID = -1346230206999871902L;
+    private static final long serialVersionUID = -9097868759703679090L;
 
     @JsonIgnore
     private final Set<Artifact> outputs = new LinkedHashSet<>();
@@ -51,6 +52,7 @@ public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A ext
     private final List<FileSet> fileSets = new ArrayList<>();
     private final List<Glob> files = new ArrayList<>();
     private final Platform platform = new Platform();
+    private final Set<String> skipTemplates = new LinkedHashSet<>();
     @JsonIgnore
     private final String type;
     @JsonIgnore
@@ -72,6 +74,7 @@ public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A ext
         this.platform.merge(source.getPlatform());
         this.stereotype = merge(this.stereotype, source.getStereotype());
         this.templateDirectory = merge(this.templateDirectory, source.getTemplateDirectory());
+        setSkipTemplates(merge(this.skipTemplates, source.getSkipTemplates()));
         setOutputs(merge(this.outputs, source.getOutputs()));
         setFileSets(merge(this.fileSets, source.getFileSets()));
         setFiles(merge(this.files, source.getFiles()));
@@ -125,6 +128,29 @@ public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A ext
     @Override
     public void setTemplateDirectory(String templateDirectory) {
         this.templateDirectory = templateDirectory;
+    }
+
+    @Override
+    public Set<String> getSkipTemplates() {
+        return skipTemplates;
+    }
+
+    @Override
+    public void setSkipTemplates(Set<String> skipTemplates) {
+        this.skipTemplates.clear();
+        this.skipTemplates.addAll(skipTemplates);
+    }
+
+    @Override
+    public void addSkipTemplates(Set<String> templates) {
+        this.skipTemplates.addAll(templates);
+    }
+
+    @Override
+    public void addSkipTemplate(String template) {
+        if (isNotBlank(template)) {
+            this.skipTemplates.add(template.trim());
+        }
     }
 
     @Override
@@ -244,6 +270,7 @@ public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A ext
         if (full || platform.isSet()) props.put("platform", platform.asMap(full));
         asMap(full, props);
         props.put("templateDirectory", templateDirectory);
+        props.put("skipTemplates", skipTemplates);
         Map<String, Map<String, Object>> mappedFiles = new LinkedHashMap<>();
         for (int i = 0; i < files.size(); i++) {
             mappedFiles.put("glob " + i, files.get(i).asMap(full));

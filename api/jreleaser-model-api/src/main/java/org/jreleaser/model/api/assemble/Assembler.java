@@ -49,6 +49,8 @@ public interface Assembler extends Domain, Activatable, ExtraProperties {
 
     String getTemplateDirectory();
 
+    Set<String> getSkipTemplates();
+
     List<? extends Glob> getFiles();
 
     List<? extends FileSet> getFileSets();

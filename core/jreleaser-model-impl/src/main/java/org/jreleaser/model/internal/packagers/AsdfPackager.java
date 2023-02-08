@@ -23,13 +23,13 @@ import org.jreleaser.model.Stereotype;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.util.PlatformUtils;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import static java.util.Collections.emptySet;
+import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
 import static org.jreleaser.model.Distribution.DistributionType.BINARY;
@@ -105,7 +105,7 @@ public final class AsdfPackager extends AbstractRepositoryPackager<org.jreleaser
 
         @Override
         public List<String> getSkipTemplates() {
-            return Collections.unmodifiableList(AsdfPackager.this.getSkipTemplates());
+            return unmodifiableList(AsdfPackager.this.getSkipTemplates());
         }
 
         @Override

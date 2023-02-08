@@ -70,6 +70,14 @@ public interface Assembler<A extends org.jreleaser.model.api.assemble.Assembler>
 
     void setTemplateDirectory(String templateDirectory);
 
+    Set<String> getSkipTemplates();
+
+    void setSkipTemplates(Set<String> skipTemplates);
+
+    void addSkipTemplates(Set<String> templates);
+
+    void addSkipTemplate(String template);
+
     List<FileSet> getFileSets();
 
     void setFileSets(List<FileSet> fileSets);

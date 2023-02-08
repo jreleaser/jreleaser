@@ -69,7 +69,7 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
     private Archive.Format archiveFormat;
 
     private final org.jreleaser.model.api.assemble.NativeImageAssembler immutable = new org.jreleaser.model.api.assemble.NativeImageAssembler() {
-        private static final long serialVersionUID = 9006136650468947726L;
+        private static final long serialVersionUID = 3086045287131936768L;
 
         private Set<? extends org.jreleaser.model.api.common.Artifact> graalJdks;
         private List<? extends org.jreleaser.model.api.common.FileSet> fileSets;
@@ -145,6 +145,11 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
         @Override
         public String getTemplateDirectory() {
             return NativeImageAssembler.this.getTemplateDirectory();
+        }
+
+        @Override
+        public Set<String> getSkipTemplates() {
+            return unmodifiableSet(NativeImageAssembler.this.getSkipTemplates());
         }
 
         @Override

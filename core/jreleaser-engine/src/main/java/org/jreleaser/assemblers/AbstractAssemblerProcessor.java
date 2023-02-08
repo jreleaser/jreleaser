@@ -198,17 +198,23 @@ public abstract class AbstractAssemblerProcessor<A extends org.jreleaser.model.a
             templates.putAll(resolveTemplates(context.getBasedir().resolve(getAssembler().getTemplateDirectory())));
 
             for (Map.Entry<String, TemplateResource> entry : templates.entrySet()) {
-                String key = entry.getKey();
+                String filename = entry.getKey();
+
+                if (isSkipped(filename)) {
+                    context.getLogger().debug(RB.$("packager.skipped.template"), filename, assembler.getType(), assembler.getName());
+                    continue;
+                }
+
                 TemplateResource value = entry.getValue();
 
                 if (value.isReader()) {
-                    context.getLogger().debug(RB.$("packager.evaluate.template"), key, assembler.getName(), assembler.getType());
-                    String content = applyTemplate(value.getReader(), props, key);
-                    context.getLogger().debug(RB.$("packager.write.template"), key, assembler.getName(), assembler.getType());
-                    writeFile(content, props, targetDirectory, key);
+                    context.getLogger().debug(RB.$("packager.evaluate.template"), filename, assembler.getName(), assembler.getType());
+                    String content = applyTemplate(value.getReader(), props, filename);
+                    context.getLogger().debug(RB.$("packager.write.template"), filename, assembler.getName(), assembler.getType());
+                    writeFile(content, props, targetDirectory, filename);
                 } else {
-                    context.getLogger().debug(RB.$("packager.write.template"), key, assembler.getName(), assembler.getType());
-                    writeFile(IOUtils.toByteArray(value.getInputStream()), props, targetDirectory, key);
+                    context.getLogger().debug(RB.$("packager.write.template"), filename, assembler.getName(), assembler.getType());
+                    writeFile(IOUtils.toByteArray(value.getInputStream()), props, targetDirectory, filename);
                 }
             }
         } catch (IllegalArgumentException | IOException e) {
@@ -241,8 +247,8 @@ public abstract class AbstractAssemblerProcessor<A extends org.jreleaser.model.a
         writeFile(content, outputFile);
     }
 
-    protected Path resolveOutputFile(TemplateContext props, Path inputsDirectory, String fileName) throws AssemblerProcessingException {
-        return inputsDirectory.resolve(fileName);
+    protected Path resolveOutputFile(TemplateContext props, Path targetDirectory, String fileName) throws AssemblerProcessingException {
+        return targetDirectory.resolve(fileName);
     }
 
     protected Set<Path> copyFiles(JReleaserContext context, Path destination) throws AssemblerProcessingException {
@@ -290,5 +296,28 @@ public abstract class AbstractAssemblerProcessor<A extends org.jreleaser.model.a
 
     protected String maybeQuote(String str) {
         return isWindows() ? quote(str) : str;
+    }
+
+    public boolean isSkipped(String filename) {
+        // check explicit match
+        if (assembler.getSkipTemplates().contains(filename)) return true;
+        // check using string contains
+        if (assembler.getSkipTemplates().stream()
+            .anyMatch(filename::contains)) return true;
+        // check using regex
+        if (assembler.getSkipTemplates().stream()
+            .anyMatch(filename::matches)) return true;
+
+        // remove .tpl and check again
+        String fname = trimTplExtension(filename);
+
+        // check explicit match
+        if (assembler.getSkipTemplates().contains(fname)) return true;
+        // check using string contains
+        if (assembler.getSkipTemplates().stream()
+            .anyMatch(fname::contains)) return true;
+        // check using regex
+        return assembler.getSkipTemplates().stream()
+            .anyMatch(fname::matches);
     }
 }

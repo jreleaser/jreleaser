@@ -34,7 +34,6 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-import static java.util.stream.Collectors.toSet;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -51,12 +50,10 @@ public class JavaArchiveAssemblerProcessor extends AbstractAssemblerProcessor<or
         Path assembleDirectory = props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
         String archiveName = assembler.getResolvedArchiveName(context);
 
-        Path inputsDirectory = assembleDirectory.resolve(INPUTS_DIRECTORY);
         Path workDirectory = assembleDirectory.resolve(WORK_DIRECTORY);
         Path archiveDirectory = workDirectory.resolve(archiveName);
 
         try {
-            FileUtils.deleteFiles(inputsDirectory);
             FileUtils.deleteFiles(workDirectory);
             Files.createDirectories(archiveDirectory);
         } catch (IOException e) {
@@ -75,22 +72,6 @@ public class JavaArchiveAssemblerProcessor extends AbstractAssemblerProcessor<or
         Path jarsDirectory = archiveDirectory.resolve("lib");
         context.getLogger().debug(RB.$("assembler.copy.jars"), context.relativizeToBasedir(jarsDirectory));
         copyJars(context, assembler, jarsDirectory);
-
-        // copy launcher(s)
-        Path binDirectory = archiveDirectory.resolve(BIN_DIRECTORY);
-        try {
-            Files.createDirectories(binDirectory);
-
-            Set<Path> launchers = Files.list(inputsDirectory.resolve(BIN_DIRECTORY)).collect(toSet());
-            for (Path srcLauncher : launchers) {
-                Path destLauncher = binDirectory.resolve(srcLauncher.getFileName());
-                Files.copy(srcLauncher, destLauncher);
-                FileUtils.grantExecutableAccess(destLauncher);
-            }
-        } catch (IOException e) {
-            throw new AssemblerProcessingException(RB.$("ERROR_assembler_copy_launcher",
-                context.relativizeToBasedir(binDirectory)), e);
-        }
 
         // run archive x format
         for (Archive.Format format : assembler.getFormats()) {
@@ -126,14 +107,14 @@ public class JavaArchiveAssemblerProcessor extends AbstractAssemblerProcessor<or
     }
 
     @Override
-    protected Path resolveOutputFile(TemplateContext props, Path inputsDirectory, String fileName) throws AssemblerProcessingException {
+    protected Path resolveOutputFile(TemplateContext props, Path targetDirectory, String fileName) throws AssemblerProcessingException {
         String executableName = assembler.getExecutable().getName();
 
         return "bin/launcher.bat".equals(fileName) ?
-            inputsDirectory.resolve(BIN_DIRECTORY).resolve(executableName.concat("." + assembler.getExecutable().getWindowsExtension())) :
+            targetDirectory.resolve(BIN_DIRECTORY).resolve(executableName.concat("." + assembler.getExecutable().getWindowsExtension())) :
             "bin/launcher".equals(fileName) ?
-                inputsDirectory.resolve(BIN_DIRECTORY).resolve(executableName) :
-                inputsDirectory.resolve(fileName);
+                targetDirectory.resolve(BIN_DIRECTORY).resolve(executableName) :
+                targetDirectory.resolve(fileName);
     }
 
     private void copyJars(JReleaserContext context, JavaArchiveAssembler assembler, Path jarsDirectory) throws AssemblerProcessingException {
