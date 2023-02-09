@@ -62,8 +62,9 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
     private String archiveName;
 
     private final org.jreleaser.model.api.assemble.JavaArchiveAssembler immutable = new org.jreleaser.model.api.assemble.JavaArchiveAssembler() {
-        private static final long serialVersionUID = -7266402712485615466L;
+        private static final long serialVersionUID = 1447263598587451959L;
 
+        private Set<? extends org.jreleaser.model.api.common.Artifact> artifacts;
         private List<? extends org.jreleaser.model.api.common.FileSet> fileSets;
         private Set<? extends org.jreleaser.model.api.common.Artifact> outputs;
         private List<? extends org.jreleaser.model.api.common.Glob> jars;
@@ -132,6 +133,16 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
         @Override
         public org.jreleaser.model.api.assemble.JavaArchiveAssembler.Java getJava() {
             return java.asImmutable();
+        }
+
+        @Override
+        public Set<? extends org.jreleaser.model.api.common.Artifact> getArtifacts() {
+            if (null == artifacts) {
+                artifacts = JavaArchiveAssembler.this.getArtifacts().stream()
+                    .map(Artifact::asImmutable)
+                    .collect(toSet());
+            }
+            return artifacts;
         }
 
         @Override

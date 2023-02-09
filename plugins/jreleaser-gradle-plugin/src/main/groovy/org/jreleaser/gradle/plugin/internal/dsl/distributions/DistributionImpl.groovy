@@ -105,7 +105,7 @@ class DistributionImpl implements Distribution {
     final SpecPackagerImpl spec
     final WingetPackagerImpl winget
 
-    final NamedDomainObjectContainer<ArtifactImpl> artifacts
+    private final NamedDomainObjectContainer<ArtifactImpl> artifacts
 
     @Inject
     DistributionImpl(ObjectFactory objects) {

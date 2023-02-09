@@ -26,6 +26,7 @@ import org.jreleaser.model.internal.common.Glob;
 import org.jreleaser.model.spi.assemble.AssemblerProcessingException;
 import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.util.FileUtils;
+import org.jreleaser.util.PlatformUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -65,6 +66,7 @@ public class JavaArchiveAssemblerProcessor extends AbstractAssemblerProcessor<or
 
         // copy files
         context.getLogger().debug(RB.$("assembler.copy.files"), context.relativizeToBasedir(archiveDirectory));
+        copyArtifacts(context, archiveDirectory, PlatformUtils.getCurrentFull(), false);
         copyFiles(context, archiveDirectory);
         copyFileSets(context, archiveDirectory);
 

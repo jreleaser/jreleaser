@@ -66,8 +66,9 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
     private Boolean copyJars;
 
     private final org.jreleaser.model.api.assemble.JlinkAssembler immutable = new org.jreleaser.model.api.assemble.JlinkAssembler() {
-        private static final long serialVersionUID = -8993180763040901890L;
+        private static final long serialVersionUID = 7908712047682054832L;
 
+        private Set<? extends org.jreleaser.model.api.common.Artifact> artifacts;
         private List<? extends org.jreleaser.model.api.common.FileSet> fileSets;
         private Set<? extends org.jreleaser.model.api.common.Artifact> outputs;
         private List<? extends org.jreleaser.model.api.common.Glob> jars;
@@ -157,6 +158,16 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
                     .collect(toList());
             }
             return jars;
+        }
+
+        @Override
+        public Set<? extends org.jreleaser.model.api.common.Artifact> getArtifacts() {
+            if (null == artifacts) {
+                artifacts = JlinkAssembler.this.getArtifacts().stream()
+                    .map(Artifact::asImmutable)
+                    .collect(toSet());
+            }
+            return artifacts;
         }
 
         @Override

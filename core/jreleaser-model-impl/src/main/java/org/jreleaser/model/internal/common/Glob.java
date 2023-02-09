@@ -150,8 +150,8 @@ public final class Glob extends AbstractModelObject<Glob> implements Domain, Ext
         Map<String, Object> props = new LinkedHashMap<>();
         props.put("pattern", pattern);
         props.put("platform", platform);
-        props.put("extraProperties", getResolvedExtraProperties());
         props.put("directory", directory);
+        props.put("extraProperties", getResolvedExtraProperties());
         return props;
     }
 

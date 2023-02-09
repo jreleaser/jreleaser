@@ -23,6 +23,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.jreleaser.gradle.plugin.dsl.common.Activatable
+import org.jreleaser.gradle.plugin.dsl.common.Artifact
 import org.jreleaser.gradle.plugin.dsl.common.ExtraProperties
 import org.jreleaser.gradle.plugin.dsl.common.FileSet
 import org.jreleaser.gradle.plugin.dsl.common.Glob
@@ -52,11 +53,15 @@ interface Assembler extends Activatable, ExtraProperties {
 
     void setStereotype(String str)
 
+    void artifact(Action<? super Artifact> action)
+
     void files(Action<? super Glob> action)
 
     void fileSet(Action<? super FileSet> action)
 
     void platform(Action<? super Platform> action)
+
+    void artifact(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
 
     void files(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Glob) Closure<Void> action)
 

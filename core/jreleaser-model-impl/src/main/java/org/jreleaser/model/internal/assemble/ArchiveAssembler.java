@@ -54,8 +54,9 @@ public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, 
     private Distribution.DistributionType distributionType;
 
     private final org.jreleaser.model.api.assemble.ArchiveAssembler immutable = new org.jreleaser.model.api.assemble.ArchiveAssembler() {
-        private static final long serialVersionUID = -5132972839376360067L;
+        private static final long serialVersionUID = -2573584273590288536L;
 
+        private Set<? extends org.jreleaser.model.api.common.Artifact> artifacts;
         private List<? extends org.jreleaser.model.api.common.FileSet> fileSets;
         private List<? extends org.jreleaser.model.api.common.Glob> files;
         private Set<? extends org.jreleaser.model.api.common.Artifact> outputs;
@@ -113,6 +114,16 @@ public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, 
         @Override
         public Set<String> getSkipTemplates() {
             return unmodifiableSet(ArchiveAssembler.this.getSkipTemplates());
+        }
+
+        @Override
+        public Set<? extends org.jreleaser.model.api.common.Artifact> getArtifacts() {
+            if (null == artifacts) {
+                artifacts = ArchiveAssembler.this.getArtifacts().stream()
+                    .map(Artifact::asImmutable)
+                    .collect(toSet());
+            }
+            return artifacts;
         }
 
         @Override

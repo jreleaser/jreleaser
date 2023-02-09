@@ -22,8 +22,10 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Constants;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.Assembler;
+import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.FileSet;
 import org.jreleaser.model.internal.common.Glob;
+import org.jreleaser.model.internal.util.Artifacts;
 import org.jreleaser.model.spi.assemble.AssemblerProcessingException;
 import org.jreleaser.model.spi.assemble.AssemblerProcessor;
 import org.jreleaser.mustache.TemplateContext;
@@ -32,11 +34,13 @@ import org.jreleaser.sdk.command.CommandException;
 import org.jreleaser.sdk.command.CommandExecutor;
 import org.jreleaser.templates.TemplateResource;
 import org.jreleaser.util.FileUtils;
+import org.jreleaser.util.PlatformUtils;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -251,7 +255,33 @@ public abstract class AbstractAssemblerProcessor<A extends org.jreleaser.model.a
         return targetDirectory.resolve(fileName);
     }
 
-    protected Set<Path> copyFiles(JReleaserContext context, Path destination) throws AssemblerProcessingException {
+    protected void copyArtifacts(JReleaserContext context, Path destination, String platformConstraint, boolean filterByPlatform) throws AssemblerProcessingException {
+        try {
+            Files.createDirectories(destination);
+
+            for (Artifact artifact : assembler.getArtifacts()) {
+                Path incoming = artifact.getResolvedPath(context, assembler);
+                if (filterByPlatform && !PlatformUtils.isCompatible(platformConstraint, artifact.getPlatform())) {
+                    context.getLogger().debug(RB.$("assembler.artifact.filter"), incoming.getFileName());
+                    continue;
+                }
+                Path outgoing = incoming.getFileName();
+
+                if (isNotBlank(artifact.getTransform())) {
+                    outgoing = Paths.get(Artifacts.resolveForArtifact(artifact.getTransform(), context, artifact, assembler));
+                }
+                outgoing = destination.resolve(outgoing);
+                Files.createDirectories(outgoing.getParent());
+
+                context.getLogger().debug(RB.$("assembler.copying"), incoming.getFileName());
+                Files.copy(incoming, outgoing, REPLACE_EXISTING);
+            }
+        } catch (IOException e) {
+            throw new AssemblerProcessingException(RB.$("ERROR_assembler_copying_files"), e);
+        }
+    }
+
+    protected void copyFiles(JReleaserContext context, Path destination) throws AssemblerProcessingException {
         Set<Path> paths = new LinkedHashSet<>();
 
         // resolve all first
@@ -271,8 +301,6 @@ public abstract class AbstractAssemblerProcessor<A extends org.jreleaser.model.a
         } catch (IOException e) {
             throw new AssemblerProcessingException(RB.$("ERROR_assembler_copying_files"), e);
         }
-
-        return paths;
     }
 
     protected void copyFileSets(JReleaserContext context, Path destination) throws AssemblerProcessingException {

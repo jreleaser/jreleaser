@@ -239,6 +239,7 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
                 Path candidateBinary = imageDirectory.resolve(BIN_DIRECTORY).resolve(fileName);
                 return !Files.exists(candidateBinary);
             });
+            copyArtifacts(context, imageDirectory, platform, true);
             copyFiles(context, imageDirectory);
             copyFileSets(context, imageDirectory);
 

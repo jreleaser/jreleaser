@@ -78,6 +78,14 @@ public interface Assembler<A extends org.jreleaser.model.api.assemble.Assembler>
 
     void addSkipTemplate(String template);
 
+    Set<? extends Artifact> getArtifacts();
+
+    void setArtifacts(Set<Artifact> artifacts);
+
+    void addArtifacts(Set<Artifact> artifacts);
+
+    void addArtifact(Artifact artifact);
+
     List<FileSet> getFileSets();
 
     void setFileSets(List<FileSet> fileSets);

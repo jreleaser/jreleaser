@@ -19,7 +19,6 @@ package org.jreleaser.gradle.plugin.dsl.assemble
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty

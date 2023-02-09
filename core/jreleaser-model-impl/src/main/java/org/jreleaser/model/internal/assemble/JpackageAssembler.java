@@ -68,8 +68,9 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
     private Boolean verbose;
 
     private final org.jreleaser.model.api.assemble.JpackageAssembler immutable = new org.jreleaser.model.api.assemble.JpackageAssembler() {
-        private static final long serialVersionUID = 3228187730950683421L;
+        private static final long serialVersionUID = -5355530264697452901L;
 
+        private Set<? extends org.jreleaser.model.api.common.Artifact> artifacts;
         private Set<? extends org.jreleaser.model.api.common.Artifact> runtimeImages;
         private Set<? extends org.jreleaser.model.api.assemble.JpackageAssembler.PlatformPackager> platformPackagers;
         private List<? extends org.jreleaser.model.api.common.Glob> jars;
@@ -172,6 +173,16 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
                     .collect(toList());
             }
             return jars;
+        }
+
+        @Override
+        public Set<? extends org.jreleaser.model.api.common.Artifact> getArtifacts() {
+            if (null == artifacts) {
+                artifacts = JpackageAssembler.this.getArtifacts().stream()
+                    .map(Artifact::asImmutable)
+                    .collect(toSet());
+            }
+            return artifacts;
         }
 
         @Override

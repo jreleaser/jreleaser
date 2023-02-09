@@ -80,6 +80,7 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
 
         // copy files to inputs
         copyTemplates(context, props, filesDirectory);
+        copyArtifacts(context, filesDirectory, platform, true);
         copyFiles(context, filesDirectory);
         copyFileSets(context, filesDirectory);
 

@@ -198,6 +198,7 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<or
                 context.getBasedir(),
                 distDirectory, path -> path.getFileName().startsWith(LICENSE));
             copyTemplates(context, props, distDirectory);
+            copyArtifacts(context, distDirectory, platform, true);
             copyFiles(context, distDirectory);
             copyFileSets(context, distDirectory);
 

@@ -44,13 +44,14 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.2.0
  */
 public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A extends org.jreleaser.model.api.assemble.Assembler> extends AbstractActivatable<S> implements Assembler<A> {
-    private static final long serialVersionUID = -9097868759703679090L;
+    private static final long serialVersionUID = 2073602358432833033L;
 
     @JsonIgnore
     private final Set<Artifact> outputs = new LinkedHashSet<>();
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
-    private final List<FileSet> fileSets = new ArrayList<>();
+    private final Set<Artifact> artifacts = new LinkedHashSet<>();
     private final List<Glob> files = new ArrayList<>();
+    private final List<FileSet> fileSets = new ArrayList<>();
     private final Platform platform = new Platform();
     private final Set<String> skipTemplates = new LinkedHashSet<>();
     @JsonIgnore
@@ -76,6 +77,7 @@ public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A ext
         this.templateDirectory = merge(this.templateDirectory, source.getTemplateDirectory());
         setSkipTemplates(merge(this.skipTemplates, source.getSkipTemplates()));
         setOutputs(merge(this.outputs, source.getOutputs()));
+        setArtifacts(merge(this.artifacts, source.getArtifacts()));
         setFileSets(merge(this.fileSets, source.getFileSets()));
         setFiles(merge(this.files, source.getFiles()));
         setExtraProperties(merge(this.extraProperties, source.getExtraProperties()));
@@ -213,6 +215,29 @@ public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A ext
     }
 
     @Override
+    public Set<Artifact> getArtifacts() {
+        return Artifact.sortArtifacts(artifacts);
+    }
+
+    @Override
+    public void setArtifacts(Set<Artifact> artifacts) {
+        this.artifacts.clear();
+        this.artifacts.addAll(artifacts);
+    }
+
+    @Override
+    public void addArtifacts(Set<Artifact> artifacts) {
+        this.artifacts.addAll(artifacts);
+    }
+
+    @Override
+    public void addArtifact(Artifact artifact) {
+        if (null != artifact) {
+            this.artifacts.add(artifact);
+        }
+    }
+
+    @Override
     public List<Glob> getFiles() {
         return files;
     }
@@ -271,13 +296,19 @@ public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A ext
         asMap(full, props);
         props.put("templateDirectory", templateDirectory);
         props.put("skipTemplates", skipTemplates);
+        Map<String, Map<String, Object>> mappedArtifacts = new LinkedHashMap<>();
+        int i = 0;
+        for (Artifact artifact : artifacts) {
+            mappedArtifacts.put("artifact " + (i++), artifact.asMap(full));
+        }
+        props.put("artifacts", mappedArtifacts);
         Map<String, Map<String, Object>> mappedFiles = new LinkedHashMap<>();
-        for (int i = 0; i < files.size(); i++) {
-            mappedFiles.put("glob " + i, files.get(i).asMap(full));
+        for (i = 0; i < files.size(); i++) {
+            mappedFiles.put("file " + i, files.get(i).asMap(full));
         }
         props.put("files", mappedFiles);
         Map<String, Map<String, Object>> mappedFileSets = new LinkedHashMap<>();
-        for (int i = 0; i < fileSets.size(); i++) {
+        for (i = 0; i < fileSets.size(); i++) {
             mappedFileSets.put("fileSet " + i, fileSets.get(i).asMap(full));
         }
         props.put("fileSets", mappedFileSets);

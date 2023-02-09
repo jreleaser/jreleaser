@@ -69,8 +69,9 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
     private Archive.Format archiveFormat;
 
     private final org.jreleaser.model.api.assemble.NativeImageAssembler immutable = new org.jreleaser.model.api.assemble.NativeImageAssembler() {
-        private static final long serialVersionUID = 3086045287131936768L;
+        private static final long serialVersionUID = 5457398509414121447L;
 
+        private Set<? extends org.jreleaser.model.api.common.Artifact> artifacts;
         private Set<? extends org.jreleaser.model.api.common.Artifact> graalJdks;
         private List<? extends org.jreleaser.model.api.common.FileSet> fileSets;
         private Set<? extends org.jreleaser.model.api.common.Artifact> outputs;
@@ -170,6 +171,16 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
                     .collect(toList());
             }
             return jars;
+        }
+
+        @Override
+        public Set<? extends org.jreleaser.model.api.common.Artifact> getArtifacts() {
+            if (null == artifacts) {
+                artifacts = NativeImageAssembler.this.getArtifacts().stream()
+                    .map(Artifact::asImmutable)
+                    .collect(toSet());
+            }
+            return artifacts;
         }
 
         @Override

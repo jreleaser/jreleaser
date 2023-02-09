@@ -29,9 +29,11 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.assemble.Assembler
+import org.jreleaser.gradle.plugin.dsl.common.Artifact
 import org.jreleaser.gradle.plugin.dsl.common.FileSet
 import org.jreleaser.gradle.plugin.dsl.common.Glob
 import org.jreleaser.gradle.plugin.dsl.platform.Platform
+import org.jreleaser.gradle.plugin.internal.dsl.common.ArtifactImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.FileSetImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.GlobImpl
 import org.jreleaser.model.Active
@@ -57,6 +59,7 @@ abstract class AbstractAssembler implements Assembler {
     final SetProperty<String> skipTemplates
     private final NamedDomainObjectContainer<FileSetImpl> fileSets
     private final NamedDomainObjectContainer<GlobImpl> files
+    private final NamedDomainObjectContainer<ArtifactImpl> artifacts
 
     @Inject
     AbstractAssembler(ObjectFactory objects) {
@@ -66,6 +69,15 @@ abstract class AbstractAssembler implements Assembler {
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
         templateDirectory = objects.directoryProperty().convention(Providers.notDefined())
         skipTemplates = objects.setProperty(String).convention(Providers.<Set<String>> notDefined())
+
+        artifacts = objects.domainObjectContainer(ArtifactImpl, new NamedDomainObjectFactory<ArtifactImpl>() {
+            @Override
+            ArtifactImpl create(String name) {
+                ArtifactImpl artifact = objects.newInstance(ArtifactImpl, objects)
+                artifact.name = name
+                artifact
+            }
+        })
 
         files = objects.domainObjectContainer(GlobImpl, new NamedDomainObjectFactory<GlobImpl>() {
             @Override
@@ -93,6 +105,7 @@ abstract class AbstractAssembler implements Assembler {
             extraProperties.present ||
             templateDirectory.present ||
             skipTemplates.present ||
+            !artifacts.isEmpty() ||
             !fileSets.isEmpty() ||
             !files.isEmpty()
     }
@@ -123,6 +136,12 @@ abstract class AbstractAssembler implements Assembler {
         }
     }
 
+
+    @Override
+    void artifact(Action<? super Artifact> action) {
+        action.execute(artifacts.maybeCreate("artifact-${artifacts.size()}".toString()))
+    }
+
     @Override
     void files(Action<? super Glob> action) {
         action.execute(files.maybeCreate("files-${files.size()}".toString()))
@@ -136,6 +155,11 @@ abstract class AbstractAssembler implements Assembler {
     @Override
     void platform(Action<? super Platform> action) {
         action.execute(platform)
+    }
+
+    @Override
+    void artifact(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
+        ConfigureUtil.configure(action, artifacts.maybeCreate("artifact-${artifacts.size()}".toString()))
     }
 
     @Override
@@ -158,6 +182,9 @@ abstract class AbstractAssembler implements Assembler {
         if (active.present) assembler.active = active.get()
         if (stereotype.present) assembler.stereotype = stereotype.get()
         if (extraProperties.present) assembler.extraProperties.putAll(extraProperties.get())
+        for (ArtifactImpl artifact : artifacts) {
+            assembler.addArtifact(artifact.toModel())
+        }
         for (GlobImpl glob : files) {
             assembler.addFile(glob.toModel())
         }
