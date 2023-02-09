@@ -73,6 +73,7 @@ import static org.jreleaser.util.StringUtils.uncapitalize;
  * @since 0.1.0
  */
 public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.release.GithubReleaser> {
+    private static final String NOREPLY_GITHUB_COM_EMAIL = "noreply@github.com";
 
     private final org.jreleaser.model.internal.release.GithubReleaser github;
 
@@ -272,6 +273,8 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
 
     @Override
     public Optional<User> findUser(String email, String name) {
+        if (NOREPLY_GITHUB_COM_EMAIL.equals(email)) return Optional.empty();
+
         org.jreleaser.model.internal.release.GithubReleaser github = context.getModel().getRelease().getGithub();
 
         try {

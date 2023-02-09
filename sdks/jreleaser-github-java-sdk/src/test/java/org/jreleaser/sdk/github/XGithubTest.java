@@ -86,7 +86,6 @@ class XGithubTest {
     @Test
     @DisplayName("Github user found with Email")
     void userFoundByEmail() throws IOException {
-
         XGithub github = new XGithub(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG),
             api.baseUrl(),
             "GH_TOKEN",
