@@ -74,6 +74,8 @@ import static org.jreleaser.util.StringUtils.uncapitalize;
  * @since 0.1.0
  */
 public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.release.GithubReleaser> {
+    private static final long serialVersionUID = 1560414694353263225L;
+
     private static final String NOREPLY_GITHUB_COM_EMAIL = "noreply@github.com";
 
     private final org.jreleaser.model.internal.release.GithubReleaser github;

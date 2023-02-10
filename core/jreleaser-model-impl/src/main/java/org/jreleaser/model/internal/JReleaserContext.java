@@ -115,9 +115,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public class JReleaserContext implements Serializable {
-    private static final long serialVersionUID = -6182757355756729953L;
-
+public class JReleaserContext {
     private final JReleaserLogger logger;
     private final JReleaserModel model;
     private final Path basedir;
@@ -128,6 +126,7 @@ public class JReleaserContext implements Serializable {
     private final org.jreleaser.model.api.JReleaserContext.Mode mode;
     private final Configurer configurer;
     private final Errors errors = new Errors();
+    private final Changelog changelog = new Changelog();
 
     private final List<String> selectedPlatforms = new ArrayList<>();
     private final List<String> rejectedPlatforms = new ArrayList<>();
@@ -155,12 +154,11 @@ public class JReleaserContext implements Serializable {
     private final List<String> excludedUploaderNames = new ArrayList<>();
     private final List<WorkflowListener> workflowListeners = new ArrayList<>();
 
-    private Changelog changelog = new Changelog();
     private org.jreleaser.model.spi.release.Releaser<?> releaser;
     private JReleaserCommand command;
 
     private final org.jreleaser.model.api.JReleaserContext immutable = new org.jreleaser.model.api.JReleaserContext() {
-        //private static final long serialVersionUID = -3617750863286236964L;
+        private static final long serialVersionUID = -3617750863286236964L;
 
         @Override
         public Path relativize(Path basedir, Path other) {

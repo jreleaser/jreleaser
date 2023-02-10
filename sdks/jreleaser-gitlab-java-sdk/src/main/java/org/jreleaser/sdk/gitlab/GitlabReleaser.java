@@ -73,6 +73,8 @@ import static org.jreleaser.util.StringUtils.uncapitalize;
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.release.GitlabReleaser> {
+    private static final long serialVersionUID = 1079387159817891884L;
+
     private final org.jreleaser.model.internal.release.GitlabReleaser gitlab;
 
     public GitlabReleaser(JReleaserContext context, Set<Asset> assets) {

@@ -18,6 +18,7 @@
 package org.jreleaser.model.spi.release;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,7 +26,7 @@ import java.util.Optional;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface Releaser<A extends org.jreleaser.model.api.release.Releaser> {
+public interface Releaser<A extends org.jreleaser.model.api.release.Releaser> extends Serializable {
     void release() throws ReleaseException;
 
     Repository maybeCreateRepository(String owner, String repo, String password) throws IOException;

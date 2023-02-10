@@ -61,6 +61,8 @@ import static org.jreleaser.util.StringUtils.uncapitalize;
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class GiteaReleaser extends AbstractReleaser<org.jreleaser.model.api.release.GiteaReleaser> {
+    private static final long serialVersionUID = 3707425922206745692L;
+
     private final org.jreleaser.model.internal.release.GiteaReleaser gitea;
 
     public GiteaReleaser(JReleaserContext context, Set<Asset> assets) {

@@ -62,6 +62,8 @@ import static org.jreleaser.util.StringUtils.uncapitalize;
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.release.CodebergReleaser> {
+    private static final long serialVersionUID = 2353604736025160554L;
+
     private final org.jreleaser.model.internal.release.CodebergReleaser codeberg;
 
     public CodebergReleaser(JReleaserContext context, Set<Asset> assets) {

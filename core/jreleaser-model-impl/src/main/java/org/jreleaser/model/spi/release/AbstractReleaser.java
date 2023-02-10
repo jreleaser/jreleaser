@@ -29,6 +29,8 @@ import java.util.TreeSet;
  * @since 0.7.0
  */
 public abstract class AbstractReleaser<A extends org.jreleaser.model.api.release.Releaser> implements Releaser<A> {
+    private static final long serialVersionUID = 362449254352903201L;
+
     protected final JReleaserContext context;
     protected final Set<Asset> assets = new TreeSet<>();
 

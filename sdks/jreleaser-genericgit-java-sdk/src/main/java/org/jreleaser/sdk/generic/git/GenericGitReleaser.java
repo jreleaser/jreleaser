@@ -41,6 +41,8 @@ import java.util.Set;
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class GenericGitReleaser extends AbstractReleaser<org.jreleaser.model.api.release.GenericGitReleaser> {
+    private static final long serialVersionUID = -5681665139072711463L;
+
     public GenericGitReleaser(JReleaserContext context, Set<Asset> assets) {
         super(context, assets);
     }
