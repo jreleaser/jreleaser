@@ -681,6 +681,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
             map.put("issueTrackerUrl", issueTrackerUrl);
         }
         map.put("tagName", tagName);
+        map.put("previousTagName", previousTagName);
         if (releaseSupported) {
             map.put("releaseName", releaseName);
         }

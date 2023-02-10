@@ -196,7 +196,7 @@ public class ChangelogGenerator {
             .findFirst();
 
         Optional<Ref> previousTag = Optional.empty();
-        String previousTagName = releaser.getPreviousTagName();
+        String previousTagName = releaser.getResolvedPreviousTagName(context.getModel());
         if (isNotBlank(previousTagName)) {
             context.getLogger().debug(RB.$("changelog.generator.lookup.previous.tag"), previousTagName);
             previousTag = tags.stream()
