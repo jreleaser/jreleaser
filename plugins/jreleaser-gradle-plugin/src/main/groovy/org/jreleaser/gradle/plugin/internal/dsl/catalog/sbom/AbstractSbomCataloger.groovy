@@ -85,7 +85,7 @@ abstract class AbstractSbomCataloger implements SbomCataloger {
     }
 
     @CompileStatic
-    class PackImpl implements Pack {
+    static class PackImpl implements Pack {
         final Property<Boolean> enabled
         final Property<String> name
 

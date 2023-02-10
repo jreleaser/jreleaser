@@ -136,7 +136,6 @@ abstract class AbstractAssembler implements Assembler {
         }
     }
 
-
     @Override
     void artifact(Action<? super Artifact> action) {
         action.execute(artifacts.maybeCreate("artifact-${artifacts.size()}".toString()))

@@ -261,14 +261,17 @@ public abstract class AbstractAssemblerProcessor<A extends org.jreleaser.model.a
 
             for (Artifact artifact : assembler.getArtifacts()) {
                 Path incoming = artifact.getResolvedPath(context, assembler);
-                if (filterByPlatform && !PlatformUtils.isCompatible(platformConstraint, artifact.getPlatform())) {
+                String platform = artifact.getPlatform();
+                if (filterByPlatform && isNotBlank(platform) && !PlatformUtils.isCompatible(platformConstraint, platform)) {
                     context.getLogger().debug(RB.$("assembler.artifact.filter"), incoming.getFileName());
                     continue;
                 }
                 Path outgoing = incoming.getFileName();
 
-                if (isNotBlank(artifact.getTransform())) {
-                    outgoing = Paths.get(Artifacts.resolveForArtifact(artifact.getTransform(), context, artifact, assembler));
+                String transform = artifact.getTransform();
+                if (isNotBlank(transform)) {
+                    if (transform.startsWith("/")) transform = transform.substring(1);
+                    outgoing = Paths.get(Artifacts.resolveForArtifact(transform, context, artifact, assembler));
                 }
                 outgoing = destination.resolve(outgoing);
                 Files.createDirectories(outgoing.getParent());
