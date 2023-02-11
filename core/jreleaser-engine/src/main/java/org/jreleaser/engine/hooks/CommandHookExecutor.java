@@ -144,6 +144,7 @@ public final class CommandHookExecutor {
     private boolean filterByPlatform(CommandHook hook) {
         if (hook.getPlatforms().isEmpty()) return true;
 
+        boolean success = true;
         for (String platform : hook.getPlatforms()) {
             boolean exclude = false;
             if (platform.startsWith("!")) {
@@ -151,10 +152,10 @@ public final class CommandHookExecutor {
                 platform = platform.substring(1);
             }
 
-            return exclude != PlatformUtils.isCompatible(PlatformUtils.getCurrentFull(), platform);
+            success &= exclude != PlatformUtils.isCompatible(PlatformUtils.getCurrentFull(), platform);
         }
 
-        return false;
+        return success;
     }
 
     private void executeCommand(Path directory, Command command) throws CommandException {
