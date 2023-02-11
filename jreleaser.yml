@@ -106,6 +106,7 @@ release:
         contributors:
           - 'GitHub'
           - 'allcontributors'
+          - 'dependabot'
       replacers:
         - search: 'i18n: '
         - search: 'deps: '
