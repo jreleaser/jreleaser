@@ -1042,7 +1042,7 @@
     "allPublicMethods": true
   },
   {
-    "name": "org.kohsuke.github.GHRepository$CollaboratorAffilition",
+    "name": "org.kohsuke.github.GHRepository$CollaboratorAffiliation",
     "allDeclaredFields": true,
     "allPublicConstructors": true,
     "allPublicMethods": true
@@ -1142,7 +1142,7 @@
     "name": "org.slf4j.impl.StaticLoggerBinder"
   },
   {
-    "name": " org.yaml.snakeyaml.parser.ParserImpl",
+    "name": "org.yaml.snakeyaml.parser.ParserImpl",
     "allDeclaredFields": true,
     "allPublicConstructors": true,
     "allPublicMethods": true
