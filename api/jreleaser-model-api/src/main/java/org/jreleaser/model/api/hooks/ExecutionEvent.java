@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.api.hooks;
 
+import java.io.Serializable;
 import java.util.Locale;
 
 import static java.util.Objects.requireNonNull;
@@ -27,7 +28,9 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @author Andres Almiray
  * @since 1.2.0
  */
-public class ExecutionEvent {
+public class ExecutionEvent implements Serializable {
+    private static final long serialVersionUID = 2808775834615403354L;
+
     private final Type type;
     private final String name;
     private final Throwable failure;
@@ -40,6 +43,11 @@ public class ExecutionEvent {
         this.type = requireNonNull(type, "'type' must not be null");
         this.name = requireNonBlank(name, "'name' must not be blank");
         this.failure = failure;
+    }
+
+    @Override
+    public String toString() {
+        return type + ":" + name;
     }
 
     public Type getType() {

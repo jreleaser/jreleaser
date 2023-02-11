@@ -23,6 +23,7 @@ import org.jreleaser.model.internal.extensions.Extension;
 import org.jreleaser.util.Errors;
 
 import java.nio.file.Files;
+import java.util.Locale;
 import java.util.Map;
 
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -53,6 +54,11 @@ public final class ExtensionsValidator {
     private static void validateExtension(JReleaserContext context, Extension extension, Errors errors) {
         context.getLogger().debug("extension.{}", extension.getName());
 
+        String value = context.getModel().getEnvironment()
+            .resolve("extension." + extension.getName() + ".enabled", "");
+        if (isNotBlank(value)) {
+            extension.setEnabled(Boolean.parseBoolean(value.toLowerCase(Locale.ENGLISH)));
+        }
         if (!extension.isEnabledSet()) {
             extension.setEnabled(true);
         }
