@@ -122,6 +122,14 @@ signing:
   active: ALWAYS
   armored: true
 
+catalog:
+  sbom:
+    syft:
+      active: ALWAYS
+      files: false
+      pack:
+        enabled: true
+
 deploy:
   maven:
     nexus2:
