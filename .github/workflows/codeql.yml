@@ -40,6 +40,7 @@ jobs:
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: ${{ env.JAVA_DISTRO }}
+          cache: 'gradle'
 
       - name: Autobuild
         uses: github/codeql-action/autobuild@v2
