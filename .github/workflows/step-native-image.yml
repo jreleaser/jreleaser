@@ -26,6 +26,11 @@ on:
 permissions:
   contents: read
 
+env:
+  CI: true
+  GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
+  JRELEASER_OCI_COMPARTMENTID: ${{ secrets.JRELEASER_OCI_COMPARTMENTID }}
+
 jobs:
   native-image:
     name: 'NativeImage on ${{ matrix.os }}'
@@ -39,6 +44,10 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: 'main'
+
+      - name: Decrypt secrets
+        shell: bash
+        run: sh .github/scripts/decrypt-secrets.sh
 
       - name: Download artifacts
         uses: actions/download-artifact@v3
@@ -96,6 +105,10 @@ jobs:
           path: |
             out/jreleaser/trace.log
             out/jreleaser/output.properties
+
+      - name: Stop Gradle daemon
+        shell: bash
+        run: ./gradlew -stop
 
       - name: Upload native-image
         uses: actions/upload-artifact@v3

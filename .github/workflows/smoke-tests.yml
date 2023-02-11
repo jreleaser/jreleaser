@@ -71,7 +71,7 @@ jobs:
 
       - name: Build
         shell: bash
-        run: ./gradlew -Prelease=true -PreproducibleBuild=true build publishToMavenLocal -S
+        run: ./gradlew -PreproducibleBuild=true build publishToMavenLocal -S
 
       - name: Checkout smoketests repository
         uses: actions/checkout@v3
@@ -84,8 +84,8 @@ jobs:
       - name: Cache Maven packages
         uses: actions/cache@v3
         with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          path: ~/.m2/repository
+          key: setup-java-${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
       - name: Prepare
@@ -210,12 +210,13 @@ jobs:
           name: jacoco
           path: smoketests-jreleaser/*.exec
 
-      - name: Cleanup cache
+      - name: Cleanup
         if: always()
         shell: bash
         run: |
           rm -rf ~/.m2/repository/org/jreleaser
           rm -rf ~/.gradle/caches/modules-2/files-2.1/org.jreleaser
+          ./gradlew -stop
 
   build-tool:
     needs: [ precheck ]
@@ -249,7 +250,7 @@ jobs:
 
       - name: Build
         shell: bash
-        run: ./gradlew  -Prelease=true -PreproducibleBuild=true build publishToMavenLocal -S
+        run: ./gradlew -PreproducibleBuild=true build publishToMavenLocal -S
 
       - name: Checkout smoketests repository
         uses: actions/checkout@v3
@@ -262,8 +263,8 @@ jobs:
       - name: Cache Maven packages
         uses: actions/cache@v3
         with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          path: ~/.m2/repository
+          key: setup-java-${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
       - name: Prepare
@@ -388,12 +389,13 @@ jobs:
           name: jacoco
           path: smoketests-jreleaser/*.exec
 
-      - name: Cleanup cache
+      - name: Cleanup
         if: always()
         shell: bash
         run: |
           rm -rf ~/.m2/repository/org/jreleaser
           rm -rf ~/.gradle/caches/modules-2/files-2.1/org.jreleaser
+          ./gradlew -stop
 
   build-ant:
     needs: [ precheck ]
@@ -427,7 +429,7 @@ jobs:
 
       - name: Build
         shell: bash
-        run: ./gradlew -Prelease=true -PreproducibleBuild=true build publishToMavenLocal -S
+        run: ./gradlew -PreproducibleBuild=true build publishToMavenLocal -S
 
       - name: Checkout smoketests repository
         uses: actions/checkout@v3
@@ -440,8 +442,8 @@ jobs:
       - name: Cache Maven packages
         uses: actions/cache@v3
         with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          path: ~/.m2/repository
+          key: setup-java-${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
       - name: Prepare
@@ -564,12 +566,13 @@ jobs:
           name: jacoco
           path: smoketests-jreleaser/*.exec
 
-      - name: Cleanup cache
+      - name: Cleanup
         if: always()
         shell: bash
         run: |
           rm -rf ~/.m2/repository/org/jreleaser
           rm -rf ~/.gradle/caches/modules-2/files-2.1/org.jreleaser
+          ./gradlew -stop
 
   build-gradle:
     needs: [ precheck ]
@@ -603,7 +606,7 @@ jobs:
 
       - name: Build
         shell: bash
-        run: ./gradlew -Prelease=true -PreproducibleBuild=true build publishToMavenLocal -S
+        run: ./gradlew -PreproducibleBuild=true build publishToMavenLocal -S
 
       - name: Checkout smoketests repository
         uses: actions/checkout@v3
@@ -616,8 +619,8 @@ jobs:
       - name: Cache Maven packages
         uses: actions/cache@v3
         with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          path: ~/.m2/repository
+          key: setup-java-${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
       - name: Prepare
@@ -752,12 +755,13 @@ jobs:
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
 
-      - name: Cleanup cache
+      - name: Cleanup
         if: always()
         shell: bash
         run: |
           rm -rf ~/.m2/repository/org/jreleaser
           rm -rf ~/.gradle/caches/modules-2/files-2.1/org.jreleaser
+          ./gradlew -stop
 
   build-maven:
     needs: [ precheck ]
@@ -791,7 +795,7 @@ jobs:
 
       - name: Build
         shell: bash
-        run: ./gradlew -Prelease=true -PreproducibleBuild=true build publishToMavenLocal -S
+        run: ./gradlew -PreproducibleBuild=true build publishToMavenLocal -S
 
       - name: Checkout smoketests repository
         uses: actions/checkout@v3
@@ -804,8 +808,8 @@ jobs:
       - name: Cache Maven packages
         uses: actions/cache@v3
         with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          path: ~/.m2/repository
+          key: setup-java-${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
       - name: Prepare
@@ -929,12 +933,13 @@ jobs:
           name: jacoco
           path: smoketests-jreleaser/*.exec
 
-      - name: Cleanup cache
+      - name: Cleanup
         if: always()
         shell: bash
         run: |
           rm -rf ~/.m2/repository/org/jreleaser
           rm -rf ~/.gradle/caches/modules-2/files-2.1/org.jreleaser
+          ./gradlew -stop
 
   unit-tests:
     needs: [ precheck ]
@@ -976,6 +981,13 @@ jobs:
           retention-days: 1
           name: jacoco
           path: '*.exec'
+
+      - name: Cleanup
+        if: always()
+        shell: bash
+        run: |
+          rm -rf ~/.gradle/caches/build-cache-1
+          ./gradlew -stop
 
   coveralls:
     needs: [ build-cli, build-tool, build-ant, build-gradle, build-maven, unit-tests ]
@@ -1020,11 +1032,12 @@ jobs:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_TOKEN }}
         run: ./gradlew :coveralls
 
-      - name: Cleanup build-cache
+      - name: Cleanup
         if: always()
         shell: bash
         run: |
           rm -rf ~/.gradle/caches/build-cache-1
+          ./gradlew -stop
 
   codecov:
     needs: [ build-cli, build-tool, build-ant, build-gradle, build-maven, unit-tests ]
@@ -1074,11 +1087,12 @@ jobs:
           name: jreleaser-smoke-tests
           verbose: true
 
-      - name: Cleanup build-cache
+      - name: Cleanup
         if: always()
         shell: bash
         run: |
           rm -rf ~/.gradle/caches/build-cache-1
+          ./gradlew -stop
 
   sonar:
     needs: [ build-cli, build-tool, build-ant, build-gradle, build-maven, unit-tests ]
@@ -1122,8 +1136,9 @@ jobs:
         run: |
           ./gradlew sonarqube -Dsonar.login=${{ secrets.SONARCLOUD_TOKEN }} -PsonarEnabled=true
 
-      - name: Cleanup build-cache
+      - name: Cleanup
         if: always()
         shell: bash
         run: |
           rm -rf ~/.gradle/caches/build-cache-1
+          ./gradlew -stop
