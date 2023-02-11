@@ -562,30 +562,47 @@ public class JReleaserModel {
 
     private final class ReleaserDownloadUrl implements TemplateFunction {
         private static final String NAME = "f_release_download_url";
+        private static final String MARKDOWN = "md";
+        private static final String ASCIIDOC = "adoc";
+        private static final String HTML = "html";
 
         @Override
         public String apply(String input) {
-            String format = "md";
+            String format = MARKDOWN;
             String artifactFile = "";
+            String linkName = "";
             String[] parts = input.split(":");
             if (parts.length == 1) {
                 artifactFile = parts[0];
+                linkName = artifactFile;
             } else if (parts.length == 2) {
-                format = parts[0];
+                linkName = parts[0];
                 artifactFile = parts[1];
+            } else if (parts.length == 3) {
+                format = parts[0];
+                linkName = parts[1];
+                artifactFile = parts[2];
             } else {
                 throw new JReleaserException(RB.$("ERROR_invalid_function_input", input, NAME));
             }
 
+            switch (linkName) {
+                case MARKDOWN:
+                case ASCIIDOC:
+                case HTML:
+                    format = linkName;
+                    linkName = artifactFile;
+            }
+
             switch (format.toLowerCase(Locale.ENGLISH)) {
-                case "md":
-                    return ("[{{artifactFile}}](" + getRelease().getReleaser().getDownloadUrl() + ")")
+                case MARKDOWN:
+                    return ("["+linkName+"](" + getRelease().getReleaser().getDownloadUrl() + ")")
                         .replace("{{artifactFile}}", artifactFile);
-                case "adoc":
-                    return ("link:" + getRelease().getReleaser().getDownloadUrl() + "[{{artifactFile}}]")
+                case ASCIIDOC:
+                    return ("link:" + getRelease().getReleaser().getDownloadUrl() + "["+linkName+"]")
                         .replace("{{artifactFile}}", artifactFile);
-                case "html":
-                    return ("<a href=\"" + getRelease().getReleaser().getDownloadUrl() + "\">{{artifactFile}}</a>")
+                case HTML:
+                    return ("<a href=\"" + getRelease().getReleaser().getDownloadUrl() + "\">"+linkName+"</a>")
                         .replace("{{artifactFile}}", artifactFile);
                 default:
                     // noop
