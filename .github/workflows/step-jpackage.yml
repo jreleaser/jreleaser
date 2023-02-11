@@ -14,11 +14,6 @@ on:
         default: 'zulu'
         required: false
         type: string
-    secrets:
-      gpg-passphrase:
-        required: true
-      oci-compartment-id:
-        required: true
 
 permissions:
   contents: read
@@ -31,19 +26,11 @@ jobs:
       matrix:
         os: [ubuntu-latest, macOS-latest, windows-latest]
     runs-on: ${{ matrix.os }}
-    env:
-      CI: true
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
           ref: 'main'
-
-      - name: Decrypt secrets
-        shell: bash
-        run: sh .github/scripts/decrypt-secrets.sh
-        env:
-          GPG_PASSPHRASE: ${{ secrets.gpg-passphrase }}
 
       - name: Download artifacts
         uses: actions/download-artifact@v3
@@ -72,8 +59,6 @@ jobs:
       - name: Build
         shell: bash
         run: ./gradlew :jreleaser:copyJdksFromCache :jreleaser:setupJdks
-        env:
-          JRELEASER_OCI_COMPARTMENTID: ${{ secrets.oci-compartment-id }}
 
       - name: Jpackage
         uses: jreleaser/release-action@v1
