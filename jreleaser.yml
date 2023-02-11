@@ -126,7 +126,6 @@ catalog:
   sbom:
     syft:
       active: ALWAYS
-      files: false
       pack:
         enabled: true
 
@@ -435,5 +434,6 @@ files:
       extraProperties:
         skipChecksum: true
         skipSigning: true
+        skipSbom: true
     - path: plugins/jreleaser-ant-tasks/build/distributions/jreleaser-ant-tasks-{{projectVersion}}.zip
       transform: 'jreleaser-ant-tasks/jreleaser-ant-tasks-{{projectEffectiveVersion}}.zip'
