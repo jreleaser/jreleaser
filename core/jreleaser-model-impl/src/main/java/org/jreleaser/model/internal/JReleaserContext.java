@@ -27,6 +27,7 @@ import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.model.Signing;
 import org.jreleaser.model.api.JReleaserCommand;
+import org.jreleaser.model.api.JReleaserContext.Changelog;
 import org.jreleaser.model.api.announce.Announcer;
 import org.jreleaser.model.api.assemble.Assembler;
 import org.jreleaser.model.api.catalog.Cataloger;
@@ -56,7 +57,6 @@ import org.jreleaser.version.SemanticVersion;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.Serializable;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -76,9 +76,6 @@ import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.unmodifiableList;
-import static org.jreleaser.model.Constants.KEY_CHANGELOG;
-import static org.jreleaser.model.Constants.KEY_CHANGELOG_CHANGES;
-import static org.jreleaser.model.Constants.KEY_CHANGELOG_CONTRIBUTORS;
 import static org.jreleaser.model.Constants.KEY_COMMIT_FULL_HASH;
 import static org.jreleaser.model.Constants.KEY_COMMIT_SHORT_HASH;
 import static org.jreleaser.model.Constants.KEY_MILESTONE_NAME;
@@ -105,7 +102,6 @@ import static org.jreleaser.model.Constants.KEY_VERSION_PRERELEASE;
 import static org.jreleaser.model.Constants.KEY_VERSION_TAG;
 import static org.jreleaser.model.Constants.KEY_VERSION_WEEK;
 import static org.jreleaser.model.Constants.KEY_VERSION_YEAR;
-import static org.jreleaser.mustache.MustacheUtils.passThrough;
 import static org.jreleaser.util.CollectionUtils.safePut;
 import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -158,7 +154,7 @@ public class JReleaserContext {
     private JReleaserCommand command;
 
     private final org.jreleaser.model.api.JReleaserContext immutable = new org.jreleaser.model.api.JReleaserContext() {
-        private static final long serialVersionUID = -3617750863286236964L;
+        private static final long serialVersionUID = 4782005131002875174L;
 
         @Override
         public Path relativize(Path basedir, Path other) {
@@ -373,6 +369,11 @@ public class JReleaserContext {
         @Override
         public Keyring createKeyring() throws SigningException {
             return JReleaserContext.this.createKeyring();
+        }
+
+        @Override
+        public Changelog getChangelog() {
+            return JReleaserContext.this.changelog;
         }
     };
 
@@ -1188,44 +1189,6 @@ public class JReleaserContext {
         @Override
         public String toString() {
             return this.dsl;
-        }
-    }
-
-    public static class Changelog implements Serializable {
-        private static final long serialVersionUID = 6481720135300486220L;
-
-        private String resolvedChangelog;
-        private String formattedChanges;
-        private String formattedContributors;
-
-        public String getResolvedChangelog() {
-            return resolvedChangelog;
-        }
-
-        public void setResolvedChangelog(String resolvedChangelog) {
-            this.resolvedChangelog = resolvedChangelog;
-        }
-
-        public String getFormattedChanges() {
-            return formattedChanges;
-        }
-
-        public void setFormattedChanges(String formattedChanges) {
-            this.formattedChanges = formattedChanges;
-        }
-
-        public String getFormattedContributors() {
-            return formattedContributors;
-        }
-
-        public void setFormattedContributors(String formattedContributors) {
-            this.formattedContributors = formattedContributors;
-        }
-
-        public void apply(TemplateContext props) {
-            props.set(KEY_CHANGELOG, passThrough(resolvedChangelog));
-            props.set(KEY_CHANGELOG_CHANGES, passThrough(formattedChanges));
-            props.set(KEY_CHANGELOG_CONTRIBUTORS, passThrough(formattedContributors));
         }
     }
 

@@ -23,10 +23,6 @@ import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.internal.JReleaserContext;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @author Andres Almiray
@@ -43,22 +39,5 @@ public final class Changelog {
         } catch (IOException e) {
             throw new JReleaserException(RB.$("ERROR_unexpected_error_changelog"), e);
         }
-    }
-
-    public static String readChangelog(JReleaserContext context) {
-        Path changelogFile = context.getOutputDirectory()
-            .resolve("release")
-            .resolve("CHANGELOG.md");
-
-        if (Files.exists(changelogFile)) {
-            try {
-                return new String(Files.readAllBytes(changelogFile), UTF_8).trim();
-            } catch (IOException e) {
-                context.getLogger().warn(RB.$("ERROR_cannot_read_changelog"),
-                    context.relativizeToBasedir(changelogFile));
-            }
-        }
-
-        return "";
     }
 }

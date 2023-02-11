@@ -26,6 +26,11 @@ import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.List;
 
+import static org.jreleaser.model.Constants.KEY_CHANGELOG;
+import static org.jreleaser.model.Constants.KEY_CHANGELOG_CHANGES;
+import static org.jreleaser.model.Constants.KEY_CHANGELOG_CONTRIBUTORS;
+import static org.jreleaser.mustache.MustacheUtils.passThrough;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -124,6 +129,46 @@ public interface JReleaserContext extends Serializable {
     void nag(String version, String message);
 
     Keyring createKeyring() throws SigningException;
+
+    Changelog getChangelog();
+
+    class Changelog implements Serializable {
+        private static final long serialVersionUID = -7619174395858420344L;
+
+        private String resolvedChangelog;
+        private String formattedChanges;
+        private String formattedContributors;
+
+        public String getResolvedChangelog() {
+            return resolvedChangelog;
+        }
+
+        public void setResolvedChangelog(String resolvedChangelog) {
+            this.resolvedChangelog = resolvedChangelog;
+        }
+
+        public String getFormattedChanges() {
+            return formattedChanges;
+        }
+
+        public void setFormattedChanges(String formattedChanges) {
+            this.formattedChanges = formattedChanges;
+        }
+
+        public String getFormattedContributors() {
+            return formattedContributors;
+        }
+
+        public void setFormattedContributors(String formattedContributors) {
+            this.formattedContributors = formattedContributors;
+        }
+
+        public void apply(TemplateContext props) {
+            props.set(KEY_CHANGELOG, passThrough(resolvedChangelog));
+            props.set(KEY_CHANGELOG_CHANGES, passThrough(formattedChanges));
+            props.set(KEY_CHANGELOG_CONTRIBUTORS, passThrough(formattedContributors));
+        }
+    }
 
     enum Mode {
         CONFIG,
