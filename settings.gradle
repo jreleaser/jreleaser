@@ -145,7 +145,7 @@ buildCache {
     }
     remote(org.kordamp.gradle.plugin.buildcache.OCIBuildCache) {
         configFile    = '.oci/config'
-        compartmentId = System.getenv()['JRELEASER_OCI_COMPARTMENTID']
+        compartmentId = System.getenv().get('JRELEASER_OCI_COMPARTMENTID')
         failOnError = false
         push = isCiServer
     }
