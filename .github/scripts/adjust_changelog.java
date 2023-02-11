@@ -27,6 +27,7 @@ import static java.lang.String.join;
 import static java.lang.System.err;
 import static java.lang.System.exit;
 import static java.lang.System.lineSeparator;
+import static java.lang.System.out;
 import static java.nio.file.Files.exists;
 import static java.nio.file.Files.readAllLines;
 import static java.nio.file.Files.write;
@@ -49,6 +50,8 @@ public class adjust_changelog {
 
         var checksumDirectory = Path.of(args[0]);
         var changelogFile = Path.of(args[1]);
+
+        out.printf("Adjusting %s with checksums from %s%n", changelogFile, checksumDirectory);
 
         if (!exists(checksumDirectory)) {
             err.printf("Checksum directory does not exist. %s%n", checksumDirectory.toAbsolutePath());
@@ -83,9 +86,12 @@ public class adjust_changelog {
             return 1;
         }
 
+        out.printf("%s checksums read%n", checksums.size());
+
+        int[] replaceCount = new int[]{0};
         try {
             List<String> lines = readAllLines(changelogFile).stream()
-                .map(line -> replaceChecksums(line, checksums))
+                .map(line -> replaceChecksums(line, checksums, replaceCount))
                 .collect(toList());
             write(changelogFile, join(lineSeparator(), lines).getBytes(), WRITE, TRUNCATE_EXISTING);
         } catch (IOException e) {
@@ -93,16 +99,19 @@ public class adjust_changelog {
             return 1;
         }
 
+        out.printf("%s checksums replaced%n", replaceCount[0]);
+
         return 0;
     }
 
-    private static String replaceChecksums(String line, Map<String, String> checksums) {
+    private static String replaceChecksums(String line, Map<String, String> checksums, int[] replaceCount) {
         var matcher = PATTERN_SHA256.matcher(line);
 
         while (matcher.find()) {
             var filename = matcher.group(1);
             if (checksums.containsKey(filename)) {
                 line = line.replace("sha256:" + filename, "sha256:`" + checksums.get(filename) + "`");
+                replaceCount[0]++;
             } else {
                 line = line.replace("sha256:" + filename, "");
             }
