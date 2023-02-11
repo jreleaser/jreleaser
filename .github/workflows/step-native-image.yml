@@ -22,14 +22,14 @@ on:
         default: '17'
         required: false
         type: string
+    secrets:
+      gpg-passphrase:
+        required: true
+      oci-compartment-id:
+        required: true
 
 permissions:
   contents: read
-
-env:
-  CI: true
-  GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-  JRELEASER_OCI_COMPARTMENTID: ${{ secrets.JRELEASER_OCI_COMPARTMENTID }}
 
 jobs:
   native-image:
@@ -39,6 +39,8 @@ jobs:
       matrix:
         os: [ubuntu-latest, macOS-latest, windows-latest]
     runs-on: ${{ matrix.os }}
+    env:
+      CI: true
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -48,6 +50,8 @@ jobs:
       - name: Decrypt secrets
         shell: bash
         run: sh .github/scripts/decrypt-secrets.sh
+        env:
+          GPG_PASSPHRASE: ${{ secrets.gpg-passphrase }}
 
       - name: Download artifacts
         uses: actions/download-artifact@v3
@@ -84,6 +88,8 @@ jobs:
       - name: Build
         shell: bash
         run: ./gradlew :jreleaser:copyJdksFromCache :jreleaser:setupJdks
+        env:
+          JRELEASER_OCI_COMPARTMENTID: ${{ secrets.oci-compartment-id }}
 
       - name: Install upx
         run: brew install upx

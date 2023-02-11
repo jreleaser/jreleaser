@@ -50,6 +50,9 @@ jobs:
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
       project-version: ${{ needs.precheck.outputs.VERSION }}
+    secrets:
+      gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
+      oci-compartment-id: ${{ secrets.JRELEASER_OCI_COMPARTMENTID }}
 
   jpackage:
     needs: [precheck, jlink]
@@ -58,6 +61,9 @@ jobs:
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
       project-version: ${{ needs.precheck.outputs.VERSION }}
+    secrets:
+      gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
+      oci-compartment-id: ${{ secrets.JRELEASER_OCI_COMPARTMENTID }}
 
   native-image:
     needs: [precheck, jlink]
@@ -68,6 +74,9 @@ jobs:
       java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
       java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
       project-version: ${{ needs.precheck.outputs.VERSION }}
+    secrets:
+      gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
+      oci-compartment-id: ${{ secrets.JRELEASER_OCI_COMPARTMENTID }}
 
   release:
     name: Release

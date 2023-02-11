@@ -14,19 +14,21 @@ on:
         default: 'zulu'
         required: false
         type: string
+    secrets:
+      gpg-passphrase:
+        required: true
+      oci-compartment-id:
+        required: true
 
 permissions:
   contents: read
-
-env:
-  CI: true
-  GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-  JRELEASER_OCI_COMPARTMENTID: ${{ secrets.JRELEASER_OCI_COMPARTMENTID }}
 
 jobs:
   jlink:
     name: Jlink
     runs-on: ubuntu-latest
+    env:
+      CI: true
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -36,6 +38,8 @@ jobs:
       - name: Decrypt secrets
         shell: bash
         run: sh .github/scripts/decrypt-secrets.sh
+        env:
+          GPG_PASSPHRASE: ${{ secrets.gpg-passphrase }}
 
       - name: Setup Java
         uses: actions/setup-java@v3
@@ -51,6 +55,8 @@ jobs:
 
       - name: Build
         run: ./gradlew -Prelease=true -PreproducibleBuild=true build -S
+        env:
+          JRELEASER_OCI_COMPARTMENTID: ${{ secrets.oci-compartment-id }}
 
       - name: Jlink
         uses: jreleaser/release-action@v1
