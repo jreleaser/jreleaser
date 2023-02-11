@@ -31,6 +31,8 @@ import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toSet;
+import static org.jreleaser.model.Constants.KEY_PLATFORM;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -212,8 +214,8 @@ public final class DockerSpec extends AbstractDockerConfiguration<DockerSpec> im
 
         for (Map.Entry<String, Object> e : matchers.entrySet()) {
             String key = e.getKey();
-            if ("platform".equals(key)) {
-                matched &= PlatformUtils.isCompatible(String.valueOf(e.getValue()), artifact.getPlatform());
+            if (KEY_PLATFORM.equals(key)) {
+                matched &= isNotBlank(artifact.getPlatform()) && PlatformUtils.isCompatible(String.valueOf(e.getValue()), artifact.getPlatform());
             } else if (artifact.getExtraProperties().containsKey(key)) {
                 matched &= e.getValue().equals(artifact.getExtraProperties().get(key));
             }

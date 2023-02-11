@@ -224,6 +224,11 @@ public final class JlinkAssemblerValidator {
         if (isBlank(jdk.getPath())) {
             errors.configuration(RB.$("validation_must_not_be_null", "jlink." + jlink.getName() + ".targetJdk[" + index + "].path"));
         }
+
+        if (isBlank(jdk.getPlatform())) {
+            errors.configuration(RB.$("validation_is_missing", "jlink." + jlink.getName() + ".targetJdk[" + index + "].platform"));
+        }
+
         if (isNotBlank(jdk.getPlatform()) && !PlatformUtils.isSupported(jdk.getPlatform().trim())) {
             context.getLogger().warn(RB.$("validation_jlink_platform",
                 jlink.getName(), index, jdk.getPlatform(), System.lineSeparator(),

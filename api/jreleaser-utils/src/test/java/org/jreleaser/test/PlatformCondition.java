@@ -25,6 +25,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 
 import java.util.Optional;
 
+import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.junit.platform.commons.util.AnnotationUtils.findAnnotation;
 
 /**
@@ -40,7 +41,7 @@ public class PlatformCondition implements ExecutionCondition {
             Platform annotation = optional.get();
             boolean match = annotation.match();
             String platform = annotation.platform();
-            boolean compatible = PlatformUtils.isCompatible(platform, PlatformUtils.getCurrentFull());
+            boolean compatible = isNotBlank(platform) && PlatformUtils.isCompatible(platform, PlatformUtils.getCurrentFull());
             boolean result = match == compatible;
             if (result) {
                 return ConditionEvaluationResult.enabled("Platform " + platform + " matches");

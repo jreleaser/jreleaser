@@ -81,8 +81,9 @@ public final class AssemblerUtils {
         }
 
         for (Glob glob : assembler.getJars()) {
-            boolean platformIsBlank = isBlank(platform) && isBlank(glob.getPlatform());
-            boolean platformIsCompatible = isNotBlank(platform) && PlatformUtils.isCompatible(platform, glob.getPlatform());
+            String globPlatform = glob.getPlatform();
+            boolean platformIsBlank = isBlank(platform) && isBlank(globPlatform);
+            boolean platformIsCompatible = isNotBlank(platform) && isNotBlank(globPlatform) && PlatformUtils.isCompatible(platform, globPlatform);
             if (platformIsBlank || platformIsCompatible) {
                 glob.getResolvedArtifacts(context).stream()
                     .map(artifact -> artifact.getResolvedPath(context, assembler))

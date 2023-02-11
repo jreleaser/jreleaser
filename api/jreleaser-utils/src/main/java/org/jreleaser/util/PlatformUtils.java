@@ -304,6 +304,8 @@ public final class PlatformUtils {
     }
 
     public static boolean isCompatible(String expected, String actual) {
+        if (isBlank(actual)) return false;
+
         if (expected.contains("-")) {
             // expected is strict
             if (actual.contains("-")) {
