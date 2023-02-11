@@ -58,7 +58,7 @@ public interface SbomCataloger<A extends org.jreleaser.model.api.catalog.sbom.Sb
 
     boolean isSkipped(ExtraProperties target);
 
-    class Pack extends AbstractModelObject<AbstractSbomCataloger.Pack> implements Domain, EnabledAware {
+    class Pack extends AbstractModelObject<SbomCataloger.Pack> implements Domain, EnabledAware {
         private static final long serialVersionUID = -4077304033224132950L;
 
         private Boolean enabled;
@@ -69,17 +69,17 @@ public interface SbomCataloger<A extends org.jreleaser.model.api.catalog.sbom.Sb
 
             @Override
             public boolean isEnabled() {
-                return AbstractSbomCataloger.Pack.this.isEnabled();
+                return SbomCataloger.Pack.this.isEnabled();
             }
 
             @Override
             public String getName() {
-                return AbstractSbomCataloger.Pack.this.getName();
+                return SbomCataloger.Pack.this.getName();
             }
 
             @Override
             public Map<String, Object> asMap(boolean full) {
-                return AbstractSbomCataloger.Pack.this.asMap(full);
+                return SbomCataloger.Pack.this.asMap(full);
             }
         };
 
@@ -88,7 +88,7 @@ public interface SbomCataloger<A extends org.jreleaser.model.api.catalog.sbom.Sb
         }
 
         @Override
-        public void merge(AbstractSbomCataloger.Pack source) {
+        public void merge(SbomCataloger.Pack source) {
             this.enabled = merge(this.enabled, source.enabled);
             this.name = merge(this.name, source.name);
         }

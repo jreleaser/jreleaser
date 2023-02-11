@@ -54,6 +54,10 @@ public abstract class SbomCatalogerProcessorHelper {
         TGZ.extension(),
         TXZ.extension());
 
+    private SbomCatalogerProcessorHelper() {
+        // noop
+    }
+
     public static Set<Artifact> resolveArtifacts(JReleaserContext context) {
         Set<Artifact> artifacts = new LinkedHashSet<>();
 
