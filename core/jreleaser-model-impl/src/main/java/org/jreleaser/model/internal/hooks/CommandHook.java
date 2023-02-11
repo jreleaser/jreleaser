@@ -22,9 +22,12 @@ import org.jreleaser.model.api.hooks.ExecutionEvent;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.mustache.TemplateContext;
 
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static java.util.Collections.unmodifiableMap;
+import static java.util.Collections.unmodifiableSet;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 
 /**
@@ -32,16 +35,22 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
  * @since 1.2.0
  */
 public final class CommandHook extends AbstractHook<CommandHook> {
-    private static final long serialVersionUID = 6669599201326933824L;
+    private static final long serialVersionUID = 2870547746386823584L;
 
+    private final Set<String> platforms = new LinkedHashSet<>();
     private String cmd;
 
     private final org.jreleaser.model.api.hooks.CommandHook immutable = new org.jreleaser.model.api.hooks.CommandHook() {
-        private static final long serialVersionUID = 4950097179887952669L;
+        private static final long serialVersionUID = 3053204535600637020L;
 
         @Override
         public String getCmd() {
             return cmd;
+        }
+
+        @Override
+        public Set<String> getPlatforms() {
+            return unmodifiableSet(CommandHook.this.getPlatforms());
         }
 
         @Override
@@ -78,6 +87,7 @@ public final class CommandHook extends AbstractHook<CommandHook> {
     public void merge(CommandHook source) {
         super.merge(source);
         this.cmd = merge(this.cmd, source.cmd);
+        setPlatforms(merge(this.platforms, source.platforms));
     }
 
     public String getResolvedCmd(JReleaserContext context, ExecutionEvent event) {
@@ -94,8 +104,18 @@ public final class CommandHook extends AbstractHook<CommandHook> {
         this.cmd = cmd;
     }
 
+    public Set<String> getPlatforms() {
+        return platforms;
+    }
+
+    public void setPlatforms(Set<String> platforms) {
+        this.platforms.clear();
+        this.platforms.addAll(platforms);
+    }
+
     @Override
     public void asMap(boolean full, Map<String, Object> map) {
         map.put("cmd", cmd);
+        map.put("platforms", platforms);
     }
 }

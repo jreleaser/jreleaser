@@ -26,6 +26,7 @@ import org.jreleaser.model.internal.hooks.CommandHooks;
 import org.jreleaser.sdk.command.Command;
 import org.jreleaser.sdk.command.CommandException;
 import org.jreleaser.sdk.command.CommandExecutor;
+import org.jreleaser.util.PlatformUtils;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -125,10 +126,10 @@ public final class CommandHookExecutor {
             if (!hook.isEnabled()) continue;
 
             if (!hook.getFilter().getResolvedIncludes().isEmpty()) {
-                if (hook.getFilter().getResolvedIncludes().contains(event.getName())) {
+                if (hook.getFilter().getResolvedIncludes().contains(event.getName()) && filterByPlatform(hook)) {
                     tmp.add(hook);
                 }
-            } else {
+            } else if (filterByPlatform(hook)) {
                 tmp.add(hook);
             }
 
@@ -138,6 +139,22 @@ public final class CommandHookExecutor {
         }
 
         return tmp;
+    }
+
+    private boolean filterByPlatform(CommandHook hook) {
+        if (hook.getPlatforms().isEmpty()) return true;
+
+        for (String platform : hook.getPlatforms()) {
+            boolean exclude = false;
+            if (platform.startsWith("!")) {
+                exclude = true;
+                platform = platform.substring(1);
+            }
+
+            return exclude != PlatformUtils.isCompatible(PlatformUtils.getCurrentFull(), platform);
+        }
+
+        return false;
     }
 
     private void executeCommand(Path directory, Command command) throws CommandException {

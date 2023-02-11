@@ -21,9 +21,9 @@ import groovy.transform.CompileStatic
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.hooks.CommandHook
-import org.jreleaser.model.Active
 
 import javax.inject.Inject
 
@@ -37,15 +37,15 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 @CompileStatic
 class CommandHookImpl extends AbstractHook implements CommandHook {
     String name
-    final Property<Boolean> continueOnError
     final Property<String> cmd
+    final SetProperty<String> platforms
     final FilterImpl filter
 
     @Inject
     CommandHookImpl(ObjectFactory objects) {
         super(objects)
-        continueOnError = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         cmd = objects.property(String).convention(Providers.<String> notDefined())
+        platforms = objects.setProperty(String).convention(Providers.<List<String>> notDefined())
         filter = objects.newInstance(FilterImpl, objects)
     }
 
@@ -54,21 +54,22 @@ class CommandHookImpl extends AbstractHook implements CommandHook {
         super.isSet() ||
             continueOnError.present ||
             cmd.present ||
+            platforms.present ||
             filter.isSet()
     }
 
     @Override
-    void setActive(String str) {
-        if (isNotBlank(str)) {
-            active.set(Active.of(str.trim()))
+    void platform(String platform) {
+        if (isNotBlank(platform)) {
+            platforms.add(platform.trim())
         }
     }
 
     org.jreleaser.model.internal.hooks.CommandHook toModel() {
         org.jreleaser.model.internal.hooks.CommandHook hook = new org.jreleaser.model.internal.hooks.CommandHook()
         fillHookProperties(hook)
-        if (continueOnError.present) hook.continueOnError = continueOnError.get()
         if (cmd.present) hook.cmd = cmd.get()
+        hook.platforms = (Set<String>) platforms.getOrElse([] as Set<String>)
         hook.filter = filter.toModel()
         hook
     }

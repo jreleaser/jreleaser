@@ -19,6 +19,7 @@ package org.jreleaser.gradle.plugin.dsl.hooks
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.jreleaser.gradle.plugin.dsl.common.Activatable
 
@@ -29,6 +30,8 @@ import org.jreleaser.gradle.plugin.dsl.common.Activatable
  */
 @CompileStatic
 interface Hook extends Activatable {
+    Property<Boolean> getContinueOnError()
+
     Filter getFilter()
 
     void filter(Action<? super Filter> action)

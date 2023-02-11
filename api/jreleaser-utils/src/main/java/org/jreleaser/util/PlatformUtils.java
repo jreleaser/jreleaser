@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
 
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -305,7 +306,12 @@ public final class PlatformUtils {
     public static boolean isCompatible(String expected, String actual) {
         if (expected.contains("-")) {
             // expected is strict
-            return expected.equalsIgnoreCase(actual);
+            if (actual.contains("-")) {
+                // actual is strict
+                return expected.equalsIgnoreCase(actual);
+            } else {
+                return expected.toLowerCase(Locale.ENGLISH).contains(actual.toLowerCase(Locale.ENGLISH));
+            }
         }
 
         String[] parts = actual.split("-");
