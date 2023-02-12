@@ -44,31 +44,24 @@ public class update_release_page {
 
     public static void main(String[] args) {
         if (null == args || args.length != 2) {
-            err.println("Usage: java update_release_page <checksumDirectory> <releasePage>");
+            err.println("Usage: java update_release_page <checksumsFile> <releasePage>");
             exit(1);
         }
 
-        var checksumDirectory = Path.of(args[0]);
+        var checksumsFile = Path.of(args[0]);
         var releasePage = Path.of(args[1]);
 
-        out.printf("Adjusting %s with checksums from %s%n", releasePage, checksumDirectory);
-
-        if (!exists(checksumDirectory)) {
-            err.printf("Checksum directory does not exist. %s%n", checksumDirectory.toAbsolutePath());
-            exit(1);
-        }
-
-        var checksumsFile = checksumDirectory.resolve("checksums_sha256.txt");
-        if (!exists(releasePage)) {
-            err.printf("Checksums file does not exist. %s%n", checksumsFile.toAbsolutePath());
+        if (!exists(checksumsFile)) {
+            err.printf("File does not exist. %s%n", checksumsFile.toAbsolutePath());
             exit(1);
         }
 
         if (!exists(releasePage)) {
-            err.printf("Changelog file does not exist. %s%n", releasePage.toAbsolutePath());
+            err.printf("File does not exist. %s%n", releasePage.toAbsolutePath());
             exit(1);
         }
 
+        out.printf("Adjusting %s with checksums from %s%n", releasePage, checksumsFile);
         exit(process(checksumsFile, releasePage));
     }
 

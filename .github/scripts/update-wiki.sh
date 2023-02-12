@@ -8,13 +8,26 @@
 
 set -e
 
-mv "wiki/Releases/wiki-release-page.md" "wiki/Releases/Release-${TAG}.md"
-CMD="${JAVA_HOME}/bin/java checksums_sha256.txt wiki/Releases/Release-${TAG}.md"
-exec CMD
+echo "📝 Updating release page"
+PAGE="wiki/Releases/Release-${TAG}.md"
+mv "wiki/Releases/wiki-release-page.md" "${PAGE}"
+java .github/scripts/update_release_page.java checksums_sha256.txt ${PAGE}
+git add "${PAGE}"
 
+if [ "${TAG}" != "early-access" ]; then
+    echo "🚀️ Updating releases"
+    RELEASES="wiki/Releases/Releases.md"
+    HEAD=$(head -n 3 "${RELEASES}")
+    TAIL=$(tail -n +4 "${RELEASES}")
+    echo "${HEAD}" > "${RELEASES}"
+    echo "* [JReleaser ${TAG}](https://github.com/jreleaser/jreleaser/wiki/Release-${TAG})" >> "${RELEASES}"
+    echo "${TAIL}" >> "${RELEASES}"
+    git add "${RELEASES}"
+fi
+
+echo "⬆️ Updating wiki"
 cd wiki
-git add "Releases/Release-${TAG}.md"
 git config --global user.email "${GH_BOT_EMAIL}"
 git config --global user.name "GitHub Action"
 git commit -a -m "Releasing ${TAG} (${VERSION})"
-git push origin main
+git push origin master

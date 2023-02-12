@@ -38,8 +38,8 @@ These binaries provide their own Java runtime.
 
 * {{#f_release_download_url}}jreleaser-installer-{{projectEffectiveVersion}}-osx-x86_64.pkg{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-installer-{{projectEffectiveVersion}}-osx-x86_64.pkg.asc{{/f_release_download_url}})
   sha256:jreleaser-installer-{{projectEffectiveVersion}}-osx-x86_64.pkg
-* {{#f_release_download_url}}jreleaser-installer-{{projectEffectiveVersion}}-1_amd64.deb{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-installer-{{projectEffectiveVersion}}-1_amd64.deb.asc{{/f_release_download_url}})
-  sha256:jreleaser-installer-{{projectEffectiveVersion}}-1_amd64.deb
+* {{#f_release_download_url}}jreleaser-installer_{{projectEffectiveVersion}}-1_amd64.deb{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-installer_{{projectEffectiveVersion}}-1_amd64.deb.asc{{/f_release_download_url}})
+  sha256:jreleaser-installer_{{projectEffectiveVersion}}-1_amd64.deb
 * {{#f_release_download_url}}jreleaser-installer-{{projectEffectiveVersion}}-1.x86_64.rpm{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-installer-{{projectEffectiveVersion}}-1.x86_64.rpm.asc{{/f_release_download_url}})
   sha256:jreleaser-installer-{{projectEffectiveVersion}}-1.x86_64.rpm
 * {{#f_release_download_url}}jreleaser-installer-{{projectEffectiveVersion}}-windows-x86_64.msi{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-installer-{{projectEffectiveVersion}}-windows-x86_64.msi.asc{{/f_release_download_url}})
@@ -55,6 +55,13 @@ These binaries provide their own Java runtime.
   sha256:jreleaser-native-{{projectEffectiveVersion}}-windows-x86_64.zip
 
 ## Verify Provenance
+{{#includeSboms}}
+
+### SBOMS
+
+* {{#f_release_download_url}}jreleaser-{{projectEffectiveVersion}}-sboms.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-{{projectEffectiveVersion}}-sboms.zip.asc{{/f_release_download_url}})
+  sha256:jreleaser-{{projectEffectiveVersion}}-sboms.zip
+{{/includeSboms}}
 
 ### SLSA
 

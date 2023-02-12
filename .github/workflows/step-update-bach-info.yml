@@ -32,11 +32,13 @@ jobs:
           token: ${{ secrets.gh-access-token }}
 
       - name: Download script
+        shell: bash
         run: |
           curl -sL https://raw.githubusercontent.com/jreleaser/jreleaser/main/.github/scripts/update-bach-info.sh --output update-bach-info.sh
           chmod +x update-bach-info.sh
 
       - name: Commit
+        shell: bash
         env:
           TAG: ${{ inputs.project-tag }}
           VERSION: ${{ inputs.project-version }}

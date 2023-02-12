@@ -9,6 +9,10 @@ on:
       project-tag:
         required: true
         type: string
+      template-params:
+        required: false
+        type: string
+        default: ''
     secrets:
       gh-access-token:
         required: true
@@ -36,6 +40,7 @@ jobs:
           token: ${{ secrets.gh-access-token }}
 
       - name: Download checksums
+        shell: bash
         run: |
           curl -sL https://github.com/jreleaser/jreleaser/releases/download/${{ inputs.project-tag }}/checksums_sha256.txt --output checksums_sha256.txt
 
@@ -43,14 +48,15 @@ jobs:
         uses: jreleaser/release-action@v2
         with:
           version: early-access
-          arguments: template eval --changelog --input-file src/jreleaser/templates/wiki-release-page.md.tpl --target-directory wiki/Releases
+          arguments: template eval --changelog --input-file src/jreleaser/templates/wiki-release-page.md.tpl --target-directory wiki/Releases ${{ inputs.template-params }}
         env:
           JRELEASER_GITHUB_TOKEN: ${{ secrets.gh-access-token }}
           JRELEASER_PROJECT_VERSION: ${{ inputs.project-version }}
 
       - name: Commit
+        shell: bash
         env:
           TAG: ${{ inputs.project-tag }}
           VERSION: ${{ inputs.project-version }}
           GH_BOT_EMAIL: ${{ vars.GH_BOT_EMAIL }}
-        run: sh update-wiki.sh
+        run: sh .github/scripts/update-wiki.sh
