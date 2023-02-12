@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 
 import static java.lang.String.join;
 import static java.lang.System.lineSeparator;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.Files.readAllLines;
 import static java.nio.file.Files.write;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
@@ -82,7 +83,7 @@ public class ChangelogAdjuster extends WorkflowAdapter {
                 .map(line -> replaceChecksums(line, checksums, replaceCount))
                 .collect(toList());
             String adjustedChangelog = join(lineSeparator(), lines);
-            write(changelogFile, adjustedChangelog.getBytes(), WRITE, TRUNCATE_EXISTING);
+            write(changelogFile, adjustedChangelog.getBytes(UTF_8), WRITE, TRUNCATE_EXISTING);
             context.getChangelog().setResolvedChangelog(adjustedChangelog);
         } catch (IOException e) {
             throw new IllegalStateException("Unexpected error replacing checksums. " + e.getMessage());
