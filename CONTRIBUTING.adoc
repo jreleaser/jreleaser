@@ -1,5 +1,13 @@
 = Contributing
 
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
 Anyone is welcome to open link:https://github.com/jreleaser/jreleaser/issues[issues] and/or pull-requests for bugfixes,
 feature-requests and/or ideas. If unsure where to start we encourage you to open a
 link:https://github.com/jreleaser/jreleaser/discussions[discussion] topic first.

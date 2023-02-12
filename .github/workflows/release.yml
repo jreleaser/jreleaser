@@ -7,6 +7,11 @@ on:
         description: 'Release version'
         required: true
 
+permissions:
+  actions: write
+  id-token: write
+  contents: write
+
 jobs:
   precheck:
     name: Precheck
@@ -171,39 +176,34 @@ jobs:
 
   provenance:
     needs: [precheck, release]
-    permissions:
-      actions: read
-      id-token: write
-      contents: write
-    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.4.0
+    uses: jreleaser/jreleaser/.github/workflows/step-provenance.yml@main
     with:
-      base64-subjects: "${{ needs.release.outputs.HASHES }}"
-      upload-assets: false
-      provenance-name: 'jreleaser-all-${{ needs.precheck.outputs.VERSION }}.intoto.jsonl'
+      project-version: ${{ needs.precheck.outputs.VERSION }}
+      project-tag: 'v${{ needs.precheck.outputs.VERSION }}'
+      hashes: ${{ needs.release.outputs.HASHES }}
+    secrets:
+      gh-access-token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
-  upload-provenance:
-    name: Upload provenance
-    needs: [precheck, provenance]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download upload-provenance script
-        run: |
-          curl -sL https://raw.githubusercontent.com/kordamp/jarviz/main/.github/scripts/upload-provenance.sh --output upload-provenance.sh
-          chmod +x upload-provenance.sh
+  update-wiki:
+    needs: [precheck, release]
+    uses: jreleaser/jreleaser/.github/workflows/step-update-wiki.yml@main
+    with:
+      project-version: ${{ needs.precheck.outputs.VERSION }}
+      project-tag: 'v${{ needs.precheck.outputs.VERSION }}'
+    secrets:
+      gh-access-token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
-      - name: Download provenance
-        uses: actions/download-artifact@v3
-        with:
-          name: 'jreleaser-all-${{ needs.precheck.outputs.VERSION }}.intoto.jsonl'
-
-      - name: Commit
-        env:
-          GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
-          TAG: "v${{ needs.precheck.outputs.VERSION }}"
-          PROVENANCE_FILE: 'jreleaser-all-${{ needs.precheck.outputs.VERSION }}.intoto.jsonl'
-          REPO_OWNER: 'jreleaser'
-          REPO_NAME: 'jreleaser'
-        run: sh upload-provenance.sh
+  update-bach-info:
+    needs: [precheck, release]
+    uses: jreleaser/jreleaser/.github/workflows/step-update-bach-info.yml@main
+    with:
+      project-version: ${{ needs.precheck.outputs.VERSION }}
+      project-tag: 'v${{ needs.precheck.outputs.VERSION }}'
+      jar-size: ${{ needs.release.outputs.JAR_SIZE }}
+      jar-csum: ${{ needs.release.outputs.JAR_CSUM }}
+      doc-size: ${{ needs.release.outputs.DOC_SIZE }}
+    secrets:
+      gh-access-token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
   update-website:
     name: Update website
@@ -230,32 +230,3 @@ jobs:
           VERSION: ${{ needs.precheck.outputs.VERSION }}
           GH_BOT_EMAIL: ${{ vars.GH_BOT_EMAIL }}
         run: sh update-website.sh
-
-  update-bach-info:
-    name: Update bach-info
-    needs: [precheck, release]
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          repository: jreleaser/bach-info
-          ref: 'main'
-          fetch-depth: 0
-          token: ${{ secrets.GIT_ACCESS_TOKEN }}
-
-      - name: Download update-bach-info script
-        run: |
-          curl -sL https://raw.githubusercontent.com/jreleaser/jreleaser/main/.github/scripts/update-bach-info.sh --output update-bach-info.sh
-          chmod +x update-bach-info.sh
-
-      - name: Commit
-        env:
-          TAG: "v${{ needs.precheck.outputs.VERSION }}"
-          VERSION: ${{ needs.precheck.outputs.VERSION }}
-          JAR_SIZE: ${{ needs.release.outputs.JAR_SIZE }}
-          JAR_CSUM: ${{ needs.release.outputs.JAR_CSUM }}
-          DOC_SIZE: ${{ needs.release.outputs.DOC_SIZE }}
-          GH_BOT_EMAIL: ${{ vars.GH_BOT_EMAIL }}
-        run: sh update-bach-info.sh

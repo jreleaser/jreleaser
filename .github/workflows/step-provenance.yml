@@ -1,0 +1,50 @@
+name: Provenance
+
+on:
+  workflow_call:
+    inputs:
+      project-version:
+        required: true
+        type: string
+      project-tag:
+        required: true
+        type: string
+      hashes:
+        required: true
+        type: string
+    secrets:
+      gh-access-token:
+        required: true
+
+jobs:
+  provenance:
+    name: Generate provenance
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.4.0
+    with:
+      base64-subjects: ${{ inputs.hashes }}
+      upload-assets: false
+      provenance-name: jreleaser-all-${{ inputs.project-tag }}.intoto.jsonl
+
+  upload-provenance:
+    name: Upload provenance
+    needs: [provenance]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download upload-provenance script
+        run: |
+          curl -sL https://raw.githubusercontent.com/jreleaser/jreleaser/main/.github/scripts/upload-provenance.sh --output upload-provenance.sh
+          chmod +x upload-provenance.sh
+
+      - name: Download provenance
+        uses: actions/download-artifact@v3
+        with:
+          name: jreleaser-all-${{ inputs.project-tag }}.intoto.jsonl
+
+      - name: Commit
+        env:
+          GITHUB_TOKEN: ${{ secrets.gh-access-token }}
+          TAG: ${{ inputs.project-tag }}
+          PROVENANCE_FILE: jreleaser-all-${{ inputs.project-tag }}.intoto.jsonl
+          REPO_OWNER: jreleaser
+          REPO_NAME: jreleaser
+        run: sh upload-provenance.sh

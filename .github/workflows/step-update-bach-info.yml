@@ -1,0 +1,56 @@
+name: BachInfo
+
+on:
+  workflow_call:
+    inputs:
+      project-version:
+        required: true
+        type: string
+      project-tag:
+        required: true
+        type: string
+      jar-size:
+        required: true
+        type: string
+      jar-csum:
+        required: true
+        type: string
+      doc-size:
+        required: true
+        type: string
+    secrets:
+      gh-access-token:
+        required: true
+
+permissions:
+  actions: read
+  id-token: write
+  contents: write
+
+jobs:
+  update-bach-info:
+    name: Update bach-info
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          repository: jreleaser/bach-info
+          ref: 'main'
+          fetch-depth: 0
+          token: ${{ secrets.gh-access-token }}
+
+      - name: Download update-bach-info script
+        run: |
+          curl -sL https://raw.githubusercontent.com/jreleaser/jreleaser/main/.github/scripts/update-bach-info.sh --output update-bach-info.sh
+          chmod +x update-bach-info.sh
+
+      - name: Commit
+        env:
+          TAG: ${{ inputs.project-tag }}
+          VERSION: ${{ inputs.project-version }}
+          JAR_SIZE: ${{ inputs.jar-size }}
+          JAR_CSUM: ${{ inputs.jar-csum }}
+          DOC_SIZE: ${{ inputs.doc-size }}
+          GH_BOT_EMAIL: ${{ vars.GH_BOT_EMAIL }}
+        run: sh update-bach-info.sh

@@ -8,10 +8,6 @@ environment:
     skipJpackageResolver: true
     skipNativeImageResolver: true
 
-extensions:
-  changelog-adjuster:
-    directory: infra/jreleaser-changelog-extension/build/libs/
-
 project:
   name: jreleaser
   description: Release projects quickly and easily with JReleaser

@@ -71,7 +71,6 @@ jobs:
           arguments: assemble --assembler native-image --select-current-platform
         env:
           JRELEASER_PROJECT_VERSION: ${{ inputs.project-version }}
-          JRELEASER_EXTENSION_CHANGELOG_ADJUSTER_ENABLED: false
 
       - name: JReleaser output
         if: always()
