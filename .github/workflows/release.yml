@@ -55,15 +55,14 @@ jobs:
     uses: jreleaser/jreleaser/.github/workflows/step-native-image.yml@main
     with:
       project-version: ${{ needs.precheck.outputs.VERSION }}
+    secrets:
+      gh-access-token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
   release:
     name: Release
     needs: [precheck, jlink, jpackage, native-image]
     runs-on: ubuntu-latest
     outputs:
-      JAR_SIZE: ${{ steps.bach.outputs.JAR_SIZE }}
-      JAR_CSUM: ${{ steps.bach.outputs.JAR_CSUM }}
-      DOC_SIZE: ${{ steps.bach.outputs.DOC_SIZE }}
       HASHES: ${{ steps.hash.outputs.hashes }}
     steps:
       - name: Checkout
@@ -156,18 +155,6 @@ jobs:
             out/jreleaser/trace.log
             out/jreleaser/output.properties
 
-      - name: Grab bach-info
-        id: bach
-        shell: bash
-        run: |
-          VERSION=${{ needs.precheck.outputs.VERSION }}
-          JAR_SIZE=$(ls -l plugins/jreleaser-tool-provider/build/libs/jreleaser-tool-provider-$VERSION.jar | awk '{print $5}')
-          JAR_CSUM=$(shasum -a 256 plugins/jreleaser-tool-provider/build/libs/jreleaser-tool-provider-$VERSION.jar | awk '{print $1}')
-          DOC_SIZE=$(ls -l README.adoc | awk '{print $5}')
-          echo "JAR_SIZE=$(echo $JAR_SIZE)" >> $GITHUB_OUTPUT
-          echo "JAR_CSUM=$(echo $JAR_CSUM)" >> $GITHUB_OUTPUT
-          echo "DOC_SIZE=$(echo $DOC_SIZE)" >> $GITHUB_OUTPUT
-
       - name: SLSA hashes
         shell: bash
         id: hash
@@ -199,9 +186,6 @@ jobs:
     with:
       project-version: ${{ needs.precheck.outputs.VERSION }}
       project-tag: 'v${{ needs.precheck.outputs.VERSION }}'
-      jar-size: ${{ needs.release.outputs.JAR_SIZE }}
-      jar-csum: ${{ needs.release.outputs.JAR_CSUM }}
-      doc-size: ${{ needs.release.outputs.DOC_SIZE }}
     secrets:
       gh-access-token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
@@ -209,7 +193,6 @@ jobs:
     name: Update website
     needs: [precheck, release]
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - name: Checkout
         uses: actions/checkout@v3

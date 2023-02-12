@@ -21,7 +21,7 @@ jobs:
           cache: 'gradle'
 
       - name: Build
-        run: ./gradlew -Prelease=true -PreproducibleBuild=true build -S
+        run: ./gradlew -PreproducibleBuild=true build -S
 
       - name: Rename artifacts
         run: |

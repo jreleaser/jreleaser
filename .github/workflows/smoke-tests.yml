@@ -100,7 +100,7 @@ jobs:
           version: ${{ vars.GRAAL_VERSION }}
           java-version: ${{ vars.GRAAL_JAVA_VERSION }}
           components: 'native-image'
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
       - name: JReleaser
         shell: bash
@@ -279,7 +279,7 @@ jobs:
           version: ${{ vars.GRAAL_VERSION }}
           java-version: ${{ vars.GRAAL_JAVA_VERSION }}
           components: 'native-image'
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
       - name: JReleaser
         shell: bash
@@ -459,7 +459,7 @@ jobs:
           version: ${{ vars.GRAAL_VERSION }}
           java-version: ${{ vars.GRAAL_JAVA_VERSION }}
           components: 'native-image'
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
       - name: JReleaser
         shell: bash
@@ -634,7 +634,7 @@ jobs:
           version: ${{ vars.GRAAL_VERSION }}
           java-version: ${{ vars.GRAAL_JAVA_VERSION }}
           components: 'native-image'
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
       - name: JReleaser
         shell: bash
@@ -823,7 +823,7 @@ jobs:
           version: ${{ vars.GRAAL_VERSION }}
           java-version: ${{ vars.GRAAL_JAVA_VERSION }}
           components: 'native-image'
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
       - name: JReleaser
         shell: bash

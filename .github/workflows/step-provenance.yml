@@ -30,7 +30,7 @@ jobs:
     needs: [provenance]
     runs-on: ubuntu-latest
     steps:
-      - name: Download upload-provenance script
+      - name: Download script
         run: |
           curl -sL https://raw.githubusercontent.com/jreleaser/jreleaser/main/.github/scripts/upload-provenance.sh --output upload-provenance.sh
           chmod +x upload-provenance.sh
@@ -42,7 +42,7 @@ jobs:
 
       - name: Commit
         env:
-          GITHUB_TOKEN: ${{ secrets.gh-access-token }}
+          GH_TOKEN: ${{ secrets.gh-access-token }}
           TAG: ${{ inputs.project-tag }}
           PROVENANCE_FILE: jreleaser-all-${{ inputs.project-tag }}.intoto.jsonl
           REPO_OWNER: jreleaser

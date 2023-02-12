@@ -9,15 +9,6 @@ on:
       project-tag:
         required: true
         type: string
-      jar-size:
-        required: true
-        type: string
-      jar-csum:
-        required: true
-        type: string
-      doc-size:
-        required: true
-        type: string
     secrets:
       gh-access-token:
         required: true
@@ -40,7 +31,7 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.gh-access-token }}
 
-      - name: Download update-bach-info script
+      - name: Download script
         run: |
           curl -sL https://raw.githubusercontent.com/jreleaser/jreleaser/main/.github/scripts/update-bach-info.sh --output update-bach-info.sh
           chmod +x update-bach-info.sh
@@ -49,8 +40,5 @@ jobs:
         env:
           TAG: ${{ inputs.project-tag }}
           VERSION: ${{ inputs.project-version }}
-          JAR_SIZE: ${{ inputs.jar-size }}
-          JAR_CSUM: ${{ inputs.jar-csum }}
-          DOC_SIZE: ${{ inputs.doc-size }}
           GH_BOT_EMAIL: ${{ vars.GH_BOT_EMAIL }}
         run: sh update-bach-info.sh

@@ -6,6 +6,9 @@ on:
       project-version:
         required: true
         type: string
+    secrets:
+      gh-access-token:
+        required: true
 
 permissions:
   contents: read
@@ -42,7 +45,7 @@ jobs:
           version: ${{ vars.GRAAL_VERSION }}
           java-version: ${{ vars.GRAAL_JAVA_VERSION }}
           components: 'native-image'
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.gh-access-token }}
 
       - name: Setup Java
         uses: actions/setup-java@v3
