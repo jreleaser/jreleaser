@@ -1,4 +1,4 @@
-name: BachInfo
+name: X-BachInfo
 
 on:
   workflow_call:

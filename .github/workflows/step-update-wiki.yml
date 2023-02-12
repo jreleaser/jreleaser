@@ -1,4 +1,4 @@
-name: UpdateWiki
+name: X-UpdateWiki
 
 on:
   workflow_call:
@@ -45,6 +45,7 @@ jobs:
           version: early-access
           arguments: template eval --changelog --input-file src/jreleaser/templates/wiki-release-page.md.tpl --target-directory wiki/Releases
         env:
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.gh-access-token }}
           JRELEASER_PROJECT_VERSION: ${{ inputs.project-version }}
 
       - name: Commit

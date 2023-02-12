@@ -1,4 +1,4 @@
-name: Provenance
+name: X-Provenance
 
 on:
   workflow_call:

@@ -1,4 +1,4 @@
-name: Jlink
+name: X-Jlink
 
 on:
   workflow_call:

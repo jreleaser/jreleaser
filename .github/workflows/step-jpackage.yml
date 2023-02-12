@@ -1,4 +1,4 @@
-name: JPackage
+name: X-JPackage
 
 on:
   workflow_call:
