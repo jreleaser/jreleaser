@@ -98,9 +98,6 @@ jobs:
           distribution: ${{ vars.JAVA_DISTRO }}
           cache: 'gradle'
 
-      - name: Build changelog extension
-        run: ./gradlew :jreleaser-changelog-extension:build
-
       - name: Release
         uses: jreleaser/release-action@v2
         with:
