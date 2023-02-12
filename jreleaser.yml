@@ -8,12 +8,9 @@ environment:
     skipJpackageResolver: true
     skipNativeImageResolver: true
 
-hooks:
-  command:
-    success:
-      - cmd: 'java .github/scripts/adjust_changelog.java {{checksumDirectory}} {{outputDirectory}}/release/CHANGELOG.md'
-        filter:
-          includes: [ 'checksum' ]
+extensions:
+  changelog-adjuster:
+    directory: infra/jreleaser-changelog-extension/build/libs/
 
 project:
   name: jreleaser

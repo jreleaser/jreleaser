@@ -112,6 +112,16 @@ jobs:
           name: native-image
           path: out/jreleaser/assemble/jreleaser-native/native-image
 
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRO }}
+          cache: 'gradle'
+
+      - name: Build changelog extension
+        run: ./gradlew :jreleaser-changelog-extension:build
+
       - name: Release
         uses: jreleaser/release-action@v2
         with:

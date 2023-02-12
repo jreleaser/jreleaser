@@ -135,6 +135,9 @@ jobs:
           path: |
             build/repos/local/release/
 
+      - name: Build changelog extension
+        run: ./gradlew :jreleaser-changelog-extension:build
+
       - name: Release
         uses: jreleaser/release-action@v2
         with:

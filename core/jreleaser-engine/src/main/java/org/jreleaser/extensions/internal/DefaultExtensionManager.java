@@ -90,8 +90,13 @@ public final class DefaultExtensionManager implements ExtensionManager {
         for (Map.Entry<String, ExtensionDef> e : extensionDefs.entrySet()) {
             String extensionName = e.getKey();
             ExtensionDef extensionDef = e.getValue();
-            if (visitedExtensionNames.contains(extensionName) || !extensionDef.isEnabled()) {
+            if (visitedExtensionNames.contains(extensionName)) {
                 continue;
+            }
+
+            if (!extensionDef.isEnabled()) {
+                context.getLogger().debug(RB.$("extension.manager.disabled", extensionName));
+                return;
             }
 
             createClassLoader(context, extensionDef).ifPresent(classLoader -> {
