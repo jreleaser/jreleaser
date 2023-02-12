@@ -6,14 +6,6 @@ on:
       project-version:
         required: true
         type: string
-      java-version:
-        default: '11'
-        required: false
-        type: string
-      java-distro:
-        default: 'zulu'
-        required: false
-        type: string
     secrets:
       gpg-passphrase:
         required: true
@@ -44,8 +36,8 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
-          java-version: ${{ inputs.java-version }}
-          distribution: ${{ inputs.java-distro }}
+          java-version: ${{ vars.JAVA_VERSION }}
+          distribution: ${{ vars.JAVA_DISTRO }}
           cache: 'gradle'
 
       - name: Version

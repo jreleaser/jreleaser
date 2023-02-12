@@ -6,22 +6,6 @@ on:
       project-version:
         required: true
         type: string
-      java-version:
-        default: '11'
-        required: false
-        type: string
-      java-distro:
-        default: 'zulu'
-        required: false
-        type: string
-      graal-version:
-        default: '22.3.1'
-        required: false
-        type: string
-      graal-java-version:
-        default: '17'
-        required: false
-        type: string
 
 permissions:
   contents: read
@@ -55,16 +39,16 @@ jobs:
       - name: Setup Graal
         uses: graalvm/setup-graalvm@v1
         with:
-          version: ${{ inputs.graal-version }}
-          java-version: ${{ inputs.graal-java-version }}
+          version: ${{ vars.GRAAL_VERSION }}
+          java-version: ${{ vars.GRAAL_JAVA_VERSION }}
           components: 'native-image'
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
-          java-version: ${{ inputs.java-version }}
-          distribution: ${{ inputs.java-distro }}
+          java-version: ${{ vars.JAVA_VERSION }}
+          distribution: ${{ vars.JAVA_DISTRO }}
           cache: 'gradle'
 
       - name: Version

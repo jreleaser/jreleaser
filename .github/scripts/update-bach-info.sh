@@ -6,7 +6,7 @@
 # JAR_SIZE
 # JAR_CSUM
 # DOC_SIZE
-# GITHUB_BOT_EMAIL
+# GH_BOT_EMAIL
 
 set -e
 
@@ -33,7 +33,7 @@ echo "  #SIZE=${DOC_SIZE}" >> $TARGET_FILE
 echo "" >> $TARGET_FILE
 
 git add $TARGET_FILE
-git config --global user.email "${GITHUB_BOT_EMAIL}"
+git config --global user.email "${GH_BOT_EMAIL}"
 git config --global user.name "GitHub Action"
 git commit -a -m "Releasing ${TAG} (${VERSION})"
 git push origin main

@@ -5,11 +5,7 @@ on:
     branches: [ main ]
 
 env:
-  JAVA_VERSION: '11'
-  JAVA_DISTRO: 'zulu'
   CI: true
-  GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-  JRELEASER_OCI_COMPARTMENTID: ${{ secrets.JRELEASER_OCI_COMPARTMENTID }}
 
 permissions:
   contents: write
@@ -42,12 +38,14 @@ jobs:
       - name: Decrypt secrets
         shell: bash
         run: sh .github/scripts/decrypt-secrets.sh
+        env:
+          GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
 
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
-          java-version: ${{ env.JAVA_VERSION }}
-          distribution: ${{ env.JAVA_DISTRO }}
+          java-version: ${{ vars.JAVA_VERSION }}
+          distribution: ${{ vars.JAVA_DISTRO }}
           cache: 'gradle'
 
       - uses: jfrog/frogbot@8daba7e9515dbc898012367c71c1018449cd7716
@@ -55,3 +53,4 @@ jobs:
           JF_URL: ${{ secrets.JFROG_PLATFORM_URL }}
           JF_ACCESS_TOKEN: ${{ secrets.JFROG_ACCESS_TOKEN }}
           JF_GIT_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JRELEASER_OCI_COMPARTMENTID: ${{ secrets.JRELEASER_OCI_COMPARTMENTID }}

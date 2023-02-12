@@ -9,10 +9,6 @@ on:
   schedule:
     - cron: '30 1 * * 0'
 
-env:
-  JAVA_VERSION: '11'
-  JAVA_DISTRO: 'zulu'
-
 permissions:
   security-events: write
   actions: write
@@ -38,8 +34,8 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
-          java-version: ${{ env.JAVA_VERSION }}
-          distribution: ${{ env.JAVA_DISTRO }}
+          java-version: ${{ vars.JAVA_VERSION }}
+          distribution: ${{ vars.JAVA_DISTRO }}
           cache: 'gradle'
 
       - name: Autobuild

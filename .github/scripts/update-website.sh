@@ -2,7 +2,7 @@
 
 # env vars:
 # VERSION
-# GITHUB_BOT_EMAIL
+# GH_BOT_EMAIL
 
 set -e
 
@@ -13,7 +13,7 @@ sed -i -e "s/jreleaser-effective-version\:\ .*/jreleaser-effective-version: ${VE
 sed -i -e "s/jreleaser-tag\:\ .*/jreleaser-tag: v${VERSION}/g" docs/antora.yml
 echo ${VERSION} > VERSION
 git add VERSION
-git config --global user.email "${GITHUB_BOT_EMAIL}"
+git config --global user.email "${GH_BOT_EMAIL}"
 git config --global user.name "GitHub Action"
 git commit -a -m "Releasing version ${VERSION}"
 git push origin main

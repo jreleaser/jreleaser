@@ -7,25 +7,12 @@ on:
         description: 'Release version'
         required: true
 
-env:
-  JAVA_VERSION: '11'
-  JAVA_DISTRO: 'zulu'
-  GRAAL_VERSION: '22.3.1'
-  GRAAL_JAVA_VERSION: '17'
-  REPO_OWNER: 'jreleaser'
-  REPO_NAME: 'jreleaser'
-  GITHUB_BOT_EMAIL: '41898282+github-actions[bot]@users.noreply.github.com'
-
 jobs:
   precheck:
     name: Precheck
     runs-on: ubuntu-latest
     outputs:
       VERSION: ${{ steps.vars.outputs.VERSION }}
-      JAVA_VERSION: ${{ env.JAVA_VERSION }}
-      JAVA_DISTRO: ${{ env.JAVA_DISTRO }}
-      GRAAL_VERSION: ${{ env.GRAAL_VERSION }}
-      GRAAL_JAVA_VERSION: ${{ env.GRAAL_JAVA_VERSION }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -47,8 +34,6 @@ jobs:
     needs: [precheck]
     uses: jreleaser/jreleaser/.github/workflows/step-jlink.yml@main
     with:
-      java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
-      java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
       project-version: ${{ needs.precheck.outputs.VERSION }}
     secrets:
       gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
@@ -58,18 +43,12 @@ jobs:
     needs: [precheck, jlink]
     uses: jreleaser/jreleaser/.github/workflows/step-jpackage.yml@main
     with:
-      java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
-      java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
       project-version: ${{ needs.precheck.outputs.VERSION }}
 
   native-image:
     needs: [precheck, jlink]
     uses: jreleaser/jreleaser/.github/workflows/step-native-image.yml@main
     with:
-      graal-version: ${{ needs.precheck.outputs.GRAAL_VERSION }}
-      graal-java-version: ${{ needs.precheck.outputs.GRAAL_JAVA_VERSION }}
-      java-version: ${{ needs.precheck.outputs.JAVA_VERSION }}
-      java-distro: ${{ needs.precheck.outputs.JAVA_DISTRO }}
       project-version: ${{ needs.precheck.outputs.VERSION }}
 
   release:
@@ -115,8 +94,8 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
-          java-version: ${{ env.JAVA_VERSION }}
-          distribution: ${{ env.JAVA_DISTRO }}
+          java-version: ${{ vars.JAVA_VERSION }}
+          distribution: ${{ vars.JAVA_DISTRO }}
           cache: 'gradle'
 
       - name: Deploy
@@ -222,6 +201,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
           TAG: "v${{ needs.precheck.outputs.VERSION }}"
           PROVENANCE_FILE: 'jreleaser-all-${{ needs.precheck.outputs.VERSION }}.intoto.jsonl'
+          REPO_OWNER: 'jreleaser'
+          REPO_NAME: 'jreleaser'
         run: sh upload-provenance.sh
 
   update-website:
@@ -247,7 +228,7 @@ jobs:
         env:
           TAG: "v${{ needs.precheck.outputs.VERSION }}"
           VERSION: ${{ needs.precheck.outputs.VERSION }}
-          GITHUB_BOT_EMAIL: ${{ env.GITHUB_BOT_EMAIL }}
+          GH_BOT_EMAIL: ${{ vars.GH_BOT_EMAIL }}
         run: sh update-website.sh
 
   update-bach-info:
@@ -276,4 +257,5 @@ jobs:
           JAR_SIZE: ${{ needs.release.outputs.JAR_SIZE }}
           JAR_CSUM: ${{ needs.release.outputs.JAR_CSUM }}
           DOC_SIZE: ${{ needs.release.outputs.DOC_SIZE }}
+          GH_BOT_EMAIL: ${{ vars.GH_BOT_EMAIL }}
         run: sh update-bach-info.sh

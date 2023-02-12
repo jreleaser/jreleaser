@@ -3,10 +3,6 @@ name: Build
 on:
   pull_request:
 
-env:
-  JAVA_VERSION: '11'
-  JAVA_DISTRO: 'zulu'
-
 permissions:
   contents: read
 
@@ -24,8 +20,8 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
-          java-version: ${{ env.JAVA_VERSION }}
-          distribution: ${{ env.JAVA_DISTRO }}
+          java-version: ${{ vars.JAVA_VERSION }}
+          distribution: ${{ vars.JAVA_DISTRO }}
           cache: 'gradle'
 
       - name: Build
