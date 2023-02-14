@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.announce;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.mustache.TemplateContext;
@@ -44,6 +45,7 @@ public final class ZulipAnnouncer extends AbstractMessageAnnouncer<ZulipAnnounce
     private String channel;
     private String subject;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.announce.ZulipAnnouncer immutable = new org.jreleaser.model.api.announce.ZulipAnnouncer() {
         private static final long serialVersionUID = -2240453843686094465L;
 

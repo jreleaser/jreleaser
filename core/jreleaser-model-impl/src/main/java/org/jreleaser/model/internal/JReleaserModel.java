@@ -94,7 +94,11 @@ public class JReleaserModel {
     @JsonIgnore
     private org.jreleaser.model.api.JReleaserModel.Commit commit;
 
+
+    @JsonIgnore
     private final org.jreleaser.model.api.JReleaserModel immutable = new org.jreleaser.model.api.JReleaserModel() {
+        private static final long serialVersionUID = -571955827712138358L;
+
         private Map<String, ? extends org.jreleaser.model.api.distributions.Distribution> distributions;
         private Map<String, ? extends org.jreleaser.model.api.extensions.Extension> extensions;
 

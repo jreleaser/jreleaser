@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.announce;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Constants;
@@ -49,6 +50,7 @@ public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer, org.jr
     private String payloadTemplate;
     private String bearerKeyword;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.announce.HttpAnnouncer immutable = new org.jreleaser.model.api.announce.HttpAnnouncer() {
         private static final long serialVersionUID = -2918111244399624143L;
 

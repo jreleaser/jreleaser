@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.catalog.sbom;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.catalog.Cataloger;
 import org.jreleaser.model.internal.common.AbstractModelObject;
@@ -64,6 +65,7 @@ public interface SbomCataloger<A extends org.jreleaser.model.api.catalog.sbom.Sb
         private Boolean enabled;
         private String name;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.catalog.sbom.SbomCataloger.Pack immutable = new org.jreleaser.model.api.catalog.sbom.SbomCataloger.Pack() {
             private static final long serialVersionUID = -6963070679384259298L;
 

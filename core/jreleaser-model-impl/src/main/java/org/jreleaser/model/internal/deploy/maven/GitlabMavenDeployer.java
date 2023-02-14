@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.deploy.maven;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Http;
 import org.jreleaser.mustache.TemplateContext;
@@ -37,6 +38,7 @@ public final class GitlabMavenDeployer extends AbstractMavenDeployer<GitlabMaven
 
     private String projectIdentifier;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.deploy.maven.GitlabMavenDeployer immutable = new org.jreleaser.model.api.deploy.maven.GitlabMavenDeployer() {
         private static final long serialVersionUID = -7592311646357396039L;
 

@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.release;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.JReleaserException;
@@ -81,6 +82,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
     private String contentTemplate;
     private String preset;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.release.Changelog immutable = new org.jreleaser.model.api.release.Changelog() {
         private static final long serialVersionUID = 3830727279862963658L;
 
@@ -556,6 +558,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
         private String content;
         private String contentTemplate;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.release.Changelog.Append immutable = new org.jreleaser.model.api.release.Changelog.Append() {
             private static final long serialVersionUID = -5635998660542618226L;
 
@@ -693,6 +696,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
         private String format;
         private Integer order;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.release.Changelog.Category immutable = new org.jreleaser.model.api.release.Changelog.Category() {
             private static final long serialVersionUID = -6331412945094114818L;
 
@@ -834,6 +838,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
         private String search;
         private String replace = "";
 
+        @JsonIgnore
         private final org.jreleaser.model.api.release.Changelog.Replacer immutable = new org.jreleaser.model.api.release.Changelog.Replacer() {
             private static final long serialVersionUID = -8515498818759834354L;
 
@@ -902,6 +907,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
         private String body;
         private Integer order;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.release.Changelog.Labeler immutable = new org.jreleaser.model.api.release.Changelog.Labeler() {
             private static final long serialVersionUID = -6780960364911032512L;
 
@@ -1006,6 +1012,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
         private Boolean enabled;
         private String format;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.release.Changelog.Contributors immutable = new org.jreleaser.model.api.release.Changelog.Contributors() {
             private static final long serialVersionUID = 1849581704581927871L;
 
@@ -1079,6 +1086,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
         private final Set<String> contributors = new LinkedHashSet<>();
         private Boolean uncategorized;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.release.Changelog.Hide immutable = new org.jreleaser.model.api.release.Changelog.Hide() {
             private static final long serialVersionUID = 4820100134325634530L;
 

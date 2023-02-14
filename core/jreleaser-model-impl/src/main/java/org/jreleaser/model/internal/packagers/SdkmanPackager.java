@@ -69,6 +69,7 @@ public final class SdkmanPackager extends AbstractPackager<org.jreleaser.model.a
     @JsonIgnore
     private boolean published;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.packagers.SdkmanPackager immutable = new org.jreleaser.model.api.packagers.SdkmanPackager() {
         private static final long serialVersionUID = 3123151880557373320L;
 

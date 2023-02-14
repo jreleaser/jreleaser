@@ -50,6 +50,7 @@ public final class Files extends AbstractActivatable<Files> implements Domain {
     @JsonIgnore
     private boolean resolved;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.files.Files immutable = new org.jreleaser.model.api.files.Files() {
         private static final long serialVersionUID = -328612924170955820L;
 

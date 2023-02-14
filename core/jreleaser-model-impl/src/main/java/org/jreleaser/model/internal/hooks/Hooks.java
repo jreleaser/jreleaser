@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.hooks;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.common.AbstractActivatable;
 import org.jreleaser.model.internal.common.Domain;
@@ -35,6 +36,7 @@ public final class Hooks extends AbstractActivatable<Hooks> implements Domain {
 
     private final CommandHooks command = new CommandHooks();
 
+    @JsonIgnore
     private final org.jreleaser.model.api.hooks.Hooks immutable = new org.jreleaser.model.api.hooks.Hooks() {
         private static final long serialVersionUID = -960078052893791966L;
 

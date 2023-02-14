@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.download;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 
 import java.util.List;
@@ -33,6 +34,7 @@ import static org.jreleaser.model.api.download.ScpDownloader.TYPE;
 public final class ScpDownloader extends AbstractSshDownloader<org.jreleaser.model.api.download.ScpDownloader, ScpDownloader> {
     private static final long serialVersionUID = -59581960524753148L;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.download.ScpDownloader immutable = new org.jreleaser.model.api.download.ScpDownloader() {
         private static final long serialVersionUID = 322325976684206094L;
 

@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.extensions;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.common.EnabledAware;
@@ -43,6 +44,7 @@ public final class Extension extends AbstractModelObject<Extension> implements D
     private String gav;
     private String directory;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.extensions.Extension immutable = new org.jreleaser.model.api.extensions.Extension() {
         private static final long serialVersionUID = -8554317090414988356L;
 
@@ -177,6 +179,7 @@ public final class Extension extends AbstractModelObject<Extension> implements D
         private final Map<String, Object> properties = new LinkedHashMap<>();
         private String type;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.extensions.Extension.Provider immutable = new org.jreleaser.model.api.extensions.Extension.Provider() {
             private static final long serialVersionUID = 6167354406466230040L;
 

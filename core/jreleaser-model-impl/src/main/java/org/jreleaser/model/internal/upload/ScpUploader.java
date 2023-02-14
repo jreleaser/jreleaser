@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.upload;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 
 import java.util.Map;
@@ -31,6 +32,7 @@ import static org.jreleaser.model.api.upload.ScpUploader.TYPE;
 public final class ScpUploader extends AbstractSshUploader<org.jreleaser.model.api.upload.ScpUploader, ScpUploader> {
     private static final long serialVersionUID = -6887462905710198298L;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.upload.ScpUploader immutable = new org.jreleaser.model.api.upload.ScpUploader() {
         private static final long serialVersionUID = 3793298601082284442L;
 

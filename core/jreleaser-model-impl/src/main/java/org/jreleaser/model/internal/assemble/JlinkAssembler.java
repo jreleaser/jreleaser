@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.assemble;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Archive;
 import org.jreleaser.model.Distribution;
@@ -65,6 +66,7 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
     private Archive.Format archiveFormat;
     private Boolean copyJars;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.assemble.JlinkAssembler immutable = new org.jreleaser.model.api.assemble.JlinkAssembler() {
         private static final long serialVersionUID = 7908712047682054832L;
 
@@ -425,6 +427,7 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
         private Boolean useWildcardInPath;
         private Boolean enabled;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.assemble.JlinkAssembler.Jdeps immutable = new org.jreleaser.model.api.assemble.JlinkAssembler.Jdeps() {
             private static final long serialVersionUID = -6727485936574423582L;
 

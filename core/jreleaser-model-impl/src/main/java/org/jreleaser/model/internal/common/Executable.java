@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.common;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.util.PlatformUtils;
 
 import java.util.LinkedHashMap;
@@ -36,6 +37,7 @@ public class Executable extends AbstractModelObject<Executable> implements Domai
     private String unixExtension;
     private String windowsExtension = "bat";
 
+    @JsonIgnore
     private final org.jreleaser.model.api.common.Executable immutable = new org.jreleaser.model.api.common.Executable() {
         private static final long serialVersionUID = 5589040357178439205L;
 

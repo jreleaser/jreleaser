@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.bouncycastle.openpgp.PGPException;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.extensions.api.workflow.WorkflowListener;
@@ -153,6 +154,7 @@ public class JReleaserContext {
     private org.jreleaser.model.spi.release.Releaser<?> releaser;
     private JReleaserCommand command;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.JReleaserContext immutable = new org.jreleaser.model.api.JReleaserContext() {
         private static final long serialVersionUID = 4782005131002875174L;
 

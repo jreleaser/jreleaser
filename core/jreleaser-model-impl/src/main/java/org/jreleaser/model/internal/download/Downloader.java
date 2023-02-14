@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.download;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.common.Activatable;
@@ -62,6 +63,7 @@ public interface Downloader<A extends org.jreleaser.model.api.download.Downloade
         private Boolean enabled;
         private Boolean skipRootEntry;
 
+        @JsonIgnore
         public final org.jreleaser.model.api.download.Downloader.Unpack immutable = new org.jreleaser.model.api.download.Downloader.Unpack() {
             private static final long serialVersionUID = -6271748744186223250L;
 
@@ -137,6 +139,7 @@ public interface Downloader<A extends org.jreleaser.model.api.download.Downloade
         private String input;
         private String output;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.download.Downloader.Asset immutable = new org.jreleaser.model.api.download.Downloader.Asset() {
             private static final long serialVersionUID = 2845138939915499623L;
 

@@ -54,6 +54,7 @@ public final class Glob extends AbstractModelObject<Glob> implements Domain, Ext
     private Set<Artifact> artifacts;
     private String directory;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.common.Glob immutable = new org.jreleaser.model.api.common.Glob() {
         private static final long serialVersionUID = -8118196314326497395L;
 

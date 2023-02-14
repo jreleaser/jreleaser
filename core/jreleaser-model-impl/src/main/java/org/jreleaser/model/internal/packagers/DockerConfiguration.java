@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.packagers;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.common.Activatable;
 import org.jreleaser.model.internal.common.Domain;
@@ -121,6 +122,7 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
         private String password;
         private Boolean externalLogin;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.packagers.DockerConfiguration.Registry immutable = new org.jreleaser.model.api.packagers.DockerConfiguration.Registry() {
             private static final long serialVersionUID = -1273111436252150810L;
 
@@ -276,6 +278,7 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
         private Boolean enabled;
         private Boolean createBuilder;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.packagers.DockerConfiguration.Buildx immutable = new org.jreleaser.model.api.packagers.DockerConfiguration.Buildx() {
             private static final long serialVersionUID = -6178190371465420854L;
 

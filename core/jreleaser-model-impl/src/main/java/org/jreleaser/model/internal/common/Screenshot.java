@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.common;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.mustachejava.TemplateFunction;
 
 import java.util.LinkedHashMap;
@@ -40,6 +41,7 @@ public final class Screenshot extends AbstractModelObject<Screenshot> implements
     private Integer width;
     private Integer height;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.common.Screenshot immutable = new org.jreleaser.model.api.common.Screenshot() {
         private static final long serialVersionUID = 3229726441750227017L;
 

@@ -1,3 +1,5 @@
+Published: {{timestamp}}
+
 ## Release Notes
 
 [{{releaseNotesUrl}}]({{releaseNotesUrl}})

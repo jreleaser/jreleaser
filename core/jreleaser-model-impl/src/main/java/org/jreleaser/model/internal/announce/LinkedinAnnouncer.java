@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.announce;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.mustache.TemplateContext;
@@ -42,6 +43,7 @@ public final class LinkedinAnnouncer extends AbstractMessageAnnouncer<LinkedinAn
     private String accessToken;
     private String subject;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.announce.LinkedinAnnouncer immutable = new org.jreleaser.model.api.announce.LinkedinAnnouncer() {
         private static final long serialVersionUID = 9008336230586137073L;
 

@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.upload;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Artifact;
@@ -41,6 +42,7 @@ public final class FtpUploader extends AbstractUploader<org.jreleaser.model.api.
     private String path;
     private String downloadUrl;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.upload.FtpUploader immutable = new org.jreleaser.model.api.upload.FtpUploader() {
         private static final long serialVersionUID = -1377876046305087409L;
 

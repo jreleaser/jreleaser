@@ -84,6 +84,7 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
     private Boolean continueOnError;
     private String downloadUrl;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.packagers.DockerPackager immutable = new org.jreleaser.model.api.packagers.DockerPackager() {
         private static final long serialVersionUID = -8249625838795141546L;
 
@@ -445,6 +446,7 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
 
         private Boolean versionedSubfolders;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.packagers.DockerPackager.DockerRepository immutable = new org.jreleaser.model.api.packagers.DockerPackager.DockerRepository() {
             private static final long serialVersionUID = -8039494200339437225L;
 

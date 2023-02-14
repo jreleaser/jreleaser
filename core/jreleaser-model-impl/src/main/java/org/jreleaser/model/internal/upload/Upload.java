@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.upload;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.AbstractActivatable;
@@ -56,6 +57,7 @@ public final class Upload extends AbstractActivatable<Upload> implements Domain 
     private final Map<String, ScpUploader> scp = new LinkedHashMap<>();
     private final Map<String, SftpUploader> sftp = new LinkedHashMap<>();
 
+    @JsonIgnore
     private final org.jreleaser.model.api.upload.Upload immutable = new org.jreleaser.model.api.upload.Upload() {
         private static final long serialVersionUID = -1954880769141203693L;
 

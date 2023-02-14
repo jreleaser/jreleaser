@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.upload;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Http;
 import org.jreleaser.model.internal.JReleaserContext;
@@ -53,6 +54,7 @@ public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.mo
     private final List<ArtifactoryRepository> repositories = new ArrayList<>();
     private String host;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.upload.ArtifactoryUploader immutable = new org.jreleaser.model.api.upload.ArtifactoryUploader() {
         private static final long serialVersionUID = -2363532627193458751L;
 
@@ -302,6 +304,7 @@ public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.mo
 
         private String path;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.upload.ArtifactoryUploader.ArtifactoryRepository immutable = new org.jreleaser.model.api.upload.ArtifactoryUploader.ArtifactoryRepository() {
             private static final long serialVersionUID = -954690979964972109L;
 

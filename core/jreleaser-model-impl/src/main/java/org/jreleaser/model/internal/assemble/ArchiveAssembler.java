@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.assemble;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Archive;
 import org.jreleaser.model.Distribution;
@@ -53,6 +54,8 @@ public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, 
     private Boolean attachPlatform;
     private Distribution.DistributionType distributionType;
 
+
+    @JsonIgnore
     private final org.jreleaser.model.api.assemble.ArchiveAssembler immutable = new org.jreleaser.model.api.assemble.ArchiveAssembler() {
         private static final long serialVersionUID = -2573584273590288536L;
 

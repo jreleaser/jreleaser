@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.announce;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 
 import java.util.Map;
@@ -37,6 +38,7 @@ public final class WebhookAnnouncer extends AbstractMessageAnnouncer<WebhookAnno
     private String messageProperty;
     private Boolean structuredMessage;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.announce.WebhookAnnouncer immutable = new org.jreleaser.model.api.announce.WebhookAnnouncer() {
         private static final long serialVersionUID = 6579288631060633630L;
 

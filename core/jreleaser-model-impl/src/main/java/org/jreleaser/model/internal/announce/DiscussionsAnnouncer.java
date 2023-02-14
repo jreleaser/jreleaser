@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.announce;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.mustache.TemplateContext;
@@ -39,6 +40,7 @@ public final class DiscussionsAnnouncer extends AbstractMessageAnnouncer<Discuss
     private String team;
     private String title;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.announce.DiscussionsAnnouncer immutable = new org.jreleaser.model.api.announce.DiscussionsAnnouncer() {
         private static final long serialVersionUID = -3455087550754390394L;
 

@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.deploy.maven;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Http;
 
@@ -33,6 +34,7 @@ import static java.util.Collections.unmodifiableMap;
 public final class GiteaMavenDeployer extends AbstractMavenDeployer<GiteaMavenDeployer, org.jreleaser.model.api.deploy.maven.GiteaMavenDeployer> {
     private static final long serialVersionUID = -5441090984288035705L;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.deploy.maven.GiteaMavenDeployer immutable = new org.jreleaser.model.api.deploy.maven.GiteaMavenDeployer() {
         private static final long serialVersionUID = 2723686027082362594L;
 

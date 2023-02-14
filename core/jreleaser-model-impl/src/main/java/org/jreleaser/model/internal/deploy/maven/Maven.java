@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.deploy.maven;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.common.AbstractActivatable;
 import org.jreleaser.model.internal.common.AbstractModelObject;
@@ -50,6 +51,7 @@ public final class Maven extends AbstractActivatable<Maven> implements Domain, A
     private final Map<String, Nexus2MavenDeployer> nexus2 = new LinkedHashMap<>();
     private final Pomchecker pomchecker = new Pomchecker();
 
+    @JsonIgnore
     private final org.jreleaser.model.api.deploy.maven.Maven immutable = new org.jreleaser.model.api.deploy.maven.Maven() {
         private static final long serialVersionUID = -8021098672645717824L;
 
@@ -434,6 +436,7 @@ public final class Maven extends AbstractActivatable<Maven> implements Domain, A
 
         private String version;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.deploy.maven.Maven.Pomchecker immutable = new org.jreleaser.model.api.deploy.maven.Maven.Pomchecker() {
             private static final long serialVersionUID = -7691641757680849149L;
 

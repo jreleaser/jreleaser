@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.checksum;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.common.Domain;
@@ -44,6 +45,7 @@ public final class Checksum extends AbstractModelObject<Checksum> implements Dom
     private String name;
     private Boolean files;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.checksum.Checksum immutable = new org.jreleaser.model.api.checksum.Checksum() {
         private static final long serialVersionUID = -7632183071376409444L;
 

@@ -70,6 +70,7 @@ public final class Environment extends AbstractModelObject<Environment> implemen
     @JsonIgnore
     private Path propertiesFile;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.environment.Environment immutable = new org.jreleaser.model.api.environment.Environment() {
         private static final long serialVersionUID = -7287090119869371299L;
 

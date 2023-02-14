@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model.internal.common;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -32,6 +34,7 @@ public final class CommitAuthor extends AbstractModelObject<CommitAuthor> implem
     private String email;
     private String name;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.common.CommitAuthor immutable = new org.jreleaser.model.api.common.CommitAuthor() {
         private static final long serialVersionUID = -4344080671093237233L;
 

@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.catalog.sbom;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Artifact;
@@ -47,6 +48,7 @@ public final class SyftSbomCataloger extends AbstractSbomCataloger<SyftSbomCatal
     private final Set<org.jreleaser.model.api.catalog.sbom.SyftSbomCataloger.Format> formats = new LinkedHashSet<>();
     private String version;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.catalog.sbom.SyftSbomCataloger immutable = new org.jreleaser.model.api.catalog.sbom.SyftSbomCataloger() {
         private static final long serialVersionUID = 6622561901807746751L;
 

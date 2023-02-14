@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.assemble;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.internal.common.AbstractActivatable;
@@ -50,6 +51,7 @@ public final class Assemble extends AbstractActivatable<Assemble> implements Dom
     private final Map<String, JpackageAssembler> jpackage = new LinkedHashMap<>();
     private final Map<String, NativeImageAssembler> nativeImage = new LinkedHashMap<>();
 
+    @JsonIgnore
     private final org.jreleaser.model.api.assemble.Assemble immutable = new org.jreleaser.model.api.assemble.Assemble() {
         private static final long serialVersionUID = -7622959098817234697L;
 

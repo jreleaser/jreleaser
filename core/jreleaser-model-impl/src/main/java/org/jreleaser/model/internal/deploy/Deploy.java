@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.deploy;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.common.AbstractActivatable;
 import org.jreleaser.model.internal.common.Domain;
@@ -36,6 +37,7 @@ public final class Deploy extends AbstractActivatable<Deploy> implements Domain 
 
     private final Maven maven = new Maven();
 
+    @JsonIgnore
     private final org.jreleaser.model.api.deploy.Deploy immutable = new org.jreleaser.model.api.deploy.Deploy() {
         private static final long serialVersionUID = 487506438939211307L;
 

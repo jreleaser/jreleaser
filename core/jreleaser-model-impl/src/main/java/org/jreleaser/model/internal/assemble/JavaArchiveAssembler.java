@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.assemble;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Archive;
 import org.jreleaser.model.Distribution;
@@ -61,6 +62,7 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
 
     private String archiveName;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.assemble.JavaArchiveAssembler immutable = new org.jreleaser.model.api.assemble.JavaArchiveAssembler() {
         private static final long serialVersionUID = 1447263598587451959L;
 
@@ -332,6 +334,7 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
         private String mainModule;
         private String mainClass;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.assemble.JavaArchiveAssembler.Java immutable = new org.jreleaser.model.api.assemble.JavaArchiveAssembler.Java() {
             private static final long serialVersionUID = 5951754473564143458L;
 

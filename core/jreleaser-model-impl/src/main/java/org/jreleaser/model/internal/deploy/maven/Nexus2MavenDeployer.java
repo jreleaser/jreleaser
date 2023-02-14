@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.deploy.maven;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Http;
 import org.jreleaser.mustache.TemplateContext;
@@ -41,6 +42,7 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
     private int transitionDelay;
     private int transitionMaxRetries;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer immutable = new org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer() {
         private static final long serialVersionUID = -325247395895899196L;
 

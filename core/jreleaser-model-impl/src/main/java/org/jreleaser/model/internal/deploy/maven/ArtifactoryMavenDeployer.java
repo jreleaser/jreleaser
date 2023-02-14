@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.deploy.maven;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Http;
 
@@ -33,6 +34,7 @@ import static java.util.Collections.unmodifiableMap;
 public final class ArtifactoryMavenDeployer extends AbstractMavenDeployer<ArtifactoryMavenDeployer, org.jreleaser.model.api.deploy.maven.ArtifactoryMavenDeployer> {
     private static final long serialVersionUID = 2876306953402604076L;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.deploy.maven.ArtifactoryMavenDeployer immutable = new org.jreleaser.model.api.deploy.maven.ArtifactoryMavenDeployer() {
         private static final long serialVersionUID = 7913526241183452717L;
 

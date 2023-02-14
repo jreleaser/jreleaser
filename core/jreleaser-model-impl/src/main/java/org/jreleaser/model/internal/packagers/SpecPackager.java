@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.packagers;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Stereotype;
@@ -82,6 +83,7 @@ public final class SpecPackager extends AbstractRepositoryPackager<org.jreleaser
     private String packageName;
     private String release;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.packagers.SpecPackager immutable = new org.jreleaser.model.api.packagers.SpecPackager() {
         private static final long serialVersionUID = -3139422195483595734L;
 

@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.announce;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.JReleaserException;
@@ -57,6 +58,7 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
     private final WebhooksAnnouncer webhooks = new WebhooksAnnouncer();
     private final ZulipAnnouncer zulip = new ZulipAnnouncer();
 
+    @JsonIgnore
     private final org.jreleaser.model.api.announce.Announce immutable = new org.jreleaser.model.api.announce.Announce() {
         private static final long serialVersionUID = 2116386621001490270L;
 
@@ -350,11 +352,11 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
     }
 
     public Map<String, HttpAnnouncer> getHttp() {
-        return this.http.getHttpAnnouncers();
+        return this.http.getHttp();
     }
 
     public void setHttp(Map<String, HttpAnnouncer> https) {
-        this.http.setHttpAnnouncers(https);
+        this.http.setHttp(https);
     }
 
     public void addHttpAnnouncer(HttpAnnouncer http) {

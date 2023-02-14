@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.assemble;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Archive;
 import org.jreleaser.model.Distribution;
@@ -68,6 +69,7 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
     private String imageNameTransform;
     private Archive.Format archiveFormat;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.assemble.NativeImageAssembler immutable = new org.jreleaser.model.api.assemble.NativeImageAssembler() {
         private static final long serialVersionUID = 5457398509414121447L;
 
@@ -462,6 +464,7 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
         private final List<String> args = new ArrayList<>();
         private String version;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.assemble.NativeImageAssembler.Upx immutable = new org.jreleaser.model.api.assemble.NativeImageAssembler.Upx() {
             private static final long serialVersionUID = 3190807504460186043L;
 
@@ -577,6 +580,7 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
     public static final class Linux extends NativeImageAssembler.AbstractPlatformCustomizer<Linux> {
         private static final long serialVersionUID = -7751015791770722168L;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.assemble.NativeImageAssembler.Linux immutable = new org.jreleaser.model.api.assemble.NativeImageAssembler.Linux() {
             private static final long serialVersionUID = -4020602674846221641L;
 
@@ -608,6 +612,7 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
     public static final class Windows extends NativeImageAssembler.AbstractPlatformCustomizer<Windows> {
         private static final long serialVersionUID = -2310019463850744244L;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.assemble.NativeImageAssembler.Windows immutable = new org.jreleaser.model.api.assemble.NativeImageAssembler.Windows() {
             private static final long serialVersionUID = 1216711581026682524L;
 
@@ -639,6 +644,7 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
     public static final class Osx extends NativeImageAssembler.AbstractPlatformCustomizer<Osx> {
         private static final long serialVersionUID = 1619426199448547975L;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.assemble.NativeImageAssembler.Osx immutable = new org.jreleaser.model.api.assemble.NativeImageAssembler.Osx() {
             private static final long serialVersionUID = -4484609486153782109L;
 

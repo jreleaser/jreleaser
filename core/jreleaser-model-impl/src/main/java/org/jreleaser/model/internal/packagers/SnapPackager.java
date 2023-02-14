@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.packagers;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Stereotype;
@@ -66,7 +67,7 @@ import static org.jreleaser.util.StringUtils.isFalse;
  */
 public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser.model.api.packagers.SnapPackager, SnapPackager> {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
-    private static final long serialVersionUID = -1449485744755116084L;
+    private static final long serialVersionUID = 4351951573944850125L;
 
     static {
         Set<String> extensions = setOf(
@@ -91,7 +92,7 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
     private final List<Plug> plugs = new ArrayList<>();
     private final List<Slot> slots = new ArrayList<>();
     private final List<Architecture> architectures = new ArrayList<>();
-    private final SnapRepository repository = new SnapRepository();
+    private final SnapRepository snap = new SnapRepository();
 
     private String packageName;
     private String base = "core20";
@@ -100,6 +101,7 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
     private String exportedLogin;
     private Boolean remoteBuild;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.packagers.SnapPackager immutable = new org.jreleaser.model.api.packagers.SnapPackager() {
         private static final long serialVersionUID = -8321640926545215502L;
 
@@ -179,7 +181,7 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
 
         @Override
         public org.jreleaser.model.api.packagers.PackagerRepository getSnap() {
-            return repository.asImmutable();
+            return snap.asImmutable();
         }
 
         @Override
@@ -291,7 +293,7 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
         setPlugs(merge(this.plugs, source.plugs));
         setSlots(merge(this.slots, source.slots));
         setArchitectures(merge(this.architectures, source.architectures));
-        setSnap(source.repository);
+        setSnap(source.snap);
     }
 
     public String getPackageName() {
@@ -402,11 +404,11 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
     }
 
     public SnapRepository getSnap() {
-        return repository;
+        return snap;
     }
 
     public void setSnap(SnapRepository repository) {
-        this.repository.merge(repository);
+        this.snap.merge(repository);
     }
 
     @Override
@@ -418,7 +420,7 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
         props.put("confinement", confinement);
         props.put("exportedLogin", exportedLogin);
         props.put("remoteBuild", isRemoteBuild());
-        props.put("snap", repository.asMap(full));
+        props.put("snap", snap.asMap(full));
         props.put("localPlugs", localPlugs);
         props.put("localSlots", localSlots);
 
@@ -488,6 +490,7 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
         private final List<String> writes = new ArrayList<>();
         private String name;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.packagers.SnapPackager.Slot immutable = new org.jreleaser.model.api.packagers.SnapPackager.Slot() {
             private static final long serialVersionUID = -3518924698578544847L;
 
@@ -605,6 +608,7 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
         private final List<String> writes = new ArrayList<>();
         private String name;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.packagers.SnapPackager.Plug immutable = new org.jreleaser.model.api.packagers.SnapPackager.Plug() {
             private static final long serialVersionUID = -5689359361910963388L;
 
@@ -729,6 +733,7 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
         private final List<String> runOn = new ArrayList<>();
         private Boolean ignoreError;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.packagers.SnapPackager.Architecture immutable = new org.jreleaser.model.api.packagers.SnapPackager.Architecture() {
             private static final long serialVersionUID = 7707062117835809382L;
 

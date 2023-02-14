@@ -50,7 +50,7 @@ public final class HttpAnnouncerValidator {
     public static void validateHttpAnnouncers(JReleaserContext context, Mode mode, HttpAnnouncers http, Errors errors) {
         context.getLogger().debug("announce.http");
 
-        Map<String, HttpAnnouncer> ha = http.getHttpAnnouncers();
+        Map<String, HttpAnnouncer> ha = http.getHttp();
 
         boolean enabled = false;
         for (Map.Entry<String, HttpAnnouncer> e : ha.entrySet()) {

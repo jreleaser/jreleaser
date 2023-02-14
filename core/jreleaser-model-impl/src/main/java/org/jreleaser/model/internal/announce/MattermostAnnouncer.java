@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.announce;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Constants;
@@ -53,6 +54,7 @@ public final class MattermostAnnouncer extends AbstractAnnouncer<MattermostAnnou
     private String messageTemplate;
     private Boolean structuredMessage;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.announce.MattermostAnnouncer immutable = new org.jreleaser.model.api.announce.MattermostAnnouncer() {
         private static final long serialVersionUID = -3761533403365622892L;
 

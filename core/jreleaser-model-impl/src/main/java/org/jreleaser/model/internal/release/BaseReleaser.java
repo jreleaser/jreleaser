@@ -809,6 +809,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
         private final Set<UpdateSection> sections = new LinkedHashSet<>();
         private Boolean enabled;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.release.Releaser.Update immutable = new org.jreleaser.model.api.release.Releaser.Update() {
             private static final long serialVersionUID = -7253526159752557224L;
 
@@ -877,6 +878,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
         private Boolean enabled;
         private String pattern;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.release.Releaser.Prerelease immutable = new org.jreleaser.model.api.release.Releaser.Prerelease() {
             private static final long serialVersionUID = -862797136353472181L;
 
@@ -970,6 +972,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
         private Boolean close;
         private String name;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.release.Releaser.Milestone immutable = new org.jreleaser.model.api.release.Releaser.Milestone() {
             private static final long serialVersionUID = 2957887352276816797L;
 
@@ -1061,6 +1064,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
         private String comment;
         private Boolean enabled;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.release.Releaser.Issues immutable = new org.jreleaser.model.api.release.Releaser.Issues() {
             private static final long serialVersionUID = 7857893617001154950L;
 
@@ -1162,6 +1166,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
             private String color;
             private String description;
 
+            @JsonIgnore
             private final org.jreleaser.model.api.release.Releaser.Issues.Label immutable = new org.jreleaser.model.api.release.Releaser.Issues.Label() {
                 private static final long serialVersionUID = 8642359487826561699L;
 

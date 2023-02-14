@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model.internal.common;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -36,6 +38,7 @@ public final class Icon extends AbstractModelObject<Icon> implements Domain, Ext
     private Integer height;
     private Boolean primary;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.common.Icon immutable = new org.jreleaser.model.api.common.Icon() {
         private static final long serialVersionUID = 371202655417131552L;
 

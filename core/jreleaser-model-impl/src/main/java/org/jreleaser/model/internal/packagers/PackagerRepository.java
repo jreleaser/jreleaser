@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.packagers;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 
 import java.util.Map;
@@ -30,6 +31,7 @@ import static java.util.Collections.unmodifiableMap;
 public class PackagerRepository extends AbstractRepositoryTap<PackagerRepository> {
     private static final long serialVersionUID = -3486962328445966652L;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.packagers.PackagerRepository immutable = new org.jreleaser.model.api.packagers.PackagerRepository() {
         private static final long serialVersionUID = -3703423912099731255L;
 

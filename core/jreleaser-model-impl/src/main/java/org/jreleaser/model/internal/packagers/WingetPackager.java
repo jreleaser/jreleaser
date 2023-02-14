@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model.internal.packagers;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Stereotype;
@@ -54,7 +56,6 @@ import static org.jreleaser.util.StringUtils.isFalse;
  */
 public final class WingetPackager extends AbstractRepositoryPackager<org.jreleaser.model.api.packagers.WingetPackager, WingetPackager> {
     private static final Map<Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
-    private static final long serialVersionUID = 3773118573465356496L;
 
     static {
         SUPPORTED.put(NATIVE_PACKAGE, setOf(MSI.extension(), EXE.extension()));
@@ -62,7 +63,8 @@ public final class WingetPackager extends AbstractRepositoryPackager<org.jreleas
 
     private final WingetRepository repository = new WingetRepository();
     private final List<String> tags = new ArrayList<>();
-    private final Package _package = new Package();
+    @JsonProperty("package")
+    private final Package pack = new Package();
     private final Publisher publisher = new Publisher();
     private final Installer installer = new Installer();
 
@@ -72,6 +74,7 @@ public final class WingetPackager extends AbstractRepositoryPackager<org.jreleas
     private String minimumOsVersion;
     private String productCode;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.packagers.WingetPackager immutable = new org.jreleaser.model.api.packagers.WingetPackager() {
         private static final long serialVersionUID = 4117704008560830372L;
 
@@ -228,15 +231,11 @@ public final class WingetPackager extends AbstractRepositoryPackager<org.jreleas
         this.moniker = merge(this.moniker, source.moniker);
         this.minimumOsVersion = merge(this.minimumOsVersion, source.minimumOsVersion);
         this.productCode = merge(this.productCode, source.productCode);
-        setPackage(source._package);
+        setPackage(source.pack);
         setPublisher(source.publisher);
         setInstaller(source.installer);
         setRepository(source.repository);
         setTags(merge(this.tags, source.tags));
-    }
-
-    public org.jreleaser.model.api.packagers.WingetPackager getImmutable() {
-        return immutable;
     }
 
     public String getDefaultLocale() {
@@ -288,12 +287,13 @@ public final class WingetPackager extends AbstractRepositoryPackager<org.jreleas
         this.tags.addAll(tags);
     }
 
+    @JsonProperty("package")
     public Package getPackage() {
-        return _package;
+        return pack;
     }
 
-    public void setPackage(Package _package) {
-        this._package.merge(_package);
+    public void setPackage(Package pack) {
+        this.pack.merge(pack);
     }
 
     public Publisher getPublisher() {
@@ -328,7 +328,7 @@ public final class WingetPackager extends AbstractRepositoryPackager<org.jreleas
         props.put("moniker", moniker);
         props.put("minimumOsVersion", minimumOsVersion);
         props.put("productCode", productCode);
-        props.put("package", _package.asMap(full));
+        props.put("package", pack.asMap(full));
         props.put("publisher", publisher.asMap(full));
         props.put("installer", installer.asMap(full));
         props.put("repository", repository.asMap(full));
@@ -379,6 +379,7 @@ public final class WingetPackager extends AbstractRepositoryPackager<org.jreleas
         private String version;
         private String url;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.packagers.WingetPackager.Package immutable = new org.jreleaser.model.api.packagers.WingetPackager.Package() {
             private static final long serialVersionUID = -681067573112565263L;
 
@@ -470,6 +471,7 @@ public final class WingetPackager extends AbstractRepositoryPackager<org.jreleas
         private String url;
         private String supportUrl;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.packagers.WingetPackager.Publisher immutable = new org.jreleaser.model.api.packagers.WingetPackager.Publisher() {
             private static final long serialVersionUID = -5458105963902729331L;
 
@@ -548,6 +550,7 @@ public final class WingetPackager extends AbstractRepositoryPackager<org.jreleas
         private UpgradeBehavior upgradeBehavior = UpgradeBehavior.INSTALL;
         private String command;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.packagers.WingetPackager.Installer immutable = new org.jreleaser.model.api.packagers.WingetPackager.Installer() {
             private static final long serialVersionUID = 1422885238324458482L;
 

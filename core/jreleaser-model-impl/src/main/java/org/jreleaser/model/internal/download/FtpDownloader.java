@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.download;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.common.Ftp;
 import org.jreleaser.model.internal.common.FtpDelegate;
@@ -37,6 +38,7 @@ public final class FtpDownloader extends AbstractDownloader<org.jreleaser.model.
 
     private final FtpDelegate delegate = new FtpDelegate();
 
+    @JsonIgnore
     private final org.jreleaser.model.api.download.FtpDownloader immutable = new org.jreleaser.model.api.download.FtpDownloader() {
         private static final long serialVersionUID = -3069423247317140050L;
 

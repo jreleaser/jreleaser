@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.announce;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.JReleaserException;
@@ -53,6 +54,7 @@ public final class MastodonAnnouncer extends AbstractAnnouncer<MastodonAnnouncer
     private String status;
     private String statusTemplate;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.announce.MastodonAnnouncer immutable = new org.jreleaser.model.api.announce.MastodonAnnouncer() {
         private static final long serialVersionUID = -8926470689255000598L;
 

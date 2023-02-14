@@ -67,7 +67,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser.model.api.packagers.BrewPackager, BrewPackager> {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
-    private static final long serialVersionUID = -7661418498079285220L;
+    private static final long serialVersionUID = -6367949798240946095L;
 
     static {
         Set<String> extensions = setOf(ZIP.extension());
@@ -81,13 +81,14 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
 
     private final List<Dependency> dependencies = new ArrayList<>();
     private final List<String> livecheck = new ArrayList<>();
-    private final HomebrewTap repository = new HomebrewTap();
+    private final HomebrewTap tap = new HomebrewTap();
     private final Cask cask = new Cask();
 
     private String formulaName;
     private String cachedFormulaName;
     private Boolean multiPlatform;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.packagers.BrewPackager immutable = new org.jreleaser.model.api.packagers.BrewPackager() {
         private static final long serialVersionUID = -7968635280218751108L;
 
@@ -103,7 +104,7 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
 
         @Override
         public org.jreleaser.model.api.packagers.PackagerRepository getTap() {
-            return repository.asImmutable();
+            return tap.asImmutable();
         }
 
         @Override
@@ -216,7 +217,7 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
         super.merge(source);
         this.formulaName = merge(this.formulaName, source.formulaName);
         this.multiPlatform = merge(this.multiPlatform, source.multiPlatform);
-        setTap(source.repository);
+        setTap(source.tap);
         setDependenciesAsList(merge(this.dependencies, source.dependencies));
         setLivecheck(merge(this.livecheck, source.livecheck));
         setCask(source.cask);
@@ -262,11 +263,11 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
     }
 
     public HomebrewTap getTap() {
-        return repository;
+        return tap;
     }
 
     public void setTap(HomebrewTap repository) {
-        this.repository.merge(repository);
+        this.tap.merge(repository);
     }
 
     public Cask getCask() {
@@ -330,7 +331,7 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
         super.asMap(full, props);
         props.put("formulaName", formulaName);
         props.put("multiPlatform", isMultiPlatform());
-        props.put("tap", repository.asMap(full));
+        props.put("tap", tap.asMap(full));
         props.put("dependencies", dependencies);
         props.put("livecheck", livecheck);
         props.put("cask", cask.asMap(full));
@@ -455,6 +456,7 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
         private String appName;
         private String appcast;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.packagers.BrewPackager.Cask immutable = new org.jreleaser.model.api.packagers.BrewPackager.Cask() {
             private static final long serialVersionUID = 5862868849533321019L;
 
@@ -757,6 +759,7 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
         private final List<String> items = new ArrayList<>();
         private String name;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.packagers.BrewPackager.CaskItem immutable = new org.jreleaser.model.api.packagers.BrewPackager.CaskItem() {
             private static final long serialVersionUID = -8230159341038906539L;
 

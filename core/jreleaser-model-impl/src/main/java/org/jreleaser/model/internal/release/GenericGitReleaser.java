@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.release;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 
 import java.util.Map;
@@ -30,6 +31,7 @@ import static java.util.Collections.unmodifiableMap;
 public final class GenericGitReleaser extends BaseReleaser<org.jreleaser.model.api.release.GenericGitReleaser, GenericGitReleaser> {
     private static final long serialVersionUID = -2400306764813478894L;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.release.GenericGitReleaser immutable = new org.jreleaser.model.api.release.GenericGitReleaser() {
         private static final long serialVersionUID = -3537373210121424970L;
 

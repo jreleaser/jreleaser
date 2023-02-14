@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.release;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 
 import java.util.Map;
@@ -32,6 +33,7 @@ public class CodebergReleaser extends BaseReleaser<org.jreleaser.model.api.relea
 
     private Boolean draft;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.release.CodebergReleaser immutable = new org.jreleaser.model.api.release.CodebergReleaser() {
         private static final long serialVersionUID = -6491682401927274247L;
 

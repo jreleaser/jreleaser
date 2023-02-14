@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.signing;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.AbstractActivatable;
@@ -59,6 +60,7 @@ public final class Signing extends AbstractActivatable<Signing> implements Domai
     private Boolean checksums;
     private Boolean catalogs;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.signing.Signing immutable = new org.jreleaser.model.api.signing.Signing() {
         private static final long serialVersionUID = -3565614952776622685L;
 
@@ -338,6 +340,7 @@ public final class Signing extends AbstractActivatable<Signing> implements Domai
         private String publicKeyring;
         private Boolean defaultKeyring;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.signing.Signing.Command immutable = new org.jreleaser.model.api.signing.Signing.Command() {
             private static final long serialVersionUID = -8636071040086599491L;
 
@@ -466,6 +469,7 @@ public final class Signing extends AbstractActivatable<Signing> implements Domai
         private String privateKeyFile;
         private String publicKeyFile;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.signing.Signing.Cosign immutable = new org.jreleaser.model.api.signing.Signing.Cosign() {
             private static final long serialVersionUID = 3675807300391748445L;
 

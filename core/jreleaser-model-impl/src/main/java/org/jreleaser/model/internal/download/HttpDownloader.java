@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.download;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.common.HttpDelegate;
 
@@ -37,6 +38,7 @@ public final class HttpDownloader extends AbstractDownloader<org.jreleaser.model
 
     private final HttpDelegate delegate = new HttpDelegate();
 
+    @JsonIgnore
     private final org.jreleaser.model.api.download.HttpDownloader immutable = new org.jreleaser.model.api.download.HttpDownloader() {
         private static final long serialVersionUID = -1955685895966905403L;
 

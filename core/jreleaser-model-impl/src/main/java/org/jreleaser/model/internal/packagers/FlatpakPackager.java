@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.packagers;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Flatpak;
@@ -82,6 +83,7 @@ public final class FlatpakPackager extends AbstractAppdataPackager<org.jreleaser
     private Flatpak.Runtime runtime;
     private String runtimeVersion;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.packagers.FlatpakPackager immutable = new org.jreleaser.model.api.packagers.FlatpakPackager() {
         private static final long serialVersionUID = -7925187932243488062L;
 

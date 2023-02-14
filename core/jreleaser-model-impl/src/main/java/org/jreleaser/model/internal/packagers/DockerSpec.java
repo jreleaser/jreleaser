@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.packagers;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.Domain;
@@ -45,6 +46,7 @@ public final class DockerSpec extends AbstractDockerConfiguration<DockerSpec> im
     private Artifact artifact;
     private String name;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.packagers.DockerSpec immutable = new org.jreleaser.model.api.packagers.DockerSpec() {
         private static final long serialVersionUID = -932413489796274177L;
 

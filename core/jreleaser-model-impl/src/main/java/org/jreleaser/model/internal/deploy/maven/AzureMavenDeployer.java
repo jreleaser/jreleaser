@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.deploy.maven;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Http;
 
@@ -33,6 +34,7 @@ import static java.util.Collections.unmodifiableMap;
 public final class AzureMavenDeployer extends AbstractMavenDeployer<AzureMavenDeployer, org.jreleaser.model.api.deploy.maven.AzureMavenDeployer> {
     private static final long serialVersionUID = 4799445800117349009L;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.deploy.maven.AzureMavenDeployer immutable = new org.jreleaser.model.api.deploy.maven.AzureMavenDeployer() {
         private static final long serialVersionUID = -7887921802377680250L;
 

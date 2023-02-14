@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.packagers;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Stereotype;
@@ -73,6 +74,7 @@ public final class MacportsPackager extends AbstractRepositoryPackager<org.jrele
     private String packageName;
     private Integer revision;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.packagers.MacportsPackager immutable = new org.jreleaser.model.api.packagers.MacportsPackager() {
         private static final long serialVersionUID = 1625817436978161466L;
 

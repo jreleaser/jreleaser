@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.release;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 
 import java.util.Map;
@@ -32,6 +33,7 @@ public class GiteaReleaser extends BaseReleaser<org.jreleaser.model.api.release.
 
     private Boolean draft;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.release.GiteaReleaser immutable = new org.jreleaser.model.api.release.GiteaReleaser() {
         private static final long serialVersionUID = -5748013316146333676L;
 

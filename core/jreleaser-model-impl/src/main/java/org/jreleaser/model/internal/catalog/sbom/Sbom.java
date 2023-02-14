@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.catalog.sbom;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.JReleaserException;
@@ -42,6 +43,7 @@ public final class Sbom extends AbstractActivatable<Sbom> implements Domain, Act
 
     private final SyftSbomCataloger syft = new SyftSbomCataloger();
 
+    @JsonIgnore
     private final org.jreleaser.model.api.catalog.sbom.Sbom immutable = new org.jreleaser.model.api.catalog.sbom.Sbom() {
         private static final long serialVersionUID = 2189991245157503624L;
 

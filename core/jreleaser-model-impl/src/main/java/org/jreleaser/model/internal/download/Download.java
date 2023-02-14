@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.download;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.common.AbstractActivatable;
 import org.jreleaser.model.internal.common.Domain;
@@ -44,6 +45,7 @@ public final class Download extends AbstractActivatable<Download> implements Dom
     private final Map<String, ScpDownloader> scp = new LinkedHashMap<>();
     private final Map<String, SftpDownloader> sftp = new LinkedHashMap<>();
 
+    @JsonIgnore
     private final org.jreleaser.model.api.download.Download immutable = new org.jreleaser.model.api.download.Download() {
         private static final long serialVersionUID = -6843721083893842034L;
 

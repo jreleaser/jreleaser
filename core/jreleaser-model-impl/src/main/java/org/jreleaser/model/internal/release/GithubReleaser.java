@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.release;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.common.Domain;
@@ -38,6 +39,7 @@ public final class GithubReleaser extends BaseReleaser<org.jreleaser.model.api.r
     private Boolean draft;
     private String discussionCategoryName;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.release.GithubReleaser immutable = new org.jreleaser.model.api.release.GithubReleaser() {
         private static final long serialVersionUID = 3386673738149277175L;
 
@@ -352,6 +354,7 @@ public final class GithubReleaser extends BaseReleaser<org.jreleaser.model.api.r
         private Boolean enabled;
         private String configurationFile;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.release.GithubReleaser.ReleaseNotes immutable = new org.jreleaser.model.api.release.GithubReleaser.ReleaseNotes() {
             private static final long serialVersionUID = -301461478911447433L;
 

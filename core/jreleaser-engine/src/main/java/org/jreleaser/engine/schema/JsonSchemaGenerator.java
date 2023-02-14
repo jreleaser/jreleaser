@@ -64,6 +64,7 @@ public final class JsonSchemaGenerator {
         mappings.put("Map<String, WebhookAnnouncer>", "WebhookAnnouncerMap");
         mappings.put("Map<String, HttpAnnouncer>", "HttpAnnouncerMap");
         mappings.put("Map<String, ArchiveAssembler>", "ArchiveAssemblerMap");
+        mappings.put("Map<String, JavaArchiveAssembler>", "JavaArchiveAssemblerMap");
         mappings.put("Map<String, JlinkAssembler>", "JlinkAssemblerMap");
         mappings.put("Map<String, JpackageAssembler>", "JpackageAssemblerMap");
         mappings.put("Map<String, NativeImageAssembler>", "NativeImageAssemblerMap");
@@ -83,17 +84,20 @@ public final class JsonSchemaGenerator {
         mappings.put("Map<String, ScpDownloader>", "ScpDownloaderMap");
         mappings.put("Map<String, Extension>", "ExtensionMap");
         mappings.put("Map<String, ArtifactoryMavenDeployer>", "ArtifactoryMavenDeployerMap");
+        mappings.put("Map<String, AzureMavenDeployer>", "AzureMavenDeployerMap");
         mappings.put("Map<String, GiteaMavenDeployer>", "GiteaMavenDeployerMap");
         mappings.put("Map<String, GithubMavenDeployer>", "GithubMavenDeployerMap");
         mappings.put("Map<String, GitlabMavenDeployer>", "GitlabMavenDeployerMap");
         mappings.put("Map<String, Nexus2MavenDeployer>", "Nexus2MavenDeployerMap");
 
         try {
-            SchemaGeneratorConfigBuilder configBuilder = new SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_2019_09, OptionPreset.PLAIN_JSON);
+            SchemaGeneratorConfigBuilder configBuilder = new SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_7, OptionPreset.PLAIN_JSON);
             configBuilder.getObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+            configBuilder.with(Option.SCHEMA_VERSION_INDICATOR);
             configBuilder.with(Option.FORBIDDEN_ADDITIONAL_PROPERTIES_BY_DEFAULT);
             configBuilder.with(Option.DEFINITION_FOR_MAIN_SCHEMA);
             configBuilder.with(Option.DEFINITIONS_FOR_ALL_OBJECTS);
+            configBuilder.with(Option.MAP_VALUES_AS_ADDITIONAL_PROPERTIES);
             JacksonModule jacksonModule = new JacksonModule();
             configBuilder.with(jacksonModule);
             configBuilder.forTypesInGeneral()

@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.announce;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Constants;
@@ -50,6 +51,7 @@ public final class TeamsAnnouncer extends AbstractAnnouncer<TeamsAnnouncer, org.
     private String webhook;
     private String messageTemplate;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.announce.TeamsAnnouncer immutable = new org.jreleaser.model.api.announce.TeamsAnnouncer() {
         private static final long serialVersionUID = -6163001411466953843L;
 

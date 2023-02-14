@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.upload;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.mustache.TemplateContext;
@@ -37,6 +38,7 @@ public final class GitlabUploader extends AbstractGitPackageUploader<org.jreleas
 
     private String projectIdentifier;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.upload.GitlabUploader immutable = new org.jreleaser.model.api.upload.GitlabUploader() {
         private static final long serialVersionUID = -7870246763484590832L;
 

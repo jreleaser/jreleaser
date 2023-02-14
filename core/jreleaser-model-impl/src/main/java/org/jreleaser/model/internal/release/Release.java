@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.release;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.common.Domain;
 
@@ -38,6 +39,7 @@ public final class Release extends AbstractModelObject<Release> implements Domai
     private CodebergReleaser codeberg;
     private GenericGitReleaser generic;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.release.Release immutable = new org.jreleaser.model.api.release.Release() {
         private static final long serialVersionUID = 8607297611597648860L;
 

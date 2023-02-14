@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.announce;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 
 import java.util.Map;
@@ -37,6 +38,7 @@ public final class TelegramAnnouncer extends AbstractMessageAnnouncer<TelegramAn
     private String token;
     private String chatId;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.announce.TelegramAnnouncer immutable = new org.jreleaser.model.api.announce.TelegramAnnouncer() {
         private static final long serialVersionUID = -5918930180588439497L;
 

@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.announce;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Constants;
@@ -56,6 +57,7 @@ public final class TwitterAnnouncer extends AbstractAnnouncer<TwitterAnnouncer, 
     private String status;
     private String statusTemplate;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.announce.TwitterAnnouncer immutable = new org.jreleaser.model.api.announce.TwitterAnnouncer() {
         private static final long serialVersionUID = -7092168952957318545L;
 

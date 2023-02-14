@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.upload;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.mustache.TemplateContext;
@@ -37,6 +38,7 @@ public final class GiteaUploader extends AbstractGitPackageUploader<org.jrelease
 
     private String owner;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.upload.GiteaUploader immutable = new org.jreleaser.model.api.upload.GiteaUploader() {
         private static final long serialVersionUID = -7859608360457491380L;
 

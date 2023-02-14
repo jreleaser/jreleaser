@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.platform;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.common.Domain;
 
@@ -35,6 +36,7 @@ public final class Platform extends AbstractModelObject<Platform> implements Dom
 
     private final Map<String, String> replacements = new LinkedHashMap<>();
 
+    @JsonIgnore
     private final org.jreleaser.model.api.platform.Platform immutable = new org.jreleaser.model.api.platform.Platform() {
         private static final long serialVersionUID = 7959953437571066163L;
 

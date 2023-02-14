@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.announce;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Mail;
 import org.jreleaser.model.internal.JReleaserContext;
@@ -58,6 +59,7 @@ public final class SmtpAnnouncer extends AbstractMessageAnnouncer<SmtpAnnouncer,
     private String subject;
     private Mail.MimeType mimeType;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.announce.SmtpAnnouncer immutable = new org.jreleaser.model.api.announce.SmtpAnnouncer() {
         private static final long serialVersionUID = -7617403297991452674L;
 

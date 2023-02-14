@@ -67,6 +67,7 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
     private Boolean attachPlatform;
     private Boolean verbose;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.assemble.JpackageAssembler immutable = new org.jreleaser.model.api.assemble.JpackageAssembler() {
         private static final long serialVersionUID = -5355530264697452901L;
 
@@ -473,6 +474,7 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
         private String copyright;
         private String licenseFile;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.assemble.JpackageAssembler.ApplicationPackage immutable = new org.jreleaser.model.api.assemble.JpackageAssembler.ApplicationPackage() {
             private static final long serialVersionUID = 2880902841456006360L;
 
@@ -601,6 +603,7 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
         private final List<String> javaOptions = new ArrayList<>();
         private final List<String> launchers = new ArrayList<>();
 
+        @JsonIgnore
         private final org.jreleaser.model.api.assemble.JpackageAssembler.Launcher immutable = new org.jreleaser.model.api.assemble.JpackageAssembler.Launcher() {
             private static final long serialVersionUID = -3045561990255302058L;
 
@@ -849,6 +852,7 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
         private String appCategory;
         private Boolean shortcut;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.assemble.JpackageAssembler.Linux immutable = new org.jreleaser.model.api.assemble.JpackageAssembler.Linux() {
             private static final long serialVersionUID = 2520774986990267446L;
 
@@ -1048,6 +1052,7 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
         private String menuGroup;
         private String upgradeUuid;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.assemble.JpackageAssembler.Windows immutable = new org.jreleaser.model.api.assemble.JpackageAssembler.Windows() {
             private static final long serialVersionUID = -6571133010636822955L;
 
@@ -1230,6 +1235,7 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
         private String signingKeyUsername;
         private Boolean sign;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.assemble.JpackageAssembler.Osx immutable = new org.jreleaser.model.api.assemble.JpackageAssembler.Osx() {
             private static final long serialVersionUID = 2993684370219100767L;
 

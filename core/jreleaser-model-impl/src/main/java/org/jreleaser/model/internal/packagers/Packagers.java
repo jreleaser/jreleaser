@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.packagers;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.internal.common.AbstractActivatable;
 import org.jreleaser.model.internal.common.Domain;
 
@@ -47,6 +48,7 @@ public class Packagers<S extends Packagers<S>> extends AbstractActivatable<S> im
     protected final SpecPackager spec = new SpecPackager();
     protected final WingetPackager winget = new WingetPackager();
 
+    @JsonIgnore
     private final org.jreleaser.model.api.packagers.Packagers immutable = new org.jreleaser.model.api.packagers.Packagers() {
         private static final long serialVersionUID = 4269097370946118575L;
 

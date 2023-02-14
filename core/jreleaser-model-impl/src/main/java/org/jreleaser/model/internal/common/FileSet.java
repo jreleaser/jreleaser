@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.common;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.internal.JReleaserContext;
@@ -58,6 +59,7 @@ public final class FileSet extends AbstractModelObject<FileSet> implements Domai
     private String output;
     private Boolean failOnMissingInput;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.common.FileSet immutable = new org.jreleaser.model.api.common.FileSet() {
         private static final long serialVersionUID = 1386323645145691467L;
 

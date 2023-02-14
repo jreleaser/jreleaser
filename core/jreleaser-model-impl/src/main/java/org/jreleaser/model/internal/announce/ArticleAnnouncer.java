@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.announce;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.CommitAuthor;
@@ -45,6 +46,7 @@ public final class ArticleAnnouncer extends AbstractAnnouncer<ArticleAnnouncer, 
 
     private String templateDirectory;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.announce.ArticleAnnouncer immutable = new org.jreleaser.model.api.announce.ArticleAnnouncer() {
         private static final long serialVersionUID = 6971332126023008307L;
 
@@ -206,6 +208,7 @@ public final class ArticleAnnouncer extends AbstractAnnouncer<ArticleAnnouncer, 
     public static final class Repository extends AbstractRepositoryTap<Repository> {
         private static final long serialVersionUID = -1923514428336002946L;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.announce.ArticleAnnouncer.Repository immutable = new org.jreleaser.model.api.announce.ArticleAnnouncer.Repository() {
             private static final long serialVersionUID = 4466712256400781859L;
 

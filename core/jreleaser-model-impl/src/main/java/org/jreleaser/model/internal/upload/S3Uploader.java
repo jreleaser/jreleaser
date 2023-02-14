@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.upload;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Artifact;
@@ -52,6 +53,7 @@ public final class S3Uploader extends AbstractUploader<org.jreleaser.model.api.u
     private String secretKey;
     private String sessionToken;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.upload.S3Uploader immutable = new org.jreleaser.model.api.upload.S3Uploader() {
         private static final long serialVersionUID = -3263159021072324345L;
 

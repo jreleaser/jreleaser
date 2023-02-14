@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.distributions;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.JReleaserException;
@@ -87,6 +88,7 @@ public final class Distribution extends Packagers<Distribution> implements Domai
     private org.jreleaser.model.Distribution.DistributionType type = org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
     private Stereotype stereotype;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.distributions.Distribution immutable = new org.jreleaser.model.api.distributions.Distribution() {
         private static final long serialVersionUID = -3718386189666939473L;
 

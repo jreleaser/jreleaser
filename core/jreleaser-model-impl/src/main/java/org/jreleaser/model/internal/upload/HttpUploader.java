@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.upload;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.common.HttpDelegate;
 
@@ -35,6 +36,7 @@ public final class HttpUploader extends AbstractWebUploader<org.jreleaser.model.
 
     private final HttpDelegate delegate = new HttpDelegate();
 
+    @JsonIgnore
     private final org.jreleaser.model.api.upload.HttpUploader immutable = new org.jreleaser.model.api.upload.HttpUploader() {
         private static final long serialVersionUID = -2422450427549788470L;
 

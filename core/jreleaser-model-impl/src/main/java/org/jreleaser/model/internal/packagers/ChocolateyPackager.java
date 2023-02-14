@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.packagers;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Stereotype;
@@ -54,7 +55,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public final class ChocolateyPackager extends AbstractRepositoryPackager<org.jreleaser.model.api.packagers.ChocolateyPackager, ChocolateyPackager> {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
-    private static final long serialVersionUID = -2548972697129361822L;
+    private static final long serialVersionUID = -4467824821283380330L;
 
     static {
         Set<String> extensions = setOf(ZIP.extension());
@@ -65,7 +66,7 @@ public final class ChocolateyPackager extends AbstractRepositoryPackager<org.jre
         // SUPPORTED.put(FLAT_BINARY, emptySet());
     }
 
-    private final ChocolateyRepository repository = new ChocolateyRepository();
+    private final ChocolateyRepository bucket = new ChocolateyRepository();
     private String packageName;
     private String packageVersion;
     private String username;
@@ -75,6 +76,7 @@ public final class ChocolateyPackager extends AbstractRepositoryPackager<org.jre
     private String source;
     private Boolean remoteBuild;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.packagers.ChocolateyPackager immutable = new org.jreleaser.model.api.packagers.ChocolateyPackager() {
         private static final long serialVersionUID = 4573744832740015330L;
 
@@ -120,7 +122,7 @@ public final class ChocolateyPackager extends AbstractRepositoryPackager<org.jre
 
         @Override
         public org.jreleaser.model.api.packagers.PackagerRepository getBucket() {
-            return repository.asImmutable();
+            return bucket.asImmutable();
         }
 
         @Override
@@ -229,7 +231,7 @@ public final class ChocolateyPackager extends AbstractRepositoryPackager<org.jre
         this.iconUrl = merge(this.iconUrl, source.iconUrl);
         this.source = merge(this.source, source.source);
         this.remoteBuild = merge(this.remoteBuild, source.remoteBuild);
-        setBucket(source.repository);
+        setBucket(source.bucket);
     }
 
     public String getPackageName() {
@@ -301,11 +303,11 @@ public final class ChocolateyPackager extends AbstractRepositoryPackager<org.jre
     }
 
     public ChocolateyRepository getBucket() {
-        return repository;
+        return bucket;
     }
 
     public void setBucket(ChocolateyRepository repository) {
-        this.repository.merge(repository);
+        this.bucket.merge(repository);
     }
 
     @Override
@@ -319,7 +321,7 @@ public final class ChocolateyPackager extends AbstractRepositoryPackager<org.jre
         props.put("title", title);
         props.put("iconUrl", iconUrl);
         props.put("source", source);
-        props.put("bucket", repository.asMap(full));
+        props.put("bucket", bucket.asMap(full));
     }
 
     @Override

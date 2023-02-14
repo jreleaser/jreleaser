@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.hooks;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.api.hooks.ExecutionEvent;
 import org.jreleaser.model.internal.JReleaserContext;
@@ -40,6 +41,7 @@ public final class CommandHook extends AbstractHook<CommandHook> {
     private final Set<String> platforms = new LinkedHashSet<>();
     private String cmd;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.hooks.CommandHook immutable = new org.jreleaser.model.api.hooks.CommandHook() {
         private static final long serialVersionUID = 3053204535600637020L;
 

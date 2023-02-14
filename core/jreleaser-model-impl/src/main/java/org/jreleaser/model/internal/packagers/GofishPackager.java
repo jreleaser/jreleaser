@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.packagers;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Stereotype;
@@ -71,6 +72,7 @@ public final class GofishPackager extends AbstractRepositoryPackager<org.jreleas
 
     private final GofishRepository repository = new GofishRepository();
 
+    @JsonIgnore
     private final org.jreleaser.model.api.packagers.GofishPackager immutable = new org.jreleaser.model.api.packagers.GofishPackager() {
         private static final long serialVersionUID = 7575986906210858224L;
 

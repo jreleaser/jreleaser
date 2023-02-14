@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.announce;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Constants;
@@ -52,6 +53,7 @@ public final class DiscordAnnouncer extends AbstractAnnouncer<DiscordAnnouncer, 
     private String message;
     private String messageTemplate;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.announce.DiscordAnnouncer immutable = new org.jreleaser.model.api.announce.DiscordAnnouncer() {
         private static final long serialVersionUID = 5364040532192292063L;
 

@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.hooks;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.common.Activatable;
 import org.jreleaser.model.internal.common.Domain;
@@ -51,6 +52,7 @@ public interface Hook extends Domain, Activatable {
         private final Set<String> includes = new LinkedHashSet<>();
         private final Set<String> excludes = new LinkedHashSet<>();
 
+        @JsonIgnore
         private final org.jreleaser.model.api.hooks.Hook.Filter immutable = new org.jreleaser.model.api.hooks.Hook.Filter() {
             private static final long serialVersionUID = -6995455963355646704L;
 

@@ -30,7 +30,7 @@ project:
     - Andres Almiray
   license: Apache-2.0
   inceptionYear: 2020
-  stereotype: cli
+  stereotype: CLI
   vendor: JReleaser
   screenshots:
     - url: https://jreleaser.org/images/app-full-release-command.png
@@ -254,7 +254,7 @@ distributions:
       active: ALWAYS
       componentId: org.jreleaser.cli
       developerName: JReleaser
-      runtime: freedesktop
+      runtime: FREEDESKTOP
       runtimeVersion: 21.08
       finishArgs:
         - --share=network

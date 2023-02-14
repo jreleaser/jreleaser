@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.catalog;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.catalog.sbom.Sbom;
 import org.jreleaser.model.internal.common.AbstractActivatable;
@@ -36,6 +37,7 @@ public final class Catalog extends AbstractActivatable<Catalog> implements Domai
 
     private final Sbom sbom = new Sbom();
 
+    @JsonIgnore
     private final org.jreleaser.model.api.catalog.Catalog immutable = new org.jreleaser.model.api.catalog.Catalog() {
         private static final long serialVersionUID = -8346576688349091865L;
 

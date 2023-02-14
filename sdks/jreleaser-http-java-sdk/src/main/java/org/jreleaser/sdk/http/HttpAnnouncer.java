@@ -70,7 +70,7 @@ public class HttpAnnouncer implements Announcer<org.jreleaser.model.api.announce
 
     @Override
     public void announce() throws AnnounceException {
-        Map<String, org.jreleaser.model.internal.announce.HttpAnnouncer> http = https.getHttpAnnouncers();
+        Map<String, org.jreleaser.model.internal.announce.HttpAnnouncer> http = https.getHttp();
 
         for (Map.Entry<String, org.jreleaser.model.internal.announce.HttpAnnouncer> e : http.entrySet()) {
             if (e.getValue().isEnabled()) {

@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.release;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.JReleaserModel;
 import org.jreleaser.mustache.TemplateContext;
@@ -39,6 +40,7 @@ public final class GitlabReleaser extends BaseReleaser<org.jreleaser.model.api.r
     private final Map<String, String> uploadLinks = new LinkedHashMap<>();
     private String projectIdentifier;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.release.GitlabReleaser immutable = new org.jreleaser.model.api.release.GitlabReleaser() {
         private static final long serialVersionUID = 338295653785071184L;
 

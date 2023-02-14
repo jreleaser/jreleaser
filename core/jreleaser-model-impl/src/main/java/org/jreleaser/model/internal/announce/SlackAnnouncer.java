@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.announce;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 
 import java.util.Map;
@@ -38,6 +39,7 @@ public final class SlackAnnouncer extends AbstractMessageAnnouncer<SlackAnnounce
     private String webhook;
     private String channel;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.announce.SlackAnnouncer immutable = new org.jreleaser.model.api.announce.SlackAnnouncer() {
         private static final long serialVersionUID = -6078751771948977999L;
 

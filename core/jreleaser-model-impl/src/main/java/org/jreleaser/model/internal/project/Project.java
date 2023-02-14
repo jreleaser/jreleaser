@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.project;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.github.mustachejava.TemplateFunction;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
@@ -91,6 +92,7 @@ public final class Project extends AbstractModelObject<Project> implements Domai
     private String vendor;
     private Stereotype stereotype = Stereotype.NONE;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.project.Project immutable = new org.jreleaser.model.api.project.Project() {
         private static final long serialVersionUID = 4384858957895818432L;
 
@@ -717,6 +719,10 @@ public final class Project extends AbstractModelObject<Project> implements Domai
         private String pattern;
         private String label;
         private Boolean fullChangelog;
+        @JsonIgnore
+        private String cachedLabel;
+
+        @JsonIgnore
         private final org.jreleaser.model.api.project.Project.Snapshot immutable = new org.jreleaser.model.api.project.Project.Snapshot() {
             private static final long serialVersionUID = 2581314557970795502L;
 
@@ -740,7 +746,6 @@ public final class Project extends AbstractModelObject<Project> implements Domai
                 return unmodifiableMap(Snapshot.this.asMap(full));
             }
         };
-        private String cachedLabel;
 
         public org.jreleaser.model.api.project.Project.Snapshot asImmutable() {
             return immutable;
@@ -911,6 +916,7 @@ public final class Project extends AbstractModelObject<Project> implements Domai
         private String vcsBrowser;
         private String contribute;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.project.Project.Links immutable = new org.jreleaser.model.api.project.Project.Links() {
             private static final long serialVersionUID = 3891594676066031996L;
 
@@ -1158,6 +1164,7 @@ public final class Project extends AbstractModelObject<Project> implements Domai
         private org.jreleaser.model.VersionPattern.Type type;
         private String format;
 
+        @JsonIgnore
         private final org.jreleaser.model.api.project.Project.VersionPattern immutable = new org.jreleaser.model.api.project.Project.VersionPattern() {
             private static final long serialVersionUID = 1073045324421554619L;
 

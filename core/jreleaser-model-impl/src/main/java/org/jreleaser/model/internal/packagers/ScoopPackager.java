@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.packagers;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Stereotype;
@@ -57,7 +58,7 @@ import static org.jreleaser.util.StringUtils.isFalse;
  */
 public final class ScoopPackager extends AbstractRepositoryPackager<org.jreleaser.model.api.packagers.ScoopPackager, ScoopPackager> {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
-    private static final long serialVersionUID = -2718700168146488344L;
+    private static final long serialVersionUID = -8156604651470704715L;
 
     static {
         Set<String> extensions = setOf(ZIP.extension());
@@ -69,11 +70,12 @@ public final class ScoopPackager extends AbstractRepositoryPackager<org.jrelease
         SUPPORTED.put(FLAT_BINARY, setOf(BAT.extension(), CMD.extension(), EXE.extension(), PS1.extension()));
     }
 
-    private final ScoopRepository repository = new ScoopRepository();
+    private final ScoopRepository bucket = new ScoopRepository();
     private String packageName;
     private String checkverUrl;
     private String autoupdateUrl;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.packagers.ScoopPackager immutable = new org.jreleaser.model.api.packagers.ScoopPackager() {
         private static final long serialVersionUID = 7006999983739292013L;
 
@@ -94,7 +96,7 @@ public final class ScoopPackager extends AbstractRepositoryPackager<org.jrelease
 
         @Override
         public org.jreleaser.model.api.packagers.PackagerRepository getBucket() {
-            return repository.asImmutable();
+            return bucket.asImmutable();
         }
 
         @Override
@@ -198,7 +200,7 @@ public final class ScoopPackager extends AbstractRepositoryPackager<org.jrelease
         this.packageName = merge(this.packageName, source.packageName);
         this.checkverUrl = merge(this.checkverUrl, source.checkverUrl);
         this.autoupdateUrl = merge(this.autoupdateUrl, source.autoupdateUrl);
-        setBucket(source.repository);
+        setBucket(source.bucket);
     }
 
     public String getPackageName() {
@@ -226,11 +228,11 @@ public final class ScoopPackager extends AbstractRepositoryPackager<org.jrelease
     }
 
     public ScoopRepository getBucket() {
-        return repository;
+        return bucket;
     }
 
     public void setBucket(ScoopRepository repository) {
-        this.repository.merge(repository);
+        this.bucket.merge(repository);
     }
 
     @Override
@@ -239,7 +241,7 @@ public final class ScoopPackager extends AbstractRepositoryPackager<org.jrelease
         props.put("packageName", packageName);
         props.put("checkverUrl", checkverUrl);
         props.put("autoupdateUrl", autoupdateUrl);
-        props.put("bucket", repository.asMap(full));
+        props.put("bucket", bucket.asMap(full));
     }
 
     @Override

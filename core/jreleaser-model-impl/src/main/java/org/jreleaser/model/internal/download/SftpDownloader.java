@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.download;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 
 import java.util.List;
@@ -33,6 +34,7 @@ import static org.jreleaser.model.api.download.SftpDownloader.TYPE;
 public final class SftpDownloader extends AbstractSshDownloader<org.jreleaser.model.api.download.SftpDownloader, SftpDownloader> {
     private static final long serialVersionUID = -3303832713268446672L;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.download.SftpDownloader immutable = new org.jreleaser.model.api.download.SftpDownloader() {
         private static final long serialVersionUID = 8300210807291243549L;
 

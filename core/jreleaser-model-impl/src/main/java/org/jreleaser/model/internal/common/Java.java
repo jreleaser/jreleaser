@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model.internal.common;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -41,6 +43,7 @@ public final class Java extends AbstractModelObject<Java> implements Domain, Ext
     private String mainClass;
     private Boolean multiProject;
 
+    @JsonIgnore
     private final org.jreleaser.model.api.common.Java immutable = new org.jreleaser.model.api.common.Java() {
         private static final long serialVersionUID = 1595567967292822458L;
 
