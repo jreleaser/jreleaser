@@ -97,7 +97,7 @@ public class ArticleAnnouncer implements Announcer<org.jreleaser.model.api.annou
         TemplateContext props = context.fullProps();
         context.getChangelog().apply(props);
         context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
-        props.setAll(article.getResolvedExtraProperties());
+        props.setAll(article.resolvedExtraProperties());
 
         try {
             for (Artifact file : article.getFiles()) {

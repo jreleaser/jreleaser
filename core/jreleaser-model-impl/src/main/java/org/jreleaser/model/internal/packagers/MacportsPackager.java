@@ -180,7 +180,7 @@ public final class MacportsPackager extends AbstractRepositoryPackager<org.jrele
 
         @Override
         public String getPrefix() {
-            return MacportsPackager.this.getPrefix();
+            return MacportsPackager.this.prefix();
         }
 
         @Override

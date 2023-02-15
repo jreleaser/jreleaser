@@ -69,7 +69,7 @@ public final class Icon extends AbstractModelObject<Icon> implements Domain, Ext
 
         @Override
         public String getPrefix() {
-            return Icon.this.getPrefix();
+            return Icon.this.prefix();
         }
 
         @Override
@@ -124,7 +124,7 @@ public final class Icon extends AbstractModelObject<Icon> implements Domain, Ext
     }
 
     @Override
-    public String getPrefix() {
+    public String prefix() {
         return "icon";
     }
 
@@ -151,7 +151,7 @@ public final class Icon extends AbstractModelObject<Icon> implements Domain, Ext
         map.put("width", width);
         map.put("height", height);
         if (isPrimary()) map.put("primary", true);
-        map.put("extraProperties", getResolvedExtraProperties());
+        map.put("extraProperties", resolvedExtraProperties());
         return map;
     }
 }

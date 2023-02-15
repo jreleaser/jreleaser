@@ -86,7 +86,7 @@ public final class WebhooksAnnouncer extends AbstractAnnouncer<WebhooksAnnouncer
 
         @Override
         public String getPrefix() {
-            return WebhooksAnnouncer.this.getPrefix();
+            return WebhooksAnnouncer.this.prefix();
         }
 
         @Override

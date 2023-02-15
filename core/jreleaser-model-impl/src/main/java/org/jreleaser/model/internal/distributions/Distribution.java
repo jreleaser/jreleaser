@@ -151,7 +151,7 @@ public final class Distribution extends Packagers<Distribution> implements Domai
 
         @Override
         public String getPrefix() {
-            return Distribution.this.getPrefix();
+            return Distribution.this.prefix();
         }
 
         @Override
@@ -256,7 +256,7 @@ public final class Distribution extends Packagers<Distribution> implements Domai
 
     public TemplateContext props() {
         TemplateContext props = new TemplateContext();
-        applyTemplates(props, getResolvedExtraProperties());
+        applyTemplates(props, resolvedExtraProperties());
         props.set(KEY_DISTRIBUTION_NAME, name);
         props.set(KEY_DISTRIBUTION_STEREOTYPE, getStereotype());
         props.set(KEY_DISTRIBUTION_EXECUTABLE, executable.getName());
@@ -267,7 +267,7 @@ public final class Distribution extends Packagers<Distribution> implements Domai
         props.set(KEY_DISTRIBUTION_EXECUTABLE_EXTENSION_WINDOWS, executable.resolveWindowsExtension(), "");
         props.set(KEY_DISTRIBUTION_TAGS_BY_SPACE, String.join(" ", tags));
         props.set(KEY_DISTRIBUTION_TAGS_BY_COMMA, String.join(",", tags));
-        props.setAll(java.getResolvedExtraProperties());
+        props.setAll(java.resolvedExtraProperties());
         props.set(KEY_DISTRIBUTION_JAVA_GROUP_ID, java.getGroupId(), "");
         props.set(KEY_DISTRIBUTION_JAVA_ARTIFACT_ID, java.getArtifactId(), "");
         props.set(KEY_DISTRIBUTION_JAVA_MAIN_CLASS, java.getMainClass(), "");
@@ -299,7 +299,7 @@ public final class Distribution extends Packagers<Distribution> implements Domai
     }
 
     @Override
-    public String getPrefix() {
+    public String prefix() {
         return "distribution";
     }
 
@@ -483,7 +483,7 @@ public final class Distribution extends Packagers<Distribution> implements Domai
 
         props.put("tags", tags);
         props.put("stereotype", stereotype);
-        props.put("extraProperties", getResolvedExtraProperties());
+        props.put("extraProperties", resolvedExtraProperties());
         if (java.isEnabled()) {
             props.put("java", java.asMap(full));
         }

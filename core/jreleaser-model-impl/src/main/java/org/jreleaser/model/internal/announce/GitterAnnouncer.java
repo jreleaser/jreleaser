@@ -104,7 +104,7 @@ public final class GitterAnnouncer extends AbstractAnnouncer<GitterAnnouncer, or
 
         @Override
         public String getPrefix() {
-            return GitterAnnouncer.this.getPrefix();
+            return GitterAnnouncer.this.prefix();
         }
 
         @Override
@@ -154,13 +154,13 @@ public final class GitterAnnouncer extends AbstractAnnouncer<GitterAnnouncer, or
 
     public String getResolvedMessage(JReleaserContext context) {
         TemplateContext props = context.fullProps();
-        applyTemplates(props, getResolvedExtraProperties());
+        applyTemplates(props, resolvedExtraProperties());
         return resolveTemplate(message, props);
     }
 
     public String getResolvedMessageTemplate(JReleaserContext context, TemplateContext extraProps) {
         TemplateContext props = context.fullProps();
-        applyTemplates(props, getResolvedExtraProperties());
+        applyTemplates(props, resolvedExtraProperties());
         props.set(KEY_TAG_NAME, context.getModel().getRelease().getReleaser()
             .getEffectiveTagName(context.getModel()));
         props.set(Constants.KEY_PREVIOUS_TAG_NAME,

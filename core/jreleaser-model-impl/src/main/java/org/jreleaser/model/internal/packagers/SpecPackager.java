@@ -184,7 +184,7 @@ public final class SpecPackager extends AbstractRepositoryPackager<org.jreleaser
 
         @Override
         public String getPrefix() {
-            return SpecPackager.this.getPrefix();
+            return SpecPackager.this.prefix();
         }
 
         @Override

@@ -132,7 +132,7 @@ public final class HttpUploader extends AbstractWebUploader<org.jreleaser.model.
 
         @Override
         public String getPrefix() {
-            return HttpUploader.this.getPrefix();
+            return HttpUploader.this.prefix();
         }
 
         @Override

@@ -104,7 +104,7 @@ public final class LinkedinAnnouncer extends AbstractMessageAnnouncer<LinkedinAn
 
         @Override
         public String getPrefix() {
-            return LinkedinAnnouncer.this.getPrefix();
+            return LinkedinAnnouncer.this.prefix();
         }
 
         @Override
@@ -142,7 +142,7 @@ public final class LinkedinAnnouncer extends AbstractMessageAnnouncer<LinkedinAn
 
     public String getResolvedTitle(JReleaserContext context) {
         TemplateContext props = context.fullProps();
-        applyTemplates(props, getResolvedExtraProperties());
+        applyTemplates(props, resolvedExtraProperties());
         return resolveTemplate(subject, props);
     }
 

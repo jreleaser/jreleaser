@@ -104,7 +104,7 @@ public final class GoogleChatAnnouncer extends AbstractAnnouncer<GoogleChatAnnou
 
         @Override
         public String getPrefix() {
-            return GoogleChatAnnouncer.this.getPrefix();
+            return GoogleChatAnnouncer.this.prefix();
         }
 
         @Override
@@ -153,19 +153,19 @@ public final class GoogleChatAnnouncer extends AbstractAnnouncer<GoogleChatAnnou
     }
 
     @Override
-    public String getPrefix() {
+    public String prefix() {
         return "googleChat";
     }
 
     public String getResolvedMessage(JReleaserContext context) {
         TemplateContext props = context.fullProps();
-        applyTemplates(props, getResolvedExtraProperties());
+        applyTemplates(props, resolvedExtraProperties());
         return resolveTemplate(message, props);
     }
 
     public String getResolvedMessageTemplate(JReleaserContext context, TemplateContext extraProps) {
         TemplateContext props = context.fullProps();
-        applyTemplates(props, getResolvedExtraProperties());
+        applyTemplates(props, resolvedExtraProperties());
         props.set(KEY_TAG_NAME, context.getModel().getRelease().getReleaser()
             .getEffectiveTagName(context.getModel()));
         props.set(Constants.KEY_PREVIOUS_TAG_NAME,

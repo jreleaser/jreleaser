@@ -94,7 +94,7 @@ public final class TelegramAnnouncer extends AbstractMessageAnnouncer<TelegramAn
 
         @Override
         public String getPrefix() {
-            return TelegramAnnouncer.this.getPrefix();
+            return TelegramAnnouncer.this.prefix();
         }
 
         @Override

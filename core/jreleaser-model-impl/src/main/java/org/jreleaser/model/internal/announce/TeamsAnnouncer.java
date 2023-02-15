@@ -97,7 +97,7 @@ public final class TeamsAnnouncer extends AbstractAnnouncer<TeamsAnnouncer, org.
 
         @Override
         public String getPrefix() {
-            return TeamsAnnouncer.this.getPrefix();
+            return TeamsAnnouncer.this.prefix();
         }
 
         @Override
@@ -145,7 +145,7 @@ public final class TeamsAnnouncer extends AbstractAnnouncer<TeamsAnnouncer, org.
 
     public String getResolvedMessageTemplate(JReleaserContext context, TemplateContext extraProps) {
         TemplateContext props = context.fullProps();
-        applyTemplates(props, getResolvedExtraProperties());
+        applyTemplates(props, resolvedExtraProperties());
         props.set(KEY_TAG_NAME, context.getModel().getRelease().getReleaser()
             .getEffectiveTagName(context.getModel()));
         props.set(Constants.KEY_PREVIOUS_TAG_NAME,

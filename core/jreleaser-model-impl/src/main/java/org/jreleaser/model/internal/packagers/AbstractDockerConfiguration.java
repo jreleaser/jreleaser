@@ -70,7 +70,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
     }
 
     @Override
-    public String getPrefix() {
+    public String prefix() {
         return TYPE;
     }
 
@@ -293,7 +293,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
         }
         props.put("registries", m);
 
-        props.put("extraProperties", getResolvedExtraProperties());
+        props.put("extraProperties", resolvedExtraProperties());
 
         return props;
     }

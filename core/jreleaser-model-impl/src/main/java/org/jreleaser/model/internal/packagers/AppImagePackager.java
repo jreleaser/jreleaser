@@ -215,7 +215,7 @@ public final class AppImagePackager extends AbstractAppdataPackager<org.jrelease
 
         @Override
         public String getPrefix() {
-            return AppImagePackager.this.getPrefix();
+            return AppImagePackager.this.prefix();
         }
 
         @Override

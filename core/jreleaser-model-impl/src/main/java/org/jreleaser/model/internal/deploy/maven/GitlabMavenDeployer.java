@@ -119,7 +119,7 @@ public final class GitlabMavenDeployer extends AbstractMavenDeployer<GitlabMaven
 
         @Override
         public String getPrefix() {
-            return GitlabMavenDeployer.this.getPrefix();
+            return GitlabMavenDeployer.this.prefix();
         }
 
         @Override

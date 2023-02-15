@@ -110,7 +110,7 @@ public final class GiteaMavenDeployer extends AbstractMavenDeployer<GiteaMavenDe
 
         @Override
         public String getPrefix() {
-            return GiteaMavenDeployer.this.getPrefix();
+            return GiteaMavenDeployer.this.prefix();
         }
 
         @Override

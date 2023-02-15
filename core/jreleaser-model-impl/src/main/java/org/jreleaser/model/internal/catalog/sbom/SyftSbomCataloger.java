@@ -104,7 +104,7 @@ public final class SyftSbomCataloger extends AbstractSbomCataloger<SyftSbomCatal
 
         @Override
         public String getPrefix() {
-            return SyftSbomCataloger.this.getPrefix();
+            return SyftSbomCataloger.this.prefix();
         }
 
         @Override
@@ -189,7 +189,7 @@ public final class SyftSbomCataloger extends AbstractSbomCataloger<SyftSbomCatal
     private String resolveArchiveName(JReleaserContext context) {
         String archiveName = getPack().getName();
         TemplateContext props = context.fullProps();
-        props.setAll(getResolvedExtraProperties());
+        props.setAll(resolvedExtraProperties());
         return resolveTemplate(archiveName, props) + ZIP.extension();
     }
 

@@ -204,7 +204,7 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
         }
         context.getLogger().debug(RB.$("packager.fill.packager.properties"));
         fillPackagerProperties(newProps, distribution);
-        applyTemplates(newProps, packager.getResolvedExtraProperties());
+        applyTemplates(newProps, packager.resolvedExtraProperties());
         if (isBlank(context.getModel().getRelease().getReleaser().getReverseRepoHost())) {
             newProps.set(KEY_REVERSE_REPO_HOST,
                 packager.getExtraProperties().get(KEY_REVERSE_REPO_HOST));
@@ -322,7 +322,7 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
             String platformReplaced = distribution.getPlatform().applyReplacements(platform);
             String artifactPlatformReplaced = isNotBlank(platformReplaced) ? capitalize(platformReplaced) : "";
             // add extra properties without clobbering existing keys
-            Map<String, Object> artifactProps = artifact.getResolvedExtraProperties(ARTIFACT + artifactPlatform);
+            Map<String, Object> artifactProps = artifact.resolvedExtraProperties(ARTIFACT + artifactPlatform);
             artifactProps.keySet().stream()
                 .filter(k -> !props.contains(k))
                 .forEach(k -> props.set(k, artifactProps.get(k)));
@@ -442,7 +442,7 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
                 safePut(props, KEY_ARTIFACT_FILE_FORMAT, artifactFileFormat);
 
                 // add extra properties without clobbering existing keys
-                Map<String, Object> aprops = artifact.getResolvedExtraProperties();
+                Map<String, Object> aprops = artifact.resolvedExtraProperties();
                 TemplateContext bprops = new TemplateContext(aprops);
                 applyTemplates(aprops, bprops);
                 aprops.keySet().stream()

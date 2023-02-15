@@ -228,7 +228,7 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
 
         @Override
         public String getPrefix() {
-            return DockerPackager.this.getPrefix();
+            return DockerPackager.this.prefix();
         }
 
         @Override

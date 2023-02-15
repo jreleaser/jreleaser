@@ -82,7 +82,7 @@ public final class Screenshot extends AbstractModelObject<Screenshot> implements
 
         @Override
         public String getPrefix() {
-            return Screenshot.this.getPrefix();
+            return Screenshot.this.prefix();
         }
 
         @Override
@@ -159,7 +159,7 @@ public final class Screenshot extends AbstractModelObject<Screenshot> implements
     }
 
     @Override
-    public String getPrefix() {
+    public String prefix() {
         return "screenshot";
     }
 
@@ -188,7 +188,7 @@ public final class Screenshot extends AbstractModelObject<Screenshot> implements
         map.put("caption", caption);
         map.put("width", width);
         map.put("height", height);
-        map.put("extraProperties", getResolvedExtraProperties());
+        map.put("extraProperties", resolvedExtraProperties());
         return map;
     }
 

@@ -133,7 +133,7 @@ public final class FtpUploader extends AbstractUploader<org.jreleaser.model.api.
 
         @Override
         public String getPrefix() {
-            return FtpUploader.this.getPrefix();
+            return FtpUploader.this.prefix();
         }
 
         @Override
@@ -234,7 +234,7 @@ public final class FtpUploader extends AbstractUploader<org.jreleaser.model.api.
 
     public String getResolvedPath(JReleaserContext context, Artifact artifact) {
         TemplateContext p = artifactProps(context.fullProps(), artifact);
-        p.setAll(getResolvedExtraProperties());
+        p.setAll(resolvedExtraProperties());
         return resolveTemplate(path, p);
     }
 
@@ -246,7 +246,7 @@ public final class FtpUploader extends AbstractUploader<org.jreleaser.model.api.
     @Override
     public String getResolvedDownloadUrl(TemplateContext props, Artifact artifact) {
         TemplateContext p = new TemplateContext(artifactProps(props, artifact));
-        p.setAll(getResolvedExtraProperties());
+        p.setAll(resolvedExtraProperties());
         return resolveTemplate(downloadUrl, p);
     }
 }

@@ -232,7 +232,7 @@ public final class FlatpakPackager extends AbstractAppdataPackager<org.jreleaser
 
         @Override
         public String getPrefix() {
-            return FlatpakPackager.this.getPrefix();
+            return FlatpakPackager.this.prefix();
         }
 
         @Override

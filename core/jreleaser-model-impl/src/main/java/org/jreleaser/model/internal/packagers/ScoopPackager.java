@@ -176,7 +176,7 @@ public final class ScoopPackager extends AbstractRepositoryPackager<org.jrelease
 
         @Override
         public String getPrefix() {
-            return ScoopPackager.this.getPrefix();
+            return ScoopPackager.this.prefix();
         }
 
         @Override

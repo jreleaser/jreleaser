@@ -261,7 +261,7 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
 
         @Override
         public String getPrefix() {
-            return SnapPackager.this.getPrefix();
+            return SnapPackager.this.prefix();
         }
 
         @Override

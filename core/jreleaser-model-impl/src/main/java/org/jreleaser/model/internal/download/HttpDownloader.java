@@ -101,7 +101,7 @@ public final class HttpDownloader extends AbstractDownloader<org.jreleaser.model
 
         @Override
         public String getPrefix() {
-            return HttpDownloader.this.getPrefix();
+            return HttpDownloader.this.prefix();
         }
 
         @Override

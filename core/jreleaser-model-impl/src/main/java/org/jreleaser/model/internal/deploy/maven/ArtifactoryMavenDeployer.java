@@ -110,7 +110,7 @@ public final class ArtifactoryMavenDeployer extends AbstractMavenDeployer<Artifa
 
         @Override
         public String getPrefix() {
-            return ArtifactoryMavenDeployer.this.getPrefix();
+            return ArtifactoryMavenDeployer.this.prefix();
         }
 
         @Override

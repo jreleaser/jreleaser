@@ -63,7 +63,7 @@ public abstract class AbstractSbomCataloger<S extends AbstractSbomCataloger<S, A
     }
 
     @Override
-    public String getPrefix() {
+    public String prefix() {
         return getType();
     }
 
@@ -144,7 +144,7 @@ public abstract class AbstractSbomCataloger<S extends AbstractSbomCataloger<S, A
         props.put("files", isFiles());
         props.put("pack", pack.asMap(full));
         asMap(full, props);
-        props.put("extraProperties", getResolvedExtraProperties());
+        props.put("extraProperties", resolvedExtraProperties());
 
         Map<String, Object> map = new LinkedHashMap<>();
         map.put(this.getType(), props);

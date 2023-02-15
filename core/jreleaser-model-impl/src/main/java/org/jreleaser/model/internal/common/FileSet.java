@@ -95,7 +95,7 @@ public final class FileSet extends AbstractModelObject<FileSet> implements Domai
 
         @Override
         public String getPrefix() {
-            return FileSet.this.getPrefix();
+            return FileSet.this.prefix();
         }
 
         @Override
@@ -119,7 +119,7 @@ public final class FileSet extends AbstractModelObject<FileSet> implements Domai
     }
 
     @Override
-    public String getPrefix() {
+    public String prefix() {
         return "artifact";
     }
 
@@ -193,7 +193,7 @@ public final class FileSet extends AbstractModelObject<FileSet> implements Domai
         props.put("includes", includes);
         props.put("excludes", excludes);
         props.put("failOnMissingInput", failOnMissingInput);
-        props.put("extraProperties", getResolvedExtraProperties());
+        props.put("extraProperties", resolvedExtraProperties());
         return props;
     }
 

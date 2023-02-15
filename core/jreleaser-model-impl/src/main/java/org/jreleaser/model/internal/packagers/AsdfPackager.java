@@ -167,7 +167,7 @@ public final class AsdfPackager extends AbstractRepositoryPackager<org.jreleaser
 
         @Override
         public String getPrefix() {
-            return AsdfPackager.this.getPrefix();
+            return AsdfPackager.this.prefix();
         }
 
         @Override

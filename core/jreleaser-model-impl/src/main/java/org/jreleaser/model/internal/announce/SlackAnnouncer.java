@@ -100,7 +100,7 @@ public final class SlackAnnouncer extends AbstractMessageAnnouncer<SlackAnnounce
 
         @Override
         public String getPrefix() {
-            return SlackAnnouncer.this.getPrefix();
+            return SlackAnnouncer.this.prefix();
         }
 
         @Override

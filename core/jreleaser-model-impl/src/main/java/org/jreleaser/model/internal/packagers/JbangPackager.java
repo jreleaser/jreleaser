@@ -146,7 +146,7 @@ public final class JbangPackager extends AbstractRepositoryPackager<org.jrelease
 
         @Override
         public String getPrefix() {
-            return JbangPackager.this.getPrefix();
+            return JbangPackager.this.prefix();
         }
 
         @Override

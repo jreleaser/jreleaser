@@ -176,7 +176,7 @@ public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, 
 
         @Override
         public String getPrefix() {
-            return ArchiveAssembler.this.getPrefix();
+            return ArchiveAssembler.this.prefix();
         }
 
         @Override

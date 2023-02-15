@@ -87,7 +87,7 @@ public class JbangPackagerProcessor extends AbstractRepositoryPackagerProcessor<
         props.set(KEY_JBANG_ALIAS_NAME, aliasName);
         props.set(KEY_JBANG_SCRIPT_NAME, scriptName);
 
-        String jbangDistributionGA = (String) packager.getResolvedExtraProperties().get(KEY_JBANG_DISTRIBUTION_GA);
+        String jbangDistributionGA = (String) packager.resolvedExtraProperties().get(KEY_JBANG_DISTRIBUTION_GA);
         if (isBlank(jbangDistributionGA)) {
             if (context.getModel().getProject().isSnapshot()) {
                 // if single

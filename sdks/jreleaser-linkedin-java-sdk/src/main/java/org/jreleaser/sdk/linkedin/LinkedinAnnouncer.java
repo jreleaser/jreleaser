@@ -88,7 +88,7 @@ public class LinkedinAnnouncer implements Announcer<org.jreleaser.model.api.anno
                 TemplateContext props = context.fullProps();
                 props.set(KEY_LINKEDIN_SUBJECT, subject);
                 props.set(KEY_LINKEDIN_OWNER, MustacheUtils.passThrough("{{" + KEY_LINKEDIN_OWNER + "}}"));
-                applyTemplates(props, linkedin.getResolvedExtraProperties());
+                applyTemplates(props, linkedin.resolvedExtraProperties());
                 text = MustacheUtils.applyTemplate(text, props);
                 sdk.share(owner, subject, text);
             }

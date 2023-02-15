@@ -116,7 +116,7 @@ public final class ZulipAnnouncer extends AbstractMessageAnnouncer<ZulipAnnounce
 
         @Override
         public String getPrefix() {
-            return ZulipAnnouncer.this.getPrefix();
+            return ZulipAnnouncer.this.prefix();
         }
 
         @Override
@@ -156,7 +156,7 @@ public final class ZulipAnnouncer extends AbstractMessageAnnouncer<ZulipAnnounce
 
     public String getResolvedSubject(JReleaserContext context) {
         TemplateContext props = context.fullProps();
-        applyTemplates(props, getResolvedExtraProperties());
+        applyTemplates(props, resolvedExtraProperties());
         return resolveTemplate(subject, props);
     }
 

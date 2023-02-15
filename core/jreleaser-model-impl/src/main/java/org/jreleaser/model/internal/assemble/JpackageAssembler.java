@@ -263,7 +263,7 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
 
         @Override
         public String getPrefix() {
-            return JpackageAssembler.this.getPrefix();
+            return JpackageAssembler.this.prefix();
         }
 
         @Override

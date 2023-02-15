@@ -202,7 +202,7 @@ public final class ChocolateyPackager extends AbstractRepositoryPackager<org.jre
 
         @Override
         public String getPrefix() {
-            return ChocolateyPackager.this.getPrefix();
+            return ChocolateyPackager.this.prefix();
         }
 
         @Override

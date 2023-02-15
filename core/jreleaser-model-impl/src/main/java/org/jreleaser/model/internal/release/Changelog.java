@@ -157,7 +157,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
 
         @Override
         public String getPrefix() {
-            return Changelog.this.getPrefix();
+            return Changelog.this.prefix();
         }
 
         @Override
@@ -274,7 +274,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
     }
 
     @Override
-    public String getPrefix() {
+    public String prefix() {
         return "changelog";
     }
 
@@ -544,7 +544,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
             m.put("replacer " + (i++), replacer.asMap(full));
         }
         map.put("replacers", m);
-        map.put("extraProperties", getResolvedExtraProperties());
+        map.put("extraProperties", resolvedExtraProperties());
 
         return map;
     }

@@ -148,7 +148,7 @@ public final class ScpUploader extends AbstractSshUploader<org.jreleaser.model.a
 
         @Override
         public String getPrefix() {
-            return ScpUploader.this.getPrefix();
+            return ScpUploader.this.prefix();
         }
 
         @Override

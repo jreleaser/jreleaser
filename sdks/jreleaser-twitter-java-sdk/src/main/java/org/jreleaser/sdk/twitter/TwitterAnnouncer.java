@@ -114,7 +114,7 @@ public class TwitterAnnouncer implements Announcer<org.jreleaser.model.api.annou
 
     private String getResolvedMessage(JReleaserContext context, String message) {
         TemplateContext props = context.fullProps();
-        applyTemplates(props, context.getModel().getAnnounce().getTwitter().getResolvedExtraProperties());
+        applyTemplates(props, context.getModel().getAnnounce().getTwitter().resolvedExtraProperties());
         props.set(KEY_TAG_NAME, context.getModel().getRelease().getReleaser().getEffectiveTagName(context.getModel()));
         props.set(KEY_PREVIOUS_TAG_NAME, context.getModel().getRelease().getReleaser().getResolvedPreviousTagName(context.getModel()));
         return resolveTemplate(message, props);

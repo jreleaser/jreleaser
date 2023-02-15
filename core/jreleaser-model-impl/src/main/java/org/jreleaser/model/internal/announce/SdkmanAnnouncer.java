@@ -114,7 +114,7 @@ public final class SdkmanAnnouncer extends AbstractAnnouncer<SdkmanAnnouncer, or
 
         @Override
         public String getPrefix() {
-            return SdkmanAnnouncer.this.getPrefix();
+            return SdkmanAnnouncer.this.prefix();
         }
 
         @Override

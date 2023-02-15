@@ -177,7 +177,7 @@ public interface Downloader<A extends org.jreleaser.model.api.download.Downloade
 
         public String getResolvedInput(JReleaserContext context, Downloader<?> downloader) {
             TemplateContext p = context.getModel().props();
-            p.setAll(downloader.getResolvedExtraProperties());
+            p.setAll(downloader.resolvedExtraProperties());
             p.set(KEY_DOWNLOADER_NAME, downloader.getName());
             return resolveTemplate(input, p);
         }
@@ -185,7 +185,7 @@ public interface Downloader<A extends org.jreleaser.model.api.download.Downloade
         public String getResolvedOutput(JReleaserContext context, Downloader<?> downloader, String artifactFile) {
             if (isBlank(output)) return output;
             TemplateContext p = context.getModel().props();
-            p.setAll(downloader.getResolvedExtraProperties());
+            p.setAll(downloader.resolvedExtraProperties());
             p.set(KEY_DOWNLOADER_NAME, downloader.getName());
             p.set(KEY_ARTIFACT_FILE, artifactFile);
             return resolveTemplate(output, p);

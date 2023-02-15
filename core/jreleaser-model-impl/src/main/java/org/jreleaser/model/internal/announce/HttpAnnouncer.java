@@ -131,7 +131,7 @@ public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer, org.jr
 
         @Override
         public String getPrefix() {
-            return HttpAnnouncer.this.getPrefix();
+            return HttpAnnouncer.this.prefix();
         }
 
         @Override
@@ -170,25 +170,25 @@ public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer, org.jr
     }
 
     @Override
-    public String getPrefix() {
+    public String prefix() {
         return "http";
     }
 
     public String getResolvedUrl(JReleaserContext context) {
         TemplateContext props = context.fullProps();
-        applyTemplates(props, getResolvedExtraProperties());
+        applyTemplates(props, resolvedExtraProperties());
         return resolveTemplate(url, props);
     }
 
     public String getResolvedPayload(JReleaserContext context) {
         TemplateContext props = context.fullProps();
-        applyTemplates(props, getResolvedExtraProperties());
+        applyTemplates(props, resolvedExtraProperties());
         return resolveTemplate(payload, props);
     }
 
     public String getResolvedPayloadTemplate(JReleaserContext context, TemplateContext extraProps) {
         TemplateContext props = context.fullProps();
-        applyTemplates(props, getResolvedExtraProperties());
+        applyTemplates(props, resolvedExtraProperties());
         props.set(KEY_TAG_NAME, context.getModel().getRelease().getReleaser()
             .getEffectiveTagName(context.getModel()));
         props.set(Constants.KEY_PREVIOUS_TAG_NAME,

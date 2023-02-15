@@ -109,7 +109,7 @@ public final class ArticleAnnouncer extends AbstractAnnouncer<ArticleAnnouncer, 
 
         @Override
         public String getPrefix() {
-            return ArticleAnnouncer.this.getPrefix();
+            return ArticleAnnouncer.this.prefix();
         }
 
         @Override

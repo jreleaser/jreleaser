@@ -205,7 +205,7 @@ public final class WingetPackager extends AbstractRepositoryPackager<org.jreleas
 
         @Override
         public String getPrefix() {
-            return WingetPackager.this.getPrefix();
+            return WingetPackager.this.prefix();
         }
 
         @Override

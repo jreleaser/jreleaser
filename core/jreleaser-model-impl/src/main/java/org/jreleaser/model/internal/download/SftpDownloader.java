@@ -77,7 +77,7 @@ public final class SftpDownloader extends AbstractSshDownloader<org.jreleaser.mo
 
         @Override
         public String getPrefix() {
-            return SftpDownloader.this.getPrefix();
+            return SftpDownloader.this.prefix();
         }
 
         @Override

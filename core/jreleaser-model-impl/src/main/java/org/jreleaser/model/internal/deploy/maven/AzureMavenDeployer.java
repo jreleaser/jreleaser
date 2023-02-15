@@ -110,7 +110,7 @@ public final class AzureMavenDeployer extends AbstractMavenDeployer<AzureMavenDe
 
         @Override
         public String getPrefix() {
-            return AzureMavenDeployer.this.getPrefix();
+            return AzureMavenDeployer.this.prefix();
         }
 
         @Override

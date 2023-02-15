@@ -249,7 +249,7 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
 
         @Override
         public String getPrefix() {
-            return JlinkAssembler.this.getPrefix();
+            return JlinkAssembler.this.prefix();
         }
 
         @Override

@@ -159,7 +159,7 @@ public final class S3Uploader extends AbstractUploader<org.jreleaser.model.api.u
 
         @Override
         public String getPrefix() {
-            return S3Uploader.this.getPrefix();
+            return S3Uploader.this.prefix();
         }
 
         @Override
@@ -210,7 +210,7 @@ public final class S3Uploader extends AbstractUploader<org.jreleaser.model.api.u
     public String getResolvedDownloadUrl(TemplateContext props, Artifact artifact) {
         if (isNotBlank(getDownloadUrl())) {
             TemplateContext p = new TemplateContext(artifactProps(props, artifact));
-            p.setAll(getResolvedExtraProperties());
+            p.setAll(resolvedExtraProperties());
             p.set("bucket", bucket);
             p.set("region", region);
             return resolveTemplate(getDownloadUrl(), p);
@@ -219,7 +219,7 @@ public final class S3Uploader extends AbstractUploader<org.jreleaser.model.api.u
         if (isBlank(getEndpoint())) {
             String url = "https://{{bucket}}.s3.{{region}}.amazonaws.com/" + path;
             TemplateContext p = new TemplateContext(artifactProps(props, artifact));
-            p.setAll(getResolvedExtraProperties());
+            p.setAll(resolvedExtraProperties());
             p.set("bucket", bucket);
             p.set("region", region);
             return resolveTemplate(url, p);
@@ -323,7 +323,7 @@ public final class S3Uploader extends AbstractUploader<org.jreleaser.model.api.u
         }
 
         TemplateContext p = new TemplateContext(artifactProps(context, artifact));
-        p.setAll(getResolvedExtraProperties());
+        p.setAll(resolvedExtraProperties());
         return resolveTemplate(artifactPath, p);
     }
 }

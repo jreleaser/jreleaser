@@ -139,7 +139,7 @@ public final class DockerSpec extends AbstractDockerConfiguration<DockerSpec> im
 
         @Override
         public String getPrefix() {
-            return DockerSpec.this.getPrefix();
+            return DockerSpec.this.prefix();
         }
 
         @Override

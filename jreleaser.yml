@@ -145,7 +145,7 @@ announce:
     noticeable:
       active: RELEASE
       url: https://api.noticeable.io/graphql
-      authorization: bearer
+      authorization: BEARER
       bearerKeyword: Apikey
       method: POST
       headers:

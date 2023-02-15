@@ -116,7 +116,7 @@ public final class DiscourseAnnouncer extends AbstractMessageAnnouncer<Discourse
 
         @Override
         public String getPrefix() {
-            return DiscourseAnnouncer.this.getPrefix();
+            return DiscourseAnnouncer.this.prefix();
         }
 
         @Override
@@ -156,7 +156,7 @@ public final class DiscourseAnnouncer extends AbstractMessageAnnouncer<Discourse
 
     public String getResolvedTitle(JReleaserContext context) {
         TemplateContext props = context.fullProps();
-        applyTemplates(props, getResolvedExtraProperties());
+        applyTemplates(props, resolvedExtraProperties());
         return resolveTemplate(title, props);
     }
 

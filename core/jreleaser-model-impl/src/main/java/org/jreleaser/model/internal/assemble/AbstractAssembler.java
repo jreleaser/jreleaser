@@ -86,7 +86,7 @@ public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A ext
     @Override
     public TemplateContext props() {
         TemplateContext props = new TemplateContext();
-        applyTemplates(props, getResolvedExtraProperties());
+        applyTemplates(props, resolvedExtraProperties());
         props.set(KEY_DISTRIBUTION_NAME, name);
         props.set(KEY_DISTRIBUTION_STEREOTYPE, getStereotype());
         return props;
@@ -210,7 +210,7 @@ public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A ext
     }
 
     @Override
-    public String getPrefix() {
+    public String prefix() {
         return getType();
     }
 
@@ -312,7 +312,7 @@ public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A ext
             mappedFileSets.put("fileSet " + i, fileSets.get(i).asMap(full));
         }
         props.put("fileSets", mappedFileSets);
-        props.put("extraProperties", getResolvedExtraProperties());
+        props.put("extraProperties", resolvedExtraProperties());
 
         Map<String, Object> map = new LinkedHashMap<>();
         map.put(getName(), props);

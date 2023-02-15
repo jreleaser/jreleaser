@@ -262,7 +262,7 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
 
         @Override
         public String getPrefix() {
-            return NativeImageAssembler.this.getPrefix();
+            return NativeImageAssembler.this.prefix();
         }
 
         @Override

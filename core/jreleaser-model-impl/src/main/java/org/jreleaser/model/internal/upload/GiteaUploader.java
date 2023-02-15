@@ -124,7 +124,7 @@ public final class GiteaUploader extends AbstractGitPackageUploader<org.jrelease
 
         @Override
         public String getPrefix() {
-            return GiteaUploader.this.getPrefix();
+            return GiteaUploader.this.prefix();
         }
 
         @Override
@@ -175,7 +175,7 @@ public final class GiteaUploader extends AbstractGitPackageUploader<org.jrelease
     @Override
     public String getResolvedDownloadUrl(TemplateContext props, Artifact artifact) {
         TemplateContext p = new TemplateContext(artifactProps(props, artifact));
-        p.setAll(getResolvedExtraProperties());
+        p.setAll(resolvedExtraProperties());
         p.set("host", getHost());
         p.set("owner", getOwner());
         p.set("packageName", getPackageName());

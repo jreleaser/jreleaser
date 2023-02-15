@@ -81,7 +81,7 @@ public final class FtpDownloader extends AbstractDownloader<org.jreleaser.model.
 
         @Override
         public String getPrefix() {
-            return FtpDownloader.this.getPrefix();
+            return FtpDownloader.this.prefix();
         }
 
         @Override

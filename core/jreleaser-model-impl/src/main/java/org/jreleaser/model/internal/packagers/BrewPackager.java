@@ -194,7 +194,7 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
 
         @Override
         public String getPrefix() {
-            return BrewPackager.this.getPrefix();
+            return BrewPackager.this.prefix();
         }
 
         @Override

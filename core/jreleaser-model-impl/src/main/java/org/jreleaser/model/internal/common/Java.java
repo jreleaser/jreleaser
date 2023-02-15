@@ -89,7 +89,7 @@ public final class Java extends AbstractModelObject<Java> implements Domain, Ext
 
         @Override
         public String getPrefix() {
-            return Java.this.getPrefix();
+            return Java.this.prefix();
         }
 
         @Override
@@ -130,7 +130,7 @@ public final class Java extends AbstractModelObject<Java> implements Domain, Ext
     }
 
     @Override
-    public String getPrefix() {
+    public String prefix() {
         return "java";
     }
 
@@ -229,7 +229,7 @@ public final class Java extends AbstractModelObject<Java> implements Domain, Ext
         map.put("mainModule", mainModule);
         map.put("mainClass", mainClass);
         map.put("multiProject", isMultiProject());
-        map.put("extraProperties", getResolvedExtraProperties());
+        map.put("extraProperties", resolvedExtraProperties());
         return map;
     }
 }

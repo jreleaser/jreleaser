@@ -958,21 +958,21 @@ public class JReleaserContext {
         props.put("javaVendor", System.getProperty("java.vendor"));
         props.put("javaVmVersion", System.getProperty("java.vm.version"));
 
-        Map<String, Object> resolvedExtraProperties = project.getResolvedExtraProperties();
-        safePut(project.getPrefix() + capitalize(KEY_VERSION_MAJOR), resolvedExtraProperties, props);
-        safePut(project.getPrefix() + capitalize(KEY_VERSION_MINOR), resolvedExtraProperties, props);
-        safePut(project.getPrefix() + capitalize(KEY_VERSION_PATCH), resolvedExtraProperties, props);
-        safePut(project.getPrefix() + capitalize(KEY_VERSION_NUMBER), resolvedExtraProperties, props);
-        safePut(project.getPrefix() + capitalize(KEY_VERSION_PRERELEASE), resolvedExtraProperties, props);
-        safePut(project.getPrefix() + capitalize(KEY_VERSION_TAG), resolvedExtraProperties, props);
-        safePut(project.getPrefix() + capitalize(KEY_VERSION_BUILD), resolvedExtraProperties, props);
-        safePut(project.getPrefix() + capitalize(KEY_VERSION_OPTIONAL), resolvedExtraProperties, props);
-        safePut(project.getPrefix() + capitalize(KEY_VERSION_YEAR), resolvedExtraProperties, props);
-        safePut(project.getPrefix() + capitalize(KEY_VERSION_MONTH), resolvedExtraProperties, props);
-        safePut(project.getPrefix() + capitalize(KEY_VERSION_DAY), resolvedExtraProperties, props);
-        safePut(project.getPrefix() + capitalize(KEY_VERSION_WEEK), resolvedExtraProperties, props);
-        safePut(project.getPrefix() + capitalize(KEY_VERSION_MICRO), resolvedExtraProperties, props);
-        safePut(project.getPrefix() + capitalize(KEY_VERSION_MODIFIER), resolvedExtraProperties, props);
+        Map<String, Object> resolvedExtraProperties = project.resolvedExtraProperties();
+        safePut(project.prefix() + capitalize(KEY_VERSION_MAJOR), resolvedExtraProperties, props);
+        safePut(project.prefix() + capitalize(KEY_VERSION_MINOR), resolvedExtraProperties, props);
+        safePut(project.prefix() + capitalize(KEY_VERSION_PATCH), resolvedExtraProperties, props);
+        safePut(project.prefix() + capitalize(KEY_VERSION_NUMBER), resolvedExtraProperties, props);
+        safePut(project.prefix() + capitalize(KEY_VERSION_PRERELEASE), resolvedExtraProperties, props);
+        safePut(project.prefix() + capitalize(KEY_VERSION_TAG), resolvedExtraProperties, props);
+        safePut(project.prefix() + capitalize(KEY_VERSION_BUILD), resolvedExtraProperties, props);
+        safePut(project.prefix() + capitalize(KEY_VERSION_OPTIONAL), resolvedExtraProperties, props);
+        safePut(project.prefix() + capitalize(KEY_VERSION_YEAR), resolvedExtraProperties, props);
+        safePut(project.prefix() + capitalize(KEY_VERSION_MONTH), resolvedExtraProperties, props);
+        safePut(project.prefix() + capitalize(KEY_VERSION_DAY), resolvedExtraProperties, props);
+        safePut(project.prefix() + capitalize(KEY_VERSION_WEEK), resolvedExtraProperties, props);
+        safePut(project.prefix() + capitalize(KEY_VERSION_MICRO), resolvedExtraProperties, props);
+        safePut(project.prefix() + capitalize(KEY_VERSION_MODIFIER), resolvedExtraProperties, props);
 
         Path output = getOutputDirectory().resolve("output.properties");
 

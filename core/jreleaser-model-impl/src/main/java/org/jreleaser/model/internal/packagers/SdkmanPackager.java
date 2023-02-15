@@ -170,7 +170,7 @@ public final class SdkmanPackager extends AbstractPackager<org.jreleaser.model.a
 
         @Override
         public String getPrefix() {
-            return SdkmanPackager.this.getPrefix();
+            return SdkmanPackager.this.prefix();
         }
 
         @Override

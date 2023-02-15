@@ -133,7 +133,7 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
 
         @Override
         public String getPrefix() {
-            return Nexus2MavenDeployer.this.getPrefix();
+            return Nexus2MavenDeployer.this.prefix();
         }
 
         @Override

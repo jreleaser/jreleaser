@@ -80,7 +80,7 @@ public final class Glob extends AbstractModelObject<Glob> implements Domain, Ext
 
         @Override
         public String getPrefix() {
-            return Glob.this.getPrefix();
+            return Glob.this.prefix();
         }
 
         @Override
@@ -101,7 +101,7 @@ public final class Glob extends AbstractModelObject<Glob> implements Domain, Ext
     }
 
     @Override
-    public String getPrefix() {
+    public String prefix() {
         return "artifact";
     }
 
@@ -152,7 +152,7 @@ public final class Glob extends AbstractModelObject<Glob> implements Domain, Ext
         props.put("pattern", pattern);
         props.put("platform", platform);
         props.put("directory", directory);
-        props.put("extraProperties", getResolvedExtraProperties());
+        props.put("extraProperties", resolvedExtraProperties());
         return props;
     }
 

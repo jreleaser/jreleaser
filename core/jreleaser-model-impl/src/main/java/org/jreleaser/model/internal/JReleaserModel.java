@@ -477,7 +477,7 @@ public class JReleaserModel {
         props.set(Constants.KEY_OS_PLATFORM, PlatformUtils.getCurrentFull());
         props.set(Constants.KEY_OS_PLATFORM_REPLACED, getPlatform().applyReplacements(PlatformUtils.getCurrentFull()));
 
-        applyTemplates(props, project.getResolvedExtraProperties());
+        applyTemplates(props, project.resolvedExtraProperties());
         props.set(Constants.KEY_ZONED_DATE_TIME_NOW, now);
         props.set(ReleaserDownloadUrl.NAME, new ReleaserDownloadUrl());
 
@@ -523,7 +523,7 @@ public class JReleaserModel {
         props.set(Constants.KEY_PROJECT_TAGS_BY_COMMA, String.join(",", project.getTags()));
 
         if (project.getJava().isEnabled()) {
-            props.setAll(project.getJava().getResolvedExtraProperties());
+            props.setAll(project.getJava().resolvedExtraProperties());
             props.set(Constants.KEY_PROJECT_JAVA_GROUP_ID, project.getJava().getGroupId());
             props.set(Constants.KEY_PROJECT_JAVA_ARTIFACT_ID, project.getJava().getArtifactId());
             String javaVersion = project.getJava().getVersion();
@@ -540,7 +540,7 @@ public class JReleaserModel {
         }
 
         project.parseVersion();
-        props.setAll(project.getResolvedExtraProperties());
+        props.setAll(project.resolvedExtraProperties());
     }
 
     private void fillReleaserProperties(TemplateContext props, Release release) {

@@ -204,7 +204,7 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
 
         @Override
         public String getPrefix() {
-            return JavaArchiveAssembler.this.getPrefix();
+            return JavaArchiveAssembler.this.prefix();
         }
 
         @Override

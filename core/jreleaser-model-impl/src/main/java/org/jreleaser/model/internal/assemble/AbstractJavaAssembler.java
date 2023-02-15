@@ -61,7 +61,7 @@ public abstract class AbstractJavaAssembler<S extends AbstractJavaAssembler<S, A
     public TemplateContext props() {
         TemplateContext props = super.props();
         props.set(Constants.KEY_DISTRIBUTION_EXECUTABLE, executable);
-        props.setAll(java.getResolvedExtraProperties());
+        props.setAll(java.resolvedExtraProperties());
         props.set(Constants.KEY_DISTRIBUTION_JAVA_GROUP_ID, java.getGroupId(), "");
         props.set(Constants.KEY_DISTRIBUTION_JAVA_ARTIFACT_ID, java.getArtifactId(), "");
         props.set(Constants.KEY_DISTRIBUTION_JAVA_MAIN_CLASS, java.getMainClass(), "");
@@ -146,7 +146,7 @@ public abstract class AbstractJavaAssembler<S extends AbstractJavaAssembler<S, A
             mappedJars.put("glob " + i, jars.get(i).asMap(full));
         }
         props.put("jars", mappedJars);
-        props.put("extraProperties", getResolvedExtraProperties());
+        props.put("extraProperties", resolvedExtraProperties());
         if (java.isEnabled()) {
             props.put("java", java.asMap(full));
         }

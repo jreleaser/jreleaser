@@ -170,7 +170,7 @@ public final class SmtpAnnouncer extends AbstractMessageAnnouncer<SmtpAnnouncer,
 
         @Override
         public String getPrefix() {
-            return SmtpAnnouncer.this.getPrefix();
+            return SmtpAnnouncer.this.prefix();
         }
 
         @Override
@@ -218,7 +218,7 @@ public final class SmtpAnnouncer extends AbstractMessageAnnouncer<SmtpAnnouncer,
 
     public String getResolvedSubject(JReleaserContext context) {
         TemplateContext props = context.fullProps();
-        applyTemplates(props, getResolvedExtraProperties());
+        applyTemplates(props, resolvedExtraProperties());
         props.set(KEY_TAG_NAME, context.getModel().getRelease().getReleaser().getEffectiveTagName(context.getModel()));
         props.set(KEY_PREVIOUS_TAG_NAME, context.getModel().getRelease().getReleaser().getResolvedPreviousTagName(context.getModel()));
         return resolveTemplate(subject, props);

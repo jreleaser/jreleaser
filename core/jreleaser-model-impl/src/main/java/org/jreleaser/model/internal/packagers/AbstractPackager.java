@@ -122,7 +122,7 @@ public abstract class AbstractPackager<A extends org.jreleaser.model.api.package
     }
 
     @Override
-    public String getPrefix() {
+    public String prefix() {
         return getType();
     }
 
@@ -191,7 +191,7 @@ public abstract class AbstractPackager<A extends org.jreleaser.model.api.package
         props.put("continueOnError", isContinueOnError());
         props.put("downloadUrl", downloadUrl);
         asMap(full, props);
-        props.put("extraProperties", getResolvedExtraProperties());
+        props.put("extraProperties", resolvedExtraProperties());
 
         Map<String, Object> map = new LinkedHashMap<>();
         map.put(getType(), props);

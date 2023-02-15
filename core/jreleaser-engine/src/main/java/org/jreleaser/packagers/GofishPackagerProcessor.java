@@ -108,7 +108,7 @@ public class GofishPackagerProcessor extends AbstractRepositoryPackagerProcessor
             String platform = artifact.getPlatform();
             String artifactPlatform = isNotBlank(platform) ? capitalize(platform) : "";
             // add extra properties without clobbering existing keys
-            Map<String, Object> artifactProps = artifact.getResolvedExtraProperties("artifact" + artifactPlatform);
+            Map<String, Object> artifactProps = artifact.resolvedExtraProperties("artifact" + artifactPlatform);
             artifactProps.keySet().stream()
                 .filter(k -> !props.contains(k))
                 .forEach(k -> props.set(k, artifactProps.get(k)));

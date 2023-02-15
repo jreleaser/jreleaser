@@ -99,7 +99,7 @@ public final class WebhookAnnouncer extends AbstractMessageAnnouncer<WebhookAnno
 
         @Override
         public String getPrefix() {
-            return WebhookAnnouncer.this.getPrefix();
+            return WebhookAnnouncer.this.prefix();
         }
 
         @Override
@@ -137,7 +137,7 @@ public final class WebhookAnnouncer extends AbstractMessageAnnouncer<WebhookAnno
     }
 
     @Override
-    public String getPrefix() {
+    public String prefix() {
         return "webhook";
     }
 

@@ -739,7 +739,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
         project.getLinks().fillProps(props);
 
         if (project.getJava().isEnabled()) {
-            props.setAll(project.getJava().getResolvedExtraProperties());
+            props.setAll(project.getJava().resolvedExtraProperties());
             props.set(Constants.KEY_PROJECT_JAVA_GROUP_ID, project.getJava().getGroupId());
             props.set(Constants.KEY_PROJECT_JAVA_ARTIFACT_ID, project.getJava().getArtifactId());
             String javaVersion = project.getJava().getVersion();
@@ -756,7 +756,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
         }
 
         project.parseVersion();
-        props.setAll(project.getResolvedExtraProperties());
+        props.setAll(project.resolvedExtraProperties());
 
         String osName = PlatformUtils.getDetectedOs();
         String osArch = PlatformUtils.getDetectedArch();
@@ -777,7 +777,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
         props.set(Constants.KEY_RELEASE_NAME, cachedReleaseName);
         props.set(Constants.KEY_MILESTONE_NAME, milestone.getEffectiveName());
 
-        applyTemplates(props, project.getResolvedExtraProperties());
+        applyTemplates(props, project.resolvedExtraProperties());
         props.set(Constants.KEY_ZONED_DATE_TIME_NOW, model.getNow());
 
         return props;

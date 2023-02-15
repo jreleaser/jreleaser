@@ -124,7 +124,7 @@ public final class GitlabUploader extends AbstractGitPackageUploader<org.jreleas
 
         @Override
         public String getPrefix() {
-            return GitlabUploader.this.getPrefix();
+            return GitlabUploader.this.prefix();
         }
 
         @Override
@@ -176,7 +176,7 @@ public final class GitlabUploader extends AbstractGitPackageUploader<org.jreleas
     @Override
     public String getResolvedDownloadUrl(TemplateContext props, Artifact artifact) {
         TemplateContext p = new TemplateContext(artifactProps(props, artifact));
-        p.setAll(getResolvedExtraProperties());
+        p.setAll(resolvedExtraProperties());
         p.set("host", getHost());
         p.set("packageName", getPackageName());
         p.set("packageVersion", getPackageVersion());

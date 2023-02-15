@@ -236,7 +236,7 @@ public final class Project extends AbstractModelObject<Project> implements Domai
 
         @Override
         public String getPrefix() {
-            return Project.this.getPrefix();
+            return Project.this.prefix();
         }
 
         @Override
@@ -273,7 +273,7 @@ public final class Project extends AbstractModelObject<Project> implements Domai
     }
 
     @Override
-    public String getPrefix() {
+    public String prefix() {
         return "project";
     }
 
@@ -556,7 +556,7 @@ public final class Project extends AbstractModelObject<Project> implements Domai
             sm.put("icon " + (i++), icon.asMap(full));
         }
         map.put("icons", sm);
-        map.put("extraProperties", getResolvedExtraProperties());
+        map.put("extraProperties", resolvedExtraProperties());
         if (java.isEnabled()) {
             map.put("java", java.asMap(full));
         }
@@ -866,7 +866,7 @@ public final class Project extends AbstractModelObject<Project> implements Domai
             project.getLinks().fillProps(props);
 
             if (project.getJava().isEnabled()) {
-                props.setAll(project.getJava().getResolvedExtraProperties());
+                props.setAll(project.getJava().resolvedExtraProperties());
                 props.set(Constants.KEY_PROJECT_JAVA_GROUP_ID, project.getJava().getGroupId());
                 props.set(Constants.KEY_PROJECT_JAVA_ARTIFACT_ID, project.getJava().getArtifactId());
                 String javaVersion = project.getJava().getVersion();
@@ -883,7 +883,7 @@ public final class Project extends AbstractModelObject<Project> implements Domai
             }
 
             project.parseVersion();
-            props.setAll(project.getResolvedExtraProperties());
+            props.setAll(project.resolvedExtraProperties());
 
             String osName = PlatformUtils.getDetectedOs();
             String osArch = PlatformUtils.getDetectedArch();
@@ -893,7 +893,7 @@ public final class Project extends AbstractModelObject<Project> implements Domai
             props.set(Constants.KEY_OS_PLATFORM, PlatformUtils.getCurrentFull());
             props.set(Constants.KEY_OS_PLATFORM_REPLACED, model.getPlatform().applyReplacements(PlatformUtils.getCurrentFull()));
 
-            applyTemplates(props, project.getResolvedExtraProperties());
+            applyTemplates(props, project.resolvedExtraProperties());
             props.set(Constants.KEY_ZONED_DATE_TIME_NOW, model.getNow());
 
             return props;

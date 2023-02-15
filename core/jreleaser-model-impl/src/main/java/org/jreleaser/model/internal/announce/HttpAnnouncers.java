@@ -86,7 +86,7 @@ public final class HttpAnnouncers extends AbstractAnnouncer<HttpAnnouncers, org.
 
         @Override
         public String getPrefix() {
-            return HttpAnnouncers.this.getPrefix();
+            return HttpAnnouncers.this.prefix();
         }
 
         @Override

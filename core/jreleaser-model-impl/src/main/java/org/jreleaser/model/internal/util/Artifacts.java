@@ -138,7 +138,7 @@ public final class Artifacts {
 
     public static TemplateContext unresolvedArtifactProps(Artifact artifact, TemplateContext props) {
         props.setAll(artifact.getExtraProperties());
-        props.setAll(artifact.getResolvedExtraProperties());
+        props.setAll(artifact.resolvedExtraProperties());
         props.set(KEY_PLATFORM, artifact.getPlatform());
         props.set(KEY_ARTIFACT_PLATFORM, artifact.getPlatform());
         return props;
@@ -146,7 +146,7 @@ public final class Artifacts {
 
     public static TemplateContext resolvedArtifactProps(Artifact artifact, TemplateContext props) {
         props.setAll(artifact.getExtraProperties());
-        props.setAll(artifact.getResolvedExtraProperties());
+        props.setAll(artifact.resolvedExtraProperties());
 
         String artifactFile = artifact.getEffectivePath().getFileName().toString();
         String artifactFileName = getFilename(artifactFile, FileType.getSupportedExtensions());
@@ -218,13 +218,13 @@ public final class Artifacts {
 
     public static TemplateContext globProps(Glob glob, TemplateContext props) {
         props.setAll(glob.getExtraProperties());
-        props.setAll(glob.getResolvedExtraProperties());
+        props.setAll(glob.resolvedExtraProperties());
         return props;
     }
 
     public static TemplateContext fileSetProps(FileSet fileSet, TemplateContext props) {
         props.setAll(fileSet.getExtraProperties());
-        props.setAll(fileSet.getResolvedExtraProperties());
+        props.setAll(fileSet.resolvedExtraProperties());
         return props;
     }
 
@@ -273,7 +273,7 @@ public final class Artifacts {
         }
 
         TemplateContext props = context.fullProps();
-        props.setAll(packager.getResolvedExtraProperties());
+        props.setAll(packager.resolvedExtraProperties());
         props.setAll(distribution.props());
         artifactProps(artifact, distribution, props);
 
@@ -325,7 +325,7 @@ public final class Artifacts {
         }
 
         TemplateContext props = context.fullProps();
-        props.setAll(announcer.getResolvedExtraProperties());
+        props.setAll(announcer.resolvedExtraProperties());
         props.setAll(distribution.props());
         artifactProps(artifact, distribution, props);
 

@@ -33,6 +33,15 @@ import com.github.victools.jsonschema.module.jackson.JacksonModule;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.model.internal.JReleaserModel;
+import org.jreleaser.model.internal.announce.HttpAnnouncer;
+import org.jreleaser.model.internal.announce.WebhookAnnouncer;
+import org.jreleaser.model.internal.download.AbstractSshDownloader;
+import org.jreleaser.model.internal.download.FtpDownloader;
+import org.jreleaser.model.internal.download.HttpDownloader;
+import org.jreleaser.model.internal.upload.AbstractSshUploader;
+import org.jreleaser.model.internal.upload.ArtifactoryUploader;
+import org.jreleaser.model.internal.upload.FtpUploader;
+import org.jreleaser.model.internal.upload.HttpUploader;
 
 import java.io.PrintWriter;
 import java.nio.file.Files;
@@ -98,6 +107,9 @@ public final class JsonSchemaGenerator {
             configBuilder.with(Option.DEFINITION_FOR_MAIN_SCHEMA);
             configBuilder.with(Option.DEFINITIONS_FOR_ALL_OBJECTS);
             configBuilder.with(Option.MAP_VALUES_AS_ADDITIONAL_PROPERTIES);
+            configBuilder.with(Option.GETTER_METHODS);
+            configBuilder.with(Option.NONSTATIC_NONVOID_NONGETTER_METHODS);
+            configBuilder.with(Option.FIELDS_DERIVED_FROM_ARGUMENTFREE_METHODS);
             JacksonModule jacksonModule = new JacksonModule();
             configBuilder.with(jacksonModule);
             configBuilder.forTypesInGeneral()
@@ -107,7 +119,7 @@ public final class JsonSchemaGenerator {
                     if (scope.getType().isInstanceOf(Map.class)) {
                         ResolvedType type = scope.getTypeParameterFor(Map.class, 1);
                         if (type.getErasedType() != String.class && type.getErasedType() != Object.class) {
-                            return singletonMap("^[a-zA-Z-]+$", type);
+                            return singletonMap("^[a-zA-Z][a-zA-Z0-9-]*[a-zA-Z0-9]?$", type);
                         }
                     }
                     return null;
@@ -128,6 +140,22 @@ public final class JsonSchemaGenerator {
                         return mappings.getOrDefault(definitionNameForKey, definitionNameForKey);
                     }
                 });
+            configBuilder.forMethods()
+                .withIgnoreCheck(method -> {
+                    if (method.isVoid() || !method.getName().startsWith("get") || method.getArgumentCount() != 0) {
+                        return true;
+                    }
+                    Class<?> declaringType = method.getDeclaringType().getErasedType();
+                    return declaringType != HttpAnnouncer.class &&
+                        declaringType != HttpDownloader.class &&
+                        declaringType != HttpUploader.class &&
+                        declaringType != ArtifactoryUploader.class &&
+                        declaringType != FtpDownloader.class &&
+                        declaringType != FtpUploader.class &&
+                        declaringType != AbstractSshDownloader.class &&
+                        declaringType != AbstractSshUploader.class &&
+                        declaringType != WebhookAnnouncer.class;
+                });
 
             SchemaGeneratorConfig config = configBuilder.build();
             SchemaGenerator generator = new SchemaGenerator(config);
@@ -139,6 +167,7 @@ public final class JsonSchemaGenerator {
             Files.write(schemaPath, json.getBytes(UTF_8), CREATE, WRITE, TRUNCATE_EXISTING);
             out.println("Schema written to " + schemaPath.toAbsolutePath());
         } catch (Exception e) {
+            e.printStackTrace();
             throw new JReleaserException($("ERROR_unexpected_error"), e);
         }
     }

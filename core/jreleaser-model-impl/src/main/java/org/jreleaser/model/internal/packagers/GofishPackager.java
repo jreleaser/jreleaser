@@ -158,7 +158,7 @@ public final class GofishPackager extends AbstractRepositoryPackager<org.jreleas
 
         @Override
         public String getPrefix() {
-            return GofishPackager.this.getPrefix();
+            return GofishPackager.this.prefix();
         }
 
         @Override

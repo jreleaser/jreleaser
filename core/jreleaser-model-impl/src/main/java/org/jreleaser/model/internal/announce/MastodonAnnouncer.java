@@ -115,7 +115,7 @@ public final class MastodonAnnouncer extends AbstractAnnouncer<MastodonAnnouncer
 
         @Override
         public String getPrefix() {
-            return MastodonAnnouncer.this.getPrefix();
+            return MastodonAnnouncer.this.prefix();
         }
 
         @Override
@@ -155,7 +155,7 @@ public final class MastodonAnnouncer extends AbstractAnnouncer<MastodonAnnouncer
 
     public String getResolvedStatusTemplate(JReleaserContext context, TemplateContext extraProps) {
         TemplateContext props = context.fullProps();
-        applyTemplates(props, getResolvedExtraProperties());
+        applyTemplates(props, resolvedExtraProperties());
         props.set(KEY_TAG_NAME, context.getModel().getRelease().getReleaser().getEffectiveTagName(context.getModel()));
         props.set(KEY_PREVIOUS_TAG_NAME, context.getModel().getRelease().getReleaser().getResolvedPreviousTagName(context.getModel()));
         props.setAll(extraProps);

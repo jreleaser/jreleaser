@@ -147,7 +147,7 @@ public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.mo
 
         @Override
         public String getPrefix() {
-            return ArtifactoryUploader.this.getPrefix();
+            return ArtifactoryUploader.this.prefix();
         }
 
         @Override

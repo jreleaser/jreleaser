@@ -128,7 +128,7 @@ public final class TwitterAnnouncer extends AbstractAnnouncer<TwitterAnnouncer, 
 
         @Override
         public String getPrefix() {
-            return TwitterAnnouncer.this.getPrefix();
+            return TwitterAnnouncer.this.prefix();
         }
 
         @Override
@@ -170,7 +170,7 @@ public final class TwitterAnnouncer extends AbstractAnnouncer<TwitterAnnouncer, 
 
     public String getResolvedStatusTemplate(JReleaserContext context, TemplateContext extraProps) {
         TemplateContext props = context.fullProps();
-        applyTemplates(props, getResolvedExtraProperties());
+        applyTemplates(props, resolvedExtraProperties());
         props.set(KEY_TAG_NAME, context.getModel().getRelease().getReleaser()
             .getEffectiveTagName(context.getModel()));
         props.set(Constants.KEY_PREVIOUS_TAG_NAME,

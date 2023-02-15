@@ -101,7 +101,7 @@ public final class DiscussionsAnnouncer extends AbstractMessageAnnouncer<Discuss
 
         @Override
         public String getPrefix() {
-            return DiscussionsAnnouncer.this.getPrefix();
+            return DiscussionsAnnouncer.this.prefix();
         }
 
         @Override
@@ -139,7 +139,7 @@ public final class DiscussionsAnnouncer extends AbstractMessageAnnouncer<Discuss
 
     public String getResolvedTitle(JReleaserContext context) {
         TemplateContext props = context.fullProps();
-        applyTemplates(props, getResolvedExtraProperties());
+        applyTemplates(props, resolvedExtraProperties());
         return resolveTemplate(title, props);
     }
 

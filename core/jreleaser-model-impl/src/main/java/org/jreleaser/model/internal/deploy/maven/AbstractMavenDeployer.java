@@ -79,7 +79,7 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
     }
 
     @Override
-    public String getPrefix() {
+    public String prefix() {
         return getType();
     }
 
@@ -258,7 +258,7 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
         props.put("applyMavenCentralRules", isApplyMavenCentralRules());
         props.put("stagingRepositories", stagingRepositories);
         asMap(full, props);
-        props.put("extraProperties", getResolvedExtraProperties());
+        props.put("extraProperties", resolvedExtraProperties());
 
         Map<String, Object> map = new LinkedHashMap<>();
         map.put(this.getName(), props);

@@ -120,7 +120,7 @@ public final class Artifact extends AbstractModelObject<Artifact> implements Dom
 
         @Override
         public String getPrefix() {
-            return Artifact.this.getPrefix();
+            return Artifact.this.prefix();
         }
 
         @Override
@@ -234,7 +234,7 @@ public final class Artifact extends AbstractModelObject<Artifact> implements Dom
     }
 
     @Override
-    public String getPrefix() {
+    public String prefix() {
         return "artifact";
     }
 
@@ -260,7 +260,7 @@ public final class Artifact extends AbstractModelObject<Artifact> implements Dom
         map.put("path", path);
         map.put("transform", transform);
         map.put("platform", platform);
-        map.put("extraProperties", getResolvedExtraProperties());
+        map.put("extraProperties", resolvedExtraProperties());
         return map;
     }
 
