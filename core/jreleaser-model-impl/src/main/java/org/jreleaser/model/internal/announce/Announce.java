@@ -46,7 +46,6 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
     private final GitterAnnouncer gitter = new GitterAnnouncer();
     private final GoogleChatAnnouncer googleChat = new GoogleChatAnnouncer();
     private final LinkedinAnnouncer linkedin = new LinkedinAnnouncer();
-    private final HttpAnnouncers http = new HttpAnnouncers();
     private final SmtpAnnouncer smtp = new SmtpAnnouncer();
     private final MastodonAnnouncer mastodon = new MastodonAnnouncer();
     private final MattermostAnnouncer mattermost = new MattermostAnnouncer();
@@ -55,8 +54,11 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
     private final TeamsAnnouncer teams = new TeamsAnnouncer();
     private final TelegramAnnouncer telegram = new TelegramAnnouncer();
     private final TwitterAnnouncer twitter = new TwitterAnnouncer();
-    private final WebhooksAnnouncer webhooks = new WebhooksAnnouncer();
     private final ZulipAnnouncer zulip = new ZulipAnnouncer();
+    @JsonIgnore
+    private final HttpAnnouncers httpAnnouncers = new HttpAnnouncers();
+    @JsonIgnore
+    private final WebhooksAnnouncer webhooksAnnouncer = new WebhooksAnnouncer();
 
     @JsonIgnore
     private final org.jreleaser.model.api.announce.Announce immutable = new org.jreleaser.model.api.announce.Announce() {
@@ -144,12 +146,12 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
 
         @Override
         public Map<String, ? extends org.jreleaser.model.api.announce.HttpAnnouncer> getHttp() {
-            return http.asImmutable().getHttpAnnouncers();
+            return httpAnnouncers.asImmutable().getHttpAnnouncers();
         }
 
         @Override
         public Map<String, ? extends org.jreleaser.model.api.announce.WebhookAnnouncer> getWebhooks() {
-            return webhooks.asImmutable().getWebhooks();
+            return webhooksAnnouncer.asImmutable().getWebhooks();
         }
 
         @Override
@@ -191,7 +193,6 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         setGitter(source.gitter);
         setLinkedin(source.linkedin);
         setGoogleChat(source.googleChat);
-        setConfiguredHttp(source.http);
         setSmtp(source.smtp);
         setMastodon(source.mastodon);
         setMattermost(source.mattermost);
@@ -201,7 +202,8 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         setTelegram(source.telegram);
         setTwitter(source.twitter);
         setZulip(source.zulip);
-        setConfiguredWebhooks(source.webhooks);
+        setConfiguredHttp(source.httpAnnouncers);
+        setConfiguredWebhooks(source.webhooksAnnouncer);
     }
 
     @Deprecated
@@ -343,44 +345,46 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         this.twitter.merge(twitter);
     }
 
+    @JsonIgnore
     public HttpAnnouncers getConfiguredHttp() {
-        return this.http;
+        return this.httpAnnouncers;
     }
 
     void setConfiguredHttp(HttpAnnouncers https) {
-        this.http.merge(https);
+        this.httpAnnouncers.merge(https);
     }
 
     public Map<String, HttpAnnouncer> getHttp() {
-        return this.http.getHttp();
+        return this.httpAnnouncers.getHttp();
     }
 
     public void setHttp(Map<String, HttpAnnouncer> https) {
-        this.http.setHttp(https);
+        this.httpAnnouncers.setHttp(https);
     }
 
     public void addHttpAnnouncer(HttpAnnouncer http) {
-        this.http.addHttpAnnouncer(http);
+        this.httpAnnouncers.addHttpAnnouncer(http);
     }
 
+    @JsonIgnore
     public WebhooksAnnouncer getConfiguredWebhooks() {
-        return this.webhooks;
+        return this.webhooksAnnouncer;
     }
 
     void setConfiguredWebhooks(WebhooksAnnouncer webhooks) {
-        this.webhooks.merge(webhooks);
+        this.webhooksAnnouncer.merge(webhooks);
     }
 
     public Map<String, WebhookAnnouncer> getWebhooks() {
-        return this.webhooks.getWebhooks();
+        return this.webhooksAnnouncer.getWebhooks();
     }
 
     public void setWebhooks(Map<String, WebhookAnnouncer> webhooks) {
-        this.webhooks.setWebhooks(webhooks);
+        this.webhooksAnnouncer.setWebhooks(webhooks);
     }
 
     public void addWebhook(WebhookAnnouncer webhook) {
-        this.webhooks.addWebhook(webhook);
+        this.webhooksAnnouncer.addWebhook(webhook);
     }
 
     public ZulipAnnouncer getZulip() {
@@ -403,7 +407,7 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         map.putAll(gitter.asMap(full));
         map.putAll(googleChat.asMap(full));
         map.putAll(linkedin.asMap(full));
-        map.putAll(http.asMap(full));
+        map.putAll(httpAnnouncers.asMap(full));
         map.putAll(smtp.asMap(full));
         map.putAll(mastodon.asMap(full));
         map.putAll(mattermost.asMap(full));
@@ -412,7 +416,7 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         map.putAll(teams.asMap(full));
         map.putAll(telegram.asMap(full));
         map.putAll(twitter.asMap(full));
-        map.putAll(webhooks.asMap(full));
+        map.putAll(webhooksAnnouncer.asMap(full));
         map.putAll(zulip.asMap(full));
         return map;
     }

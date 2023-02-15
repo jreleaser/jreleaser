@@ -33,6 +33,7 @@ import com.github.victools.jsonschema.module.jackson.JacksonModule;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.model.internal.JReleaserModel;
+import org.jreleaser.model.internal.announce.Announce;
 import org.jreleaser.model.internal.announce.HttpAnnouncer;
 import org.jreleaser.model.internal.announce.WebhookAnnouncer;
 import org.jreleaser.model.internal.download.AbstractSshDownloader;
@@ -146,7 +147,8 @@ public final class JsonSchemaGenerator {
                         return true;
                     }
                     Class<?> declaringType = method.getDeclaringType().getErasedType();
-                    return declaringType != HttpAnnouncer.class &&
+                    return declaringType != Announce.class &&
+                        declaringType != HttpAnnouncer.class &&
                         declaringType != HttpDownloader.class &&
                         declaringType != HttpUploader.class &&
                         declaringType != ArtifactoryUploader.class &&
