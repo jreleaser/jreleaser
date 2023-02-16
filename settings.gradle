@@ -95,6 +95,7 @@ enforce {
             "com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:$jacksonVersion",
             "com.fasterxml.jackson:jackson-bom:$jacksonVersion",
             "com.github.ben-manes.caffeine:caffeine:$caffeineVersion",
+            "com.github.luben:zstd-jni:$zstdVersion",
             "com.google.code.findbugs:jsr305:$jsr305Version",
             "com.google.errorprone:error_prone_annotations:$errorproneVersion",
             "com.google.guava:guava:$guavaVersion",
