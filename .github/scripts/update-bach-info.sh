@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # env vars:
 # VERSION: x.y.z or early-access
@@ -36,18 +36,18 @@ DOC_SIZE=$(ls -l "download/README.adoc" | awk '{print $5}')
 
 TARGET_FILE=".bach/external-tools/${TOOL_NAME}@${TAG}.tool-directory.properties"
 echo "📝️ Creating ${TARGET_FILE}"
-echo "@description ${TOOL_DESC} ${TAG} (${VERSION})" > $TARGET_FILE
-echo " " >> $TARGET_FILE
-echo "${JAR_FILENAME}=\\" >> $TARGET_FILE
-echo "  ${JAR_URL}\\" >> $TARGET_FILE
-echo "  #SIZE=${JAR_SIZE}&SHA-256=${JAR_CSUM}" >> $TARGET_FILE
-echo "README.adoc=\\" >> $TARGET_FILE
-echo "  ${DOC_URL}\\" >> $TARGET_FILE
-echo "  #SIZE=${DOC_SIZE}" >> $TARGET_FILE
-echo "" >> $TARGET_FILE
+echo "@description ${TOOL_DESC} ${TAG} (${VERSION})" > "${TARGET_FILE}"
+echo " " >> "${TARGET_FILE}"
+echo "${JAR_FILENAME}=\\" >> "${TARGET_FILE}"
+echo "  ${JAR_URL}\\" >> "${TARGET_FILE}"
+echo "  #SIZE=${JAR_SIZE}&SHA-256=${JAR_CSUM}" >> "${TARGET_FILE}"
+echo "README.adoc=\\" >> "${TARGET_FILE}"
+echo "  ${DOC_URL}\\" >> "${TARGET_FILE}"
+echo "  #SIZE=${DOC_SIZE}" >> "${TARGET_FILE}"
+echo "" >> "${TARGET_FILE}"
 
 echo "🔍 ${TARGET_FILE}"
-cat $TARGET_FILE
+cat "${TARGET_FILE}"
 
 echo "⬆️ Updating bach-info repository"
 git add "${TARGET_FILE}"

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # env vars:
 # VERSION: x.y.z or early-access

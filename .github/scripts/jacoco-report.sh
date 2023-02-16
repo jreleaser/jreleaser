@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/bin/bash
 
 set -e
 
@@ -19,14 +19,14 @@ curl -s https://repo1.maven.org/maven2/args4j/args4j/${ARGS4J_VERSION}/args4j-${
 
 CLASSPATH="libs/org.jacoco.cli-${JACOCO_VERSION}.jar:libs/org.jacoco.report-${JACOCO_VERSION}.jar:libs/org.jacoco.core-${JACOCO_VERSION}.jar:libs/asm-tree-${ASM_VERSION}.jar:libs/asm-commons-${ASM_VERSION}.jar:libs/asm-analysis-${ASM_VERSION}.jar:libs/asm-${ASM_VERSION}.jar:libs/args4j-${ARGS4J_VERSION}.jar"
 
-PWD=`pwd`
+PWD=$(pwd)
 CLASSES=""
 SOURCES=""
 
 echo "🔍 Collecting sources & classes"
 for group in api core plugins sdks
 do
-    for project in `ls $group`
+    for project in $(ls $group)
     do
       echo " - $group/$project"
       sourcesDir="${PWD}/${group}/${project}/src/main/groovy"
