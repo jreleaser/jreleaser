@@ -31,7 +31,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -192,7 +192,7 @@ public class DownloadableTool {
         }
 
         downloadUrl = resolveTemplate(downloadUrl, props) + filename;
-        try (InputStream stream = new URL(downloadUrl).openStream()) {
+        try (InputStream stream = new URI(downloadUrl).toURL().openStream()) {
             Path tmp = Files.createTempDirectory("jreleaser");
             Path destination = tmp.resolve(filename);
 

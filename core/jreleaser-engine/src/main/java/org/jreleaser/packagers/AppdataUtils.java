@@ -26,7 +26,8 @@ import org.jreleaser.model.spi.packagers.PackagerProcessingException;
 import org.jreleaser.mustache.TemplateContext;
 
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -64,11 +65,11 @@ public final class AppdataUtils {
                 context.getLogger().debug("{} -> {}", iconUrl, context.relativizeToBasedir(iconPath));
                 try {
                     org.apache.commons.io.FileUtils.copyURLToFile(
-                        new URL(iconUrl),
+                        new URI(iconUrl).toURL(),
                         iconPath.toFile(),
                         20000,
                         60000);
-                } catch (IOException e) {
+                } catch (URISyntaxException | IOException e) {
                     throw new PackagerProcessingException(RB.$("ERROR_unexpected_download", iconUrl), e);
                 }
             }

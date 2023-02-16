@@ -169,7 +169,6 @@ public final class JsonSchemaGenerator {
             Files.write(schemaPath, json.getBytes(UTF_8), CREATE, WRITE, TRUNCATE_EXISTING);
             out.println("Schema written to " + schemaPath.toAbsolutePath());
         } catch (Exception e) {
-            e.printStackTrace();
             throw new JReleaserException($("ERROR_unexpected_error"), e);
         }
     }

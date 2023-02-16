@@ -25,6 +25,8 @@ import org.jreleaser.sdk.gitlab.api.GlPackage;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,8 +91,8 @@ public class GitlabMavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
         URL url = null;
 
         try {
-            url = new URL(baseUrl);
-        } catch (MalformedURLException e) {
+            url = new URI(baseUrl).toURL();
+        } catch (URISyntaxException | MalformedURLException e) {
             context.getLogger().trace(e);
             throw new DeployException(RB.$("ERROR_unexpected_error"), e);
         }

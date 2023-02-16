@@ -23,6 +23,8 @@ import org.jreleaser.model.spi.deploy.DeployException;
 import org.jreleaser.sdk.commons.AbstractMavenDeployer;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Set;
 
@@ -71,8 +73,8 @@ public class GiteaMavenDeployer extends AbstractMavenDeployer<org.jreleaser.mode
         URL url = null;
 
         try {
-            url = new URL(baseUrl);
-        } catch (MalformedURLException e) {
+            url = new URI(baseUrl).toURL();
+        } catch (URISyntaxException | MalformedURLException e) {
             context.getLogger().trace(e);
             throw new DeployException(RB.$("ERROR_unexpected_deploy", deployable.getGav(), e.getMessage()), e);
         }

@@ -21,6 +21,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -82,7 +84,7 @@ public final class GradleWrapperDownloader {
         }
     }
 
-    private static void downloadDistribution(String urlString, Path destination) throws IOException {
+    private static void downloadDistribution(String urlString, Path destination) throws URISyntaxException, IOException {
         if (isWindows()) {
             System.out.printf("Downloading %s%n", urlString);
         } else {
@@ -100,7 +102,7 @@ public final class GradleWrapperDownloader {
             });
         }
 
-        var website = new URL(urlString);
+        var website = new URI(urlString).toURL();
         try (var inStream = website.openStream()) {
             Files.copy(inStream, destination, REPLACE_EXISTING);
         }

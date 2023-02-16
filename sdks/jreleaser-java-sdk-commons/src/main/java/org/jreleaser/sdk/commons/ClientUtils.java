@@ -48,6 +48,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -145,7 +147,7 @@ public final class ClientUtils {
                             Map<String, String> headers) throws AnnounceException {
         try {
             // create URL
-            URL url = new URL(theUrl);
+            URL url = new URI(theUrl).toURL();
             // open connection
             logger.debug(RB.$("webhook.connection.open"));
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -190,7 +192,7 @@ public final class ClientUtils {
                 }
                 throw new AnnounceException(b.toString());
             }
-        } catch (IOException e) {
+        } catch (URISyntaxException | IOException e) {
             logger.trace(e);
             throw new AnnounceException(e);
         }
@@ -225,7 +227,7 @@ public final class ClientUtils {
                                    Map<String, String> headers) throws UploadException {
         try {
             // create URL
-            URL theUrl = new URL(url);
+            URL theUrl = new URI(url).toURL();
             logger.debug("url: {}", theUrl);
 
             // open connection
@@ -284,7 +286,7 @@ public final class ClientUtils {
                 }
                 throw new UploadException(b.toString());
             }
-        } catch (IOException e) {
+        } catch (URISyntaxException | IOException e) {
             logger.trace(e);
             throw new UploadException(e);
         }

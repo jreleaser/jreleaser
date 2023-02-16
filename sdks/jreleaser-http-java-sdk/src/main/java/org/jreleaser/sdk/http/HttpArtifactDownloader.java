@@ -25,7 +25,8 @@ import org.jreleaser.model.spi.download.DownloadException;
 import org.jreleaser.sdk.commons.AbstractArtifactDownloader;
 
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -77,11 +78,11 @@ public class HttpArtifactDownloader extends AbstractArtifactDownloader<org.jrele
         if (!context.isDryrun()) {
             try {
                 org.apache.commons.io.FileUtils.copyURLToFile(
-                    new URL(input),
+                    new URI(input).toURL(),
                     outputPath.toFile(),
                     downloader.getConnectTimeout() * 1000,
                     downloader.getReadTimeout() * 1000);
-            } catch (IOException e) {
+            } catch (URISyntaxException | IOException e) {
                 throw new DownloadException(RB.$("ERROR_unexpected_download", input), e);
             }
         }
