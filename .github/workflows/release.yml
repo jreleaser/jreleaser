@@ -200,10 +200,20 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
-      - name: Download update-website script
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ vars.JAVA_VERSION }}
+          distribution: ${{ vars.JAVA_DISTRO }}
+
+      - name: Download assets
         run: |
           curl -sL https://raw.githubusercontent.com/jreleaser/jreleaser/main/.github/scripts/update-website.sh --output update-website.sh
           chmod +x update-website.sh
+          curl -sL https://github.com/jreleaser/jreleaser/releases/download/${TAG}/jreleaser-tool-provider-${VERSION}.jar --output jreleaser-cli.jar
+        env:
+          TAG: "v${{ needs.precheck.outputs.VERSION }}"
+          VERSION: ${{ needs.precheck.outputs.VERSION }}
 
       - name: Commit
         env:

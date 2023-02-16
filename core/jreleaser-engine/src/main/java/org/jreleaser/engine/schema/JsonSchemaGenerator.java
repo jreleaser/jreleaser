@@ -163,7 +163,7 @@ public final class JsonSchemaGenerator {
             SchemaGenerator generator = new SchemaGenerator(config);
             JsonNode jsonSchema = generator.generateSchema(JReleaserModel.class);
 
-            String fileName = String.format("jreleaser-%s-schema.json", JReleaserVersion.getPlainVersion());
+            String fileName = String.format("jreleaser-schema-%s.json", JReleaserVersion.getPlainVersion());
             Path schemaPath = Paths.get(fileName);
             String json = configBuilder.getObjectMapper().writeValueAsString(jsonSchema);
             Files.write(schemaPath, json.getBytes(UTF_8), CREATE, WRITE, TRUNCATE_EXISTING);
