@@ -67,8 +67,8 @@ public class JReleaserVersion {
 
             out.println(SEPARATOR);
             out.printf("Build time:   %s %s%n", BUILD_DATE, BUILD_TIME);
-            out.println("Revision:     " + BUILD_REVISION);
-            out.println("JVM:          " + jvm);
+            out.printf("Revision:     %s%n", BUILD_REVISION);
+            out.printf("JVM:          %s%n", jvm);
             out.println(SEPARATOR);
         } else {
             out.printf(JRELEASER_FORMAT, JRELEASER_VERSION);

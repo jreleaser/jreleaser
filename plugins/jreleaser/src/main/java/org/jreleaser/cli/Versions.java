@@ -34,6 +34,6 @@ public class Versions implements CommandLine.IVersionProvider {
     public String[] getVersion() throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         JReleaserVersion.banner(newPrintStream(baos));
-        return IoUtils.toString(baos).split("\n");
+        return IoUtils.toString(baos).split(System.lineSeparator());
     }
 }
