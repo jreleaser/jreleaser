@@ -132,7 +132,8 @@ enforce {
             "org.ow2.asm:asm:$asmVersion",
             "org.slf4j:slf4j-api:$slf4jVersion",
             "org.yaml:snakeyaml:$snakeYamlVersion",
-            "org.apache.maven:maven-artifact:$mavenVersion"
+            "org.apache.maven:maven-artifact:$mavenVersion",
+            "software.amazon.ion:ion-java:$ionVersion"
     }
 }
 
