@@ -80,7 +80,7 @@ public class Assemble extends AbstractPlatformAwareModelCommand<Main> {
     }
 
     @Override
-    protected void collectCandidateDeprecatedArgs(Set<AbstractCommand<Main>.DeprecatedArg> args) {
+    protected void collectCandidateDeprecatedArgs(Set<AbstractCommand.DeprecatedArg> args) {
         super.collectCandidateDeprecatedArgs(args);
         args.add(new DeprecatedArg("-s", "--assembler", "1.5.0"));
         args.add(new DeprecatedArg("-xs", "--exclude-assembler", "1.5.0"));

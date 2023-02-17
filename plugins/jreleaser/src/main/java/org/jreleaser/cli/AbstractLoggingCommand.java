@@ -85,7 +85,7 @@ abstract class AbstractLoggingCommand<C extends IO> extends AbstractCommand<C> i
     }
 
     @Override
-    protected void collectCandidateDeprecatedArgs(Set<AbstractCommand<C>.DeprecatedArg> args) {
+    protected void collectCandidateDeprecatedArgs(Set<AbstractCommand.DeprecatedArg> args) {
         args.add(new DeprecatedArg("-od", "--output-directory", "1.5.0"));
     }
 

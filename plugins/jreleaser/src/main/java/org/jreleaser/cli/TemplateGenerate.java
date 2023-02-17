@@ -121,7 +121,7 @@ public class TemplateGenerate extends AbstractLoggingCommand<Template> {
 
 
     @Override
-    protected void collectCandidateDeprecatedArgs(Set<AbstractCommand<Template>.DeprecatedArg> args) {
+    protected void collectCandidateDeprecatedArgs(Set<AbstractCommand.DeprecatedArg> args) {
         super.collectCandidateDeprecatedArgs(args);
         args.add(new DeprecatedArg("-sn", "--snapshot", "1.5.0"));
         args.add(new DeprecatedArg("-d", "--distribution", "1.5.0"));

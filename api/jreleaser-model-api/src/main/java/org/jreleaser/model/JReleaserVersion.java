@@ -33,7 +33,7 @@ public class JReleaserVersion {
     private static final String BUILD_DATE = BUNDLE.getString("build_date");
     private static final String BUILD_TIME = BUNDLE.getString("build_time");
     private static final String BUILD_REVISION = BUNDLE.getString("build_revision");
-    private static final String SEPARATOR = "------------------------------------------------------------";
+    private static final String SEPARATOR = "------------------------------------------------------------%n";
     private static final String JRELEASER_FORMAT = "jreleaser %s%n";
 
     private JReleaserVersion() {
@@ -58,18 +58,18 @@ public class JReleaserVersion {
 
     public static void banner(PrintWriter out, boolean full) {
         if (full) {
-            out.println(SEPARATOR);
+            out.printf(SEPARATOR);
             out.printf(JRELEASER_FORMAT, JRELEASER_VERSION);
 
             String jvm = System.getProperty("java.version") + " (" +
                 System.getProperty("java.vendor") + " " +
                 System.getProperty("java.vm.version") + ")";
 
-            out.println(SEPARATOR);
+            out.printf(SEPARATOR);
             out.printf("Build time:   %s %s%n", BUILD_DATE, BUILD_TIME);
             out.printf("Revision:     %s%n", BUILD_REVISION);
             out.printf("JVM:          %s%n", jvm);
-            out.println(SEPARATOR);
+            out.printf(SEPARATOR);
         } else {
             out.printf(JRELEASER_FORMAT, JRELEASER_VERSION);
         }

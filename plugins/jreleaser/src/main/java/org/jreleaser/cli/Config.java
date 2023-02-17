@@ -52,7 +52,7 @@ public class Config extends AbstractPlatformAwareModelCommand<Main> {
     }
 
     @Override
-    protected void collectCandidateDeprecatedArgs(Set<AbstractCommand<Main>.DeprecatedArg> args) {
+    protected void collectCandidateDeprecatedArgs(Set<AbstractCommand.DeprecatedArg> args) {
         super.collectCandidateDeprecatedArgs(args);
         args.add(new DeprecatedArg("-a", "--assembly", "1.5.0"));
         args.add(new DeprecatedArg("-d", "--download", "1.5.0"));

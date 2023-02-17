@@ -85,7 +85,7 @@ public class Deploy extends AbstractModelCommand<Main> {
     }
 
     @Override
-    protected void collectCandidateDeprecatedArgs(Set<AbstractCommand<Main>.DeprecatedArg> args) {
+    protected void collectCandidateDeprecatedArgs(Set<AbstractCommand.DeprecatedArg> args) {
         super.collectCandidateDeprecatedArgs(args);
         args.add(new DeprecatedArg("-y", "--deployer", "1.5.0"));
         args.add(new DeprecatedArg("-yn", "--deployer-name", "1.5.0"));

@@ -267,7 +267,7 @@ public class Release extends AbstractPlatformAwareModelCommand<Main> {
     }
 
     @Override
-    protected void collectCandidateDeprecatedArgs(Set<AbstractCommand<Main>.DeprecatedArg> args) {
+    protected void collectCandidateDeprecatedArgs(Set<AbstractCommand.DeprecatedArg> args) {
         super.collectCandidateDeprecatedArgs(args);
         args.add(new DeprecatedArg("-d", "--distribution", "1.5.0"));
         args.add(new DeprecatedArg("-xd", "--exclude-distribution", "1.5.0"));

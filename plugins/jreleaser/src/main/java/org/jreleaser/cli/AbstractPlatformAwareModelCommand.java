@@ -43,7 +43,7 @@ public abstract class AbstractPlatformAwareModelCommand<C extends IO> extends Ab
     String[] rejectedPlatforms;
 
     @Override
-    protected void collectCandidateDeprecatedArgs(Set<AbstractCommand<C>.DeprecatedArg> args) {
+    protected void collectCandidateDeprecatedArgs(Set<AbstractCommand.DeprecatedArg> args) {
         super.collectCandidateDeprecatedArgs(args);
         args.add(new DeprecatedArg("-scp", "--select-current-platform", "1.5.0"));
         args.add(new DeprecatedArg("-sp", "--select-platform", "1.5.0"));

@@ -112,7 +112,7 @@ abstract class AbstractCommand<C extends IO> extends BaseCommand implements Call
 
     protected abstract void execute();
 
-    final class DeprecatedArg implements Comparable<DeprecatedArg> {
+    public static final class DeprecatedArg implements Comparable<DeprecatedArg> {
         private final String deprecated;
         private final String replacement;
         private final String since;

@@ -67,7 +67,7 @@ public class Announce extends AbstractModelCommand<Main> {
     }
 
     @Override
-    protected void collectCandidateDeprecatedArgs(Set<AbstractCommand<Main>.DeprecatedArg> args) {
+    protected void collectCandidateDeprecatedArgs(Set<AbstractCommand.DeprecatedArg> args) {
         super.collectCandidateDeprecatedArgs(args);
         args.add(new DeprecatedArg("-a", "--announcer", "1.5.0"));
         args.add(new DeprecatedArg("-xa", "--exclude-announcer", "1.5.0"));

@@ -68,7 +68,7 @@ public abstract class AbstractModelCommand<C extends IO> extends AbstractLogging
     Path actualBasedir;
 
     @Override
-    protected void collectCandidateDeprecatedArgs(Set<AbstractCommand<C>.DeprecatedArg> args) {
+    protected void collectCandidateDeprecatedArgs(Set<AbstractCommand.DeprecatedArg> args) {
         super.collectCandidateDeprecatedArgs(args);
         args.add(new DeprecatedArg("-grs", "--git-root-search", "1.5.0"));
     }
