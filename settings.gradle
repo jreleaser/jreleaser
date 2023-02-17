@@ -105,6 +105,7 @@ enforce {
             "commons-io:commons-io:$commonsIoVersion",
             "info.picocli:picocli:$picocliVersion",
             "jakarta.activation:jakarta.activation-api:$jakartaActivatinVersion",
+            "joda-time:joda-time:$jodaTimeVersion",
             "junit:junit:$junitVersion",
             "net.bytebuddy:byte-buddy:$bytebuddyVersion",
             "net.minidev:json-smart:$jsonSmartVersion",
