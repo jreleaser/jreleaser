@@ -18,6 +18,7 @@
 package org.jreleaser.model.internal.release;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.JReleaserModel;
 import org.jreleaser.mustache.TemplateContext;
@@ -311,6 +312,7 @@ public final class GitlabReleaser extends BaseReleaser<org.jreleaser.model.api.r
     }
 
     @Deprecated
+    @JsonPropertyDescription("gitlab.identifier is deprecated since 1.2.0 and will be removed in 2.0.0. Use gitlab.projectIdentifier instead")
     public String getIdentifier() {
         return getProjectIdentifier();
     }

@@ -18,6 +18,7 @@
 package org.jreleaser.model.internal.announce;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.JReleaserException;
@@ -207,6 +208,7 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
     }
 
     @Deprecated
+    @JsonPropertyDescription("announce.enabled is deprecated since 1.1.0 and will be removed in 2.0.0")
     public void setEnabled(Boolean enabled) {
         nag("announce.enabled is deprecated since 1.1.0 and will be removed in 2.0.0");
         if (null != enabled) {
@@ -222,6 +224,7 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         this.article.merge(article);
     }
 
+    @JsonPropertyDescription("announce.discord is deprecated since 1.4.0 and will be removed in 2.0.0")
     public DiscordAnnouncer getDiscord() {
         return discord;
     }
@@ -246,6 +249,7 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         this.discussions.merge(discussions);
     }
 
+    @JsonPropertyDescription("announce.gitter is deprecated since 1.4.0 and will be removed in 2.0.0")
     public GitterAnnouncer getGitter() {
         return gitter;
     }
@@ -254,6 +258,7 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         this.gitter.merge(gitter);
     }
 
+    @JsonPropertyDescription("announce.googleChat is deprecated since 1.4.0 and will be removed in 2.0.0")
     public GoogleChatAnnouncer getGoogleChat() {
         return googleChat;
     }
@@ -271,11 +276,13 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
     }
 
     @Deprecated
+    @JsonPropertyDescription("announce.mail is deprecated since 1.4.0 and will be removed in 2.0.0")
     public SmtpAnnouncer getMail() {
         return getSmtp();
     }
 
     @Deprecated
+    @JsonPropertyDescription("announce.mail is deprecated since 1.4.0 and will be removed in 2.0.0")
     public void setMail(SmtpAnnouncer mail) {
         nag("announce.mail is deprecated since 1.4.0 and will be removed in 2.0.0");
         setSmtp(mail);
@@ -297,6 +304,7 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         this.mastodon.merge(mastodon);
     }
 
+    @JsonPropertyDescription("announce.mattermost is deprecated since 1.4.0 and will be removed in 2.0.0")
     public MattermostAnnouncer getMattermost() {
         return mattermost;
     }
@@ -321,6 +329,7 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         this.slack.merge(slack);
     }
 
+    @JsonPropertyDescription("announce.teams is deprecated since 1.4.0 and will be removed in 2.0.0")
     public TeamsAnnouncer getTeams() {
         return teams;
     }

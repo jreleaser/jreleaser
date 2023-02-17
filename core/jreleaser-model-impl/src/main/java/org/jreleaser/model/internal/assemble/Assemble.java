@@ -18,6 +18,7 @@
 package org.jreleaser.model.internal.assemble;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.internal.common.AbstractActivatable;
@@ -146,6 +147,7 @@ public final class Assemble extends AbstractActivatable<Assemble> implements Dom
     }
 
     @Deprecated
+    @JsonPropertyDescription("assemble.enabled is deprecated since 1.1.0 and will be removed in 2.0.0")
     public void setEnabled(Boolean enabled) {
         nag("assemble.enabled is deprecated since 1.1.0 and will be removed in 2.0.0");
         if (null != enabled) {

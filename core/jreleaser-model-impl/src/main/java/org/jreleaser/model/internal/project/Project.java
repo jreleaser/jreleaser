@@ -18,6 +18,7 @@
 package org.jreleaser.model.internal.project;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.github.mustachejava.TemplateFunction;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
@@ -361,6 +362,7 @@ public final class Project extends AbstractModelObject<Project> implements Domai
     }
 
     @Deprecated
+    @JsonPropertyDescription("project.website is deprecated since 1.2.0 and will be removed in 2.0.0. Use project.links.homepage instead")
     public String getWebsite() {
         return links.getHomepage();
     }
@@ -380,6 +382,7 @@ public final class Project extends AbstractModelObject<Project> implements Domai
     }
 
     @Deprecated
+    @JsonPropertyDescription("project.licenseUrl is deprecated since 1.2.0 and will be removed in 2.0.0. Use project.links.license instead")
     public String getLicenseUrl() {
         return links.getLicense();
     }
@@ -415,6 +418,7 @@ public final class Project extends AbstractModelObject<Project> implements Domai
     }
 
     @Deprecated
+    @JsonPropertyDescription("project.docsUrl is deprecated since 1.2.0 and will be removed in 2.0.0. Use project.links.documentation instead")
     public String getDocsUrl() {
         return links.getDocumentation();
     }

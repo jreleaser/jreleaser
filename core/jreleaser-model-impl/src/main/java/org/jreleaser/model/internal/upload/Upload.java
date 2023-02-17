@@ -18,6 +18,7 @@
 package org.jreleaser.model.internal.upload;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.AbstractActivatable;
@@ -188,6 +189,7 @@ public final class Upload extends AbstractActivatable<Upload> implements Domain 
     }
 
     @Deprecated
+    @JsonPropertyDescription("upload.enabled is deprecated since 1.1.0 and will be removed in 2.0.0")
     public void setEnabled(Boolean enabled) {
         nag("upload.enabled is deprecated since 1.1.0 and will be removed in 2.0.0");
         if (null != enabled) {
