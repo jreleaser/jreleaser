@@ -27,7 +27,7 @@ dependencies {
     api "org.apache.commons:commons-compress:$commonsCompressVersion"
     api "org.bouncycastle:bcpg-jdk15on:$bouncyCastleVersion"
     api "org.slf4j:jcl-over-slf4j:$slf4jVersion"
-    api "com.github.veithen.cosmos.bootstrap:org.tukaani.xz:$xzVersion"
+    api "org.tukaani:xz:$xzVersion"
     api "com.github.luben:zstd-jni:$zstdVersion"
 }
 
