@@ -17,36 +17,45 @@
  */
 package org.jreleaser.sdk.s3;
 
-import com.amazonaws.ClientConfiguration;
-import com.amazonaws.SdkClientException;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.auth.BasicSessionCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.AccessControlList;
-import com.amazonaws.services.s3.model.GroupGrantee;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.Permission;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import org.apache.tika.Tika;
-import org.apache.tika.mime.MediaType;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.upload.S3Uploader;
 import org.jreleaser.model.spi.upload.UploadException;
 import org.jreleaser.sdk.commons.AbstractArtifactUploader;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.AwsSessionCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.core.exception.SdkException;
+import software.amazon.awssdk.endpoints.Endpoint;
+import software.amazon.awssdk.http.apache.ApacheHttpClient;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.S3ClientBuilder;
+import software.amazon.awssdk.services.s3.endpoints.S3EndpointParams;
+import software.amazon.awssdk.services.s3.endpoints.S3EndpointProvider;
+import software.amazon.awssdk.services.s3.model.AccessControlPolicy;
+import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetBucketAclRequest;
+import software.amazon.awssdk.services.s3.model.Grant;
+import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
+import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
+import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
+import software.amazon.awssdk.services.s3.model.Permission;
+import software.amazon.awssdk.services.s3.model.PutObjectAclRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.Type;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
-import static java.nio.file.StandardOpenOption.READ;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -56,7 +65,6 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class S3ArtifactUploader extends AbstractArtifactUploader<org.jreleaser.model.api.upload.S3Uploader, S3Uploader> {
-    private static final Tika TIKA = new Tika();
     private S3Uploader uploader;
 
     public S3ArtifactUploader(JReleaserContext context) {
@@ -87,95 +95,191 @@ public class S3ArtifactUploader extends AbstractArtifactUploader<org.jreleaser.m
 
         String bucketName = uploader.getBucket();
 
-        AmazonS3 s3 = createS3Client();
+        S3Client s3 = createS3Client();
+        String ownerId = null;
 
-        // does the bucket exist?
-        context.getLogger().debug(RB.$("s3.bucket.check"), bucketName);
-        if (!context.isDryrun() && !s3.doesBucketExistV2(bucketName)) {
-            // create the bucket
-            context.getLogger().debug(RB.$("s3.bucket.create"), bucketName);
-            s3.createBucket(bucketName);
+        if (!context.isDryrun()) {
+            try {
+                context.getLogger().debug(RB.$("s3.bucket.check"), bucketName);
+                if (!doesBucketExist(s3, bucketName)) {
+                    createBucket(s3, bucketName);
+                }
+
+                ownerId = s3.getBucketAcl(GetBucketAclRequest.builder()
+                    .bucket(bucketName)
+                    .build()).owner().id();
+            } catch (SdkException e) {
+                context.getLogger().trace(e);
+                throw new UploadException(RB.$("ERROR_unexpected_upload2"), e);
+            }
         }
 
         for (Artifact artifact : artifacts) {
             Path path = artifact.getEffectivePath(context);
-            context.getLogger().info(" - {}", path.getFileName());
-
             try {
+                context.getLogger().info(" - {}", path.getFileName());
+
                 String bucketPath = uploader.getResolvedPath(context, artifact);
                 context.getLogger().debug("   {}", bucketPath);
 
                 if (!context.isDryrun()) {
                     context.getLogger().debug(RB.$("s3.object.check"), bucketName, bucketPath);
-                    if (s3.doesObjectExist(bucketName, bucketPath)) {
-                        context.getLogger().debug(RB.$("s3.object.create"), bucketName, bucketPath);
-                        s3.deleteObject(bucketName, bucketPath);
+                    if (doesObjectExist(s3, bucketName, bucketPath)) {
+                        deleteObject(s3, bucketName, bucketPath);
                     }
 
-                    ObjectMetadata meta = new ObjectMetadata();
-                    meta.setContentType(MediaType.parse(TIKA.detect(path)).toString());
-                    meta.setContentLength(Files.size(path));
-
-                    context.getLogger().debug(RB.$("s3.object.write"), bucketName, bucketPath);
-                    try (InputStream is = Files.newInputStream(path, READ)) {
-                        s3.putObject(new PutObjectRequest(bucketName, bucketPath, is, meta));
-                    }
-
-                    context.getLogger().debug(RB.$("s3.object.acl"), bucketName, bucketPath);
-                    AccessControlList acl = s3.getObjectAcl(bucketName, bucketPath);
-                    acl.grantPermission(GroupGrantee.AllUsers, Permission.Read);
-                    s3.setObjectAcl(bucketName, bucketPath, acl);
+                    putObject(s3, ownerId, bucketName, bucketPath, path);
                 }
-            } catch (IOException e) {
+            } catch (SdkException e) {
                 context.getLogger().trace(e);
                 throw new UploadException(RB.$("ERROR_unexpected_upload", context.relativizeToBasedir(path)), e);
             }
         }
     }
 
-    private AmazonS3 createS3Client() throws UploadException {
+    private S3Client createS3Client() {
+        S3ClientBuilder builder = S3Client.builder()
+            .httpClientBuilder(ApacheHttpClient.builder());
+
+        if (isNotBlank(uploader.getAccessKeyId()) &&
+            isNotBlank(uploader.getSecretKey()) &&
+            isNotBlank(uploader.getSessionToken())) {
+            builder.credentialsProvider(StaticCredentialsProvider.create(
+                AwsSessionCredentials.create(uploader.getAccessKeyId(),
+                    uploader.getSecretKey(),
+                    uploader.getSessionToken())));
+        } else if (isNotBlank(uploader.getAccessKeyId()) &&
+            isNotBlank(uploader.getSecretKey())) {
+            builder.credentialsProvider(StaticCredentialsProvider.create(
+                AwsBasicCredentials.create(uploader.getAccessKeyId(),
+                    uploader.getSecretKey())));
+        }
+
+        if (isBlank(uploader.getEndpoint())) {
+            builder.region(Region.of(uploader.getRegion()));
+        } else {
+            builder.endpointProvider(new MyS3EndpointProvider(
+                uploader.getEndpoint(), Region.of(uploader.getRegion())));
+        }
+
+        builder.overrideConfiguration(confBuilder -> {
+            uploader.getHeaders().forEach(confBuilder::putHeader);
+            confBuilder.apiCallAttemptTimeout(Duration.of(uploader.getConnectTimeout(), ChronoUnit.SECONDS));
+        });
+
+        return builder.build();
+    }
+
+    private boolean doesBucketExist(S3Client s3, String bucketName) {
         try {
-            AmazonS3ClientBuilder s3Builder = AmazonS3ClientBuilder.standard();
-            if (isNotBlank(uploader.getAccessKeyId()) &&
-                isNotBlank(uploader.getSecretKey()) &&
-                isNotBlank(uploader.getSessionToken())) {
-                s3Builder.withCredentials(new AWSStaticCredentialsProvider(
-                    new BasicSessionCredentials(uploader.getAccessKeyId(),
-                        uploader.getSecretKey(),
-                        uploader.getSessionToken())));
-            } else if (isNotBlank(uploader.getAccessKeyId()) &&
-                isNotBlank(uploader.getSecretKey())) {
-                s3Builder.withCredentials(new AWSStaticCredentialsProvider(
-                    new BasicAWSCredentials(uploader.getAccessKeyId(),
-                        uploader.getSecretKey())));
-            }
+            return s3.headBucket(HeadBucketRequest.builder()
+                    .bucket(bucketName)
+                    .build())
+                .sdkHttpResponse().isSuccessful();
+        } catch (NoSuchBucketException e) {
+            return false;
+        }
+    }
 
-            Map<String, String> headers = uploader.getHeaders();
-            if (null != headers) {
-                ClientConfiguration clientConfiguration = new ClientConfiguration();
-                for (Map.Entry<String, String> header : headers.entrySet()) {
-                    if (null != header.getKey() && null != header.getValue()) {
-                        clientConfiguration.addHeader(header.getKey(), header.getValue());
-                    }
-                }
-                s3Builder.setClientConfiguration(clientConfiguration);
-            }
+    private void createBucket(S3Client s3, String bucketName) throws SdkException {
+        context.getLogger().debug(RB.$("s3.bucket.create"), bucketName);
+        s3.createBucket(CreateBucketRequest.builder()
+            .bucket(bucketName)
+            .build());
 
-            if (isBlank(uploader.getEndpoint())) {
-                s3Builder.withRegion(uploader.getRegion());
-            } else {
-                s3Builder.withEndpointConfiguration(
-                    new AwsClientBuilder.EndpointConfiguration(uploader.getEndpoint(),
-                        uploader.getRegion()));
-            }
+        context.getLogger().debug(RB.$("s3.bucket.create.wait"), bucketName);
+        s3.waiter().waitUntilBucketExists(HeadBucketRequest.builder()
+            .bucket(bucketName)
+            .build());
+    }
 
-            s3Builder.getClientConfiguration()
-                .setConnectionTimeout(uploader.getConnectTimeout() * 1000);
+    private void deleteObject(S3Client s3, String bucketName, String bucketPath) throws SdkException {
+        context.getLogger().debug(RB.$("s3.object.delete"), bucketName, bucketPath);
+        s3.deleteObject(DeleteObjectRequest.builder()
+            .bucket(bucketName)
+            .key(bucketPath)
+            .build());
 
-            return s3Builder.build();
-        } catch (SdkClientException e) {
-            context.getLogger().trace(e);
-            throw new UploadException(RB.$("ERROR_unexpected_s3_client_config"), e);
+        context.getLogger().debug(RB.$("s3.object.delete.wait"), bucketName, bucketPath);
+        s3.waiter().waitUntilObjectNotExists(HeadObjectRequest.builder()
+            .bucket(bucketName)
+            .key(bucketPath)
+            .build());
+    }
+
+    private boolean doesObjectExist(S3Client s3, String bucketName, String bucketPath) {
+        try {
+            return s3.headObject(HeadObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(bucketPath)
+                    .build())
+                .sdkHttpResponse().isSuccessful();
+        } catch (NoSuchKeyException e) {
+            return false;
+        }
+    }
+
+    private void putObject(S3Client s3, String ownerId, String bucketName, String bucketPath, Path path) throws SdkException {
+        context.getLogger().debug(RB.$("s3.object.write"), bucketName, bucketPath);
+        s3.putObject(PutObjectRequest.builder()
+            .bucket(bucketName)
+            .key(bucketPath)
+            .build(), path);
+
+        List<Grant> grantList = new ArrayList<>();
+        grantList.add(Grant.builder()
+            .grantee(builder -> builder.id(ownerId)
+                .type(Type.CANONICAL_USER))
+            .permission(Permission.FULL_CONTROL)
+            .build());
+        grantList.add(Grant.builder()
+            .grantee(builder -> builder
+                .uri("http://acs.amazonaws.com/groups/global/AllUsers")
+                .type(Type.GROUP))
+            .permission(Permission.READ)
+            .build());
+
+        AccessControlPolicy acl = AccessControlPolicy.builder()
+            .owner(builder -> builder.id(ownerId))
+            .grants(grantList)
+            .build();
+
+        PutObjectAclRequest putAclReq = PutObjectAclRequest.builder()
+            .bucket(bucketName)
+            .key(bucketPath)
+            .accessControlPolicy(acl)
+            .build();
+
+        context.getLogger().debug(RB.$("s3.object.acl"), bucketName, bucketPath);
+        s3.putObjectAcl(putAclReq);
+    }
+
+    public static class MyS3EndpointProvider implements S3EndpointProvider {
+        private final S3EndpointProvider delegate = S3EndpointProvider.defaultProvider();
+        private final String endpoint;
+        private final Region region;
+
+        public MyS3EndpointProvider(String endpoint, Region region) {
+            this.endpoint = endpoint;
+            this.region = region;
+        }
+
+        @Override
+        public CompletableFuture<Endpoint> resolveEndpoint(S3EndpointParams endpointParams) {
+            S3EndpointParams.Builder builder = S3EndpointParams.builder();
+            builder.accelerate(endpointParams.accelerate());
+            builder.bucket(endpointParams.bucket());
+            builder.useFips(endpointParams.useFips());
+            builder.useDualStack(endpointParams.useDualStack());
+            builder.forcePathStyle(endpointParams.forcePathStyle());
+            builder.useGlobalEndpoint(endpointParams.useGlobalEndpoint());
+            builder.useObjectLambdaEndpoint(endpointParams.useObjectLambdaEndpoint());
+            builder.disableAccessPoints(endpointParams.disableAccessPoints());
+            builder.disableMultiRegionAccessPoints(endpointParams.disableMultiRegionAccessPoints());
+            builder.useArnRegion(endpointParams.useArnRegion());
+            builder.endpoint(endpoint);
+            builder.region(region);
+            return delegate.resolveEndpoint(builder.build());
         }
     }
 }

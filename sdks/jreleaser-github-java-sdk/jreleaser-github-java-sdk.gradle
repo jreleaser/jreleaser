@@ -20,10 +20,6 @@ dependencies {
     annotationProcessor "org.kordamp.jipsy:jipsy-processor:${jipsyVersion}"
 
     api project(':jreleaser-java-sdk-commons')
-    api("io.github.openfeign:feign-httpclient:$feignVersion") {
-        exclude group: 'commons-logging', module: 'commons-logging'
-    }
-
     api "org.kohsuke:github-api:$githubVersion"
 
     testImplementation project(':jreleaser-test-support')

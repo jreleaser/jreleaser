@@ -25,7 +25,15 @@ dependencies {
 
     api "org.apache.tika:tika-core:$tikaVersion"
 
+    api("org.apache.httpcomponents:httpclient:$httpclientVersion") {
+        transitive = false
+    }
+    api "org.apache.httpcomponents:httpcore:$httpcoreVersion"
+    api "commons-codec:commons-codec:$commonsCodecVersion"
     api "io.github.openfeign:feign-core:$feignVersion"
+    api("io.github.openfeign:feign-httpclient:$feignVersion") {
+        exclude group: 'org.apache.httpcomponents', module: 'httpclient'
+    }
     api "io.github.openfeign:feign-jackson:$feignVersion"
     api "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"
     api "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"

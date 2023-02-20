@@ -21,7 +21,16 @@ dependencies {
 
     api project(':jreleaser-java-sdk-commons')
 
-    api("com.amazonaws:aws-java-sdk-s3:$awsSdkVersion") {
-        exclude group: 'commons-logging', module: 'commons-logging'
+    api("org.apache.httpcomponents:httpclient:$httpclientVersion") {
+        transitive = false
+    }
+    api "org.apache.httpcomponents:httpcore:$httpcoreVersion"
+    api "commons-codec:commons-codec:$commonsCodecVersion"
+    api("software.amazon.awssdk:apache-client:$awsSdkVersion") {
+        exclude group: 'org.apache.httpcomponents', module: 'httpclient'
+    }
+    api("software.amazon.awssdk:s3:$awsSdkVersion") {
+        exclude group: 'software.amazon.awssdk', module: 'netty-nio-client'
+        exclude group: 'software.amazon.awssdk', module: 'apache-client'
     }
 }

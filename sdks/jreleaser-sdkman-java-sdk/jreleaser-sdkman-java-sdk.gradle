@@ -21,6 +21,11 @@ dependencies {
 
     api project(':jreleaser-model-impl')
 
+    api("org.apache.httpcomponents:httpclient:$httpclientVersion") {
+        transitive = false
+    }
+    api "org.apache.httpcomponents:httpcore:$httpcoreVersion"
+    api "commons-codec:commons-codec:$commonsCodecVersion"
     api "io.github.openfeign:feign-core:$feignVersion"
     api "io.github.openfeign:feign-jackson:$feignVersion"
     api "com.fasterxml.jackson.core:jackson-core:$jacksonVersion"

@@ -105,14 +105,15 @@ enforce {
             "commons-io:commons-io:$commonsIoVersion",
             "info.picocli:picocli:$picocliVersion",
             "jakarta.activation:jakarta.activation-api:$jakartaActivatinVersion",
-            "joda-time:joda-time:$jodaTimeVersion",
             "junit:junit:$junitVersion",
             "net.bytebuddy:byte-buddy:$bytebuddyVersion",
             "net.minidev:json-smart:$jsonSmartVersion",
             "org.apache.commons:commons-compress:$commonsCompressVersion",
             "org.apache.commons:commons-lang3:$commonsLang3Version",
             "org.apache.httpcomponents:httpclient:$httpclientVersion",
+            "org.apache.httpcomponents:httpcore:$httpcoreVersion",
             "org.apache.maven.shared:maven-shared-utils:$mavenSharedVersion",
+            "org.apache.maven:maven-artifact:$mavenVersion",
             "org.apache.maven:maven-core:$mavenVersion",
             "org.apache.maven:maven-model:$mavenVersion",
             "org.apache.maven:maven-plugin-api:$mavenVersion",
@@ -131,9 +132,7 @@ enforce {
             "org.opentest4j:opentest4j:$opentest4jVersion",
             "org.ow2.asm:asm:$asmVersion",
             "org.slf4j:slf4j-api:$slf4jVersion",
-            "org.yaml:snakeyaml:$snakeYamlVersion",
-            "org.apache.maven:maven-artifact:$mavenVersion",
-            "software.amazon.ion:ion-java:$ionVersion"
+            "org.yaml:snakeyaml:$snakeYamlVersion"
     }
 }
 
