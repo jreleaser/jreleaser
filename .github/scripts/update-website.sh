@@ -48,6 +48,7 @@ EOF
 echo "📝 Updating schema"
 java -jar jreleaser-cli.jar json-schema
 cp "jreleaser-schema-${VERSION}.json" schema/
+git add schema
 
 PAGE="docs/modules/ROOT/pages/schema.adoc"
 
