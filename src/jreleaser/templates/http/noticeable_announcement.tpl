@@ -1,7 +1,7 @@
 JReleaser {{projectVersion}} is now available! This release brings plenty of features and bug fixes
 
-**Environment:** Several properties may not be set using either System Properties or environment variables; review the
-_Environment` section of each DSL element in the [Reference]({{projectLinkDocumentation}}/reference). Additionally, local
+**Environment:** Several properties may now be set using either System Properties or environment variables; review the
+_Environment_ section of each DSL element in the [Reference]({{projectLinkDocumentation}}/reference). Additionally, local
 `.env` files may be used to define environment variables. A new [env]({{projectLinkDocumentation}}/reference/environment.html#_inspection)
 command may be used to display System property names and environment variable names in use.
 
