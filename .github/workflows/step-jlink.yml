@@ -51,7 +51,7 @@ jobs:
           JRELEASER_OCI_COMPARTMENTID: ${{ secrets.oci-compartment-id }}
 
       - name: Jlink
-        uses: jreleaser/release-action@v1
+        uses: jreleaser/release-action@v2
         with:
           version: early-access
           arguments: assemble --assembler jlink

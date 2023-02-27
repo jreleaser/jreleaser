@@ -68,7 +68,7 @@ jobs:
         if: ${{ runner.os == 'macOS' }}
 
       - name: NativeImage
-        uses: jreleaser/release-action@v1
+        uses: jreleaser/release-action@v2
         with:
           version: early-access
           arguments: assemble --assembler native-image --select-current-platform
