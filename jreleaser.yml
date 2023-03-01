@@ -163,6 +163,8 @@ assemble:
       jdeps:
         multiRelease: base
         ignoreMissingDeps: true
+        targets:
+          - 'plugins/jreleaser/build/libs/jreleaser-{{projectVersion}}.jar'
       additionalModuleNames:
         - 'java.security.sasl'
         - 'java.security.jgss'

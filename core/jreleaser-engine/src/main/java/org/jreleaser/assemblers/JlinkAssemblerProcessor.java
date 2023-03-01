@@ -294,6 +294,8 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
                 .map(target -> resolveTemplate(target, props))
                 .filter(StringUtils::isNotBlank)
                 .map(AssemblerUtils::maybeAdjust)
+                .map(context::relativizeToBasedir)
+                .map(p -> p.toAbsolutePath().normalize().toString())
                 .forEach(cmd::arg);
         } else {
             calculateJarPath(jarsDirectory, platform, cmd, false);
