@@ -1,3 +1,5 @@
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fjreleaser%2Fjreleaser.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fjreleaser%2Fjreleaser?ref=badge_shield)
+
 
 :linkattrs:
 :project-owner:   jreleaser
@@ -69,3 +71,7 @@ image:https://img.shields.io/coverallsCoverage/github/{project-owner}/{project-n
 image:https://img.shields.io/codecov/c/github/{project-owner}/{project-name}?label=codecov&logo=codecov&logoColor=white["Codecov", link="https://app.codecov.io/gh/{project-owner}/{project-name}"]
 image:https://img.shields.io/snyk/vulnerabilities/github/{project-owner}/{project-name}?logo=snyk[Snyk Vulnerabilities for GitHub Repo]
 image:https://sonarcloud.io/api/project_badges/measure?project=org_jreleaser_jreleaser&metric=security_rating[link="https://sonarcloud.io/summary/new_code?id=org_jreleaser_jreleaser"]
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fjreleaser%2Fjreleaser.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fjreleaser%2Fjreleaser?ref=badge_large)
