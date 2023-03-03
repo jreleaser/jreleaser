@@ -84,6 +84,23 @@ class ConventionalCommitUnitTest {
     }
 
     @Test
+    void typeCanBeHaveNumbers() {
+        String commitBody = "i18n: correct spelling of CHANGELOG";
+
+        ChangelogGenerator.Commit c = mockCommit(commitBody);
+
+        assertThat(c)
+            .hasFieldOrPropertyWithValue("isConventional", true)
+            .hasFieldOrPropertyWithValue("ccIsBreakingChange", false)
+            .hasFieldOrPropertyWithValue("ccBreakingChangeContent", "")
+            .hasFieldOrPropertyWithValue("ccType", "i18n")
+            .hasFieldOrPropertyWithValue("ccScope", "")
+            .hasFieldOrPropertyWithValue("ccDescription", "correct spelling of CHANGELOG")
+            .hasFieldOrPropertyWithValue("ccBody", "");
+        assertThat(((ChangelogGenerator.ConventionalCommit) c).getTrailers()).isEmpty();
+    }
+
+    @Test
     void bangIsBreakingChange() {
         String commitBody = "feat(scope)!: add new feature";
 
