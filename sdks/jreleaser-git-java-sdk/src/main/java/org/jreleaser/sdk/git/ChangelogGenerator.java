@@ -398,8 +398,11 @@ public class ChangelogGenerator {
             if (isConventionalCommits(changelog) && isCategorizeScopes(changelog)) {
                 Map<String, List<Commit>> scopes = categories.get(categoryKey).stream()
                     .collect(groupingBy(commit -> {
-                        ConventionalCommit cc = (ConventionalCommit) commit;
-                        return isNotBlank(cc.ccScope) ? cc.ccScope : UNCATEGORIZED;
+                        if (commit instanceof ConventionalCommit) {
+                            ConventionalCommit cc = (ConventionalCommit) commit;
+                            return isNotBlank(cc.ccScope) ? cc.ccScope : UNCATEGORIZED;
+                        }
+                        return UNCATEGORIZED;
                     }));
 
                 scopes.keySet().stream().sorted()
@@ -418,7 +421,7 @@ public class ChangelogGenerator {
                         .append(lineSeparator()));
 
                 if (scopes.containsKey(UNCATEGORIZED)) {
-                    // add unscoped header only if there are more than uncategorized commits
+                    // add unscoped header only if there are more than one uncategorized commits
                     if (scopes.size() > 1) changes.append("**unscoped**");
                     changes.append(lineSeparator).append(scopes.get(UNCATEGORIZED).stream()
                             .map(c -> resolveTemplate(categoryFormat, c.asContext(changelog.isLinks(), commitsUrl, issueTracker)))
