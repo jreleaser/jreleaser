@@ -200,6 +200,9 @@ public final class Validator {
     public static void validateTap(JReleaserContext context, Distribution distribution,
                                    RepositoryTap tap, RepositoryTap parentTap, String property, String activeDefaultValue) {
         String distributionName = distribution.getName();
+        if (!tap.isActiveSet() && parentTap.isActiveSet()) {
+            tap.setActive(parentTap.getActive());
+        }
         resolveActivatable(context, tap, "distributions." + distributionName + "." + property, activeDefaultValue);
         tap.resolveEnabled(context.getModel().getProject());
 
