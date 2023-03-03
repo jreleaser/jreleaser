@@ -42,6 +42,7 @@ import static org.jreleaser.model.Distribution.DistributionType.BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.FLAT_BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JLINK;
+import static org.jreleaser.model.Distribution.DistributionType.NATIVE_IMAGE;
 import static org.jreleaser.model.api.packagers.FlatpakPackager.SKIP_FLATPAK;
 import static org.jreleaser.model.api.packagers.FlatpakPackager.TYPE;
 import static org.jreleaser.util.CollectionUtils.setOf;
@@ -71,6 +72,7 @@ public final class FlatpakPackager extends AbstractAppdataPackager<org.jreleaser
             TAR.extension(),
             ZIP.extension());
 
+        SUPPORTED.put(NATIVE_IMAGE, extensions);
         SUPPORTED.put(BINARY, extensions);
         SUPPORTED.put(JAVA_BINARY, extensions);
         SUPPORTED.put(JLINK, extensions);
