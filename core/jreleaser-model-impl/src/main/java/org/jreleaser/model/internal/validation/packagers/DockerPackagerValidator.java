@@ -358,20 +358,20 @@ public final class DockerPackagerValidator {
     private static void validateRegistries(JReleaserContext context, DockerConfiguration self, DockerConfiguration other, Errors errors, String element) {
         JReleaserModel model = context.getModel();
 
+        Set<AbstractDockerConfiguration.Registry> registries = new LinkedHashSet<>();
+        registries.addAll(self.getRegistries());
+        registries.addAll(other.getRegistries());
+        self.setRegistries(registries);
+
         if (self.getRegistries().isEmpty()) {
             String username = model.getRelease().getReleaser().getUsername();
             context.getLogger().info(RB.$("validation_docker_no_registries", element, username));
             DockerConfiguration.Registry registry = new DockerConfiguration.Registry();
             registry.setServerName(DockerConfiguration.Registry.DEFAULT_NAME);
-            registry.setServer("docker.io");
+            registry.setServer(DockerConfiguration.Registry.DOCKER_IO);
             registry.setUsername(username);
             self.addRegistry(registry);
         }
-
-        Set<AbstractDockerConfiguration.Registry> registries = new LinkedHashSet<>();
-        registries.addAll(self.getRegistries());
-        registries.addAll(other.getRegistries());
-        self.setRegistries(registries);
 
         for (AbstractDockerConfiguration.Registry registry : registries) {
             BaseReleaser<?, ?> service = model.getRelease().getReleaser();
