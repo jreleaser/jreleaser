@@ -17,7 +17,7 @@
  */
 package org.jreleaser.util;
 
-import kr.motd.maven.os.Detector;
+import org.jreleaser.dependencies.os.Detector;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;

@@ -17,7 +17,6 @@
  */
 package org.jreleaser.util;
 
-import kr.motd.maven.os.Detector;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.logging.JReleaserLogger;
 
@@ -321,14 +320,14 @@ public final class PlatformUtils {
     }
 
     public static String getDetectedOs() {
-        return OS_DETECTOR.get(Detector.DETECTED_NAME);
+        return OS_DETECTOR.get(OsDetector.DETECTED_NAME);
     }
 
     public static String getDetectedArch() {
-        return OS_DETECTOR.get(Detector.DETECTED_ARCH);
+        return OS_DETECTOR.get(OsDetector.DETECTED_ARCH);
     }
 
     public static String getDetectedVersion() {
-        return OS_DETECTOR.get(Detector.DETECTED_VERSION);
+        return OS_DETECTOR.get(OsDetector.DETECTED_VERSION);
     }
 }
