@@ -968,7 +968,7 @@ jobs:
       - name: Rename JaCoCo execution data
         shell: bash
         run: |
-          mv build/jacoco/aggregate.exec aggregate-${{ runner.os }}.exec
+          for i in $(find ./ -name *.exec -print); do mv $i "${i:0:${#i}-5}-${{ runner.os }}.exec"; done
 
       - name: JaCoCo upload
         if: always()
