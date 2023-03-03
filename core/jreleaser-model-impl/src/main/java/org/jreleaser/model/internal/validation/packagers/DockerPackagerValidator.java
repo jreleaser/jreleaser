@@ -41,6 +41,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.Collections.singleton;
+import static org.jreleaser.model.internal.packagers.DockerConfiguration.Registry.DEFAULT_NAME;
+import static org.jreleaser.model.internal.packagers.DockerConfiguration.Registry.DOCKER_IO;
 import static org.jreleaser.model.internal.packagers.DockerPackager.LABEL_OCI_IMAGE_DESCRIPTION;
 import static org.jreleaser.model.internal.packagers.DockerPackager.LABEL_OCI_IMAGE_LICENSES;
 import static org.jreleaser.model.internal.packagers.DockerPackager.LABEL_OCI_IMAGE_REVISION;
@@ -367,8 +369,8 @@ public final class DockerPackagerValidator {
             String username = model.getRelease().getReleaser().getUsername();
             context.getLogger().info(RB.$("validation_docker_no_registries", element, username));
             DockerConfiguration.Registry registry = new DockerConfiguration.Registry();
-            registry.setServerName(DockerConfiguration.Registry.DEFAULT_NAME);
-            registry.setServer(DockerConfiguration.Registry.DOCKER_IO);
+            registry.setServerName(DOCKER_IO);
+            registry.setServer(DOCKER_IO);
             registry.setUsername(username);
             self.addRegistry(registry);
         }
@@ -378,14 +380,12 @@ public final class DockerPackagerValidator {
             String serverName = registry.getServerName();
 
             if (isBlank(registry.getServer())) {
-                registry.setServer(serverName);
+                registry.setServer(DEFAULT_NAME.equals(serverName)? DOCKER_IO : serverName);
             }
 
             registry.setUsername(
                 checkProperty(context,
-                    listOf(
-                        element + "." + serverName + ".username",
-                        "docker." + serverName + ".username"),
+                    resolveKeys(element, serverName, ".username"),
                     "registry." + serverName + ".username",
                     registry.getUsername(),
                     service.getUsername()));
@@ -402,14 +402,26 @@ public final class DockerPackagerValidator {
 
                 registry.setPassword(
                     checkProperty(context,
-                        listOf(
-                            element + "." + serverName + ".password",
-                            "docker." + serverName + ".password"),
+                        resolveKeys(element, serverName, ".password"),
                         "registry." + serverName + ".password",
                         registry.getPassword(),
                         errors,
                         context.isDryrun()));
             }
         }
+    }
+
+    private static List<String> resolveKeys(String element, String serverName, String property) {
+        if (DOCKER_IO.equals(serverName)) {
+            return listOf(
+                element + "." + serverName + property,
+                element + "." + DEFAULT_NAME + property,
+                "docker." + serverName + property,
+                "docker." + DEFAULT_NAME + property);
+        }
+
+        return listOf(
+            element + "." + serverName + property,
+            "docker." + serverName + property);
     }
 }
