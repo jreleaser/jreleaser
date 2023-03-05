@@ -160,6 +160,13 @@ assemble:
         version: 11
       imageName: '{{distributionName}}-{{projectEffectiveVersion}}'
       executable: jreleaser
+      fileSets:
+        - input: '.'
+          includes:
+            - NOTICE
+            - LICENSE
+        - input: licenses
+          output: licenses
       jdeps:
         multiRelease: base
         ignoreMissingDeps: true
@@ -230,6 +237,13 @@ assemble:
         version: 17
       imageName: '{{distributionName}}-{{projectEffectiveVersion}}'
       executable: jreleaser
+      fileSets:
+        - input: '.'
+          includes:
+            - NOTICE
+            - LICENSE
+        - input: licenses
+          output: licenses
       mainJar:
         path: 'plugins/jreleaser/build/libs/jreleaser-{{projectVersion}}.jar'
       jars:

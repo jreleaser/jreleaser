@@ -200,3 +200,55 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
+
+==============================================================================
+Licenses for included components:
+
+------------------------------------------------------------------------------
+com.jcraft:jzlib
+http://www.jcraft.com/jzlib/LICENSE.txt
+
+------------------------------------------------------------------------------
+BSD 2-Clause FreeBSD
+https://spdx.org/licenses/BSD-2-Clause-FreeBSD.html
+
+org.codehaus.woodstox:stax2-api
+
+------------------------------------------------------------------------------
+BSD 2-Clause
+https://opensource.org/licenses/BSD-2-Clause
+
+org.commonmark:commonmark
+com.github.luben:zstd-jni
+
+------------------------------------------------------------------------------
+Bouncy Castle
+https://www.bouncycastle.org/licence.html
+
+org.bouncycastle:bcpg-jdk15on
+org.bouncycastle:bcpkix-jdk15on
+org.bouncycastle:bcprov-jdk15on
+org.bouncycastle:bcutil-jdk15on
+
+------------------------------------------------------------------------------
+CC0 1.0 Universal
+https://creativecommons.org/publicdomain/zero/1.0/
+
+org.reactivestreams:reactive-streams
+net.i2p.crypto:eddsa
+
+------------------------------------------------------------------------------
+EDL 1.0
+https://www.eclipse.org/org/documents/edl-v10.php
+
+com.sun.activation:jakarta.activation
+com.sun.mail:jakarta.mail
+org.eclipse.jgit:org.eclipse.jgit
+
+------------------------------------------------------------------------------
+MIT
+https://spdx.org/licenses/MIT.html
+
+org.kohsuke:github-api
+org.slf4j:slf4j-api
+org.slf4j:slf4j-simple

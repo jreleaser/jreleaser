@@ -73,7 +73,9 @@ distributions {
     main {
         contents {
             from('../..') {
+                include 'licenses/*'
                 include 'LICENSE'
+                include 'NOTICE'
                 include 'VERSION'
             }
         }
