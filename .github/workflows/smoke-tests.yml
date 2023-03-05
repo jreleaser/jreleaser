@@ -963,12 +963,21 @@ jobs:
 
       - name: Test
         shell: bash
-        run: ./gradlew :aggregateJacocoReport
+        run: |
+          ./gradlew check jacocoTestReport --no-build-cache
+          ./gradlew :aggregateJacocoReport
 
       - name: Rename JaCoCo execution data
         shell: bash
         run: |
-          for i in $(find ./ -name *.exec -print); do mv $i "${i:0:${#i}-5}-${{ runner.os }}.exec"; done
+          for execFile in $(find ./ -name "*.exec" -print); do
+              jacoco=$(dirname "$execFile")
+              build=$(dirname "$jacoco")
+              project=$(dirname "$build")
+              projectName=$(basename "$project")
+              mv "$execFile" "${projectName}-${{ runner.os }}.exec"
+          done
+          for execFile in $(find ./ -name "*.exec" -print); do echo "$execFile"; done
 
       - name: JaCoCo upload
         if: always()
