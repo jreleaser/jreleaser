@@ -106,13 +106,6 @@ tasks.withType(JavaCompile) { JavaCompile c ->
     c.targetCompatibility = JavaVersion.VERSION_11
 }
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-        vendor = JvmVendorSpec.ADOPTOPENJDK
-    }
-}
-
 task versionFile {
     inputs.property('version', project.version)
     outputs.file(project.layout.buildDirectory.file('VERSION'))

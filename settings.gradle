@@ -75,6 +75,10 @@ projects {
 enforce {
     mergeStrategy = 'append'
 
+    rule(enforcer.rules.RequireJavaVersion) { r ->
+        r.version.set('[11,12)')
+    }
+
     rule(enforcer.rules.EnforceBytecodeVersion) { r ->
         r.exclude("org.graalvm.sdk:graal-sdk:$graalVersion")
         r.exclude("org.graalvm.nativeimage:svm:$graalVersion")
