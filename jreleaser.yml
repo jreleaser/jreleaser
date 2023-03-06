@@ -410,6 +410,7 @@ distributions:
         name: jreleaser
       repository:
         active: ALWAYS
+        name: jreleaser-winget
         commitMessage: 'jreleaser {{tagName}}'
     executable:
       name: jreleaser
