@@ -120,6 +120,7 @@ class WorkflowImpl implements Workflow {
 
                     try {
                         context.fireWorkflowEvent(ExecutionEvent.failure(item.getCommand().toStep(), e));
+                        break;
                     } catch (WorkflowListenerException failureException) {
                         context.getLogger().error(RB.$("listener.failure", failureException.getListener().getClass().getName()));
                         context.getLogger().trace(failureException);

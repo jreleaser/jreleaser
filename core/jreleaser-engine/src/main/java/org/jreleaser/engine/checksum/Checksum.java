@@ -54,6 +54,15 @@ public final class Checksum {
         context.getLogger().increaseIndent();
         context.getLogger().setPrefix("checksum");
 
+        try {
+            doCollectAndWriteChecksums(context);
+        } finally {
+            context.getLogger().restorePrefix();
+            context.getLogger().decreaseIndent();
+        }
+    }
+
+    private static void doCollectAndWriteChecksums(JReleaserContext context) throws JReleaserException {
         Map<Algorithm, List<String>> checksums = new LinkedHashMap<>();
 
         if (context.getModel().getChecksum().isFiles()) {
@@ -137,9 +146,6 @@ public final class Checksum {
                 throw new JReleaserException(RB.$("ERROR_unexpected_error_checksum", checksumsFilePath.toAbsolutePath()), e);
             }
         }
-
-        context.getLogger().restorePrefix();
-        context.getLogger().decreaseIndent();
     }
 
     public static void readHash(JReleaserContext context, Distribution distribution, Algorithm algorithm, Artifact artifact) throws JReleaserException {
