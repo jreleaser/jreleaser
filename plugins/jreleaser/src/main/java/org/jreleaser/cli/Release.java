@@ -209,13 +209,13 @@ public class Release extends AbstractPlatformAwareModelCommand<Main> {
         String milestoneName;
 
         @CommandLine.Option(names = {"--prerelease"})
-        boolean prerelease;
+        Boolean prerelease;
 
         @CommandLine.Option(names = {"--prerelease-pattern"}, paramLabel = "<pattern>")
         String prereleasePattern;
 
         @CommandLine.Option(names = {"--draft"})
-        boolean draft;
+        Boolean draft;
 
         @CommandLine.Option(names = {"--overwrite"})
         boolean overwrite;

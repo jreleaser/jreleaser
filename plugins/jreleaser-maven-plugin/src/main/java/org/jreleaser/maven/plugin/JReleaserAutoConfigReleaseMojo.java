@@ -158,7 +158,7 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
      * If the release is a prerelease.
      */
     @Parameter(property = "jreleaser.prerelease")
-    private boolean prerelease;
+    private Boolean prerelease;
     /**
      * The prerelease pattern.
      */
@@ -168,7 +168,7 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
      * If the release is a draft.
      */
     @Parameter(property = "jreleaser.draft")
-    private boolean draft;
+    private Boolean draft;
     /**
      * Overwrite an existing release.
      */

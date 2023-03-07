@@ -127,8 +127,12 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
                     context.getLogger().debug(RB.$("git.releaser.release.update"), tagName);
                     if (!context.isDryrun()) {
                         GtRelease updater = new GtRelease();
-                        updater.setPrerelease(codeberg.getPrerelease().isEnabled());
-                        updater.setDraft(codeberg.isDraft());
+                        if (codeberg.getPrerelease().isEnabledSet()) {
+                            updater.setPrerelease(codeberg.getPrerelease().isEnabled());
+                        }
+                        if (codeberg.isDraftSet()) {
+                            updater.setDraft(codeberg.isDraft());
+                        }
                         if (codeberg.getUpdate().getSections().contains(UpdateSection.TITLE)) {
                             context.getLogger().info(RB.$("git.releaser.release.update.title"), codeberg.getEffectiveReleaseName());
                             updater.setName(codeberg.getEffectiveReleaseName());
@@ -170,7 +174,7 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
     }
 
     protected Repository.Kind resolveRepositoryKind() {
-        return Repository.Kind.OTHER;
+        return Repository.Kind.CODEBERG;
     }
 
     @Override

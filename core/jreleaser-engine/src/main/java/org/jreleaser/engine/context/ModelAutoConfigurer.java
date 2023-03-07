@@ -81,9 +81,9 @@ public final class ModelAutoConfigurer {
     private String releaseName;
     private String milestoneName;
     private String branch;
-    private boolean prerelease;
+    private Boolean prerelease;
     private String prereleasePattern;
-    private boolean draft;
+    private Boolean draft;
     private boolean overwrite;
     private boolean update;
     private boolean skipTag;
@@ -205,7 +205,7 @@ public final class ModelAutoConfigurer {
         return this;
     }
 
-    public ModelAutoConfigurer prerelease(boolean prerelease) {
+    public ModelAutoConfigurer prerelease(Boolean prerelease) {
         this.prerelease = prerelease;
         return this;
     }
@@ -215,7 +215,7 @@ public final class ModelAutoConfigurer {
         return this;
     }
 
-    public ModelAutoConfigurer draft(boolean draft) {
+    public ModelAutoConfigurer draft(Boolean draft) {
         this.draft = draft;
         return this;
     }
@@ -485,7 +485,7 @@ public final class ModelAutoConfigurer {
                 case GITHUB:
                     service = new GithubReleaser();
                     model.getRelease().setGithub((GithubReleaser) service);
-                    if (prerelease) service.getPrerelease().setEnabled(true);
+                    service.getPrerelease().setEnabled(prerelease);
                     service.getPrerelease().setPattern(prereleasePattern);
                     ((GithubReleaser) service).setDraft(draft);
                     break;
@@ -496,7 +496,7 @@ public final class ModelAutoConfigurer {
                 case CODEBERG:
                     service = new CodebergReleaser();
                     model.getRelease().setCodeberg((CodebergReleaser) service);
-                    if (prerelease) service.getPrerelease().setEnabled(true);
+                    service.getPrerelease().setEnabled(prerelease);
                     service.getPrerelease().setPattern(prereleasePattern);
                     ((CodebergReleaser) service).setDraft(draft);
                     break;

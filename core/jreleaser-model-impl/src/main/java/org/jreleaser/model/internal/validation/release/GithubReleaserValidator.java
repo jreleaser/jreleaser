@@ -63,6 +63,15 @@ public final class GithubReleaserValidator {
                     false));
         }
 
+        if (!github.getUpdate().isEnabled()) {
+            if (!github.getPrerelease().isEnabledSet()) {
+                github.getPrerelease().setEnabled(false);
+            }
+            if (!github.isDraftSet()) {
+                github.setDraft(false);
+            }
+        }
+
         if (github.isDraft()) {
             github.getMilestone().setClose(false);
         }

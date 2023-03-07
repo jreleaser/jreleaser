@@ -69,6 +69,15 @@ public final class GiteaReleaserValidator {
                     false));
         }
 
+        if (!gitea.getUpdate().isEnabled()) {
+            if (!gitea.getPrerelease().isEnabledSet()) {
+                gitea.getPrerelease().setEnabled(false);
+            }
+            if (!gitea.isDraftSet()) {
+                gitea.setDraft(false);
+            }
+        }
+
         if (gitea.isDraft()) {
             gitea.getMilestone().setClose(false);
         }

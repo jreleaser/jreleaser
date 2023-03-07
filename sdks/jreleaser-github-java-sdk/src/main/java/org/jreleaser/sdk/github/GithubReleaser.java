@@ -208,8 +208,12 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
                     context.getLogger().debug(RB.$("git.releaser.release.update"), tagName);
                     if (!context.isDryrun()) {
                         GHReleaseUpdater updater = release.update();
-                        updater.prerelease(github.getPrerelease().isEnabled());
-                        updater.draft(github.isDraft());
+                        if (github.getPrerelease().isEnabledSet()) {
+                            updater.prerelease(github.getPrerelease().isEnabled());
+                        }
+                        if (github.isDraftSet()) {
+                            updater.draft(github.isDraft());
+                        }
                         if (github.getUpdate().getSections().contains(UpdateSection.TITLE)) {
                             context.getLogger().info(RB.$("git.releaser.release.update.title"), github.getEffectiveReleaseName());
                             updater.name(github.getEffectiveReleaseName());
