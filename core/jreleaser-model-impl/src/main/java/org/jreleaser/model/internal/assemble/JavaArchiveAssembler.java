@@ -230,7 +230,7 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
     @Override
     public void merge(JavaArchiveAssembler source) {
         super.merge(source);
-        this.archiveName = merge(source.archiveName, source.archiveName);
+        this.archiveName = merge(this.archiveName, source.archiveName);
         setFormats(merge(this.formats, source.formats));
         setExecutable(source.executable);
         setJava(source.java);

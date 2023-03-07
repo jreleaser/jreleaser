@@ -210,9 +210,9 @@ public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, 
     @Override
     public void merge(ArchiveAssembler source) {
         super.merge(source);
-        this.archiveName = merge(source.archiveName, source.archiveName);
-        this.distributionType = merge(source.distributionType, source.distributionType);
-        this.attachPlatform = merge(source.attachPlatform, source.attachPlatform);
+        this.archiveName = merge(this.archiveName, source.archiveName);
+        this.distributionType = merge(this.distributionType, source.distributionType);
+        this.attachPlatform = merge(this.attachPlatform, source.attachPlatform);
         setFormats(merge(this.formats, source.formats));
     }
 
