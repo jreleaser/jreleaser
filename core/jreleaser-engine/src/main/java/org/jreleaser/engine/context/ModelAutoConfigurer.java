@@ -432,9 +432,9 @@ public final class ModelAutoConfigurer {
         if (!updateSections.isEmpty()) logger.info("- release.updateSections: " + updateSections);
         if (skipTag) logger.info("- release.skipTag: true");
         if (skipRelease) logger.info("- release.skipRelease: true");
-        if (prerelease) logger.info("- release.prerelease: true");
+        if (null != prerelease && prerelease) logger.info("- release.prerelease: true");
         if (isNotBlank(prereleasePattern)) logger.info("- release.prerelease.pattern: {}", prereleasePattern);
-        if (draft) logger.info("- release.draft: true");
+        if (null != draft && draft) logger.info("- release.draft: true");
         if (isNotBlank(changelog)) logger.info(" - release.changelog: {}", changelog);
         if (changelogFormatted) logger.info("- release.changelog.formatted: true");
         if (isNotBlank(commitAuthorName)) logger.info("- release.commitAuthor.name: {}", commitAuthorName);
