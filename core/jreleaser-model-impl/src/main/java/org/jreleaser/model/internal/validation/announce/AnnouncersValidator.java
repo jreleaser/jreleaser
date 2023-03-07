@@ -33,6 +33,7 @@ import static org.jreleaser.model.internal.validation.announce.HttpAnnouncerVali
 import static org.jreleaser.model.internal.validation.announce.LinkedinAnnouncerValidator.validateLinkedin;
 import static org.jreleaser.model.internal.validation.announce.MastodonAnnouncerValidator.validateMastodon;
 import static org.jreleaser.model.internal.validation.announce.MattermostAnnouncerValidator.validateMattermost;
+import static org.jreleaser.model.internal.validation.announce.OpenCollectiveAnnouncerValidator.validateOpenCollective;
 import static org.jreleaser.model.internal.validation.announce.SdkmanAnnouncerValidator.validateSdkmanAnnouncer;
 import static org.jreleaser.model.internal.validation.announce.SlackAnnouncerValidator.validateSlack;
 import static org.jreleaser.model.internal.validation.announce.SmtpAnnouncerValidator.validateSmtp;
@@ -72,6 +73,7 @@ public final class AnnouncersValidator {
         validateSmtp(context, announce.getSmtp(), errors);
         validateMastodon(context, announce.getMastodon(), errors);
         validateMattermost(context, announce.getMattermost(), errors);
+        validateOpenCollective(context, announce.getOpenCollective(), errors);
         validateSdkmanAnnouncer(context, announce.getSdkman(), errors);
         validateSlack(context, announce.getSlack(), errors);
         validateTeams(context, announce.getTeams(), errors);
@@ -96,6 +98,7 @@ public final class AnnouncersValidator {
                 announce.getSmtp().isEnabled() ||
                 announce.getMastodon().isEnabled() ||
                 announce.getMattermost().isEnabled() ||
+                announce.getOpenCollective().isEnabled() ||
                 announce.getSdkman().isEnabled() ||
                 announce.getSlack().isEnabled() ||
                 announce.getTeams().isEnabled() ||

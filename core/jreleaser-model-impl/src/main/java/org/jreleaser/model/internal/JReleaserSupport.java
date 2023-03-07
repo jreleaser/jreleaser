@@ -55,6 +55,7 @@ public final class JReleaserSupport {
         set.add(org.jreleaser.model.api.announce.SmtpAnnouncer.TYPE);
         set.add(org.jreleaser.model.api.announce.MastodonAnnouncer.TYPE);
         set.add(org.jreleaser.model.api.announce.MattermostAnnouncer.TYPE);
+        set.add(org.jreleaser.model.api.announce.OpenCollectiveAnnouncer.TYPE);
         set.add(org.jreleaser.model.api.announce.SdkmanAnnouncer.TYPE);
         set.add(org.jreleaser.model.api.announce.SlackAnnouncer.TYPE);
         set.add(org.jreleaser.model.api.announce.TeamsAnnouncer.TYPE);

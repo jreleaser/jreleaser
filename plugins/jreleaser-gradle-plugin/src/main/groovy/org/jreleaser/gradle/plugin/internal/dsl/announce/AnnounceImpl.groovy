@@ -35,6 +35,7 @@ import org.jreleaser.gradle.plugin.dsl.announce.HttpAnnouncer
 import org.jreleaser.gradle.plugin.dsl.announce.LinkedinAnnouncer
 import org.jreleaser.gradle.plugin.dsl.announce.MastodonAnnouncer
 import org.jreleaser.gradle.plugin.dsl.announce.MattermostAnnouncer
+import org.jreleaser.gradle.plugin.dsl.announce.OpenCollectiveAnnouncer
 import org.jreleaser.gradle.plugin.dsl.announce.SdkmanAnnouncer
 import org.jreleaser.gradle.plugin.dsl.announce.SlackAnnouncer
 import org.jreleaser.gradle.plugin.dsl.announce.SmtpAnnouncer
@@ -68,6 +69,7 @@ class AnnounceImpl implements Announce {
     final SmtpAnnouncerImpl smtp
     final MastodonAnnouncerImpl mastodon
     final MattermostAnnouncerImpl mattermost
+    final OpenCollectiveAnnouncerImpl openCollective
     final SdkmanAnnouncerImpl sdkman
     final SlackAnnouncerImpl slack
     final TeamsAnnouncerImpl teams
@@ -89,6 +91,7 @@ class AnnounceImpl implements Announce {
         linkedin = objects.newInstance(LinkedinAnnouncerImpl, objects)
         smtp = objects.newInstance(SmtpAnnouncerImpl, objects)
         mastodon = objects.newInstance(MastodonAnnouncerImpl, objects)
+        openCollective = objects.newInstance(OpenCollectiveAnnouncerImpl, objects)
         mattermost = objects.newInstance(MattermostAnnouncerImpl, objects)
         sdkman = objects.newInstance(SdkmanAnnouncerImpl, objects)
         slack = objects.newInstance(SlackAnnouncerImpl, objects)
@@ -189,6 +192,11 @@ class AnnounceImpl implements Announce {
     }
 
     @Override
+    void openCollective(Action<? super OpenCollectiveAnnouncer> action) {
+        action.execute(openCollective)
+    }
+
+    @Override
     void sdkman(Action<? super SdkmanAnnouncer> action) {
         action.execute(sdkman)
     }
@@ -284,6 +292,11 @@ class AnnounceImpl implements Announce {
     }
 
     @Override
+    void openCollective(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = OpenCollectiveAnnouncer) Closure<Void> action) {
+        ConfigureUtil.configure(action, openCollective)
+    }
+
+    @Override
     void sdkman(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SdkmanAnnouncer) Closure<Void> action) {
         ConfigureUtil.configure(action, sdkman)
     }
@@ -330,6 +343,7 @@ class AnnounceImpl implements Announce {
         if (linkedin.isSet()) announce.linkedin = linkedin.toModel()
         if (smtp.isSet()) announce.smtp = smtp.toModel()
         if (mastodon.isSet()) announce.mastodon = mastodon.toModel()
+        if (openCollective.isSet()) announce.openCollective = openCollective.toModel()
         if (mattermost.isSet()) announce.mattermost = mattermost.toModel()
         if (sdkman.isSet()) announce.sdkman = sdkman.toModel()
         if (slack.isSet()) announce.slack = slack.toModel()

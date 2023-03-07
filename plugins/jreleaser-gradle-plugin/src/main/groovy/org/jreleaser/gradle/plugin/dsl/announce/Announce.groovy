@@ -52,6 +52,8 @@ interface Announce extends Activatable {
 
     MattermostAnnouncer getMattermost()
 
+    OpenCollectiveAnnouncer getOpenCollective()
+
     SdkmanAnnouncer getSdkman()
 
     SlackAnnouncer getSlack()
@@ -92,6 +94,8 @@ interface Announce extends Activatable {
 
     void mattermost(Action<? super MattermostAnnouncer> action)
 
+    void openCollective(Action<? super OpenCollectiveAnnouncer> action)
+
     void sdkman(Action<? super SdkmanAnnouncer> action)
 
     void slack(Action<? super SlackAnnouncer> action)
@@ -129,6 +133,8 @@ interface Announce extends Activatable {
     void mastodon(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = MastodonAnnouncer) Closure<Void> action)
 
     void mattermost(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = MattermostAnnouncer) Closure<Void> action)
+
+    void openCollective(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = OpenCollectiveAnnouncer) Closure<Void> action)
 
     void sdkman(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SdkmanAnnouncer) Closure<Void> action)
 

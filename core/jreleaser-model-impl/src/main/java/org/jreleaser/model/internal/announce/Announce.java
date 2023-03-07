@@ -50,6 +50,7 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
     private final SmtpAnnouncer smtp = new SmtpAnnouncer();
     private final MastodonAnnouncer mastodon = new MastodonAnnouncer();
     private final MattermostAnnouncer mattermost = new MattermostAnnouncer();
+    private final OpenCollectiveAnnouncer openCollective = new OpenCollectiveAnnouncer();
     private final SdkmanAnnouncer sdkman = new SdkmanAnnouncer();
     private final SlackAnnouncer slack = new SlackAnnouncer();
     private final TeamsAnnouncer teams = new TeamsAnnouncer();
@@ -118,6 +119,11 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         @Override
         public org.jreleaser.model.api.announce.MattermostAnnouncer getMattermost() {
             return mattermost.asImmutable();
+        }
+
+        @Override
+        public org.jreleaser.model.api.announce.OpenCollectiveAnnouncer getOpenCollective() {
+            return openCollective.asImmutable();
         }
 
         @Override
@@ -197,6 +203,7 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         setSmtp(source.smtp);
         setMastodon(source.mastodon);
         setMattermost(source.mattermost);
+        setOpenCollective(source.openCollective);
         setSdkman(source.sdkman);
         setSlack(source.slack);
         setTeams(source.teams);
@@ -313,6 +320,14 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         this.mattermost.merge(mattermost);
     }
 
+    public OpenCollectiveAnnouncer getOpenCollective() {
+        return openCollective;
+    }
+
+    public void setOpenCollective(OpenCollectiveAnnouncer openCollective) {
+        this.openCollective.merge(openCollective);
+    }
+
     public SdkmanAnnouncer getSdkman() {
         return sdkman;
     }
@@ -420,6 +435,7 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         map.putAll(smtp.asMap(full));
         map.putAll(mastodon.asMap(full));
         map.putAll(mattermost.asMap(full));
+        map.putAll(openCollective.asMap(full));
         map.putAll(sdkman.asMap(full));
         map.putAll(slack.asMap(full));
         map.putAll(teams.asMap(full));
@@ -463,6 +479,8 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
                 return (A) getMastodon();
             case org.jreleaser.model.api.announce.MattermostAnnouncer.TYPE:
                 return (A) getMattermost();
+            case org.jreleaser.model.api.announce.OpenCollectiveAnnouncer.TYPE:
+                return (A) getOpenCollective();
             case org.jreleaser.model.api.announce.SdkmanAnnouncer.TYPE:
                 return (A) getSdkman();
             case org.jreleaser.model.api.announce.SlackAnnouncer.TYPE:

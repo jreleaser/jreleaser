@@ -50,6 +50,8 @@ public interface Announce extends Domain, Activatable {
 
     MattermostAnnouncer getMattermost();
 
+    OpenCollectiveAnnouncer getOpenCollective();
+
     SdkmanAnnouncer getSdkman();
 
     SlackAnnouncer getSlack();
