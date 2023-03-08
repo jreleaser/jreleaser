@@ -398,7 +398,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
     }
 
     private void cleanupBuilder(TemplateContext props, DockerConfiguration docker) throws PackagerProcessingException {
-        if (docker.getBuildx().isEnabled()) {
+        if (docker.getBuildx().isEnabled() && docker.getBuildx().isCreateBuilder()) {
             int i = docker.getBuildx().getCreateBuilderFlags().indexOf("--name");
             String builderName = docker.getBuildx().getCreateBuilderFlags().get(i + 1);
             Command cmd = createCommand("buildx")
@@ -412,7 +412,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
     private void cleanupBuilder(TemplateContext props, List<DockerSpec> specs) throws PackagerProcessingException {
         Set<String> builderNames = new LinkedHashSet<>();
         for (DockerSpec spec : specs) {
-            if (spec.getBuildx().isEnabled()) {
+            if (spec.getBuildx().isEnabled() && spec.getBuildx().isCreateBuilder()) {
                 int i = spec.getBuildx().getCreateBuilderFlags().indexOf("--name");
                 builderNames.add(spec.getBuildx().getCreateBuilderFlags().get(i + 1));
             }
