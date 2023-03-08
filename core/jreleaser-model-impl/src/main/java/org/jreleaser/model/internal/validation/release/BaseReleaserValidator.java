@@ -194,16 +194,16 @@ public final class BaseReleaserValidator {
 
             BaseReleaser.Issues issues = service.getIssues();
             if (isBlank(issues.getComment())) {
-                issues.setComment("Released in {{tagName}} -> {{releaseNotesUrl}}");
+                issues.setComment(RB.$("default.release.issue.message"));
             }
             if (isBlank(issues.getLabel().getName())) {
-                issues.getLabel().setName("released");
+                issues.getLabel().setName(RB.$("default.release.issue.label.text"));
             }
             if (isBlank(issues.getLabel().getColor())) {
-                issues.getLabel().setColor("#FF0000");
+                issues.getLabel().setColor(RB.$("default.release.issue.label.color"));
             }
             if (isBlank(issues.getLabel().getDescription())) {
-                issues.getLabel().setDescription("Issue has been released");
+                issues.getLabel().setDescription(RB.$("default.release.issue.label.desc"));
             }
         }
 
