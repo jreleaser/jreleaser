@@ -107,17 +107,15 @@ public final class JavaArchiveAssemblerValidator {
         context.getLogger().debug("assemble.java-archive.{}.java", archive.getName());
 
         Project project = context.getModel().getProject();
-        boolean mainJarIsSet = isNotBlank(archive.getMainJar().getPath());
 
-        if (!mainJarIsSet) {
-            if (isBlank(archive.getJava().getMainModule())) {
-                archive.getJava().setMainModule(project.getJava().getMainModule());
-            }
-            if (isBlank(archive.getJava().getMainClass())) {
-                archive.getJava().setMainClass(project.getJava().getMainClass());
-            }
+        if (isBlank(archive.getJava().getMainModule())) {
+            archive.getJava().setMainModule(project.getJava().getMainModule());
+        }
+        if (isBlank(archive.getJava().getMainClass())) {
+            archive.getJava().setMainClass(project.getJava().getMainClass());
         }
 
+        boolean mainJarIsSet = isNotBlank(archive.getMainJar().getPath());
         boolean mainClassIsSet = isNotBlank(archive.getJava().getMainClass());
 
         if (!mainJarIsSet && !mainClassIsSet) {

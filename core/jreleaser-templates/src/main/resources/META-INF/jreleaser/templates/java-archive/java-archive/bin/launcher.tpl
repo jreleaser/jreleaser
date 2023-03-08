@@ -164,19 +164,14 @@ APP_ARGS=$(save "$@")
 # Collect all arguments for the java command, following the shell quoting and substitution rules
 eval set -- "$APP_ARGS"
 
-{{#distributionJavaMainJar}}
+{{#distributionJavaMainModule}}
+exec "$JAVACMD" $JAVA_OPTS -p "$CLASSPATH" -m {{distributionJavaMainModule}}/{{distributionJavaMainClass}} "$@"
+{{/distributionJavaMainModule}}
+{{^distributionJavaMainModule}}
 {{#distributionJavaMainClass}}
 exec "$JAVACMD" $JAVA_OPTS -cp "$CLASSPATH" {{distributionJavaMainClass}} "$@"
 {{/distributionJavaMainClass}}
 {{^distributionJavaMainClass}}
 exec "$JAVACMD" $JAVA_OPTS -cp "$CLASSPATH" -jar "${JARSDIR}/{{distributionJavaMainJar}}" "$@"
 {{/distributionJavaMainClass}}
-{{/distributionJavaMainJar}}
-{{^distributionJavaMainJar}}
-{{#distributionJavaMainModule}}
-exec "$JAVACMD" $JAVA_OPTS -p "$CLASSPATH" -m {{distributionJavaMainModule}}/{{distributionJavaMainClass}} "$@"
 {{/distributionJavaMainModule}}
-{{^distributionJavaMainModule}}
-exec "$JAVACMD" $JAVA_OPTS -cp "$CLASSPATH" {{distributionJavaMainClass}} "$@"
-{{/distributionJavaMainModule}}
-{{/distributionJavaMainJar}}
