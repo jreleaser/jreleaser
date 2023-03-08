@@ -49,23 +49,23 @@ public final class NativeImageAssemblerResolver {
         }
     }
 
-    private static void resolveNativeImageOutputs(JReleaserContext context, NativeImageAssembler nativeImage, Errors errors) {
+    private static void resolveNativeImageOutputs(JReleaserContext context, NativeImageAssembler assembler, Errors errors) {
         Path baseOutputDirectory = context.getAssembleDirectory()
-            .resolve(nativeImage.getName())
-            .resolve(nativeImage.getType());
+            .resolve(assembler.getName())
+            .resolve(assembler.getType());
 
-        String imageName = nativeImage.getResolvedImageName(context);
-        if (isNotBlank(nativeImage.getImageNameTransform())) {
-            imageName = nativeImage.getResolvedImageNameTransform(context);
+        String imageName = assembler.getResolvedImageName(context);
+        if (isNotBlank(assembler.getImageNameTransform())) {
+            imageName = assembler.getResolvedImageNameTransform(context);
         }
 
-        for (Artifact graalJdk : nativeImage.getGraalJdks()) {
+        for (Artifact graalJdk : assembler.getGraalJdks()) {
             if (!context.isPlatformSelected(graalJdk)) continue;
 
             String platform = graalJdk.getPlatform();
-            String platformReplaced = nativeImage.getPlatform().applyReplacements(platform);
+            String platformReplaced = assembler.getPlatform().applyReplacements(platform);
             String str = graalJdk.getExtraProperties()
-                .getOrDefault(KEY_ARCHIVE_FORMAT, nativeImage.getArchiveFormat())
+                .getOrDefault(KEY_ARCHIVE_FORMAT, assembler.getArchiveFormat())
                 .toString();
             Archive.Format archiveFormat = Archive.Format.of(str);
 
@@ -75,12 +75,12 @@ public final class NativeImageAssemblerResolver {
 
             if (!Files.exists(image)) {
                 errors.assembly(RB.$("validation_missing_assembly",
-                    nativeImage.getType(), nativeImage.getName(), nativeImage.getName()));
+                    assembler.getType(), assembler.getName(), assembler.getName()));
             } else {
                 Artifact artifact = Artifact.of(image, platform);
-                artifact.setExtraProperties(nativeImage.getExtraProperties());
+                artifact.setExtraProperties(assembler.getExtraProperties());
                 artifact.activate();
-                nativeImage.addOutput(artifact);
+                assembler.addOutput(artifact);
             }
         }
     }

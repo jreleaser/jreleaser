@@ -55,71 +55,71 @@ public final class JavaArchiveAssemblerValidator {
         }
     }
 
-    private static void validateJavaArchive(JReleaserContext context, Mode mode, JavaArchiveAssembler archive, Errors errors) {
-        context.getLogger().debug("assemble.java-archive.{}", archive.getName());
+    private static void validateJavaArchive(JReleaserContext context, Mode mode, JavaArchiveAssembler assembler, Errors errors) {
+        context.getLogger().debug("assemble.java-archive.{}", assembler.getName());
 
-        resolveActivatable(context, archive,
-            listOf("assemble.java.archive." + archive.getName(), "assemble.java.archive"),
+        resolveActivatable(context, assembler,
+            listOf("assemble.java.archive." + assembler.getName(), "assemble.java.archive"),
             "NEVER");
-        if (!archive.resolveEnabled(context.getModel().getProject())) {
+        if (!assembler.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
-        if (isBlank(archive.getName())) {
+        if (isBlank(assembler.getName())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "java-archive.name"));
             context.getLogger().debug(RB.$("validation.disabled.error"));
-            archive.disable();
+            assembler.disable();
             return;
         }
 
-        if (isBlank(archive.getArchiveName())) {
-            archive.setArchiveName("{{distributionName}}-{{projectVersion}}");
+        if (isBlank(assembler.getArchiveName())) {
+            assembler.setArchiveName("{{distributionName}}-{{projectVersion}}");
         }
 
-        if (isBlank(archive.getExecutable().getName())) {
-            archive.getExecutable().setName(archive.getName());
+        if (isBlank(assembler.getExecutable().getName())) {
+            assembler.getExecutable().setName(assembler.getName());
         }
 
-        if (isBlank(archive.getExecutable().getWindowsExtension())) {
-            archive.getExecutable().setWindowsExtension("bat");
+        if (isBlank(assembler.getExecutable().getWindowsExtension())) {
+            assembler.getExecutable().setWindowsExtension("bat");
         }
 
-        if (archive.getFormats().isEmpty()) {
-            archive.addFormat(Archive.Format.ZIP);
+        if (assembler.getFormats().isEmpty()) {
+            assembler.addFormat(Archive.Format.ZIP);
         }
 
-        if (null == archive.getOptions().getTimestamp()) {
-            archive.getOptions().setTimestamp(context.getModel().resolveArchiveTimestamp());
+        if (null == assembler.getOptions().getTimestamp()) {
+            assembler.getOptions().setTimestamp(context.getModel().resolveArchiveTimestamp());
         }
 
-        if (archive.getJars().isEmpty() && isBlank(archive.getMainJar().getPath())) {
-            errors.configuration(RB.$("validation_java_archive_empty_jars", archive.getName()));
+        if (assembler.getJars().isEmpty() && isBlank(assembler.getMainJar().getPath())) {
+            errors.configuration(RB.$("validation_java_archive_empty_jars", assembler.getName()));
         } else {
             validateGlobs(
-                archive.getJars(),
-                "java-archive." + archive.getName() + ".jars",
+                assembler.getJars(),
+                "java-archive." + assembler.getName() + ".jars",
                 errors);
         }
 
-        validateAssembler(context, mode, archive, errors);
+        validateAssembler(context, mode, assembler, errors);
 
-        context.getLogger().debug("assemble.java-archive.{}.java", archive.getName());
+        context.getLogger().debug("assemble.java-archive.{}.java", assembler.getName());
 
         Project project = context.getModel().getProject();
 
-        if (isBlank(archive.getJava().getMainModule())) {
-            archive.getJava().setMainModule(project.getJava().getMainModule());
+        if (isBlank(assembler.getJava().getMainModule())) {
+            assembler.getJava().setMainModule(project.getJava().getMainModule());
         }
-        if (isBlank(archive.getJava().getMainClass())) {
-            archive.getJava().setMainClass(project.getJava().getMainClass());
+        if (isBlank(assembler.getJava().getMainClass())) {
+            assembler.getJava().setMainClass(project.getJava().getMainClass());
         }
 
-        boolean mainJarIsSet = isNotBlank(archive.getMainJar().getPath());
-        boolean mainClassIsSet = isNotBlank(archive.getJava().getMainClass());
+        boolean mainJarIsSet = isNotBlank(assembler.getMainJar().getPath());
+        boolean mainClassIsSet = isNotBlank(assembler.getJava().getMainClass());
 
         if (!mainJarIsSet && !mainClassIsSet) {
-            errors.configuration(RB.$("validation_java_archive_main_jar_or_class_missing", archive.getName(), archive.getName()));
+            errors.configuration(RB.$("validation_java_archive_main_jar_or_class_missing", assembler.getName(), assembler.getName()));
         }
     }
 }

@@ -38,9 +38,9 @@ class SftpUploaderImpl extends AbstractSshUploader implements SftpUploader {
     }
 
     org.jreleaser.model.internal.upload.SftpUploader toModel() {
-        org.jreleaser.model.internal.upload.SftpUploader sftp = new org.jreleaser.model.internal.upload.SftpUploader()
-        sftp.name = name
-        fillProperties(sftp)
-        sftp
+        org.jreleaser.model.internal.upload.SftpUploader uploader = new org.jreleaser.model.internal.upload.SftpUploader()
+        uploader.name = name
+        fillProperties(uploader)
+        uploader
     }
 }

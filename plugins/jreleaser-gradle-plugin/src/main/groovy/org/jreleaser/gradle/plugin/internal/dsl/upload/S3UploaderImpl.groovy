@@ -84,18 +84,18 @@ class S3UploaderImpl extends AbstractUploader implements S3Uploader {
     }
 
     org.jreleaser.model.internal.upload.S3Uploader toModel() {
-        org.jreleaser.model.internal.upload.S3Uploader s3 = new org.jreleaser.model.internal.upload.S3Uploader()
-        s3.name = name
-        fillProperties(s3)
-        if (region.present) s3.region = region.get()
-        if (bucket.present) s3.bucket = bucket.get()
-        if (accessKeyId.present) s3.accessKeyId = accessKeyId.get()
-        if (secretKey.present) s3.secretKey = secretKey.get()
-        if (sessionToken.present) s3.sessionToken = sessionToken.get()
-        if (endpoint.present) s3.endpoint = endpoint.get()
-        if (path.present) s3.path = path.get()
-        if (downloadUrl.present) s3.downloadUrl = downloadUrl.get()
-        if (headers.present) s3.headers.putAll(headers.get())
-        s3
+        org.jreleaser.model.internal.upload.S3Uploader uploader = new org.jreleaser.model.internal.upload.S3Uploader()
+        uploader.name = name
+        fillProperties(uploader)
+        if (region.present) uploader.region = region.get()
+        if (bucket.present) uploader.bucket = bucket.get()
+        if (accessKeyId.present) uploader.accessKeyId = accessKeyId.get()
+        if (secretKey.present) uploader.secretKey = secretKey.get()
+        if (sessionToken.present) uploader.sessionToken = sessionToken.get()
+        if (endpoint.present) uploader.endpoint = endpoint.get()
+        if (path.present) uploader.path = path.get()
+        if (downloadUrl.present) uploader.downloadUrl = downloadUrl.get()
+        if (headers.present) uploader.headers.putAll(headers.get())
+        uploader
     }
 }

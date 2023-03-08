@@ -52,30 +52,30 @@ public final class GitlabUploaderValidator {
         }
     }
 
-    private static void validateGitlabUploader(JReleaserContext context, GitlabUploader gitlab, Errors errors) {
-        context.getLogger().debug("upload.gitlab.{}", gitlab.getName());
+    private static void validateGitlabUploader(JReleaserContext context, GitlabUploader uploader, Errors errors) {
+        context.getLogger().debug("upload.gitlab.{}", uploader.getName());
 
-        resolveActivatable(context, gitlab,
-            listOf("upload.gitlab." + gitlab.getName(), "upload.gitlab"),
+        resolveActivatable(context, uploader,
+            listOf("upload.gitlab." + uploader.getName(), "upload.gitlab"),
             "NEVER");
-        if (!gitlab.resolveEnabledWithSnapshot(context.getModel().getProject())) {
+        if (!uploader.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
-        if (!gitlab.isArtifacts() && !gitlab.isFiles() && !gitlab.isSignatures()) {
-            errors.warning(RB.$("WARNING.validation.uploader.no.artifacts", gitlab.getType(), gitlab.getName()));
+        if (!uploader.isArtifacts() && !uploader.isFiles() && !uploader.isSignatures()) {
+            errors.warning(RB.$("WARNING.validation.uploader.no.artifacts", uploader.getType(), uploader.getName()));
             context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
-            gitlab.disable();
+            uploader.disable();
             return;
         }
 
-        String baseKey1 = "upload.gitlab." + gitlab.getName();
+        String baseKey1 = "upload.gitlab." + uploader.getName();
         String baseKey2 = "upload.gitlab";
-        String baseKey3 = "gitlab." + gitlab.getName();
+        String baseKey3 = "gitlab." + uploader.getName();
         String baseKey4 = "gitlab";
 
-        gitlab.setToken(
+        uploader.setToken(
             checkProperty(context,
                 listOf(
                     baseKey1 + ".token",
@@ -83,11 +83,11 @@ public final class GitlabUploaderValidator {
                     baseKey3 + ".token",
                     baseKey4 + ".token"),
                 baseKey1 + ".token",
-                gitlab.getToken(),
+                uploader.getToken(),
                 errors,
                 context.isDryrun()));
 
-        gitlab.setHost(
+        uploader.setHost(
             checkProperty(context,
                 listOf(
                     baseKey1 + ".host",
@@ -95,21 +95,21 @@ public final class GitlabUploaderValidator {
                     baseKey3 + ".host",
                     baseKey4 + ".host"),
                 baseKey1 + ".host",
-                gitlab.getHost(),
+                uploader.getHost(),
                 errors,
                 context.isDryrun()));
 
-        if (isBlank(gitlab.getPackageName())) {
-            gitlab.setPackageName(gitlab.getName());
+        if (isBlank(uploader.getPackageName())) {
+            uploader.setPackageName(uploader.getName());
         }
-        if (isBlank(gitlab.getPackageVersion())) {
-            gitlab.setPackageVersion("{{projectVersion}}");
+        if (isBlank(uploader.getPackageVersion())) {
+            uploader.setPackageVersion("{{projectVersion}}");
         }
 
-        if (isBlank(gitlab.getProjectIdentifier())) {
+        if (isBlank(uploader.getProjectIdentifier())) {
             errors.configuration(RB.$("validation_must_not_be_blank", baseKey1 + ".projectIdentifier"));
         }
 
-        validateTimeout(gitlab);
+        validateTimeout(uploader);
     }
 }

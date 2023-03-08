@@ -71,13 +71,13 @@ class MastodonAnnouncerImpl extends AbstractAnnouncer implements MastodonAnnounc
     }
 
     org.jreleaser.model.internal.announce.MastodonAnnouncer toModel() {
-        org.jreleaser.model.internal.announce.MastodonAnnouncer mastodon = new org.jreleaser.model.internal.announce.MastodonAnnouncer()
-        fillProperties(mastodon)
-        if (host.present) mastodon.host = host.get()
-        if (accessToken.present) mastodon.accessToken = accessToken.get()
-        if (status.present) mastodon.status = status.get()
-        if (statusTemplate.present) mastodon.statusTemplate = statusTemplate.get()
-        mastodon.statuses = (List<String>) statuses.getOrElse([])
-        mastodon
+        org.jreleaser.model.internal.announce.MastodonAnnouncer announcer = new org.jreleaser.model.internal.announce.MastodonAnnouncer()
+        fillProperties(announcer)
+        if (host.present) announcer.host = host.get()
+        if (accessToken.present) announcer.accessToken = accessToken.get()
+        if (status.present) announcer.status = status.get()
+        if (statusTemplate.present) announcer.statusTemplate = statusTemplate.get()
+        announcer.statuses = (List<String>) statuses.getOrElse([])
+        announcer
     }
 }

@@ -53,27 +53,27 @@ public final class SftpDownloaderValidator {
         }
     }
 
-    private static void validateSftpDownloader(JReleaserContext context, SftpDownloader sftp, Errors errors) {
-        context.getLogger().debug("download.sftp.{}", sftp.getName());
+    private static void validateSftpDownloader(JReleaserContext context, SftpDownloader downloader, Errors errors) {
+        context.getLogger().debug("download.sftp.{}", downloader.getName());
 
-        resolveActivatable(context, sftp,
-            listOf("download.sftp." + sftp.getName(), "download.sftp"),
+        resolveActivatable(context, downloader,
+            listOf("download.sftp." + downloader.getName(), "download.sftp"),
             "ALWAYS");
-        if (!sftp.resolveEnabled(context.getModel().getProject())) {
+        if (!downloader.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
-        validateSsh(context, sftp, sftp.getType(), sftp.getName(), "download.", errors);
-        validateTimeout(sftp);
+        validateSsh(context, downloader, downloader.getType(), downloader.getName(), "download.", errors);
+        validateTimeout(downloader);
 
-        if (sftp.getAssets().isEmpty()) {
-            errors.configuration(RB.$("validation_must_not_be_empty", "download.sftp." + sftp.getName() + ".assets"));
+        if (downloader.getAssets().isEmpty()) {
+            errors.configuration(RB.$("validation_must_not_be_empty", "download.sftp." + downloader.getName() + ".assets"));
         } else {
             int index = 0;
-            for (Downloader.Asset asset : sftp.getAssets()) {
+            for (Downloader.Asset asset : downloader.getAssets()) {
                 if (isBlank(asset.getInput())) {
-                    errors.configuration(RB.$("validation_must_not_be_null", "download.sftp." + sftp.getName() + ".asset[" + (index++) + "].input"));
+                    errors.configuration(RB.$("validation_must_not_be_null", "download.sftp." + downloader.getName() + ".asset[" + (index++) + "].input"));
                 }
             }
         }

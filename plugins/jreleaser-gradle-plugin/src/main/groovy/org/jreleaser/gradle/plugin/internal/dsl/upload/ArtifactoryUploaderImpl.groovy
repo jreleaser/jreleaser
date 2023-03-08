@@ -95,17 +95,17 @@ class ArtifactoryUploaderImpl extends AbstractWebUploader implements Artifactory
     }
 
     org.jreleaser.model.internal.upload.ArtifactoryUploader toModel() {
-        org.jreleaser.model.internal.upload.ArtifactoryUploader artifactory = new org.jreleaser.model.internal.upload.ArtifactoryUploader()
-        artifactory.name = name
-        fillProperties(artifactory)
-        if (host.present) artifactory.host = host.get()
-        if (username.present) artifactory.username = username.get()
-        if (password.present) artifactory.password = password.get()
-        if (authorization.present) artifactory.authorization = authorization.get()
+        org.jreleaser.model.internal.upload.ArtifactoryUploader uploader = new org.jreleaser.model.internal.upload.ArtifactoryUploader()
+        uploader.name = name
+        fillProperties(uploader)
+        if (host.present) uploader.host = host.get()
+        if (username.present) uploader.username = username.get()
+        if (password.present) uploader.password = password.get()
+        if (authorization.present) uploader.authorization = authorization.get()
         for (ArtifactoryRepositoryImpl repository : repositories) {
-            artifactory.addRepository(repository.toModel())
+            uploader.addRepository(repository.toModel())
         }
-        artifactory
+        uploader
     }
 
     @CompileStatic

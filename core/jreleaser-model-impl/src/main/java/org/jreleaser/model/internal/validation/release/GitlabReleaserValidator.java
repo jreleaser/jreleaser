@@ -38,20 +38,20 @@ public final class GitlabReleaserValidator {
         // noop
     }
 
-    public static boolean validateGitlab(JReleaserContext context, Mode mode, GitlabReleaser gitlab, Errors errors) {
-        if (null == gitlab) return false;
+    public static boolean validateGitlab(JReleaserContext context, Mode mode, GitlabReleaser service, Errors errors) {
+        if (null == service) return false;
         context.getLogger().debug("release.gitlab");
 
-        validateGitService(context, mode, gitlab, errors);
-        gitlab.getPrerelease().disable();
+        validateGitService(context, mode, service, errors);
+        service.getPrerelease().disable();
 
-        for (Map.Entry<String, String> e : gitlab.getUploadLinks().entrySet()) {
+        for (Map.Entry<String, String> e : service.getUploadLinks().entrySet()) {
             Optional<? extends Uploader<?>> uploader = context.getModel().getUpload().getUploader(e.getKey(), e.getValue());
             if (!uploader.isPresent()) {
                 errors.configuration(RB.$("validation_gitlab_non_matching_uploader", e.getKey(), e.getValue()));
             }
         }
 
-        return gitlab.isEnabled();
+        return service.isEnabled();
     }
 }

@@ -49,15 +49,15 @@ public final class JpackageAssemblerResolver {
         }
     }
 
-    private static void resolveJpackageOutputs(JReleaserContext context, JpackageAssembler jpackage, Errors errors) {
+    private static void resolveJpackageOutputs(JReleaserContext context, JpackageAssembler assembler, Errors errors) {
         Path baseOutputDirectory = context.getAssembleDirectory()
-            .resolve(jpackage.getName())
-            .resolve(jpackage.getType());
+            .resolve(assembler.getName())
+            .resolve(assembler.getType());
 
-        Artifact jdk = jpackage.getResolvedPlatformPackager().getJdk();
+        Artifact jdk = assembler.getResolvedPlatformPackager().getJdk();
         if (!context.isPlatformSelected(jdk)) return;
 
-        JpackageAssembler.PlatformPackager packager = jpackage.getResolvedPlatformPackager();
+        JpackageAssembler.PlatformPackager packager = assembler.getResolvedPlatformPackager();
         String platform = jdk.getPlatform();
 
         for (String type : packager.getTypes()) {
@@ -68,12 +68,12 @@ public final class JpackageAssemblerResolver {
 
                 if (!file.isPresent()) {
                     errors.assembly(RB.$("validation_missing_assembly",
-                        jpackage.getType(), jpackage.getName(), jpackage.getName()));
+                        assembler.getType(), assembler.getName(), assembler.getName()));
                 } else {
                     Artifact artifact = Artifact.of(file.get(), platform);
-                    artifact.setExtraProperties(jpackage.getExtraProperties());
+                    artifact.setExtraProperties(assembler.getExtraProperties());
                     artifact.activate();
-                    jpackage.addOutput(artifact);
+                    assembler.addOutput(artifact);
                 }
             } catch (IOException e) {
                 throw new JReleaserException(RB.$("ERROR_unexpected_error"), e);

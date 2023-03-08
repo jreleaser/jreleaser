@@ -36,26 +36,26 @@ public final class GithubReleaserValidator {
         // noop
     }
 
-    public static boolean validateGithub(JReleaserContext context, Mode mode, GithubReleaser github, Errors errors) {
-        if (null == github) return false;
+    public static boolean validateGithub(JReleaserContext context, Mode mode, GithubReleaser service, Errors errors) {
+        if (null == service) return false;
         context.getLogger().debug("release.github");
 
-        validateGitService(context, mode, github, errors);
+        validateGitService(context, mode, service, errors);
 
         if (context.getModel().getProject().isSnapshot()) {
-            github.getPrerelease().setEnabled(true);
+            service.getPrerelease().setEnabled(true);
         }
 
-        github.getPrerelease().setPattern(
+        service.getPrerelease().setPattern(
             checkProperty(context,
                 PRERELEASE_PATTERN,
                 "release.github.prerelease.pattern",
-                github.getPrerelease().getPattern(),
+                service.getPrerelease().getPattern(),
                 ""));
-        github.getPrerelease().isPrerelease(context.getModel().getProject().getResolvedVersion());
+        service.getPrerelease().isPrerelease(context.getModel().getProject().getResolvedVersion());
 
-        if (!github.isDraftSet()) {
-            github.setDraft(
+        if (!service.isDraftSet()) {
+            service.setDraft(
                 checkProperty(context,
                     DRAFT,
                     "release.github.draft",
@@ -63,19 +63,19 @@ public final class GithubReleaserValidator {
                     false));
         }
 
-        if (!github.getUpdate().isEnabled()) {
-            if (!github.getPrerelease().isEnabledSet()) {
-                github.getPrerelease().setEnabled(false);
+        if (!service.getUpdate().isEnabled()) {
+            if (!service.getPrerelease().isEnabledSet()) {
+                service.getPrerelease().setEnabled(false);
             }
-            if (!github.isDraftSet()) {
-                github.setDraft(false);
+            if (!service.isDraftSet()) {
+                service.setDraft(false);
             }
         }
 
-        if (github.isDraft()) {
-            github.getMilestone().setClose(false);
+        if (service.isDraft()) {
+            service.getMilestone().setClose(false);
         }
 
-        return github.isEnabled();
+        return service.isEnabled();
     }
 }

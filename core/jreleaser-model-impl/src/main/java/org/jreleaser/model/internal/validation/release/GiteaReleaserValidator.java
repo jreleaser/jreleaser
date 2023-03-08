@@ -38,30 +38,30 @@ public final class GiteaReleaserValidator {
         // noop
     }
 
-    public static boolean validateGitea(JReleaserContext context, Mode mode, GiteaReleaser gitea, Errors errors) {
-        if (null == gitea) return false;
+    public static boolean validateGitea(JReleaserContext context, Mode mode, GiteaReleaser service, Errors errors) {
+        if (null == service) return false;
         context.getLogger().debug("release.gitea");
 
-        validateGitService(context, mode, gitea, errors);
+        validateGitService(context, mode, service, errors);
 
-        if (isBlank(gitea.getApiEndpoint())) {
+        if (isBlank(service.getApiEndpoint())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "gitea.apiEndpoint"));
         }
 
         if (context.getModel().getProject().isSnapshot()) {
-            gitea.getPrerelease().setEnabled(true);
+            service.getPrerelease().setEnabled(true);
         }
 
-        gitea.getPrerelease().setPattern(
+        service.getPrerelease().setPattern(
             checkProperty(context,
                 PRERELEASE_PATTERN,
                 "release.gitea.prerelease.pattern",
-                gitea.getPrerelease().getPattern(),
+                service.getPrerelease().getPattern(),
                 ""));
-        gitea.getPrerelease().isPrerelease(context.getModel().getProject().getResolvedVersion());
+        service.getPrerelease().isPrerelease(context.getModel().getProject().getResolvedVersion());
 
-        if (!gitea.isDraftSet()) {
-            gitea.setDraft(
+        if (!service.isDraftSet()) {
+            service.setDraft(
                 checkProperty(context,
                     DRAFT,
                     "release.gitea.draft",
@@ -69,19 +69,19 @@ public final class GiteaReleaserValidator {
                     false));
         }
 
-        if (!gitea.getUpdate().isEnabled()) {
-            if (!gitea.getPrerelease().isEnabledSet()) {
-                gitea.getPrerelease().setEnabled(false);
+        if (!service.getUpdate().isEnabled()) {
+            if (!service.getPrerelease().isEnabledSet()) {
+                service.getPrerelease().setEnabled(false);
             }
-            if (!gitea.isDraftSet()) {
-                gitea.setDraft(false);
+            if (!service.isDraftSet()) {
+                service.setDraft(false);
             }
         }
 
-        if (gitea.isDraft()) {
-            gitea.getMilestone().setClose(false);
+        if (service.isDraft()) {
+            service.getMilestone().setClose(false);
         }
 
-        return gitea.isEnabled();
+        return service.isEnabled();
     }
 }

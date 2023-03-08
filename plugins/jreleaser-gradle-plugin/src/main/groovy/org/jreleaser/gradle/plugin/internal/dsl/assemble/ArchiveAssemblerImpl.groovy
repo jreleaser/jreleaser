@@ -95,15 +95,15 @@ class ArchiveAssemblerImpl extends AbstractAssembler implements ArchiveAssembler
     }
 
     org.jreleaser.model.internal.assemble.ArchiveAssembler toModel() {
-        org.jreleaser.model.internal.assemble.ArchiveAssembler archive = new org.jreleaser.model.internal.assemble.ArchiveAssembler()
-        archive.name = name
-        fillProperties(archive)
-        if (archiveName.present) archive.archiveName = archiveName.get()
-        if (attachPlatform.present) archive.attachPlatform = attachPlatform.get()
-        archive.platform = platform.toModel()
-        archive.distributionType = distributionType.get()
-        archive.formats = (Set<Archive.Format>) formats.getOrElse([] as Set<Archive.Format>)
-        if (options.isSet()) archive.options = options.toModel()
-        archive
+        org.jreleaser.model.internal.assemble.ArchiveAssembler assembler = new org.jreleaser.model.internal.assemble.ArchiveAssembler()
+        assembler.name = name
+        fillProperties(assembler)
+        if (archiveName.present) assembler.archiveName = archiveName.get()
+        if (attachPlatform.present) assembler.attachPlatform = attachPlatform.get()
+        assembler.platform = platform.toModel()
+        assembler.distributionType = distributionType.get()
+        assembler.formats = (Set<Archive.Format>) formats.getOrElse([] as Set<Archive.Format>)
+        if (options.isSet()) assembler.options = options.toModel()
+        assembler
     }
 }

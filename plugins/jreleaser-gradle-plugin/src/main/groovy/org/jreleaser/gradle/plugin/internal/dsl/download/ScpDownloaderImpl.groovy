@@ -38,9 +38,9 @@ class ScpDownloaderImpl extends AbstractSshDownloader implements ScpDownloader {
     }
 
     org.jreleaser.model.internal.download.ScpDownloader toModel() {
-        org.jreleaser.model.internal.download.ScpDownloader scp = new org.jreleaser.model.internal.download.ScpDownloader()
-        scp.name = name
-        fillProperties(scp)
-        scp
+        org.jreleaser.model.internal.download.ScpDownloader downloader = new org.jreleaser.model.internal.download.ScpDownloader()
+        downloader.name = name
+        fillProperties(downloader)
+        downloader
     }
 }

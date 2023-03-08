@@ -44,60 +44,60 @@ public final class SlackAnnouncerValidator {
         // noop
     }
 
-    public static void validateSlack(JReleaserContext context, SlackAnnouncer slack, Errors errors) {
+    public static void validateSlack(JReleaserContext context, SlackAnnouncer announcer, Errors errors) {
         context.getLogger().debug("announce.slack");
-        resolveActivatable(context, slack, "announce.slack", "NEVER");
-        if (!slack.resolveEnabledWithSnapshot(context.getModel().getProject())) {
+        resolveActivatable(context, announcer, "announce.slack", "NEVER");
+        if (!announcer.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
         Errors ignored = new Errors();
-        slack.setToken(
+        announcer.setToken(
             checkProperty(context,
                 listOf(
                     "announce.slack.token",
                     SLACK_TOKEN),
                 "announce.slack.token",
-                slack.getToken(),
+                announcer.getToken(),
                 ignored,
                 context.isDryrun()));
 
-        slack.setWebhook(
+        announcer.setWebhook(
             checkProperty(context,
                 listOf(
                     "announce.slack.webhook",
                     SLACK_WEBHOOK),
                 "announce.slack.webhook",
-                slack.getWebhook(),
+                announcer.getWebhook(),
                 ignored,
                 context.isDryrun()));
 
-        String token = slack.getToken();
-        String webhook = slack.getWebhook();
+        String token = announcer.getToken();
+        String webhook = announcer.getWebhook();
 
         if (!context.isDryrun() && isBlank(token) && isBlank(webhook)) {
             errors.configuration(RB.$("validation_slack_token"));
             return;
         }
 
-        if (isBlank(slack.getChannel())) {
-            slack.setChannel("#announce");
+        if (isBlank(announcer.getChannel())) {
+            announcer.setChannel("#announce");
         }
 
-        if (isBlank(slack.getMessage()) && isBlank(slack.getMessageTemplate())) {
+        if (isBlank(announcer.getMessage()) && isBlank(announcer.getMessageTemplate())) {
             if (Files.exists(context.getBasedir().resolve(DEFAULT_SLACK_TPL))) {
-                slack.setMessageTemplate(DEFAULT_SLACK_TPL);
+                announcer.setMessageTemplate(DEFAULT_SLACK_TPL);
             } else {
-                slack.setMessage(RB.$("default.release.message"));
+                announcer.setMessage(RB.$("default.release.message"));
             }
         }
 
-        if (isNotBlank(slack.getMessageTemplate()) &&
-            !Files.exists(context.getBasedir().resolve(slack.getMessageTemplate().trim()))) {
-            errors.configuration(RB.$("validation_directory_not_exist", "slack.messageTemplate ", slack.getMessageTemplate()));
+        if (isNotBlank(announcer.getMessageTemplate()) &&
+            !Files.exists(context.getBasedir().resolve(announcer.getMessageTemplate().trim()))) {
+            errors.configuration(RB.$("validation_directory_not_exist", "slack.messageTemplate ", announcer.getMessageTemplate()));
         }
 
-        validateTimeout(slack);
+        validateTimeout(announcer);
     }
 }

@@ -59,13 +59,13 @@ class FtpDownloaderImpl extends AbstractDownloader implements FtpDownloader {
     }
 
     org.jreleaser.model.internal.download.FtpDownloader toModel() {
-        org.jreleaser.model.internal.download.FtpDownloader ftp = new org.jreleaser.model.internal.download.FtpDownloader()
-        ftp.name = name
-        fillProperties(ftp)
-        ftp.username = username.orNull
-        ftp.password = password.orNull
-        ftp.host = host.orNull
-        if (port.present) ftp.port = port.get()
-        ftp
+        org.jreleaser.model.internal.download.FtpDownloader downloader = new org.jreleaser.model.internal.download.FtpDownloader()
+        downloader.name = name
+        fillProperties(downloader)
+        downloader.username = username.orNull
+        downloader.password = password.orNull
+        downloader.host = host.orNull
+        if (port.present) downloader.port = port.get()
+        downloader
     }
 }

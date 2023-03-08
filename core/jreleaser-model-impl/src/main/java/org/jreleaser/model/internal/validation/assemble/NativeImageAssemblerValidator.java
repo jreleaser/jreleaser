@@ -58,66 +58,66 @@ public final class NativeImageAssemblerValidator {
         }
     }
 
-    private static void validateNativeImage(JReleaserContext context, Mode mode, NativeImageAssembler nativeImage, Errors errors) {
-        context.getLogger().debug("assemble.nativeImage.{}", nativeImage.getName());
+    private static void validateNativeImage(JReleaserContext context, Mode mode, NativeImageAssembler assembler, Errors errors) {
+        context.getLogger().debug("assemble.nativeImage.{}", assembler.getName());
 
-        resolveActivatable(context, nativeImage,
-            listOf("assemble.native.image." + nativeImage.getName(), "assemble.native.image"),
+        resolveActivatable(context, assembler,
+            listOf("assemble.native.image." + assembler.getName(), "assemble.native.image"),
             "NEVER");
-        if (!nativeImage.resolveEnabled(context.getModel().getProject())) {
+        if (!assembler.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
-        if (null == nativeImage.getStereotype()) {
-            nativeImage.setStereotype(context.getModel().getProject().getStereotype());
+        if (null == assembler.getStereotype()) {
+            assembler.setStereotype(context.getModel().getProject().getStereotype());
         }
 
-        if (isBlank(nativeImage.getName())) {
+        if (isBlank(assembler.getName())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "nativeImage.name"));
             context.getLogger().debug(RB.$("validation.disabled.error"));
-            nativeImage.disable();
+            assembler.disable();
             return;
         }
 
-        if (null == nativeImage.getMainJar()) {
-            errors.configuration(RB.$("validation_is_null", "nativeImage." + nativeImage.getName() + ".mainJar"));
+        if (null == assembler.getMainJar()) {
+            errors.configuration(RB.$("validation_is_null", "nativeImage." + assembler.getName() + ".mainJar"));
             context.getLogger().debug(RB.$("validation.disabled.error"));
             return;
         }
 
-        nativeImage.setPlatform(nativeImage.getPlatform().mergeValues(context.getModel().getPlatform()));
+        assembler.setPlatform(assembler.getPlatform().mergeValues(context.getModel().getPlatform()));
 
-        if (isBlank(nativeImage.getExecutable())) {
-            nativeImage.setExecutable(nativeImage.getName());
+        if (isBlank(assembler.getExecutable())) {
+            assembler.setExecutable(assembler.getName());
         }
-        if (isBlank(nativeImage.getImageName())) {
-            nativeImage.setImageName(nativeImage.getExecutable() + "-" +
+        if (isBlank(assembler.getImageName())) {
+            assembler.setImageName(assembler.getExecutable() + "-" +
                 context.getModel().getProject().getResolvedVersion());
         }
 
         int i = 0;
-        for (Artifact graalJdk : nativeImage.getGraalJdks()) {
-            validateJdk(context, mode, nativeImage, graalJdk, i++, errors);
+        for (Artifact graalJdk : assembler.getGraalJdks()) {
+            validateJdk(context, mode, assembler, graalJdk, i++, errors);
         }
 
         // validate jdks.platform is unique
-        Map<String, List<Artifact>> byPlatform = nativeImage.getGraalJdks().stream()
+        Map<String, List<Artifact>> byPlatform = assembler.getGraalJdks().stream()
             .collect(groupingBy(jdk -> isBlank(jdk.getPlatform()) ? "<nil>" : jdk.getPlatform()));
         if (byPlatform.containsKey("<nil>")) {
-            errors.configuration(RB.$("validation_nativeimage_jdk_platform", nativeImage.getName()));
+            errors.configuration(RB.$("validation_nativeimage_jdk_platform", assembler.getName()));
         }
         // check platforms
         byPlatform.forEach((p, jdks) -> {
             if (jdks.size() > 1) {
-                errors.configuration(RB.$("validation_nativeimage_jdk_multiple_platforms", nativeImage.getName(), p));
+                errors.configuration(RB.$("validation_nativeimage_jdk_multiple_platforms", assembler.getName(), p));
             }
         });
 
-        if (isBlank(nativeImage.getGraal().getPath())) {
+        if (isBlank(assembler.getGraal().getPath())) {
             String currentPlatform = PlatformUtils.getCurrentFull();
             String javaHome = System.getProperty("java.home");
-            if (nativeImage.getGraalJdks().isEmpty()) {
+            if (assembler.getGraalJdks().isEmpty()) {
                 if (isBlank(javaHome)) {
                     // Can only happen when running as native-image, fail for now
                     // TODO: native-image
@@ -125,16 +125,16 @@ public final class NativeImageAssemblerValidator {
                     return;
                 }
                 // Use current
-                nativeImage.getGraal().setPath(javaHome);
-                nativeImage.getGraal().setPlatform(currentPlatform);
+                assembler.getGraal().setPath(javaHome);
+                assembler.getGraal().setPlatform(currentPlatform);
             } else {
                 // find a compatible JDK in targets
-                Optional<Artifact> jdk = nativeImage.getGraalJdks().stream()
+                Optional<Artifact> jdk = assembler.getGraalJdks().stream()
                     .filter(j -> PlatformUtils.isCompatible(currentPlatform, j.getPlatform()))
                     .findFirst();
 
                 if (jdk.isPresent()) {
-                    nativeImage.setGraal(jdk.get());
+                    assembler.setGraal(jdk.get());
                 } else {
                     if (isBlank(javaHome)) {
                         // Can only happen when running as native-image, fail for now
@@ -143,32 +143,32 @@ public final class NativeImageAssemblerValidator {
                         return;
                     }
                     // Can't tell if the current JDK will work but might as well use it
-                    nativeImage.getGraal().setPath(javaHome);
-                    nativeImage.getGraal().setPlatform(currentPlatform);
+                    assembler.getGraal().setPath(javaHome);
+                    assembler.getGraal().setPlatform(currentPlatform);
                 }
             }
         }
 
-        if (null == nativeImage.getArchiveFormat()) {
-            nativeImage.setArchiveFormat(Archive.Format.ZIP);
+        if (null == assembler.getArchiveFormat()) {
+            assembler.setArchiveFormat(Archive.Format.ZIP);
         }
 
-        if (null == nativeImage.getOptions().getTimestamp()) {
-            nativeImage.getOptions().setTimestamp(context.getModel().resolveArchiveTimestamp());
+        if (null == assembler.getOptions().getTimestamp()) {
+            assembler.getOptions().setTimestamp(context.getModel().resolveArchiveTimestamp());
         }
 
-        validateJavaAssembler(context, mode, nativeImage, errors, true);
+        validateJavaAssembler(context, mode, assembler, errors, true);
 
-        nativeImage.getComponents().remove("native-image");
+        assembler.getComponents().remove("native-image");
 
-        NativeImageAssembler.Upx upx = nativeImage.getUpx();
+        NativeImageAssembler.Upx upx = assembler.getUpx();
         resolveActivatable(context, upx,
-            listOf("assemble.native.image." + nativeImage.getName() + ".upx", "assemble.native.image.upx"),
+            listOf("assemble.native.image." + assembler.getName() + ".upx", "assemble.native.image.upx"),
             "NEVER");
         if (!upx.resolveEnabled(context.getModel().getProject())) return;
 
         if (isBlank(upx.getVersion())) {
-            errors.configuration(RB.$("validation_is_missing", "nativeImage." + nativeImage.getName() + ".upx.version"));
+            errors.configuration(RB.$("validation_is_missing", "nativeImage." + assembler.getName() + ".upx.version"));
         }
     }
 

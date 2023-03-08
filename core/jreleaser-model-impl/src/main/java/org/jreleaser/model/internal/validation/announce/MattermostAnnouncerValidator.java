@@ -43,37 +43,37 @@ public final class MattermostAnnouncerValidator {
         // noop
     }
 
-    public static void validateMattermost(JReleaserContext context, MattermostAnnouncer mattermost, Errors errors) {
+    public static void validateMattermost(JReleaserContext context, MattermostAnnouncer announcer, Errors errors) {
         context.getLogger().debug("announce.mattermost");
-        resolveActivatable(context, mattermost, "announce.mattermost", "NEVER");
-        if (!mattermost.resolveEnabledWithSnapshot(context.getModel().getProject())) {
+        resolveActivatable(context, announcer, "announce.mattermost", "NEVER");
+        if (!announcer.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
-        mattermost.setWebhook(
+        announcer.setWebhook(
             checkProperty(context,
                 listOf(
                     "announce.mattermost.webhook",
                     MATTERMOST_WEBHOOK),
                 "announce.mattermost.webhook",
-                mattermost.getWebhook(),
+                announcer.getWebhook(),
                 errors,
                 context.isDryrun()));
 
-        if (isBlank(mattermost.getMessage()) && isBlank(mattermost.getMessageTemplate())) {
+        if (isBlank(announcer.getMessage()) && isBlank(announcer.getMessageTemplate())) {
             if (Files.exists(context.getBasedir().resolve(DEFAULT_MATTERMOST_TPL))) {
-                mattermost.setMessageTemplate(DEFAULT_MATTERMOST_TPL);
+                announcer.setMessageTemplate(DEFAULT_MATTERMOST_TPL);
             } else {
-                mattermost.setMessage(RB.$("default.release.message"));
+                announcer.setMessage(RB.$("default.release.message"));
             }
         }
 
-        if (isNotBlank(mattermost.getMessageTemplate()) &&
-            !Files.exists(context.getBasedir().resolve(mattermost.getMessageTemplate().trim()))) {
-            errors.configuration(RB.$("validation_directory_not_exist", "mattermost.messageTemplate", mattermost.getMessageTemplate()));
+        if (isNotBlank(announcer.getMessageTemplate()) &&
+            !Files.exists(context.getBasedir().resolve(announcer.getMessageTemplate().trim()))) {
+            errors.configuration(RB.$("validation_directory_not_exist", "mattermost.messageTemplate", announcer.getMessageTemplate()));
         }
 
-        validateTimeout(mattermost);
+        validateTimeout(announcer);
     }
 }

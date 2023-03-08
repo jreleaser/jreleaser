@@ -67,15 +67,15 @@ class LinkedinAnnouncerImpl extends AbstractAnnouncer implements LinkedinAnnounc
     }
 
     org.jreleaser.model.internal.announce.LinkedinAnnouncer toModel() {
-        org.jreleaser.model.internal.announce.LinkedinAnnouncer linkedin = new org.jreleaser.model.internal.announce.LinkedinAnnouncer()
-        fillProperties(linkedin)
-        if (owner.present) linkedin.owner = owner.get()
-        if (accessToken.present) linkedin.accessToken = accessToken.get()
-        if (subject.present) linkedin.subject = subject.get()
-        if (message.present) linkedin.message = message.get()
+        org.jreleaser.model.internal.announce.LinkedinAnnouncer announcer = new org.jreleaser.model.internal.announce.LinkedinAnnouncer()
+        fillProperties(announcer)
+        if (owner.present) announcer.owner = owner.get()
+        if (accessToken.present) announcer.accessToken = accessToken.get()
+        if (subject.present) announcer.subject = subject.get()
+        if (message.present) announcer.message = message.get()
         if (messageTemplate.present) {
-            linkedin.messageTemplate = messageTemplate.asFile.get().absolutePath
+            announcer.messageTemplate = messageTemplate.asFile.get().absolutePath
         }
-        linkedin
+        announcer
     }
 }

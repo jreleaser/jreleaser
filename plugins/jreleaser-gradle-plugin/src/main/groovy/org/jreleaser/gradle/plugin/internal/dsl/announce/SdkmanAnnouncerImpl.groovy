@@ -74,14 +74,14 @@ class SdkmanAnnouncerImpl extends AbstractAnnouncer implements SdkmanAnnouncer {
     }
 
     org.jreleaser.model.internal.announce.SdkmanAnnouncer toModel() {
-        org.jreleaser.model.internal.announce.SdkmanAnnouncer sdkman = new org.jreleaser.model.internal.announce.SdkmanAnnouncer()
-        fillProperties(sdkman)
-        if (consumerKey.present) sdkman.consumerKey = consumerKey.get()
-        if (consumerToken.present) sdkman.consumerToken = consumerToken.get()
-        if (candidate.present) sdkman.candidate = candidate.get()
-        if (releaseNotesUrl.present) sdkman.releaseNotesUrl = releaseNotesUrl.get()
-        if (downloadUrl.present) sdkman.downloadUrl = downloadUrl.get()
-        if (command.present) sdkman.command = command.get()
-        sdkman
+        org.jreleaser.model.internal.announce.SdkmanAnnouncer announcer = new org.jreleaser.model.internal.announce.SdkmanAnnouncer()
+        fillProperties(announcer)
+        if (consumerKey.present) announcer.consumerKey = consumerKey.get()
+        if (consumerToken.present) announcer.consumerToken = consumerToken.get()
+        if (candidate.present) announcer.candidate = candidate.get()
+        if (releaseNotesUrl.present) announcer.releaseNotesUrl = releaseNotesUrl.get()
+        if (downloadUrl.present) announcer.downloadUrl = downloadUrl.get()
+        if (command.present) announcer.command = command.get()
+        announcer
     }
 }

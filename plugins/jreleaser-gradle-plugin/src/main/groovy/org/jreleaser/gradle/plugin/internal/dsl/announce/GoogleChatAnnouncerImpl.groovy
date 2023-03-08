@@ -61,13 +61,13 @@ class GoogleChatAnnouncerImpl extends AbstractAnnouncer implements GoogleChatAnn
     }
 
     org.jreleaser.model.internal.announce.GoogleChatAnnouncer toModel() {
-        org.jreleaser.model.internal.announce.GoogleChatAnnouncer slack = new org.jreleaser.model.internal.announce.GoogleChatAnnouncer()
-        fillProperties(slack)
-        if (webhook.present) slack.webhook = webhook.get()
-        if (message.present) slack.message = message.get()
+        org.jreleaser.model.internal.announce.GoogleChatAnnouncer announcer = new org.jreleaser.model.internal.announce.GoogleChatAnnouncer()
+        fillProperties(announcer)
+        if (webhook.present) announcer.webhook = webhook.get()
+        if (message.present) announcer.message = message.get()
         if (messageTemplate.present) {
-            slack.messageTemplate = messageTemplate.asFile.get().absolutePath
+            announcer.messageTemplate = messageTemplate.asFile.get().absolutePath
         }
-        slack
+        announcer
     }
 }

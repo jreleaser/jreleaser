@@ -62,14 +62,14 @@ class GitlabUploaderImpl extends AbstractUploader implements GitlabUploader {
     }
 
     org.jreleaser.model.internal.upload.GitlabUploader toModel() {
-        org.jreleaser.model.internal.upload.GitlabUploader gitlab = new org.jreleaser.model.internal.upload.GitlabUploader()
-        gitlab.name = name
-        fillProperties(gitlab)
-        if (host.present) gitlab.host = host.get()
-        if (token.present) gitlab.token = token.get()
-        if (packageName.present) gitlab.packageName = packageName.get()
-        if (packageVersion.present) gitlab.packageVersion = packageVersion.get()
-        if (projectIdentifier.present) gitlab.projectIdentifier = projectIdentifier.get()
-        gitlab
+        org.jreleaser.model.internal.upload.GitlabUploader uploader = new org.jreleaser.model.internal.upload.GitlabUploader()
+        uploader.name = name
+        fillProperties(uploader)
+        if (host.present) uploader.host = host.get()
+        if (token.present) uploader.token = token.get()
+        if (packageName.present) uploader.packageName = packageName.get()
+        if (packageVersion.present) uploader.packageVersion = packageVersion.get()
+        if (projectIdentifier.present) uploader.projectIdentifier = projectIdentifier.get()
+        uploader
     }
 }

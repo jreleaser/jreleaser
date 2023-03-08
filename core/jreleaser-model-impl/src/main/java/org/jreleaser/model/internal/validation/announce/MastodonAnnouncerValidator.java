@@ -41,42 +41,42 @@ public final class MastodonAnnouncerValidator {
         // noop
     }
 
-    public static void validateMastodon(JReleaserContext context, MastodonAnnouncer mastodon, Errors errors) {
+    public static void validateMastodon(JReleaserContext context, MastodonAnnouncer announcer, Errors errors) {
         context.getLogger().debug("announce.mastodon");
-        resolveActivatable(context, mastodon, "announce.mastodon", "NEVER");
-        if (!mastodon.resolveEnabledWithSnapshot(context.getModel().getProject())) {
+        resolveActivatable(context, announcer, "announce.mastodon", "NEVER");
+        if (!announcer.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
-        mastodon.setHost(
+        announcer.setHost(
             checkProperty(context,
                 listOf(
                     "announce.mastodon.host",
                     "mastodon.host"),
                 "announce.mastodon.host",
-                mastodon.getHost(),
+                announcer.getHost(),
                 errors));
 
-        mastodon.setAccessToken(
+        announcer.setAccessToken(
             checkProperty(context,
                 listOf(
                     "announce.mastodon.access.token",
                     MASTODON_ACCESS_TOKEN),
                 "announce.mastodon.accessToken",
-                mastodon.getAccessToken(),
+                announcer.getAccessToken(),
                 errors,
                 context.isDryrun()));
 
-        if (isNotBlank(mastodon.getStatusTemplate()) &&
-            !Files.exists(context.getBasedir().resolve(mastodon.getStatusTemplate().trim()))) {
-            errors.configuration(RB.$("validation_directory_not_exist", "mastodon.statusTemplate", mastodon.getStatusTemplate()));
+        if (isNotBlank(announcer.getStatusTemplate()) &&
+            !Files.exists(context.getBasedir().resolve(announcer.getStatusTemplate().trim()))) {
+            errors.configuration(RB.$("validation_directory_not_exist", "mastodon.statusTemplate", announcer.getStatusTemplate()));
         }
 
-        if (isBlank(mastodon.getStatus()) && isBlank(mastodon.getStatusTemplate()) && mastodon.getStatuses().isEmpty()) {
-            mastodon.setStatus(RB.$("default.release.message"));
+        if (isBlank(announcer.getStatus()) && isBlank(announcer.getStatusTemplate()) && announcer.getStatuses().isEmpty()) {
+            announcer.setStatus(RB.$("default.release.message"));
         }
 
-        validateTimeout(mastodon);
+        validateTimeout(announcer);
     }
 }

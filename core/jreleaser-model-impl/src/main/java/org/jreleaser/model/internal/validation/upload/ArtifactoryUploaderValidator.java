@@ -51,37 +51,37 @@ public final class ArtifactoryUploaderValidator {
         }
     }
 
-    private static void validateArtifactory(JReleaserContext context, ArtifactoryUploader artifactory, Errors errors) {
-        context.getLogger().debug("upload.artifactory.{}", artifactory.getName());
+    private static void validateArtifactory(JReleaserContext context, ArtifactoryUploader uploader, Errors errors) {
+        context.getLogger().debug("upload.artifactory.{}", uploader.getName());
 
-        resolveActivatable(context, artifactory,
-            listOf("upload.artifactory." + artifactory.getName(), "upload.artifactory"),
+        resolveActivatable(context, uploader,
+            listOf("upload.artifactory." + uploader.getName(), "upload.artifactory"),
             "NEVER");
-        if (!artifactory.resolveEnabledWithSnapshot(context.getModel().getProject())) {
+        if (!uploader.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
-        if (!artifactory.isArtifacts() && !artifactory.isFiles() && !artifactory.isSignatures()) {
-            errors.warning(RB.$("WARNING.validation.uploader.no.artifacts", artifactory.getType(), artifactory.getName()));
+        if (!uploader.isArtifacts() && !uploader.isFiles() && !uploader.isSignatures()) {
+            errors.warning(RB.$("WARNING.validation.uploader.no.artifacts", uploader.getType(), uploader.getName()));
             context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
-            artifactory.disable();
+            uploader.disable();
             return;
         }
 
-        if (artifactory.getRepositories().isEmpty()) {
-            errors.configuration(RB.$("validation_artifactory_no_repositories", "artifactory." + artifactory.getName()));
+        if (uploader.getRepositories().isEmpty()) {
+            errors.configuration(RB.$("validation_artifactory_no_repositories", "artifactory." + uploader.getName()));
             context.getLogger().debug(RB.$("validation.disabled.no.repositories"));
-            artifactory.disable();
+            uploader.disable();
             return;
         }
 
-        String baseKey1 = "upload.artifactory." + artifactory.getName();
+        String baseKey1 = "upload.artifactory." + uploader.getName();
         String baseKey2 = "upload.artifactory";
-        String baseKey3 = "artifactory." + artifactory.getName();
+        String baseKey3 = "artifactory." + uploader.getName();
         String baseKey4 = "artifactory";
 
-        artifactory.setHost(
+        uploader.setHost(
             checkProperty(context,
                 listOf(
                     baseKey1 + ".host",
@@ -89,12 +89,12 @@ public final class ArtifactoryUploaderValidator {
                     baseKey3 + ".host",
                     baseKey4 + ".host"),
                 baseKey1 + ".host",
-                artifactory.getHost(),
+                uploader.getHost(),
                 errors));
 
-        switch (artifactory.resolveAuthorization()) {
+        switch (uploader.resolveAuthorization()) {
             case BEARER:
-                artifactory.setPassword(
+                uploader.setPassword(
                     checkProperty(context,
                         listOf(
                             baseKey1 + ".password",
@@ -102,12 +102,12 @@ public final class ArtifactoryUploaderValidator {
                             baseKey3 + ".password",
                             baseKey4 + ".password"),
                         baseKey1 + ".password",
-                        artifactory.getPassword(),
+                        uploader.getPassword(),
                         errors,
                         context.isDryrun()));
                 break;
             case BASIC:
-                artifactory.setUsername(
+                uploader.setUsername(
                     checkProperty(context,
                         listOf(
                             baseKey1 + ".username",
@@ -115,11 +115,11 @@ public final class ArtifactoryUploaderValidator {
                             baseKey3 + ".username",
                             baseKey4 + ".username"),
                         baseKey1 + ".username",
-                        artifactory.getUsername(),
+                        uploader.getUsername(),
                         errors,
                         context.isDryrun()));
 
-                artifactory.setPassword(
+                uploader.setPassword(
                     checkProperty(context,
                         listOf(
                             baseKey1 + ".password",
@@ -127,31 +127,31 @@ public final class ArtifactoryUploaderValidator {
                             baseKey3 + ".password",
                             baseKey4 + ".password"),
                         baseKey1 + ".password",
-                        artifactory.getPassword(),
+                        uploader.getPassword(),
                         errors,
                         context.isDryrun()));
                 break;
             case NONE:
                 errors.configuration(RB.$("validation_value_cannot_be", baseKey1 + ".authorization", "NONE"));
                 context.getLogger().debug(RB.$("validation.disabled.error"));
-                artifactory.disable();
+                uploader.disable();
                 break;
         }
 
-        validateTimeout(artifactory);
+        validateTimeout(uploader);
 
-        for (ArtifactoryUploader.ArtifactoryRepository repository : artifactory.getRepositories()) {
+        for (ArtifactoryUploader.ArtifactoryRepository repository : uploader.getRepositories()) {
             resolveActivatable(context, repository, baseKey1 + ".repository", "");
             if (!repository.isActiveSet()) {
-                repository.setActive(artifactory.getActive());
+                repository.setActive(uploader.getActive());
             }
             repository.resolveEnabledWithSnapshot(context.getModel().getProject());
         }
 
-        if (artifactory.getRepositories().stream().noneMatch(ArtifactoryUploader.ArtifactoryRepository::isEnabled)) {
+        if (uploader.getRepositories().stream().noneMatch(ArtifactoryUploader.ArtifactoryRepository::isEnabled)) {
             errors.warning(RB.$("validation_artifactory_disabled_repositories", baseKey1));
             context.getLogger().debug(RB.$("validation.disabled.no.repositories"));
-            artifactory.disable();
+            uploader.disable();
         }
     }
 }

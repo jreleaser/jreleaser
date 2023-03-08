@@ -75,13 +75,13 @@ class HttpDownloaderImpl extends AbstractDownloader implements HttpDownloader {
     }
 
     org.jreleaser.model.internal.download.HttpDownloader toModel() {
-        org.jreleaser.model.internal.download.HttpDownloader http = new org.jreleaser.model.internal.download.HttpDownloader()
-        http.name = name
-        fillProperties(http)
-        if (username.present) http.username = username.get()
-        if (password.present) http.password = password.get()
-        if (authorization.present) http.authorization = authorization.get()
-        if (headers.present) http.headers.putAll(headers.get())
-        http
+        org.jreleaser.model.internal.download.HttpDownloader downloader = new org.jreleaser.model.internal.download.HttpDownloader()
+        downloader.name = name
+        fillProperties(downloader)
+        if (username.present) downloader.username = username.get()
+        if (password.present) downloader.password = password.get()
+        if (authorization.present) downloader.authorization = authorization.get()
+        if (headers.present) downloader.headers.putAll(headers.get())
+        downloader
     }
 }

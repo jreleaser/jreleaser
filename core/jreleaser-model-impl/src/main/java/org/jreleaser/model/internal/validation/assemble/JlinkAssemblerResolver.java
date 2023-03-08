@@ -49,23 +49,23 @@ public final class JlinkAssemblerResolver {
         }
     }
 
-    private static void resolveJlinkOutputs(JReleaserContext context, JlinkAssembler jlink, Errors errors) {
+    private static void resolveJlinkOutputs(JReleaserContext context, JlinkAssembler assembler, Errors errors) {
         Path baseOutputDirectory = context.getAssembleDirectory()
-            .resolve(jlink.getName())
-            .resolve(jlink.getType());
+            .resolve(assembler.getName())
+            .resolve(assembler.getType());
 
-        String imageName = jlink.getResolvedImageName(context);
-        if (isNotBlank(jlink.getImageNameTransform())) {
-            imageName = jlink.getResolvedImageNameTransform(context);
+        String imageName = assembler.getResolvedImageName(context);
+        if (isNotBlank(assembler.getImageNameTransform())) {
+            imageName = assembler.getResolvedImageNameTransform(context);
         }
 
-        for (Artifact targetJdk : jlink.getTargetJdks()) {
+        for (Artifact targetJdk : assembler.getTargetJdks()) {
             if (!context.isPlatformSelected(targetJdk)) continue;
 
             String platform = targetJdk.getPlatform();
-            String platformReplaced = jlink.getPlatform().applyReplacements(platform);
+            String platformReplaced = assembler.getPlatform().applyReplacements(platform);
             String str = targetJdk.getExtraProperties()
-                .getOrDefault(KEY_ARCHIVE_FORMAT, jlink.getArchiveFormat())
+                .getOrDefault(KEY_ARCHIVE_FORMAT, assembler.getArchiveFormat())
                 .toString();
             Archive.Format archiveFormat = Archive.Format.of(str);
 
@@ -75,12 +75,12 @@ public final class JlinkAssemblerResolver {
 
             if (!Files.exists(image)) {
                 errors.assembly(RB.$("validation_missing_assembly",
-                    jlink.getType(), jlink.getName(), jlink.getName()));
+                    assembler.getType(), assembler.getName(), assembler.getName()));
             } else {
                 Artifact artifact = Artifact.of(image, platform);
-                artifact.setExtraProperties(jlink.getExtraProperties());
+                artifact.setExtraProperties(assembler.getExtraProperties());
                 artifact.activate();
-                jlink.addOutput(artifact);
+                assembler.addOutput(artifact);
             }
         }
     }

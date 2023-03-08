@@ -52,28 +52,28 @@ public final class ScpUploaderValidator {
         }
     }
 
-    private static void validateScpUploader(JReleaserContext context, ScpUploader scp, Errors errors) {
-        context.getLogger().debug("upload.scp.{}", scp.getName());
+    private static void validateScpUploader(JReleaserContext context, ScpUploader uploader, Errors errors) {
+        context.getLogger().debug("upload.scp.{}", uploader.getName());
 
-        resolveActivatable(context, scp,
-            listOf("upload.scp." + scp.getName(), "upload.scp"),
+        resolveActivatable(context, uploader,
+            listOf("upload.scp." + uploader.getName(), "upload.scp"),
             "NEVER");
-        if (!scp.resolveEnabledWithSnapshot(context.getModel().getProject())) {
+        if (!uploader.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
-        if (!scp.isArtifacts() && !scp.isFiles() && !scp.isSignatures()) {
-            errors.warning(RB.$("WARNING.validation.uploader.no.artifacts", scp.getType(), scp.getName()));
+        if (!uploader.isArtifacts() && !uploader.isFiles() && !uploader.isSignatures()) {
+            errors.warning(RB.$("WARNING.validation.uploader.no.artifacts", uploader.getType(), uploader.getName()));
             context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
-            scp.disable();
+            uploader.disable();
             return;
         }
 
-        validateSsh(context, scp, scp.getType(), scp.getName(), "upload.", errors);
-        if (isBlank(scp.getPath())) {
-            errors.configuration(RB.$("validation_must_not_be_blank", "upload.scp." + scp.getName() + ".path"));
+        validateSsh(context, uploader, uploader.getType(), uploader.getName(), "upload.", errors);
+        if (isBlank(uploader.getPath())) {
+            errors.configuration(RB.$("validation_must_not_be_blank", "upload.scp." + uploader.getName() + ".path"));
         }
-        validateTimeout(scp);
+        validateTimeout(uploader);
     }
 }

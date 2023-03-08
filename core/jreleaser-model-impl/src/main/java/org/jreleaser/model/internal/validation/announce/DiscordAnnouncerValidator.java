@@ -43,37 +43,37 @@ public final class DiscordAnnouncerValidator {
         // noop
     }
 
-    public static void validateDiscord(JReleaserContext context, DiscordAnnouncer discord, Errors errors) {
+    public static void validateDiscord(JReleaserContext context, DiscordAnnouncer announcer, Errors errors) {
         context.getLogger().debug("announce.discord");
-        resolveActivatable(context, discord, "announce.discord", "NEVER");
-        if (!discord.resolveEnabledWithSnapshot(context.getModel().getProject())) {
+        resolveActivatable(context, announcer, "announce.discord", "NEVER");
+        if (!announcer.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
-        discord.setWebhook(
+        announcer.setWebhook(
             checkProperty(context,
                 listOf(
                     "announce.discord.webhook",
                     DISCORD_WEBHOOK),
                 "announce.discord.webhook",
-                discord.getWebhook(),
+                announcer.getWebhook(),
                 errors,
                 context.isDryrun()));
 
-        if (isBlank(discord.getMessage()) && isBlank(discord.getMessageTemplate())) {
+        if (isBlank(announcer.getMessage()) && isBlank(announcer.getMessageTemplate())) {
             if (Files.exists(context.getBasedir().resolve(DEFAULT_DISCORD_TPL))) {
-                discord.setMessageTemplate(DEFAULT_DISCORD_TPL);
+                announcer.setMessageTemplate(DEFAULT_DISCORD_TPL);
             } else {
-                discord.setMessage(RB.$("default.release.message"));
+                announcer.setMessage(RB.$("default.release.message"));
             }
         }
 
-        if (isNotBlank(discord.getMessageTemplate()) &&
-            !Files.exists(context.getBasedir().resolve(discord.getMessageTemplate().trim()))) {
-            errors.configuration(RB.$("validation_directory_not_exist", "discord.messageTemplate", discord.getMessageTemplate()));
+        if (isNotBlank(announcer.getMessageTemplate()) &&
+            !Files.exists(context.getBasedir().resolve(announcer.getMessageTemplate().trim()))) {
+            errors.configuration(RB.$("validation_directory_not_exist", "discord.messageTemplate", announcer.getMessageTemplate()));
         }
 
-        validateTimeout(discord);
+        validateTimeout(announcer);
     }
 }

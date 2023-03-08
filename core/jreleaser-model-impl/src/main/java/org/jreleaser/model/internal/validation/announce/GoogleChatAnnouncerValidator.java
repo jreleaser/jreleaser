@@ -43,37 +43,37 @@ public final class GoogleChatAnnouncerValidator {
         // noop
     }
 
-    public static void validateGoogleChat(JReleaserContext context, GoogleChatAnnouncer googleChat, Errors errors) {
+    public static void validateGoogleChat(JReleaserContext context, GoogleChatAnnouncer announcer, Errors errors) {
         context.getLogger().debug("announce.googleChat");
-        resolveActivatable(context, googleChat, "announce.google.chat", "NEVER");
-        if (!googleChat.resolveEnabledWithSnapshot(context.getModel().getProject())) {
+        resolveActivatable(context, announcer, "announce.google.chat", "NEVER");
+        if (!announcer.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
-        googleChat.setWebhook(
+        announcer.setWebhook(
             checkProperty(context,
                 listOf(
                     "announce.google.chat.webhook",
                     GOOGLE_CHAT_WEBHOOK),
                 "announce.googleChat.webhook",
-                googleChat.getWebhook(),
+                announcer.getWebhook(),
                 errors,
                 context.isDryrun()));
 
-        if (isBlank(googleChat.getMessage()) && isBlank(googleChat.getMessageTemplate())) {
+        if (isBlank(announcer.getMessage()) && isBlank(announcer.getMessageTemplate())) {
             if (Files.exists(context.getBasedir().resolve(DEFAULT_GOOGLE_CHAT_TPL))) {
-                googleChat.setMessageTemplate(DEFAULT_GOOGLE_CHAT_TPL);
+                announcer.setMessageTemplate(DEFAULT_GOOGLE_CHAT_TPL);
             } else {
-                googleChat.setMessage(RB.$("default.release.message"));
+                announcer.setMessage(RB.$("default.release.message"));
             }
         }
 
-        if (isNotBlank(googleChat.getMessageTemplate()) &&
-            !Files.exists(context.getBasedir().resolve(googleChat.getMessageTemplate().trim()))) {
-            errors.configuration(RB.$("validation_directory_not_exist", "googleChat.messageTemplate", googleChat.getMessageTemplate()));
+        if (isNotBlank(announcer.getMessageTemplate()) &&
+            !Files.exists(context.getBasedir().resolve(announcer.getMessageTemplate().trim()))) {
+            errors.configuration(RB.$("validation_directory_not_exist", "googleChat.messageTemplate", announcer.getMessageTemplate()));
         }
 
-        validateTimeout(googleChat);
+        validateTimeout(announcer);
     }
 }

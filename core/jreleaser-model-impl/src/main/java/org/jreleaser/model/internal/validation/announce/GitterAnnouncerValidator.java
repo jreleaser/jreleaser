@@ -43,37 +43,37 @@ public final class GitterAnnouncerValidator {
         // noop
     }
 
-    public static void validateGitter(JReleaserContext context, GitterAnnouncer gitter, Errors errors) {
+    public static void validateGitter(JReleaserContext context, GitterAnnouncer announcer, Errors errors) {
         context.getLogger().debug("announce.gitter");
-        resolveActivatable(context, gitter, "announce.gitter", "NEVER");
-        if (!gitter.resolveEnabledWithSnapshot(context.getModel().getProject())) {
+        resolveActivatable(context, announcer, "announce.gitter", "NEVER");
+        if (!announcer.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
-        gitter.setWebhook(
+        announcer.setWebhook(
             checkProperty(context,
                 listOf(
                     "announce.gitter.webhook",
                     GITTER_WEBHOOK),
                 "announce.gitter.webhook",
-                gitter.getWebhook(),
+                announcer.getWebhook(),
                 errors,
                 context.isDryrun()));
 
-        if (isBlank(gitter.getMessage()) && isBlank(gitter.getMessageTemplate())) {
+        if (isBlank(announcer.getMessage()) && isBlank(announcer.getMessageTemplate())) {
             if (Files.exists(context.getBasedir().resolve(DEFAULT_GITTER_TPL))) {
-                gitter.setMessageTemplate(DEFAULT_GITTER_TPL);
+                announcer.setMessageTemplate(DEFAULT_GITTER_TPL);
             } else {
-                gitter.setMessage(RB.$("default.release.message"));
+                announcer.setMessage(RB.$("default.release.message"));
             }
         }
 
-        if (isNotBlank(gitter.getMessageTemplate()) &&
-            !Files.exists(context.getBasedir().resolve(gitter.getMessageTemplate().trim()))) {
-            errors.configuration(RB.$("validation_directory_not_exist", "gitter.messageTemplate", gitter.getMessageTemplate()));
+        if (isNotBlank(announcer.getMessageTemplate()) &&
+            !Files.exists(context.getBasedir().resolve(announcer.getMessageTemplate().trim()))) {
+            errors.configuration(RB.$("validation_directory_not_exist", "gitter.messageTemplate", announcer.getMessageTemplate()));
         }
 
-        validateTimeout(gitter);
+        validateTimeout(announcer);
     }
 }

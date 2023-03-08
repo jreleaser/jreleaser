@@ -52,28 +52,28 @@ public final class SftpUploaderValidator {
         }
     }
 
-    private static void validateSftpUploader(JReleaserContext context, SftpUploader sftp, Errors errors) {
-        context.getLogger().debug("upload.sftp.{}", sftp.getName());
+    private static void validateSftpUploader(JReleaserContext context, SftpUploader uploader, Errors errors) {
+        context.getLogger().debug("upload.sftp.{}", uploader.getName());
 
-        resolveActivatable(context, sftp,
-            listOf("upload.sftp." + sftp.getName(), "upload.sftp"),
+        resolveActivatable(context, uploader,
+            listOf("upload.sftp." + uploader.getName(), "upload.sftp"),
             "NEVER");
-        if (!sftp.resolveEnabledWithSnapshot(context.getModel().getProject())) {
+        if (!uploader.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
-        if (!sftp.isArtifacts() && !sftp.isFiles() && !sftp.isSignatures()) {
-            errors.warning(RB.$("WARNING.validation.uploader.no.artifacts", sftp.getType(), sftp.getName()));
+        if (!uploader.isArtifacts() && !uploader.isFiles() && !uploader.isSignatures()) {
+            errors.warning(RB.$("WARNING.validation.uploader.no.artifacts", uploader.getType(), uploader.getName()));
             context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
-            sftp.disable();
+            uploader.disable();
             return;
         }
 
-        validateSsh(context, sftp, sftp.getType(), sftp.getName(), "upload.", errors);
-        if (isBlank(sftp.getPath())) {
-            errors.configuration(RB.$("validation_must_not_be_blank", "upload.sftp." + sftp.getName() + ".path"));
+        validateSsh(context, uploader, uploader.getType(), uploader.getName(), "upload.", errors);
+        if (isBlank(uploader.getPath())) {
+            errors.configuration(RB.$("validation_must_not_be_blank", "upload.sftp." + uploader.getName() + ".path"));
         }
-        validateTimeout(sftp);
+        validateTimeout(uploader);
     }
 }

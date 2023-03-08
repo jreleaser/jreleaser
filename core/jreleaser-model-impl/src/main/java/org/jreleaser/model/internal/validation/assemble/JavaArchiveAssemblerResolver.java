@@ -45,26 +45,26 @@ public final class JavaArchiveAssemblerResolver {
         }
     }
 
-    private static void resolveJavaArchiveOutputs(JReleaserContext context, JavaArchiveAssembler archive, Errors errors) {
+    private static void resolveJavaArchiveOutputs(JReleaserContext context, JavaArchiveAssembler assembler, Errors errors) {
         Path baseOutputDirectory = context.getAssembleDirectory()
-            .resolve(archive.getName())
-            .resolve(archive.getType());
+            .resolve(assembler.getName())
+            .resolve(assembler.getType());
 
-        String archiveName = archive.getResolvedArchiveName(context);
+        String archiveName = assembler.getResolvedArchiveName(context);
 
-        for (org.jreleaser.model.Archive.Format format : archive.getFormats()) {
+        for (org.jreleaser.model.Archive.Format format : assembler.getFormats()) {
             Path path = baseOutputDirectory
                 .resolve(archiveName + "." + format.extension())
                 .toAbsolutePath();
 
             if (!Files.exists(path)) {
                 errors.assembly(RB.$("validation_missing_assembly",
-                    archive.getType(), archive.getName(), archive.getName()));
+                    assembler.getType(), assembler.getName(), assembler.getName()));
             } else {
                 Artifact artifact = Artifact.of(path);
-                artifact.setExtraProperties(archive.getExtraProperties());
+                artifact.setExtraProperties(assembler.getExtraProperties());
                 artifact.activate();
-                archive.addOutput(artifact);
+                assembler.addOutput(artifact);
             }
         }
     }

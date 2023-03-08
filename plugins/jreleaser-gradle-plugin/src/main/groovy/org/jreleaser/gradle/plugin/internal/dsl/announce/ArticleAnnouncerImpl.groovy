@@ -106,27 +106,27 @@ class ArticleAnnouncerImpl extends AbstractAnnouncer implements ArticleAnnouncer
     @Internal
     boolean isSet() {
         super.isSet() ||
-            !files.isEmpty()
-        templateDirectory.present ||
+            !files.isEmpty() ||
+            templateDirectory.present ||
             repository.isSet() ||
             commitAuthor.isSet()
     }
 
     org.jreleaser.model.internal.announce.ArticleAnnouncer toModel() {
-        org.jreleaser.model.internal.announce.ArticleAnnouncer article = new org.jreleaser.model.internal.announce.ArticleAnnouncer()
-        fillProperties(article)
+        org.jreleaser.model.internal.announce.ArticleAnnouncer announcer = new org.jreleaser.model.internal.announce.ArticleAnnouncer()
+        fillProperties(announcer)
 
         for (ArtifactImpl file : files) {
-            article.addFile(file.toModel())
+            announcer.addFile(file.toModel())
         }
 
         if (templateDirectory.present) {
-            article.templateDirectory = templateDirectory.get().asFile.toPath().toAbsolutePath().toString()
+            announcer.templateDirectory = templateDirectory.get().asFile.toPath().toAbsolutePath().toString()
         }
 
-        if (repository.isSet()) article.repository = repository.toRepository()
-        if (commitAuthor.isSet()) article.commitAuthor = commitAuthor.toModel()
+        if (repository.isSet()) announcer.repository = repository.toRepository()
+        if (commitAuthor.isSet()) announcer.commitAuthor = commitAuthor.toModel()
 
-        article
+        announcer
     }
 }

@@ -44,47 +44,47 @@ public final class TelegramAnnouncerValidator {
         // noop
     }
 
-    public static void validateTelegram(JReleaserContext context, TelegramAnnouncer telegram, Errors errors) {
+    public static void validateTelegram(JReleaserContext context, TelegramAnnouncer announcer, Errors errors) {
         context.getLogger().debug("announce.telegram");
-        resolveActivatable(context, telegram, "announce.telegram", "NEVER");
-        if (!telegram.resolveEnabledWithSnapshot(context.getModel().getProject())) {
+        resolveActivatable(context, announcer, "announce.telegram", "NEVER");
+        if (!announcer.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
-        telegram.setToken(
+        announcer.setToken(
             checkProperty(context,
                 listOf(
                     "announce.telegram.token",
                     TELEGRAM_TOKEN),
                 "announce.telegram.token",
-                telegram.getToken(),
+                announcer.getToken(),
                 errors,
                 context.isDryrun()));
 
-        telegram.setChatId(
+        announcer.setChatId(
             checkProperty(context,
                 listOf(
                     "announce.telegram.chat.id",
                     TELEGRAM_CHAT_ID),
                 "announce.telegram.chatId",
-                telegram.getChatId(),
+                announcer.getChatId(),
                 errors,
                 context.isDryrun()));
 
-        if (isBlank(telegram.getMessage()) && isBlank(telegram.getMessageTemplate())) {
+        if (isBlank(announcer.getMessage()) && isBlank(announcer.getMessageTemplate())) {
             if (Files.exists(context.getBasedir().resolve(DEFAULT_TELEGRAM_TPL))) {
-                telegram.setMessageTemplate(DEFAULT_TELEGRAM_TPL);
+                announcer.setMessageTemplate(DEFAULT_TELEGRAM_TPL);
             } else {
-                telegram.setMessage(RB.$("default.release.message"));
+                announcer.setMessage(RB.$("default.release.message"));
             }
         }
 
-        if (isNotBlank(telegram.getMessageTemplate()) &&
-            !Files.exists(context.getBasedir().resolve(telegram.getMessageTemplate().trim()))) {
-            errors.configuration(RB.$("validation_directory_not_exist", "telegram.messageTemplate", telegram.getMessageTemplate()));
+        if (isNotBlank(announcer.getMessageTemplate()) &&
+            !Files.exists(context.getBasedir().resolve(announcer.getMessageTemplate().trim()))) {
+            errors.configuration(RB.$("validation_directory_not_exist", "telegram.messageTemplate", announcer.getMessageTemplate()));
         }
 
-        validateTimeout(telegram);
+        validateTimeout(announcer);
     }
 }

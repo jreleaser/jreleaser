@@ -169,24 +169,24 @@ class JpackageAssemblerImpl extends AbstractJavaAssembler implements JpackageAss
     }
 
     org.jreleaser.model.internal.assemble.JpackageAssembler toModel() {
-        org.jreleaser.model.internal.assemble.JpackageAssembler jpackage = new org.jreleaser.model.internal.assemble.JpackageAssembler()
-        jpackage.name = name
-        fillProperties(jpackage)
-        if (java.isSet()) jpackage.java = java.toModel()
-        if (platform.isSet()) jpackage.platform = platform.toModel()
-        if (applicationPackage.isSet()) jpackage.applicationPackage = applicationPackage.toModel()
-        if (launcher.isSet()) jpackage.launcher = launcher.toModel()
-        if (linux.isSet()) jpackage.linux = linux.toModel()
-        if (windows.isSet()) jpackage.windows = windows.toModel()
-        if (osx.isSet()) jpackage.osx = osx.toModel()
-        if (jlink.present) jpackage.jlink = jlink.get()
-        if (attachPlatform.present) jpackage.attachPlatform = attachPlatform.get()
-        if (verbose.present) jpackage.verbose = verbose.get()
+        org.jreleaser.model.internal.assemble.JpackageAssembler assembler = new org.jreleaser.model.internal.assemble.JpackageAssembler()
+        assembler.name = name
+        fillProperties(assembler)
+        if (java.isSet()) assembler.java = java.toModel()
+        if (platform.isSet()) assembler.platform = platform.toModel()
+        if (applicationPackage.isSet()) assembler.applicationPackage = applicationPackage.toModel()
+        if (launcher.isSet()) assembler.launcher = launcher.toModel()
+        if (linux.isSet()) assembler.linux = linux.toModel()
+        if (windows.isSet()) assembler.windows = windows.toModel()
+        if (osx.isSet()) assembler.osx = osx.toModel()
+        if (jlink.present) assembler.jlink = jlink.get()
+        if (attachPlatform.present) assembler.attachPlatform = attachPlatform.get()
+        if (verbose.present) assembler.verbose = verbose.get()
         for (ArtifactImpl artifact : runtimeImages) {
-            jpackage.addRuntimeImage(artifact.toModel())
+            assembler.addRuntimeImage(artifact.toModel())
         }
 
-        jpackage
+        assembler
     }
 
     @CompileStatic

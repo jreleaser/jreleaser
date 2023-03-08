@@ -211,26 +211,26 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
     }
 
     org.jreleaser.model.internal.assemble.NativeImageAssembler toModel() {
-        org.jreleaser.model.internal.assemble.NativeImageAssembler nativeImage = new org.jreleaser.model.internal.assemble.NativeImageAssembler()
-        nativeImage.name = name
-        fillProperties(nativeImage)
-        nativeImage.java = java.toModel()
-        nativeImage.platform = platform.toModel()
-        if (imageName.present) nativeImage.imageName = imageName.get()
-        if (imageNameTransform.present) nativeImage.imageNameTransform = imageNameTransform.get()
-        nativeImage.archiveFormat = archiveFormat.get()
-        nativeImage.args = (List<String>) args.getOrElse([])
-        nativeImage.components = (Set<String>) components.getOrElse([] as Set)
-        if (graal.isSet()) nativeImage.graal = graal.toModel()
-        if (upx.isSet()) nativeImage.upx = upx.toModel()
-        if (linux.isSet()) nativeImage.linux = linux.toModel()
-        if (windows.isSet()) nativeImage.windows = windows.toModel()
-        if (osx.isSet()) nativeImage.osx = osx.toModel()
+        org.jreleaser.model.internal.assemble.NativeImageAssembler assembler = new org.jreleaser.model.internal.assemble.NativeImageAssembler()
+        assembler.name = name
+        fillProperties(assembler)
+        assembler.java = java.toModel()
+        assembler.platform = platform.toModel()
+        if (imageName.present) assembler.imageName = imageName.get()
+        if (imageNameTransform.present) assembler.imageNameTransform = imageNameTransform.get()
+        assembler.archiveFormat = archiveFormat.get()
+        assembler.args = (List<String>) args.getOrElse([])
+        assembler.components = (Set<String>) components.getOrElse([] as Set)
+        if (graal.isSet()) assembler.graal = graal.toModel()
+        if (upx.isSet()) assembler.upx = upx.toModel()
+        if (linux.isSet()) assembler.linux = linux.toModel()
+        if (windows.isSet()) assembler.windows = windows.toModel()
+        if (osx.isSet()) assembler.osx = osx.toModel()
         for (ArtifactImpl artifact : graalJdks) {
-            nativeImage.addGraalJdk(artifact.toModel())
+            assembler.addGraalJdk(artifact.toModel())
         }
-        if (options.isSet()) nativeImage.options = options.toModel()
-        nativeImage
+        if (options.isSet()) assembler.options = options.toModel()
+        assembler
     }
 
     @CompileStatic

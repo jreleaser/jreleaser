@@ -46,29 +46,29 @@ public final class ArchiveAssemblerResolver {
         }
     }
 
-    private static void resolveArchiveOutputs(JReleaserContext context, ArchiveAssembler archive, Errors errors) {
-        if (archive.isAttachPlatform() &&
+    private static void resolveArchiveOutputs(JReleaserContext context, ArchiveAssembler assembler, Errors errors) {
+        if (assembler.isAttachPlatform() &&
             !context.isPlatformSelected(PlatformUtils.getCurrentFull())) return;
 
         Path baseOutputDirectory = context.getAssembleDirectory()
-            .resolve(archive.getName())
-            .resolve(archive.getType());
+            .resolve(assembler.getName())
+            .resolve(assembler.getType());
 
-        String archiveName = archive.getResolvedArchiveName(context);
+        String archiveName = assembler.getResolvedArchiveName(context);
 
-        for (org.jreleaser.model.Archive.Format format : archive.getFormats()) {
+        for (org.jreleaser.model.Archive.Format format : assembler.getFormats()) {
             Path path = baseOutputDirectory
                 .resolve(archiveName + "." + format.extension())
                 .toAbsolutePath();
 
             if (!Files.exists(path)) {
                 errors.assembly(RB.$("validation_missing_assembly",
-                    archive.getType(), archive.getName(), archive.getName()));
+                    assembler.getType(), assembler.getName(), assembler.getName()));
             } else {
-                Artifact artifact = Artifact.of(path, archive.isAttachPlatform() ? PlatformUtils.getCurrentFull() : "");
-                artifact.setExtraProperties(archive.getExtraProperties());
+                Artifact artifact = Artifact.of(path, assembler.isAttachPlatform() ? PlatformUtils.getCurrentFull() : "");
+                artifact.setExtraProperties(assembler.getExtraProperties());
                 artifact.activate();
-                archive.addOutput(artifact);
+                assembler.addOutput(artifact);
             }
         }
     }

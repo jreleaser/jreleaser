@@ -65,15 +65,15 @@ class FtpUploaderImpl extends AbstractUploader implements FtpUploader {
     }
 
     org.jreleaser.model.internal.upload.FtpUploader toModel() {
-        org.jreleaser.model.internal.upload.FtpUploader ftp = new org.jreleaser.model.internal.upload.FtpUploader()
-        ftp.name = name
-        fillProperties(ftp)
-        ftp.username = username.orNull
-        ftp.password = password.orNull
-        ftp.host = host.orNull
-        ftp.path = path.orNull
-        ftp.downloadUrl = downloadUrl.orNull
-        if (port.present) ftp.port = port.get()
-        ftp
+        org.jreleaser.model.internal.upload.FtpUploader uploader = new org.jreleaser.model.internal.upload.FtpUploader()
+        uploader.name = name
+        fillProperties(uploader)
+        uploader.username = username.orNull
+        uploader.password = password.orNull
+        uploader.host = host.orNull
+        uploader.path = path.orNull
+        uploader.downloadUrl = downloadUrl.orNull
+        if (port.present) uploader.port = port.get()
+        uploader
     }
 }

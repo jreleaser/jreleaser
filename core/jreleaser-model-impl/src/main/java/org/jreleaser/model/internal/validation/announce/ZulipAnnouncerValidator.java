@@ -43,62 +43,62 @@ public final class ZulipAnnouncerValidator {
         // noop
     }
 
-    public static void validateZulip(JReleaserContext context, ZulipAnnouncer zulip, Errors errors) {
+    public static void validateZulip(JReleaserContext context, ZulipAnnouncer announcer, Errors errors) {
         context.getLogger().debug("announce.zulip");
-        resolveActivatable(context, zulip, "announce.zulip", "NEVER");
-        if (!zulip.resolveEnabledWithSnapshot(context.getModel().getProject())) {
+        resolveActivatable(context, announcer, "announce.zulip", "NEVER");
+        if (!announcer.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
-        zulip.setAccount(
+        announcer.setAccount(
             checkProperty(context,
                 listOf(
                     "announce.zulip.account",
                     "zulip.account"),
                 "announce.zulip.account",
-                zulip.getAccount(),
+                announcer.getAccount(),
                 errors));
 
-        zulip.setApiKey(
+        announcer.setApiKey(
             checkProperty(context,
                 listOf(
                     "announce.zulip.api.key",
                     ZULIP_API_KEY),
                 "announce.zulip.apiKey",
-                zulip.getApiKey(),
+                announcer.getApiKey(),
                 errors,
                 context.isDryrun()));
 
-        zulip.setApiHost(
+        announcer.setApiHost(
             checkProperty(context,
                 listOf(
                     "announce.zulip.api.host",
                     "zulip.api.host"),
                 "announce.zulip.apiHost",
-                zulip.getApiHost(),
+                announcer.getApiHost(),
                 errors));
 
-        if (isBlank(zulip.getSubject())) {
-            zulip.setSubject(RB.$("default.discussion.title"));
+        if (isBlank(announcer.getSubject())) {
+            announcer.setSubject(RB.$("default.discussion.title"));
         }
-        if (isBlank(zulip.getChannel())) {
-            zulip.setChannel("announce");
+        if (isBlank(announcer.getChannel())) {
+            announcer.setChannel("announce");
         }
 
-        if (isBlank(zulip.getMessage()) && isBlank(zulip.getMessageTemplate())) {
+        if (isBlank(announcer.getMessage()) && isBlank(announcer.getMessageTemplate())) {
             if (Files.exists(context.getBasedir().resolve(DEFAULT_ZULIP_TPL))) {
-                zulip.setMessageTemplate(DEFAULT_ZULIP_TPL);
+                announcer.setMessageTemplate(DEFAULT_ZULIP_TPL);
             } else {
-                zulip.setMessage(RB.$("default.release.message"));
+                announcer.setMessage(RB.$("default.release.message"));
             }
         }
 
-        if (isNotBlank(zulip.getMessageTemplate()) &&
-            !Files.exists(context.getBasedir().resolve(zulip.getMessageTemplate().trim()))) {
-            errors.configuration(RB.$("validation_directory_not_exist", "zulip.messageTemplate", zulip.getMessageTemplate()));
+        if (isNotBlank(announcer.getMessageTemplate()) &&
+            !Files.exists(context.getBasedir().resolve(announcer.getMessageTemplate().trim()))) {
+            errors.configuration(RB.$("validation_directory_not_exist", "zulip.messageTemplate", announcer.getMessageTemplate()));
         }
 
-        validateTimeout(zulip);
+        validateTimeout(announcer);
     }
 }

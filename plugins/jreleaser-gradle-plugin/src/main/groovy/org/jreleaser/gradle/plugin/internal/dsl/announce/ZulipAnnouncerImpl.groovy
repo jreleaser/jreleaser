@@ -73,17 +73,17 @@ class ZulipAnnouncerImpl extends AbstractAnnouncer implements ZulipAnnouncer {
     }
 
     org.jreleaser.model.internal.announce.ZulipAnnouncer toModel() {
-        org.jreleaser.model.internal.announce.ZulipAnnouncer zulip = new org.jreleaser.model.internal.announce.ZulipAnnouncer()
-        fillProperties(zulip)
-        if (account.present) zulip.account = account.get()
-        if (apiKey.present) zulip.apiKey = apiKey.get()
-        if (apiHost.present) zulip.apiHost = apiHost.get()
-        if (channel.present) zulip.channel = channel.get()
-        if (subject.present) zulip.subject = subject.get()
-        if (message.present) zulip.message = message.get()
+        org.jreleaser.model.internal.announce.ZulipAnnouncer announcer = new org.jreleaser.model.internal.announce.ZulipAnnouncer()
+        fillProperties(announcer)
+        if (account.present) announcer.account = account.get()
+        if (apiKey.present) announcer.apiKey = apiKey.get()
+        if (apiHost.present) announcer.apiHost = apiHost.get()
+        if (channel.present) announcer.channel = channel.get()
+        if (subject.present) announcer.subject = subject.get()
+        if (message.present) announcer.message = message.get()
         if (messageTemplate.present) {
-            zulip.messageTemplate = messageTemplate.asFile.get().absolutePath
+            announcer.messageTemplate = messageTemplate.asFile.get().absolutePath
         }
-        zulip
+        announcer
     }
 }

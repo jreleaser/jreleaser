@@ -41,72 +41,72 @@ public final class SdkmanAnnouncerValidator {
         // noop
     }
 
-    public static void validateSdkmanAnnouncer(JReleaserContext context, SdkmanAnnouncer sdkman, Errors errors) {
+    public static void validateSdkmanAnnouncer(JReleaserContext context, SdkmanAnnouncer announcer, Errors errors) {
         context.getLogger().debug("announce.sdkman");
         // activate if there are any active distributions with Sdkman packager enabled
         context.getModel().getActiveDistributions().stream()
             .filter(d -> d.getSdkman().isEnabled())
             .findFirst()
-            .ifPresent(distribution -> sdkman.setActive(Active.ALWAYS));
+            .ifPresent(distribution -> announcer.setActive(Active.ALWAYS));
 
-        if (!sdkman.resolveEnabledWithSnapshot(context.getModel().getProject())) {
+        if (!announcer.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
         if (!context.getModel().getRelease().getReleaser().isReleaseSupported()) {
             context.getLogger().debug(RB.$("validation.disabled.release"));
-            sdkman.disable();
+            announcer.disable();
             return;
         }
 
-        Boolean set = (Boolean) sdkman.getExtraProperties().get(MAGIC_SET);
+        Boolean set = (Boolean) announcer.getExtraProperties().get(MAGIC_SET);
         if (null != set && set) {
             context.getLogger().debug(RB.$("validation.disabled"));
-            sdkman.disable();
+            announcer.disable();
             return;
         }
 
-        sdkman.setConsumerKey(
+        announcer.setConsumerKey(
             checkProperty(context,
                 listOf(
                     "announce.sdkman.consumer.key",
                     SDKMAN_CONSUMER_KEY),
                 "announce.sdkman.consumerKey",
-                sdkman.getConsumerKey(),
+                announcer.getConsumerKey(),
                 errors,
                 context.isDryrun()));
 
-        sdkman.setConsumerToken(
+        announcer.setConsumerToken(
             checkProperty(context,
                 listOf(
                     "announce.sdkman.consumer.token",
                     SDKMAN_CONSUMER_TOKEN),
                 "announce.sdkman.consumerToken",
-                sdkman.getConsumerToken(),
+                announcer.getConsumerToken(),
                 errors,
                 context.isDryrun()));
 
         SdkmanPackager sdkmanPackager = context.getModel().getPackagers().getSdkman();
-        if (isBlank(sdkman.getConsumerKey()) && sdkmanPackager.isEnabled()) {
-            sdkman.setConsumerKey(sdkmanPackager.getConsumerKey());
+        if (isBlank(announcer.getConsumerKey()) && sdkmanPackager.isEnabled()) {
+            announcer.setConsumerKey(sdkmanPackager.getConsumerKey());
         }
-        if (isBlank(sdkman.getConsumerToken()) && sdkmanPackager.isEnabled()) {
-            sdkman.setConsumerToken(sdkmanPackager.getConsumerToken());
+        if (isBlank(announcer.getConsumerToken()) && sdkmanPackager.isEnabled()) {
+            announcer.setConsumerToken(sdkmanPackager.getConsumerToken());
         }
 
-        if (isBlank(sdkman.getReleaseNotesUrl())) {
-            sdkman.setReleaseNotesUrl(context.getModel().getRelease().getReleaser().getReleaseNotesUrl());
+        if (isBlank(announcer.getReleaseNotesUrl())) {
+            announcer.setReleaseNotesUrl(context.getModel().getRelease().getReleaser().getReleaseNotesUrl());
         }
 
         if (context.getModel().getActiveDistributions().isEmpty()) {
             errors.warning(RB.$("validation_skdman_disable"));
-            sdkman.disable();
+            announcer.disable();
         }
 
-        if (null == sdkman.getCommand()) {
-            sdkman.setCommand(org.jreleaser.model.Sdkman.Command.MAJOR);
+        if (null == announcer.getCommand()) {
+            announcer.setCommand(org.jreleaser.model.Sdkman.Command.MAJOR);
         }
 
-        validateTimeout(sdkman);
+        validateTimeout(announcer);
     }
 }

@@ -52,30 +52,30 @@ public final class GiteaUploaderValidator {
         }
     }
 
-    private static void validateGiteaUploader(JReleaserContext context, GiteaUploader gitea, Errors errors) {
-        context.getLogger().debug("upload.gitea.{}", gitea.getName());
+    private static void validateGiteaUploader(JReleaserContext context, GiteaUploader uploader, Errors errors) {
+        context.getLogger().debug("upload.gitea.{}", uploader.getName());
 
-        resolveActivatable(context, gitea,
-            listOf("upload.gitea." + gitea.getName(), "upload.gitea"),
+        resolveActivatable(context, uploader,
+            listOf("upload.gitea." + uploader.getName(), "upload.gitea"),
             "NEVER");
-        if (!gitea.resolveEnabledWithSnapshot(context.getModel().getProject())) {
+        if (!uploader.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
-        if (!gitea.isArtifacts() && !gitea.isFiles() && !gitea.isSignatures()) {
-            errors.warning(RB.$("WARNING.validation.uploader.no.artifacts", gitea.getType(), gitea.getName()));
+        if (!uploader.isArtifacts() && !uploader.isFiles() && !uploader.isSignatures()) {
+            errors.warning(RB.$("WARNING.validation.uploader.no.artifacts", uploader.getType(), uploader.getName()));
             context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
-            gitea.disable();
+            uploader.disable();
             return;
         }
 
-        String baseKey1 = "upload.gitea." + gitea.getName();
+        String baseKey1 = "upload.gitea." + uploader.getName();
         String baseKey2 = "upload.gitea";
-        String baseKey3 = "gitea." + gitea.getName();
+        String baseKey3 = "gitea." + uploader.getName();
         String baseKey4 = "gitea";
 
-        gitea.setToken(
+        uploader.setToken(
             checkProperty(context,
                 listOf(
                     baseKey1 + ".token",
@@ -83,11 +83,11 @@ public final class GiteaUploaderValidator {
                     baseKey3 + ".token",
                     baseKey4 + ".token"),
                 baseKey1 + ".token",
-                gitea.getToken(),
+                uploader.getToken(),
                 errors,
                 context.isDryrun()));
 
-        gitea.setHost(
+        uploader.setHost(
             checkProperty(context,
                 listOf(
                     baseKey1 + ".host",
@@ -95,21 +95,21 @@ public final class GiteaUploaderValidator {
                     baseKey3 + ".host",
                     baseKey4 + ".host"),
                 baseKey1 + ".host",
-                gitea.getHost(),
+                uploader.getHost(),
                 errors,
                 context.isDryrun()));
 
-        if (isBlank(gitea.getPackageName())) {
-            gitea.setPackageName(gitea.getName());
+        if (isBlank(uploader.getPackageName())) {
+            uploader.setPackageName(uploader.getName());
         }
-        if (isBlank(gitea.getPackageVersion())) {
-            gitea.setPackageVersion("{{projectVersion}}");
+        if (isBlank(uploader.getPackageVersion())) {
+            uploader.setPackageVersion("{{projectVersion}}");
         }
 
-        if (isBlank(gitea.getOwner())) {
+        if (isBlank(uploader.getOwner())) {
             errors.configuration(RB.$("validation_must_not_be_blank", baseKey1 + ".owner"));
         }
 
-        validateTimeout(gitea);
+        validateTimeout(uploader);
     }
 }

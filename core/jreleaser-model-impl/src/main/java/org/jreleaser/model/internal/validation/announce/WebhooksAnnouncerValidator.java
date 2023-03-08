@@ -70,52 +70,52 @@ public final class WebhooksAnnouncerValidator {
         }
     }
 
-    public static boolean validateWebhook(JReleaserContext context, WebhookAnnouncer webhook, Errors errors) {
-        context.getLogger().debug("announce.webhooks." + webhook.getName());
-        resolveActivatable(context, webhook,
-            listOf("announce.webhooks." + webhook.getName(), "announce.webhooks"),
+    public static boolean validateWebhook(JReleaserContext context, WebhookAnnouncer announcer, Errors errors) {
+        context.getLogger().debug("announce.webhooks." + announcer.getName());
+        resolveActivatable(context, announcer,
+            listOf("announce.webhooks." + announcer.getName(), "announce.webhooks"),
             "NEVER");
-        if (!webhook.resolveEnabledWithSnapshot(context.getModel().getProject())) {
+        if (!announcer.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return false;
         }
-        if (isBlank(webhook.getName())) {
+        if (isBlank(announcer.getName())) {
             context.getLogger().debug(RB.$("validation.disabled"));
-            webhook.disable();
+            announcer.disable();
             return false;
         }
 
-        webhook.setWebhook(
+        announcer.setWebhook(
             checkProperty(context,
                 listOf(
-                    "announce.webhooks." + webhook.getName() + ".webhook",
-                    webhook.getName() + ".webhook"),
-                "announce.webhooks." + webhook.getName() + ".webhook",
-                webhook.getWebhook(),
+                    "announce.webhooks." + announcer.getName() + ".webhook",
+                    announcer.getName() + ".webhook"),
+                "announce.webhooks." + announcer.getName() + ".webhook",
+                announcer.getWebhook(),
                 errors,
                 context.isDryrun()));
 
-        String defaultMessageTemplate = DEFAULT_TPL + webhook.getName() + ".tpl";
-        if (isBlank(webhook.getMessage()) && isBlank(webhook.getMessageTemplate())) {
+        String defaultMessageTemplate = DEFAULT_TPL + announcer.getName() + ".tpl";
+        if (isBlank(announcer.getMessage()) && isBlank(announcer.getMessageTemplate())) {
             if (Files.exists(context.getBasedir().resolve(defaultMessageTemplate))) {
-                webhook.setMessageTemplate(defaultMessageTemplate);
+                announcer.setMessageTemplate(defaultMessageTemplate);
             } else {
-                webhook.setMessage(RB.$("default.release.message"));
+                announcer.setMessage(RB.$("default.release.message"));
             }
         }
 
-        if (isNotBlank(webhook.getMessage()) && isBlank(webhook.getMessageProperty())) {
-            webhook.setMessageProperty("text");
+        if (isNotBlank(announcer.getMessage()) && isBlank(announcer.getMessageProperty())) {
+            announcer.setMessageProperty("text");
         }
 
-        if (isNotBlank(webhook.getMessageTemplate()) &&
-            !defaultMessageTemplate.equals(webhook.getMessageTemplate().trim()) &&
-            !Files.exists(context.getBasedir().resolve(webhook.getMessageTemplate().trim()))) {
+        if (isNotBlank(announcer.getMessageTemplate()) &&
+            !defaultMessageTemplate.equals(announcer.getMessageTemplate().trim()) &&
+            !Files.exists(context.getBasedir().resolve(announcer.getMessageTemplate().trim()))) {
             errors.configuration(RB.$("validation_directory_not_exist",
-                "webhook." + webhook.getName() + ".messageTemplate", webhook.getMessageTemplate()));
+                "webhook." + announcer.getName() + ".messageTemplate", announcer.getMessageTemplate()));
         }
 
-        validateTimeout(webhook);
+        validateTimeout(announcer);
 
         return true;
     }

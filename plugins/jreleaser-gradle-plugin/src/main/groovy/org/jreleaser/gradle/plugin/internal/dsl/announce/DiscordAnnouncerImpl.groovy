@@ -61,13 +61,13 @@ class DiscordAnnouncerImpl extends AbstractAnnouncer implements DiscordAnnouncer
     }
 
     org.jreleaser.model.internal.announce.DiscordAnnouncer toModel() {
-        org.jreleaser.model.internal.announce.DiscordAnnouncer discord = new org.jreleaser.model.internal.announce.DiscordAnnouncer()
-        fillProperties(discord)
-        if (webhook.present) discord.webhook = webhook.get()
-        if (message.present) discord.message = message.get()
+        org.jreleaser.model.internal.announce.DiscordAnnouncer announcer = new org.jreleaser.model.internal.announce.DiscordAnnouncer()
+        fillProperties(announcer)
+        if (webhook.present) announcer.webhook = webhook.get()
+        if (message.present) announcer.message = message.get()
         if (messageTemplate.present) {
-            discord.messageTemplate = messageTemplate.asFile.get().absolutePath
+            announcer.messageTemplate = messageTemplate.asFile.get().absolutePath
         }
-        discord
+        announcer
     }
 }

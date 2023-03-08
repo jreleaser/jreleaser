@@ -67,15 +67,15 @@ class SlackAnnouncerImpl extends AbstractAnnouncer implements SlackAnnouncer {
     }
 
     org.jreleaser.model.internal.announce.SlackAnnouncer toModel() {
-        org.jreleaser.model.internal.announce.SlackAnnouncer slack = new org.jreleaser.model.internal.announce.SlackAnnouncer()
-        fillProperties(slack)
-        if (token.present) slack.token = token.get()
-        if (webhook.present) slack.webhook = webhook.get()
-        if (channel.present) slack.channel = channel.get()
-        if (message.present) slack.message = message.get()
+        org.jreleaser.model.internal.announce.SlackAnnouncer announcer = new org.jreleaser.model.internal.announce.SlackAnnouncer()
+        fillProperties(announcer)
+        if (token.present) announcer.token = token.get()
+        if (webhook.present) announcer.webhook = webhook.get()
+        if (channel.present) announcer.channel = channel.get()
+        if (message.present) announcer.message = message.get()
         if (messageTemplate.present) {
-            slack.messageTemplate = messageTemplate.asFile.get().absolutePath
+            announcer.messageTemplate = messageTemplate.asFile.get().absolutePath
         }
-        slack
+        announcer
     }
 }

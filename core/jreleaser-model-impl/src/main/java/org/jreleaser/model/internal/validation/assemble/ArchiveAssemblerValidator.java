@@ -53,46 +53,46 @@ public final class ArchiveAssemblerValidator {
         }
     }
 
-    private static void validateArchive(JReleaserContext context, Mode mode, ArchiveAssembler archive, Errors errors) {
-        context.getLogger().debug("assemble.archive.{}", archive.getName());
+    private static void validateArchive(JReleaserContext context, Mode mode, ArchiveAssembler assembler, Errors errors) {
+        context.getLogger().debug("assemble.archive.{}", assembler.getName());
 
-        resolveActivatable(context, archive,
-            listOf("assemble.archive." + archive.getName(), "assemble.archive"),
+        resolveActivatable(context, assembler,
+            listOf("assemble.archive." + assembler.getName(), "assemble.archive"),
             "NEVER");
-        if (!archive.resolveEnabled(context.getModel().getProject())) {
+        if (!assembler.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
-        if (isBlank(archive.getName())) {
+        if (isBlank(assembler.getName())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "archive.name"));
             context.getLogger().debug(RB.$("validation.disabled.error"));
-            archive.disable();
+            assembler.disable();
             return;
         }
 
-        archive.setPlatform(archive.getPlatform().mergeValues(context.getModel().getPlatform()));
+        assembler.setPlatform(assembler.getPlatform().mergeValues(context.getModel().getPlatform()));
 
-        if (null == archive.getDistributionType()) {
-            archive.setDistributionType(Distribution.DistributionType.BINARY);
+        if (null == assembler.getDistributionType()) {
+            assembler.setDistributionType(Distribution.DistributionType.BINARY);
         }
 
-        if (isBlank(archive.getArchiveName())) {
-            archive.setArchiveName("{{distributionName}}-{{projectVersion}}");
+        if (isBlank(assembler.getArchiveName())) {
+            assembler.setArchiveName("{{distributionName}}-{{projectVersion}}");
         }
 
-        if (archive.getFormats().isEmpty()) {
-            archive.addFormat(Archive.Format.ZIP);
+        if (assembler.getFormats().isEmpty()) {
+            assembler.addFormat(Archive.Format.ZIP);
         }
 
-        if (null == archive.getOptions().getTimestamp()) {
-            archive.getOptions().setTimestamp(context.getModel().resolveArchiveTimestamp());
+        if (null == assembler.getOptions().getTimestamp()) {
+            assembler.getOptions().setTimestamp(context.getModel().resolveArchiveTimestamp());
         }
 
-        if (archive.getFileSets().isEmpty()) {
-            errors.configuration(RB.$("validation_archive_empty_fileset", archive.getName()));
+        if (assembler.getFileSets().isEmpty()) {
+            errors.configuration(RB.$("validation_archive_empty_fileset", assembler.getName()));
         }
 
-        validateAssembler(context, mode, archive, errors);
+        validateAssembler(context, mode, assembler, errors);
     }
 }

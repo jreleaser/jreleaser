@@ -33,13 +33,13 @@ public final class GenericGitReleaserValidator {
         // noop
     }
 
-    public static boolean validateGeneric(JReleaserContext context, Mode mode, GenericGitReleaser generic, Errors errors) {
-        if (null == generic) return false;
+    public static boolean validateGeneric(JReleaserContext context, Mode mode, GenericGitReleaser service, Errors errors) {
+        if (null == service) return false;
         context.getLogger().debug("release.generic");
 
-        validateGitService(context, mode, generic, errors);
-        generic.getChangelog().setLinks(false);
+        validateGitService(context, mode, service, errors);
+        service.getChangelog().setLinks(false);
 
-        return generic.isEnabled();
+        return service.isEnabled();
     }
 }

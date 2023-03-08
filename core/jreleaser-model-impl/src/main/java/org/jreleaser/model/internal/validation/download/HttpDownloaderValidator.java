@@ -53,27 +53,27 @@ public final class HttpDownloaderValidator {
         }
     }
 
-    private static void validateHttp(JReleaserContext context, HttpDownloader http, Errors errors) {
-        context.getLogger().debug("download.http.{}", http.getName());
+    private static void validateHttp(JReleaserContext context, HttpDownloader downloader, Errors errors) {
+        context.getLogger().debug("download.http.{}", downloader.getName());
 
-        resolveActivatable(context, http,
-            listOf("download.http." + http.getName(), "download.http"),
+        resolveActivatable(context, downloader,
+            listOf("download.http." + downloader.getName(), "download.http"),
             "ALWAYS");
-        if (!http.resolveEnabled(context.getModel().getProject())) {
+        if (!downloader.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
-        HttpValidator.validateHttp(context, http, "download", http.getName(), errors);
-        validateTimeout(http);
+        HttpValidator.validateHttp(context, downloader, "download", downloader.getName(), errors);
+        validateTimeout(downloader);
 
-        if (http.getAssets().isEmpty()) {
-            errors.configuration(RB.$("validation_must_not_be_empty", "download.http." + http.getName() + ".assets"));
+        if (downloader.getAssets().isEmpty()) {
+            errors.configuration(RB.$("validation_must_not_be_empty", "download.http." + downloader.getName() + ".assets"));
         } else {
             int index = 0;
-            for (Downloader.Asset asset : http.getAssets()) {
+            for (Downloader.Asset asset : downloader.getAssets()) {
                 if (isBlank(asset.getInput())) {
-                    errors.configuration(RB.$("validation_must_not_be_null", "download.http." + http.getName() + ".asset[" + (index++) + "].input"));
+                    errors.configuration(RB.$("validation_must_not_be_null", "download.http." + downloader.getName() + ".asset[" + (index++) + "].input"));
                 }
             }
         }

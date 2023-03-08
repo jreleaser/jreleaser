@@ -39,9 +39,9 @@ class ScpUploaderImpl extends AbstractSshUploader implements ScpUploader {
     }
 
     org.jreleaser.model.internal.upload.ScpUploader toModel() {
-        org.jreleaser.model.internal.upload.ScpUploader scp = new org.jreleaser.model.internal.upload.ScpUploader()
-        scp.name = name
-        fillProperties(scp)
-        scp
+        org.jreleaser.model.internal.upload.ScpUploader downloader = new org.jreleaser.model.internal.upload.ScpUploader()
+        downloader.name = name
+        fillProperties(downloader)
+        downloader
     }
 }

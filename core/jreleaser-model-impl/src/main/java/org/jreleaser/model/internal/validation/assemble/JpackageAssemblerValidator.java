@@ -75,25 +75,25 @@ public final class JpackageAssemblerValidator {
         }
     }
 
-    private static void validateJpackage(JReleaserContext context, Mode mode, JpackageAssembler jpackage, Errors errors) {
-        context.getLogger().debug("assemble.jpackage.{}", jpackage.getName());
+    private static void validateJpackage(JReleaserContext context, Mode mode, JpackageAssembler assembler, Errors errors) {
+        context.getLogger().debug("assemble.jpackage.{}", assembler.getName());
 
-        resolveActivatable(context, jpackage,
-            listOf("assemble.jpackage." + jpackage.getName(), "assemble.jpackage"),
+        resolveActivatable(context, assembler,
+            listOf("assemble.jpackage." + assembler.getName(), "assemble.jpackage"),
             "NEVER");
 
         Project project = context.getModel().getProject();
-        if (!jpackage.resolveEnabled(project)) {
+        if (!assembler.resolveEnabled(project)) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
-        JpackageAssembler.PlatformPackager packager = jpackage.getResolvedPlatformPackager();
-        JpackageAssembler.ApplicationPackage applicationPackage = jpackage.getApplicationPackage();
+        JpackageAssembler.PlatformPackager packager = assembler.getResolvedPlatformPackager();
+        JpackageAssembler.ApplicationPackage applicationPackage = assembler.getApplicationPackage();
         packager.enable();
 
-        if (isNotBlank(jpackage.getJlink())) {
-            JlinkAssembler jlink = context.getModel().getAssemble().findJlink(jpackage.getJlink());
+        if (isNotBlank(assembler.getJlink())) {
+            JlinkAssembler jlink = context.getModel().getAssemble().findJlink(assembler.getJlink());
 
             Path baseOutputDirectory = context.getAssembleDirectory()
                 .resolve(jlink.getName())
@@ -113,14 +113,14 @@ public final class JpackageAssemblerValidator {
                 candidateRuntimeImages.add(Artifact.of(path, platform));
             }
 
-            if (!jpackage.getRuntimeImages().isEmpty() && jpackage.getRuntimeImages().size() != candidateRuntimeImages.size()) {
-                errors.configuration(RB.$("validation_jpackage_jlink_application", jpackage.getName()));
+            if (!assembler.getRuntimeImages().isEmpty() && assembler.getRuntimeImages().size() != candidateRuntimeImages.size()) {
+                errors.configuration(RB.$("validation_jpackage_jlink_application", assembler.getName()));
             }
 
             int count = 0;
-            for (Artifact runtimeImage : jpackage.getRuntimeImages()) {
-                Path rp = runtimeImage.getResolvedPath(context, jpackage);
-                Path tp = runtimeImage.getResolvedTransform(context, jpackage);
+            for (Artifact runtimeImage : assembler.getRuntimeImages()) {
+                Path rp = runtimeImage.getResolvedPath(context, assembler);
+                Path tp = runtimeImage.getResolvedTransform(context, assembler);
                 Path path = null != tp ? tp : rp;
                 if (candidateRuntimeImages.stream()
                     .anyMatch(a -> a.getPath().equals(path.toString()))) {
@@ -128,55 +128,55 @@ public final class JpackageAssemblerValidator {
                 }
             }
 
-            if (!jpackage.getRuntimeImages().isEmpty() && count != candidateRuntimeImages.size()) {
-                errors.configuration(RB.$("validation_jpackage_jlink_application", jpackage.getName()));
+            if (!assembler.getRuntimeImages().isEmpty() && count != candidateRuntimeImages.size()) {
+                errors.configuration(RB.$("validation_jpackage_jlink_application", assembler.getName()));
             }
 
-            jpackage.setJava(jlink.getJava());
-            jpackage.setMainJar(jlink.getMainJar());
-            jpackage.setJars(jlink.getJars());
+            assembler.setJava(jlink.getJava());
+            assembler.setMainJar(jlink.getMainJar());
+            assembler.setJars(jlink.getJars());
             packager.setJdk(jlink.getJdk());
-            if (isBlank(jpackage.getExecutable())) {
-                jpackage.setExecutable(jlink.getExecutable());
+            if (isBlank(assembler.getExecutable())) {
+                assembler.setExecutable(jlink.getExecutable());
             }
 
             for (Artifact runtimeImage : candidateRuntimeImages) {
                 runtimeImage.activate();
-                jpackage.addRuntimeImage(runtimeImage);
+                assembler.addRuntimeImage(runtimeImage);
             }
         }
 
-        context.getLogger().debug("assemble.jpackage.{}.java", jpackage.getName());
-        if (!validateJava(context, jpackage, errors)) {
+        context.getLogger().debug("assemble.jpackage.{}.java", assembler.getName());
+        if (!validateJava(context, assembler, errors)) {
             context.getLogger().debug(RB.$("validation.disabled.error"));
-            jpackage.disable();
+            assembler.disable();
             return;
         }
 
-        if (isBlank(jpackage.getExecutable())) {
-            jpackage.setExecutable(jpackage.getName());
+        if (isBlank(assembler.getExecutable())) {
+            assembler.setExecutable(assembler.getName());
         }
 
-        if (jpackage.getRuntimeImages().isEmpty()) {
-            errors.configuration(RB.$("validation_jpackage_runtime_images_missing", jpackage.getName()));
+        if (assembler.getRuntimeImages().isEmpty()) {
+            errors.configuration(RB.$("validation_jpackage_runtime_images_missing", assembler.getName()));
             return;
         }
 
         int i = 0;
-        for (Artifact runtimeImage : jpackage.getRuntimeImages()) {
-            validateRuntimeImage(context, mode, jpackage, runtimeImage, i++, errors);
+        for (Artifact runtimeImage : assembler.getRuntimeImages()) {
+            validateRuntimeImage(context, mode, assembler, runtimeImage, i++, errors);
         }
 
         // validate jdks.platform is unique
-        Map<String, List<Artifact>> byPlatform = jpackage.getRuntimeImages().stream()
+        Map<String, List<Artifact>> byPlatform = assembler.getRuntimeImages().stream()
             .collect(groupingBy(ri -> isBlank(ri.getPlatform()) ? "<nil>" : ri.getPlatform()));
         if (byPlatform.containsKey("<nil>")) {
-            errors.configuration(RB.$("validation_jpackage_runtime_image_platform", jpackage.getName()));
+            errors.configuration(RB.$("validation_jpackage_runtime_image_platform", assembler.getName()));
         }
         // check platforms
         byPlatform.forEach((p, jdks) -> {
             if (jdks.size() > 1) {
-                errors.configuration(RB.$("validation_jpackage_runtime_image_multiple_platforms", jpackage.getName(), p));
+                errors.configuration(RB.$("validation_jpackage_runtime_image_multiple_platforms", assembler.getName(), p));
             }
         });
 
@@ -197,7 +197,7 @@ public final class JpackageAssemblerValidator {
         }
 
         if (isBlank(applicationPackage.getAppName())) {
-            applicationPackage.setAppName(jpackage.getName());
+            applicationPackage.setAppName(assembler.getName());
         }
 
         if (isBlank(applicationPackage.getAppVersion())) {
@@ -205,7 +205,7 @@ public final class JpackageAssemblerValidator {
         }
 
         // validate appVersion
-        String appVersion = applicationPackage.getResolvedAppVersion(context, jpackage);
+        String appVersion = applicationPackage.getResolvedAppVersion(context, assembler);
         try {
             SemanticVersion v = SemanticVersion.of(appVersion);
             if (isNotBlank(v.getBuild()) || isNotBlank(v.getTag())) {
@@ -223,26 +223,26 @@ public final class JpackageAssemblerValidator {
             applicationPackage.setVendor(project.getVendor());
         }
         if (isBlank(applicationPackage.getVendor())) {
-            errors.configuration(RB.$("validation_jpackage_missing_vendor", jpackage.getName()));
+            errors.configuration(RB.$("validation_jpackage_missing_vendor", assembler.getName()));
         }
         if (isBlank(applicationPackage.getCopyright())) {
             applicationPackage.setCopyright(project.getCopyright());
         }
 
-        validateJavaAssembler(context, mode, jpackage, errors, false);
+        validateJavaAssembler(context, mode, assembler, errors, false);
 
         if (isBlank(packager.getAppName())) {
-            packager.setAppName(jpackage.getApplicationPackage().getAppName());
+            packager.setAppName(assembler.getApplicationPackage().getAppName());
         }
 
         if (packager instanceof JpackageAssembler.Linux) {
-            validateLinux(context, jpackage, (JpackageAssembler.Linux) packager, errors);
+            validateLinux(context, assembler, (JpackageAssembler.Linux) packager, errors);
         }
         if (packager instanceof JpackageAssembler.Osx) {
-            validateOsx(context, jpackage, (JpackageAssembler.Osx) packager, errors);
+            validateOsx(context, assembler, (JpackageAssembler.Osx) packager, errors);
         }
         if (packager instanceof JpackageAssembler.Windows) {
-            validateWindows(context, jpackage, (JpackageAssembler.Windows) packager, errors);
+            validateWindows(context, assembler, (JpackageAssembler.Windows) packager, errors);
         }
     }
 

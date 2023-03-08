@@ -62,14 +62,14 @@ class GiteaUploaderImpl extends AbstractUploader implements GiteaUploader {
     }
 
     org.jreleaser.model.internal.upload.GiteaUploader toModel() {
-        org.jreleaser.model.internal.upload.GiteaUploader gitea = new org.jreleaser.model.internal.upload.GiteaUploader()
-        gitea.name = name
-        fillProperties(gitea)
-        if (host.present) gitea.host = host.get()
-        if (owner.present) gitea.owner = owner.get()
-        if (token.present) gitea.token = token.get()
-        if (packageName.present) gitea.packageName = packageName.get()
-        if (packageVersion.present) gitea.packageVersion = packageVersion.get()
-        gitea
+        org.jreleaser.model.internal.upload.GiteaUploader uploader = new org.jreleaser.model.internal.upload.GiteaUploader()
+        uploader.name = name
+        fillProperties(uploader)
+        if (host.present) uploader.host = host.get()
+        if (owner.present) uploader.owner = owner.get()
+        if (token.present) uploader.token = token.get()
+        if (packageName.present) uploader.packageName = packageName.get()
+        if (packageVersion.present) uploader.packageVersion = packageVersion.get()
+        uploader
     }
 }

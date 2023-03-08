@@ -107,27 +107,27 @@ class SmtpAnnouncerImpl extends AbstractAnnouncer implements SmtpAnnouncer {
     }
 
     org.jreleaser.model.internal.announce.SmtpAnnouncer toModel() {
-        org.jreleaser.model.internal.announce.SmtpAnnouncer mail = new org.jreleaser.model.internal.announce.SmtpAnnouncer()
-        fillProperties(mail)
-        if (transport.present) mail.transport = transport.get()
-        if (mimeType.present) mail.mimeType = mimeType.get()
-        if (port.present) mail.port = port.get()
-        if (auth.present) mail.auth = auth.get()
-        if (host.present) mail.host = host.get()
-        if (username.present) mail.username = username.get()
-        if (password.present) mail.password = password.get()
-        if (from.present) mail.from = from.get()
-        if (to.present) mail.to = to.get()
-        if (cc.present) mail.cc = cc.get()
-        if (bcc.present) mail.bcc = bcc.get()
-        if (subject.present) mail.subject = subject.get()
-        if (message.present) mail.message = message.get()
-        if (subject.present) mail.subject = subject.get()
-        if (message.present) mail.message = message.get()
+        org.jreleaser.model.internal.announce.SmtpAnnouncer announcer = new org.jreleaser.model.internal.announce.SmtpAnnouncer()
+        fillProperties(announcer)
+        if (transport.present) announcer.transport = transport.get()
+        if (mimeType.present) announcer.mimeType = mimeType.get()
+        if (port.present) announcer.port = port.get()
+        if (auth.present) announcer.auth = auth.get()
+        if (host.present) announcer.host = host.get()
+        if (username.present) announcer.username = username.get()
+        if (password.present) announcer.password = password.get()
+        if (from.present) announcer.from = from.get()
+        if (to.present) announcer.to = to.get()
+        if (cc.present) announcer.cc = cc.get()
+        if (bcc.present) announcer.bcc = bcc.get()
+        if (subject.present) announcer.subject = subject.get()
+        if (message.present) announcer.message = message.get()
+        if (subject.present) announcer.subject = subject.get()
+        if (message.present) announcer.message = message.get()
         if (messageTemplate.present) {
-            mail.messageTemplate = messageTemplate.asFile.get().absolutePath
+            announcer.messageTemplate = messageTemplate.asFile.get().absolutePath
         }
-        if (properties.present) mail.properties.putAll(properties.get())
-        mail
+        if (properties.present) announcer.properties.putAll(properties.get())
+        announcer
     }
 }

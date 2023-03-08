@@ -59,63 +59,63 @@ public final class JlinkAssemblerValidator {
         }
     }
 
-    private static void validateJlink(JReleaserContext context, Mode mode, JlinkAssembler jlink, Errors errors) {
-        context.getLogger().debug("assemble.jlink.{}", jlink.getName());
+    private static void validateJlink(JReleaserContext context, Mode mode, JlinkAssembler assembler, Errors errors) {
+        context.getLogger().debug("assemble.jlink.{}", assembler.getName());
 
-        resolveActivatable(context, jlink,
-            listOf("assemble.jlink." + jlink.getName(), "assemble.jlink"),
+        resolveActivatable(context, assembler,
+            listOf("assemble.jlink." + assembler.getName(), "assemble.jlink"),
             "NEVER");
-        if (!jlink.resolveEnabled(context.getModel().getProject())) {
+        if (!assembler.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
-        if (isBlank(jlink.getName())) {
+        if (isBlank(assembler.getName())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "jlink.name"));
             return;
         }
 
-        context.getLogger().debug("assemble.jlink.{}.java", jlink.getName());
-        if (!validateJava(context, jlink, errors)) {
+        context.getLogger().debug("assemble.jlink.{}.java", assembler.getName());
+        if (!validateJava(context, assembler, errors)) {
             context.getLogger().debug(RB.$("validation.disabled.error"));
-            jlink.disable();
+            assembler.disable();
             return;
         }
 
-        jlink.setPlatform(jlink.getPlatform().mergeValues(context.getModel().getPlatform()));
+        assembler.setPlatform(assembler.getPlatform().mergeValues(context.getModel().getPlatform()));
 
-        if (isBlank(jlink.getImageName())) {
-            jlink.setImageName(jlink.getJava().getGroupId() + "." +
-                jlink.getJava().getArtifactId() + "-" +
+        if (isBlank(assembler.getImageName())) {
+            assembler.setImageName(assembler.getJava().getGroupId() + "." +
+                assembler.getJava().getArtifactId() + "-" +
                 context.getModel().getProject().getResolvedVersion());
         }
-        if (isBlank(jlink.getExecutable())) {
-            jlink.setExecutable(jlink.getName());
+        if (isBlank(assembler.getExecutable())) {
+            assembler.setExecutable(assembler.getName());
         }
 
         int i = 0;
-        for (Artifact targetJdk : jlink.getTargetJdks()) {
-            validateJdk(context, mode, jlink, targetJdk, i++, errors);
+        for (Artifact targetJdk : assembler.getTargetJdks()) {
+            validateJdk(context, mode, assembler, targetJdk, i++, errors);
         }
 
         // validate jdks.platform is unique
-        Map<String, List<Artifact>> byPlatform = jlink.getTargetJdks().stream()
+        Map<String, List<Artifact>> byPlatform = assembler.getTargetJdks().stream()
             .collect(groupingBy(jdk -> isBlank(jdk.getPlatform()) ? "<nil>" : jdk.getPlatform()));
         if (byPlatform.containsKey("<nil>")) {
-            errors.configuration(RB.$("validation_jlink_jdk_platform", jlink.getName()));
+            errors.configuration(RB.$("validation_jlink_jdk_platform", assembler.getName()));
         }
         // check platforms
         byPlatform.forEach((p, jdks) -> {
             if (jdks.size() > 1) {
-                errors.configuration(RB.$("validation_jlink_jdk_multiple_platforms", jlink.getName(), p));
+                errors.configuration(RB.$("validation_jlink_jdk_multiple_platforms", assembler.getName(), p));
             }
         });
 
-        if (isBlank(jlink.getJdk().getPath())) {
+        if (isBlank(assembler.getJdk().getPath())) {
             String currentPlatform = PlatformUtils.getCurrentFull();
             String javaHome = System.getProperty("java.home");
 
-            if (jlink.getTargetJdks().isEmpty()) {
+            if (assembler.getTargetJdks().isEmpty()) {
                 if (isBlank(javaHome)) {
                     // Can only happen when running as native-image, fail for now
                     // TODO: native-image
@@ -123,17 +123,17 @@ public final class JlinkAssemblerValidator {
                     return;
                 }
                 // Use current
-                jlink.getJdk().setPath(javaHome);
-                jlink.getJdk().setPlatform(currentPlatform);
-                jlink.addTargetJdk(jlink.getJdk());
+                assembler.getJdk().setPath(javaHome);
+                assembler.getJdk().setPlatform(currentPlatform);
+                assembler.addTargetJdk(assembler.getJdk());
             } else {
                 // find a compatible JDK in targets
-                Optional<Artifact> jdk = jlink.getTargetJdks().stream()
+                Optional<Artifact> jdk = assembler.getTargetJdks().stream()
                     .filter(j -> PlatformUtils.isCompatible(currentPlatform, j.getPlatform()))
                     .findFirst();
 
                 if (jdk.isPresent()) {
-                    jlink.setJdk(jdk.get());
+                    assembler.setJdk(jdk.get());
                 } else {
                     if (isBlank(javaHome)) {
                         // Can only happen when running as native-image, fail for now
@@ -142,44 +142,44 @@ public final class JlinkAssemblerValidator {
                         return;
                     }
                     // Can't tell if the current JDK will work but might as well use it
-                    jlink.getJdk().setPath(javaHome);
-                    jlink.getJdk().setPlatform(currentPlatform);
+                    assembler.getJdk().setPath(javaHome);
+                    assembler.getJdk().setPlatform(currentPlatform);
                 }
             }
         }
 
-        if (jlink.getArgs().isEmpty()) {
-            jlink.getArgs().add("--no-header-files");
-            jlink.getArgs().add("--no-man-pages");
-            jlink.getArgs().add("--compress=2");
-            jlink.getArgs().add("--strip-debug");
+        if (assembler.getArgs().isEmpty()) {
+            assembler.getArgs().add("--no-header-files");
+            assembler.getArgs().add("--no-man-pages");
+            assembler.getArgs().add("--compress=2");
+            assembler.getArgs().add("--strip-debug");
         }
 
-        if (null == jlink.getMainJar()) {
-            errors.configuration(RB.$("validation_is_null", "jlink." + jlink.getName() + ".mainJar"));
+        if (null == assembler.getMainJar()) {
+            errors.configuration(RB.$("validation_is_null", "jlink." + assembler.getName() + ".mainJar"));
             return;
         }
 
-        if (null == jlink.getArchiveFormat()) {
-            jlink.setArchiveFormat(Archive.Format.ZIP);
+        if (null == assembler.getArchiveFormat()) {
+            assembler.setArchiveFormat(Archive.Format.ZIP);
         }
 
-        if (null == jlink.getOptions().getTimestamp()) {
-            jlink.getOptions().setTimestamp(context.getModel().resolveArchiveTimestamp());
+        if (null == assembler.getOptions().getTimestamp()) {
+            assembler.getOptions().setTimestamp(context.getModel().resolveArchiveTimestamp());
         }
 
-        validateJavaAssembler(context, mode, jlink, errors, true);
+        validateJavaAssembler(context, mode, assembler, errors, true);
 
-        if (!jlink.getJdeps().isEnabledSet()) {
-            jlink.getJdeps().setEnabled(true);
+        if (!assembler.getJdeps().isEnabledSet()) {
+            assembler.getJdeps().setEnabled(true);
         }
 
-        if (!jlink.getJdeps().isEnabled() && jlink.getModuleNames().isEmpty()) {
-            jlink.getModuleNames().add("java.base");
+        if (!assembler.getJdeps().isEnabled() && assembler.getModuleNames().isEmpty()) {
+            assembler.getModuleNames().add("java.base");
         }
 
-        if (!jlink.getModuleNames().isEmpty()) {
-            jlink.getJdeps().setEnabled(false);
+        if (!assembler.getModuleNames().isEmpty()) {
+            assembler.getJdeps().setEnabled(false);
         }
     }
 

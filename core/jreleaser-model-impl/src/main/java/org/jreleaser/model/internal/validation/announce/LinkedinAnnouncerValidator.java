@@ -44,51 +44,51 @@ public final class LinkedinAnnouncerValidator {
         // noop
     }
 
-    public static void validateLinkedin(JReleaserContext context, LinkedinAnnouncer linkedin, Errors errors) {
+    public static void validateLinkedin(JReleaserContext context, LinkedinAnnouncer announcer, Errors errors) {
         context.getLogger().debug("announce.linkedin");
-        resolveActivatable(context, linkedin, "announce.linkedin", "NEVER");
-        if (!linkedin.resolveEnabledWithSnapshot(context.getModel().getProject())) {
+        resolveActivatable(context, announcer, "announce.linkedin", "NEVER");
+        if (!announcer.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
-        linkedin.setOwner(
+        announcer.setOwner(
             checkProperty(context,
                 listOf(
                     "announce.linkedin.owner",
                     LINKEDIN_OWNER),
                 "announce.linkedin.owner",
-                linkedin.getOwner(),
+                announcer.getOwner(),
                 errors,
                 true)); // optional
 
-        linkedin.setAccessToken(
+        announcer.setAccessToken(
             checkProperty(context,
                 listOf(
                     "announce.linkedin.access.token",
                     LINKEDIN_ACCESS_TOKEN),
                 "announce.linkedin.accessToken",
-                linkedin.getAccessToken(),
+                announcer.getAccessToken(),
                 errors,
                 context.isDryrun()));
 
-        if (isBlank(linkedin.getSubject())) {
-            linkedin.setSubject("{{projectNameCapitalized}} {{projectVersion}} released");
+        if (isBlank(announcer.getSubject())) {
+            announcer.setSubject("{{projectNameCapitalized}} {{projectVersion}} released");
         }
 
-        if (isBlank(linkedin.getMessage()) && isBlank(linkedin.getMessageTemplate())) {
+        if (isBlank(announcer.getMessage()) && isBlank(announcer.getMessageTemplate())) {
             if (Files.exists(context.getBasedir().resolve(DEFAULT_LINKEDIN_TPL))) {
-                linkedin.setMessageTemplate(DEFAULT_LINKEDIN_TPL);
+                announcer.setMessageTemplate(DEFAULT_LINKEDIN_TPL);
             } else {
-                linkedin.setMessage(RB.$("default.release.message"));
+                announcer.setMessage(RB.$("default.release.message"));
             }
         }
 
-        if (isNotBlank(linkedin.getMessageTemplate()) &&
-            !Files.exists(context.getBasedir().resolve(linkedin.getMessageTemplate().trim()))) {
-            errors.configuration(RB.$("validation_directory_not_exist", "linkedin.messageTemplate", linkedin.getMessageTemplate()));
+        if (isNotBlank(announcer.getMessageTemplate()) &&
+            !Files.exists(context.getBasedir().resolve(announcer.getMessageTemplate().trim()))) {
+            errors.configuration(RB.$("validation_directory_not_exist", "linkedin.messageTemplate", announcer.getMessageTemplate()));
         }
 
-        validateTimeout(linkedin);
+        validateTimeout(announcer);
     }
 }

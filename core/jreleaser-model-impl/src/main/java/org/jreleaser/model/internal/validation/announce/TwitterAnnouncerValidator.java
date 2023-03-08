@@ -44,63 +44,63 @@ public final class TwitterAnnouncerValidator {
         // noop
     }
 
-    public static void validateTwitter(JReleaserContext context, TwitterAnnouncer twitter, Errors errors) {
+    public static void validateTwitter(JReleaserContext context, TwitterAnnouncer announcer, Errors errors) {
         context.getLogger().debug("announce.twitter");
-        resolveActivatable(context, twitter, "announce.twitter", "NEVER");
-        if (!twitter.resolveEnabledWithSnapshot(context.getModel().getProject())) {
+        resolveActivatable(context, announcer, "announce.twitter", "NEVER");
+        if (!announcer.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
-        twitter.setConsumerKey(
+        announcer.setConsumerKey(
             checkProperty(context,
                 listOf(
                     "announce.twitter.consumer.key",
                     TWITTER_CONSUMER_KEY),
                 "announce.twitter.consumerKey",
-                twitter.getConsumerKey(),
+                announcer.getConsumerKey(),
                 errors,
                 context.isDryrun()));
 
-        twitter.setConsumerSecret(
+        announcer.setConsumerSecret(
             checkProperty(context,
                 listOf(
                     "announce.twitter.consumer.secret",
                     TWITTER_CONSUMER_SECRET),
                 "announce.twitter.consumerSecret",
-                twitter.getConsumerSecret(),
+                announcer.getConsumerSecret(),
                 errors,
                 context.isDryrun()));
 
-        twitter.setAccessToken(
+        announcer.setAccessToken(
             checkProperty(context,
                 listOf(
                     "announce.twitter.access.token",
                     TWITTER_ACCESS_TOKEN),
                 "announce.twitter.accessToken",
-                twitter.getAccessToken(),
+                announcer.getAccessToken(),
                 errors,
                 context.isDryrun()));
 
-        twitter.setAccessTokenSecret(
+        announcer.setAccessTokenSecret(
             checkProperty(context,
                 listOf(
                     "announce.twitter.access.token.secret",
                     TWITTER_ACCESS_TOKEN_SECRET),
                 "announce.twitter.accessTokenSecret",
-                twitter.getAccessTokenSecret(),
+                announcer.getAccessTokenSecret(),
                 errors,
                 context.isDryrun()));
 
-        if (isNotBlank(twitter.getStatusTemplate()) &&
-            !Files.exists(context.getBasedir().resolve(twitter.getStatusTemplate().trim()))) {
-            errors.configuration(RB.$("validation_directory_not_exist", "twitter.statusTemplate", twitter.getStatusTemplate()));
+        if (isNotBlank(announcer.getStatusTemplate()) &&
+            !Files.exists(context.getBasedir().resolve(announcer.getStatusTemplate().trim()))) {
+            errors.configuration(RB.$("validation_directory_not_exist", "twitter.statusTemplate", announcer.getStatusTemplate()));
         }
 
-        if (isBlank(twitter.getStatus()) && isBlank(twitter.getStatusTemplate()) && twitter.getStatuses().isEmpty()) {
-            twitter.setStatus(RB.$("default.release.message"));
+        if (isBlank(announcer.getStatus()) && isBlank(announcer.getStatusTemplate()) && announcer.getStatuses().isEmpty()) {
+            announcer.setStatus(RB.$("default.release.message"));
         }
 
-        validateTimeout(twitter);
+        validateTimeout(announcer);
     }
 }

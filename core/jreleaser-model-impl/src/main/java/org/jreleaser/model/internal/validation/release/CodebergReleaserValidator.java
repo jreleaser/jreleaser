@@ -37,26 +37,26 @@ public final class CodebergReleaserValidator {
         // noop
     }
 
-    public static boolean validateCodeberg(JReleaserContext context, Mode mode, CodebergReleaser codeberg, Errors errors) {
-        if (null == codeberg) return false;
+    public static boolean validateCodeberg(JReleaserContext context, Mode mode, CodebergReleaser service, Errors errors) {
+        if (null == service) return false;
         context.getLogger().debug("release.codeberg");
 
-        validateGitService(context, mode, codeberg, errors);
+        validateGitService(context, mode, service, errors);
 
         if (context.getModel().getProject().isSnapshot()) {
-            codeberg.getPrerelease().setEnabled(true);
+            service.getPrerelease().setEnabled(true);
         }
 
-        codeberg.getPrerelease().setPattern(
+        service.getPrerelease().setPattern(
             checkProperty(context,
                 PRERELEASE_PATTERN,
                 "release.codeberg.prerelease.pattern",
-                codeberg.getPrerelease().getPattern(),
+                service.getPrerelease().getPattern(),
                 ""));
-        codeberg.getPrerelease().isPrerelease(context.getModel().getProject().getResolvedVersion());
+        service.getPrerelease().isPrerelease(context.getModel().getProject().getResolvedVersion());
 
-        if (!codeberg.isDraftSet()) {
-            codeberg.setDraft(
+        if (!service.isDraftSet()) {
+            service.setDraft(
                 checkProperty(context,
                     DRAFT,
                     "release.codeberg.draft",
@@ -64,10 +64,10 @@ public final class CodebergReleaserValidator {
                     false));
         }
 
-        if (codeberg.isDraft()) {
-            codeberg.getMilestone().setClose(false);
+        if (service.isDraft()) {
+            service.getMilestone().setClose(false);
         }
 
-        return codeberg.isEnabled();
+        return service.isEnabled();
     }
 }

@@ -172,25 +172,25 @@ class JlinkAssemblerImpl extends AbstractJavaAssembler implements JlinkAssembler
     }
 
     org.jreleaser.model.internal.assemble.JlinkAssembler toModel() {
-        org.jreleaser.model.internal.assemble.JlinkAssembler jlink = new org.jreleaser.model.internal.assemble.JlinkAssembler()
-        jlink.name = name
-        fillProperties(jlink)
-        jlink.args = (List<String>) args.getOrElse([])
-        if (jdeps.isSet()) jlink.jdeps = jdeps.toModel()
-        if (jdk.isSet()) jlink.jdk = jdk.toModel()
-        jlink.archiveFormat = archiveFormat.get()
-        jlink.java = java.toModel()
-        jlink.platform = platform.toModel()
-        if (imageName.present) jlink.imageName = imageName.get()
-        if (imageNameTransform.present) jlink.imageNameTransform = imageNameTransform.get()
-        if (copyJars.present) jlink.copyJars = copyJars.get()
-        jlink.moduleNames = (Set<String>) moduleNames.getOrElse([] as Set)
-        jlink.additionalModuleNames = (Set<String>) additionalModuleNames.getOrElse([] as Set)
+        org.jreleaser.model.internal.assemble.JlinkAssembler assembler = new org.jreleaser.model.internal.assemble.JlinkAssembler()
+        assembler.name = name
+        fillProperties(assembler)
+        assembler.args = (List<String>) args.getOrElse([])
+        if (jdeps.isSet()) assembler.jdeps = jdeps.toModel()
+        if (jdk.isSet()) assembler.jdk = jdk.toModel()
+        assembler.archiveFormat = archiveFormat.get()
+        assembler.java = java.toModel()
+        assembler.platform = platform.toModel()
+        if (imageName.present) assembler.imageName = imageName.get()
+        if (imageNameTransform.present) assembler.imageNameTransform = imageNameTransform.get()
+        if (copyJars.present) assembler.copyJars = copyJars.get()
+        assembler.moduleNames = (Set<String>) moduleNames.getOrElse([] as Set)
+        assembler.additionalModuleNames = (Set<String>) additionalModuleNames.getOrElse([] as Set)
         for (ArtifactImpl artifact : targetJdks) {
-            jlink.addTargetJdk(artifact.toModel())
+            assembler.addTargetJdk(artifact.toModel())
         }
-        if (options.isSet()) jlink.options = options.toModel()
-        jlink
+        if (options.isSet()) assembler.options = options.toModel()
+        assembler
     }
 
     @CompileStatic

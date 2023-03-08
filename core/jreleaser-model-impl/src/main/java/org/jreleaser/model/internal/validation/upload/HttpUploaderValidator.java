@@ -53,36 +53,36 @@ public final class HttpUploaderValidator {
         }
     }
 
-    private static void validateHttp(JReleaserContext context, HttpUploader http, Errors errors) {
-        context.getLogger().debug("upload.http.{}", http.getName());
+    private static void validateHttp(JReleaserContext context, HttpUploader uploader, Errors errors) {
+        context.getLogger().debug("upload.http.{}", uploader.getName());
 
-        resolveActivatable(context, http,
-            listOf("upload.http." + http.getName(), "upload.http"),
+        resolveActivatable(context, uploader,
+            listOf("upload.http." + uploader.getName(), "upload.http"),
             "NEVER");
-        if (!http.resolveEnabledWithSnapshot(context.getModel().getProject())) {
+        if (!uploader.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
-        if (!http.isArtifacts() && !http.isFiles() && !http.isSignatures()) {
-            errors.warning(RB.$("WARNING.validation.uploader.no.artifacts", http.getType(), http.getName()));
+        if (!uploader.isArtifacts() && !uploader.isFiles() && !uploader.isSignatures()) {
+            errors.warning(RB.$("WARNING.validation.uploader.no.artifacts", uploader.getType(), uploader.getName()));
             context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
-            http.disable();
+            uploader.disable();
             return;
         }
 
-        if (isBlank(http.getUploadUrl())) {
-            errors.configuration(RB.$("validation_must_not_be_blank", "upload.http." + http.getName() + ".uploadUrl"));
+        if (isBlank(uploader.getUploadUrl())) {
+            errors.configuration(RB.$("validation_must_not_be_blank", "upload.http." + uploader.getName() + ".uploadUrl"));
         }
-        if (isBlank(http.getDownloadUrl())) {
-            http.setDownloadUrl(http.getUploadUrl());
-        }
-
-        if (null == http.getMethod()) {
-            http.setMethod(Http.Method.PUT);
+        if (isBlank(uploader.getDownloadUrl())) {
+            uploader.setDownloadUrl(uploader.getUploadUrl());
         }
 
-        HttpValidator.validateHttp(context, http, "upload", http.getName(), errors);
-        validateTimeout(http);
+        if (null == uploader.getMethod()) {
+            uploader.setMethod(Http.Method.PUT);
+        }
+
+        HttpValidator.validateHttp(context, uploader, "upload", uploader.getName(), errors);
+        validateTimeout(uploader);
     }
 }

@@ -101,20 +101,20 @@ class HttpAnnouncerImpl extends AbstractAnnouncer implements HttpAnnouncer {
     }
 
     org.jreleaser.model.internal.announce.HttpAnnouncer toModel() {
-        org.jreleaser.model.internal.announce.HttpAnnouncer http = new org.jreleaser.model.internal.announce.HttpAnnouncer()
-        http.name = name
-        fillProperties(http)
-        if (url.present) http.url = url.get()
-        if (username.present) http.username = username.get()
-        if (password.present) http.password = password.get()
-        if (method.present) http.method = method.get()
-        if (authorization.present) http.authorization = authorization.get()
-        if (bearerKeyword.present) http.bearerKeyword = bearerKeyword.get()
-        if (headers.present) http.headers.putAll(headers.get())
-        if (payload.present) http.payload = payload.get()
+        org.jreleaser.model.internal.announce.HttpAnnouncer announcer = new org.jreleaser.model.internal.announce.HttpAnnouncer()
+        announcer.name = name
+        fillProperties(announcer)
+        if (url.present) announcer.url = url.get()
+        if (username.present) announcer.username = username.get()
+        if (password.present) announcer.password = password.get()
+        if (method.present) announcer.method = method.get()
+        if (authorization.present) announcer.authorization = authorization.get()
+        if (bearerKeyword.present) announcer.bearerKeyword = bearerKeyword.get()
+        if (headers.present) announcer.headers.putAll(headers.get())
+        if (payload.present) announcer.payload = payload.get()
         if (payloadTemplate.present) {
-            http.payloadTemplate = payloadTemplate.asFile.get().absolutePath
+            announcer.payloadTemplate = payloadTemplate.asFile.get().absolutePath
         }
-        http
+        announcer
     }
 }

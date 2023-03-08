@@ -52,29 +52,29 @@ public final class FtpUploaderValidator {
         }
     }
 
-    private static void validateFtp(JReleaserContext context, FtpUploader ftp, Errors errors) {
-        context.getLogger().debug("upload.ftp.{}", ftp.getName());
+    private static void validateFtp(JReleaserContext context, FtpUploader uploader, Errors errors) {
+        context.getLogger().debug("upload.ftp.{}", uploader.getName());
 
-        resolveActivatable(context, ftp,
-            listOf("upload.ftp." + ftp.getName(), "upload.ftp"),
+        resolveActivatable(context, uploader,
+            listOf("upload.ftp." + uploader.getName(), "upload.ftp"),
             "NEVER");
-        if (!ftp.resolveEnabledWithSnapshot(context.getModel().getProject())) {
+        if (!uploader.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
-        if (!ftp.isArtifacts() && !ftp.isFiles() && !ftp.isSignatures()) {
-            errors.warning(RB.$("WARNING.validation.uploader.no.artifacts", ftp.getType(), ftp.getName()));
+        if (!uploader.isArtifacts() && !uploader.isFiles() && !uploader.isSignatures()) {
+            errors.warning(RB.$("WARNING.validation.uploader.no.artifacts", uploader.getType(), uploader.getName()));
             context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
-            ftp.disable();
+            uploader.disable();
             return;
         }
 
-        FtpValidator.validateFtp(context, ftp, "upload", ftp.getName(), errors, context.isDryrun());
+        FtpValidator.validateFtp(context, uploader, "upload", uploader.getName(), errors, context.isDryrun());
 
-        if (isBlank(ftp.getPath())) {
-            errors.configuration(RB.$("validation_must_not_be_blank", "upload.ftp." + ftp.getName() + ".path"));
+        if (isBlank(uploader.getPath())) {
+            errors.configuration(RB.$("validation_must_not_be_blank", "upload.ftp." + uploader.getName() + ".path"));
         }
-        validateTimeout(ftp);
+        validateTimeout(uploader);
     }
 }

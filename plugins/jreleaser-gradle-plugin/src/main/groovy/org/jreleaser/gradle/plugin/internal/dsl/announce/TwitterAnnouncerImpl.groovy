@@ -77,15 +77,15 @@ class TwitterAnnouncerImpl extends AbstractAnnouncer implements TwitterAnnouncer
     }
 
     org.jreleaser.model.internal.announce.TwitterAnnouncer toModel() {
-        org.jreleaser.model.internal.announce.TwitterAnnouncer twitter = new org.jreleaser.model.internal.announce.TwitterAnnouncer()
-        fillProperties(twitter)
-        if (consumerKey.present) twitter.consumerKey = consumerKey.get()
-        if (consumerSecret.present) twitter.consumerSecret = consumerSecret.get()
-        if (accessToken.present) twitter.accessToken = accessToken.get()
-        if (accessTokenSecret.present) twitter.accessTokenSecret = accessTokenSecret.get()
-        if (status.present) twitter.status = status.get()
-        if (statusTemplate.present) twitter.statusTemplate = statusTemplate.get()
-        twitter.statuses = (List<String>) statuses.getOrElse([])
-        twitter
+        org.jreleaser.model.internal.announce.TwitterAnnouncer announcer = new org.jreleaser.model.internal.announce.TwitterAnnouncer()
+        fillProperties(announcer)
+        if (consumerKey.present) announcer.consumerKey = consumerKey.get()
+        if (consumerSecret.present) announcer.consumerSecret = consumerSecret.get()
+        if (accessToken.present) announcer.accessToken = accessToken.get()
+        if (accessTokenSecret.present) announcer.accessTokenSecret = accessTokenSecret.get()
+        if (status.present) announcer.status = status.get()
+        if (statusTemplate.present) announcer.statusTemplate = statusTemplate.get()
+        announcer.statuses = (List<String>) statuses.getOrElse([])
+        announcer
     }
 }

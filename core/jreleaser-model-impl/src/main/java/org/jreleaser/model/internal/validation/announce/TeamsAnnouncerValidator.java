@@ -43,33 +43,33 @@ public final class TeamsAnnouncerValidator {
         // noop
     }
 
-    public static void validateTeams(JReleaserContext context, TeamsAnnouncer teams, Errors errors) {
+    public static void validateTeams(JReleaserContext context, TeamsAnnouncer announcer, Errors errors) {
         context.getLogger().debug("announce.teams");
-        resolveActivatable(context, teams, "announce.teams", "NEVER");
-        if (!teams.resolveEnabledWithSnapshot(context.getModel().getProject())) {
+        resolveActivatable(context, announcer, "announce.teams", "NEVER");
+        if (!announcer.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
-        teams.setWebhook(
+        announcer.setWebhook(
             checkProperty(context,
                 listOf(
                     "announce.teams.webhook",
                     TEAMS_WEBHOOK),
                 "announce.teams.webhook",
-                teams.getWebhook(),
+                announcer.getWebhook(),
                 errors,
                 context.isDryrun()));
 
-        if (isBlank(teams.getMessageTemplate())) {
-            teams.setMessageTemplate(DEFAULT_TEAMS_TPL);
+        if (isBlank(announcer.getMessageTemplate())) {
+            announcer.setMessageTemplate(DEFAULT_TEAMS_TPL);
         }
 
-        if (isNotBlank(teams.getMessageTemplate()) &&
-            !Files.exists(context.getBasedir().resolve(teams.getMessageTemplate().trim()))) {
-            errors.configuration(RB.$("validation_directory_not_exist", "teams.messageTemplate", teams.getMessageTemplate()));
+        if (isNotBlank(announcer.getMessageTemplate()) &&
+            !Files.exists(context.getBasedir().resolve(announcer.getMessageTemplate().trim()))) {
+            errors.configuration(RB.$("validation_directory_not_exist", "teams.messageTemplate", announcer.getMessageTemplate()));
         }
 
-        validateTimeout(teams);
+        validateTimeout(announcer);
     }
 }

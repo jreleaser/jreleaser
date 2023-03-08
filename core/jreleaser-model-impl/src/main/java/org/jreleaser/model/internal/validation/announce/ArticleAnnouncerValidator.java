@@ -41,26 +41,26 @@ public final class ArticleAnnouncerValidator {
         // noop
     }
 
-    public static void validateArticle(JReleaserContext context, ArticleAnnouncer article, Errors errors) {
+    public static void validateArticle(JReleaserContext context, ArticleAnnouncer announcer, Errors errors) {
         context.getLogger().debug("announce.article");
-        resolveActivatable(context, article, "announce.article", "NEVER");
-        if (!article.resolveEnabledWithSnapshot(context.getModel().getProject())) {
+        resolveActivatable(context, announcer, "announce.article", "NEVER");
+        if (!announcer.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
         BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
-        ArticleAnnouncer.Repository repository = article.getRepository();
+        ArticleAnnouncer.Repository repository = announcer.getRepository();
 
-        validateCommitAuthor(article, service);
+        validateCommitAuthor(announcer, service);
         validateOwner(repository, service);
 
         if (isBlank(repository.getName())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "announce.article.repository.name"));
         }
 
-        if (isBlank(article.getRepository().getCommitMessage())) {
-            article.getRepository().setCommitMessage("{{projectName}} {{tagName}}");
+        if (isBlank(announcer.getRepository().getCommitMessage())) {
+            announcer.getRepository().setCommitMessage("{{projectName}} {{tagName}}");
         }
 
         repository.setUsername(
@@ -94,24 +94,24 @@ public final class ArticleAnnouncerValidator {
             repository.setTagName(service.getTagName());
         }
 
-        if (isBlank(article.getTemplateDirectory())) {
-            article.setTemplateDirectory("src/jreleaser/templates/article");
+        if (isBlank(announcer.getTemplateDirectory())) {
+            announcer.setTemplateDirectory("src/jreleaser/templates/article");
         }
 
-        File templateDirectoryFile = context.getBasedir().resolve(article.getTemplateDirectory().trim()).toFile();
+        File templateDirectoryFile = context.getBasedir().resolve(announcer.getTemplateDirectory().trim()).toFile();
         if (!(templateDirectoryFile.exists())) {
-            errors.configuration(RB.$("validation_directory_not_exist", "announce.article.templateDirectory", article.getTemplateDirectory()));
+            errors.configuration(RB.$("validation_directory_not_exist", "announce.article.templateDirectory", announcer.getTemplateDirectory()));
         }
 
         if (!templateDirectoryFile.isDirectory()) {
-            errors.configuration(RB.$("validation_is_not_a_directory", "announce.article.templateDirectory", article.getTemplateDirectory()));
+            errors.configuration(RB.$("validation_is_not_a_directory", "announce.article.templateDirectory", announcer.getTemplateDirectory()));
         }
 
         if (null == templateDirectoryFile.listFiles() || templateDirectoryFile.listFiles().length == 0) {
-            errors.configuration(RB.$("validation_directory_is_empty", "announce.article.templateDirectory", article.getTemplateDirectory()));
+            errors.configuration(RB.$("validation_directory_is_empty", "announce.article.templateDirectory", announcer.getTemplateDirectory()));
         }
 
-        if (article.getFiles().isEmpty()) {
+        if (announcer.getFiles().isEmpty()) {
             errors.configuration(RB.$("validation_must_not_be_empty", "announce.article.files"));
         }
     }

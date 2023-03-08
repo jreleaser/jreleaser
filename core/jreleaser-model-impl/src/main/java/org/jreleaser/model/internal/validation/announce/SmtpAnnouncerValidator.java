@@ -41,72 +41,72 @@ public final class SmtpAnnouncerValidator {
         // noop
     }
 
-    public static void validateSmtp(JReleaserContext context, SmtpAnnouncer smtp, Errors errors) {
+    public static void validateSmtp(JReleaserContext context, SmtpAnnouncer announcer, Errors errors) {
         context.getLogger().debug("announce.smtp");
-        resolveActivatable(context, smtp, "announce.smtp", "NEVER");
-        if (!smtp.resolveEnabledWithSnapshot(context.getModel().getProject())) {
+        resolveActivatable(context, announcer, "announce.smtp", "NEVER");
+        if (!announcer.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
-        if (null == smtp.getTransport()) {
-            smtp.setTransport(org.jreleaser.model.Mail.Transport.SMTP);
+        if (null == announcer.getTransport()) {
+            announcer.setTransport(org.jreleaser.model.Mail.Transport.SMTP);
         }
 
-        if (isBlank(smtp.getHost())) {
+        if (isBlank(announcer.getHost())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "mail.host"));
         }
 
-        if (null == smtp.getPort()) {
-            smtp.setPort(25);
+        if (null == announcer.getPort()) {
+            announcer.setPort(25);
         }
 
-        if (!smtp.isAuthSet()) {
-            smtp.setAuth(true);
+        if (!announcer.isAuthSet()) {
+            announcer.setAuth(true);
         }
 
-        if (isBlank(smtp.getUsername())) {
+        if (isBlank(announcer.getUsername())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "mail.username"));
         }
 
-        smtp.setPassword(
+        announcer.setPassword(
             checkProperty(context,
                 listOf(
                     "announce.smtp.password",
                     SMTP_PASSWORD,
                     MAIL_PASSWORD),
                 "announce.smtp.password",
-                smtp.getPassword(),
+                announcer.getPassword(),
                 errors,
                 context.isDryrun()));
 
-        if (isBlank(smtp.getFrom())) {
+        if (isBlank(announcer.getFrom())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "mail.from"));
         }
 
-        boolean to = isBlank(smtp.getTo());
-        boolean cc = isBlank(smtp.getCc());
-        boolean bcc = isBlank(smtp.getBcc());
+        boolean to = isBlank(announcer.getTo());
+        boolean cc = isBlank(announcer.getCc());
+        boolean bcc = isBlank(announcer.getBcc());
 
         if (!to && !cc && !bcc) {
             errors.configuration(RB.$("validation_mail_not_blank", "mail.to, mail.cc,", "mail.bcc"));
         }
 
-        if (isBlank(smtp.getSubject())) {
-            smtp.setSubject(RB.$("default.discussion.title"));
+        if (isBlank(announcer.getSubject())) {
+            announcer.setSubject(RB.$("default.discussion.title"));
         }
 
-        if (null == smtp.getMimeType()) {
-            smtp.setMimeType(org.jreleaser.model.Mail.MimeType.TEXT);
+        if (null == announcer.getMimeType()) {
+            announcer.setMimeType(org.jreleaser.model.Mail.MimeType.TEXT);
         }
 
-        if (isBlank(smtp.getMessage()) && isBlank(smtp.getMessageTemplate())) {
-            smtp.setMessageTemplate("src/jreleaser/templates/mail.tpl");
+        if (isBlank(announcer.getMessage()) && isBlank(announcer.getMessageTemplate())) {
+            announcer.setMessageTemplate("src/jreleaser/templates/mail.tpl");
         }
 
-        if (isNotBlank(smtp.getMessageTemplate()) &&
-            !Files.exists(context.getBasedir().resolve(smtp.getMessageTemplate().trim()))) {
-            errors.configuration(RB.$("validation_directory_not_exist", "mail.messageTemplate", smtp.getMessageTemplate()));
+        if (isNotBlank(announcer.getMessageTemplate()) &&
+            !Files.exists(context.getBasedir().resolve(announcer.getMessageTemplate().trim()))) {
+            errors.configuration(RB.$("validation_directory_not_exist", "mail.messageTemplate", announcer.getMessageTemplate()));
         }
     }
 }

@@ -53,28 +53,28 @@ public final class FtpDownloaderValidator {
         }
     }
 
-    private static void validateFtp(JReleaserContext context, FtpDownloader ftp, Errors errors) {
-        context.getLogger().debug("download.ftp.{}", ftp.getName());
+    private static void validateFtp(JReleaserContext context, FtpDownloader downloader, Errors errors) {
+        context.getLogger().debug("download.ftp.{}", downloader.getName());
 
-        resolveActivatable(context, ftp,
-            listOf("download.ftp." + ftp.getName(), "download.ftp"),
+        resolveActivatable(context, downloader,
+            listOf("download.ftp." + downloader.getName(), "download.ftp"),
             "ALWAYS");
-        if (!ftp.resolveEnabled(context.getModel().getProject())) {
+        if (!downloader.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
         // allow anonymous access
-        FtpValidator.validateFtp(context, ftp, "upload", ftp.getName(), errors, true);
-        validateTimeout(ftp);
+        FtpValidator.validateFtp(context, downloader, "upload", downloader.getName(), errors, true);
+        validateTimeout(downloader);
 
-        if (ftp.getAssets().isEmpty()) {
-            errors.configuration(RB.$("validation_must_not_be_empty", "download.ftp." + ftp.getName() + ".assets"));
+        if (downloader.getAssets().isEmpty()) {
+            errors.configuration(RB.$("validation_must_not_be_empty", "download.ftp." + downloader.getName() + ".assets"));
         } else {
             int index = 0;
-            for (Downloader.Asset asset : ftp.getAssets()) {
+            for (Downloader.Asset asset : downloader.getAssets()) {
                 if (isBlank(asset.getInput())) {
-                    errors.configuration(RB.$("validation_must_not_be_null", "download.ftp." + ftp.getName() + ".asset[" + (index++) + "].input"));
+                    errors.configuration(RB.$("validation_must_not_be_null", "download.ftp." + downloader.getName() + ".asset[" + (index++) + "].input"));
                 }
             }
         }

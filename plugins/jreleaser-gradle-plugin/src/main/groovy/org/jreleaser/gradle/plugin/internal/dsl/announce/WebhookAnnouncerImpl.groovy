@@ -68,16 +68,16 @@ class WebhookAnnouncerImpl extends AbstractAnnouncer implements WebhookAnnouncer
     }
 
     org.jreleaser.model.internal.announce.WebhookAnnouncer toModel() {
-        org.jreleaser.model.internal.announce.WebhookAnnouncer w = new org.jreleaser.model.internal.announce.WebhookAnnouncer()
-        fillProperties(w)
-        w.name = name
-        if (webhook.present) w.webhook = webhook.get()
-        if (message.present) w.message = message.get()
-        if (messageProperty.present) w.messageProperty = messageProperty.get()
+        org.jreleaser.model.internal.announce.WebhookAnnouncer announcer = new org.jreleaser.model.internal.announce.WebhookAnnouncer()
+        fillProperties(announcer)
+        announcer.name = name
+        if (webhook.present) announcer.webhook = webhook.get()
+        if (message.present) announcer.message = message.get()
+        if (messageProperty.present) announcer.messageProperty = messageProperty.get()
         if (messageTemplate.present) {
-            w.messageTemplate = messageTemplate.asFile.get().absolutePath
+            announcer.messageTemplate = messageTemplate.asFile.get().absolutePath
         }
-        if (structuredMessage.present) w.structuredMessage = structuredMessage.get()
-        w
+        if (structuredMessage.present) announcer.structuredMessage = structuredMessage.get()
+        announcer
     }
 }

@@ -38,9 +38,9 @@ class SftpDownloaderImpl extends AbstractSshDownloader implements SftpDownloader
     }
 
     org.jreleaser.model.internal.download.SftpDownloader toModel() {
-        org.jreleaser.model.internal.download.SftpDownloader sftp = new org.jreleaser.model.internal.download.SftpDownloader()
-        sftp.name = name
-        fillProperties(sftp)
-        sftp
+        org.jreleaser.model.internal.download.SftpDownloader downloader = new org.jreleaser.model.internal.download.SftpDownloader()
+        downloader.name = name
+        fillProperties(downloader)
+        downloader
     }
 }

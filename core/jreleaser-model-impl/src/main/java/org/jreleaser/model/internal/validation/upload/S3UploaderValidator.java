@@ -53,30 +53,30 @@ public final class S3UploaderValidator {
         }
     }
 
-    private static void validateS3(JReleaserContext context, S3Uploader s3, Errors errors) {
-        context.getLogger().debug("upload.s3.{}", s3.getName());
+    private static void validateS3(JReleaserContext context, S3Uploader uploader, Errors errors) {
+        context.getLogger().debug("upload.s3.{}", uploader.getName());
 
-        resolveActivatable(context, s3,
-            listOf("upload.s3." + s3.getName(), "upload.s3"),
+        resolveActivatable(context, uploader,
+            listOf("upload.s3." + uploader.getName(), "upload.s3"),
             "NEVER");
-        if (!s3.resolveEnabledWithSnapshot(context.getModel().getProject())) {
+        if (!uploader.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
-        if (!s3.isArtifacts() && !s3.isFiles() && !s3.isSignatures()) {
-            errors.warning(RB.$("WARNING.validation.uploader.no.artifacts", s3.getType(), s3.getName()));
+        if (!uploader.isArtifacts() && !uploader.isFiles() && !uploader.isSignatures()) {
+            errors.warning(RB.$("WARNING.validation.uploader.no.artifacts", uploader.getType(), uploader.getName()));
             context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
-            s3.disable();
+            uploader.disable();
             return;
         }
 
-        String baseKey1 = "upload.s3." + s3.getName();
+        String baseKey1 = "upload.s3." + uploader.getName();
         String baseKey2 = "upload.s3";
-        String baseKey3 = "s3." + s3.getName();
+        String baseKey3 = "s3." + uploader.getName();
         String baseKey4 = "s3";
 
-        s3.setRegion(
+        uploader.setRegion(
             checkProperty(context,
                 listOf(
                     baseKey1 + ".region",
@@ -84,10 +84,10 @@ public final class S3UploaderValidator {
                     baseKey3 + ".region",
                     baseKey4 + ".region"),
                 baseKey1 + ".region",
-                s3.getRegion(),
+                uploader.getRegion(),
                 errors));
 
-        s3.setBucket(
+        uploader.setBucket(
             checkProperty(context,
                 listOf(
                     baseKey1 + ".bucket",
@@ -95,10 +95,10 @@ public final class S3UploaderValidator {
                     baseKey3 + ".bucket",
                     baseKey4 + ".bucket"),
                 baseKey1 + ".bucket",
-                s3.getBucket(),
+                uploader.getBucket(),
                 errors));
 
-        s3.setAccessKeyId(
+        uploader.setAccessKeyId(
             checkProperty(context,
                 listOf(
                     baseKey1 + ".access.key.id",
@@ -106,10 +106,10 @@ public final class S3UploaderValidator {
                     baseKey3 + ".access.key.id",
                     baseKey4 + ".access.key.id"),
                 baseKey1 + ".accessKeyId",
-                s3.getAccessKeyId(),
-                s3.getAccessKeyId()));
+                uploader.getAccessKeyId(),
+                uploader.getAccessKeyId()));
 
-        s3.setSecretKey(
+        uploader.setSecretKey(
             checkProperty(context,
                 listOf(
                     baseKey1 + ".secret.key",
@@ -117,10 +117,10 @@ public final class S3UploaderValidator {
                     baseKey3 + ".secret.key",
                     baseKey4 + ".secret.key"),
                 baseKey1 + ".secretKey",
-                s3.getSecretKey(),
-                s3.getSecretKey()));
+                uploader.getSecretKey(),
+                uploader.getSecretKey()));
 
-        s3.setSessionToken(
+        uploader.setSessionToken(
             checkProperty(context,
                 listOf(
                     baseKey1 + ".session.token",
@@ -128,10 +128,10 @@ public final class S3UploaderValidator {
                     baseKey3 + ".session.token",
                     baseKey4 + ".session.token"),
                 baseKey1 + ".sessionToken",
-                s3.getSessionToken(),
-                s3.getSessionToken()));
+                uploader.getSessionToken(),
+                uploader.getSessionToken()));
 
-        s3.setPath(
+        uploader.setPath(
             checkProperty(context,
                 listOf(
                     baseKey1 + ".path",
@@ -139,10 +139,10 @@ public final class S3UploaderValidator {
                     baseKey3 + ".path",
                     baseKey4 + ".path"),
                 baseKey1 + ".path",
-                s3.getPath(),
+                uploader.getPath(),
                 "{{projectName}}/{{tagName}}/{{artifactFile}}"));
 
-        s3.setDownloadUrl(
+        uploader.setDownloadUrl(
             checkProperty(context,
                 listOf(
                     baseKey1 + ".download.url",
@@ -150,10 +150,10 @@ public final class S3UploaderValidator {
                     baseKey3 + ".download.url",
                     baseKey4 + ".download.url"),
                 baseKey1 + ".downloadUrl",
-                s3.getDownloadUrl(),
-                s3.getDownloadUrl()));
+                uploader.getDownloadUrl(),
+                uploader.getDownloadUrl()));
 
-        s3.setEndpoint(
+        uploader.setEndpoint(
             checkProperty(context,
                 listOf(
                     baseKey1 + ".endpoint",
@@ -161,13 +161,13 @@ public final class S3UploaderValidator {
                     baseKey3 + ".endpoint",
                     baseKey4 + ".endpoint"),
                 baseKey1 + "endpoint",
-                s3.getEndpoint(),
+                uploader.getEndpoint(),
                 ""));
 
-        if (isNotBlank(s3.getEndpoint()) && isBlank(s3.getDownloadUrl())) {
+        if (isNotBlank(uploader.getEndpoint()) && isBlank(uploader.getDownloadUrl())) {
             errors.configuration(RB.$("validation_s3_missing_download_url", baseKey1));
         }
 
-        validateTimeout(s3);
+        validateTimeout(uploader);
     }
 }

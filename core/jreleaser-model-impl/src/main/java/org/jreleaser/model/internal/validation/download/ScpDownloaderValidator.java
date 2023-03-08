@@ -53,27 +53,27 @@ public final class ScpDownloaderValidator {
         }
     }
 
-    private static void validateScpDownloader(JReleaserContext context, ScpDownloader scp, Errors errors) {
-        context.getLogger().debug("download.scp.{}", scp.getName());
+    private static void validateScpDownloader(JReleaserContext context, ScpDownloader downloader, Errors errors) {
+        context.getLogger().debug("download.scp.{}", downloader.getName());
 
-        resolveActivatable(context, scp,
-            listOf("download.scp." + scp.getName(), "download.scp"),
+        resolveActivatable(context, downloader,
+            listOf("download.scp." + downloader.getName(), "download.scp"),
             "ALWAYS");
-        if (!scp.resolveEnabled(context.getModel().getProject())) {
+        if (!downloader.resolveEnabled(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
-        validateSsh(context, scp, scp.getType(), scp.getName(), "download.", errors);
-        validateTimeout(scp);
+        validateSsh(context, downloader, downloader.getType(), downloader.getName(), "download.", errors);
+        validateTimeout(downloader);
 
-        if (scp.getAssets().isEmpty()) {
-            errors.configuration(RB.$("validation_must_not_be_empty", "download.scp." + scp.getName() + ".assets"));
+        if (downloader.getAssets().isEmpty()) {
+            errors.configuration(RB.$("validation_must_not_be_empty", "download.scp." + downloader.getName() + ".assets"));
         } else {
             int index = 0;
-            for (Downloader.Asset asset : scp.getAssets()) {
+            for (Downloader.Asset asset : downloader.getAssets()) {
                 if (isBlank(asset.getInput())) {
-                    errors.configuration(RB.$("validation_must_not_be_null", "download.scp." + scp.getName() + ".asset[" + (index++) + "].input"));
+                    errors.configuration(RB.$("validation_must_not_be_null", "download.scp." + downloader.getName() + ".asset[" + (index++) + "].input"));
                 }
             }
         }

@@ -73,17 +73,17 @@ class DiscourseAnnouncerImpl extends AbstractAnnouncer implements DiscourseAnnou
     }
 
     org.jreleaser.model.internal.announce.DiscourseAnnouncer toModel() {
-        org.jreleaser.model.internal.announce.DiscourseAnnouncer discourse = new org.jreleaser.model.internal.announce.DiscourseAnnouncer()
-        fillProperties(discourse)
-        if (host.present) discourse.host = host.get()
-        if (username.present) discourse.username = username.get()
-        if (apiKey.present) discourse.apiKey = apiKey.get()
-        if (categoryName.present) discourse.categoryName = categoryName.get()
-        if (title.present) discourse.title = title.get()
-        if (message.present) discourse.message = message.get()
+        org.jreleaser.model.internal.announce.DiscourseAnnouncer announcer = new org.jreleaser.model.internal.announce.DiscourseAnnouncer()
+        fillProperties(announcer)
+        if (host.present) announcer.host = host.get()
+        if (username.present) announcer.username = username.get()
+        if (apiKey.present) announcer.apiKey = apiKey.get()
+        if (categoryName.present) announcer.categoryName = categoryName.get()
+        if (title.present) announcer.title = title.get()
+        if (message.present) announcer.message = message.get()
         if (messageTemplate.present) {
-            discourse.messageTemplate = messageTemplate.asFile.get().absolutePath
+            announcer.messageTemplate = messageTemplate.asFile.get().absolutePath
         }
-        discourse
+        announcer
     }
 }

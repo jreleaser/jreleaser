@@ -45,65 +45,65 @@ public final class DiscourseAnnouncerValidator {
         // noop
     }
 
-    public static void validateDiscourse(JReleaserContext context, DiscourseAnnouncer discourse, Errors errors) {
+    public static void validateDiscourse(JReleaserContext context, DiscourseAnnouncer announcer, Errors errors) {
         context.getLogger().debug("announce.discourse");
-        resolveActivatable(context, discourse, "announce.discourse", "NEVER");
-        if (!discourse.resolveEnabledWithSnapshot(context.getModel().getProject())) {
+        resolveActivatable(context, announcer, "announce.discourse", "NEVER");
+        if (!announcer.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
 
-        if (isBlank(discourse.getHost())) {
+        if (isBlank(announcer.getHost())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "discourse.host"));
         }
 
-        discourse.setUsername(
+        announcer.setUsername(
             checkProperty(context,
                 listOf(
                     "announce.discourse.username",
                     DISCOURSE_USERNAME),
                 "announce.discourse.username",
-                discourse.getUsername(),
+                announcer.getUsername(),
                 errors,
                 context.isDryrun()));
 
-        discourse.setApiKey(
+        announcer.setApiKey(
             checkProperty(context,
                 listOf(
                     "announce.discourse.api.key",
                     DISCOURSE_API_KEY),
                 "announce.discourse.apiKey",
-                discourse.getApiKey(),
+                announcer.getApiKey(),
                 errors,
                 context.isDryrun()));
 
-        discourse.setCategoryName(
+        announcer.setCategoryName(
             checkProperty(context,
                 listOf(
                     "announce.discourse.category",
                     DISCOURSE_CATEGORY_NAME),
                 "announce.discourse.category",
-                discourse.getCategoryName(),
+                announcer.getCategoryName(),
                 errors,
                 context.isDryrun()));
 
-        if (isBlank(discourse.getTitle())) {
-            discourse.setTitle(RB.$("default.discussion.title"));
+        if (isBlank(announcer.getTitle())) {
+            announcer.setTitle(RB.$("default.discussion.title"));
         }
 
-        if (isBlank(discourse.getMessage()) && isBlank(discourse.getMessageTemplate())) {
+        if (isBlank(announcer.getMessage()) && isBlank(announcer.getMessageTemplate())) {
             if (Files.exists(context.getBasedir().resolve(DEFAULT_DISCOURSE_TPL))) {
-                discourse.setMessageTemplate(DEFAULT_DISCOURSE_TPL);
+                announcer.setMessageTemplate(DEFAULT_DISCOURSE_TPL);
             } else {
-                discourse.setMessage(RB.$("default.release.message"));
+                announcer.setMessage(RB.$("default.release.message"));
             }
         }
 
-        if (isNotBlank(discourse.getMessageTemplate()) &&
-            !Files.exists(context.getBasedir().resolve(discourse.getMessageTemplate().trim()))) {
-            errors.configuration(RB.$("validation_directory_not_exist", "discourse.messageTemplate", discourse.getMessageTemplate()));
+        if (isNotBlank(announcer.getMessageTemplate()) &&
+            !Files.exists(context.getBasedir().resolve(announcer.getMessageTemplate().trim()))) {
+            errors.configuration(RB.$("validation_directory_not_exist", "discourse.messageTemplate", announcer.getMessageTemplate()));
         }
 
-        validateTimeout(discourse);
+        validateTimeout(announcer);
     }
 }
