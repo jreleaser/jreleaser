@@ -85,6 +85,10 @@ public final class ArchiveAssemblerValidator {
             archive.addFormat(Archive.Format.ZIP);
         }
 
+        if (null == archive.getOptions().getTimestamp()) {
+            archive.getOptions().setTimestamp(context.getModel().resolveArchiveTimestamp());
+        }
+
         if (archive.getFileSets().isEmpty()) {
             errors.configuration(RB.$("validation_archive_empty_fileset", archive.getName()));
         }

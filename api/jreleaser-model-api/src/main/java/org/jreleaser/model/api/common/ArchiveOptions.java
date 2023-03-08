@@ -15,25 +15,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.api.assemble;
+package org.jreleaser.model.api.common;
 
-import org.jreleaser.model.Archive;
-import org.jreleaser.model.api.common.ArchiveOptions;
+import java.time.ZonedDateTime;
+import java.util.Locale;
 
-import java.util.Set;
+import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
- * @since 0.8.0
+ * @since 1.6.0
  */
-public interface ArchiveAssembler extends Assembler {
-    String TYPE = "archive";
+public interface ArchiveOptions extends Domain {
+    ZonedDateTime getTimestamp();
 
-    String getArchiveName();
+    TarMode getLongFileMode();
 
-    boolean isAttachPlatform();
+    TarMode getBigNumberMode();
 
-    Set<Archive.Format> getFormats();
+    enum TarMode {
+        GNU,
+        POSIX,
+        ERROR,
+        TRUNCATE;
 
-    ArchiveOptions getOptions();
+        public String formatted() {
+            return name().toLowerCase(Locale.ENGLISH);
+        }
+
+        public static TarMode of(String str) {
+            if (isBlank(str)) return null;
+            return valueOf(str.toUpperCase(Locale.ENGLISH).trim());
+        }
+    }
 }

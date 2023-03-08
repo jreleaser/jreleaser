@@ -28,7 +28,9 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.assemble.NativeImageAssembler
+import org.jreleaser.gradle.plugin.dsl.common.ArchiveOptions
 import org.jreleaser.gradle.plugin.dsl.common.Artifact
+import org.jreleaser.gradle.plugin.internal.dsl.common.ArchiveOptionsImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.ArtifactImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.JavaImpl
 import org.jreleaser.gradle.plugin.internal.dsl.platform.PlatformImpl
@@ -55,6 +57,7 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
     final SetProperty<String> components
     final JavaImpl java
     final PlatformImpl platform
+    final ArchiveOptionsImpl options
 
     private final ArtifactImpl graal
     private final UpxImpl upx
@@ -80,6 +83,7 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
         linux = objects.newInstance(LinuxImpl, objects)
         windows = objects.newInstance(WindowsImpl, objects)
         osx = objects.newInstance(OsxImpl, objects)
+        options = objects.newInstance(ArchiveOptionsImpl, objects)
 
         graalJdks = objects.domainObjectContainer(ArtifactImpl, new NamedDomainObjectFactory<ArtifactImpl>() {
             @Override
@@ -111,7 +115,8 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
             linux.isSet() ||
             windows.isSet() ||
             osx.isSet() ||
-            !graalJdks.isEmpty()
+            !graalJdks.isEmpty() ||
+            options.isSet()
     }
 
     @Override
@@ -159,6 +164,11 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
     }
 
     @Override
+    void options(Action<? super ArchiveOptions> action) {
+        action.execute(options)
+    }
+
+    @Override
     void graal(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
         ConfigureUtil.configure(action, graal)
     }
@@ -189,6 +199,11 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
     }
 
     @Override
+    void options(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArchiveOptions) Closure<Void> action) {
+        ConfigureUtil.configure(action, options)
+    }
+
+    @Override
     void setActive(String str) {
         if (isNotBlank(str)) {
             active.set(Active.of(str.trim()))
@@ -214,6 +229,7 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
         for (ArtifactImpl artifact : graalJdks) {
             nativeImage.addGraalJdk(artifact.toModel())
         }
+        if (options.isSet()) nativeImage.options = options.toModel()
         nativeImage
     }
 

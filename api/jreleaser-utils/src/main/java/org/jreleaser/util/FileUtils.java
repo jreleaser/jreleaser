@@ -94,6 +94,7 @@ import static org.jreleaser.util.FileType.TGZ;
 import static org.jreleaser.util.FileType.TXZ;
 import static org.jreleaser.util.FileType.ZIP;
 import static org.jreleaser.util.StringUtils.getFilename;
+import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -161,10 +162,10 @@ public final class FileUtils {
     }
 
     public static void zip(Path src, Path dest) throws IOException {
-        zip(src, dest, null);
+        zip(src, dest, new ArchiveOptions());
     }
 
-    public static void zip(Path src, Path dest, ZonedDateTime timestamp) throws IOException {
+    public static void zip(Path src, Path dest, ArchiveOptions options) throws IOException {
         try (ZipArchiveOutputStream out = new ZipArchiveOutputStream(dest.toFile())) {
             out.setMethod(ZipOutputStream.DEFLATED);
 
@@ -177,7 +178,7 @@ public final class FileUtils {
                 }
             });
 
-            FileTime fileTime = null != timestamp ? FileTime.from(timestamp.toInstant()) : null;
+            FileTime fileTime = null != options.getTimestamp() ? FileTime.from(options.getTimestamp().toInstant()) : null;
             for (Path path : paths) {
                 String entryName = src.relativize(path).toString();
                 File inputFile = path.toFile();
@@ -200,63 +201,64 @@ public final class FileUtils {
     }
 
     public static void tar(Path src, Path dest) throws IOException {
-        tar(src, dest, null);
+        tar(src, dest, new ArchiveOptions());
     }
 
-    public static void tar(Path src, Path dest, ZonedDateTime timestamp) throws IOException {
+    public static void tar(Path src, Path dest, ArchiveOptions options) throws IOException {
         try (TarArchiveOutputStream out = new TarArchiveOutputStream(
             Files.newOutputStream(dest, CREATE, TRUNCATE_EXISTING))) {
-            tar(src, out, timestamp);
+            tar(src, out, options);
         }
     }
 
     public static void tgz(Path src, Path dest) throws IOException {
-        tgz(src, dest, null);
+        tgz(src, dest, new ArchiveOptions());
     }
 
-    public static void tgz(Path src, Path dest, ZonedDateTime timestamp) throws IOException {
+    public static void tgz(Path src, Path dest, ArchiveOptions options) throws IOException {
         try (TarArchiveOutputStream out = new TarArchiveOutputStream(
             new GzipCompressorOutputStream(Files.newOutputStream(dest, CREATE, TRUNCATE_EXISTING)))) {
-            tar(src, out, timestamp);
+            tar(src, out, options);
         }
     }
 
     public static void bz2(Path src, Path dest) throws IOException {
-        bz2(src, dest, null);
+        bz2(src, dest, new ArchiveOptions());
     }
 
-    public static void bz2(Path src, Path dest, ZonedDateTime timestamp) throws IOException {
+    public static void bz2(Path src, Path dest, ArchiveOptions options) throws IOException {
         try (TarArchiveOutputStream out = new TarArchiveOutputStream(
             new BZip2CompressorOutputStream(Files.newOutputStream(dest, CREATE, TRUNCATE_EXISTING)))) {
-            tar(src, out, timestamp);
+            tar(src, out, options);
         }
     }
 
     public static void xz(Path src, Path dest) throws IOException {
-        xz(src, dest, null);
+        xz(src, dest, new ArchiveOptions());
     }
 
-    public static void xz(Path src, Path dest, ZonedDateTime timestamp) throws IOException {
+    public static void xz(Path src, Path dest, ArchiveOptions options) throws IOException {
         try (TarArchiveOutputStream out = new TarArchiveOutputStream(
             new XZCompressorOutputStream(Files.newOutputStream(dest, CREATE, TRUNCATE_EXISTING)))) {
-            tar(src, out, timestamp);
+            tar(src, out, options);
         }
     }
 
     public static void zst(Path src, Path dest) throws IOException {
-        zst(src, dest, null);
+        zst(src, dest, new ArchiveOptions());
     }
 
-    public static void zst(Path src, Path dest, ZonedDateTime timestamp) throws IOException {
+    public static void zst(Path src, Path dest, ArchiveOptions options) throws IOException {
         try (TarArchiveOutputStream out = new TarArchiveOutputStream(
             new ZstdCompressorOutputStream(Files.newOutputStream(dest, CREATE, TRUNCATE_EXISTING),
                 Zstd.defaultCompressionLevel(), true))) {
-            tar(src, out, timestamp);
+            tar(src, out, options);
         }
     }
 
-    private static void tar(Path src, TarArchiveOutputStream out, ZonedDateTime timestamp) throws IOException {
-        out.setLongFileMode(TarArchiveOutputStream.LONGFILE_POSIX);
+    private static void tar(Path src, TarArchiveOutputStream out, ArchiveOptions options) throws IOException {
+        out.setLongFileMode(options.getLongFileMode().toLongFileMode());
+        out.setBigNumberMode(options.getBigNumberMode().toBigNumberMode());
 
         TreeSet<Path> paths = new TreeSet<>();
         Files.walkFileTree(src, new SimpleFileVisitor<Path>() {
@@ -267,7 +269,7 @@ public final class FileUtils {
             }
         });
 
-        FileTime fileTime = null != timestamp ? FileTime.from(timestamp.toInstant()) : null;
+        FileTime fileTime = null != options.getTimestamp() ? FileTime.from(options.getTimestamp().toInstant()) : null;
         for (Path path : paths) {
             String entryName = src.relativize(path).toString();
             File inputFile = path.toFile();
@@ -288,24 +290,99 @@ public final class FileUtils {
         }
     }
 
-    public static void packArchive(Path src, Path dest) throws IOException {
-        packArchive(src, dest, null);
+    public static class ArchiveOptions {
+        private ZonedDateTime timestamp;
+        private TarMode longFileMode = TarMode.ERROR;
+        private TarMode bigNumberMode = TarMode.ERROR;
+
+        public ZonedDateTime getTimestamp() {
+            return timestamp;
+        }
+
+        public TarMode getLongFileMode() {
+            return longFileMode;
+        }
+
+        public TarMode getBigNumberMode() {
+            return bigNumberMode;
+        }
+
+        public ArchiveOptions withTimestamp(ZonedDateTime timestamp) {
+            this.timestamp = timestamp;
+            return this;
+        }
+
+        public ArchiveOptions withLongFileMode(TarMode longFileMode) {
+            if (null != longFileMode) this.longFileMode = longFileMode;
+            return this;
+        }
+
+        public ArchiveOptions withBigNumberMode(TarMode bigNumberMode) {
+            if (null != bigNumberMode) this.bigNumberMode = bigNumberMode;
+            return this;
+        }
+
+        public enum TarMode {
+            GNU,
+            POSIX,
+            ERROR,
+            TRUNCATE;
+
+            public String formatted() {
+                return name().toLowerCase(Locale.ENGLISH);
+            }
+
+            public static TarMode of(String str) {
+                if (isBlank(str)) return null;
+                return valueOf(str.toUpperCase(Locale.ENGLISH).trim());
+            }
+
+            public int toLongFileMode() {
+                switch (this) {
+                    case GNU:
+                        return TarArchiveOutputStream.LONGFILE_GNU;
+                    case POSIX:
+                        return TarArchiveOutputStream.LONGFILE_POSIX;
+                    case TRUNCATE:
+                        return TarArchiveOutputStream.LONGFILE_TRUNCATE;
+                    case ERROR:
+                    default:
+                        return TarArchiveOutputStream.LONGFILE_ERROR;
+                }
+            }
+
+            public int toBigNumberMode() {
+                switch (this) {
+                    case GNU:
+                        return TarArchiveOutputStream.BIGNUMBER_STAR;
+                    case POSIX:
+                        return TarArchiveOutputStream.BIGNUMBER_POSIX;
+                    case ERROR:
+                    default:
+                        return TarArchiveOutputStream.BIGNUMBER_ERROR;
+                }
+            }
+        }
     }
 
-    public static void packArchive(Path src, Path dest, ZonedDateTime timestamp) throws IOException {
+    public static void packArchive(Path src, Path dest) throws IOException {
+        packArchive(src, dest, new ArchiveOptions());
+    }
+
+    public static void packArchive(Path src, Path dest, ArchiveOptions options) throws IOException {
         String filename = dest.getFileName().toString();
         if (filename.endsWith(ZIP.extension())) {
-            zip(src, dest, timestamp);
+            zip(src, dest, options);
         } else if (filename.endsWith(TAR_BZ2.extension()) || filename.endsWith(TBZ2.extension())) {
-            bz2(src, dest, timestamp);
+            bz2(src, dest, options);
         } else if (filename.endsWith(TAR_GZ.extension()) || filename.endsWith(TGZ.extension())) {
-            tgz(src, dest, timestamp);
+            tgz(src, dest, options);
         } else if (filename.endsWith(TAR_XZ.extension()) || filename.endsWith(TXZ.extension())) {
-            xz(src, dest, timestamp);
+            xz(src, dest, options);
         } else if (filename.endsWith(TAR_ZST.extension())) {
-            zst(src, dest, timestamp);
+            zst(src, dest, options);
         } else if (filename.endsWith(TAR.extension())) {
-            tar(src, dest, timestamp);
+            tar(src, dest, options);
         }
     }
 

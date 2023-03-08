@@ -28,9 +28,11 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.assemble.JavaArchiveAssembler
+import org.jreleaser.gradle.plugin.dsl.common.ArchiveOptions
 import org.jreleaser.gradle.plugin.dsl.common.Artifact
 import org.jreleaser.gradle.plugin.dsl.common.Executable
 import org.jreleaser.gradle.plugin.dsl.common.Glob
+import org.jreleaser.gradle.plugin.internal.dsl.common.ArchiveOptionsImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.ArtifactImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.ExecutableImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.GlobImpl
@@ -56,6 +58,7 @@ class JavaArchiveAssemblerImpl extends AbstractAssembler implements JavaArchiveA
     final ExecutableImpl executable
     final ArtifactImpl mainJar
     final PlatformImpl platform
+    final ArchiveOptionsImpl options
 
     private final NamedDomainObjectContainer<GlobImpl> jars
 
@@ -69,6 +72,7 @@ class JavaArchiveAssemblerImpl extends AbstractAssembler implements JavaArchiveA
         mainJar = objects.newInstance(ArtifactImpl, objects)
         mainJar.setName('mainJar')
         platform = objects.newInstance(PlatformImpl, objects)
+        options = objects.newInstance(ArchiveOptionsImpl, objects)
 
         jars = objects.domainObjectContainer(GlobImpl, new NamedDomainObjectFactory<GlobImpl>() {
             @Override
@@ -88,7 +92,8 @@ class JavaArchiveAssemblerImpl extends AbstractAssembler implements JavaArchiveA
             executable.isSet() ||
             java.isSet() ||
             mainJar.isSet() ||
-            !jars.isEmpty()
+            !jars.isEmpty() ||
+            options.isSet()
     }
 
     @Override
@@ -119,6 +124,11 @@ class JavaArchiveAssemblerImpl extends AbstractAssembler implements JavaArchiveA
     }
 
     @Override
+    void options(Action<? super ArchiveOptions> action) {
+        action.execute(options)
+    }
+
+    @Override
     void java(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = org.jreleaser.gradle.plugin.dsl.assemble.JavaArchiveAssembler.Java) Closure<Void> action) {
         ConfigureUtil.configure(action, java)
     }
@@ -138,6 +148,11 @@ class JavaArchiveAssemblerImpl extends AbstractAssembler implements JavaArchiveA
         ConfigureUtil.configure(action, jars.maybeCreate("jars-${jars.size()}".toString()))
     }
 
+    @Override
+    void options(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArchiveOptions) Closure<Void> action) {
+        ConfigureUtil.configure(action, options)
+    }
+
     org.jreleaser.model.internal.assemble.JavaArchiveAssembler toModel() {
         org.jreleaser.model.internal.assemble.JavaArchiveAssembler assembler = new org.jreleaser.model.internal.assemble.JavaArchiveAssembler()
         assembler.name = name
@@ -150,6 +165,7 @@ class JavaArchiveAssemblerImpl extends AbstractAssembler implements JavaArchiveA
         for (GlobImpl glob : jars) {
             assembler.addJar(glob.toModel())
         }
+        if (options.isSet()) assembler.options = options.toModel()
         assembler
     }
 

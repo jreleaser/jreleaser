@@ -164,6 +164,10 @@ public final class JlinkAssemblerValidator {
             jlink.setArchiveFormat(Archive.Format.ZIP);
         }
 
+        if (null == jlink.getOptions().getTimestamp()) {
+            jlink.getOptions().setTimestamp(context.getModel().resolveArchiveTimestamp());
+        }
+
         validateJavaAssembler(context, mode, jlink, errors, true);
 
         if (!jlink.getJdeps().isEnabledSet()) {

@@ -15,25 +15,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.api.assemble;
+package org.jreleaser.gradle.plugin.dsl.common
 
-import org.jreleaser.model.Archive;
-import org.jreleaser.model.api.common.ArchiveOptions;
+import groovy.transform.CompileStatic
+import org.gradle.api.provider.Property
 
-import java.util.Set;
+import java.time.ZonedDateTime
 
 /**
+ *
  * @author Andres Almiray
- * @since 0.8.0
+ * @since 1.6.0
  */
-public interface ArchiveAssembler extends Assembler {
-    String TYPE = "archive";
+@CompileStatic
+interface ArchiveOptions {
+    Property<ZonedDateTime> getTimestamp()
 
-    String getArchiveName();
+    Property<org.jreleaser.model.api.common.ArchiveOptions.TarMode> getLongFileMode()
 
-    boolean isAttachPlatform();
+    Property<org.jreleaser.model.api.common.ArchiveOptions.TarMode> getBigNumberMode()
 
-    Set<Archive.Format> getFormats();
+    void setTimestamp(String str)
 
-    ArchiveOptions getOptions();
+    void setLongFileMode(String str)
+
+    void setBigNumberMode(String str)
 }

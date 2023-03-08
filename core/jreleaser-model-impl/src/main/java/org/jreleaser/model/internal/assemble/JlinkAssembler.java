@@ -24,6 +24,7 @@ import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Stereotype;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.AbstractModelObject;
+import org.jreleaser.model.internal.common.ArchiveOptions;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.common.EnabledAware;
@@ -52,7 +53,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.2.0
  */
 public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, org.jreleaser.model.api.assemble.JlinkAssembler> {
-    private static final long serialVersionUID = -5831054689759186447L;
+
 
     private final Set<Artifact> targetJdks = new LinkedHashSet<>();
     private final Set<String> moduleNames = new LinkedHashSet<>();
@@ -60,6 +61,7 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
     private final List<String> args = new ArrayList<>();
     private final Artifact jdk = new Artifact();
     private final Jdeps jdeps = new Jdeps();
+    private final ArchiveOptions options = new ArchiveOptions();
 
     private String imageName;
     private String imageNameTransform;
@@ -68,7 +70,7 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
 
     @JsonIgnore
     private final org.jreleaser.model.api.assemble.JlinkAssembler immutable = new org.jreleaser.model.api.assemble.JlinkAssembler() {
-        private static final long serialVersionUID = 7908712047682054832L;
+
 
         private Set<? extends org.jreleaser.model.api.common.Artifact> artifacts;
         private List<? extends org.jreleaser.model.api.common.FileSet> fileSets;
@@ -100,6 +102,11 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
         @Override
         public Archive.Format getArchiveFormat() {
             return archiveFormat;
+        }
+
+        @Override
+        public org.jreleaser.model.api.common.ArchiveOptions getOptions() {
+            return options.asImmutable();
         }
 
         @Override
@@ -279,6 +286,7 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
         this.imageNameTransform = merge(this.imageNameTransform, source.imageNameTransform);
         this.archiveFormat = merge(this.archiveFormat, source.archiveFormat);
         this.copyJars = merge(this.copyJars, source.copyJars);
+        setOptions(source.options);
         setJdeps(source.jdeps);
         setJdk(source.jdk);
         setTargetJdks(merge(this.targetJdks, source.targetJdks));
@@ -344,6 +352,14 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
         this.archiveFormat = Archive.Format.of(archiveFormat);
     }
 
+    public ArchiveOptions getOptions() {
+        return options;
+    }
+
+    public void setOptions(ArchiveOptions options) {
+        this.options.merge(options);
+    }
+
     public Set<Artifact> getTargetJdks() {
         return Artifact.sortArtifacts(targetJdks);
     }
@@ -404,6 +420,7 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
         props.put("imageName", imageName);
         props.put("imageNameTransform", imageNameTransform);
         props.put("archiveFormat", archiveFormat);
+        props.put("options", options.asMap(full));
         props.put("moduleNames", moduleNames);
         props.put("additionalModuleNames", additionalModuleNames);
         props.put("args", args);

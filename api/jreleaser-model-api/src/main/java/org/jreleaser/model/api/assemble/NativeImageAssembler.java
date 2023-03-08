@@ -19,6 +19,7 @@ package org.jreleaser.model.api.assemble;
 
 import org.jreleaser.model.Archive;
 import org.jreleaser.model.api.common.Activatable;
+import org.jreleaser.model.api.common.ArchiveOptions;
 import org.jreleaser.model.api.common.Artifact;
 import org.jreleaser.model.api.common.Domain;
 
@@ -37,6 +38,8 @@ public interface NativeImageAssembler extends Assembler, JavaAssembler {
     String getImageNameTransform();
 
     Archive.Format getArchiveFormat();
+
+    ArchiveOptions getOptions();
 
     Artifact getGraal();
 

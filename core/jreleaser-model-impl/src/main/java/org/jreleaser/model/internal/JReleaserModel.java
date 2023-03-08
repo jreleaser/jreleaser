@@ -47,13 +47,11 @@ import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.version.SemanticVersion;
 
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatterBuilder;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
@@ -62,6 +60,7 @@ import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
 import static org.jreleaser.util.StringUtils.getCapitalizedName;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.TimeUtils.TIMESTAMP_FORMATTER;
 
 /**
  * @author Andres Almiray
@@ -220,12 +219,7 @@ public class JReleaserModel {
 
     public JReleaserModel() {
         this.now = ZonedDateTime.now();
-        this.timestamp = now.format(new DateTimeFormatterBuilder()
-            .append(ISO_LOCAL_DATE_TIME)
-            .optionalStart()
-            .appendOffset("+HH:MM", "Z")
-            .optionalEnd()
-            .toFormatter());
+        this.timestamp = now.format(TIMESTAMP_FORMATTER);
     }
 
     public org.jreleaser.model.api.JReleaserModel asImmutable() {
@@ -600,13 +594,13 @@ public class JReleaserModel {
 
             switch (format.toLowerCase(Locale.ENGLISH)) {
                 case MARKDOWN:
-                    return ("["+linkName+"](" + getRelease().getReleaser().getDownloadUrl() + ")")
+                    return ("[" + linkName + "](" + getRelease().getReleaser().getDownloadUrl() + ")")
                         .replace("{{artifactFile}}", artifactFile);
                 case ASCIIDOC:
-                    return ("link:" + getRelease().getReleaser().getDownloadUrl() + "["+linkName+"]")
+                    return ("link:" + getRelease().getReleaser().getDownloadUrl() + "[" + linkName + "]")
                         .replace("{{artifactFile}}", artifactFile);
                 case HTML:
-                    return ("<a href=\"" + getRelease().getReleaser().getDownloadUrl() + "\">"+linkName+"</a>")
+                    return ("<a href=\"" + getRelease().getReleaser().getDownloadUrl() + "\">" + linkName + "</a>")
                         .replace("{{artifactFile}}", artifactFile);
                 default:
                     // noop

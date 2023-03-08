@@ -18,8 +18,11 @@
 package org.jreleaser.gradle.plugin.dsl.assemble
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
+import org.jreleaser.gradle.plugin.dsl.common.ArchiveOptions
+import org.jreleaser.gradle.plugin.dsl.common.Artifact
 import org.jreleaser.model.Archive.Format
 import org.jreleaser.model.Distribution.DistributionType
 
@@ -41,4 +44,8 @@ interface ArchiveAssembler extends Assembler {
     SetProperty<Format> getFormats()
 
     void format(String format)
+
+    void options(Action<? super ArchiveOptions> action)
+
+    void options(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArchiveOptions) Closure<Void> action)
 }

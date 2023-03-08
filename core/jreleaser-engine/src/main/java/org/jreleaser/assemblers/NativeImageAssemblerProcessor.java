@@ -208,7 +208,7 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<or
             Archive.Format archiveFormat = Archive.Format.of(str);
 
             Path imageArchive = assembleDirectory.resolve(finalImageName + "." + archiveFormat.extension());
-            FileUtils.packArchive(tempDirectory, imageArchive, context.getModel().resolveArchiveTimestamp());
+            FileUtils.packArchive(tempDirectory, imageArchive, assembler.getOptions().toOptions());
 
             context.getLogger().debug("- {}", imageArchive.getFileName());
         } catch (IOException e) {

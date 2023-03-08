@@ -153,6 +153,10 @@ public final class NativeImageAssemblerValidator {
             nativeImage.setArchiveFormat(Archive.Format.ZIP);
         }
 
+        if (null == nativeImage.getOptions().getTimestamp()) {
+            nativeImage.getOptions().setTimestamp(context.getModel().resolveArchiveTimestamp());
+        }
+
         validateJavaAssembler(context, mode, nativeImage, errors, true);
 
         nativeImage.getComponents().remove("native-image");

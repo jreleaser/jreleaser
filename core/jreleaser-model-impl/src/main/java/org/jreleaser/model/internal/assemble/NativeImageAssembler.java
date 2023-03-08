@@ -25,6 +25,7 @@ import org.jreleaser.model.Stereotype;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.AbstractActivatable;
 import org.jreleaser.model.internal.common.AbstractModelObject;
+import org.jreleaser.model.internal.common.ArchiveOptions;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.common.FileSet;
@@ -54,7 +55,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.2.0
  */
 public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImageAssembler, org.jreleaser.model.api.assemble.NativeImageAssembler> {
-    private static final long serialVersionUID = -8815074350596679986L;
+
 
     private final List<String> args = new ArrayList<>();
     private final Set<String> components = new LinkedHashSet<>();
@@ -64,6 +65,7 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
     private final Linux linux = new Linux();
     private final Windows windows = new Windows();
     private final Osx osx = new Osx();
+    private final ArchiveOptions options = new ArchiveOptions();
 
     private String imageName;
     private String imageNameTransform;
@@ -71,7 +73,7 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
 
     @JsonIgnore
     private final org.jreleaser.model.api.assemble.NativeImageAssembler immutable = new org.jreleaser.model.api.assemble.NativeImageAssembler() {
-        private static final long serialVersionUID = 5457398509414121447L;
+
 
         private Set<? extends org.jreleaser.model.api.common.Artifact> artifacts;
         private Set<? extends org.jreleaser.model.api.common.Artifact> graalJdks;
@@ -93,6 +95,11 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
         @Override
         public Archive.Format getArchiveFormat() {
             return archiveFormat;
+        }
+
+        @Override
+        public org.jreleaser.model.api.common.ArchiveOptions getOptions() {
+            return options.asImmutable();
         }
 
         @Override
@@ -291,6 +298,7 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
         this.imageName = merge(this.imageName, source.imageName);
         this.imageNameTransform = merge(this.imageNameTransform, source.imageNameTransform);
         this.archiveFormat = merge(this.archiveFormat, source.archiveFormat);
+        setOptions(source.options);
         setGraal(source.graal);
         setGraalJdks(merge(this.graalJdks, source.graalJdks));
         setArgs(merge(this.args, source.args));
@@ -350,6 +358,14 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
 
     public void setArchiveFormat(String archiveFormat) {
         this.archiveFormat = Archive.Format.of(archiveFormat);
+    }
+
+    public ArchiveOptions getOptions() {
+        return options;
+    }
+
+    public void setOptions(ArchiveOptions options) {
+        this.options.merge(options);
     }
 
     public Artifact getGraal() {
@@ -435,6 +451,7 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
         props.put("imageName", imageName);
         props.put("imageNameTransform", imageNameTransform);
         props.put("archiveFormat", archiveFormat);
+        props.put("options", options.asMap(full));
         Map<String, Map<String, Object>> mappedJdks = new LinkedHashMap<>();
         int i = 0;
         for (Artifact graalJdk : getGraalJdks()) {

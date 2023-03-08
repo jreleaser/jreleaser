@@ -23,6 +23,7 @@ import org.jreleaser.model.Archive;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Stereotype;
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.common.ArchiveOptions;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.FileSet;
 import org.jreleaser.model.internal.common.Glob;
@@ -46,18 +47,18 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
  * @since 0.8.0
  */
 public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, org.jreleaser.model.api.assemble.ArchiveAssembler> {
-    private static final long serialVersionUID = 8451661914162002081L;
+
 
     private final Set<Archive.Format> formats = new LinkedHashSet<>();
+    private final ArchiveOptions options = new ArchiveOptions();
 
     private String archiveName;
     private Boolean attachPlatform;
     private Distribution.DistributionType distributionType;
 
-
     @JsonIgnore
     private final org.jreleaser.model.api.assemble.ArchiveAssembler immutable = new org.jreleaser.model.api.assemble.ArchiveAssembler() {
-        private static final long serialVersionUID = -2573584273590288536L;
+
 
         private Set<? extends org.jreleaser.model.api.common.Artifact> artifacts;
         private List<? extends org.jreleaser.model.api.common.FileSet> fileSets;
@@ -77,6 +78,11 @@ public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, 
         @Override
         public Set<Archive.Format> getFormats() {
             return unmodifiableSet(formats);
+        }
+
+        @Override
+        public org.jreleaser.model.api.common.ArchiveOptions getOptions() {
+            return options.asImmutable();
         }
 
         @Override
@@ -214,6 +220,7 @@ public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, 
         this.distributionType = merge(this.distributionType, source.distributionType);
         this.attachPlatform = merge(this.attachPlatform, source.attachPlatform);
         setFormats(merge(this.formats, source.formats));
+        setOptions(source.options);
     }
 
     public String getResolvedArchiveName(JReleaserContext context) {
@@ -263,11 +270,20 @@ public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, 
         this.formats.add(Archive.Format.of(str));
     }
 
+    public ArchiveOptions getOptions() {
+        return options;
+    }
+
+    public void setOptions(ArchiveOptions options) {
+        this.options.merge(options);
+    }
+
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("archiveName", archiveName);
         props.put("distributionType", distributionType);
         props.put("attachPlatform", isAttachPlatform());
         props.put("formats", formats);
+        props.put("options", options.asMap(full));
     }
 }

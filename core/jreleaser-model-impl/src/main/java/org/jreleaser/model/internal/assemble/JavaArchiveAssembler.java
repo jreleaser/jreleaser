@@ -24,6 +24,7 @@ import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Stereotype;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.AbstractModelObject;
+import org.jreleaser.model.internal.common.ArchiveOptions;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.common.Executable;
@@ -52,9 +53,10 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 1.4.0
  */
 public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAssembler, org.jreleaser.model.api.assemble.JavaArchiveAssembler> {
-    private static final long serialVersionUID = 6337590566349527052L;
+
 
     private final Set<Archive.Format> formats = new LinkedHashSet<>();
+    private final ArchiveOptions options = new ArchiveOptions();
     private final List<Glob> jars = new ArrayList<>();
     private final Java java = new Java();
     private final Executable executable = new Executable();
@@ -64,7 +66,7 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
 
     @JsonIgnore
     private final org.jreleaser.model.api.assemble.JavaArchiveAssembler immutable = new org.jreleaser.model.api.assemble.JavaArchiveAssembler() {
-        private static final long serialVersionUID = 1447263598587451959L;
+
 
         private Set<? extends org.jreleaser.model.api.common.Artifact> artifacts;
         private List<? extends org.jreleaser.model.api.common.FileSet> fileSets;
@@ -80,6 +82,11 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
         @Override
         public Set<Archive.Format> getFormats() {
             return unmodifiableSet(formats);
+        }
+
+        @Override
+        public org.jreleaser.model.api.common.ArchiveOptions getOptions() {
+            return options.asImmutable();
         }
 
         @Override
@@ -232,6 +239,7 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
         super.merge(source);
         this.archiveName = merge(this.archiveName, source.archiveName);
         setFormats(merge(this.formats, source.formats));
+        setOptions(source.options);
         setExecutable(source.executable);
         setJava(source.java);
         setMainJar(source.mainJar);
@@ -293,6 +301,14 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
         this.formats.add(Archive.Format.of(str));
     }
 
+    public ArchiveOptions getOptions() {
+        return options;
+    }
+
+    public void setOptions(ArchiveOptions options) {
+        this.options.merge(options);
+    }
+
     public List<Glob> getJars() {
         return jars;
     }
@@ -316,6 +332,7 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("archiveName", archiveName);
         props.put("formats", formats);
+        props.put("options", options.asMap(full));
         props.put("executable", executable.asMap(full));
         props.put("mainJar", mainJar.asMap(full));
         Map<String, Object> javaMap = java.asMap(full);

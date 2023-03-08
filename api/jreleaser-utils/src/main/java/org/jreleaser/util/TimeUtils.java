@@ -17,6 +17,10 @@
  */
 package org.jreleaser.util;
 
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+
+import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 import static org.jreleaser.util.StringUtils.padLeft;
 
 /**
@@ -24,6 +28,13 @@ import static org.jreleaser.util.StringUtils.padLeft;
  * @since 0.3.0
  */
 public final class TimeUtils {
+    public static final DateTimeFormatter TIMESTAMP_FORMATTER = new DateTimeFormatterBuilder()
+        .append(ISO_LOCAL_DATE_TIME)
+        .optionalStart()
+        .appendOffset("+HH:MM", "Z")
+        .optionalEnd()
+        .toFormatter();
+
     private TimeUtils() {
         // noop
     }

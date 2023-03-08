@@ -243,7 +243,7 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
             copyFiles(context, imageDirectory);
             copyFileSets(context, imageDirectory);
 
-            FileUtils.packArchive(workDirectory, imageArchive, context.getModel().resolveArchiveTimestamp());
+            FileUtils.packArchive(workDirectory, imageArchive, assembler.getOptions().toOptions());
 
             context.getLogger().debug("- {}", imageArchive.getFileName());
         } catch (IOException e) {

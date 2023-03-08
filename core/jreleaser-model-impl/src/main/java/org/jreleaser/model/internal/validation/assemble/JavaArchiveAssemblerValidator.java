@@ -89,6 +89,10 @@ public final class JavaArchiveAssemblerValidator {
             archive.addFormat(Archive.Format.ZIP);
         }
 
+        if (null == archive.getOptions().getTimestamp()) {
+            archive.getOptions().setTimestamp(context.getModel().resolveArchiveTimestamp());
+        }
+
         if (archive.getJars().isEmpty() && isBlank(archive.getMainJar().getPath())) {
             errors.configuration(RB.$("validation_java_archive_empty_jars", archive.getName()));
         } else {

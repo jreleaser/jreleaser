@@ -102,7 +102,7 @@ public class JavaArchiveAssemblerProcessor extends AbstractAssemblerProcessor<or
 
         try {
             Path archiveFile = assembleDirectory.resolve(finalArchiveName);
-            FileUtils.packArchive(workDirectory, archiveFile, context.getModel().resolveArchiveTimestamp());
+            FileUtils.packArchive(workDirectory, archiveFile, assembler.getOptions().toOptions());
         } catch (IOException e) {
             throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
         }

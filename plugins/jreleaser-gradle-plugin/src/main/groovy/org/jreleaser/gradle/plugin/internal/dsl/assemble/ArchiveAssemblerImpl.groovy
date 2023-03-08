@@ -18,15 +18,19 @@
 package org.jreleaser.gradle.plugin.internal.dsl.assemble
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.assemble.ArchiveAssembler
+import org.jreleaser.gradle.plugin.dsl.common.ArchiveOptions
+import org.jreleaser.gradle.plugin.internal.dsl.common.ArchiveOptionsImpl
 import org.jreleaser.gradle.plugin.internal.dsl.platform.PlatformImpl
 import org.jreleaser.model.Archive
 import org.jreleaser.model.Distribution.DistributionType
+import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -45,6 +49,7 @@ class ArchiveAssemblerImpl extends AbstractAssembler implements ArchiveAssembler
     final Property<Boolean> attachPlatform
     final SetProperty<Archive.Format> formats
     final PlatformImpl platform
+    final ArchiveOptionsImpl options
 
     @Inject
     ArchiveAssemblerImpl(ObjectFactory objects) {
@@ -54,6 +59,7 @@ class ArchiveAssemblerImpl extends AbstractAssembler implements ArchiveAssembler
         attachPlatform = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         formats = objects.setProperty(Archive.Format).convention(Providers.<Set<Archive.Format>> notDefined())
         platform = objects.newInstance(PlatformImpl, objects)
+        options = objects.newInstance(ArchiveOptionsImpl, objects)
     }
 
     @Internal
@@ -62,7 +68,8 @@ class ArchiveAssemblerImpl extends AbstractAssembler implements ArchiveAssembler
             archiveName.present ||
             distributionType.present ||
             attachPlatform.present ||
-            formats.present
+            formats.present ||
+            options.isSet()
     }
 
     @Override
@@ -77,6 +84,16 @@ class ArchiveAssemblerImpl extends AbstractAssembler implements ArchiveAssembler
         }
     }
 
+    @Override
+    void options(Action<? super ArchiveOptions> action) {
+        action.execute(options)
+    }
+
+    @Override
+    void options(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArchiveOptions) Closure<Void> action) {
+        ConfigureUtil.configure(action, options)
+    }
+
     org.jreleaser.model.internal.assemble.ArchiveAssembler toModel() {
         org.jreleaser.model.internal.assemble.ArchiveAssembler archive = new org.jreleaser.model.internal.assemble.ArchiveAssembler()
         archive.name = name
@@ -86,6 +103,7 @@ class ArchiveAssemblerImpl extends AbstractAssembler implements ArchiveAssembler
         archive.platform = platform.toModel()
         archive.distributionType = distributionType.get()
         archive.formats = (Set<Archive.Format>) formats.getOrElse([] as Set<Archive.Format>)
+        if (options.isSet()) archive.options = options.toModel()
         archive
     }
 }

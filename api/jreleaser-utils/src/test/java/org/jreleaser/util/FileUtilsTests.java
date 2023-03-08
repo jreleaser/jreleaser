@@ -52,7 +52,9 @@ class FileUtilsTests {
         Path archive = tmp1.resolve("app-1.0.0" + fileType.extension());
 
         // when:
-        FileUtils.packArchive(src, archive, TIMESTAMP);
+        FileUtils.ArchiveOptions options = new FileUtils.ArchiveOptions();
+        options.withTimestamp(TIMESTAMP);
+        FileUtils.packArchive(src, archive, options);
         FileUtils.unpackArchive(archive, tmp2, false);
 
         // then:

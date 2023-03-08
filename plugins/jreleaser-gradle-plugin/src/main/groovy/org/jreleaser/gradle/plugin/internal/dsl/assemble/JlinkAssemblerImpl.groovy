@@ -28,7 +28,9 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.assemble.JlinkAssembler
+import org.jreleaser.gradle.plugin.dsl.common.ArchiveOptions
 import org.jreleaser.gradle.plugin.dsl.common.Artifact
+import org.jreleaser.gradle.plugin.internal.dsl.common.ArchiveOptionsImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.ArtifactImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.JavaImpl
 import org.jreleaser.gradle.plugin.internal.dsl.platform.PlatformImpl
@@ -57,6 +59,7 @@ class JlinkAssemblerImpl extends AbstractJavaAssembler implements JlinkAssembler
     final SetProperty<String> additionalModuleNames
     final JavaImpl java
     final PlatformImpl platform
+    final ArchiveOptionsImpl options
 
     private final JdepsImpl jdeps
     private final ArtifactImpl jdk
@@ -78,6 +81,7 @@ class JlinkAssemblerImpl extends AbstractJavaAssembler implements JlinkAssembler
         jdeps = objects.newInstance(JdepsImpl, objects)
         jdk = objects.newInstance(ArtifactImpl, objects)
         jdk.setName('jdk')
+        options = objects.newInstance(ArchiveOptionsImpl, objects)
 
         targetJdks = objects.domainObjectContainer(ArtifactImpl, new NamedDomainObjectFactory<ArtifactImpl>() {
             @Override
@@ -109,7 +113,8 @@ class JlinkAssemblerImpl extends AbstractJavaAssembler implements JlinkAssembler
             moduleNames.present ||
             additionalModuleNames.present ||
             !targetJdks.isEmpty() ||
-            platform.isSet()
+            platform.isSet() ||
+            options.isSet()
     }
 
     @Override
@@ -135,6 +140,11 @@ class JlinkAssemblerImpl extends AbstractJavaAssembler implements JlinkAssembler
     }
 
     @Override
+    void options(Action<? super ArchiveOptions> action) {
+        action.execute(options)
+    }
+
+    @Override
     void setActive(String str) {
         if (isNotBlank(str)) {
             active.set(Active.of(str.trim()))
@@ -156,6 +166,11 @@ class JlinkAssemblerImpl extends AbstractJavaAssembler implements JlinkAssembler
         ConfigureUtil.configure(action, targetJdks.maybeCreate("targetJdk-${targetJdks.size()}".toString()))
     }
 
+    @Override
+    void options(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArchiveOptions) Closure<Void> action) {
+        ConfigureUtil.configure(action, options)
+    }
+
     org.jreleaser.model.internal.assemble.JlinkAssembler toModel() {
         org.jreleaser.model.internal.assemble.JlinkAssembler jlink = new org.jreleaser.model.internal.assemble.JlinkAssembler()
         jlink.name = name
@@ -174,6 +189,7 @@ class JlinkAssemblerImpl extends AbstractJavaAssembler implements JlinkAssembler
         for (ArtifactImpl artifact : targetJdks) {
             jlink.addTargetJdk(artifact.toModel())
         }
+        if (options.isSet()) jlink.options = options.toModel()
         jlink
     }
 
