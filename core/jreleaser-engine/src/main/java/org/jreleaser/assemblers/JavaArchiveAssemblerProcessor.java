@@ -112,10 +112,15 @@ public class JavaArchiveAssemblerProcessor extends AbstractAssemblerProcessor<or
     protected Path resolveOutputFile(TemplateContext props, Path targetDirectory, String fileName) throws AssemblerProcessingException {
         String executableName = assembler.getExecutable().getName();
 
+        String windowsExtension = "." + assembler.getExecutable().getWindowsExtension();
+        String unixExtension = assembler.getExecutable().getUnixExtension();
+        if (isNotBlank(unixExtension)) {
+            unixExtension = "." + unixExtension;
+        }
         return "bin/launcher.bat".equals(fileName) ?
-            targetDirectory.resolve(BIN_DIRECTORY).resolve(executableName.concat("." + assembler.getExecutable().getWindowsExtension())) :
+            targetDirectory.resolve(BIN_DIRECTORY).resolve(executableName.concat(windowsExtension)) :
             "bin/launcher".equals(fileName) ?
-                targetDirectory.resolve(BIN_DIRECTORY).resolve(executableName) :
+                targetDirectory.resolve(BIN_DIRECTORY).resolve(executableName.concat(unixExtension)) :
                 targetDirectory.resolve(fileName);
     }
 
