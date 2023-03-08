@@ -114,9 +114,7 @@ public class JavaArchiveAssemblerProcessor extends AbstractAssemblerProcessor<or
 
         String windowsExtension = "." + assembler.getExecutable().getWindowsExtension();
         String unixExtension = assembler.getExecutable().getUnixExtension();
-        if (isNotBlank(unixExtension)) {
-            unixExtension = "." + unixExtension;
-        }
+        unixExtension = isNotBlank(unixExtension) ? "." + unixExtension : "";
         return "bin/launcher.bat".equals(fileName) ?
             targetDirectory.resolve(BIN_DIRECTORY).resolve(executableName.concat(windowsExtension)) :
             "bin/launcher".equals(fileName) ?
