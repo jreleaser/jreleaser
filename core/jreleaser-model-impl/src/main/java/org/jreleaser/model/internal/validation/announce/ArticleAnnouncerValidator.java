@@ -90,6 +90,15 @@ public final class ArticleAnnouncerValidator {
                 repository.getBranch(),
                 "HEAD"));
 
+        repository.setBranchPush(
+            checkProperty(context,
+                listOf(
+                    "announce.article.repository.branch.push",
+                    repository.getBasename() + "." + service.getServiceName() + ".branch.push"),
+                "announce.article.repository.branch.push",
+                repository.getBranchPush(),
+                repository.getBranch()));
+
         if (isBlank(repository.getTagName())) {
             repository.setTagName(service.getTagName());
         }

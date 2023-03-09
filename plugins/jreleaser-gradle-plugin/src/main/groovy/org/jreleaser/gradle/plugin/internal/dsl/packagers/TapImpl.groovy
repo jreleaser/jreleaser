@@ -55,6 +55,7 @@ class TapImpl implements Tap {
     final Property<String> name
     final Property<String> tagName
     final Property<String> branch
+    final Property<String> branchPush
     final Property<String> username
     final Property<String> token
     final Property<String> commitMessage
@@ -66,6 +67,7 @@ class TapImpl implements Tap {
         name = objects.property(String).convention(Providers.<String> notDefined())
         tagName = objects.property(String).convention(Providers.<String> notDefined())
         branch = objects.property(String).convention(Providers.<String> notDefined())
+        branchPush = objects.property(String).convention(Providers.<String> notDefined())
         username = objects.property(String).convention(Providers.<String> notDefined())
         token = objects.property(String).convention(Providers.<String> notDefined())
         commitMessage = objects.property(String).convention(Providers.<String> notDefined())
@@ -85,6 +87,7 @@ class TapImpl implements Tap {
             name.present ||
             tagName.present ||
             branch.present ||
+            branchPush.present ||
             username.present ||
             token.present ||
             commitMessage.present
@@ -96,6 +99,7 @@ class TapImpl implements Tap {
         if (name.present) into.name = name.get()
         if (tagName.present) into.tagName = tagName.get()
         if (branch.present) into.branch = branch.get()
+        if (branchPush.present) into.branchPush = branchPush.get()
         if (username.present) into.username = username.get()
         if (token.present) into.token = token.get()
         if (commitMessage.present) into.commitMessage = commitMessage.get()

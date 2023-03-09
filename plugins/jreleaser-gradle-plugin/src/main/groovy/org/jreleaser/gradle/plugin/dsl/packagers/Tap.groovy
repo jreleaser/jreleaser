@@ -40,5 +40,7 @@ interface Tap extends Activatable {
 
     Property<String> getBranch()
 
+    Property<String> getBranchPush()
+
     Property<String> getCommitMessage()
 }

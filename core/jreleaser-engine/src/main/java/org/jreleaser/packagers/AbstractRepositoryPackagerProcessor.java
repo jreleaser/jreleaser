@@ -19,6 +19,8 @@ package org.jreleaser.packagers;
 
 import org.eclipse.jgit.api.CommitCommand;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.NoHeadException;
+import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.internal.JReleaserContext;
@@ -38,6 +40,7 @@ import java.nio.file.Path;
 import java.util.function.Predicate;
 
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY;
+import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -80,12 +83,34 @@ public abstract class AbstractRepositoryPackagerProcessor<T extends RepositoryPa
             context.getLogger().debug(RB.$("repository.clone"), repository.getHttpUrl());
             Path directory = Files.createTempDirectory("jreleaser-" + tap.getResolvedName());
 
+            String pullBranch = tap.getBranch();
+            String pushBranch = resolveTemplate(tap.getBranchPush(), props);
+
             Git git = Git.cloneRepository()
                 .setCredentialsProvider(credentialsProvider)
-                .setBranch(tap.getBranch())
+                .setBranch(pullBranch)
                 .setDirectory(directory.toFile())
                 .setURI(repository.getHttpUrl())
                 .call();
+
+            boolean emptyRepository = true;
+            try {
+                for (RevCommit commit : git.log().call()) {
+                    emptyRepository = false;
+                    break;
+                }
+            } catch (NoHeadException ignored) {
+                // ok
+            }
+
+            boolean mustBranch = !pushBranch.equals(pullBranch);
+            if (mustBranch && !emptyRepository) {
+                context.getLogger().debug(RB.$("repository.branching", pushBranch));
+                git.checkout()
+                    .setName(pushBranch)
+                    .setCreateBranch(true)
+                    .call();
+            }
 
             prepareWorkingCopy(props, directory, distribution);
 
@@ -115,6 +140,14 @@ public abstract class AbstractRepositoryPackagerProcessor<T extends RepositoryPa
                 .setGpgSigner(signer);
 
             commitCommand.call();
+
+            if (mustBranch && emptyRepository) {
+                context.getLogger().debug(RB.$("repository.branching", pushBranch));
+                git.checkout()
+                    .setName(pushBranch)
+                    .setCreateBranch(true)
+                    .call();
+            }
 
             String tagName = tap.getResolvedTagName(props);
             context.getLogger().debug(RB.$("git.releaser.repository.tag"), tagName);

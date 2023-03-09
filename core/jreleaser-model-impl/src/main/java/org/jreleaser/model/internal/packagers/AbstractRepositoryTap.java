@@ -34,7 +34,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> extends AbstractActivatable<S> implements RepositoryTap {
-    private static final long serialVersionUID = 4164695459074006526L;
+    private static final long serialVersionUID = -5502324290729964526L;
 
     @JsonIgnore
     private final String basename;
@@ -44,6 +44,7 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
     private String name;
     private String tagName;
     private String branch;
+    private String branchPush;
     private String username;
     private String token;
     private String commitMessage;
@@ -73,6 +74,7 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
         this.name = merge(this.name, source.getName());
         this.tagName = merge(this.tagName, source.getTagName());
         this.branch = merge(this.branch, source.getBranch());
+        this.branchPush = merge(this.branchPush, source.getBranchPush());
         this.username = merge(this.username, source.getUsername());
         this.token = merge(this.token, source.getToken());
         this.commitMessage = merge(this.commitMessage, source.getCommitMessage());
@@ -142,6 +144,16 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
     }
 
     @Override
+    public String getBranchPush() {
+        return branchPush;
+    }
+
+    @Override
+    public void setBranchPush(String branchPush) {
+        this.branchPush = branchPush;
+    }
+
+    @Override
     public String getUsername() {
         return username;
     }
@@ -180,6 +192,7 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
         map.put("name", getResolvedName());
         map.put("tagName", tagName);
         map.put("branch", branch);
+        map.put("branchPush", branchPush);
         map.put("username", username);
         map.put("token", isNotBlank(token) ? HIDE : UNSET);
         map.put("commitMessage", commitMessage);

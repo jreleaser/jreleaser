@@ -129,6 +129,7 @@ class DockerPackagerImpl extends AbstractDockerConfiguration implements DockerPa
         final Property<String> name
         final Property<String> tagName
         final Property<String> branch
+        final Property<String> branchPush
         final Property<String> username
         final Property<String> token
         final Property<String> commitMessage
@@ -141,6 +142,7 @@ class DockerPackagerImpl extends AbstractDockerConfiguration implements DockerPa
             name = objects.property(String).convention(Providers.<String> notDefined())
             tagName = objects.property(String).convention(Providers.<String> notDefined())
             branch = objects.property(String).convention(Providers.<String> notDefined())
+            branchPush = objects.property(String).convention(Providers.<String> notDefined())
             username = objects.property(String).convention(Providers.<String> notDefined())
             token = objects.property(String).convention(Providers.<String> notDefined())
             commitMessage = objects.property(String).convention(Providers.<String> notDefined())
@@ -161,6 +163,7 @@ class DockerPackagerImpl extends AbstractDockerConfiguration implements DockerPa
                 name.present ||
                 tagName.present ||
                 branch.present ||
+                branchPush.present ||
                 username.present ||
                 versionedSubfolders.present ||
                 token.present ||
@@ -174,6 +177,7 @@ class DockerPackagerImpl extends AbstractDockerConfiguration implements DockerPa
             if (name.present) tap.name = name.get()
             if (tagName.present) tap.tagName = tagName.get()
             if (branch.present) tap.branch = branch.get()
+            if (branchPush.present) tap.branchPush = branchPush.get()
             if (username.present) tap.name = username.get()
             if (token.present) tap.token = token.get()
             if (commitMessage.present) tap.commitMessage = commitMessage.get()

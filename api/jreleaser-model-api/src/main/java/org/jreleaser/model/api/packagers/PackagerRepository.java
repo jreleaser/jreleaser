@@ -36,6 +36,8 @@ public interface PackagerRepository extends Domain, OwnerAware, Activatable {
 
     String getBranch();
 
+    String getBranchPush();
+
     String getUsername();
 
     String getToken();

@@ -202,5 +202,9 @@ public final class PackagersValidator {
         if (isBlank(tap.getBranch())) {
             tap.setBranch("HEAD");
         }
+
+        if (isBlank(tap.getBranchPush())) {
+            tap.setBranchPush(tap.getBranch());
+        }
     }
 }

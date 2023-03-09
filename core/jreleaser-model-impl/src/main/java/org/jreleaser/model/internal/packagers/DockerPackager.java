@@ -450,7 +450,7 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
 
         @JsonIgnore
         private final org.jreleaser.model.api.packagers.DockerPackager.DockerRepository immutable = new org.jreleaser.model.api.packagers.DockerPackager.DockerRepository() {
-            private static final long serialVersionUID = -8039494200339437225L;
+            private static final long serialVersionUID = 7279929782283595739L;
 
             @Override
             public boolean isVersionedSubfolders() {
@@ -480,6 +480,11 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
             @Override
             public String getBranch() {
                 return DockerRepository.this.getBranch();
+            }
+
+            @Override
+            public String getBranchPush() {
+                return DockerRepository.this.getBranchPush();
             }
 
             @Override

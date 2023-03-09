@@ -252,6 +252,15 @@ public final class Validator {
                 "distributions." + distributionName + "." + property + ".branch",
                 tap.getBranch(),
                 parentTap.getBranch()));
+
+        tap.setBranchPush(
+            checkProperty(context,
+                listOf(
+                    "distributions." + distributionName + "." + property + ".branch.push",
+                    tapBasename + "." + serviceName + ".branch.push"),
+                "distributions." + distributionName + "." + property + ".branch.push",
+                tap.getBranchPush(),
+                parentTap.getBranchPush()));
     }
 
     public static void validateGlobs(Collection<Glob> globs, String property, Errors errors) {

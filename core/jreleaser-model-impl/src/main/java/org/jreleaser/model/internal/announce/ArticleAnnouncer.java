@@ -210,7 +210,7 @@ public final class ArticleAnnouncer extends AbstractAnnouncer<ArticleAnnouncer, 
 
         @JsonIgnore
         private final org.jreleaser.model.api.announce.ArticleAnnouncer.Repository immutable = new org.jreleaser.model.api.announce.ArticleAnnouncer.Repository() {
-            private static final long serialVersionUID = 4466712256400781859L;
+            private static final long serialVersionUID = 8958590109555034736L;
 
             @Override
             public String getBasename() {
@@ -235,6 +235,11 @@ public final class ArticleAnnouncer extends AbstractAnnouncer<ArticleAnnouncer, 
             @Override
             public String getBranch() {
                 return Repository.this.getBranch();
+            }
+
+            @Override
+            public String getBranchPush() {
+                return Repository.this.getBranchPush();
             }
 
             @Override
