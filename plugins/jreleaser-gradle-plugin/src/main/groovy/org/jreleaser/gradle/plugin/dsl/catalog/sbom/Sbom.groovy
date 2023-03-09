@@ -28,9 +28,15 @@ import org.jreleaser.gradle.plugin.dsl.common.Activatable
  */
 @CompileStatic
 interface Sbom extends Activatable {
+    CyclonedxSbomCataloger getCyclonedx()
+
     SyftSbomCataloger getSyft()
 
+    void cyclonedx(Action<? super CyclonedxSbomCataloger> action)
+
     void syft(Action<? super SyftSbomCataloger> action)
+
+    void cyclonedx(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CyclonedxSbomCataloger) Closure<Void> action)
 
     void syft(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SyftSbomCataloger) Closure<Void> action)
 }

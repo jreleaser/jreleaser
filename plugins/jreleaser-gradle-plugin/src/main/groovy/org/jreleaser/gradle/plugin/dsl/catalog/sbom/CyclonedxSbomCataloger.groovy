@@ -15,17 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.api.catalog.sbom;
+package org.jreleaser.gradle.plugin.dsl.catalog.sbom
 
-import org.jreleaser.model.api.common.Activatable;
-import org.jreleaser.model.api.common.Domain;
+import groovy.transform.CompileStatic
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 
 /**
+ *
  * @author Andres Almiray
- * @since 1.5.0
+ * @since 1.6.0
  */
-public interface Sbom extends Domain, Activatable {
-    CyclonedxSbomCataloger getCyclonedx();
+@CompileStatic
+interface CyclonedxSbomCataloger extends SbomCataloger {
+    Property<String> getVersion()
 
-    SyftSbomCataloger getSyft();
+    SetProperty<org.jreleaser.model.api.catalog.sbom.CyclonedxSbomCataloger.Format> getFormats()
+
+    void format(String str)
 }

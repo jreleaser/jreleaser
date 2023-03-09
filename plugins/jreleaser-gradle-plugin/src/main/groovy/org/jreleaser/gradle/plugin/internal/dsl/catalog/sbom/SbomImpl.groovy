@@ -23,6 +23,7 @@ import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.jreleaser.gradle.plugin.dsl.catalog.sbom.CyclonedxSbomCataloger
 import org.jreleaser.gradle.plugin.dsl.catalog.sbom.Sbom
 import org.jreleaser.gradle.plugin.dsl.catalog.sbom.SyftSbomCataloger
 import org.jreleaser.model.Active
@@ -40,11 +41,13 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 @CompileStatic
 class SbomImpl implements Sbom {
     final Property<Active> active
+    final CyclonedxSbomCatalogerImpl cyclonedx
     final SyftSbomCatalogerImpl syft
 
     @Inject
     SbomImpl(ObjectFactory objects) {
         active = objects.property(Active).convention(Providers.<Active> notDefined())
+        cyclonedx = objects.newInstance(CyclonedxSbomCatalogerImpl, objects)
         syft = objects.newInstance(SyftSbomCatalogerImpl, objects)
     }
 
@@ -56,8 +59,18 @@ class SbomImpl implements Sbom {
     }
 
     @Override
+    void cyclonedx(Action<? super CyclonedxSbomCataloger> action) {
+        action.execute(cyclonedx)
+    }
+
+    @Override
     void syft(Action<? super SyftSbomCataloger> action) {
         action.execute(syft)
+    }
+
+    @Override
+    void cyclonedx(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CyclonedxSbomCataloger) Closure<Void> action) {
+        ConfigureUtil.configure(action, cyclonedx)
     }
 
     @Override
@@ -70,6 +83,7 @@ class SbomImpl implements Sbom {
         org.jreleaser.model.internal.catalog.sbom.Sbom sbom = new org.jreleaser.model.internal.catalog.sbom.Sbom()
         if (active.present) sbom.active = active.get()
 
+        sbom.cyclonedx = cyclonedx.toModel()
         sbom.syft = syft.toModel()
 
         sbom

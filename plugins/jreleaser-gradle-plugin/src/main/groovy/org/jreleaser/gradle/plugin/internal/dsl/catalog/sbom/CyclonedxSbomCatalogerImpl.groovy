@@ -23,7 +23,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
-import org.jreleaser.gradle.plugin.dsl.catalog.sbom.SyftSbomCataloger
+import org.jreleaser.gradle.plugin.dsl.catalog.sbom.CyclonedxSbomCataloger
 
 import javax.inject.Inject
 
@@ -32,20 +32,20 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 /**
  *
  * @author Andres Almiray
- * @since 1.5.0
+ * @since 1.6.0
  */
 @CompileStatic
-class SyftSbomCatalogerImpl extends AbstractSbomCataloger implements SyftSbomCataloger {
+class CyclonedxSbomCatalogerImpl extends AbstractSbomCataloger implements CyclonedxSbomCataloger {
     final Property<String> version
-    final SetProperty<org.jreleaser.model.api.catalog.sbom.SyftSbomCataloger.Format> formats
+    final SetProperty<org.jreleaser.model.api.catalog.sbom.CyclonedxSbomCataloger.Format> formats
     final PackImpl pack
 
     @Inject
-    SyftSbomCatalogerImpl(ObjectFactory objects) {
+    CyclonedxSbomCatalogerImpl(ObjectFactory objects) {
         super(objects)
         version = objects.property(String).convention(Providers.<String> notDefined())
-        formats = objects.setProperty(org.jreleaser.model.api.catalog.sbom.SyftSbomCataloger.Format)
-            .convention(Providers.<Set<org.jreleaser.model.api.catalog.sbom.SyftSbomCataloger.Format>> notDefined())
+        formats = objects.setProperty(org.jreleaser.model.api.catalog.sbom.CyclonedxSbomCataloger.Format)
+            .convention(Providers.<Set<org.jreleaser.model.api.catalog.sbom.CyclonedxSbomCataloger.Format>> notDefined())
         pack = objects.newInstance(PackImpl, objects)
     }
 
@@ -61,16 +61,16 @@ class SyftSbomCatalogerImpl extends AbstractSbomCataloger implements SyftSbomCat
     @Override
     void format(String str) {
         if (isNotBlank(str)) {
-            this.formats.add(org.jreleaser.model.api.catalog.sbom.SyftSbomCataloger.Format.of(str.trim()))
+            this.formats.add(org.jreleaser.model.api.catalog.sbom.CyclonedxSbomCataloger.Format.of(str.trim()))
         }
     }
 
-    org.jreleaser.model.internal.catalog.sbom.SyftSbomCataloger toModel() {
-        org.jreleaser.model.internal.catalog.sbom.SyftSbomCataloger cataloger = new org.jreleaser.model.internal.catalog.sbom.SyftSbomCataloger()
+    org.jreleaser.model.internal.catalog.sbom.CyclonedxSbomCataloger toModel() {
+        org.jreleaser.model.internal.catalog.sbom.CyclonedxSbomCataloger cataloger = new org.jreleaser.model.internal.catalog.sbom.CyclonedxSbomCataloger()
         fillProperties(cataloger)
         if (version.present) cataloger.version = version.get()
         cataloger.pack = pack.toModel()
-        cataloger.formats = (Set<org.jreleaser.model.api.catalog.sbom.SyftSbomCataloger.Format>) formats.getOrElse([] as Set<org.jreleaser.model.api.catalog.sbom.SyftSbomCataloger.Format>)
+        cataloger.formats = (Set<org.jreleaser.model.api.catalog.sbom.CyclonedxSbomCataloger.Format>) formats.getOrElse([] as Set<org.jreleaser.model.api.catalog.sbom.CyclonedxSbomCataloger.Format>)
         cataloger
     }
 }

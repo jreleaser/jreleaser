@@ -24,6 +24,7 @@ import org.jreleaser.model.internal.catalog.sbom.Sbom;
 import org.jreleaser.model.internal.catalog.sbom.SbomCataloger;
 import org.jreleaser.util.Errors;
 
+import static org.jreleaser.model.internal.validation.catalog.sbom.CyclonedxSbomCatalogerValidator.validateCyclonedxSbomCataloger;
 import static org.jreleaser.model.internal.validation.catalog.sbom.SyftSbomCatalogerValidator.validateSyftSbomCataloger;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -41,6 +42,7 @@ public final class SbomCatalogersValidator {
         Sbom sbom = context.getModel().getCatalog().getSbom();
         context.getLogger().debug("catalog.sbom");
 
+        validateCyclonedxSbomCataloger(context, sbom.getCyclonedx(), errors);
         validateSyftSbomCataloger(context, sbom.getSyft(), errors);
 
         if (mode.validateConfig()) {
@@ -49,7 +51,8 @@ public final class SbomCatalogersValidator {
             sbom.resolveEnabledWithSnapshot(context.getModel().getProject());
 
             if (sbom.isEnabled()) {
-                boolean enabled = sbom.getSyft().isEnabled();
+                boolean enabled = sbom.getCyclonedx().isEnabled() ||
+                    sbom.getSyft().isEnabled();
 
                 if (!activeSet && !enabled) {
                     context.getLogger().debug(RB.$("validation.disabled"));

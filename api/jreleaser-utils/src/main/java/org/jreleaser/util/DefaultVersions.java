@@ -29,6 +29,7 @@ public final class DefaultVersions {
     private final ResourceBundle bundle = ResourceBundle.getBundle("org.jreleaser.default_versions");
     private final String mvnVersion = bundle.getString("mvn.version");
     private final String pomcheckerVersion = bundle.getString("pomchecker.version");
+    private final String cyclonedxVersion = bundle.getString("cyclonedx.version");
     private final String syftVersion = bundle.getString("syft.version");
 
     public String getMvnVersion() {
@@ -37,6 +38,10 @@ public final class DefaultVersions {
 
     public String getPomcheckerVersion() {
         return pomcheckerVersion;
+    }
+
+    public String getCyclonedxVersion() {
+        return cyclonedxVersion;
     }
 
     public String getSyftVersion() {

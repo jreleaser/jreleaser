@@ -120,6 +120,7 @@ public final class JReleaserSupport {
 
     public static Set<String> supportedSbomCatalogers() {
         Set<String> set = new LinkedHashSet<>();
+        set.add(org.jreleaser.model.api.catalog.sbom.CyclonedxSbomCataloger.TYPE);
         set.add(org.jreleaser.model.api.catalog.sbom.SyftSbomCataloger.TYPE);
         return unmodifiableSet(set);
     }

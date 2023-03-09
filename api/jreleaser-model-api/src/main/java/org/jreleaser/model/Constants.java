@@ -387,5 +387,6 @@ public interface Constants {
     String KEY_GRAALVM_NAGIVE_IMAGE = "graalVMNativeImage";
 
     String SKIP_SBOM = "skipSbom";
+    String SKIP_SBOM_CYCLONEDX = "skipSbomCyclonedx";
     String SKIP_SBOM_SYFT = "skipSbomSyft";
 }

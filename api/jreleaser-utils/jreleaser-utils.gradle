@@ -47,6 +47,7 @@ processResources {
         expand(
             mvnVersion: mavenVersion,
             pomcheckerVersion: pomcheckerVersion,
+            cyclonedxVersion: cyclonedxVersion,
             syftVersion: syftVersion
         )
     }

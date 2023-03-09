@@ -39,13 +39,19 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 1.5.0
  */
 public final class Sbom extends AbstractActivatable<Sbom> implements Domain, Activatable {
-    private static final long serialVersionUID = 7580114841869385084L;
+    private static final long serialVersionUID = 8210488305115310708L;
 
+    private final CyclonedxSbomCataloger cyclonedx = new CyclonedxSbomCataloger();
     private final SyftSbomCataloger syft = new SyftSbomCataloger();
 
     @JsonIgnore
     private final org.jreleaser.model.api.catalog.sbom.Sbom immutable = new org.jreleaser.model.api.catalog.sbom.Sbom() {
-        private static final long serialVersionUID = 2189991245157503624L;
+        private static final long serialVersionUID = 5388790360937381329L;
+
+        @Override
+        public org.jreleaser.model.api.catalog.sbom.CyclonedxSbomCataloger getCyclonedx() {
+            return cyclonedx.asImmutable();
+        }
 
         @Override
         public org.jreleaser.model.api.catalog.sbom.SyftSbomCataloger getSyft() {
@@ -80,12 +86,22 @@ public final class Sbom extends AbstractActivatable<Sbom> implements Domain, Act
     public void merge(Sbom source) {
         super.merge(source);
         setSyft(source.syft);
+        setCyclonedx(source.cyclonedx);
     }
 
     @Override
     public boolean isSet() {
         return super.isSet() ||
+            cyclonedx.isSet() ||
             syft.isSet();
+    }
+
+    public CyclonedxSbomCataloger getCyclonedx() {
+        return cyclonedx;
+    }
+
+    public void setCyclonedx(CyclonedxSbomCataloger cyclonedx) {
+        this.cyclonedx.merge(cyclonedx);
     }
 
     public SyftSbomCataloger getSyft() {
@@ -101,6 +117,7 @@ public final class Sbom extends AbstractActivatable<Sbom> implements Domain, Act
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
         map.put("active", getActive());
+        map.putAll(cyclonedx.asMap(full));
         map.putAll(syft.asMap(full));
         return map;
     }
@@ -115,12 +132,15 @@ public final class Sbom extends AbstractActivatable<Sbom> implements Domain, Act
 
     public List<? extends SbomCataloger<?>> findAllActiveSbomCatalogers() {
         List list = new ArrayList<>();
+        if (cyclonedx.isEnabled()) list.add(getCyclonedx());
         if (syft.isEnabled()) list.add(getSyft());
         return list;
     }
 
     private <A extends SbomCataloger<?>> A resolveSbomCataloger(String name) {
         switch (name.toLowerCase(Locale.ENGLISH).trim()) {
+            case org.jreleaser.model.api.catalog.sbom.CyclonedxSbomCataloger.TYPE:
+                return (A) getCyclonedx();
             case org.jreleaser.model.api.catalog.sbom.SyftSbomCataloger.TYPE:
                 return (A) getSyft();
             default:
