@@ -12,46 +12,34 @@ permissions:
 jobs:
   precheck:
     name: Precheck
-    if: github.repository == 'jreleaser/jreleaser' && startsWith(github.event.head_commit.message, 'Releasing version') != true
-    runs-on: ubuntu-latest
-    outputs:
-      VERSION: ${{ steps.vars.outputs.VERSION }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Cancel previous run
-        uses: styfle/cancel-workflow-action@0.11.0
-        with:
-          access_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Version
-        id: vars
-        shell: bash
-        run: |
-          echo "VERSION=$(cat VERSION)" >> $GITHUB_OUTPUT
+    uses: jreleaser/jreleaser/.github/workflows/step-precheck.yml@main
+    secrets: inherit
 
   jlink:
+    name: Jlink
     needs: [precheck]
-    if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
+    if: endsWith(${{ needs.precheck.outputs.version }}, '-SNAPSHOT')
     uses: jreleaser/jreleaser/.github/workflows/step-jlink.yml@main
     with:
-      project-version: ${{ needs.precheck.outputs.VERSION }}
+      project-version: ${{ needs.precheck.outputs.version }}
     secrets:
       gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
       oci-compartment-id: ${{ secrets.JRELEASER_OCI_COMPARTMENTID }}
 
   jpackage:
+    name: JPackage
     needs: [precheck, jlink]
     uses: jreleaser/jreleaser/.github/workflows/step-jpackage.yml@main
     with:
-      project-version: ${{ needs.precheck.outputs.VERSION }}
+      project-version: ${{ needs.precheck.outputs.version }}
+      project-effective-version: early-access
 
   native-image:
+    name: Native Image
     needs: [precheck, jlink]
     uses: jreleaser/jreleaser/.github/workflows/step-native-image.yml@main
     with:
-      project-version: ${{ needs.precheck.outputs.VERSION }}
+      project-version: ${{ needs.precheck.outputs.version }}
     secrets:
       gh-access-token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
@@ -60,7 +48,7 @@ jobs:
     needs: [precheck, jlink, jpackage, native-image]
     runs-on: ubuntu-latest
     outputs:
-      HASHES: ${{ steps.hash.outputs.hashes }}
+      hashes: ${{ steps.hash.outputs.HASHES }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -91,20 +79,13 @@ jobs:
           name: native-image
           path: out/jreleaser/assemble/jreleaser-native/native-image
 
-      - name: Setup Java
-        uses: actions/setup-java@v3
-        with:
-          java-version: ${{ vars.JAVA_VERSION }}
-          distribution: ${{ vars.JAVA_DISTRO }}
-          cache: 'gradle'
-
       - name: Release
         uses: jreleaser/release-action@v2
         with:
           version: early-access
           arguments: full-release
         env:
-          JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.VERSION }}
+          JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.version }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
           JRELEASER_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
@@ -124,32 +105,35 @@ jobs:
         shell: bash
         id: hash
         run: |
-          echo "hashes=$(cat out/jreleaser/checksums/checksums_sha256.txt | base64 -w0)" >> "$GITHUB_OUTPUT"
+          echo "HASHES=$(cat out/jreleaser/checksums/checksums_sha256.txt | base64 -w0)" >> "$GITHUB_OUTPUT"
 
   provenance:
+    name: Provenance
     needs: [precheck, release]
     uses: jreleaser/jreleaser/.github/workflows/step-provenance.yml@main
     with:
-      project-version: ${{ needs.precheck.outputs.VERSION }}
-      project-tag: 'early-access'
-      hashes: ${{ needs.release.outputs.HASHES }}
+      project-version: ${{ needs.precheck.outputs.version }}
+      project-tag: early-access
+      hashes: ${{ needs.release.outputs.hashes }}
     secrets:
       gh-access-token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
   update-wiki:
+    name: Update Wiki
     needs: [precheck, release]
     uses: jreleaser/jreleaser/.github/workflows/step-update-wiki.yml@main
     with:
-      project-version: ${{ needs.precheck.outputs.VERSION }}
-      project-tag: 'early-access'
+      project-version: ${{ needs.precheck.outputs.version }}
+      project-tag: early-access
     secrets:
       gh-access-token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
   update-bach-info:
+    name: Update Bach Info
     needs: [precheck, release]
     uses: jreleaser/jreleaser/.github/workflows/step-update-bach-info.yml@main
     with:
-      project-version: ${{ needs.precheck.outputs.VERSION }}
-      project-tag: 'early-access'
+      project-version: ${{ needs.precheck.outputs.version }}
+      project-tag: early-access
     secrets:
       gh-access-token: ${{ secrets.GIT_ACCESS_TOKEN }}

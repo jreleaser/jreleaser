@@ -15,30 +15,14 @@ permissions:
 
 jobs:
   precheck:
-    if: github.repository == 'jreleaser/jreleaser' && startsWith(github.event.head_commit.message, 'Releasing version') != true
-    runs-on: ubuntu-latest
-    outputs:
-      VERSION: ${{ steps.vars.outputs.VERSION }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Cancel previous run
-        uses: styfle/cancel-workflow-action@0.11.0
-        with:
-          access_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Version
-        id: vars
-        shell: bash
-        run: |
-          version=$(cat VERSION)
-          echo "VERSION=$(echo "$version")" >> $GITHUB_OUTPUT
+    name: Precheck
+    uses: jreleaser/jreleaser/.github/workflows/step-precheck.yml@main
+    secrets: inherit
 
   build-cli:
-    needs: [ precheck ]
-    if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
     name: 'CLI ${{ matrix.job.os }}'
+    needs: [ precheck ]
+    if: endsWith(${{ needs.precheck.outputs.version }}, '-SNAPSHOT')
     continue-on-error: true
     strategy:
       fail-fast: false
@@ -63,7 +47,7 @@ jobs:
         with:
           java-version: ${{ vars.JAVA_VERSION }}
           distribution: ${{ vars.JAVA_DISTRO }}
-          cache: 'gradle'
+          cache: gradle
 
       - name: Build
         shell: bash
@@ -88,10 +72,10 @@ jobs:
         shell: bash
         run: |
           cd smoketests-jreleaser
-          unzip -qo ../plugins/jreleaser/build/distributions/jreleaser-${{ needs.precheck.outputs.VERSION }}.zip
-          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" pom.xml
-          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" build.xml
-          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" gradle.properties
+          unzip -qo ../plugins/jreleaser/build/distributions/jreleaser-${{ needs.precheck.outputs.version }}.zip
+          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.version }}/g" pom.xml
+          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.version }}/g" build.xml
+          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.version }}/g" gradle.properties
           sh ../.github/scripts/jacoco-instrument.sh
 
       - name: Setup Graal
@@ -113,68 +97,68 @@ jobs:
           ./mvnw -B -ntp deploy -DaltDeploymentRepository=local::file:./target/staging-deploy
           echo "::endgroup::"
           echo "::group::➡️ json-schema"
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser json-schema
+          ./jreleaser-${{ needs.precheck.outputs.version }}/bin/jreleaser json-schema
           echo "::endgroup::"
           echo "::group::➡️ env"
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser env
+          ./jreleaser-${{ needs.precheck.outputs.version }}/bin/jreleaser env
           echo "::endgroup::"
           echo "::group::➡️ assemble"
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser assemble -PoutputDir=out
+          ./jreleaser-${{ needs.precheck.outputs.version }}/bin/jreleaser assemble -PoutputDir=out
           echo "::endgroup::"
           echo "::group::➡️ config"
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser config -PoutputDir=out
+          ./jreleaser-${{ needs.precheck.outputs.version }}/bin/jreleaser config -PoutputDir=out
           echo "::endgroup::"
           echo "::group::➡️ changelog"
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser changelog -PoutputDir=out
+          ./jreleaser-${{ needs.precheck.outputs.version }}/bin/jreleaser changelog -PoutputDir=out
           echo "::endgroup::"
           echo "::group::➡️ download"
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser download -PoutputDir=out --dry-run
+          ./jreleaser-${{ needs.precheck.outputs.version }}/bin/jreleaser download -PoutputDir=out --dry-run
           echo "::endgroup::"
           echo "::group::➡️ catalog"
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser catalog -PoutputDir=out --select-current-platform
+          ./jreleaser-${{ needs.precheck.outputs.version }}/bin/jreleaser catalog -PoutputDir=out --select-current-platform
           echo "::endgroup::"
           echo "::group::➡️ checksum"
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser checksum -PoutputDir=out --select-current-platform
+          ./jreleaser-${{ needs.precheck.outputs.version }}/bin/jreleaser checksum -PoutputDir=out --select-current-platform
           echo "::endgroup::"
           echo "::group::➡️ sign"
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser sign -PoutputDir=out --select-current-platform
+          ./jreleaser-${{ needs.precheck.outputs.version }}/bin/jreleaser sign -PoutputDir=out --select-current-platform
           echo "::endgroup::"
           echo "::group::➡️ deploy"
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser deploy -PoutputDir=out --dry-run
+          ./jreleaser-${{ needs.precheck.outputs.version }}/bin/jreleaser deploy -PoutputDir=out --dry-run
           echo "::endgroup::"
           echo "::group::➡️ upload"
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser upload --select-current-platform -PoutputDir=out --dry-run
+          ./jreleaser-${{ needs.precheck.outputs.version }}/bin/jreleaser upload --select-current-platform -PoutputDir=out --dry-run
           echo "::endgroup::"
           echo "::group::➡️ release"
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser release --select-current-platform -PoutputDir=out --dry-run
+          ./jreleaser-${{ needs.precheck.outputs.version }}/bin/jreleaser release --select-current-platform -PoutputDir=out --dry-run
           echo "::endgroup::"
           echo "::group::➡️ prepare"
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser prepare --select-current-platform -PoutputDir=out ${{ matrix.job.args }}
+          ./jreleaser-${{ needs.precheck.outputs.version }}/bin/jreleaser prepare --select-current-platform -PoutputDir=out ${{ matrix.job.args }}
           echo "::endgroup::"
           echo "::group::➡️ package"
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser package --select-current-platform -PoutputDir=out ${{ matrix.job.args }}
+          ./jreleaser-${{ needs.precheck.outputs.version }}/bin/jreleaser package --select-current-platform -PoutputDir=out ${{ matrix.job.args }}
           echo "::endgroup::"
           echo "::group::➡️ publish"
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser publish --select-current-platform -PoutputDir=out --dry-run ${{ matrix.job.args }}
+          ./jreleaser-${{ needs.precheck.outputs.version }}/bin/jreleaser publish --select-current-platform -PoutputDir=out --dry-run ${{ matrix.job.args }}
           echo "::endgroup::"
           echo "::group::➡️ full-release"
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser full-release -PoutputDir=out --select-current-platform --dry-run ${{ matrix.job.args }}
+          ./jreleaser-${{ needs.precheck.outputs.version }}/bin/jreleaser full-release -PoutputDir=out --select-current-platform --dry-run ${{ matrix.job.args }}
           echo "::endgroup::"
           echo "::group::➡️ announce"
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser announce -PoutputDir=out --dry-run
+          ./jreleaser-${{ needs.precheck.outputs.version }}/bin/jreleaser announce -PoutputDir=out --dry-run
           echo "::endgroup::"
           echo "::group::➡️ template generate"
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser template generate --announcer discord
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser template generate --assembler-type jlink --assembler-name app-standalone
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser template generate --packager brew --distribution app
+          ./jreleaser-${{ needs.precheck.outputs.version }}/bin/jreleaser template generate --announcer discord
+          ./jreleaser-${{ needs.precheck.outputs.version }}/bin/jreleaser template generate --assembler-type jlink --assembler-name app-standalone
+          ./jreleaser-${{ needs.precheck.outputs.version }}/bin/jreleaser template generate --packager brew --distribution app
           echo "::endgroup::"
           echo "::group::➡️ init"
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser init --overwrite --format yml
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser init --overwrite --format toml
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser init --overwrite --format json
+          ./jreleaser-${{ needs.precheck.outputs.version }}/bin/jreleaser init --overwrite --format yml
+          ./jreleaser-${{ needs.precheck.outputs.version }}/bin/jreleaser init --overwrite --format toml
+          ./jreleaser-${{ needs.precheck.outputs.version }}/bin/jreleaser init --overwrite --format json
           echo "::endgroup::"
           echo "::group::➡️ auto-config"
-          ./jreleaser-${{ needs.precheck.outputs.VERSION }}/bin/jreleaser release --auto-config --dry-run
+          ./jreleaser-${{ needs.precheck.outputs.version }}/bin/jreleaser release --auto-config --dry-run
           echo "::endgroup::"
         env:
           JRELEASER_OUTPUT_DIRECTORY: out
@@ -215,9 +199,9 @@ jobs:
           ./gradlew -stop
 
   build-tool:
-    needs: [ precheck ]
-    if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
     name: 'Tool ${{ matrix.job.os }}'
+    needs: [ precheck ]
+    if: endsWith(${{ needs.precheck.outputs.version }}, '-SNAPSHOT')
     continue-on-error: true
     strategy:
       fail-fast: false
@@ -242,7 +226,7 @@ jobs:
         with:
           java-version: ${{ vars.JAVA_VERSION }}
           distribution: ${{ vars.JAVA_DISTRO }}
-          cache: 'gradle'
+          cache: gradle
 
       - name: Build
         shell: bash
@@ -267,10 +251,10 @@ jobs:
         shell: bash
         run: |
           cd smoketests-jreleaser
-          cp ../plugins/jreleaser-tool-provider/build/libs/jreleaser-tool-provider-${{ needs.precheck.outputs.VERSION }}.jar jreleaser.jar
-          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" pom.xml
-          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" build.xml
-          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" gradle.properties
+          cp ../plugins/jreleaser-tool-provider/build/libs/jreleaser-tool-provider-${{ needs.precheck.outputs.version }}.jar jreleaser.jar
+          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.version }}/g" pom.xml
+          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.version }}/g" build.xml
+          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.version }}/g" gradle.properties
           sh ../.github/scripts/jacoco-instrument.sh
 
       - name: Setup Graal
@@ -394,9 +378,9 @@ jobs:
           ./gradlew -stop
 
   build-ant:
-    needs: [ precheck ]
-    if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
     name: 'Ant ${{ matrix.job.os }}'
+    needs: [ precheck ]
+    if: endsWith(${{ needs.precheck.outputs.version }}, '-SNAPSHOT')
     continue-on-error: true
     strategy:
       fail-fast: false
@@ -421,7 +405,7 @@ jobs:
         with:
           java-version: ${{ vars.JAVA_VERSION }}
           distribution: ${{ vars.JAVA_DISTRO }}
-          cache: 'gradle'
+          cache: gradle
 
       - name: Build
         shell: bash
@@ -447,10 +431,10 @@ jobs:
         run: |
           cd smoketests-jreleaser
           mkdir lib
-          unzip -dlib -qo ../plugins/jreleaser-ant-tasks/build/distributions/jreleaser-ant-tasks-${{ needs.precheck.outputs.VERSION }}.zip
-          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" pom.xml
-          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" build.xml
-          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" gradle.properties
+          unzip -dlib -qo ../plugins/jreleaser-ant-tasks/build/distributions/jreleaser-ant-tasks-${{ needs.precheck.outputs.version }}.zip
+          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.version }}/g" pom.xml
+          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.version }}/g" build.xml
+          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.version }}/g" gradle.properties
           sh ../.github/scripts/jacoco-instrument.sh
 
       - name: Setup Graal
@@ -571,9 +555,9 @@ jobs:
           ./gradlew -stop
 
   build-gradle:
-    needs: [ precheck ]
-    if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
     name: 'Gradle ${{ matrix.job.os }}'
+    needs: [ precheck ]
+    if: endsWith(${{ needs.precheck.outputs.version }}, '-SNAPSHOT')
     continue-on-error: true
     strategy:
       fail-fast: false
@@ -598,7 +582,7 @@ jobs:
         with:
           java-version: ${{ vars.JAVA_VERSION }}
           distribution: ${{ vars.JAVA_DISTRO }}
-          cache: 'gradle'
+          cache: gradle
 
       - name: Build
         shell: bash
@@ -623,9 +607,9 @@ jobs:
         shell: bash
         run: |
           cd smoketests-jreleaser
-          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" pom.xml
-          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" build.xml
-          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" gradle.properties
+          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.version }}/g" pom.xml
+          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.version }}/g" build.xml
+          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.version }}/g" gradle.properties
           sh ../.github/scripts/jacoco-instrument.sh
 
       - name: Setup Graal
@@ -760,9 +744,9 @@ jobs:
           ./gradlew -stop
 
   build-maven:
-    needs: [ precheck ]
-    if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
     name: 'Maven ${{ matrix.job.os }}'
+    needs: [ precheck ]
+    if: endsWith(${{ needs.precheck.outputs.version }}, '-SNAPSHOT')
     continue-on-error: true
     strategy:
       fail-fast: false
@@ -787,7 +771,7 @@ jobs:
         with:
           java-version: ${{ vars.JAVA_VERSION }}
           distribution: ${{ vars.JAVA_DISTRO }}
-          cache: 'gradle'
+          cache: gradle
 
       - name: Build
         shell: bash
@@ -812,9 +796,9 @@ jobs:
         shell: bash
         run: |
           cd smoketests-jreleaser
-          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" pom.xml
-          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" build.xml
-          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.VERSION }}/g" gradle.properties
+          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.version }}/g" pom.xml
+          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.version }}/g" build.xml
+          sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.version }}/g" gradle.properties
           sh ../.github/scripts/jacoco-instrument.sh
 
       - name: Setup Graal
@@ -938,9 +922,9 @@ jobs:
           ./gradlew -stop
 
   unit-tests:
-    needs: [ precheck ]
-    if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
     name: 'Unit Test ${{ matrix.os }}'
+    needs: [ precheck ]
+    if: endsWith(${{ needs.precheck.outputs.version }}, '-SNAPSHOT')
     continue-on-error: true
     strategy:
       fail-fast: true
@@ -959,7 +943,7 @@ jobs:
         with:
           java-version: ${{ vars.JAVA_VERSION }}
           distribution: ${{ vars.JAVA_DISTRO }}
-          cache: 'gradle'
+          cache: gradle
 
       - name: Test
         shell: bash
@@ -995,9 +979,9 @@ jobs:
           ./gradlew -stop
 
   coveralls:
-    needs: [ build-cli, build-tool, build-ant, build-gradle, build-maven, unit-tests ]
-    if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
     name: Coveralls
+    needs: [ build-cli, build-tool, build-ant, build-gradle, build-maven, unit-tests ]
+    if: endsWith(${{ needs.precheck.outputs.version }}, '-SNAPSHOT')
     continue-on-error: true
     runs-on: ubuntu-latest
     steps:
@@ -1015,7 +999,7 @@ jobs:
         with:
           java-version: ${{ vars.JAVA_VERSION }}
           distribution: ${{ vars.JAVA_DISTRO }}
-          cache: 'gradle'
+          cache: gradle
 
       - name: Build
         run: ./gradlew classes
@@ -1045,9 +1029,9 @@ jobs:
           ./gradlew -stop
 
   codecov:
-    needs: [ build-cli, build-tool, build-ant, build-gradle, build-maven, unit-tests ]
-    if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
     name: Codecov
+    needs: [ build-cli, build-tool, build-ant, build-gradle, build-maven, unit-tests ]
+    if: endsWith(${{ needs.precheck.outputs.version }}, '-SNAPSHOT')
     continue-on-error: true
     runs-on: ubuntu-latest
     steps:
@@ -1065,7 +1049,7 @@ jobs:
         with:
           java-version: ${{ vars.JAVA_VERSION }}
           distribution: ${{ vars.JAVA_DISTRO }}
-          cache: 'gradle'
+          cache: gradle
 
       - name: Build
         run: ./gradlew classes
@@ -1100,9 +1084,9 @@ jobs:
           ./gradlew -stop
 
   sonar:
-    needs: [ build-cli, build-tool, build-ant, build-gradle, build-maven, unit-tests ]
-    if: endsWith(${{ needs.precheck.outputs.VERSION }}, '-SNAPSHOT')
     name: Sonar
+    needs: [ build-cli, build-tool, build-ant, build-gradle, build-maven, unit-tests ]
+    if: endsWith(${{ needs.precheck.outputs.version }}, '-SNAPSHOT')
     continue-on-error: true
     runs-on: ubuntu-latest
     steps:
@@ -1120,7 +1104,7 @@ jobs:
         with:
           java-version: ${{ vars.JAVA_VERSION }}
           distribution: ${{ vars.JAVA_DISTRO }}
-          cache: 'gradle'
+          cache: gradle
 
       - name: Build
         run: ./gradlew check -PspotbugsEnabled=true

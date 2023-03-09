@@ -22,7 +22,7 @@ jobs:
         with:
           java-version: ${{ vars.JAVA_VERSION }}
           distribution: ${{ vars.JAVA_DISTRO }}
-          cache: 'gradle'
+          cache: gradle
 
       - name: Build
         shell: bash

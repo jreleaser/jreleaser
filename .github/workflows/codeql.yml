@@ -15,7 +15,15 @@ permissions:
   contents: read
 
 jobs:
-  CodeQL:
+  precheck:
+    name: Precheck
+    uses: jreleaser/jreleaser/.github/workflows/step-precheck.yml@main
+    secrets: inherit
+
+  codeql:
+    name: CodeQL
+    needs: [precheck]
+    if: endsWith(${{ needs.precheck.outputs.version }}, '-SNAPSHOT')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -36,7 +44,7 @@ jobs:
         with:
           java-version: ${{ vars.JAVA_VERSION }}
           distribution: ${{ vars.JAVA_DISTRO }}
-          cache: 'gradle'
+          cache: gradle
 
       - name: Autobuild
         uses: github/codeql-action/autobuild@v2

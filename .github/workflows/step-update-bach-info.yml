@@ -27,7 +27,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: jreleaser/bach-info
-          ref: 'main'
+          ref: main
           fetch-depth: 0
           token: ${{ secrets.gh-access-token }}
 

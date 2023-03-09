@@ -5,8 +5,6 @@ environment:
     graalFilePrefix: 'graalvm-ce-java17-22.3.0'
     nativeImageDir: out/jreleaser/assemble/jreleaser-native/native-image
     jpackageDir: out/jreleaser/assemble/jreleaser-installer/jpackage
-    skipJpackageResolver: true
-    skipNativeImageResolver: true
 
 project:
   name: jreleaser
@@ -208,6 +206,7 @@ assemble:
       active: ALWAYS
       jlink: jreleaser-standalone
       attachPlatform: true
+      exported: false
       applicationPackage:
         appName: jreleaser
         appVersion: '{{projectVersionNumber}}'
@@ -285,6 +284,7 @@ distributions:
         owner: flathub
         name: org.jreleaser.cli
         branch: master
+        branchPush: '{{projectName}}-{{tagName}}'
     chocolatey:
       active: ALWAYS
       remoteBuild: true

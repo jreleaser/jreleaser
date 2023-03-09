@@ -25,7 +25,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          ref: 'main'
+          ref: main
 
       - name: Decrypt secrets
         shell: bash
@@ -38,7 +38,7 @@ jobs:
         with:
           java-version: ${{ vars.JAVA_VERSION }}
           distribution: ${{ vars.JAVA_DISTRO }}
-          cache: 'gradle'
+          cache: gradle
 
       - name: Version
         if: endsWith(${{ inputs.project-version }}, '-SNAPSHOT') != true
@@ -51,10 +51,11 @@ jobs:
           JRELEASER_OCI_COMPARTMENTID: ${{ secrets.oci-compartment-id }}
 
       - name: Jlink
-        uses: jreleaser/release-action@v1
+        uses: jreleaser/release-action@v2
         with:
           version: early-access
           arguments: assemble --assembler jlink
+          setup-java: false
         env:
           JRELEASER_PROJECT_VERSION: ${{ inputs.project-version }}
 
@@ -89,4 +90,4 @@ jobs:
           retention-days: 1
           name: jlink
           path: |
-            out/jreleaser/assemble/jreleaser-standalone/jlink/
+            out/jreleaser/assemble/jreleaser-standalone/jlink/*.zip

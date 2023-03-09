@@ -6,23 +6,29 @@ on:
       project-version:
         required: true
         type: string
+      project-effective-version:
+        required: true
+        type: string
 
 permissions:
   contents: read
 
 jobs:
   jpackage:
-    name: 'JPackage on ${{ matrix.os }}'
+    name: '${{ matrix.job.os }}'
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
-        os: [ubuntu-latest, macOS-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
+        job:
+          - { os: ubuntu-latest,  platform: linux-x86_64 }
+          - { os: macOS-latest,   platform: osx-x86_64 }
+          - { os: windows-latest, platform: windows-x86_64 }
+    runs-on: ${{ matrix.job.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
         with:
-          ref: 'main'
+          ref: main
 
       - name: Download artifacts
         uses: actions/download-artifact@v3
@@ -36,27 +42,35 @@ jobs:
           name: jlink
           path: out/jreleaser/assemble/jreleaser-standalone/jlink
 
+      - name: Expand jlink
+        shell: bash
+        run: |
+          cd out/jreleaser/assemble/jreleaser-standalone/jlink
+          ls -l
+          unzip -q -d work-${{ matrix.job.platform }} jreleaser-standalone-${{ inputs.project-effective-version }}-${{ matrix.job.platform }}.zip
+
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
           java-version: ${{ vars.JAVA_VERSION }}
           distribution: ${{ vars.JAVA_DISTRO }}
-          cache: 'gradle'
+          cache: gradle
 
       - name: Version
         if: endsWith(${{ inputs.project-version }}, '-SNAPSHOT') != true
         run: |
           echo ${{ inputs.project-version }} > VERSION
 
-      - name: Build
+      - name: Jdks
         shell: bash
         run: ./gradlew :jreleaser:copyJdksFromCache :jreleaser:setupJdks
 
       - name: Jpackage
-        uses: jreleaser/release-action@v1
+        uses: jreleaser/release-action@v2
         with:
           version: early-access
           arguments: assemble --assembler jpackage --select-current-platform
+          setup-java: false
         env:
           JRELEASER_PROJECT_VERSION: ${{ inputs.project-version }}
 
