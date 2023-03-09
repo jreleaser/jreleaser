@@ -78,32 +78,29 @@ echo location of your Java installation.
 goto error
 
 set JAVACMD="%JAVA_HOME%\bin\java"
-
 set JARSDIRS="%BASEDIR%\lib"
-
+{{#distributionJavaMainModule}}
+set CLASSPATH="%JARSDIRS%"
+{{/distributionJavaMainModule}}
+{{^distributionJavaMainModule}}
 set CLASSPATH="%JARSDIRS%\*"
-
+{{/distributionJavaMainModule}}
 set JAVA_OPTS="{{distributionJavaOptions}}"
 
 @REM Reaching here means variables are defined and arguments have been captured
 :endInit
 
-{{#distributionJavaMainJar}}
-{{#distributionJavaMainClass}}
-%JAVACMD% %JAVA_OPTS% -cp %CLASSPATH% {{distributionJavaMainClass}} %CMD_LINE_ARGS%
-{{/distributionJavaMainClass}}
-{{^distributionJavaMainClass}}
-%JAVACMD% %JAVA_OPTS% -cp %CLASSPATH% -jar "%JARSDIRS%\{{distributionJavaMainJar}}" %CMD_LINE_ARGS%
-{{/distributionJavaMainClass}}
-{{/distributionJavaMainJar}}
-{{^distributionJavaMainJar}}
 {{#distributionJavaMainModule}}
-%JAVACMD% %JAVA_OPTS% -cp %CLASSPATH% -m {{distributionJavaMainModule}}/{{distributionJavaMainClass}} %CMD_LINE_ARGS%
+%JAVACMD% %DEFAULT_JAVA_OPTS% %JAVA_OPTS% -p %CLASSPATH% -m {{distributionJavaMainModule}}/{{distributionJavaMainClass}} %CMD_LINE_ARGS%
 {{/distributionJavaMainModule}}
 {{^distributionJavaMainModule}}
-%JAVACMD% %JAVA_OPTS% -cp %CLASSPATH% {{distributionJavaMainClass}} %CMD_LINE_ARGS%
+{{#distributionJavaMainClass}}
+%JAVACMD% %DEFAULT_JAVA_OPTS% %JAVA_OPTS% -cp %CLASSPATH% {{distributionJavaMainClass}} %CMD_LINE_ARGS%
+{{/distributionJavaMainClass}}
+{{^distributionJavaMainClass}}
+%JAVACMD% %DEFAULT_JAVA_OPTS% %JAVA_OPTS% -cp %CLASSPATH% -jar "%JARSDIRS%\{{distributionJavaMainJar}}" %CMD_LINE_ARGS%
+{{/distributionJavaMainClass}}
 {{/distributionJavaMainModule}}
-{{/distributionJavaMainJar}}
 
 if %ERRORLEVEL% NEQ 0 goto error
 goto end
