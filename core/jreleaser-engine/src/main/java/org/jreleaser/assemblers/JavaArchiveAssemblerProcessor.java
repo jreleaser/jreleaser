@@ -19,7 +19,6 @@ package org.jreleaser.assemblers;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Archive;
-import org.jreleaser.model.Constants;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.JavaArchiveAssembler;
 import org.jreleaser.model.internal.common.Glob;
@@ -32,9 +31,18 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
+import static java.lang.String.join;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_EXECUTABLE;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_CLASS;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_JAR;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_MODULE;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_OPTIONS;
+import static org.jreleaser.mustache.MustacheUtils.passThrough;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -48,7 +56,7 @@ public class JavaArchiveAssemblerProcessor extends AbstractAssemblerProcessor<or
 
     @Override
     protected void doAssemble(TemplateContext props) throws AssemblerProcessingException {
-        Path assembleDirectory = props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
+        Path assembleDirectory = props.get(KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
         String archiveName = assembler.getResolvedArchiveName(context);
 
         Path workDirectory = assembleDirectory.resolve(WORK_DIRECTORY);
@@ -86,14 +94,16 @@ public class JavaArchiveAssemblerProcessor extends AbstractAssemblerProcessor<or
         super.fillAssemblerProperties(props);
 
         if (isNotBlank(assembler.getMainJar().getPath())) {
-            props.set(Constants.KEY_DISTRIBUTION_JAVA_MAIN_JAR, assembler.getMainJar().getEffectivePath(context, assembler)
+            props.set(KEY_DISTRIBUTION_JAVA_MAIN_JAR, assembler.getMainJar().getEffectivePath(context, assembler)
                 .getFileName());
         } else {
-            props.set(Constants.KEY_DISTRIBUTION_JAVA_MAIN_JAR, "");
+            props.set(KEY_DISTRIBUTION_JAVA_MAIN_JAR, "");
         }
-        props.set(Constants.KEY_DISTRIBUTION_JAVA_MAIN_CLASS, assembler.getJava().getMainClass());
-        props.set(Constants.KEY_DISTRIBUTION_JAVA_MAIN_MODULE, assembler.getJava().getMainModule());
-        props.set(Constants.KEY_DISTRIBUTION_JAVA_OPTIONS, !assembler.getJava().getOptions().isEmpty() ? assembler.getJava().getOptions() : "");
+        props.set(KEY_DISTRIBUTION_JAVA_MAIN_CLASS, assembler.getJava().getMainClass());
+        props.set(KEY_DISTRIBUTION_JAVA_MAIN_MODULE, assembler.getJava().getMainModule());
+        List<String> javaOptions = assembler.getJava().getOptions();
+        props.set(KEY_DISTRIBUTION_JAVA_OPTIONS, !javaOptions.isEmpty() ? passThrough(join(" ", javaOptions)) : "");
+        props.set(KEY_DISTRIBUTION_EXECUTABLE, assembler.getExecutable().getName());
     }
 
     private void archive(Path workDirectory, Path assembleDirectory, String archiveName, Archive.Format format) throws AssemblerProcessingException {

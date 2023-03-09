@@ -19,7 +19,6 @@ package org.jreleaser.assemblers;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Archive;
-import org.jreleaser.model.Constants;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.JlinkAssembler;
 import org.jreleaser.model.internal.common.Artifact;
@@ -47,6 +46,8 @@ import static java.util.stream.Collectors.toSet;
 import static org.jreleaser.assemblers.AssemblerUtils.copyJars;
 import static org.jreleaser.assemblers.AssemblerUtils.readJavaVersion;
 import static org.jreleaser.model.Constants.KEY_ARCHIVE_FORMAT;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_EXECUTABLE;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.util.FileType.BAT;
 import static org.jreleaser.util.FileType.JAR;
@@ -62,6 +63,12 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jreleaser.model.api.assemble.JlinkAssembler, JlinkAssembler> {
     public JlinkAssemblerProcessor(JReleaserContext context) {
         super(context);
+    }
+
+    @Override
+    protected void fillAssemblerProperties(TemplateContext props) {
+        super.fillAssemblerProperties(props);
+        props.set(KEY_DISTRIBUTION_EXECUTABLE, assembler.getExecutable());
     }
 
     @Override
@@ -84,7 +91,7 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
             }
         }
 
-        Path assembleDirectory = props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
+        Path assembleDirectory = props.get(KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
         Path inputsDirectory = assembleDirectory.resolve(INPUTS_DIRECTORY);
 
         // copy templates
