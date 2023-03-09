@@ -18,7 +18,6 @@
 package org.jreleaser.maven.plugin;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.jreleaser.model.internal.JReleaserContext;
 
@@ -26,7 +25,7 @@ import org.jreleaser.model.internal.JReleaserContext;
  * @author Andres Almiray
  * @since 1.5.0
  */
-abstract class AbstractPackagerMojo extends AbstractPlatformAwareMojo {
+abstract class AbstractPackagerMojo extends AbstractDistributionMojo {
     /**
      * Include a packager.
      */
@@ -39,35 +38,11 @@ abstract class AbstractPackagerMojo extends AbstractPlatformAwareMojo {
     @Parameter(property = "jreleaser.excluded.packagers")
     private String[] excludedPackagers;
 
-    /**
-     * Include a distribution.
-     */
-    @Parameter(property = "jreleaser.distributions")
-    private String[] includedDistributions;
-
-    /**
-     * Exclude a distribution.
-     */
-    @Parameter(property = "jreleaser.excluded.distributions")
-    private String[] excludedDistributions;
-
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        Banner.display(project, getLog());
-        if (isSkip()) {
-            getLog().info("Execution has been explicitly skipped.");
-            return;
-        }
-
-        JReleaserContext context = createContext();
+    protected JReleaserContext setupContext() throws MojoExecutionException {
+        JReleaserContext context = super.setupContext();
         context.setIncludedPackagers(collectEntries(includedPackagers, true));
-        context.setIncludedDistributions(collectEntries(includedDistributions));
         context.setExcludedPackagers(collectEntries(excludedPackagers, true));
-        context.setExcludedDistributions(collectEntries(excludedDistributions));
-        doExecute(context);
+        return context;
     }
-
-    protected abstract void doExecute(JReleaserContext context);
-
-    protected abstract boolean isSkip();
 }

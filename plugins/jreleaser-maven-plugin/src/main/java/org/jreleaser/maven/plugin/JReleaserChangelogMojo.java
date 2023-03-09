@@ -39,18 +39,17 @@ public class JReleaserChangelogMojo extends AbstractJReleaserMojo {
     private boolean skip;
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        Banner.display(project, getLog());
-        if (skip) {
-            getLog().info("Execution has been explicitly skipped.");
-            return;
-        }
-
+    protected void doExecute() throws MojoExecutionException, MojoFailureException {
         Workflows.changelog(createContext()).execute();
     }
 
     @Override
     protected Mode getMode() {
         return Mode.CHANGELOG;
+    }
+
+    @Override
+    protected boolean isSkip() {
+        return skip;
     }
 }

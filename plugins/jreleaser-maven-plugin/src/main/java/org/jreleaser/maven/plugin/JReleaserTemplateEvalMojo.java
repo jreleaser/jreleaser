@@ -88,13 +88,7 @@ public class JReleaserTemplateEvalMojo extends AbstractPlatformAwareMojo {
     protected File targetDirectory;
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        Banner.display(project, getLog());
-        if (skip) {
-            getLog().info("Execution has been explicitly skipped.");
-            return;
-        }
-
+    protected void doExecute() throws MojoExecutionException, MojoFailureException {
         JReleaserContext context = createContext();
         ModelValidator.validate(context);
 
@@ -116,5 +110,10 @@ public class JReleaserTemplateEvalMojo extends AbstractPlatformAwareMojo {
         if (changelog) return Mode.CHANGELOG;
         if (announce) return Mode.ANNOUNCE;
         return Mode.CONFIG;
+    }
+
+    @Override
+    protected boolean isSkip() {
+        return skip;
     }
 }

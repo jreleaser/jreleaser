@@ -66,13 +66,7 @@ public class JReleaserDeployMojo extends AbstractJReleaserMojo {
     private boolean skip;
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        Banner.display(project, getLog());
-        if (skip) {
-            getLog().info("Execution has been explicitly skipped.");
-            return;
-        }
-
+    protected void doExecute() throws MojoExecutionException, MojoFailureException {
         JReleaserContext context = createContext();
         context.setIncludedDeployerTypes(collectEntries(includedDeployers, true));
         context.setIncludedDeployerNames(collectEntries(includedDeployerNames));
@@ -84,5 +78,10 @@ public class JReleaserDeployMojo extends AbstractJReleaserMojo {
     @Override
     protected Mode getMode() {
         return DEPLOY;
+    }
+
+    @Override
+    protected boolean isSkip() {
+        return skip;
     }
 }

@@ -64,13 +64,7 @@ public class JReleaserAssembleMojo extends AbstractPlatformAwareMojo {
     private boolean skip;
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        Banner.display(project, getLog());
-        if (skip) {
-            getLog().info("Execution has been explicitly skipped.");
-            return;
-        }
-
+    protected void doExecute() throws MojoExecutionException, MojoFailureException {
         JReleaserContext context = createContext();
         context.setIncludedAssemblers(collectEntries(includedAssemblers, true));
         context.setIncludedDistributions(collectEntries(includedDistributions));
@@ -82,5 +76,10 @@ public class JReleaserAssembleMojo extends AbstractPlatformAwareMojo {
     @Override
     protected Mode getMode() {
         return Mode.ASSEMBLE;
+    }
+
+    @Override
+    protected boolean isSkip() {
+        return skip;
     }
 }

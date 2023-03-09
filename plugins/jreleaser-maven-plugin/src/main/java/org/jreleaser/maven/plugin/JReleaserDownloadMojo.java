@@ -64,13 +64,7 @@ public class JReleaserDownloadMojo extends AbstractJReleaserMojo {
     private boolean skip;
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        Banner.display(project, getLog());
-        if (skip) {
-            getLog().info("Execution has been explicitly skipped.");
-            return;
-        }
-
+    protected void doExecute() throws MojoExecutionException, MojoFailureException {
         JReleaserContext context = createContext();
         context.setIncludedDownloaderTypes(collectEntries(includedDownloaders, true));
         context.setIncludedDownloaderNames(collectEntries(includedDownloaderNames));
@@ -82,5 +76,10 @@ public class JReleaserDownloadMojo extends AbstractJReleaserMojo {
     @Override
     protected Mode getMode() {
         return Mode.DOWNLOAD;
+    }
+
+    @Override
+    protected boolean isSkip() {
+        return skip;
     }
 }

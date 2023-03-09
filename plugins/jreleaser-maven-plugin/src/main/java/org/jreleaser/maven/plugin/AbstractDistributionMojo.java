@@ -40,20 +40,16 @@ abstract class AbstractDistributionMojo extends AbstractPlatformAwareMojo {
     private String[] excludedDistributions;
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        Banner.display(project, getLog());
-        if (isSkip()) {
-            getLog().info("Execution has been explicitly skipped.");
-            return;
-        }
+    protected void doExecute() throws MojoExecutionException, MojoFailureException {
+        doExecute(setupContext());
+    }
 
+    protected JReleaserContext setupContext() throws MojoExecutionException {
         JReleaserContext context = createContext();
         context.setIncludedDistributions(collectEntries(includedDistributions));
         context.setExcludedDistributions(collectEntries(excludedDistributions));
-        doExecute(context);
+        return context;
     }
 
     protected abstract void doExecute(JReleaserContext context);
-
-    protected abstract boolean isSkip();
 }

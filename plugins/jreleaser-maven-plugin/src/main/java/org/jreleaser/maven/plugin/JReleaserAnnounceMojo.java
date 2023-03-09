@@ -52,13 +52,7 @@ public class JReleaserAnnounceMojo extends AbstractJReleaserMojo {
     private boolean skip;
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        Banner.display(project, getLog());
-        if (skip) {
-            getLog().info("Execution has been explicitly skipped.");
-            return;
-        }
-
+    protected void doExecute() throws MojoExecutionException, MojoFailureException {
         JReleaserContext context = createContext();
         context.setIncludedAnnouncers(collectEntries(includedAnnouncers, true));
         context.setExcludedAnnouncers(collectEntries(excludedAnnouncers, true));
@@ -68,5 +62,10 @@ public class JReleaserAnnounceMojo extends AbstractJReleaserMojo {
     @Override
     protected Mode getMode() {
         return Mode.ANNOUNCE;
+    }
+
+    @Override
+    protected boolean isSkip() {
+        return skip;
     }
 }

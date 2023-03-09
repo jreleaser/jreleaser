@@ -111,13 +111,7 @@ public class JReleaserReleaseMojo extends AbstractPlatformAwareMojo {
     private boolean skip;
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        Banner.display(project, getLog());
-        if (skip) {
-            getLog().info("Execution has been explicitly skipped.");
-            return;
-        }
-
+    protected void doExecute() throws MojoExecutionException, MojoFailureException {
         JReleaserContext context = createContext();
         context.setIncludedDeployerTypes(collectEntries(includedDeployers, true));
         context.setIncludedDeployerNames(collectEntries(includedDeployerNames));
@@ -132,5 +126,10 @@ public class JReleaserReleaseMojo extends AbstractPlatformAwareMojo {
         context.setExcludedDistributions(collectEntries(excludedDistributions));
         context.setExcludedCatalogers(collectEntries(excludedCatalogers, true));
         Workflows.release(context).execute();
+    }
+
+    @Override
+    protected boolean isSkip() {
+        return skip;
     }
 }

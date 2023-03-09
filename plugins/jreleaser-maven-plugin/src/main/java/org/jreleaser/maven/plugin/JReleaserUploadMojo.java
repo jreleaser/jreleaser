@@ -87,13 +87,7 @@ public class JReleaserUploadMojo extends AbstractPlatformAwareMojo {
     private boolean skip;
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        Banner.display(project, getLog());
-        if (skip) {
-            getLog().info("Execution has been explicitly skipped.");
-            return;
-        }
-
+    protected void doExecute() throws MojoExecutionException, MojoFailureException {
         JReleaserContext context = createContext();
         context.setIncludedUploaderTypes(collectEntries(includedUploaders, true));
         context.setIncludedUploaderNames(collectEntries(includedUploaderNames));
@@ -104,5 +98,10 @@ public class JReleaserUploadMojo extends AbstractPlatformAwareMojo {
         context.setIncludedCatalogers(collectEntries(includedCatalogers, true));
         context.setExcludedCatalogers(collectEntries(excludedCatalogers, true));
         Workflows.upload(context).execute();
+    }
+
+    @Override
+    protected boolean isSkip() {
+        return skip;
     }
 }

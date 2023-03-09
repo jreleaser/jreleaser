@@ -20,6 +20,7 @@ package org.jreleaser.maven.plugin;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.jreleaser.engine.context.ContextCreator;
@@ -96,6 +97,21 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${maven.multiModuleProjectDirectory}")
     private String multiModuleProjectDirectory;
+
+    @Override
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        Banner.display(project, getLog());
+        if (isSkip()) {
+            getLog().info("Execution has been explicitly skipped.");
+            return;
+        }
+
+        doExecute();
+    }
+
+    protected abstract boolean isSkip();
+
+    protected abstract void doExecute() throws MojoExecutionException, MojoFailureException;
 
     protected boolean isQuiet() {
         return getLog().isErrorEnabled() &&
