@@ -21,8 +21,10 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Archive;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.assemble.JavaAssembler;
 import org.jreleaser.model.internal.assemble.NativeImageAssembler;
 import org.jreleaser.model.internal.common.Artifact;
+import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.PlatformUtils;
 
@@ -85,6 +87,9 @@ public final class NativeImageAssemblerValidator {
             context.getLogger().debug(RB.$("validation.disabled.error"));
             return;
         }
+
+        context.getLogger().debug("assemble.nativeImage.{}.java", assembler.getName());
+        validateJava(context, assembler, errors);
 
         assembler.setPlatform(assembler.getPlatform().mergeValues(context.getModel().getPlatform()));
 
@@ -187,5 +192,36 @@ public final class NativeImageAssemblerValidator {
                 nativeImage.getName(), index, jdk.getPlatform(), System.lineSeparator(),
                 PlatformUtils.getSupportedOsNames(), System.lineSeparator(), PlatformUtils.getSupportedOsArchs()));
         }
+    }
+
+    private static boolean validateJava(JReleaserContext context, JavaAssembler<?> assembler, Errors errors) {
+        Project project = context.getModel().getProject();
+
+        if (!assembler.getJava().isEnabledSet() && project.getJava().isEnabledSet()) {
+            assembler.getJava().setEnabled(project.getJava().isEnabled());
+        }
+        if (!assembler.getJava().isEnabledSet()) {
+            assembler.getJava().setEnabled(assembler.getJava().isSet());
+        }
+
+        if (!assembler.getJava().isEnabled()) return false;
+
+        if (isBlank(assembler.getJava().getArtifactId())) {
+            assembler.getJava().setArtifactId(project.getJava().getArtifactId());
+        }
+        if (isBlank(assembler.getJava().getGroupId())) {
+            assembler.getJava().setGroupId(project.getJava().getGroupId());
+        }
+        if (isBlank(assembler.getJava().getVersion())) {
+            assembler.getJava().setVersion(project.getJava().getVersion());
+        }
+        if (isBlank(assembler.getJava().getMainModule())) {
+            assembler.getJava().setMainModule(project.getJava().getMainModule());
+        }
+        if (isBlank(assembler.getJava().getMainClass())) {
+            assembler.getJava().setMainClass(project.getJava().getMainClass());
+        }
+
+        return true;
     }
 }

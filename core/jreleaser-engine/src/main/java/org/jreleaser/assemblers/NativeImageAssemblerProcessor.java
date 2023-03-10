@@ -41,8 +41,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.joining;
 import static org.jreleaser.assemblers.AssemblerUtils.copyJars;
 import static org.jreleaser.assemblers.AssemblerUtils.readJavaVersion;
 import static org.jreleaser.model.Constants.KEY_ARCHIVE_FORMAT;
@@ -168,17 +168,33 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<or
         NativeImageAssembler.PlatformCustomizer customizer = assembler.getResolvedPlatformCustomizer();
         cmd.args(customizer.getArgs());
 
-        cmd.arg("-jar")
-            .arg(maybeQuote(assembler.getMainJar().getEffectivePath(context, assembler).toAbsolutePath().toString()));
+        if (isNotBlank(assembler.getJava().getMainModule())) {
+            cmd.arg("--module")
+                .arg(assembler.getJava().getMainModule() + "/" + assembler.getJava().getMainClass());
 
-        if (!jars.isEmpty()) {
-            cmd.arg("-cp")
+            cmd.arg("--module-path")
                 .arg(jars.stream()
                     .map(Path::toAbsolutePath)
+                    .map(Path::getParent)
+                    .distinct()
                     .map(Path::toString)
                     .map(this::maybeQuote)
-                    .collect(Collectors.joining(File.pathSeparator)));
+                    .collect(joining(File.pathSeparator)));
+
+        } else {
+            cmd.arg("-jar")
+                .arg(maybeQuote(assembler.getMainJar().getEffectivePath(context, assembler).toAbsolutePath().toString()));
+
+            if (!jars.isEmpty()) {
+                cmd.arg("-cp")
+                    .arg(jars.stream()
+                        .map(Path::toAbsolutePath)
+                        .map(Path::toString)
+                        .map(this::maybeQuote)
+                        .collect(joining(File.pathSeparator)));
+            }
         }
+
         cmd.arg("-H:Name=" + assembler.getExecutable());
         context.getLogger().debug(String.join(" ", cmd.getArgs()));
         executeCommand(image.getParent(), cmd);
@@ -229,7 +245,7 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<or
 
         List<String> args = new ArrayList<>(assembler.getUpx().getArgs());
         args.add(image.getFileName().toString());
-        context.getLogger().info("upx {}", image.getFileName().toString());
+        context.getLogger().info("  upx {}", image.getFileName().toString());
 
         try {
             upx.compress(image.getParent(), args);

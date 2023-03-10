@@ -92,17 +92,20 @@ public final class AssemblerUtils {
         }
 
         // copy all next
+        Set<Path> copied = new LinkedHashSet<>();
         try {
             Files.createDirectories(jarsDirectory);
             for (Path path : paths) {
                 context.getLogger().debug(RB.$("assembler.copying"), path.getFileName());
-                Files.copy(path, jarsDirectory.resolve(path.getFileName()), REPLACE_EXISTING);
+                Path copy = jarsDirectory.resolve(path.getFileName());
+                Files.copy(path, copy, REPLACE_EXISTING);
+                copied.add(copy);
             }
         } catch (IOException e) {
             throw new AssemblerProcessingException(RB.$("ERROR_assembler_copying_jars"), e);
         }
 
-        return paths;
+        return copied;
     }
 
     public static Path maybeAdjust(Path path) {

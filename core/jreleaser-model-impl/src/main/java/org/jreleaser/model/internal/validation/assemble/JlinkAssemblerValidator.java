@@ -21,6 +21,7 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Archive;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.assemble.JavaAssembler;
 import org.jreleaser.model.internal.assemble.JlinkAssembler;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.project.Project;
@@ -183,36 +184,36 @@ public final class JlinkAssemblerValidator {
         }
     }
 
-    private static boolean validateJava(JReleaserContext context, JlinkAssembler jlink, Errors errors) {
+    private static boolean validateJava(JReleaserContext context, JavaAssembler<?> assembler, Errors errors) {
         Project project = context.getModel().getProject();
 
-        if (!jlink.getJava().isEnabledSet() && project.getJava().isEnabledSet()) {
-            jlink.getJava().setEnabled(project.getJava().isEnabled());
+        if (!assembler.getJava().isEnabledSet() && project.getJava().isEnabledSet()) {
+            assembler.getJava().setEnabled(project.getJava().isEnabled());
         }
-        if (!jlink.getJava().isEnabledSet()) {
-            jlink.getJava().setEnabled(jlink.getJava().isSet());
-        }
-
-        if (!jlink.getJava().isEnabled()) return false;
-
-        if (isBlank(jlink.getJava().getArtifactId())) {
-            jlink.getJava().setArtifactId(project.getJava().getArtifactId());
-        }
-        if (isBlank(jlink.getJava().getGroupId())) {
-            jlink.getJava().setGroupId(project.getJava().getGroupId());
-        }
-        if (isBlank(jlink.getJava().getVersion())) {
-            jlink.getJava().setVersion(project.getJava().getVersion());
-        }
-        if (isBlank(jlink.getJava().getMainModule())) {
-            jlink.getJava().setMainModule(project.getJava().getMainModule());
-        }
-        if (isBlank(jlink.getJava().getMainClass())) {
-            jlink.getJava().setMainClass(project.getJava().getMainClass());
+        if (!assembler.getJava().isEnabledSet()) {
+            assembler.getJava().setEnabled(assembler.getJava().isSet());
         }
 
-        if (isBlank(jlink.getJava().getGroupId())) {
-            errors.configuration(RB.$("validation_must_not_be_blank", "jlink." + jlink.getName() + ".java.groupId"));
+        if (!assembler.getJava().isEnabled()) return false;
+
+        if (isBlank(assembler.getJava().getArtifactId())) {
+            assembler.getJava().setArtifactId(project.getJava().getArtifactId());
+        }
+        if (isBlank(assembler.getJava().getGroupId())) {
+            assembler.getJava().setGroupId(project.getJava().getGroupId());
+        }
+        if (isBlank(assembler.getJava().getVersion())) {
+            assembler.getJava().setVersion(project.getJava().getVersion());
+        }
+        if (isBlank(assembler.getJava().getMainModule())) {
+            assembler.getJava().setMainModule(project.getJava().getMainModule());
+        }
+        if (isBlank(assembler.getJava().getMainClass())) {
+            assembler.getJava().setMainClass(project.getJava().getMainClass());
+        }
+
+        if (isBlank(assembler.getJava().getGroupId())) {
+            errors.configuration(RB.$("validation_must_not_be_blank", "assembler." + assembler.getName() + ".java.groupId"));
         }
 
         return true;
