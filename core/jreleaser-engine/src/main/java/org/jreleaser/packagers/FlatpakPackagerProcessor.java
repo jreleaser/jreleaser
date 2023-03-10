@@ -42,6 +42,8 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_CLASS;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_MODULE;
 import static org.jreleaser.model.Constants.KEY_FLATPACK_ICONS;
 import static org.jreleaser.model.Constants.KEY_FLATPAK_BINARIES;
 import static org.jreleaser.model.Constants.KEY_FLATPAK_CATEGORIES;
@@ -142,6 +144,8 @@ public class FlatpakPackagerProcessor extends AbstractRepositoryPackagerProcesso
 
     @Override
     protected void fillPackagerProperties(TemplateContext props, Distribution distribution) {
+        props.set(KEY_DISTRIBUTION_JAVA_MAIN_CLASS, distribution.getJava().getMainClass());
+        props.set(KEY_DISTRIBUTION_JAVA_MAIN_MODULE, distribution.getJava().getMainModule());
         props.set(KEY_PROJECT_AUTHORS, context.getModel().getProject().getAuthors());
         props.set(KEY_FLATPAK_URLS, context.getModel().getProject().getLinks().asLinkTemplates());
         props.set(KEY_FLATPAK_COMPONENT_ID, getPackager().getComponentId());

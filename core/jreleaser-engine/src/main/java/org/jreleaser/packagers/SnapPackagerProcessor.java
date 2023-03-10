@@ -32,6 +32,8 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_CLASS;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_MODULE;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY;
 import static org.jreleaser.model.Constants.KEY_PROJECT_EFFECTIVE_VERSION;
 import static org.jreleaser.model.Constants.KEY_PROJECT_LONG_DESCRIPTION;
@@ -102,6 +104,8 @@ public class SnapPackagerProcessor extends AbstractRepositoryPackagerProcessor<S
 
     @Override
     protected void fillPackagerProperties(TemplateContext props, Distribution distribution) {
+        props.set(KEY_DISTRIBUTION_JAVA_MAIN_CLASS, distribution.getJava().getMainClass());
+        props.set(KEY_DISTRIBUTION_JAVA_MAIN_MODULE, distribution.getJava().getMainModule());
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
 
         String desc = context.getModel().getProject().getLongDescription();

@@ -53,6 +53,8 @@ import static org.jreleaser.model.Constants.KEY_APPIMAGE_SCREENSHOTS;
 import static org.jreleaser.model.Constants.KEY_APPIMAGE_URLS;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_NAME;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_CLASS;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_MODULE;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_URL;
 import static org.jreleaser.model.Constants.KEY_PROJECT_AUTHORS;
 import static org.jreleaser.packagers.AppdataUtils.isReleaseIncluded;
@@ -104,6 +106,8 @@ public class AppImagePackagerProcessor extends AbstractRepositoryPackagerProcess
 
     @Override
     protected void fillPackagerProperties(TemplateContext props, Distribution distribution) {
+        props.set(KEY_DISTRIBUTION_JAVA_MAIN_CLASS, distribution.getJava().getMainClass());
+        props.set(KEY_DISTRIBUTION_JAVA_MAIN_MODULE, distribution.getJava().getMainModule());
         props.set(KEY_PROJECT_AUTHORS, context.getModel().getProject().getAuthors());
         props.set(KEY_APPIMAGE_URLS, context.getModel().getProject().getLinks().asLinkTemplates());
         props.set(KEY_APPIMAGE_COMPONENT_ID, getPackager().getComponentId());

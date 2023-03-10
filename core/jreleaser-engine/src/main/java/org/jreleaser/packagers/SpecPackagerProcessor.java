@@ -31,6 +31,8 @@ import java.nio.file.Path;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_CLASS;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_MODULE;
 import static org.jreleaser.model.Constants.KEY_PROJECT_VERSION;
 import static org.jreleaser.model.Constants.KEY_SPEC_BINARIES;
 import static org.jreleaser.model.Constants.KEY_SPEC_DIRECTORIES;
@@ -91,6 +93,8 @@ public class SpecPackagerProcessor extends AbstractRepositoryPackagerProcessor<S
 
     @Override
     protected void fillPackagerProperties(TemplateContext props, Distribution distribution) {
+        props.set(KEY_DISTRIBUTION_JAVA_MAIN_CLASS, distribution.getJava().getMainClass());
+        props.set(KEY_DISTRIBUTION_JAVA_MAIN_MODULE, distribution.getJava().getMainModule());
         props.set(KEY_SPEC_PACKAGE_NAME, packager.getPackageName());
         props.set(KEY_SPEC_RELEASE, packager.getRelease());
         props.set(KEY_SPEC_REQUIRES, packager.getRequires());

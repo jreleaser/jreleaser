@@ -32,6 +32,8 @@ import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_NAME;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_NAME;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_VERSION;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_CLASS;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_MODULE;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_URL;
 import static org.jreleaser.model.Constants.KEY_MACPORTS_APP_NAME;
 import static org.jreleaser.model.Constants.KEY_MACPORTS_CATEGORIES;
@@ -68,6 +70,8 @@ public class MacportsPackagerProcessor extends AbstractRepositoryPackagerProcess
 
     @Override
     protected void fillPackagerProperties(TemplateContext props, Distribution distribution) {
+        props.set(KEY_DISTRIBUTION_JAVA_MAIN_CLASS, distribution.getJava().getMainClass());
+        props.set(KEY_DISTRIBUTION_JAVA_MAIN_MODULE, distribution.getJava().getMainModule());
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
 
         props.set(KEY_MACPORTS_REPOSITORY_REPO_URL,

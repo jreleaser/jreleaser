@@ -42,6 +42,8 @@ import static org.jreleaser.model.Constants.KEY_CHOCOLATEY_PACKAGE_VERSION;
 import static org.jreleaser.model.Constants.KEY_CHOCOLATEY_SOURCE;
 import static org.jreleaser.model.Constants.KEY_CHOCOLATEY_TITLE;
 import static org.jreleaser.model.Constants.KEY_CHOCOLATEY_USERNAME;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_CLASS;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_MODULE;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY;
 import static org.jreleaser.model.Constants.KEY_PROJECT_LICENSE_URL;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
@@ -98,6 +100,8 @@ public class ChocolateyPackagerProcessor extends AbstractRepositoryPackagerProce
 
     @Override
     protected void fillPackagerProperties(TemplateContext props, Distribution distribution) {
+        props.set(KEY_DISTRIBUTION_JAVA_MAIN_CLASS, distribution.getJava().getMainClass());
+        props.set(KEY_DISTRIBUTION_JAVA_MAIN_MODULE, distribution.getJava().getMainModule());
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
 
         if (!props.contains(KEY_PROJECT_LICENSE_URL) ||

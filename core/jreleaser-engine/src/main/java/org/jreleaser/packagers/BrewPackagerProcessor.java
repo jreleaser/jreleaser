@@ -54,6 +54,8 @@ import static org.jreleaser.model.Constants.KEY_BREW_HAS_LIVECHECK;
 import static org.jreleaser.model.Constants.KEY_BREW_LIVECHECK;
 import static org.jreleaser.model.Constants.KEY_BREW_MULTIPLATFORM;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_NAME;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_CLASS;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_MODULE;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_VERSION;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_URL;
 import static org.jreleaser.model.Constants.KEY_HOMEBREW_TAP_NAME;
@@ -149,6 +151,8 @@ BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> 
 
     @Override
     protected void fillPackagerProperties(TemplateContext props, Distribution distribution) {
+        props.set(KEY_DISTRIBUTION_JAVA_MAIN_CLASS, distribution.getJava().getMainClass());
+        props.set(KEY_DISTRIBUTION_JAVA_MAIN_MODULE, distribution.getJava().getMainModule());
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
 
         props.set(KEY_BREW_FORMULA_NAME, packager.getResolvedFormulaName(props));

@@ -19,8 +19,21 @@ class {{brewFormulaName}} < Formula
   {{/brewDependencies}}
 
   def install
-    libexec.install "{{artifactFile}}"
-    bin.write_jar_script libexec/"{{distributionArtifactFile}}", "{{distributionExecutableName}}"
+    libexec.install "{{distributionArtifactFile}}"
+
+    bin.mkpath
+    File.open("#{bin}/{{distributionExecutableName}}", "w") do |f|
+      f.write <<~EOS
+        #!/bin/bash
+        export JAVA_HOME="#{Language::Java.overridable_java_home_env(nil)[:JAVA_HOME]}"
+        {{#distributionJavaMainModule}}
+        exec "${JAVA_HOME}/bin/java" -p #{libexec}/{{distributionArtifactFile}} -m {{distributionJavaMainModule}}/{{distributionJavaMainClass}} "$@"
+        {{/distributionJavaMainModule}}
+        {{^distributionJavaMainModule}}
+        exec "${JAVA_HOME}/bin/java" -jar #{libexec}/{{distributionArtifactFile}} "$@"
+        {{/distributionJavaMainModule}}
+      EOS
+    end
   end
 
   test do

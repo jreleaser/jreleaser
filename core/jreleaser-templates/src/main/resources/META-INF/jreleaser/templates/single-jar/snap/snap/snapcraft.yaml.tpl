@@ -19,7 +19,12 @@ architectures:
 {{/hasArchitectures}}
 apps:
   {{distributionExecutableName}}:
+    {{#distributionJavaMainModule}}
+    command: ${JAVA_HOME}/bin/java -p $SNAP/{{distributionArtifactFile}} -m {{distributionJavaMainModule}}/{{distributionJavaMainClass}}
+    {{/distributionJavaMainModule}}
+    {{^distributionJavaMainModule}}
     command: ${JAVA_HOME}/bin/java -jar $SNAP/{{distributionArtifactFile}}
+    {{/distributionJavaMainModule}}
     environment:
       JAVA_HOME: "$SNAP/usr/lib/jvm/java"
       PATH: "$PATH:$JAVA_HOME/bin"

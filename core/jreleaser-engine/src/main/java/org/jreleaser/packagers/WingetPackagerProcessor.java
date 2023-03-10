@@ -34,6 +34,8 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_PLATFORM;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_CLASS;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_MODULE;
 import static org.jreleaser.model.Constants.KEY_PROJECT_LONG_DESCRIPTION;
 import static org.jreleaser.model.Constants.KEY_WINGET_AUTHOR;
 import static org.jreleaser.model.Constants.KEY_WINGET_DEFAULT_LOCALE;
@@ -77,6 +79,8 @@ public class WingetPackagerProcessor extends AbstractRepositoryPackagerProcessor
 
     @Override
     protected void fillPackagerProperties(TemplateContext props, Distribution distribution) {
+        props.set(KEY_DISTRIBUTION_JAVA_MAIN_CLASS, distribution.getJava().getMainClass());
+        props.set(KEY_DISTRIBUTION_JAVA_MAIN_MODULE, distribution.getJava().getMainModule());
         String desc = context.getModel().getProject().getLongDescription();
         desc = Arrays.stream(desc.split(System.lineSeparator()))
             .map(line -> "  " + line)
