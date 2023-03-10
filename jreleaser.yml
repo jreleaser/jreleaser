@@ -267,6 +267,7 @@ distributions:
   jreleaser:
     flatpak:
       active: ALWAYS
+      continueOnError: true
       componentId: org.jreleaser.cli
       developerName: JReleaser
       runtime: FREEDESKTOP
