@@ -79,6 +79,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.unmodifiableList;
 import static org.jreleaser.model.Constants.KEY_COMMIT_FULL_HASH;
 import static org.jreleaser.model.Constants.KEY_COMMIT_SHORT_HASH;
+import static org.jreleaser.model.Constants.KEY_GRAALVM_NAGIVE_IMAGE;
 import static org.jreleaser.model.Constants.KEY_MILESTONE_NAME;
 import static org.jreleaser.model.Constants.KEY_PLATFORM;
 import static org.jreleaser.model.Constants.KEY_PLATFORM_REPLACED;
@@ -526,6 +527,7 @@ public class JReleaserContext {
                 distribution.setJava(((JavaAssembler<?>) assembler).getJava());
                 if (assembler instanceof NativeImageAssembler) {
                     distribution.getExecutable().setWindowsExtension(FileType.EXE.type());
+                    distribution.getExtraProperties().put(KEY_GRAALVM_NAGIVE_IMAGE, "true");
                 }
             } else if (assembler instanceof JavaArchiveAssembler) {
                 JavaArchiveAssembler javaArchiveAssembler = (JavaArchiveAssembler) assembler;
