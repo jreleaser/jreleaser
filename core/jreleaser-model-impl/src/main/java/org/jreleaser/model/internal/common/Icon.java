@@ -151,7 +151,7 @@ public final class Icon extends AbstractModelObject<Icon> implements Domain, Ext
         map.put("width", width);
         map.put("height", height);
         if (isPrimary()) map.put("primary", true);
-        map.put("extraProperties", resolvedExtraProperties());
+        map.put("extraProperties", getExtraProperties());
         return map;
     }
 }

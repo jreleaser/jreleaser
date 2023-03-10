@@ -483,7 +483,7 @@ public final class Distribution extends Packagers<Distribution> implements Domai
 
         props.put("tags", tags);
         props.put("stereotype", stereotype);
-        props.put("extraProperties", resolvedExtraProperties());
+        props.put("extraProperties", getExtraProperties());
         if (java.isEnabled()) {
             props.put("java", java.asMap(full));
         }

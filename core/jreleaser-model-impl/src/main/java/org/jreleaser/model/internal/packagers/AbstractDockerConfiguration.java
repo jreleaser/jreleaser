@@ -293,7 +293,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
         }
         props.put("registries", m);
 
-        props.put("extraProperties", resolvedExtraProperties());
+        props.put("extraProperties", getExtraProperties());
 
         return props;
     }

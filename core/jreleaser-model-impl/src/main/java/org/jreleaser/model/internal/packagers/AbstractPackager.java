@@ -191,7 +191,7 @@ public abstract class AbstractPackager<A extends org.jreleaser.model.api.package
         props.put("continueOnError", isContinueOnError());
         props.put("downloadUrl", downloadUrl);
         asMap(full, props);
-        props.put("extraProperties", resolvedExtraProperties());
+        props.put("extraProperties", getExtraProperties());
 
         Map<String, Object> map = new LinkedHashMap<>();
         map.put(getType(), props);

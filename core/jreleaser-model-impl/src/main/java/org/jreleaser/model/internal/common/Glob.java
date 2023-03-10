@@ -152,7 +152,7 @@ public final class Glob extends AbstractModelObject<Glob> implements Domain, Ext
         props.put("pattern", pattern);
         props.put("platform", platform);
         props.put("directory", directory);
-        props.put("extraProperties", resolvedExtraProperties());
+        props.put("extraProperties", getExtraProperties());
         return props;
     }
 

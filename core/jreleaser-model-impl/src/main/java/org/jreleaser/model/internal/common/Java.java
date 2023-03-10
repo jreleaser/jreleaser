@@ -229,7 +229,7 @@ public final class Java extends AbstractModelObject<Java> implements Domain, Ext
         map.put("mainModule", mainModule);
         map.put("mainClass", mainClass);
         map.put("multiProject", isMultiProject());
-        map.put("extraProperties", resolvedExtraProperties());
+        map.put("extraProperties", getExtraProperties());
         return map;
     }
 }

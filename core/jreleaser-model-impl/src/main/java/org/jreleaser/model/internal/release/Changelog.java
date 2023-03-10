@@ -544,7 +544,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
             m.put("replacer " + (i++), replacer.asMap(full));
         }
         map.put("replacers", m);
-        map.put("extraProperties", resolvedExtraProperties());
+        map.put("extraProperties", getExtraProperties());
 
         return map;
     }

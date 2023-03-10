@@ -260,7 +260,7 @@ public final class Artifact extends AbstractModelObject<Artifact> implements Dom
         map.put("path", path);
         map.put("transform", transform);
         map.put("platform", platform);
-        map.put("extraProperties", resolvedExtraProperties());
+        map.put("extraProperties", getExtraProperties());
         return map;
     }
 

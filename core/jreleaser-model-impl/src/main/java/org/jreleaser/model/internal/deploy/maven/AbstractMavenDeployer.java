@@ -258,7 +258,7 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
         props.put("applyMavenCentralRules", isApplyMavenCentralRules());
         props.put("stagingRepositories", stagingRepositories);
         asMap(full, props);
-        props.put("extraProperties", resolvedExtraProperties());
+        props.put("extraProperties", getExtraProperties());
 
         Map<String, Object> map = new LinkedHashMap<>();
         map.put(this.getName(), props);

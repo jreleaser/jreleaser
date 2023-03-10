@@ -193,7 +193,7 @@ public final class FileSet extends AbstractModelObject<FileSet> implements Domai
         props.put("includes", includes);
         props.put("excludes", excludes);
         props.put("failOnMissingInput", failOnMissingInput);
-        props.put("extraProperties", resolvedExtraProperties());
+        props.put("extraProperties", getExtraProperties());
         return props;
     }
 

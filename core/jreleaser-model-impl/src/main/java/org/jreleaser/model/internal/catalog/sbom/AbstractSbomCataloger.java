@@ -144,7 +144,7 @@ public abstract class AbstractSbomCataloger<S extends AbstractSbomCataloger<S, A
         props.put("files", isFiles());
         props.put("pack", pack.asMap(full));
         asMap(full, props);
-        props.put("extraProperties", resolvedExtraProperties());
+        props.put("extraProperties", getExtraProperties());
 
         Map<String, Object> map = new LinkedHashMap<>();
         map.put(this.getType(), props);

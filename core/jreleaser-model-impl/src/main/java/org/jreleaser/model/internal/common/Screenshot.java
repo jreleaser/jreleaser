@@ -188,7 +188,7 @@ public final class Screenshot extends AbstractModelObject<Screenshot> implements
         map.put("caption", caption);
         map.put("width", width);
         map.put("height", height);
-        map.put("extraProperties", resolvedExtraProperties());
+        map.put("extraProperties", getExtraProperties());
         return map;
     }
 

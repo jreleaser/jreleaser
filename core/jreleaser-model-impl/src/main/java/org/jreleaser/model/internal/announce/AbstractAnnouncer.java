@@ -122,7 +122,7 @@ public abstract class AbstractAnnouncer<S extends AbstractAnnouncer<S, A>, A ext
         props.put("connectTimeout", connectTimeout);
         props.put("readTimeout", readTimeout);
         asMap(full, props);
-        props.put("extraProperties", resolvedExtraProperties());
+        props.put("extraProperties", getExtraProperties());
 
         Map<String, Object> map = new LinkedHashMap<>();
         map.put(getName(), props);

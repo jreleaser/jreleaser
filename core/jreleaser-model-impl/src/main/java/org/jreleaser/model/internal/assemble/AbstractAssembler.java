@@ -312,7 +312,7 @@ public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A ext
             mappedFileSets.put("fileSet " + i, fileSets.get(i).asMap(full));
         }
         props.put("fileSets", mappedFileSets);
-        props.put("extraProperties", resolvedExtraProperties());
+        props.put("extraProperties", getExtraProperties());
 
         Map<String, Object> map = new LinkedHashMap<>();
         map.put(getName(), props);

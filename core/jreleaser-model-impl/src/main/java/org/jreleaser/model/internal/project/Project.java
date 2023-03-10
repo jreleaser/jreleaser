@@ -560,7 +560,7 @@ public final class Project extends AbstractModelObject<Project> implements Domai
             sm.put("icon " + (i++), icon.asMap(full));
         }
         map.put("icons", sm);
-        map.put("extraProperties", resolvedExtraProperties());
+        map.put("extraProperties", getExtraProperties());
         if (java.isEnabled()) {
             map.put("java", java.asMap(full));
         }

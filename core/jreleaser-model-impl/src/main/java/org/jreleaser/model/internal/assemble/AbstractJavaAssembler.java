@@ -146,7 +146,7 @@ public abstract class AbstractJavaAssembler<S extends AbstractJavaAssembler<S, A
             mappedJars.put("glob " + i, jars.get(i).asMap(full));
         }
         props.put("jars", mappedJars);
-        props.put("extraProperties", resolvedExtraProperties());
+        props.put("extraProperties", getExtraProperties());
         if (java.isEnabled()) {
             props.put("java", java.asMap(full));
         }

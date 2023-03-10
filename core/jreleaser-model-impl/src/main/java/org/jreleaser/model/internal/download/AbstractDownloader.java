@@ -146,7 +146,7 @@ public abstract class AbstractDownloader<A extends org.jreleaser.model.api.downl
             mappedAssets.put("asset " + (i++), asset.asMap(full));
         }
         props.put("assets", mappedAssets);
-        props.put("extraProperties", resolvedExtraProperties());
+        props.put("extraProperties", getExtraProperties());
 
         Map<String, Object> map = new LinkedHashMap<>();
         map.put(this.getName(), props);

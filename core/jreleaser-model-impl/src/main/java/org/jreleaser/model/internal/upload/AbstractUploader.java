@@ -226,7 +226,7 @@ public abstract class AbstractUploader<A extends org.jreleaser.model.api.upload.
         props.put("checksums", isChecksums());
         props.put("catalogs", isCatalogs());
         asMap(full, props);
-        props.put("extraProperties", resolvedExtraProperties());
+        props.put("extraProperties", getExtraProperties());
 
         Map<String, Object> map = new LinkedHashMap<>();
         map.put(this.getName(), props);
