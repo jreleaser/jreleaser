@@ -9,4 +9,4 @@ longFileMode/bigNumberMode for tars. java-archive failed to generate a suitable 
 The deprecated NATIVE_IMAGE distribution type was accidentally removed; use BINARY instead. Targets set in `jlink.jdeps`
 will be automatically converted to absolute paths.
 
-[🚀 Changelog](https://github.com/jreleaser/jreleaser/releases/tag/{{tagName}})
+[🚀 Changelog](https://github.com/jreleaser/jreleaser/releases/tag/{{tagName}}) [📝 Milestone]({projectLinkVcsBrowser}}?q=is%3Aclosed+milestone%3A{{tagName}})
