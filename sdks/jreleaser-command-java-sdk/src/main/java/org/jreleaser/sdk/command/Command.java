@@ -112,17 +112,17 @@ public class Command {
         }
 
         private Result(String out, String err, int exitValue) {
-            this.out = out;
-            this.err = err;
+            this.out = out.trim();
+            this.err = err.trim();
             this.exitValue = exitValue;
         }
 
         public String getOut() {
-            return out.trim();
+            return out;
         }
 
         public String getErr() {
-            return err.trim();
+            return err;
         }
 
         public int getExitValue() {

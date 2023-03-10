@@ -78,7 +78,7 @@ public class CommandExecutor {
                 error(err);
             }
 
-            Command.Result result = Command.Result.of(out.toString(), err.toString(), exitValue);
+            Command.Result result = Command.Result.of(IoUtils.toString(out), IoUtils.toString(err), exitValue);
 
             if (result.getExitValue() != 0) {
                 throw new CommandException(RB.$("ERROR_command_execution_exit_value", result.getExitValue()));
