@@ -129,5 +129,10 @@ public final class MacportsPackagerValidator {
         }
 
         validateArtifactPlatforms(distribution, packager, candidateArtifacts, errors);
+
+        // TODO: remove in 2.0.0
+        if (isBlank(distribution.getJava().getVersion())) {
+            errors.configuration(RB.$("validation_is_missing", "distribution." + distribution.getName() + ".java.version"));
+        }
     }
 }

@@ -121,7 +121,7 @@ public final class DockerPackagerValidator {
         if (isBlank(packager.getBaseImage())) {
             packager.setBaseImage(parentPackager.getBaseImage());
         }
-        validateBaseImage(distribution, packager);
+        validateBaseImage(distribution, packager, errors);
 
         if (packager.getImageNames().isEmpty()) {
             packager.setImageNames(parentPackager.getImageNames());
@@ -226,7 +226,7 @@ public final class DockerPackagerValidator {
         validateTemplate(context, distribution, spec, docker, errors);
         mergeExtraProperties(spec, docker);
 
-        validateBaseImage(distribution, spec);
+        validateBaseImage(distribution, spec, errors);
 
         if (spec.getImageNames().isEmpty()) {
             spec.addImageName("{{repoOwner}}/{{distributionName}}-{{dockerSpecName}}:{{tagName}}");
@@ -277,10 +277,15 @@ public final class DockerPackagerValidator {
         validateBuildx(context, distribution, docker, spec.getBuildx(), docker.getBuildx(), errors);
     }
 
-    private static void validateBaseImage(Distribution distribution, DockerConfiguration docker) {
+    private static void validateBaseImage(Distribution distribution, DockerConfiguration docker, Errors errors) {
         if (isBlank(docker.getBaseImage())) {
             if (distribution.getType() == org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY ||
                 distribution.getType() == org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR) {
+                // TODO: remove in 2.0.0
+                if (isBlank(distribution.getJava().getVersion())) {
+                    errors.configuration(RB.$("validation_is_missing", "distribution." + distribution.getName() + ".java.version"));
+                    return;
+                }
                 int version = Integer.parseInt(distribution.getJava().getVersion());
                 boolean ltsmts = version == 8 || version % 2 == 1;
                 docker.setBaseImage("azul/zulu-openjdk-alpine:{{distributionJavaVersion}}" + (ltsmts ? "-jre" : ""));

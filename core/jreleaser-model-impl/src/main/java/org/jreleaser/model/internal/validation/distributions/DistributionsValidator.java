@@ -266,10 +266,11 @@ public final class DistributionsValidator {
         }
 
         boolean valid = true;
-        if (isBlank(distribution.getJava().getVersion())) {
-            errors.configuration(RB.$("validation_is_missing", "distribution." + distribution.getName() + ".java.version"));
-            valid = false;
-        }
+        // TODO: activate in 2.0.0
+        // if (isBlank(distribution.getJava().getVersion())) {
+        //     errors.warning(RB.$("validation_is_missing", "distribution." + distribution.getName() + ".java.version"));
+        //     valid = false;
+        // }
         if (isBlank(distribution.getJava().getGroupId())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "distribution." + distribution.getName() + ".java.groupId"));
             valid = false;
