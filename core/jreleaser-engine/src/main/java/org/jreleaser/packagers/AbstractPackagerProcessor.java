@@ -38,7 +38,6 @@ import org.jreleaser.util.IoUtils;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -219,50 +218,28 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
 
     protected abstract void fillPackagerProperties(TemplateContext props, Distribution distribution);
 
-    protected void executeCommand(Path directory, Command command) throws PackagerProcessingException {
+    protected Command.Result executeCommand(Path directory, Command command) throws PackagerProcessingException {
         try {
-            int exitValue = new CommandExecutor(context.getLogger())
+            return new CommandExecutor(context.getLogger())
                 .executeCommand(directory, command);
-            if (exitValue != 0) {
-                throw new CommandException(RB.$("ERROR_command_execution_exit_value", exitValue));
-            }
         } catch (CommandException e) {
             throw new PackagerProcessingException(RB.$("ERROR_unexpected_error"), e);
         }
     }
 
-    protected void executeCommand(Command command) throws PackagerProcessingException {
+    protected Command.Result executeCommand(Command command) throws PackagerProcessingException {
         try {
-            int exitValue = new CommandExecutor(context.getLogger())
+            return new CommandExecutor(context.getLogger())
                 .executeCommand(command);
-            if (exitValue != 0) {
-                throw new CommandException(RB.$("ERROR_command_execution_exit_value", exitValue));
-            }
         } catch (CommandException e) {
             throw new PackagerProcessingException(RB.$("ERROR_unexpected_error"), e);
         }
     }
 
-    protected void executeCommandCapturing(Command command, OutputStream out) throws PackagerProcessingException {
+    protected Command.Result executeCommand(Command command, InputStream in) throws PackagerProcessingException {
         try {
-            int exitValue = new CommandExecutor(context.getLogger())
-                .executeCommandCapturing(command, out);
-            if (exitValue != 0) {
-                context.getLogger().error(out.toString().trim());
-                throw new CommandException(RB.$("ERROR_command_execution_exit_value", exitValue));
-            }
-        } catch (CommandException e) {
-            throw new PackagerProcessingException(RB.$("ERROR_unexpected_error"), e);
-        }
-    }
-
-    protected void executeCommandWithInput(Command command, InputStream in) throws PackagerProcessingException {
-        try {
-            int exitValue = new CommandExecutor(context.getLogger())
-                .executeCommandWithInput(command, in);
-            if (exitValue != 0) {
-                throw new CommandException(RB.$("ERROR_command_execution_exit_value", exitValue));
-            }
+            return new CommandExecutor(context.getLogger())
+                .executeCommand(command, in);
         } catch (CommandException e) {
             throw new PackagerProcessingException(RB.$("ERROR_unexpected_error"), e);
         }

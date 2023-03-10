@@ -93,4 +93,40 @@ public class Command {
 
         return getArgs();
     }
+
+    public static class Result {
+        private final String out;
+        private final String err;
+        private final int exitValue;
+
+        public static Result empty() {
+            return new Result("", "", -1);
+        }
+
+        public static Result of(String err, int exitValue) {
+            return new Result("", err, exitValue);
+        }
+
+        public static Result of(String out, String err, int exitValue) {
+            return new Result(out, err, exitValue);
+        }
+
+        private Result(String out, String err, int exitValue) {
+            this.out = out;
+            this.err = err;
+            this.exitValue = exitValue;
+        }
+
+        public String getOut() {
+            return out.trim();
+        }
+
+        public String getErr() {
+            return err.trim();
+        }
+
+        public int getExitValue() {
+            return exitValue;
+        }
+    }
 }

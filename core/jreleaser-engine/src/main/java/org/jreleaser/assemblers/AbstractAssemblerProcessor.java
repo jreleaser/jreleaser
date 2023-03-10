@@ -37,7 +37,6 @@ import org.jreleaser.util.FileUtils;
 import org.jreleaser.util.PlatformUtils;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -141,51 +140,19 @@ public abstract class AbstractAssemblerProcessor<A extends org.jreleaser.model.a
         props.setAll(assembler.props());
     }
 
-    protected void executeCommand(Path directory, Command command) throws AssemblerProcessingException {
+    protected Command.Result executeCommand(Path directory, Command command) throws AssemblerProcessingException {
         try {
-            int exitValue = new CommandExecutor(context.getLogger())
+            return new CommandExecutor(context.getLogger())
                 .executeCommand(directory, command);
-            if (exitValue != 0) {
-                throw new CommandException(RB.$("ERROR_command_execution_exit_value", exitValue));
-            }
         } catch (CommandException e) {
             throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
         }
     }
 
-    protected void executeCommand(Command command) throws AssemblerProcessingException {
+    protected Command.Result executeCommand(Command command) throws AssemblerProcessingException {
         try {
-            int exitValue = new CommandExecutor(context.getLogger())
+            return new CommandExecutor(context.getLogger())
                 .executeCommand(command);
-            if (exitValue != 0) {
-                throw new CommandException(RB.$("ERROR_command_execution_exit_value", exitValue));
-            }
-        } catch (CommandException e) {
-            throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
-        }
-    }
-
-    protected void executeCommandCapturing(Command command, OutputStream out) throws AssemblerProcessingException {
-        try {
-            int exitValue = new CommandExecutor(context.getLogger())
-                .executeCommandCapturing(command, out);
-            if (exitValue != 0) {
-                context.getLogger().error(out.toString().trim());
-                throw new CommandException(RB.$("ERROR_command_execution_exit_value", exitValue));
-            }
-        } catch (CommandException e) {
-            throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
-        }
-    }
-
-    protected void executeCommandCapturing(Path directory, Command command, OutputStream out) throws AssemblerProcessingException {
-        try {
-            int exitValue = new CommandExecutor(context.getLogger())
-                .executeCommandCapturing(directory, command, out);
-            if (exitValue != 0) {
-                context.getLogger().error(out.toString().trim());
-                throw new CommandException(RB.$("ERROR_command_execution_exit_value", exitValue));
-            }
         } catch (CommandException e) {
             throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
         }

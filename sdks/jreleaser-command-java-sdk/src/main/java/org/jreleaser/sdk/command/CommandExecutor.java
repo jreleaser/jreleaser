@@ -26,7 +26,6 @@ import org.zeroturnaround.exec.ProcessInitException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -63,7 +62,7 @@ public class CommandExecutor {
         return this;
     }
 
-    public int executeCommand(ProcessExecutor processExecutor) throws CommandException {
+    public Command.Result executeCommand(ProcessExecutor processExecutor) throws CommandException {
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             ByteArrayOutputStream err = new ByteArrayOutputStream();
@@ -75,68 +74,47 @@ public class CommandExecutor {
                 .getExitValue();
 
             if (!quiet) {
-                info(out);
+                debug(out);
                 error(err);
             }
 
-            return exitValue;
+            Command.Result result = Command.Result.of(out.toString(), err.toString(), exitValue);
+
+            if (result.getExitValue() != 0) {
+                throw new CommandException(RB.$("ERROR_command_execution_exit_value", result.getExitValue()));
+            }
+
+            return result;
         } catch (ProcessInitException e) {
             throw new CommandException(RB.$("ERROR_unexpected_error"), e.getCause());
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new CommandException(RB.$("ERROR_unexpected_error"), e);
+        } catch (CommandException e) {
+            throw e;
         } catch (Exception e) {
             throw new CommandException(RB.$("ERROR_unexpected_error"), e);
         }
     }
 
-    public int executeCommand(Command command) throws CommandException {
+    public Command.Result executeCommand(Command command) throws CommandException {
         return executeCommand(createProcessExecutor(command));
     }
 
-    public int executeCommand(Path directory, Command command) throws CommandException {
+    public Command.Result executeCommand(Path directory, Command command) throws CommandException {
         return executeCommand(createProcessExecutor(command)
             .directory(directory.toFile()));
     }
 
-    public int executeCommandCapturing(Command command, OutputStream out) throws CommandException {
-        return executeCommandCapturing(createProcessExecutor(command), out);
-    }
-
-    public int executeCommandCapturing(Command command, OutputStream out, OutputStream err) throws CommandException {
-        return executeCommandCapturing(createProcessExecutor(command), out, err);
-    }
-
-    public int executeCommandCapturing(Path directory, Command command, OutputStream out) throws CommandException {
-        return executeCommandCapturing(createProcessExecutor(command)
-            .directory(directory.toFile()), out);
-    }
-
-    public int executeCommandCapturing(Path directory, Command command, OutputStream out, OutputStream err) throws CommandException {
-        return executeCommandCapturing(createProcessExecutor(command)
-            .directory(directory.toFile()), out, err);
-    }
-
-    public int executeCommandWithInput(Command command, InputStream in) throws CommandException {
+    public Command.Result executeCommand(Command command, InputStream in) throws CommandException {
         return executeCommand(createProcessExecutor(command)
             .redirectInput(in));
     }
 
-    public int executeCommandWithInputCapturing(Command command, InputStream in, OutputStream out) throws CommandException {
-        return executeCommandCapturing(createProcessExecutor(command)
-            .redirectInput(in), out);
-    }
-
-    public int executeCommandWithInput(Path directory, Command command, InputStream in) throws CommandException {
+    public Command.Result executeCommand(Path directory, Command command, InputStream in) throws CommandException {
         return executeCommand(createProcessExecutor(command)
             .redirectInput(in)
             .directory(directory.toFile()));
-    }
-
-    public int executeCommandWithInputCapturing(Path directory, Command command, InputStream in, OutputStream out) throws CommandException {
-        return executeCommandCapturing(createProcessExecutor(command)
-            .directory(directory.toFile())
-            .redirectInput(in), out);
     }
 
     private ProcessExecutor createProcessExecutor(Command command) throws CommandException {
@@ -148,41 +126,8 @@ public class CommandExecutor {
         }
     }
 
-    private int executeCommandCapturing(ProcessExecutor processor, OutputStream out) throws CommandException {
-        return executeCommandCapturing(processor, out, null);
-    }
-
-    private int executeCommandCapturing(ProcessExecutor processor, OutputStream out, OutputStream err) throws CommandException {
-        try {
-            ByteArrayOutputStream errLocal = new ByteArrayOutputStream();
-
-            int exitValue = processor
-                .redirectOutput(out)
-                .redirectError(err)
-                .execute()
-                .getExitValue();
-
-            if (!quiet) {
-                error(errLocal);
-            }
-
-            if (null != err) {
-                err.write(errLocal.toByteArray());
-            }
-
-            return exitValue;
-        } catch (ProcessInitException e) {
-            throw new CommandException(RB.$("ERROR_unexpected_error"), e.getCause());
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new CommandException(RB.$("ERROR_unexpected_error"), e);
-        } catch (Exception e) {
-            throw new CommandException(RB.$("ERROR_unexpected_error"), e);
-        }
-    }
-
-    private void info(ByteArrayOutputStream out) {
-        log(out, logger::info);
+    private void debug(ByteArrayOutputStream out) {
+        log(out, logger::debug);
     }
 
     private void error(ByteArrayOutputStream err) {

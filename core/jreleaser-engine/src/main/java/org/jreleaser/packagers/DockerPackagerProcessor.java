@@ -28,11 +28,9 @@ import org.jreleaser.model.spi.packagers.PackagerProcessingException;
 import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.command.Command;
 import org.jreleaser.util.FileUtils;
-import org.jreleaser.util.IoUtils;
 import org.jreleaser.util.PlatformUtils;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -226,16 +224,15 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
     private void createBuildxBuilder(TemplateContext props, DockerConfiguration docker) throws PackagerProcessingException {
         if (!docker.getBuildx().isCreateBuilder()) return;
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Command cmd = new Command("docker" + (PlatformUtils.isWindows() ? ".exe" : ""))
             .arg("buildx")
             .arg("ls");
-        executeCommandCapturing(cmd, baos);
-        if (IoUtils.toString(baos).contains("jreleaser")) return;
+        Command.Result result = executeCommand(cmd);
+        if (result.getOut().contains("jreleaser")) return;
 
         cmd = buildxCreateCommand(props, docker);
         context.getLogger().debug(String.join(" ", cmd.getArgs()));
-        executeCommandCapturing(cmd, new ByteArrayOutputStream());
+        executeCommand(cmd);
     }
 
     private Path prepareAssembly(Distribution distribution,
@@ -444,7 +441,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         context.getLogger().debug(RB.$("docker.login"),
             registry.getServerName(),
             isNotBlank(registry.getServer()) ? " (" + registry.getServer() + ")" : "");
-        if (!context.isDryrun()) executeCommandWithInput(cmd, in);
+        if (!context.isDryrun()) executeCommand(cmd, in);
     }
 
     private Map<String, List<String>> resolveTagNames(DockerConfiguration docker, TemplateContext props) {

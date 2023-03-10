@@ -55,7 +55,7 @@ public class Cosign extends AbstractTool {
 
         try {
             executeCommand(() -> new CommandExecutor(context.getLogger(), true)
-                .executeCommandWithInput(command, in));
+                .executeCommand(command, in));
             return true;
         } catch (CommandException e) {
             context.getLogger().debug(RB.$("ERROR_password_incorrect"));
@@ -95,7 +95,7 @@ public class Cosign extends AbstractTool {
 
         try {
             executeCommand(() -> new CommandExecutor(context.getLogger(), true)
-                .executeCommandWithInputCapturing(command, in, out));
+                .executeCommand(command, in));
         } catch (CommandException e) {
             throw new SigningException(RB.$("ERROR_unexpected_error_signing", input.toAbsolutePath()), e);
         }

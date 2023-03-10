@@ -29,11 +29,9 @@ import org.jreleaser.sdk.command.Command;
 import org.jreleaser.templates.TemplateResource;
 import org.jreleaser.templates.TemplateUtils;
 import org.jreleaser.util.FileUtils;
-import org.jreleaser.util.IoUtils;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.version.SemanticVersion;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -263,10 +261,9 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
         customize(type, packager, inputsDirectory, cmd, props);
 
         context.getLogger().debug(String.join(" ", cmd.getArgs()));
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        executeCommandCapturing(cmd, out);
+        Command.Result result = executeCommand(cmd);
         if (assembler.isVerbose()) {
-            context.getLogger().debug(IoUtils.toString(out));
+            context.getLogger().debug(result.getOut());
         }
 
         // replace only if not linux

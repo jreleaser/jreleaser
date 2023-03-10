@@ -25,6 +25,7 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.spi.deploy.DeployException;
 import org.jreleaser.model.spi.deploy.maven.MavenDeployer;
 import org.jreleaser.model.spi.upload.UploadException;
+import org.jreleaser.sdk.command.Command;
 import org.jreleaser.sdk.command.CommandException;
 import org.jreleaser.sdk.signing.SigningUtils;
 import org.jreleaser.sdk.tool.PomChecker;
@@ -32,7 +33,6 @@ import org.jreleaser.sdk.tool.ToolException;
 import org.jreleaser.util.Algorithm;
 import org.jreleaser.util.ChecksumUtils;
 import org.jreleaser.util.Errors;
-import org.jreleaser.util.IoUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -41,7 +41,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
@@ -201,9 +200,6 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
                 continue;
             }
 
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            ByteArrayOutputStream err = new ByteArrayOutputStream();
-
             List<String> args = new ArrayList<>();
             args.add("check-maven-central");
             args.add("--quiet");
@@ -213,11 +209,13 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
             }
             args.add("--file");
             args.add(deployable.getLocalPath().toAbsolutePath().toString());
+
+            Command.Result result = Command.Result.empty();
             try {
-                pomChecker.invoke(context.getBasedir(), args, out, err);
+                pomChecker.invoke(context.getBasedir(), args);
             } catch (CommandException e) {
-                String plumbing = IoUtils.toString(err).trim();
-                String validation = IoUtils.toString(out).trim();
+                String plumbing = result.getErr();
+                String validation = result.getOut();
 
                 // 1st check out -> validation issues
                 if (isNotBlank(validation)) {

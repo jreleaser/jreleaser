@@ -24,7 +24,6 @@ import org.jreleaser.sdk.command.CommandExecutor;
 import org.jreleaser.util.ComparatorUtils;
 import org.jreleaser.version.SemanticVersion;
 
-import java.io.OutputStream;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -37,7 +36,7 @@ public class PomChecker extends AbstractTool {
         super(context, "pomchecker", version);
     }
 
-    public void invoke(Path parent, List<String> args, OutputStream out, OutputStream err) throws CommandException {
+    public Command.Result invoke(Path parent, List<String> args) throws CommandException {
         SemanticVersion semver = SemanticVersion.of(version);
         SemanticVersion ofz = SemanticVersion.of("1.5.0");
         if (ComparatorUtils.greaterThanOrEqualTo(semver, ofz)) {
@@ -45,7 +44,7 @@ public class PomChecker extends AbstractTool {
         }
 
         Command command = tool.asCommand().args(args);
-        executeCommand(() -> new CommandExecutor(context.getLogger())
-            .executeCommandCapturing(parent, command, out, err));
+        return executeCommand(() -> new CommandExecutor(context.getLogger())
+            .executeCommand(parent, command));
     }
 }

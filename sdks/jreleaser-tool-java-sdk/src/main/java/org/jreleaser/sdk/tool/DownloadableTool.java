@@ -24,13 +24,10 @@ import org.jreleaser.sdk.command.Command;
 import org.jreleaser.sdk.command.CommandException;
 import org.jreleaser.sdk.command.CommandExecutor;
 import org.jreleaser.util.FileUtils;
-import org.jreleaser.util.IoUtils;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -140,14 +137,11 @@ public class DownloadableTool {
             Pattern pattern = Pattern.compile(verify);
 
             if (verifyErrorOutput) {
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                ByteArrayOutputStream err = new ByteArrayOutputStream();
-                executeCommandCapturing(command, out, err);
-                return pattern.matcher(IoUtils.toString(out)).find() || pattern.matcher(IoUtils.toString(err)).find();
+                Command.Result result = executeCommand(command);
+                return pattern.matcher(result.getOut()).find() || pattern.matcher(result.getErr()).find();
             } else {
-                ByteArrayOutputStream out = new ByteArrayOutputStream();
-                executeCommandCapturing(command, out, null);
-                return pattern.matcher(IoUtils.toString(out)).find();
+                Command.Result result = executeCommand(command);
+                return pattern.matcher(result.getOut()).find();
             }
         } catch (CommandException e) {
             if (null != e.getCause()) {
@@ -236,13 +230,9 @@ public class DownloadableTool {
         return props;
     }
 
-    private void executeCommandCapturing(Command command, OutputStream out, OutputStream err) throws CommandException {
-        int exitValue = new CommandExecutor(logger)
-            .executeCommandCapturing(command, out, err);
-        if (exitValue != 0) {
-            logger.error(out.toString().trim());
-            throw new CommandException(RB.$("ERROR_command_execution_exit_value", exitValue));
-        }
+    private Command.Result executeCommand(Command command) throws CommandException {
+        return new CommandExecutor(logger, true)
+            .executeCommand(command);
     }
 
     private Path resolveJReleaserCacheDir() {

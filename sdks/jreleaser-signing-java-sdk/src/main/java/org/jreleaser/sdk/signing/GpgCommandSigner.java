@@ -91,7 +91,7 @@ public final class GpgCommandSigner {
             .arg(input.toAbsolutePath().toString());
 
         new CommandExecutor(logger)
-            .executeCommandWithInput(cmd,
+            .executeCommand(cmd,
                 new ByteArrayInputStream(passphrase.getBytes(UTF_8)));
     }
 
@@ -100,7 +100,7 @@ public final class GpgCommandSigner {
             .arg(signature.toAbsolutePath().toString())
             .arg(target.toAbsolutePath().toString());
         return new CommandExecutor(logger, true)
-            .executeCommand(cmd) == 0;
+            .executeCommand(cmd).getExitValue() == 0;
     }
 
     public byte[] sign(byte[] in) throws CommandException {

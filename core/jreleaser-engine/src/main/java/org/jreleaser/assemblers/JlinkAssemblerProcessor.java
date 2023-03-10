@@ -26,12 +26,10 @@ import org.jreleaser.model.spi.assemble.AssemblerProcessingException;
 import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.command.Command;
 import org.jreleaser.util.FileUtils;
-import org.jreleaser.util.IoUtils;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.util.StringUtils;
 import org.jreleaser.version.SemanticVersion;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -190,8 +188,7 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
             .arg(maybeQuote(imageDirectory.toString()));
 
         context.getLogger().debug(String.join(" ", cmd.getArgs()));
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        executeCommandCapturing(cmd, out);
+        executeCommand(cmd);
 
         if (isBlank(moduleName)) {
             // non modular
@@ -309,10 +306,9 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
         }
 
         context.getLogger().debug(String.join(" ", cmd.getArgs()));
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        executeCommandCapturing(jarsDirectory, cmd, out);
+        Command.Result result = executeCommand(jarsDirectory, cmd);
 
-        String output = IoUtils.toString(out).trim();
+        String output = result.getOut();
         long lineCount = Arrays.stream(output.split(System.lineSeparator()))
             .map(String::trim)
             .count();

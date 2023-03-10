@@ -159,11 +159,8 @@ public final class CommandHookExecutor {
     }
 
     private void executeCommand(Path directory, Command command) throws CommandException {
-        int exitValue = new CommandExecutor(context.getLogger())
+        new CommandExecutor(context.getLogger())
             .executeCommand(directory, command);
-        if (exitValue != 0) {
-            throw new CommandException(RB.$("ERROR_command_execution_exit_value", exitValue));
-        }
     }
 
     // adjusted from org.apache.tools.ant.types.Commandline#translateCommandLine
