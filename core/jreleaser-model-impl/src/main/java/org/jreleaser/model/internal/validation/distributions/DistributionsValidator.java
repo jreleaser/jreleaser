@@ -265,8 +265,14 @@ public final class DistributionsValidator {
             return true;
         }
 
+        boolean valid = true;
+        if (isBlank(distribution.getJava().getVersion())) {
+            errors.configuration(RB.$("validation_is_missing", "distribution." + distribution.getName() + ".java.version"));
+            valid = false;
+        }
         if (isBlank(distribution.getJava().getGroupId())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "distribution." + distribution.getName() + ".java.groupId"));
+            valid = false;
         }
         if (!distribution.getJava().isMultiProjectSet()) {
             distribution.getJava().setMultiProject(project.getJava().isMultiProject());
@@ -279,10 +285,10 @@ public final class DistributionsValidator {
                 org.jreleaser.model.api.distributions.Distribution.JAVA_DISTRIBUTION_TYPES.stream()
                     .map(org.jreleaser.model.Distribution.DistributionType::name)
                     .collect(Collectors.joining(", "))));
-            return false;
+            valid = false;
         }
 
-        return true;
+        return valid;
     }
 
     private static void validateArtifact(JReleaserContext context, Distribution distribution, Artifact artifact, int index, Errors errors) {
