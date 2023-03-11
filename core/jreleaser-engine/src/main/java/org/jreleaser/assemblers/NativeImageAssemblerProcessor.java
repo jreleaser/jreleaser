@@ -189,6 +189,7 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<or
                 cmd.arg("-cp")
                     .arg(jars.stream()
                         .map(Path::toAbsolutePath)
+                        .map(image.getParent()::relativize)
                         .map(Path::toString)
                         .map(this::maybeQuote)
                         .collect(joining(File.pathSeparator)));
