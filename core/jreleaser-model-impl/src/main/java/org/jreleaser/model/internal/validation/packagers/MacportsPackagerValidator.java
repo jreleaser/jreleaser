@@ -38,6 +38,7 @@ import static org.jreleaser.model.internal.validation.common.Validator.resolveAc
 import static org.jreleaser.model.internal.validation.common.Validator.validateCommitAuthor;
 import static org.jreleaser.model.internal.validation.common.Validator.validateContinueOnError;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTap;
+import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.isGraalVMDistribution;
 import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -131,8 +132,12 @@ public final class MacportsPackagerValidator {
         validateArtifactPlatforms(distribution, packager, candidateArtifacts, errors);
 
         // TODO: remove in 2.0.0
-        if (isBlank(distribution.getJava().getVersion())) {
-            errors.configuration(RB.$("validation_is_missing", "distribution." + distribution.getName() + ".java.version"));
+        if (distribution.getType() == org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY ||
+            distribution.getType() == org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR ||
+            isGraalVMDistribution(distribution)) {
+            if (isBlank(distribution.getJava().getVersion())) {
+                errors.configuration(RB.$("validation_is_missing", "distribution." + distribution.getName() + ".java.version"));
+            }
         }
     }
 }

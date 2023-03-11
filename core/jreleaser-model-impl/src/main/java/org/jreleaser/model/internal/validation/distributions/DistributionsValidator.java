@@ -33,9 +33,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
+import static java.lang.System.lineSeparator;
 import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.joining;
+import static org.jreleaser.model.Constants.KEY_GRAALVM_NAGIVE_IMAGE;
 import static org.jreleaser.model.api.release.Releaser.KEY_SKIP_RELEASE_SIGNATURES;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.packagers.AppImagePackagerValidator.validateAppImage;
@@ -60,6 +62,7 @@ import static org.jreleaser.model.internal.validation.packagers.WingetPackagerVa
 import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.StringUtils.isTrue;
 
 /**
  * @author Andres Almiray
@@ -144,7 +147,7 @@ public final class DistributionsValidator {
             }
         }
 
-        if (org.jreleaser.model.api.distributions.Distribution.JAVA_DISTRIBUTION_TYPES.contains(distribution.getType())) {
+        if (isJavaDistribution(distribution)) {
             context.getLogger().debug("distribution.{}.java", distribution.getName());
             if (!validateJava(context, distribution, errors)) {
                 return;
@@ -152,7 +155,7 @@ public final class DistributionsValidator {
         }
 
         // validate distribution type
-        if (!distribution.getJava().isEnabled() && org.jreleaser.model.api.distributions.Distribution.JAVA_DISTRIBUTION_TYPES.contains(distribution.getType())) {
+        if (!distribution.getJava().isEnabled() && isJavaDistribution(distribution)) {
             errors.configuration(RB.$("validation_distributions_java",
                 "distribution." + distribution.getName() + ".type",
                 distribution.getType(),
@@ -280,12 +283,12 @@ public final class DistributionsValidator {
         }
 
         // validate distribution type
-        if (!org.jreleaser.model.api.distributions.Distribution.JAVA_DISTRIBUTION_TYPES.contains(distribution.getType())) {
+        if (!isJavaDistribution(distribution)) {
             errors.configuration(RB.$("validation_distributions_java_types",
                 "distribution." + distribution.getName() + ".type",
                 org.jreleaser.model.api.distributions.Distribution.JAVA_DISTRIBUTION_TYPES.stream()
                     .map(org.jreleaser.model.Distribution.DistributionType::name)
-                    .collect(Collectors.joining(", "))));
+                    .collect(joining(", "))));
             valid = false;
         }
 
@@ -302,8 +305,8 @@ public final class DistributionsValidator {
         }
         if (isNotBlank(artifact.getPlatform()) && !PlatformUtils.isSupported(artifact.getPlatform().trim())) {
             context.getLogger().warn(RB.$("validation_distributions_platform",
-                distribution.getName(), index, artifact.getPlatform(), System.lineSeparator(),
-                PlatformUtils.getSupportedOsNames(), System.lineSeparator(), PlatformUtils.getSupportedOsArchs()));
+                distribution.getName(), index, artifact.getPlatform(), lineSeparator(),
+                PlatformUtils.getSupportedOsNames(), lineSeparator(), PlatformUtils.getSupportedOsArchs()));
         }
     }
 
@@ -360,5 +363,15 @@ public final class DistributionsValidator {
 
         postValidateChocolatey(context, distribution, distribution.getChocolatey(), errors);
         postValidateWinget(context, distribution, distribution.getWinget(), errors);
+    }
+
+    public static boolean isJavaDistribution(Distribution distribution) {
+        return isGraalVMDistribution(distribution) ||
+            org.jreleaser.model.api.distributions.Distribution.JAVA_DISTRIBUTION_TYPES.contains(distribution.getType());
+    }
+
+    public static boolean isGraalVMDistribution(Distribution distribution) {
+        return distribution.getType() == org.jreleaser.model.Distribution.DistributionType.BINARY &&
+            isTrue(distribution.getExtraProperties().get(KEY_GRAALVM_NAGIVE_IMAGE));
     }
 }

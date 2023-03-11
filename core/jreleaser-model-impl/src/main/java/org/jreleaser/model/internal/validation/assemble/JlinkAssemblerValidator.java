@@ -21,10 +21,8 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Archive;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
-import org.jreleaser.model.internal.assemble.JavaAssembler;
 import org.jreleaser.model.internal.assemble.JlinkAssembler;
 import org.jreleaser.model.internal.common.Artifact;
-import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.PlatformUtils;
 
@@ -33,6 +31,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static java.util.stream.Collectors.groupingBy;
+import static org.jreleaser.model.internal.validation.assemble.AssemblersValidator.validateJava;
 import static org.jreleaser.model.internal.validation.assemble.AssemblersValidator.validateJavaAssembler;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.util.CollectionUtils.listOf;
@@ -81,6 +80,9 @@ public final class JlinkAssemblerValidator {
             context.getLogger().debug(RB.$("validation.disabled.error"));
             assembler.disable();
             return;
+        }
+        if (isBlank(assembler.getJava().getGroupId())) {
+            errors.configuration(RB.$("validation_must_not_be_blank", "assembler." + assembler.getName() + ".java.groupId"));
         }
 
         assembler.setPlatform(assembler.getPlatform().mergeValues(context.getModel().getPlatform()));
@@ -182,41 +184,6 @@ public final class JlinkAssemblerValidator {
         if (!assembler.getModuleNames().isEmpty()) {
             assembler.getJdeps().setEnabled(false);
         }
-    }
-
-    private static boolean validateJava(JReleaserContext context, JavaAssembler<?> assembler, Errors errors) {
-        Project project = context.getModel().getProject();
-
-        if (!assembler.getJava().isEnabledSet() && project.getJava().isEnabledSet()) {
-            assembler.getJava().setEnabled(project.getJava().isEnabled());
-        }
-        if (!assembler.getJava().isEnabledSet()) {
-            assembler.getJava().setEnabled(assembler.getJava().isSet());
-        }
-
-        if (!assembler.getJava().isEnabled()) return false;
-
-        if (isBlank(assembler.getJava().getArtifactId())) {
-            assembler.getJava().setArtifactId(project.getJava().getArtifactId());
-        }
-        if (isBlank(assembler.getJava().getGroupId())) {
-            assembler.getJava().setGroupId(project.getJava().getGroupId());
-        }
-        if (isBlank(assembler.getJava().getVersion())) {
-            assembler.getJava().setVersion(project.getJava().getVersion());
-        }
-        if (isBlank(assembler.getJava().getMainModule())) {
-            assembler.getJava().setMainModule(project.getJava().getMainModule());
-        }
-        if (isBlank(assembler.getJava().getMainClass())) {
-            assembler.getJava().setMainClass(project.getJava().getMainClass());
-        }
-
-        if (isBlank(assembler.getJava().getGroupId())) {
-            errors.configuration(RB.$("validation_must_not_be_blank", "assembler." + assembler.getName() + ".java.groupId"));
-        }
-
-        return true;
     }
 
     private static void validateJdk(JReleaserContext context, Mode mode, JlinkAssembler jlink, Artifact jdk, int index, Errors errors) {

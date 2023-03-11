@@ -56,6 +56,7 @@ import static org.jreleaser.model.internal.validation.common.Validator.resolveAc
 import static org.jreleaser.model.internal.validation.common.Validator.validateCommitAuthor;
 import static org.jreleaser.model.internal.validation.common.Validator.validateContinueOnError;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTap;
+import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.isGraalVMDistribution;
 import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -280,7 +281,8 @@ public final class DockerPackagerValidator {
     private static void validateBaseImage(Distribution distribution, DockerConfiguration docker, Errors errors) {
         if (isBlank(docker.getBaseImage())) {
             if (distribution.getType() == org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY ||
-                distribution.getType() == org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR) {
+                distribution.getType() == org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR ||
+                isGraalVMDistribution(distribution)) {
                 // TODO: remove in 2.0.0
                 if (isBlank(distribution.getJava().getVersion())) {
                     errors.configuration(RB.$("validation_is_missing", "distribution." + distribution.getName() + ".java.version"));
@@ -386,7 +388,7 @@ public final class DockerPackagerValidator {
             String serverName = registry.getServerName();
 
             if (isBlank(registry.getServer())) {
-                registry.setServer(DEFAULT_NAME.equals(serverName)? DOCKER_IO : serverName);
+                registry.setServer(DEFAULT_NAME.equals(serverName) ? DOCKER_IO : serverName);
             }
 
             registry.setUsername(
