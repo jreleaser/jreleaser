@@ -79,8 +79,7 @@ public enum FileType {
         return "." + this.type;
     }
 
-    @Override
-    public String toString() {
+    public String formatted() {
         return type();
     }
 

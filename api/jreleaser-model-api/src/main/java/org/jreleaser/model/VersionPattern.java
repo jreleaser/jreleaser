@@ -34,8 +34,7 @@ public class VersionPattern {
         JAVA_MODULE,
         CUSTOM;
 
-        @Override
-        public String toString() {
+        public String formatted() {
             return name().toLowerCase(Locale.ENGLISH);
         }
 

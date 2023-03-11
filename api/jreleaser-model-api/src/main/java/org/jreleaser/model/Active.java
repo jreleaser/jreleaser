@@ -50,8 +50,7 @@ public enum Active {
         return p;
     }
 
-    @Override
-    public String toString() {
+    public String formatted() {
         return name().toLowerCase(Locale.ENGLISH);
     }
 

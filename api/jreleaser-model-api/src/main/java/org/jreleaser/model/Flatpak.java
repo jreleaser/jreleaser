@@ -48,8 +48,7 @@ public class Flatpak {
             return sdk;
         }
 
-        @Override
-        public String toString() {
+        public String formatted() {
             return name().toLowerCase(Locale.ENGLISH);
         }
 

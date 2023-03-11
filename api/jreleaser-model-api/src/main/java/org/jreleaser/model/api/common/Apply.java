@@ -31,8 +31,7 @@ public enum Apply {
     WARN,
     FORCE;
 
-    @Override
-    public String toString() {
+    public String formatted() {
         return name().toLowerCase(Locale.ENGLISH);
     }
 

@@ -52,8 +52,7 @@ public interface SyftSbomCataloger extends SbomCataloger {
             return "." + alias.replace(".", "-") + ".sbom";
         }
 
-        @Override
-        public String toString() {
+        public String formatted() {
             return name().replace("_", "-").toLowerCase(Locale.ROOT);
         }
 

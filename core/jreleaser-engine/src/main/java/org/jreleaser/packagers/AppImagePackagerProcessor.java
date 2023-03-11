@@ -149,7 +149,7 @@ public class AppImagePackagerProcessor extends AbstractRepositoryPackagerProcess
         Optional<Stereotype> stereotype = resolveStereotype(fileName);
         if (stereotype.isPresent()) {
             if (distribution.getStereotype() == stereotype.get()) {
-                fileName = fileName.substring(distribution.getStereotype().toString().length() + 1);
+                fileName = fileName.substring(distribution.getStereotype().formatted().length() + 1);
             } else {
                 // skip it
                 return;

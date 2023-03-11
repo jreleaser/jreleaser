@@ -79,8 +79,7 @@ public class ExecutionEvent implements Serializable {
         SUCCESS,
         FAILURE;
 
-        @Override
-        public String toString() {
+        public String formatted() {
             return name().toLowerCase(Locale.ENGLISH);
         }
 

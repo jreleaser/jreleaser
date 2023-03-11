@@ -205,7 +205,7 @@ public final class Screenshot extends AbstractModelObject<Screenshot> implements
         private final Integer height;
 
         public ScreenshotTemplate(Screenshot source) {
-            this.type = source.type.toString();
+            this.type = source.type.formatted();
             this.primary = source.isPrimary();
             this.url = source.url;
             this.caption = source.caption;

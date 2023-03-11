@@ -47,8 +47,7 @@ public class Archive {
             return this.extension;
         }
 
-        @Override
-        public String toString() {
+        public String formatted() {
             return extension();
         }
 

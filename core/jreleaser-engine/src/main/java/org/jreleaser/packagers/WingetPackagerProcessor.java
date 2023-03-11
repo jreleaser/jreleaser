@@ -33,6 +33,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_PLATFORM;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_CLASS;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_MODULE;
@@ -102,10 +103,12 @@ public class WingetPackagerProcessor extends AbstractRepositoryPackagerProcessor
         props.set(KEY_WINGET_PUBLISHER_NAME, resolveTemplate(packager.getPublisher().getName(), props));
         props.set(KEY_WINGET_PUBLISHER_URL, resolveTemplate(packager.getPublisher().getUrl(), props));
         props.set(KEY_WINGET_PUBLISHER_SUPPORT_URL, resolveTemplate(packager.getPublisher().getSupportUrl(), props));
-        props.set(KEY_WINGET_INSTALLER_TYPE, packager.getInstaller().getType().toString());
-        props.set(KEY_WINGET_SCOPE, packager.getInstaller().getScope().toString());
-        props.set(KEY_WINGET_INSTALL_MODES, packager.getInstaller().getModes());
-        props.set(KEY_WINGET_UPGRADE_BEHAVIOR, packager.getInstaller().getUpgradeBehavior().toString());
+        props.set(KEY_WINGET_INSTALLER_TYPE, packager.getInstaller().getType().formatted());
+        props.set(KEY_WINGET_SCOPE, packager.getInstaller().getScope().formatted());
+        props.set(KEY_WINGET_INSTALL_MODES, packager.getInstaller().getModes().stream()
+            .map(org.jreleaser.model.api.packagers.WingetPackager.Installer.Mode::formatted)
+            .collect(toList()));
+        props.set(KEY_WINGET_UPGRADE_BEHAVIOR, packager.getInstaller().getUpgradeBehavior().formatted());
         props.set(KEY_WINGET_RELEASE_DATE, new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
 
         String platform = props.get(KEY_DISTRIBUTION_ARTIFACT_PLATFORM);

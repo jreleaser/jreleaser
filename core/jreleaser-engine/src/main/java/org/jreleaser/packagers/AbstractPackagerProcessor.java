@@ -467,7 +467,7 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
 
     protected Optional<Stereotype> resolveStereotype(String fileName) {
         for (Stereotype stereotype : packager.getSupportedStereotypes()) {
-            if (fileName.startsWith(stereotype.toString() + "-")) {
+            if (fileName.startsWith(stereotype.formatted() + "-")) {
                 return Optional.of(stereotype);
             }
         }

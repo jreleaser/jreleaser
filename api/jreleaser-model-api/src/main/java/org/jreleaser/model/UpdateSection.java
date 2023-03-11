@@ -30,8 +30,7 @@ public enum UpdateSection {
     BODY,
     ASSETS;
 
-    @Override
-    public String toString() {
+    public String formatted() {
         return name().toLowerCase(Locale.ENGLISH);
     }
 

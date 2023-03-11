@@ -39,8 +39,7 @@ public interface Http {
         PUT,
         POST;
 
-        @Override
-        public String toString() {
+        public String formatted() {
             return name().toLowerCase(Locale.ENGLISH);
         }
 
@@ -55,8 +54,7 @@ public interface Http {
         BASIC,
         BEARER;
 
-        @Override
-        public String toString() {
+        public String formatted() {
             return name().toLowerCase(Locale.ENGLISH);
         }
 

@@ -94,8 +94,7 @@ public interface WingetPackager extends RepositoryPackager {
             BURN,
             PWA;
 
-            @Override
-            public String toString() {
+            public String formatted() {
                 return name().toLowerCase(Locale.ENGLISH);
             }
 
@@ -109,8 +108,7 @@ public interface WingetPackager extends RepositoryPackager {
             USER,
             MACHINE;
 
-            @Override
-            public String toString() {
+            public String formatted() {
                 return name().toLowerCase(Locale.ENGLISH);
             }
 
@@ -131,8 +129,7 @@ public interface WingetPackager extends RepositoryPackager {
                 this.alias = alias;
             }
 
-            @Override
-            public String toString() {
+            public String formatted() {
                 return alias;
             }
 
@@ -165,8 +162,7 @@ public interface WingetPackager extends RepositoryPackager {
                 this.alias = alias;
             }
 
-            @Override
-            public String toString() {
+            public String formatted() {
                 return alias;
             }
 

@@ -32,8 +32,7 @@ public class Signing {
         COMMAND,
         COSIGN;
 
-        @Override
-        public String toString() {
+        public String formatted() {
             return name().toLowerCase(Locale.ENGLISH);
         }
 

@@ -32,8 +32,7 @@ public enum Stereotype {
     WEB,
     MOBILE;
 
-    @Override
-    public String toString() {
+    public String formatted() {
         return name().toLowerCase(Locale.ENGLISH);
     }
 
