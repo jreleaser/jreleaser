@@ -147,7 +147,7 @@ public class FlatpakPackagerProcessor extends AbstractRepositoryPackagerProcesso
         props.set(KEY_DISTRIBUTION_JAVA_MAIN_CLASS, distribution.getJava().getMainClass());
         props.set(KEY_DISTRIBUTION_JAVA_MAIN_MODULE, distribution.getJava().getMainModule());
         props.set(KEY_PROJECT_AUTHORS, context.getModel().getProject().getAuthors());
-        props.set(KEY_FLATPAK_URLS, context.getModel().getProject().getLinks().asLinkTemplates());
+        props.set(KEY_FLATPAK_URLS, context.getModel().getProject().getLinks().asLinkTemplates(true));
         props.set(KEY_FLATPAK_COMPONENT_ID, getPackager().getComponentId());
         props.set(KEY_FLATPAK_CATEGORIES, getPackager().getCategories());
         props.set(KEY_FLATPAK_CATEGORIES_BY_COMMA, String.join(",", getPackager().getCategories()));

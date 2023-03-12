@@ -1127,11 +1127,11 @@ public final class Project extends AbstractModelObject<Project> implements Domai
             props.set(Constants.KEY_PROJECT_LICENSE_URL, license);
         }
 
-        public Collection<LinkTemplate> asLinkTemplates() {
+        public Collection<LinkTemplate> asLinkTemplates(boolean flatpak) {
             List<LinkTemplate> links = new ArrayList<>();
             if (isNotBlank(homepage)) links.add(new LinkTemplate("homepage", homepage));
-            if (isNotBlank(documentation)) links.add(new LinkTemplate("documentation", documentation));
-            if (isNotBlank(license)) links.add(new LinkTemplate("license", license));
+            if (!flatpak && isNotBlank(documentation)) links.add(new LinkTemplate("documentation", documentation));
+            if (!flatpak && isNotBlank(license)) links.add(new LinkTemplate("license", license));
             if (isNotBlank(bugTracker)) links.add(new LinkTemplate("bugtracker", bugTracker));
             if (isNotBlank(vcsBrowser)) links.add(new LinkTemplate("vcs-browser", vcsBrowser));
             if (isNotBlank(faq)) links.add(new LinkTemplate("faq", faq));
