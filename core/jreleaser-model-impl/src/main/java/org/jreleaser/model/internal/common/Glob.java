@@ -27,12 +27,12 @@ import org.jreleaser.util.PlatformUtils;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
 import static java.nio.file.Files.exists;
+import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableMap;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -163,8 +163,8 @@ public final class Glob extends AbstractModelObject<Glob> implements Domain, Ext
     public Set<Artifact> getResolvedArtifactsPattern(JReleaserContext context) {
         if (null == artifacts) {
             setPattern(Artifacts.resolveForGlob(getPattern(), context, this));
-            normalizePattern(resolveDirectory(context));
-            artifacts = Artifacts.resolveFiles(context, resolveDirectory(context), Collections.singletonList(pattern));
+            normalizePattern();
+            artifacts = Artifacts.resolveFiles(context, resolveDirectory(context), singletonList(pattern));
             artifacts.forEach(artifact -> {
                 artifact.setPlatform(platform);
                 if (context.isPlatformSelected(artifact)) artifact.activate();
@@ -189,43 +189,27 @@ public final class Glob extends AbstractModelObject<Glob> implements Domain, Ext
         return path;
     }
 
-    private void normalizePattern(Path basedir) {
+    private void normalizePattern() {
         if (!pattern.startsWith(GLOB_PREFIX) && !pattern.startsWith(REGEX_PREFIX)) {
             this.pattern = GLOB_PREFIX + pattern;
         }
 
-        if (this.pattern.startsWith(GLOB_PREFIX)) {
-            String path = this.pattern.substring(GLOB_PREFIX.length());
-            String test = path;
-            if (PlatformUtils.isWindows()) {
-                test = test.replace("*", "x");
-            }
-            if (!Paths.get(test).isAbsolute()) {
-                this.pattern = GLOB_PREFIX + "**" + File.separator + path;
-            } else {
-                this.pattern = GLOB_PREFIX + "**" + relativize(basedir, Paths.get(path));
-            }
+        String prefix = this.pattern.startsWith(GLOB_PREFIX) ? GLOB_PREFIX : REGEX_PREFIX;
+        String path = this.pattern.substring(prefix.length());
+
+        String test = path;
+        if (PlatformUtils.isWindows()) {
+            test = test.replace("*", "x");
+        }
+
+        if (!Paths.get(test).isAbsolute()) {
+            this.pattern = prefix + ".*" + File.separator + path;
         } else {
-            String path = this.pattern.substring(REGEX_PREFIX.length());
-            String test = path;
-            if (PlatformUtils.isWindows()) {
-                test = test.replace("*", "x");
-            }
-            if (!Paths.get(test).isAbsolute()) {
-                this.pattern = REGEX_PREFIX + ".*" + File.separator + path;
-            } else {
-                this.pattern = REGEX_PREFIX + ".*" + relativize(basedir, Paths.get(path));
-            }
+            this.pattern = prefix + path;
         }
 
         if (PlatformUtils.isWindows()) {
             this.pattern = pattern.replace("/", "\\\\");
         }
-    }
-
-    private Path relativize(Path base, Path other) {
-        Path p1 = base.toAbsolutePath();
-        Path p2 = other.toAbsolutePath();
-        return p1.relativize(p2).normalize();
     }
 }
