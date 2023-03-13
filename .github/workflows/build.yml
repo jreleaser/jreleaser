@@ -20,8 +20,8 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
-          java-version: ${{ vars.JAVA_VERSION }}
-          distribution: ${{ vars.JAVA_DISTRO }}
+          java-version: 11
+          distribution: zulu
           cache: gradle
 
       - name: Build
