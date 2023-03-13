@@ -44,6 +44,7 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.util.FileType.JAR;
 import static org.jreleaser.util.FileUtils.listFilesAndProcess;
 import static org.jreleaser.util.PlatformUtils.isWindows;
+import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -84,8 +85,10 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
 
         // copy jars to inputs
         context.getLogger().debug(RB.$("assembler.copy.jars"), context.relativizeToBasedir(filesDirectory));
-        copyJars(context, assembler, filesDirectory, "");
-        copyJars(context, assembler, filesDirectory, platform);
+        if (isBlank(assembler.getJava().getMainModule())) {
+            copyJars(context, assembler, filesDirectory, "");
+            copyJars(context, assembler, filesDirectory, platform);
+        }
 
         // copy icon to inputs
         copyIcon(context, assembler, packager, inputsDirectory, platform, props);
