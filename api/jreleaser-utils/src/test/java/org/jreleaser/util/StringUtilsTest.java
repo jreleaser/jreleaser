@@ -178,5 +178,17 @@ class StringUtilsTest {
     void testGetClassNameForLowerCaseHyphenSeparatedName() {
         assertEquals("StringUtils", StringUtils.getClassNameForLowerCaseHyphenSeparatedName("string-utils"));
     }
+
+    @Test
+    void testPropertyConversion() {
+        assertFalse(StringUtils.isTrue(null));
+        assertFalse(StringUtils.isTrue(null, false));
+        assertTrue(StringUtils.isTrue(null, true));
+
+        assertTrue(StringUtils.isTrue("true"));
+        assertTrue(StringUtils.isTrue("tRuE"));
+
+        assertFalse(StringUtils.isTrue(""));
+    }
 }
 
