@@ -104,7 +104,7 @@ public class ChangelogGenerator {
             if (changelog.getSort() == org.jreleaser.model.Changelog.Sort.ASC) {
                 revCommitComparator = Comparator.comparing(RevCommit::getCommitTime);
             }
-            context.getLogger().debug(RB.$("changelog.generator.sort.commits"), changelog.getSort());
+            context.getLogger().debug(RB.$("changelog.generator.sort.commits", changelog.getSort()));
 
             // collect
             List<RevCommit> commitList = StreamSupport.stream(commits.spliterator(), false)
