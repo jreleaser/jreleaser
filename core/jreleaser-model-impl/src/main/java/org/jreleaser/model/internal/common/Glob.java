@@ -195,6 +195,7 @@ public final class Glob extends AbstractModelObject<Glob> implements Domain, Ext
         }
 
         String prefix = this.pattern.startsWith(GLOB_PREFIX) ? GLOB_PREFIX : REGEX_PREFIX;
+        String root = this.pattern.startsWith(GLOB_PREFIX) ? "**" : ".*";
         String path = this.pattern.substring(prefix.length());
 
         String test = path;
@@ -203,7 +204,7 @@ public final class Glob extends AbstractModelObject<Glob> implements Domain, Ext
         }
 
         if (!Paths.get(test).isAbsolute()) {
-            this.pattern = prefix + ".*" + File.separator + path;
+            this.pattern = prefix + root + File.separator + path;
         } else {
             this.pattern = prefix + path;
         }
