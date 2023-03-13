@@ -326,13 +326,13 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
                 StringBuilder pathBuilder = new StringBuilder();
 
                 String s = listFilesAndProcess(jarsDirectory.resolve(UNIVERSAL_DIRECTORY), files ->
-                    files.map(jarsDirectory::relativize)
+                    files.map(Path::toAbsolutePath)
                         .map(Object::toString)
                         .collect(joining(File.pathSeparator)));
                 pathBuilder.append(s);
 
                 String platformSpecific = listFilesAndProcess(jarsDirectory.resolve(platform), files ->
-                    files.map(jarsDirectory::relativize)
+                    files.map(Path::toAbsolutePath)
                         .map(Object::toString)
                         .collect(joining(File.pathSeparator)));
 
@@ -344,12 +344,12 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
                 cmd.arg(pathBuilder.toString());
             } else {
                 listFilesAndConsume(jarsDirectory.resolve(UNIVERSAL_DIRECTORY), files ->
-                    files.map(jarsDirectory::relativize)
+                    files.map(Path::toAbsolutePath)
                         .map(Object::toString)
                         .forEach(cmd::arg));
 
                 listFilesAndConsume(jarsDirectory.resolve(platform), files ->
-                    files.map(jarsDirectory::relativize)
+                    files.map(Path::toAbsolutePath)
                         .map(Object::toString)
                         .forEach(cmd::arg));
             }
