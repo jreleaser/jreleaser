@@ -10,13 +10,13 @@ Published: {{timestamp}}
 
 These binaries require an external Java runtime.
 
-* {{#f_release_download_url}}jreleaser-{{projectEffectiveVersion}}.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-{{projectEffectiveVersion}}.zip.asc{{/f_release_download_url}}) **Requires Java 8+** +
+* {{#f_release_download_url}}jreleaser-{{projectEffectiveVersion}}.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-{{projectEffectiveVersion}}.zip.asc{{/f_release_download_url}}) **Requires Java 8+**
   sha256:jreleaser-{{projectEffectiveVersion}}.zip
-* {{#f_release_download_url}}jreleaser-{{projectEffectiveVersion}}.tar{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-{{projectEffectiveVersion}}.tar.asc{{/f_release_download_url}}) **Requires Java 8+** +
+* {{#f_release_download_url}}jreleaser-{{projectEffectiveVersion}}.tar{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-{{projectEffectiveVersion}}.tar.asc{{/f_release_download_url}}) **Requires Java 8+**
   sha256:jreleaser-{{projectEffectiveVersion}}.tar
-* {{#f_release_download_url}}jreleaser-ant-tasks-{{projectEffectiveVersion}}.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-ant-tasks-{{projectEffectiveVersion}}.zip.asc{{/f_release_download_url}}) **Requires Java 8+** +
+* {{#f_release_download_url}}jreleaser-ant-tasks-{{projectEffectiveVersion}}.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-ant-tasks-{{projectEffectiveVersion}}.zip.asc{{/f_release_download_url}}) **Requires Java 8+**
   sha256:jreleaser-ant-tasks-{{projectEffectiveVersion}}.zip
-* {{#f_release_download_url}}jreleaser-tool-provider-{{projectEffectiveVersion}}.jar{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-tool-provider-{{projectEffectiveVersion}}.jar.asc{{/f_release_download_url}}) **Requires Java 11+** +
+* {{#f_release_download_url}}jreleaser-tool-provider-{{projectEffectiveVersion}}.jar{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-tool-provider-{{projectEffectiveVersion}}.jar.asc{{/f_release_download_url}}) **Requires Java 11+**
   sha256:jreleaser-tool-provider-{{projectEffectiveVersion}}.jar
 
 ### ☕️ Bundled Java Runtimes
@@ -38,22 +38,22 @@ These binaries provide their own Java runtime.
 
 These binaries provide their own Java runtime.
 
-* {{#f_release_download_url}}jreleaser-installer-{{projectEffectiveVersion}}-osx-x86_64.pkg{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-installer-{{projectEffectiveVersion}}-osx-x86_64.pkg.asc{{/f_release_download_url}}) +
+* {{#f_release_download_url}}jreleaser-installer-{{projectEffectiveVersion}}-osx-x86_64.pkg{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-installer-{{projectEffectiveVersion}}-osx-x86_64.pkg.asc{{/f_release_download_url}})
   sha256:jreleaser-installer-{{projectEffectiveVersion}}-osx-x86_64.pkg
-* {{#f_release_download_url}}jreleaser-installer_{{projectEffectiveVersion}}-1_amd64.deb{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-installer_{{projectEffectiveVersion}}-1_amd64.deb.asc{{/f_release_download_url}}) +
+* {{#f_release_download_url}}jreleaser-installer_{{projectEffectiveVersion}}-1_amd64.deb{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-installer_{{projectEffectiveVersion}}-1_amd64.deb.asc{{/f_release_download_url}})
   sha256:jreleaser-installer_{{projectEffectiveVersion}}-1_amd64.deb
-* {{#f_release_download_url}}jreleaser-installer-{{projectEffectiveVersion}}-1.x86_64.rpm{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-installer-{{projectEffectiveVersion}}-1.x86_64.rpm.asc{{/f_release_download_url}}) +
+* {{#f_release_download_url}}jreleaser-installer-{{projectEffectiveVersion}}-1.x86_64.rpm{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-installer-{{projectEffectiveVersion}}-1.x86_64.rpm.asc{{/f_release_download_url}})
   sha256:jreleaser-installer-{{projectEffectiveVersion}}-1.x86_64.rpm
-* {{#f_release_download_url}}jreleaser-installer-{{projectEffectiveVersion}}-windows-x86_64.msi{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-installer-{{projectEffectiveVersion}}-windows-x86_64.msi.asc{{/f_release_download_url}}) +
+* {{#f_release_download_url}}jreleaser-installer-{{projectEffectiveVersion}}-windows-x86_64.msi{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-installer-{{projectEffectiveVersion}}-windows-x86_64.msi.asc{{/f_release_download_url}})
   sha256:jreleaser-installer-{{projectEffectiveVersion}}-windows-x86_64.msi
 
 ### 💻 Native Executables
 
-* {{#f_release_download_url}}jreleaser-native-{{projectEffectiveVersion}}-osx-x86_64.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-native-{{projectEffectiveVersion}}-osx-x86_64.zip.asc{{/f_release_download_url}}) +
+* {{#f_release_download_url}}jreleaser-native-{{projectEffectiveVersion}}-osx-x86_64.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-native-{{projectEffectiveVersion}}-osx-x86_64.zip.asc{{/f_release_download_url}})
   sha256:jreleaser-native-{{projectEffectiveVersion}}-osx-x86_64.zip
-* {{#f_release_download_url}}jreleaser-native-{{projectEffectiveVersion}}-linux-x86_64.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-native-{{projectEffectiveVersion}}-linux-x86_64.zip.asc{{/f_release_download_url}}) +
+* {{#f_release_download_url}}jreleaser-native-{{projectEffectiveVersion}}-linux-x86_64.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-native-{{projectEffectiveVersion}}-linux-x86_64.zip.asc{{/f_release_download_url}})
   sha256:jreleaser-native-{{projectEffectiveVersion}}-linux-x86_64.zip
-* {{#f_release_download_url}}jreleaser-native-{{projectEffectiveVersion}}-windows-x86_64.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-native-{{projectEffectiveVersion}}-windows-x86_64.zip.asc{{/f_release_download_url}}) +
+* {{#f_release_download_url}}jreleaser-native-{{projectEffectiveVersion}}-windows-x86_64.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-native-{{projectEffectiveVersion}}-windows-x86_64.zip.asc{{/f_release_download_url}})
   sha256:jreleaser-native-{{projectEffectiveVersion}}-windows-x86_64.zip
 
 ## Verify Provenance
@@ -61,7 +61,7 @@ These binaries provide their own Java runtime.
 
 ### SBOMS
 
-* {{#f_release_download_url}}jreleaser-{{projectEffectiveVersion}}-sboms.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-{{projectEffectiveVersion}}-sboms.zip.asc{{/f_release_download_url}}) +
+* {{#f_release_download_url}}jreleaser-{{projectEffectiveVersion}}-sboms.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-{{projectEffectiveVersion}}-sboms.zip.asc{{/f_release_download_url}})
   sha256:jreleaser-{{projectEffectiveVersion}}-sboms.zip
 {{/includeSboms}}
 
