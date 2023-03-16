@@ -21,6 +21,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Client;
 import feign.Feign;
+import feign.Logger;
 import feign.Request;
 import feign.form.FormData;
 import feign.form.FormEncoder;
@@ -36,6 +37,7 @@ import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.model.internal.JReleaserModelPrinter;
 import org.jreleaser.model.spi.announce.AnnounceException;
 import org.jreleaser.model.spi.upload.UploadException;
+import org.jreleaser.sdk.commons.feign.FeignLogger;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -107,6 +109,8 @@ public final class ClientUtils {
         }
 
         return builder
+            .logger(new FeignLogger(logger))
+            .logLevel(Logger.Level.FULL)
             .encoder(new FormEncoder(new JacksonEncoder()))
             .decoder(new JacksonDecoder())
             .requestInterceptor(template -> template.header("User-Agent", "JReleaser/" + JReleaserVersion.getPlainVersion()))
