@@ -18,8 +18,8 @@
 package org.jreleaser.infra.nativeimage.processor;
 
 import javax.lang.model.element.Element;
-import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * @author Andres Almiray
@@ -34,7 +34,7 @@ class ReflectConfigGenerator extends AbstractGenerator {
 
     @Override
     protected String generateConfig(Context context) {
-        Map<String, String> collector = new LinkedHashMap<>();
+        Map<String, String> collector = new TreeMap<>();
 
         for (Element element : context.getElements()) {
             String className = elementTypeName(element.asType());

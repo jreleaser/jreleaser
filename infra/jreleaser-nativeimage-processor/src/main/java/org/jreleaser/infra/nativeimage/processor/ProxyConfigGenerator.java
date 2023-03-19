@@ -20,8 +20,8 @@ package org.jreleaser.infra.nativeimage.processor;
 import org.jreleaser.infra.nativeimage.annotations.ProxyConfig;
 
 import javax.lang.model.element.Element;
-import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import static java.util.stream.Collectors.joining;
 
@@ -38,7 +38,7 @@ class ProxyConfigGenerator extends AbstractGenerator {
 
     @Override
     protected String generateConfig(Context context) {
-        Set<String> collector = new LinkedHashSet<>();
+        Set<String> collector = new TreeSet<>();
 
         for (Element element : context.getElements()) {
             if (null != element.getAnnotation(ProxyConfig.class)) {
