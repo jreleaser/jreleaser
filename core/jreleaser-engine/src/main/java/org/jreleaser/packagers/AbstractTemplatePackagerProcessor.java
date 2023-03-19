@@ -40,10 +40,12 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardOpenOption.CREATE;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static java.nio.file.StandardOpenOption.WRITE;
+import static org.jreleaser.model.Constants.SKIP_LICENSE_FILE;
 import static org.jreleaser.templates.TemplateUtils.resolveAndMergeTemplates;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.FileUtils.createDirectoriesWithFullAccess;
 import static org.jreleaser.util.FileUtils.grantFullAccess;
+import static org.jreleaser.util.StringUtils.isFalse;
 
 /**
  * @author Andres Almiray
@@ -105,7 +107,7 @@ public abstract class AbstractTemplatePackagerProcessor<T extends TemplatePackag
             }
         }
 
-        if (copyLicense) {
+        if (copyLicense && isFalse(packager.getExtraProperties().get(SKIP_LICENSE_FILE))) {
             context.getLogger().debug(RB.$("packager.copy.license"));
             FileUtils.copyFiles(context.getLogger(),
                 context.getBasedir(),

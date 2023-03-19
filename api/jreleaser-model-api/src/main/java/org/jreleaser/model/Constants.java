@@ -27,6 +27,7 @@ public interface Constants {
 
     String MAGIC_SET = "__MAGIC_SET__";
     String SKIP_OPENJDK = "skipOpenjdk";
+    String SKIP_LICENSE_FILE = "skipLicenseFile";
     String DEFAULT_GIT_REMOTE = "DEFAULT_GIT_REMOTE";
     String JRELEASER_USER_HOME = "JRELEASER_USER_HOME";
     String XDG_CONFIG_HOME = "XDG_CONFIG_HOME";
