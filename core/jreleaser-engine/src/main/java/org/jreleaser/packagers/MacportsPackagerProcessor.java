@@ -86,7 +86,8 @@ public class MacportsPackagerProcessor extends AbstractRepositoryPackagerProcess
         props.set(KEY_MACPORTS_CATEGORIES, String.join(" ", packager.getCategories()));
         props.set(KEY_MACPORTS_MAINTAINERS, passThrough(String.join(LINE_SEPARATOR, packager.getResolvedMaintainers(context))));
         props.set(KEY_PROJECT_LONG_DESCRIPTION, passThrough(String.join(LINE_SEPARATOR, longDescription)));
-        if (distribution.getType() == org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY) {
+        if (distribution.getType() == org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY ||
+            distribution.getType() == org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR) {
             props.set(KEY_MACPORTS_JAVA_VERSION, resolveJavaVersion(distribution));
         }
         if (packager.getExtraProperties().containsKey(APP_NAME)) {

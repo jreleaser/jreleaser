@@ -42,10 +42,12 @@ import static org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JLINK;
 import static org.jreleaser.model.Distribution.DistributionType.NATIVE_IMAGE;
 import static org.jreleaser.model.Distribution.DistributionType.NATIVE_PACKAGE;
+import static org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR;
 import static org.jreleaser.model.api.packagers.MacportsPackager.SKIP_MACPORTS;
 import static org.jreleaser.model.api.packagers.MacportsPackager.TYPE;
 import static org.jreleaser.util.CollectionUtils.setOf;
 import static org.jreleaser.util.FileType.DMG;
+import static org.jreleaser.util.FileType.JAR;
 import static org.jreleaser.util.FileType.ZIP;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isFalse;
@@ -66,6 +68,7 @@ public final class MacportsPackager extends AbstractRepositoryPackager<org.jrele
         SUPPORTED.put(JAVA_BINARY, extensions);
         SUPPORTED.put(JLINK, extensions);
         SUPPORTED.put(NATIVE_PACKAGE, setOf(DMG.extension()));
+        SUPPORTED.put(SINGLE_JAR, setOf(JAR.extension()));
         SUPPORTED.put(FLAT_BINARY, emptySet());
     }
 
