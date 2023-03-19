@@ -703,10 +703,14 @@ public final class StringUtils {
         return Pattern.compile(toSafeRegexPattern(str));
     }
 
-    public static boolean isTrue(Object o) {
-        if (null == o) return false;
+    public static boolean isTrue(Object o, boolean defaultIfAbsent) {
+        if (null == o) return defaultIfAbsent;
         if (o instanceof Boolean) return (Boolean) o;
         return "true".equalsIgnoreCase(String.valueOf(o).trim());
+    }
+
+    public static boolean isTrue(Object o) {
+        return isTrue(o, false);
     }
 
     public static boolean isFalse(Object o) {

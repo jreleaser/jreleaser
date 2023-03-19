@@ -32,6 +32,7 @@ import org.jreleaser.util.PlatformUtils;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -138,6 +139,9 @@ BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> 
     private static final String FORMULA_MULTI_RB = "formula-multi.rb";
     private static final String RB = ".rb";
     private static final String SKIP_JAVA = "skipJava";
+    private static final String USE_VERSIONED_JAVA = "useVersionedJava";
+
+    private static final List<String> BREW_JDK_ALIASES = Arrays.asList("openjdk", "java");
 
     public BrewPackagerProcessor(JReleaserContext context) {
         super(context);
@@ -265,10 +269,10 @@ BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> 
                 throw new IllegalStateException(org.jreleaser.bundle.RB.$("ERROR_brew_multiplatform_artifacts"));
             }
             props.set(KEY_BREW_MULTIPLATFORM, passThrough(String.join(System.lineSeparator() + "  ", multiPlatforms)));
-        } else if ((distribution.getType() == org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY ||
-            distribution.getType() == org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR) &&
-            !isTrue(packager.getExtraProperties().get(SKIP_JAVA))) {
-            packager.addDependency("openjdk@" + props.get(KEY_DISTRIBUTION_JAVA_VERSION));
+        } else if (shouldAddJavaDependency(distribution)) {
+            boolean useVersionedJava = isTrue(packager.getExtraProperties().get(USE_VERSIONED_JAVA), true);
+            String javaDependency = "openjdk" + (useVersionedJava ? "@" + props.get(KEY_DISTRIBUTION_JAVA_VERSION) : "");
+            packager.addDependency(javaDependency);
         }
 
         props.set(KEY_BREW_DEPENDENCIES, packager.getDependenciesAsList()
@@ -276,6 +280,25 @@ BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> 
             // prevent Mustache from converting quotes into &quot;
             .map(dependency -> passThrough(dependency.toString()))
             .collect(Collectors.toList()));
+    }
+
+    private boolean shouldAddJavaDependency(Distribution distribution) {
+        if ((distribution.getType() == org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY ||
+                distribution.getType() == org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR) &&
+                !isTrue(packager.getExtraProperties().get(SKIP_JAVA))) {
+            return packager.getDependenciesAsList().stream()
+                    .map(BrewPackager.Dependency::getKey).noneMatch(BrewPackagerProcessor::isJdkDependency);
+        }
+        return false;
+    }
+
+    private static boolean isJdkDependency(String brewDependency) {
+        for(String alias: BREW_JDK_ALIASES) {
+            if(brewDependency.equals(alias) || brewDependency.startsWith(alias + "@")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private String resolveArtifactUrl(Distribution distribution, Artifact artifact) {
