@@ -40,6 +40,7 @@ import java.util.StringTokenizer;
  * @since 1.2.0
  */
 public final class CommandHookExecutor {
+    private static final String JRELEASER_OUTPUT = "JRELEASER_OUTPUT:";
     private final JReleaserContext context;
 
     public CommandHookExecutor(JReleaserContext context) {
@@ -99,7 +100,7 @@ public final class CommandHookExecutor {
 
                 try {
                     Command command = new Command(commandLine);
-                    executeCommand(context.getBasedir(), command);
+                    processOutput(executeCommand(context.getBasedir(), command));
                 } catch (CommandException e) {
                     if (!hook.isContinueOnError()) {
                         throw new JReleaserException(RB.$("ERROR_command_hook_unexpected_error"), e);
@@ -116,6 +117,18 @@ public final class CommandHookExecutor {
         } finally {
             context.getLogger().decreaseIndent();
             context.getLogger().restorePrefix();
+        }
+    }
+
+    private void processOutput(Command.Result result) {
+        if (!result.getOut().contains(JRELEASER_OUTPUT)) return;
+        for (String line : result.getOut().split(System.lineSeparator())) {
+            if (!line.startsWith(JRELEASER_OUTPUT)) continue;
+            line = line.substring(JRELEASER_OUTPUT.length());
+            int p = line.indexOf("=");
+            String key = line.substring(0, p);
+            String value = line.substring(p + 1);
+            context.getModel().getEnvironment().getProperties().put(key, value);
         }
     }
 
@@ -158,8 +171,8 @@ public final class CommandHookExecutor {
         return success;
     }
 
-    private void executeCommand(Path directory, Command command) throws CommandException {
-        new CommandExecutor(context.getLogger())
+    private Command.Result executeCommand(Path directory, Command command) throws CommandException {
+        return new CommandExecutor(context.getLogger())
             .executeCommand(directory, command);
     }
 
