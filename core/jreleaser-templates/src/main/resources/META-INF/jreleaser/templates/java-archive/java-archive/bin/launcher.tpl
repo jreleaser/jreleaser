@@ -77,7 +77,6 @@ Please set the JAVA_HOME variable in your environment to match the
 location of your Java installation."
 fi
 
-JAVACMD="$JAVA_HOME/bin/java"
 JARSDIR="$APP_HOME/lib"
 {{#distributionJavaMainModule}}
 CLASSPATH="$JARSDIR"
