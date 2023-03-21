@@ -19,6 +19,10 @@ package org.jreleaser.sdk.nexus2;
 
 import com.fasterxml.jackson.databind.RuntimeJsonMappingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import dev.failsafe.Failsafe;
+import dev.failsafe.RetryPolicy;
+import dev.failsafe.function.CheckedPredicate;
+import dev.failsafe.function.CheckedSupplier;
 import feign.Feign;
 import feign.FeignException;
 import feign.Request;
@@ -32,9 +36,6 @@ import feign.codec.ErrorDecoder;
 import feign.form.FormData;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
-import net.jodah.failsafe.Failsafe;
-import net.jodah.failsafe.RetryPolicy;
-import net.jodah.failsafe.function.CheckedSupplier;
 import org.apache.commons.io.IOUtils;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.logging.JReleaserLogger;
@@ -65,7 +66,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Predicate;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.requireNonNull;
@@ -293,10 +293,10 @@ public class Nexus2 {
             this.maxRetries = maxRetries;
         }
 
-        public <R> R retry(Predicate<R> stopFunction, CheckedSupplier<R> retriableOperation) {
+        public <R> R retry(CheckedPredicate<R> stopFunction, CheckedSupplier<R> retriableOperation) {
             final int maxAttempts = maxRetries + 1;
 
-            RetryPolicy<R> policy = new RetryPolicy<R>()
+            RetryPolicy<R> policy = RetryPolicy.<R>builder()
                 .handle(IllegalStateException.class, NexusAPIException.class)
                 .handleResultIf(stopFunction)
                 .withDelay(Duration.ofSeconds(delay))
@@ -304,7 +304,8 @@ public class Nexus2 {
                 .onFailedAttempt(event -> {
                     logger.info(RB.$("nexus.retry.attempt"), event.getAttemptCount(), maxAttempts);
                     logger.debug(RB.$("nexus.retry.failed.attempt"), event.getAttemptCount(), maxAttempts, event.getLastResult());
-                });
+                }).build();
+
             return Failsafe.with(policy).get(retriableOperation);
         }
     }
