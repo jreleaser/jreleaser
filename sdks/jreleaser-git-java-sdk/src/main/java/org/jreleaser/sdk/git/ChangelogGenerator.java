@@ -700,7 +700,7 @@ public class ChangelogGenerator {
 
     static class ConventionalCommit extends Commit {
         private static final Pattern FIRST_LINE_PATTERN =
-            Pattern.compile("^(?<type>\\w+)(?:\\((?<scope>\\w+)\\))?(?<bang>!)?: (?<description>.*$)");
+            Pattern.compile("^(?<type>\\w+)(?:\\((?<scope>[^)\\n]+)\\))?(?<bang>!)?: (?<description>.*$)");
         private static final Pattern BREAKING_CHANGE_PATTERN = Pattern.compile("^BREAKING[ \\-]CHANGE:\\s+(?<content>[\\w\\W]+)", Pattern.MULTILINE);
         private static final Pattern TRAILER_PATTERN = Pattern.compile("(?<token>^\\w+(?:-\\w+)*)(?:: | #)(?<value>.*$)");
 

@@ -214,6 +214,40 @@ class ConventionalCommitUnitTest {
     }
 
     @Test
+    void scopeCanHaveDash() {
+        String commitBody = "build(deps-dev): bump mockito-core from 4.8.1 to 5.2.0";
+
+        ChangelogGenerator.Commit c = mockCommit(commitBody);
+
+        assertThat(c)
+            .hasFieldOrPropertyWithValue("isConventional", true)
+            .hasFieldOrPropertyWithValue("ccIsBreakingChange", false)
+            .hasFieldOrPropertyWithValue("ccBreakingChangeContent", "")
+            .hasFieldOrPropertyWithValue("ccType", "build")
+            .hasFieldOrPropertyWithValue("ccScope", "deps-dev")
+            .hasFieldOrPropertyWithValue("ccDescription", "bump mockito-core from 4.8.1 to 5.2.0")
+            .hasFieldOrPropertyWithValue("ccBody", "");
+        assertThat(((ChangelogGenerator.ConventionalCommit) c).getTrailers()).isEmpty();
+    }
+
+    @Test
+    void scopeCanHaveOtherCharacters() {
+        String commitBody = "build(@scope/pkg-name): javascript style scope";
+
+        ChangelogGenerator.Commit c = mockCommit(commitBody);
+
+        assertThat(c)
+            .hasFieldOrPropertyWithValue("isConventional", true)
+            .hasFieldOrPropertyWithValue("ccIsBreakingChange", false)
+            .hasFieldOrPropertyWithValue("ccBreakingChangeContent", "")
+            .hasFieldOrPropertyWithValue("ccType", "build")
+            .hasFieldOrPropertyWithValue("ccScope", "@scope/pkg-name")
+            .hasFieldOrPropertyWithValue("ccDescription", "javascript style scope")
+            .hasFieldOrPropertyWithValue("ccBody", "");
+        assertThat(((ChangelogGenerator.ConventionalCommit) c).getTrailers()).isEmpty();
+    }
+
+    @Test
     void ccExample1() {
         String commitBody = "feat: allow provided config object to extend other configs\n" +
             "\n" +
