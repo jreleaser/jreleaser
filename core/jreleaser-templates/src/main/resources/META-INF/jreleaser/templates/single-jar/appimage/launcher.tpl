@@ -36,8 +36,6 @@ Please set the JAVA_HOME variable in your environment to match the
 location of your Java installation."
 fi
 
-JAVACMD="$JAVA_HOME/bin/java"
-
 # Collect all arguments for the java command;
 #   * $JAVA_OPTS can contain fragments of
 #     shell script including quotes and variable substitutions, so put them in
