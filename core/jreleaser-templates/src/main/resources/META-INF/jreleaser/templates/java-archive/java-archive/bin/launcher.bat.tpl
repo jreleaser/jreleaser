@@ -1,59 +1,26 @@
 @echo off
 rem {{jreleaserCreationStamp}}
 
-set ERROR_CODE=0
+@rem Set local scope for the variables with windows NT shell
+if "%OS%"=="Windows_NT" setlocal
 
-:init
-@REM Decide how to startup depending on the version of windows
+set DIRNAME=%~dp0
+if "%DIRNAME%" == "" set DIRNAME=.
+set APP_BASE_NAME=%~n0
+set APP_HOME=%DIRNAME%..
 
-@REM -- Win98ME
-if NOT "%OS%"=="Windows_NT" goto Win9xArg
+@rem Resolve any "." and ".." in APP_HOME to make it shorter.
+for %%i in ("%APP_HOME%") do set APP_HOME=%%~fi
 
-@REM set local scope for the variables with windows NT shell
-if "%OS%"=="Windows_NT" @setlocal
-
-@REM -- 4NT shell
-if "%eval[2+2]" == "4" goto 4NTArgs
-
-@REM -- Regular WinNT shell
-set CMD_LINE_ARGS=%*
-goto WinNTGetScriptDir
-
-@REM The 4NT Shell from jp software
-:4NTArgs
-set CMD_LINE_ARGS=%$
-goto WinNTGetScriptDir
-
-:Win9xArg
-@REM Slurp the command line arguments.  This loop allows for an unlimited number
-@REM of arguments (up to the command line limit, anyway).
-set CMD_LINE_ARGS=
-:Win9xApp
-if %1a==a goto Win9xGetScriptDir
-set CMD_LINE_ARGS=%CMD_LINE_ARGS% %1
-shift
-goto Win9xApp
-
-:Win9xGetScriptDir
-set SAVEDIR=%CD%
-%0\
-cd %0\..\..
-set BASEDIR=%CD%
-cd %SAVEDIR%
-set SAVE_DIR=
-goto javaSetup
-
-:WinNTGetScriptDir
-for %%i in ("%~dp0..") do set "BASEDIR=%%~fi"
-
-:javaSetup
+@rem Add default JVM options here. You can also use JAVA_OPTS to pass JVM options to this script.
+set DEFAULT_JVM_OPTS=
 
 @rem Find java.exe
 if defined JAVA_HOME goto findJavaFromJavaHome
 
 set JAVA_EXE=java.exe
 %JAVA_EXE% -version >NUL 2>&1
-if "%ERRORLEVEL%" == "0" goto endInit
+if "%ERRORLEVEL%" == "0" goto execute
 
 echo.
 echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
@@ -61,13 +28,13 @@ echo.
 echo Please set the JAVA_HOME variable in your environment to match the
 echo location of your Java installation.
 
-goto error
+goto fail
 
 :findJavaFromJavaHome
 set JAVA_HOME=%JAVA_HOME:"=%
 set JAVA_EXE=%JAVA_HOME%/bin/java.exe
 
-if exist "%JAVA_EXE%" goto endInit
+if exist "%JAVA_EXE%" goto execute
 
 echo.
 echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME%
@@ -75,10 +42,12 @@ echo.
 echo Please set the JAVA_HOME variable in your environment to match the
 echo location of your Java installation.
 
-goto error
+goto fail
 
-set JAVACMD="%JAVA_HOME%\bin\java"
-set JARSDIRS="%BASEDIR%\lib"
+:execute
+@rem Setup the command line
+
+set JARSDIRS="%APP_HOME%\lib"
 {{#distributionJavaMainModule}}
 set CLASSPATH="%JARSDIRS%"
 {{/distributionJavaMainModule}}
@@ -87,45 +56,30 @@ set CLASSPATH="%JARSDIRS%\*"
 {{/distributionJavaMainModule}}
 set JAVA_OPTS="{{distributionJavaOptions}}"
 
-@REM Reaching here means variables are defined and arguments have been captured
-:endInit
-
+@rem Execute
 {{#distributionJavaMainModule}}
-%JAVACMD% %DEFAULT_JAVA_OPTS% %JAVA_OPTS% -p %CLASSPATH% -m {{distributionJavaMainModule}}/{{distributionJavaMainClass}} %CMD_LINE_ARGS%
+"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% -p %CLASSPATH% -m {{distributionJavaMainModule}}/{{distributionJavaMainClass}} %*
 {{/distributionJavaMainModule}}
 {{^distributionJavaMainModule}}
 {{#distributionJavaMainClass}}
-%JAVACMD% %DEFAULT_JAVA_OPTS% %JAVA_OPTS% -cp %CLASSPATH% {{distributionJavaMainClass}} %CMD_LINE_ARGS%
+"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% -cp %CLASSPATH% {{distributionJavaMainClass}} %*
 {{/distributionJavaMainClass}}
 {{^distributionJavaMainClass}}
-%JAVACMD% %DEFAULT_JAVA_OPTS% %JAVA_OPTS% -cp %CLASSPATH% -jar "%JARSDIRS%\{{distributionJavaMainJar}}" %CMD_LINE_ARGS%
+"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% -cp %CLASSPATH% -jar "%JARSDIRS%\{{distributionJavaMainJar}}" %*
 {{/distributionJavaMainClass}}
 {{/distributionJavaMainModule}}
 
-if %ERRORLEVEL% NEQ 0 goto error
-goto end
-
-:error
-if "%OS%"=="Windows_NT" @endlocal
-set ERROR_CODE=%ERRORLEVEL%
-
 :end
-@REM set local scope for the variables with windows NT shell
-if "%OS%"=="Windows_NT" goto endNT
+@rem End local scope for the variables with windows NT shell
+if "%ERRORLEVEL%"=="0" goto mainEnd
 
-@REM For old DOS remove the set variables from ENV - we assume they were not set
-@REM before we started - at least we don't leave any baggage around
-set CMD_LINE_ARGS=
-goto postExec
+:fail
+rem Set variable JRELEASER_EXIT_CONSOLE if you need the _script_ return code instead of
+rem the _cmd.exe /c_ return code!
+if  not "" == "%JRELEASER_EXIT_CONSOLE%" exit 1
+exit /b 1
 
-:endNT
-@REM If error code is set to 1 then the endlocal was done already in :error.
-if %ERROR_CODE% EQU 0 @endlocal
+:mainEnd
+if "%OS%"=="Windows_NT" endlocal
 
-:postExec
-
-if "%FORCE_EXIT_ON_ERROR%" == "on" (
-  if %ERROR_CODE% NEQ 0 exit %ERROR_CODE%
-)
-
-exit /B %ERROR_CODE%
+:omega
