@@ -139,6 +139,9 @@ announce:
     active: RELEASE
     host: https://fosstodon.org
     statusTemplate: src/jreleaser/mastodon.tpl
+  openCollective:
+    active: RELEASE
+    message: '{{#f_md2html}}🚀 JReleaser {{projectVersion}} has been released! [{{releaseNotesUrl}}]({{releaseNotesUrl}}){{/f_md2html}}'
   http:
     noticeable:
       active: RELEASE
