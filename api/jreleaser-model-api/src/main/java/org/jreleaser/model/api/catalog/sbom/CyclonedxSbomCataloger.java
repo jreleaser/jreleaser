@@ -48,8 +48,7 @@ public interface CyclonedxSbomCataloger extends SbomCataloger {
             return "." + alias.replace(".", "-") + ".sbom";
         }
 
-        @Override
-        public String toString() {
+        public String formatted() {
             return name().toLowerCase(Locale.ROOT);
         }
 
