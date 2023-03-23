@@ -18,6 +18,7 @@
 package org.jreleaser.gradle.plugin.dsl.deploy.maven
 
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.deploy.Deployer
@@ -48,9 +49,29 @@ interface MavenDeployer extends Deployer {
 
     Property<Boolean> getSign()
 
+    Property<Boolean> getChecksums()
+
+    Property<Boolean> getSourceJar()
+
+    Property<Boolean> getJavadocJar()
+
     Property<Boolean> getVerifyPom()
 
     Property<Boolean> getApplyMavenCentralRules()
 
     ListProperty<String> getStagingRepositories()
+
+    void artifactOverride(Action<? super ArtifactOverride> action)
+
+    void artifactOverride(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArtifactOverride) Closure<Void> action)
+
+    interface ArtifactOverride {
+        Property<String> getGroupId()
+
+        Property<String> getArtifactId()
+
+        Property<Boolean> getSourceJar()
+
+        Property<Boolean> getJavadocJar()
+    }
 }

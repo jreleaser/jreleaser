@@ -384,5 +384,4 @@ class DistributionImpl implements Distribution {
         if (winget.isSet()) distribution.winget = winget.toModel()
         distribution
     }
-
 }

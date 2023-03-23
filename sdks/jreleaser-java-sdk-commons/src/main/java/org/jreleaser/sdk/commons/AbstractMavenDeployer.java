@@ -56,6 +56,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
@@ -143,10 +144,6 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
     }
 
     private void checkMavenCentralRules(Map<String, Deployable> deployablesMap, Errors errors) {
-        if (!getDeployer().isApplyMavenCentralRules()) {
-            return;
-        }
-
         // 1st check jar, sources, javadoc if applicable
         for (Deployable deployable : deployablesMap.values()) {
             if (!deployable.getFilename().endsWith(EXT_POM)) {
@@ -163,14 +160,14 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
                 }
             }
 
-            if (deployable.requiresSourcesJar()) {
+            if (requiresSourcesJar(deployable)) {
                 Deployable derived = deployable.deriveByFilename(PACKAGING_JAR, base + "-sources.jar");
                 if (!deployablesMap.containsKey(derived.getFullDeployPath())) {
                     errors.configuration(RB.$("validation_is_missing", derived.getFilename()));
                 }
             }
 
-            if (deployable.requiresJavadocJar()) {
+            if (requiresJavadocJar(deployable)) {
                 Deployable derived = deployable.deriveByFilename(PACKAGING_JAR, base + "-javadoc.jar");
                 if (!deployablesMap.containsKey(derived.getFullDeployPath())) {
                     errors.configuration(RB.$("validation_is_missing", derived.getFilename()));
@@ -231,6 +228,30 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
         }
     }
 
+    private boolean requiresSourcesJar(Deployable deployable) {
+        if (!deployable.requiresSourcesJar()) return false;
+
+        Optional<org.jreleaser.model.internal.deploy.maven.MavenDeployer.ArtifactOverride> override = getDeployer().getArtifactOverrides().stream()
+            .filter(a -> a.getGroupId().equals(deployable.getGroupId()) && a.getArtifactId().equals(deployable.getArtifactId()))
+            .findFirst();
+
+        if (override.isPresent() && (override.get().isSourceJarSet())) return override.get().isSourceJar();
+
+        return getDeployer().isSourceJar();
+    }
+
+    private boolean requiresJavadocJar(Deployable deployable) {
+        if (!deployable.requiresJavadocJar()) return false;
+
+        Optional<org.jreleaser.model.internal.deploy.maven.MavenDeployer.ArtifactOverride> override = getDeployer().getArtifactOverrides().stream()
+            .filter(a -> a.getGroupId().equals(deployable.getGroupId()) && a.getArtifactId().equals(deployable.getArtifactId()))
+            .findFirst();
+
+        if (override.isPresent() && (override.get().isJavadocJarSet())) return override.get().isJavadocJar();
+
+        return getDeployer().isJavadocJar();
+    }
+
     private void signDeployables(Map<String, Deployable> deployablesMap, Set<Deployable> deployables) {
         if (!getDeployer().isSign()) {
             return;
@@ -257,6 +278,10 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
     }
 
     private void checksumDeployables(Map<String, Deployable> deployablesMap, Set<Deployable> deployables) {
+        if (!getDeployer().isChecksums()) {
+            return;
+        }
+
         for (Deployable deployable : deployablesMap.values()) {
             if (deployable.isChecksum()) continue;
 

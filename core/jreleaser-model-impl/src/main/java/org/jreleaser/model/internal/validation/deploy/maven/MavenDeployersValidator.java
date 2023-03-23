@@ -181,12 +181,41 @@ public final class MavenDeployersValidator {
             mavenDeployer.setSign(true);
         }
 
+        if (mavenDeployer.isApplyMavenCentralRules() && !mavenDeployer.isChecksumsSet()) {
+            mavenDeployer.setChecksums(true);
+        }
+
+        if (mavenDeployer.isApplyMavenCentralRules() && !mavenDeployer.isSourceJarSet()) {
+            mavenDeployer.setSourceJar(true);
+        }
+
+        if (mavenDeployer.isApplyMavenCentralRules() && !mavenDeployer.isJavadocJarSet()) {
+            mavenDeployer.setJavadocJar(true);
+        }
+
         if (mavenDeployer.isApplyMavenCentralRules() && !mavenDeployer.isVerifyPomSet()) {
             mavenDeployer.setVerifyPom(true);
         }
 
         if (mavenDeployer.isSign() && !context.getModel().getSigning().isEnabled() && !context.isDryrun() /*&& !mode.validateConfig()*/) {
             errors.configuration(RB.$("validation_maven_deployer_signing", deployerPrefix));
+        }
+
+        int index = 0;
+        for (MavenDeployer.ArtifactOverride artifactOverride : mavenDeployer.getArtifactOverrides()) {
+            if (isBlank(artifactOverride.getGroupId())) {
+                artifactOverride.setGroupId(context.getModel().getProject().getJava().getGroupId());
+            }
+
+            if (isBlank(artifactOverride.getGroupId())) {
+                errors.configuration(RB.$("validation_must_not_be_null", deployerPrefix + ".artifactOverrides[" + index + "].groupId"));
+            }
+
+            if (isBlank(artifactOverride.getArtifactId())) {
+                errors.configuration(RB.$("validation_must_not_be_null", deployerPrefix + ".artifactOverrides[" + index + "].artifactId"));
+            }
+
+            index++;
         }
     }
 }

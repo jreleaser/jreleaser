@@ -23,9 +23,11 @@ import org.jreleaser.model.Http;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * @author Andres Almiray
@@ -36,7 +38,9 @@ public final class GiteaMavenDeployer extends AbstractMavenDeployer<GiteaMavenDe
 
     @JsonIgnore
     private final org.jreleaser.model.api.deploy.maven.GiteaMavenDeployer immutable = new org.jreleaser.model.api.deploy.maven.GiteaMavenDeployer() {
-        private static final long serialVersionUID = 2723686027082362594L;
+        private static final long serialVersionUID = -5072992326711451976L;
+
+        private Set<? extends org.jreleaser.model.api.deploy.maven.MavenDeployer.ArtifactOverride> artifactOverrides;
 
         @Override
         public String getGroup() {
@@ -69,6 +73,21 @@ public final class GiteaMavenDeployer extends AbstractMavenDeployer<GiteaMavenDe
         }
 
         @Override
+        public boolean isChecksums() {
+            return GiteaMavenDeployer.this.isChecksums();
+        }
+
+        @Override
+        public boolean isSourceJar() {
+            return GiteaMavenDeployer.this.isSourceJar();
+        }
+
+        @Override
+        public boolean isJavadocJar() {
+            return GiteaMavenDeployer.this.isJavadocJar();
+        }
+
+        @Override
         public boolean isVerifyPom() {
             return GiteaMavenDeployer.this.isVerifyPom();
         }
@@ -81,6 +100,16 @@ public final class GiteaMavenDeployer extends AbstractMavenDeployer<GiteaMavenDe
         @Override
         public List<String> getStagingRepositories() {
             return unmodifiableList(GiteaMavenDeployer.this.getStagingRepositories());
+        }
+
+        @Override
+        public Set<? extends org.jreleaser.model.api.deploy.maven.MavenDeployer.ArtifactOverride> getArtifactOverrides() {
+            if (null == artifactOverrides) {
+                artifactOverrides = GiteaMavenDeployer.this.getArtifactOverrides().stream()
+                    .map(MavenDeployer.ArtifactOverride::asImmutable)
+                    .collect(toSet());
+            }
+            return artifactOverrides;
         }
 
         @Override

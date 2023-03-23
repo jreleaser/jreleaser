@@ -23,9 +23,11 @@ import org.jreleaser.model.Http;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * @author Andres Almiray
@@ -36,7 +38,9 @@ public final class AzureMavenDeployer extends AbstractMavenDeployer<AzureMavenDe
 
     @JsonIgnore
     private final org.jreleaser.model.api.deploy.maven.AzureMavenDeployer immutable = new org.jreleaser.model.api.deploy.maven.AzureMavenDeployer() {
-        private static final long serialVersionUID = -7887921802377680250L;
+        private static final long serialVersionUID = -2548518547684068299L;
+
+        private Set<? extends org.jreleaser.model.api.deploy.maven.MavenDeployer.ArtifactOverride> artifactOverrides;
 
         @Override
         public String getGroup() {
@@ -69,6 +73,21 @@ public final class AzureMavenDeployer extends AbstractMavenDeployer<AzureMavenDe
         }
 
         @Override
+        public boolean isChecksums() {
+            return AzureMavenDeployer.this.isChecksums();
+        }
+
+        @Override
+        public boolean isSourceJar() {
+            return AzureMavenDeployer.this.isSourceJar();
+        }
+
+        @Override
+        public boolean isJavadocJar() {
+            return AzureMavenDeployer.this.isJavadocJar();
+        }
+
+        @Override
         public boolean isVerifyPom() {
             return AzureMavenDeployer.this.isVerifyPom();
         }
@@ -81,6 +100,16 @@ public final class AzureMavenDeployer extends AbstractMavenDeployer<AzureMavenDe
         @Override
         public List<String> getStagingRepositories() {
             return unmodifiableList(AzureMavenDeployer.this.getStagingRepositories());
+        }
+
+        @Override
+        public Set<? extends org.jreleaser.model.api.deploy.maven.MavenDeployer.ArtifactOverride> getArtifactOverrides() {
+            if (null == artifactOverrides) {
+                artifactOverrides = AzureMavenDeployer.this.getArtifactOverrides().stream()
+                    .map(MavenDeployer.ArtifactOverride::asImmutable)
+                    .collect(toSet());
+            }
+            return artifactOverrides;
         }
 
         @Override

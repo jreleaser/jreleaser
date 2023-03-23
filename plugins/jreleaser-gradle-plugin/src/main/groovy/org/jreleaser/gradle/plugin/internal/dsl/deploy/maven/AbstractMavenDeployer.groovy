@@ -19,6 +19,9 @@ package org.jreleaser.gradle.plugin.internal.dsl.deploy.maven
 
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
+import org.gradle.api.Action
+import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
@@ -28,6 +31,7 @@ import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.deploy.maven.MavenDeployer
 import org.jreleaser.model.Active
 import org.jreleaser.model.Http
+import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -45,6 +49,9 @@ abstract class AbstractMavenDeployer implements MavenDeployer {
     final Property<Integer> connectTimeout
     final Property<Integer> readTimeout
     final Property<Boolean> sign
+    final Property<Boolean> checksums
+    final Property<Boolean> sourceJar
+    final Property<Boolean> javadocJar
     final Property<Boolean> verifyPom
     final Property<Boolean> applyMavenCentralRules
     final Property<String> url
@@ -54,12 +61,17 @@ abstract class AbstractMavenDeployer implements MavenDeployer {
     final ListProperty<String> stagingRepositories
     final MapProperty<String, Object> extraProperties
 
+    private final NamedDomainObjectContainer<ArtifactOverrideImpl> artifactOverrides
+
     @Inject
     AbstractMavenDeployer(ObjectFactory objects) {
         active = objects.property(Active).convention(Providers.<Active> notDefined())
         connectTimeout = objects.property(Integer).convention(Providers.<Integer> notDefined())
         readTimeout = objects.property(Integer).convention(Providers.<Integer> notDefined())
         sign = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+        checksums = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+        sourceJar = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+        javadocJar = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         verifyPom = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         applyMavenCentralRules = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         url = objects.property(String).convention(Providers.<String> notDefined())
@@ -68,6 +80,15 @@ abstract class AbstractMavenDeployer implements MavenDeployer {
         authorization = objects.property(Http.Authorization).convention(Providers.<Http.Authorization> notDefined())
         stagingRepositories = objects.listProperty(String).convention(Providers.<List<String>> notDefined())
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
+
+        artifactOverrides = objects.domainObjectContainer(ArtifactOverrideImpl, new NamedDomainObjectFactory<ArtifactOverrideImpl>() {
+            @Override
+            ArtifactOverrideImpl create(String name) {
+                ArtifactOverrideImpl artifact = objects.newInstance(ArtifactOverrideImpl, objects)
+                artifact.name = name
+                artifact
+            }
+        })
     }
 
     @Internal
@@ -77,13 +98,17 @@ abstract class AbstractMavenDeployer implements MavenDeployer {
             readTimeout.present ||
             extraProperties.present ||
             sign.present ||
+            checksums.present ||
+            sourceJar.present ||
+            javadocJar.present ||
             verifyPom.present ||
             applyMavenCentralRules.present ||
             url.present ||
             username.present ||
             password.present ||
             authorization.present ||
-            stagingRepositories.present
+            stagingRepositories.present ||
+            !artifactOverrides.isEmpty()
     }
 
     @Override
@@ -106,6 +131,16 @@ abstract class AbstractMavenDeployer implements MavenDeployer {
         }
     }
 
+    @Override
+    void artifactOverride(Action<? super ArtifactOverride> action) {
+        action.execute(artifactOverrides.maybeCreate("artifact-${artifactOverrides.size()}".toString()))
+    }
+
+    @Override
+    void artifactOverride(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArtifactOverride) Closure<Void> action) {
+        ConfigureUtil.configure(action, artifactOverrides.maybeCreate("artifact-${artifactOverrides.size()}".toString()))
+    }
+
     protected <D extends org.jreleaser.model.internal.deploy.maven.MavenDeployer> void fillProperties(D deployer) {
         deployer.name = name
         if (active.present) deployer.active = active.get()
@@ -113,6 +148,9 @@ abstract class AbstractMavenDeployer implements MavenDeployer {
         if (readTimeout.present) deployer.readTimeout = readTimeout.get()
         if (extraProperties.present) deployer.extraProperties.putAll(extraProperties.get())
         if (sign.present) deployer.sign = sign.get()
+        if (checksums.present) deployer.checksums = checksums.get()
+        if (sourceJar.present) deployer.sourceJar = sourceJar.get()
+        if (javadocJar.present) deployer.javadocJar = javadocJar.get()
         if (verifyPom.present) deployer.verifyPom = verifyPom.get()
         if (applyMavenCentralRules.present) deployer.applyMavenCentralRules = applyMavenCentralRules.get()
         if (url.present) deployer.url = url.get()
@@ -120,5 +158,33 @@ abstract class AbstractMavenDeployer implements MavenDeployer {
         if (password.present) deployer.password = password.get()
         if (authorization.present) deployer.authorization = authorization.get()
         deployer.stagingRepositories = (List<String>) stagingRepositories.getOrElse([])
+        for (ArtifactOverrideImpl artifact : artifactOverrides) {
+            deployer.addArtifactOverride(artifact.toModel())
+        }
+    }
+
+    class ArtifactOverrideImpl implements ArtifactOverride {
+        String name
+        final Property<String> groupId
+        final Property<String> artifactId
+        final Property<Boolean> sourceJar
+        final Property<Boolean> javadocJar
+
+        @Inject
+        ArtifactOverrideImpl(ObjectFactory objects) {
+            groupId = objects.property(String).convention(Providers.<String> notDefined())
+            artifactId = objects.property(String).convention(Providers.<String> notDefined())
+            sourceJar = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+            javadocJar = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+        }
+
+        org.jreleaser.model.internal.deploy.maven.MavenDeployer.ArtifactOverride toModel() {
+            org.jreleaser.model.internal.deploy.maven.MavenDeployer.ArtifactOverride artifact = new org.jreleaser.model.internal.deploy.maven.MavenDeployer.ArtifactOverride()
+            if (groupId.present) artifact.groupId = groupId.get()
+            if (artifactId.present) artifact.artifactId = artifactId.get()
+            if (sourceJar.present) artifact.sourceJar = sourceJar.get()
+            if (javadocJar.present) artifact.javadocJar = javadocJar.get()
+            artifact
+        }
     }
 }

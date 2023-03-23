@@ -18,10 +18,12 @@
 package org.jreleaser.model.api.deploy.maven;
 
 import org.jreleaser.model.Http;
+import org.jreleaser.model.api.common.Domain;
 import org.jreleaser.model.api.common.TimeoutAware;
 import org.jreleaser.model.api.deploy.Deployer;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Andres Almiray
@@ -40,9 +42,27 @@ public interface MavenDeployer extends Deployer, TimeoutAware {
 
     boolean isSign();
 
+    boolean isChecksums();
+
+    boolean isSourceJar();
+
+    boolean isJavadocJar();
+
     boolean isVerifyPom();
 
     boolean isApplyMavenCentralRules();
 
     List<String> getStagingRepositories();
+
+    Set<? extends ArtifactOverride> getArtifactOverrides();
+
+    interface ArtifactOverride extends Domain {
+        String getGroupId();
+
+        String getArtifactId();
+
+        boolean isSourceJar();
+
+        boolean isJavadocJar();
+    }
 }

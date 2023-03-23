@@ -23,9 +23,11 @@ import org.jreleaser.model.Http;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
+import static java.util.stream.Collectors.toSet;
 
 /**
  * @author Andres Almiray
@@ -36,7 +38,9 @@ public final class ArtifactoryMavenDeployer extends AbstractMavenDeployer<Artifa
 
     @JsonIgnore
     private final org.jreleaser.model.api.deploy.maven.ArtifactoryMavenDeployer immutable = new org.jreleaser.model.api.deploy.maven.ArtifactoryMavenDeployer() {
-        private static final long serialVersionUID = 7913526241183452717L;
+        private static final long serialVersionUID = 2401988830267833191L;
+
+        private Set<? extends org.jreleaser.model.api.deploy.maven.MavenDeployer.ArtifactOverride> artifactOverrides;
 
         @Override
         public String getGroup() {
@@ -69,6 +73,21 @@ public final class ArtifactoryMavenDeployer extends AbstractMavenDeployer<Artifa
         }
 
         @Override
+        public boolean isChecksums() {
+            return ArtifactoryMavenDeployer.this.isChecksums();
+        }
+
+        @Override
+        public boolean isSourceJar() {
+            return ArtifactoryMavenDeployer.this.isSourceJar();
+        }
+
+        @Override
+        public boolean isJavadocJar() {
+            return ArtifactoryMavenDeployer.this.isJavadocJar();
+        }
+
+        @Override
         public boolean isVerifyPom() {
             return ArtifactoryMavenDeployer.this.isVerifyPom();
         }
@@ -81,6 +100,16 @@ public final class ArtifactoryMavenDeployer extends AbstractMavenDeployer<Artifa
         @Override
         public List<String> getStagingRepositories() {
             return unmodifiableList(ArtifactoryMavenDeployer.this.getStagingRepositories());
+        }
+
+        @Override
+        public Set<? extends org.jreleaser.model.api.deploy.maven.MavenDeployer.ArtifactOverride> getArtifactOverrides() {
+            if (null == artifactOverrides) {
+                artifactOverrides = ArtifactoryMavenDeployer.this.getArtifactOverrides().stream()
+                    .map(MavenDeployer.ArtifactOverride::asImmutable)
+                    .collect(toSet());
+            }
+            return artifactOverrides;
         }
 
         @Override

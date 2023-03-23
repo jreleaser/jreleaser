@@ -17,12 +17,20 @@
  */
 package org.jreleaser.model.internal.deploy.maven;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Http;
+import org.jreleaser.model.internal.common.AbstractModelObject;
+import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.common.TimeoutAware;
 import org.jreleaser.model.internal.deploy.Deployer;
 import org.jreleaser.mustache.TemplateContext;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static java.util.Collections.unmodifiableMap;
 
 /**
  * @author Andres Almiray
@@ -53,6 +61,24 @@ public interface MavenDeployer<A extends org.jreleaser.model.api.deploy.maven.Ma
 
     boolean isSignSet();
 
+    boolean isChecksums();
+
+    void setChecksums(Boolean checksums);
+
+    boolean isChecksumsSet();
+
+    boolean isSourceJar();
+
+    void setSourceJar(Boolean sourceJar);
+
+    boolean isSourceJarSet();
+
+    boolean isJavadocJar();
+
+    void setJavadocJar(Boolean javadocJar);
+
+    boolean isJavadocJarSet();
+
     boolean isVerifyPom();
 
     void setVerifyPom(Boolean verifyPom);
@@ -69,7 +95,114 @@ public interface MavenDeployer<A extends org.jreleaser.model.api.deploy.maven.Ma
 
     void setStagingRepositories(List<String> stagingRepositories);
 
+    Set<ArtifactOverride> getArtifactOverrides();
+
+    void setArtifactOverrides(Set<ArtifactOverride> artifactOverrides);
+
+    void addArtifactOverride(ArtifactOverride artifactOverride);
+
     Http.Authorization resolveAuthorization();
 
     String getResolvedUrl(TemplateContext props);
+
+    final class ArtifactOverride extends AbstractModelObject<ArtifactOverride> implements Domain {
+        private static final long serialVersionUID = 2308197517238220999L;
+
+        private String groupId;
+        private String artifactId;
+        private Boolean sourceJar;
+        private Boolean javadocJar;
+
+        @JsonIgnore
+        private final org.jreleaser.model.api.deploy.maven.MavenDeployer.ArtifactOverride immutable = new org.jreleaser.model.api.deploy.maven.MavenDeployer.ArtifactOverride() {
+            private static final long serialVersionUID = -2668444880125206282L;
+
+            @Override
+            public String getGroupId() {
+                return groupId;
+            }
+
+            @Override
+            public String getArtifactId() {
+                return artifactId;
+            }
+
+            @Override
+            public boolean isSourceJar() {
+                return sourceJar;
+            }
+
+            @Override
+            public boolean isJavadocJar() {
+                return javadocJar;
+            }
+
+            @Override
+            public Map<String, Object> asMap(boolean full) {
+                return unmodifiableMap(ArtifactOverride.this.asMap(full));
+            }
+        };
+
+        public org.jreleaser.model.api.deploy.maven.MavenDeployer.ArtifactOverride asImmutable() {
+            return immutable;
+        }
+
+        @Override
+        public void merge(ArtifactOverride source) {
+            this.groupId = this.merge(this.groupId, source.groupId);
+            this.artifactId = this.merge(this.artifactId, source.artifactId);
+            this.sourceJar = this.merge(this.sourceJar, source.sourceJar);
+            this.javadocJar = this.merge(this.javadocJar, source.javadocJar);
+        }
+
+        public String getGroupId() {
+            return groupId;
+        }
+
+        public void setGroupId(String groupId) {
+            this.groupId = groupId;
+        }
+
+        public String getArtifactId() {
+            return artifactId;
+        }
+
+        public void setArtifactId(String artifactId) {
+            this.artifactId = artifactId;
+        }
+
+        public boolean isSourceJar() {
+            return null != sourceJar && sourceJar;
+        }
+
+        public void setSourceJar(Boolean sourceJar) {
+            this.sourceJar = sourceJar;
+        }
+
+        public boolean isSourceJarSet() {
+            return null != sourceJar;
+        }
+
+        public boolean isJavadocJar() {
+            return null != javadocJar && javadocJar;
+        }
+
+        public void setJavadocJar(Boolean javadocJar) {
+            this.javadocJar = javadocJar;
+        }
+
+        public boolean isJavadocJarSet() {
+            return null != javadocJar;
+        }
+
+        @Override
+        public Map<String, Object> asMap(boolean full) {
+            Map<String, Object> props = new LinkedHashMap<>();
+            props.put("groupId", groupId);
+            props.put("artifactId", artifactId);
+            props.put("sourceJar", isSourceJar());
+            props.put("javadocJar", isJavadocJar());
+            return props;
+        }
+    }
 }

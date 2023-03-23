@@ -24,9 +24,11 @@ import org.jreleaser.mustache.TemplateContext;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
+import static java.util.stream.Collectors.toSet;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 
 /**
@@ -40,7 +42,9 @@ public final class GithubMavenDeployer extends AbstractMavenDeployer<GithubMaven
 
     @JsonIgnore
     private final org.jreleaser.model.api.deploy.maven.GithubMavenDeployer immutable = new org.jreleaser.model.api.deploy.maven.GithubMavenDeployer() {
-        private static final long serialVersionUID = 900691521486342222L;
+        private static final long serialVersionUID = -7375325967023331116L;
+
+        private Set<? extends org.jreleaser.model.api.deploy.maven.MavenDeployer.ArtifactOverride> artifactOverrides;
 
         @Override
         public String getGroup() {
@@ -78,6 +82,21 @@ public final class GithubMavenDeployer extends AbstractMavenDeployer<GithubMaven
         }
 
         @Override
+        public boolean isChecksums() {
+            return GithubMavenDeployer.this.isChecksums();
+        }
+
+        @Override
+        public boolean isSourceJar() {
+            return GithubMavenDeployer.this.isSourceJar();
+        }
+
+        @Override
+        public boolean isJavadocJar() {
+            return GithubMavenDeployer.this.isJavadocJar();
+        }
+
+        @Override
         public boolean isVerifyPom() {
             return GithubMavenDeployer.this.isVerifyPom();
         }
@@ -90,6 +109,16 @@ public final class GithubMavenDeployer extends AbstractMavenDeployer<GithubMaven
         @Override
         public List<String> getStagingRepositories() {
             return unmodifiableList(GithubMavenDeployer.this.getStagingRepositories());
+        }
+
+        @Override
+        public Set<? extends org.jreleaser.model.api.deploy.maven.MavenDeployer.ArtifactOverride> getArtifactOverrides() {
+            if (null == artifactOverrides) {
+                artifactOverrides = GithubMavenDeployer.this.getArtifactOverrides().stream()
+                    .map(MavenDeployer.ArtifactOverride::asImmutable)
+                    .collect(toSet());
+            }
+            return artifactOverrides;
         }
 
         @Override

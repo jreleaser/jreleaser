@@ -26,8 +26,10 @@ import org.jreleaser.mustache.TemplateContext;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.jreleaser.model.Constants.HIDE;
 import static org.jreleaser.model.Constants.UNSET;
@@ -39,17 +41,21 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 1.3.0
  */
 public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A>, A extends org.jreleaser.model.api.deploy.maven.MavenDeployer> extends AbstractActivatable<S> implements MavenDeployer<A>, ExtraProperties {
-    private static final long serialVersionUID = -1018438777546427061L;
+    private static final long serialVersionUID = 4927436336504358521L;
 
     @JsonIgnore
     private final String type;
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private final List<String> stagingRepositories = new ArrayList<>();
+    private final Set<ArtifactOverride> artifactOverrides = new LinkedHashSet<>();
     @JsonIgnore
     private String name;
     private int connectTimeout;
     private int readTimeout;
     protected Boolean sign;
+    protected Boolean checksums;
+    protected Boolean sourceJar;
+    protected Boolean javadocJar;
     protected Boolean verifyPom;
     protected Boolean applyMavenCentralRules;
     private String url;
@@ -68,6 +74,9 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
         this.connectTimeout = merge(this.getConnectTimeout(), source.getConnectTimeout());
         this.readTimeout = merge(this.getReadTimeout(), source.getReadTimeout());
         this.sign = merge(this.sign, source.sign);
+        this.checksums = merge(this.checksums, source.checksums);
+        this.sourceJar = merge(this.sourceJar, source.sourceJar);
+        this.javadocJar = merge(this.javadocJar, source.javadocJar);
         this.verifyPom = merge(this.verifyPom, source.verifyPom);
         this.applyMavenCentralRules = merge(this.applyMavenCentralRules, source.applyMavenCentralRules);
         this.url = merge(this.url, source.getUrl());
@@ -76,6 +85,7 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
         this.authorization = merge(this.authorization, source.getAuthorization());
         setExtraProperties(merge(this.extraProperties, source.getExtraProperties()));
         setStagingRepositories(merge(this.stagingRepositories, source.getStagingRepositories()));
+        setArtifactOverrides(merge(this.artifactOverrides, source.getArtifactOverrides()));
     }
 
     @Override
@@ -155,6 +165,51 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
     }
 
     @Override
+    public boolean isChecksums() {
+        return null != checksums && checksums;
+    }
+
+    @Override
+    public void setChecksums(Boolean checksum) {
+        this.checksums = checksum;
+    }
+
+    @Override
+    public boolean isChecksumsSet() {
+        return null != checksums;
+    }
+
+    @Override
+    public boolean isSourceJar() {
+        return null != sourceJar && sourceJar;
+    }
+
+    @Override
+    public void setSourceJar(Boolean sourceJar) {
+        this.sourceJar = sourceJar;
+    }
+
+    @Override
+    public boolean isSourceJarSet() {
+        return null != sourceJar;
+    }
+
+    @Override
+    public boolean isJavadocJar() {
+        return null != javadocJar && javadocJar;
+    }
+
+    @Override
+    public void setJavadocJar(Boolean javadocJar) {
+        this.javadocJar = javadocJar;
+    }
+
+    @Override
+    public boolean isJavadocJarSet() {
+        return null != javadocJar;
+    }
+
+    @Override
     public boolean isVerifyPom() {
         return null != verifyPom && verifyPom;
     }
@@ -193,6 +248,24 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
     public void setStagingRepositories(List<String> stagingRepositories) {
         this.stagingRepositories.clear();
         this.stagingRepositories.addAll(stagingRepositories);
+    }
+
+    @Override
+    public Set<ArtifactOverride> getArtifactOverrides() {
+        return artifactOverrides;
+    }
+
+    @Override
+    public void setArtifactOverrides(Set<ArtifactOverride> artifactOverrides) {
+        this.artifactOverrides.clear();
+        this.artifactOverrides.addAll(artifactOverrides);
+    }
+
+    @Override
+    public void addArtifactOverride(ArtifactOverride artifactOverride) {
+        if (null != artifactOverride) {
+            this.artifactOverrides.add(artifactOverride);
+        }
     }
 
     @Override
@@ -254,9 +327,18 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
         props.put("username", isNotBlank(username) ? HIDE : UNSET);
         props.put("password", isNotBlank(password) ? HIDE : UNSET);
         props.put("sign", isSign());
+        props.put("checksums", isChecksums());
+        props.put("sourceJar", isSourceJar());
+        props.put("javadocJar", isJavadocJar());
         props.put("verifyPom", isVerifyPom());
         props.put("applyMavenCentralRules", isApplyMavenCentralRules());
         props.put("stagingRepositories", stagingRepositories);
+        Map<String, Map<String, Object>> mappedArtifacts = new LinkedHashMap<>();
+        int i = 0;
+        for (ArtifactOverride artifact : getArtifactOverrides()) {
+            mappedArtifacts.put("artifact " + (i++), artifact.asMap(full));
+        }
+        props.put("artifactOverrides", mappedArtifacts);
         asMap(full, props);
         props.put("extraProperties", getExtraProperties());
 
