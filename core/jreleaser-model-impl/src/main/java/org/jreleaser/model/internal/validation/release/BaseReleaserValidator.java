@@ -229,8 +229,8 @@ public final class BaseReleaserValidator {
         // FIXME: extension
         // eager resolve
         service.getResolvedTagName(context.getModel());
+        service.getResolvedBranchPush(context.getModel());
         if (service.isReleaseSupported()) {
-            service.getResolvedBranchPush(context.getModel());
             service.getResolvedReleaseName(context.getModel());
             service.getMilestone().getResolvedName(service.props(context.getModel()));
         }

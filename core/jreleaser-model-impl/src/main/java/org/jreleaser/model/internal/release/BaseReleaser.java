@@ -189,7 +189,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
         if (isBlank(cachedBranchPush)) {
             cachedBranchPush = resolveTemplate(branchPush, props(model));
         }
-        if (cachedBranchPush.contains("{{")) {
+        if (isNotBlank(cachedBranchPush) && cachedBranchPush.contains("{{")) {
             cachedBranchPush = resolveTemplate(cachedBranchPush, props(model));
         }
 
@@ -211,7 +211,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
         if (isBlank(cachedTagName)) {
             cachedTagName = resolveTemplate(tagName, props(model));
         }
-        if (cachedTagName.contains("{{")) {
+        if (isNotBlank(cachedTagName) && cachedTagName.contains("{{")) {
             cachedTagName = resolveTemplate(cachedTagName, props(model));
         }
 
@@ -229,7 +229,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
         if (isBlank(cachedReleaseName)) {
             cachedReleaseName = resolveTemplate(releaseName, props(model));
         }
-        if (cachedReleaseName.contains("{{")) {
+        if (isNotBlank(cachedReleaseName) && cachedReleaseName.contains("{{")) {
             cachedReleaseName = resolveTemplate(cachedReleaseName, props(model));
         }
 
