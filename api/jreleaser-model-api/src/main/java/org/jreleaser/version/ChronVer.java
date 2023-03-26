@@ -34,7 +34,7 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @since 1.0.0
  */
 public class ChronVer implements Version<ChronVer> {
-    private static final Pattern VERSION_PATTERN = Pattern.compile("^([2-9]\\d{3})\\.(0[1-9]|1[0-2])\\.(0[1-9]|[1-2]\\d|3[0-1])(?:\\.((?:[1-9]\\d*)(?:(?:-[a-zA-Z0-9]+)+(?:\\.[1-9]\\d*)?)?))?$");
+    private static final Pattern VERSION_PATTERN = Pattern.compile("^([2-9]\\d{3})\\.(0[1-9]|1[0-2])\\.(0[1-9]|[1-2]\\d|3[0-1])(?:\\.((?:[1-9]\\d*)(?:(?:-[a-zA-Z0-9]+)+(?:\\.[1-9]\\d*)?)?))?(?:-[a-zA-Z0-9]+)?$");
     private static final Pattern CHANGESET_PATTERN = Pattern.compile("^(?:((?:[1-9]\\d*))(?:-([a-zA-Z0-9-]+[a-zA-Z0-9]?)(?:\\.([1-9]\\d*))?)?)?$");
 
     private final int year;
