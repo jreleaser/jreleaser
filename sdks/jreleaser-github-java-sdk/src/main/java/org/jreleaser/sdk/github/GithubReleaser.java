@@ -171,8 +171,11 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
 
     @Override
     protected void createRelease() throws ReleaseException {
-        org.jreleaser.model.internal.release.GithubReleaser github = context.getModel().getRelease().getGithub();
-        context.getLogger().info(RB.$("git.releaser.releasing"), github.getResolvedRepoUrl(context.getModel()));
+        String pullBranch = github.getBranch();
+        String pushBranch = github.getResolvedBranchPush(context.getModel());
+        boolean mustCheckoutBranch = !pushBranch.equals(pullBranch);
+
+        context.getLogger().info(RB.$("git.releaser.releasing"), github.getResolvedRepoUrl(context.getModel()), pushBranch);
         String tagName = github.getEffectiveTagName(context.getModel());
 
         try {
@@ -183,12 +186,17 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
                 github.getReadTimeout());
 
             if (!context.isDryrun()) {
-                String branch = github.getBranch();
                 Map<String, GHBranch> branches = api.listBranches(github.getOwner(), github.getName());
-                if (!branches.containsKey(branch)) {
-                    throw new ReleaseException(RB.$("ERROR_git_release_branch_not_exists", branch, branches.keySet()));
+                if (!branches.containsKey(pushBranch)) {
+                    if (mustCheckoutBranch) {
+                        GitSdk.of(context).checkoutBranch(github, pushBranch, true);
+                    } else {
+                        throw new ReleaseException(RB.$("ERROR_git_release_branch_not_exists", pushBranch, branches.keySet()));
+                    }
                 }
             }
+
+            GitSdk.of(context).checkoutBranch(pushBranch);
 
             String changelog = context.getChangelog().getResolvedChangelog();
 
@@ -257,7 +265,6 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
 
     @Override
     public Repository maybeCreateRepository(String owner, String repo, String password) throws IOException {
-        org.jreleaser.model.internal.release.GithubReleaser github = context.getModel().getRelease().getGithub();
         context.getLogger().debug(RB.$("git.repository.lookup"), owner, repo);
 
         Github api = new Github(context.getLogger(),
@@ -282,8 +289,6 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
     public Optional<User> findUser(String email, String name) {
         if (NOREPLY_GITHUB_COM_EMAIL.equals(email)) return Optional.empty();
 
-        org.jreleaser.model.internal.release.GithubReleaser github = context.getModel().getRelease().getGithub();
-
         try {
             return new XGithub(context.getLogger(),
                 github.getApiEndpoint(),
@@ -301,8 +306,6 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
 
     @Override
     public List<Release> listReleases(String owner, String repo) throws IOException {
-        org.jreleaser.model.internal.release.GithubReleaser github = context.getModel().getRelease().getGithub();
-
         Github api = new Github(context.getLogger(),
             github.getApiEndpoint(),
             github.getToken(),
@@ -333,8 +336,6 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
     }
 
     private void createRelease(Github api, String tagName, String changelog, boolean deleteTags) throws IOException {
-        org.jreleaser.model.internal.release.GithubReleaser github = context.getModel().getRelease().getGithub();
-
         if (context.isDryrun()) {
             for (Asset asset : assets) {
                 if (0 == Files.size(asset.getPath()) || !Files.exists(asset.getPath())) {
@@ -360,7 +361,7 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
 
         // remote tag/release
         GHRelease release = api.createRelease(github.getCanonicalRepoName(), tagName)
-            .commitish(github.getBranch())
+            .commitish(github.getResolvedBranchPush(context.getModel()))
             .name(github.getEffectiveReleaseName())
             .draft(github.isDraft())
             .prerelease(github.getPrerelease().isEnabled())
@@ -488,8 +489,6 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
     }
 
     private void updateAssets(Github api, GHRelease release) throws IOException {
-        org.jreleaser.model.internal.release.GithubReleaser github = context.getModel().getRelease().getGithub();
-
         Set<Asset> assetsToBeUpdated = new TreeSet<>();
         Set<Asset> assetsToBeUploaded = new TreeSet<>();
 
@@ -510,8 +509,6 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
     }
 
     private void linkDiscussion(String tagName, GHRelease release) {
-        org.jreleaser.model.internal.release.GithubReleaser github = context.getModel().getRelease().getGithub();
-
         String discussionCategoryName = github.getDiscussionCategoryName();
         if (context.getModel().getProject().isSnapshot() ||
             isBlank(discussionCategoryName) ||

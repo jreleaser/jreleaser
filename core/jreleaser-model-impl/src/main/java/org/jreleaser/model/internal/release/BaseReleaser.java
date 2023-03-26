@@ -52,7 +52,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Releaser, S extends BaseReleaser<A, S>> extends AbstractModelObject<S> implements Releaser<A> {
-    private static final long serialVersionUID = -8672937544539013287L;
+    private static final long serialVersionUID = 1051555604419029072L;
 
     @JsonIgnore
     private final String serviceName;
@@ -84,6 +84,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
     private String previousTagName;
     private String releaseName;
     private String branch;
+    private String branchPush;
     protected Boolean sign;
     protected Boolean skipTag;
     protected Boolean skipRelease;
@@ -98,6 +99,8 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
     protected Boolean catalogs;
     private Active uploadAssets;
     protected Boolean uploadAssetsEnabled;
+    @JsonIgnore
+    private String cachedBranchPush;
     @JsonIgnore
     private String cachedTagName;
     @JsonIgnore
@@ -141,6 +144,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
         this.previousTagName = merge(this.previousTagName, source.getPreviousTagName());
         this.releaseName = merge(this.releaseName, source.getReleaseName());
         this.branch = merge(this.branch, source.getBranch());
+        this.branchPush = merge(this.branchPush, source.getBranchPush());
         this.sign = merge(this.sign, source.sign);
         this.skipTag = merge(this.skipTag, source.skipTag);
         this.skipRelease = merge(this.skipRelease, source.skipRelease);
@@ -179,6 +183,17 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
             return owner + "/" + name;
         }
         return name;
+    }
+
+    public String getResolvedBranchPush(JReleaserModel model) {
+        if (isBlank(cachedBranchPush)) {
+            cachedBranchPush = resolveTemplate(branchPush, props(model));
+        }
+        if (cachedBranchPush.contains("{{")) {
+            cachedBranchPush = resolveTemplate(cachedBranchPush, props(model));
+        }
+
+        return cachedBranchPush;
     }
 
     public String getResolvedPreviousTagName(JReleaserModel model) {
@@ -457,6 +472,14 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
         this.branch = branch;
     }
 
+    public String getBranchPush() {
+        return branchPush;
+    }
+
+    public void setBranchPush(String branchPush) {
+        this.branchPush = branchPush;
+    }
+
     @Override
     public CommitAuthor getCommitAuthor() {
         return commitAuthor;
@@ -686,6 +709,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
             map.put("releaseName", releaseName);
         }
         map.put("branch", branch);
+        map.put("branchPush", branchPush);
         map.put("commitAuthor", commitAuthor.asMap(full));
         map.put("sign", isSign());
         map.put("skipTag", isSkipTag());
@@ -770,6 +794,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
         props.set(Constants.KEY_REPO_OWNER, owner);
         props.set(Constants.KEY_REPO_NAME, name);
         props.set(Constants.KEY_REPO_BRANCH, branch);
+        props.set(Constants.KEY_REPO_BRANCH_PUSH, cachedBranchPush);
         props.set(Constants.KEY_REVERSE_REPO_HOST, getReverseRepoHost());
         props.set(Constants.KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
         props.set(Constants.KEY_TAG_NAME, project.isSnapshot() ? project.getSnapshot().getResolvedLabel(model) : cachedTagName);
@@ -788,6 +813,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
         props.set(Constants.KEY_REPO_OWNER, owner);
         props.set(Constants.KEY_REPO_NAME, name);
         props.set(Constants.KEY_REPO_BRANCH, branch);
+        props.set(Constants.KEY_REPO_BRANCH_PUSH, getResolvedBranchPush(model));
         props.set(Constants.KEY_REVERSE_REPO_HOST, getReverseRepoHost());
         props.set(Constants.KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
         props.set(Constants.KEY_TAG_NAME, getEffectiveTagName(model));

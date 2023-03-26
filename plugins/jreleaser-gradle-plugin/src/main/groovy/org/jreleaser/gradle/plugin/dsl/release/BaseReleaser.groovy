@@ -67,6 +67,8 @@ interface BaseReleaser extends Releaser {
 
     Property<String> getBranch()
 
+    Property<String> getBranchPush()
+
     Property<Boolean> getSign()
 
     Property<Boolean> getSkipTag()

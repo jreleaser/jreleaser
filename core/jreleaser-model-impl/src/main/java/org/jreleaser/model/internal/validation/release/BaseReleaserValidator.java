@@ -46,6 +46,7 @@ import java.util.TreeSet;
 import static java.lang.System.lineSeparator;
 import static java.util.stream.Collectors.groupingBy;
 import static org.jreleaser.model.api.release.Releaser.BRANCH;
+import static org.jreleaser.model.api.release.Releaser.BRANCH_PUSH;
 import static org.jreleaser.model.api.release.Releaser.MILESTONE_NAME;
 import static org.jreleaser.model.api.release.Releaser.OVERWRITE;
 import static org.jreleaser.model.api.release.Releaser.PREVIOUS_TAG_NAME;
@@ -136,6 +137,13 @@ public final class BaseReleaserValidator {
                 service.getBranch(),
                 "main"));
 
+        service.setBranchPush(
+            checkProperty(context,
+                BRANCH_PUSH,
+                baseKey + "branch.push",
+                service.getBranchPush(),
+                service.getBranch()));
+
         if (!service.isOverwriteSet()) {
             service.setOverwrite(
                 checkProperty(context,
@@ -222,6 +230,7 @@ public final class BaseReleaserValidator {
         // eager resolve
         service.getResolvedTagName(context.getModel());
         if (service.isReleaseSupported()) {
+            service.getResolvedBranchPush(context.getModel());
             service.getResolvedReleaseName(context.getModel());
             service.getMilestone().getResolvedName(service.props(context.getModel()));
         }

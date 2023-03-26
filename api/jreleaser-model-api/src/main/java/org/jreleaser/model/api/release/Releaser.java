@@ -44,6 +44,7 @@ public interface Releaser extends Domain, EnabledAware, CommitAuthorAware, Owner
     String SKIP_TAG = "SKIP_TAG";
     String SKIP_RELEASE = "SKIP_RELEASE";
     String BRANCH = "BRANCH";
+    String BRANCH_PUSH = "BRANCH_PUSH";
     String PRERELEASE_PATTERN = "PRERELEASE_PATTERN";
     String MILESTONE_NAME = "MILESTONE_NAME";
 
@@ -88,6 +89,8 @@ public interface Releaser extends Domain, EnabledAware, CommitAuthorAware, Owner
     String getReleaseName();
 
     String getBranch();
+
+    String getBranchPush();
 
     Prerelease getPrerelease();
 

@@ -35,7 +35,7 @@ public class CodebergReleaser extends BaseReleaser<org.jreleaser.model.api.relea
 
     @JsonIgnore
     private final org.jreleaser.model.api.release.CodebergReleaser immutable = new org.jreleaser.model.api.release.CodebergReleaser() {
-        private static final long serialVersionUID = -6491682401927274247L;
+        private static final long serialVersionUID = -4853178830155860635L;
 
         @Override
         public boolean isPrerelease() {
@@ -150,6 +150,11 @@ public class CodebergReleaser extends BaseReleaser<org.jreleaser.model.api.relea
         @Override
         public String getBranch() {
             return CodebergReleaser.this.getBranch();
+        }
+
+        @Override
+        public String getBranchPush() {
+            return CodebergReleaser.this.getBranchPush();
         }
 
         @Override

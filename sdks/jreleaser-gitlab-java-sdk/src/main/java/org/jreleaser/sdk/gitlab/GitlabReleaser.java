@@ -103,7 +103,10 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
 
     @Override
     protected void createRelease() throws ReleaseException {
-        context.getLogger().info(RB.$("git.releaser.releasing"), gitlab.getResolvedRepoUrl(context.getModel()));
+        String pullBranch = gitlab.getBranch();
+        String pushBranch = gitlab.getResolvedBranchPush(context.getModel());
+        boolean mustCheckoutBranch = !pushBranch.equals(pullBranch);
+        context.getLogger().info(RB.$("git.releaser.releasing"), gitlab.getResolvedRepoUrl(context.getModel()), pushBranch);
         String tagName = gitlab.getEffectiveTagName(context.getModel());
 
         try {
@@ -113,12 +116,18 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
                 gitlab.getConnectTimeout(),
                 gitlab.getReadTimeout());
 
-            String branch = gitlab.getBranch();
-
-            List<String> branchNames = api.listBranches(gitlab.getOwner(), gitlab.getName(), gitlab.getProjectIdentifier());
-            if (!branchNames.contains(branch)) {
-                throw new ReleaseException(RB.$("ERROR_git_release_branch_not_exists", branch, branchNames));
+            if (!context.isDryrun()) {
+                List<String> branchNames = api.listBranches(gitlab.getOwner(), gitlab.getName(), gitlab.getProjectIdentifier());
+                if (!branchNames.contains(pushBranch)) {
+                    if (mustCheckoutBranch) {
+                        GitSdk.of(context).checkoutBranch(gitlab, pushBranch, true);
+                    } else {
+                        throw new ReleaseException(RB.$("ERROR_git_release_branch_not_exists", pushBranch, branchNames));
+                    }
+                }
             }
+
+            GitSdk.of(context).checkoutBranch(pushBranch);
 
             String changelog = context.getChangelog().getResolvedChangelog();
 
@@ -185,7 +194,6 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
 
     @Override
     public Repository maybeCreateRepository(String owner, String repo, String password) throws IOException {
-        org.jreleaser.model.internal.release.GitlabReleaser gitlab = context.getModel().getRelease().getGitlab();
         context.getLogger().debug(RB.$("git.repository.lookup"), owner, repo);
 
         Gitlab api = new Gitlab(context.getLogger(),
@@ -217,8 +225,6 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
 
     @Override
     public Optional<User> findUser(String email, String name) {
-        org.jreleaser.model.internal.release.GitlabReleaser gitlab = context.getModel().getRelease().getGitlab();
-
         try {
             return new Gitlab(context.getLogger(),
                 gitlab.getApiEndpoint(),
@@ -236,8 +242,6 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
 
     @Override
     public List<Release> listReleases(String owner, String repo) throws IOException {
-        org.jreleaser.model.internal.release.GitlabReleaser gitlab = context.getModel().getRelease().getGitlab();
-
         Gitlab api = new Gitlab(context.getLogger(),
             gitlab.getApiEndpoint(),
             gitlab.getToken(),
@@ -258,8 +262,6 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
     }
 
     private void createRelease(Gitlab api, String tagName, String changelog, boolean deleteTags) throws IOException {
-        org.jreleaser.model.internal.release.GitlabReleaser gitlab = context.getModel().getRelease().getGitlab();
-
         Collection<GlLinkRequest> links = collectUploadLinks(gitlab);
 
         if (context.isDryrun()) {
@@ -298,7 +300,7 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
         GlRelease release = new GlRelease();
         release.setName(gitlab.getEffectiveReleaseName());
         release.setTagName(tagName);
-        release.setRef(gitlab.getBranch());
+        release.setRef(gitlab.getResolvedBranchPush(context.getModel()));
         release.setDescription(changelog);
 
         // remote tag/release
@@ -318,12 +320,10 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
                 gitlab.getName(),
                 projectIdentifier,
                 gitlab.getMilestone().getEffectiveName());
-            if (milestone.isPresent()) {
-                api.closeMilestone(gitlab.getOwner(),
-                    gitlab.getName(),
-                    projectIdentifier,
-                    milestone.get());
-            }
+            milestone.ifPresent(glMilestone -> api.closeMilestone(gitlab.getOwner(),
+                gitlab.getName(),
+                projectIdentifier,
+                glMilestone));
         }
         updateIssues(gitlab, api);
     }

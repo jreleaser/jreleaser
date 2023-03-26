@@ -92,7 +92,10 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
 
     @Override
     protected void createRelease() throws ReleaseException {
-        context.getLogger().info(RB.$("git.releaser.releasing"), codeberg.getResolvedRepoUrl(context.getModel()));
+        String pullBranch = codeberg.getBranch();
+        String pushBranch = codeberg.getResolvedBranchPush(context.getModel());
+        boolean mustCheckoutBranch = !pushBranch.equals(pullBranch);
+        context.getLogger().info(RB.$("git.releaser.releasing"), codeberg.getResolvedRepoUrl(context.getModel()), pushBranch);
         String tagName = codeberg.getEffectiveTagName(context.getModel());
 
         try {
@@ -102,12 +105,18 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
                 codeberg.getConnectTimeout(),
                 codeberg.getReadTimeout());
 
-            String branch = codeberg.getBranch();
-
-            List<String> branchNames = api.listBranches(codeberg.getOwner(), codeberg.getName());
-            if (!branchNames.contains(branch)) {
-                throw new ReleaseException(RB.$("ERROR_git_release_branch_not_exists", branch, branchNames));
+            if (!context.isDryrun()) {
+                List<String> branchNames = api.listBranches(codeberg.getOwner(), codeberg.getName());
+                if (!branchNames.contains(pushBranch)) {
+                    if (mustCheckoutBranch) {
+                        GitSdk.of(context).checkoutBranch(codeberg, pushBranch, true);
+                    } else {
+                        throw new ReleaseException(RB.$("ERROR_git_release_branch_not_exists", pushBranch, branchNames));
+                    }
+                }
             }
+
+            GitSdk.of(context).checkoutBranch(pushBranch);
 
             String changelog = context.getChangelog().getResolvedChangelog();
 
@@ -276,7 +285,7 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
         GtRelease release = new GtRelease();
         release.setName(codeberg.getEffectiveReleaseName());
         release.setTagName(tagName);
-        release.setTargetCommitish(codeberg.getBranch());
+        release.setTargetCommitish(codeberg.getResolvedBranchPush(context.getModel()));
         release.setBody(changelog);
 
         release = api.createRelease(codeberg.getOwner(), codeberg.getName(), release);
@@ -287,11 +296,9 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
                 codeberg.getOwner(),
                 codeberg.getName(),
                 codeberg.getMilestone().getEffectiveName());
-            if (milestone.isPresent()) {
-                api.closeMilestone(codeberg.getOwner(),
-                    codeberg.getName(),
-                    milestone.get());
-            }
+            milestone.ifPresent(gtMilestone -> api.closeMilestone(codeberg.getOwner(),
+                codeberg.getName(),
+                gtMilestone));
         }
 
         updateIssues(codeberg, api);

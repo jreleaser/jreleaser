@@ -108,6 +108,7 @@ public interface Constants {
     String KEY_IDENTIFIER = "identifier";
     String KEY_PROJECT_IDENTIFIER = "projectIdentifier";
     String KEY_REPO_BRANCH = "repoBranch";
+    String KEY_REPO_BRANCH_PUSH = "repoBranchPush";
     String KEY_TAG_NAME = "tagName";
     String KEY_PREVIOUS_TAG_NAME = "previousTagName";
     String KEY_RELEASE_NAME = "releaseName";

@@ -35,7 +35,7 @@ public class GiteaReleaser extends BaseReleaser<org.jreleaser.model.api.release.
 
     @JsonIgnore
     private final org.jreleaser.model.api.release.GiteaReleaser immutable = new org.jreleaser.model.api.release.GiteaReleaser() {
-        private static final long serialVersionUID = -5748013316146333676L;
+        private static final long serialVersionUID = -2135534604107948779L;
 
         @Override
         public boolean isPrerelease() {
@@ -150,6 +150,11 @@ public class GiteaReleaser extends BaseReleaser<org.jreleaser.model.api.release.
         @Override
         public String getBranch() {
             return GiteaReleaser.this.getBranch();
+        }
+
+        @Override
+        public String getBranchPush() {
+            return GiteaReleaser.this.getBranchPush();
         }
 
         @Override

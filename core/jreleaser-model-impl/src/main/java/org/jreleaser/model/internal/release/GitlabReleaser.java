@@ -43,7 +43,7 @@ public final class GitlabReleaser extends BaseReleaser<org.jreleaser.model.api.r
 
     @JsonIgnore
     private final org.jreleaser.model.api.release.GitlabReleaser immutable = new org.jreleaser.model.api.release.GitlabReleaser() {
-        private static final long serialVersionUID = 338295653785071184L;
+        private static final long serialVersionUID = 6362243270119328338L;
 
         @Override
         public boolean isPrerelease() {
@@ -168,6 +168,11 @@ public final class GitlabReleaser extends BaseReleaser<org.jreleaser.model.api.r
         @Override
         public String getBranch() {
             return GitlabReleaser.this.getBranch();
+        }
+
+        @Override
+        public String getBranchPush() {
+            return GitlabReleaser.this.getBranchPush();
         }
 
         @Override

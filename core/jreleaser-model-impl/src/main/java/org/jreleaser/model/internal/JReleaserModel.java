@@ -543,6 +543,7 @@ public class JReleaserModel {
         props.set(Constants.KEY_REPO_OWNER, service.getOwner());
         props.set(Constants.KEY_REPO_NAME, service.getName());
         props.set(Constants.KEY_REPO_BRANCH, service.getBranch());
+        props.set(Constants.KEY_REPO_BRANCH_PUSH, service.getResolvedBranchPush(this));
         props.set(Constants.KEY_REVERSE_REPO_HOST, service.getReverseRepoHost());
         props.set(Constants.KEY_CANONICAL_REPO_NAME, service.getCanonicalRepoName());
         props.set(Constants.KEY_TAG_NAME, service.getEffectiveTagName(this));

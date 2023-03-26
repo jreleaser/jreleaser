@@ -91,7 +91,10 @@ public class GiteaReleaser extends AbstractReleaser<org.jreleaser.model.api.rele
 
     @Override
     protected void createRelease() throws ReleaseException {
-        context.getLogger().info(RB.$("git.releaser.releasing"), gitea.getResolvedRepoUrl(context.getModel()));
+        String pullBranch = gitea.getBranch();
+        String pushBranch = gitea.getResolvedBranchPush(context.getModel());
+        boolean mustCheckoutBranch = !pushBranch.equals(pullBranch);
+        context.getLogger().info(RB.$("git.releaser.releasing"), gitea.getResolvedRepoUrl(context.getModel()), pushBranch);
         String tagName = gitea.getEffectiveTagName(context.getModel());
 
         try {
@@ -101,12 +104,18 @@ public class GiteaReleaser extends AbstractReleaser<org.jreleaser.model.api.rele
                 gitea.getConnectTimeout(),
                 gitea.getReadTimeout());
 
-            String branch = gitea.getBranch();
-
-            List<String> branchNames = api.listBranches(gitea.getOwner(), gitea.getName());
-            if (!branchNames.contains(branch)) {
-                throw new ReleaseException(RB.$("ERROR_git_release_branch_not_exists", branch, branchNames));
+            if (!context.isDryrun()) {
+                List<String> branchNames = api.listBranches(gitea.getOwner(), gitea.getName());
+                if (!branchNames.contains(pushBranch)) {
+                    if (mustCheckoutBranch) {
+                        GitSdk.of(context).checkoutBranch(gitea, pushBranch, true);
+                    } else {
+                        throw new ReleaseException(RB.$("ERROR_git_release_branch_not_exists", pushBranch, branchNames));
+                    }
+                }
             }
+
+            GitSdk.of(context).checkoutBranch(pushBranch);
 
             String changelog = context.getChangelog().getResolvedChangelog();
 
@@ -275,7 +284,7 @@ public class GiteaReleaser extends AbstractReleaser<org.jreleaser.model.api.rele
         GtRelease release = new GtRelease();
         release.setName(gitea.getEffectiveReleaseName());
         release.setTagName(tagName);
-        release.setTargetCommitish(gitea.getBranch());
+        release.setTargetCommitish(gitea.getResolvedBranchPush(context.getModel()));
         release.setBody(changelog);
 
         release = api.createRelease(gitea.getOwner(), gitea.getName(), release);
@@ -286,11 +295,9 @@ public class GiteaReleaser extends AbstractReleaser<org.jreleaser.model.api.rele
                 gitea.getOwner(),
                 gitea.getName(),
                 gitea.getMilestone().getEffectiveName());
-            if (milestone.isPresent()) {
-                api.closeMilestone(gitea.getOwner(),
-                    gitea.getName(),
-                    milestone.get());
-            }
+            milestone.ifPresent(gtMilestone -> api.closeMilestone(gitea.getOwner(),
+                gitea.getName(),
+                gtMilestone));
         }
 
         updateIssues(gitea, api);

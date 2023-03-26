@@ -30,8 +30,10 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.transport.RemoteConfig;
 import org.eclipse.jgit.transport.URIish;
+import org.eclipse.jgit.transport.UsernamePasswordCredentialsProvider;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.release.BaseReleaser;
 import org.jreleaser.model.spi.release.Commit;
 import org.jreleaser.model.spi.release.Repository;
 import org.jreleaser.util.Env;
@@ -245,6 +247,33 @@ public class GitSdk {
                 .anyMatch(tagName::matches);
         } catch (GitAPIException e) {
             throw new IOException(RB.$("ERROR_git_find_tag", tagName), e);
+        }
+    }
+
+    public void checkoutBranch(String branch) throws IOException {
+        checkoutBranch(null, branch, false);
+    }
+
+    public void checkoutBranch(BaseReleaser<?, ?> releaser, String branch, boolean create) throws IOException {
+        try (Git git = open()) {
+            git.checkout()
+                .setName(branch)
+                .setCreateBranch(create)
+                .call();
+
+            if (create) {
+                UsernamePasswordCredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider(
+                    releaser.getUsername(),
+                    releaser.getToken());
+
+                git.push()
+                    .setDryRun(false)
+                    .setPushAll()
+                    .setCredentialsProvider(credentialsProvider)
+                    .call();
+            }
+        } catch (GitAPIException e) {
+            throw new IOException(RB.$("ERROR_git_checkout_branch", branch), e);
         }
     }
 

@@ -61,6 +61,7 @@ abstract class BaseReleaserImpl implements BaseReleaser {
     final Property<String> previousTagName
     final Property<String> releaseName
     final Property<String> branch
+    final Property<String> branchPush
     final Property<Boolean> sign
     final Property<Boolean> skipTag
     final Property<Boolean> skipRelease
@@ -99,6 +100,7 @@ abstract class BaseReleaserImpl implements BaseReleaser {
         previousTagName = objects.property(String).convention(Providers.<String> notDefined())
         releaseName = objects.property(String).convention(Providers.<String> notDefined())
         branch = objects.property(String).convention(Providers.<String> notDefined())
+        branchPush = objects.property(String).convention(Providers.<String> notDefined())
         sign = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         skipTag = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         skipRelease = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
@@ -137,6 +139,7 @@ abstract class BaseReleaserImpl implements BaseReleaser {
             previousTagName.present ||
             releaseName.present ||
             branch.present ||
+            branchPush.present ||
             sign.present ||
             skipTag.present ||
             skipRelease.present ||
@@ -230,6 +233,7 @@ abstract class BaseReleaserImpl implements BaseReleaser {
         if (previousTagName.present) service.previousTagName = previousTagName.get()
         if (releaseName.present) service.releaseName = releaseName.get()
         if (branch.present) service.branch = branch.get()
+        if (branchPush.present) service.branchPush = branchPush.get()
         if (apiEndpoint.present) service.apiEndpoint = apiEndpoint.get()
         if (connectTimeout.present) service.connectTimeout = connectTimeout.get()
         if (readTimeout.present) service.readTimeout = readTimeout.get()
