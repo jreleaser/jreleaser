@@ -18,18 +18,24 @@
 package org.jreleaser.packagers;
 
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.WingetPackager;
+import org.jreleaser.model.internal.util.Artifacts;
 import org.jreleaser.model.spi.packagers.PackagerProcessingException;
 import org.jreleaser.mustache.MustacheUtils;
 import org.jreleaser.mustache.TemplateContext;
+import org.jreleaser.util.Algorithm;
+import org.jreleaser.util.FileType;
 import org.jreleaser.util.PlatformUtils;
 
 import java.io.Reader;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
@@ -41,6 +47,7 @@ import static org.jreleaser.model.Constants.KEY_PROJECT_LONG_DESCRIPTION;
 import static org.jreleaser.model.Constants.KEY_WINGET_AUTHOR;
 import static org.jreleaser.model.Constants.KEY_WINGET_DEFAULT_LOCALE;
 import static org.jreleaser.model.Constants.KEY_WINGET_HAS_TAGS;
+import static org.jreleaser.model.Constants.KEY_WINGET_INSTALLERS;
 import static org.jreleaser.model.Constants.KEY_WINGET_INSTALLER_ARCHITECTURE;
 import static org.jreleaser.model.Constants.KEY_WINGET_INSTALLER_TYPE;
 import static org.jreleaser.model.Constants.KEY_WINGET_INSTALL_MODES;
@@ -62,6 +69,9 @@ import static org.jreleaser.model.Constants.KEY_WINGET_TAGS;
 import static org.jreleaser.model.Constants.KEY_WINGET_UPGRADE_BEHAVIOR;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
+import static org.jreleaser.util.FileType.ZIP;
+import static org.jreleaser.util.StringUtils.getFilename;
+import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
@@ -104,24 +114,43 @@ public class WingetPackagerProcessor extends AbstractRepositoryPackagerProcessor
         props.set(KEY_WINGET_PUBLISHER_URL, resolveTemplate(packager.getPublisher().getUrl(), props));
         props.set(KEY_WINGET_PUBLISHER_SUPPORT_URL, resolveTemplate(packager.getPublisher().getSupportUrl(), props));
         props.set(KEY_WINGET_INSTALLER_TYPE, packager.getInstaller().getType().formatted());
-        props.set(KEY_WINGET_SCOPE, packager.getInstaller().getScope().formatted());
+        if (null != packager.getInstaller().getScope()) {
+            props.set(KEY_WINGET_SCOPE, packager.getInstaller().getScope().formatted());
+        }
         props.set(KEY_WINGET_INSTALL_MODES, packager.getInstaller().getModes().stream()
             .map(org.jreleaser.model.api.packagers.WingetPackager.Installer.Mode::formatted)
             .collect(toList()));
-        props.set(KEY_WINGET_UPGRADE_BEHAVIOR, packager.getInstaller().getUpgradeBehavior().formatted());
+        if (null != packager.getInstaller().getUpgradeBehavior()) {
+            props.set(KEY_WINGET_UPGRADE_BEHAVIOR, packager.getInstaller().getUpgradeBehavior().formatted());
+        }
         props.set(KEY_WINGET_RELEASE_DATE, new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
 
-        String platform = props.get(KEY_DISTRIBUTION_ARTIFACT_PLATFORM);
-        if (PlatformUtils.isIntel32(platform)) {
-            platform = "x86";
-        } else if (PlatformUtils.isIntel64(platform)) {
-            platform = "x64";
-        } else if (PlatformUtils.isArm32(platform)) {
-            platform = "arm";
-        } else if (PlatformUtils.isArm64(platform)) {
-            platform = "arm64";
+        props.set(KEY_WINGET_INSTALLER_ARCHITECTURE, resolveArchitecture(props.get(KEY_DISTRIBUTION_ARTIFACT_PLATFORM)));
+
+        if (distribution.getType() == org.jreleaser.model.Distribution.DistributionType.JLINK) {
+            List<Installer> installers = new ArrayList<>();
+            for (Artifact artifact : collectArtifacts(distribution)) {
+                if (!artifact.getPath().endsWith(ZIP.extension()) || isBlank(artifact.getPlatform())) {
+                    continue;
+                }
+
+                String artifactFile = artifact.getEffectivePath().getFileName().toString();
+                String architecture = resolveArchitecture(artifact.getPlatform());
+                String url = resolveArtifactUrl(distribution, artifact);
+                String fileName = getFilename(artifactFile, FileType.getSupportedExtensions());
+                String checksum = artifact.getHash(Algorithm.SHA_256);
+                String executableName = distribution.getExecutable().getName();
+                String executablePath = fileName + "\\bin\\" + executableName + distribution.getExecutable().resolveWindowsExtension();
+
+                installers.add(new Installer()
+                    .withArchitecture(architecture)
+                    .withUrl(url)
+                    .withChecksum(checksum)
+                    .withExecutablePath(executablePath)
+                    .withExecutableName(executableName));
+            }
+            props.set(KEY_WINGET_INSTALLERS, installers);
         }
-        props.set(KEY_WINGET_INSTALLER_ARCHITECTURE, platform);
     }
 
     @Override
@@ -171,5 +200,75 @@ public class WingetPackagerProcessor extends AbstractRepositoryPackagerProcessor
         return outputDirectory.resolve(packageIdentifier.substring(0, 1).toLowerCase(Locale.ENGLISH) + "/" +
             packageIdentifier.replace(".", "/") + "/" +
             context.getModel().getProject().getResolvedVersion());
+    }
+
+    private String resolveArchitecture(String platform) {
+        if (PlatformUtils.isIntel32(platform)) {
+            return "x86";
+        } else if (PlatformUtils.isIntel64(platform)) {
+            return "x64";
+        } else if (PlatformUtils.isArm32(platform)) {
+            return "arm";
+        } else if (PlatformUtils.isArm64(platform)) {
+            return "arm64";
+        }
+        return "neutral";
+    }
+
+    private String resolveArtifactUrl(Distribution distribution, Artifact artifact) {
+        return Artifacts.resolveDownloadUrl(context, org.jreleaser.model.api.packagers.WingetPackager.TYPE, distribution, artifact);
+    }
+
+    public static class Installer {
+        private String architecture;
+        private String url;
+        private String checksum;
+        private String executablePath;
+        private String executableName;
+
+        public String getArchitecture() {
+            return architecture;
+        }
+
+        public Installer withArchitecture(String architecture) {
+            this.architecture = architecture;
+            return this;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public Installer withUrl(String url) {
+            this.url = url;
+            return this;
+        }
+
+        public String getChecksum() {
+            return checksum;
+        }
+
+        public Installer withChecksum(String checksum) {
+            this.checksum = checksum;
+            return this;
+        }
+
+        public String getExecutablePath() {
+            return executablePath;
+        }
+
+        public Installer withExecutablePath(String executablePath) {
+            this.executablePath = executablePath;
+            return this;
+        }
+
+        public String getExecutableName() {
+            return executableName;
+        }
+
+        public Installer withExecutableName(String executableName) {
+            this.executableName = executableName;
+            return this;
+        }
     }
 }

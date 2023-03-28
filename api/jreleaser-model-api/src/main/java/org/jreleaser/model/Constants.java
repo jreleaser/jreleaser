@@ -356,6 +356,7 @@ public interface Constants {
     String KEY_WINGET_UPGRADE_BEHAVIOR = "wingetUpgradeBehavior";
     String KEY_WINGET_RELEASE_DATE = "wingetReleaseDate";
     String KEY_WINGET_INSTALLER_ARCHITECTURE = "wingetInstallerArchitecture";
+    String KEY_WINGET_INSTALLERS = "wingetInstallers";
 
     // Linkedin
     String KEY_LINKEDIN_OWNER = "linkedinOwner";

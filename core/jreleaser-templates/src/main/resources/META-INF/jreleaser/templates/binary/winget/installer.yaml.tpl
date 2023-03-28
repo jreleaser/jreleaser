@@ -3,21 +3,15 @@
 
 PackageIdentifier: {{wingetPackageIdentifier}}
 PackageVersion: {{wingetPackageVersion}}
-MinimumOSVersion: {{wingetMinimumOsVersion}}
-InstallerType: {{wingetInstallerType}}
-Scope: {{wingetScope}}
-InstallModes:
-{{#wingetInstallModes}}
-  - {{.}}
-{{/wingetInstallModes}}
-UpgradeBehavior: {{wingetUpgradeBehavior}}
-Commands:
-  - {{distributionExecutableName}}
 ReleaseDate: {{wingetReleaseDate}}
 Installers:
-  - Architecture: {{wingetInstallerArchitecture}}
+  - Architecture: neutral
     InstallerUrl: {{distributionUrl}}
     InstallerSha256: {{distributionChecksumSha256}}
-    ProductCode: '{{wingetProductCode}}'
+    InstallerType: zip
+    NestedInstallerType: portable
+    NestedInstallerFiles:
+      - RelativeFilePath: {{distributionArtifactFileName}}\bin\{{distributionExecutableWindows}}
+        PortableCommandAlias: {{distributionExecutableName}}
 ManifestType: installer
 ManifestVersion: 1.4.0

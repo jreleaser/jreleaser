@@ -42,12 +42,18 @@ import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
+import static org.jreleaser.model.Distribution.DistributionType.BINARY;
+import static org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
+import static org.jreleaser.model.Distribution.DistributionType.JLINK;
+import static org.jreleaser.model.Distribution.DistributionType.NATIVE_IMAGE;
 import static org.jreleaser.model.Distribution.DistributionType.NATIVE_PACKAGE;
 import static org.jreleaser.model.api.packagers.WingetPackager.SKIP_WINGET;
 import static org.jreleaser.model.api.packagers.WingetPackager.TYPE;
 import static org.jreleaser.util.CollectionUtils.setOf;
 import static org.jreleaser.util.FileType.EXE;
 import static org.jreleaser.util.FileType.MSI;
+import static org.jreleaser.util.FileType.ZIP;
+import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isFalse;
 
 /**
@@ -55,9 +61,15 @@ import static org.jreleaser.util.StringUtils.isFalse;
  * @since 1.5.0
  */
 public final class WingetPackager extends AbstractRepositoryPackager<org.jreleaser.model.api.packagers.WingetPackager, WingetPackager> {
+    private static final long serialVersionUID = -9015011090998365168L;
+
     private static final Map<Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
 
     static {
+        SUPPORTED.put(NATIVE_IMAGE, setOf(ZIP.extension()));
+        SUPPORTED.put(BINARY, setOf(ZIP.extension()));
+        SUPPORTED.put(JAVA_BINARY, setOf(ZIP.extension()));
+        SUPPORTED.put(JLINK, setOf(ZIP.extension()));
         SUPPORTED.put(NATIVE_PACKAGE, setOf(MSI.extension(), EXE.extension()));
     }
 
@@ -345,7 +357,7 @@ public final class WingetPackager extends AbstractRepositoryPackager<org.jreleas
 
     @Override
     public boolean supportsPlatform(String platform) {
-        return PlatformUtils.isWindows(platform);
+        return isBlank(platform) || PlatformUtils.isWindows(platform);
     }
 
     @Override

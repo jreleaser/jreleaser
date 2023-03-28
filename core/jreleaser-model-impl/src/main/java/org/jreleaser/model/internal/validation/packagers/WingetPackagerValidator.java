@@ -18,6 +18,9 @@
 package org.jreleaser.model.internal.validation.packagers;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.model.api.packagers.WingetPackager.Installer;
+import org.jreleaser.model.api.packagers.WingetPackager.Installer.Scope;
+import org.jreleaser.model.api.packagers.WingetPackager.Installer.UpgradeBehavior;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.JReleaserModel;
 import org.jreleaser.model.internal.common.Artifact;
@@ -82,7 +85,8 @@ public final class WingetPackagerValidator {
                 packager.getType(), packager.getSupportedFileExtensions(distribution.getType())));
             packager.disable();
             return;
-        } else if (candidateArtifacts.size() > 1) {
+        } else if (candidateArtifacts.size() > 1 &&
+            distribution.getType() == org.jreleaser.model.Distribution.DistributionType.NATIVE_PACKAGE) {
             errors.configuration(RB.$("validation_packager_multiple_artifacts", "distribution." + distribution.getName() + ".winget"));
             context.getLogger().debug(RB.$("validation.disabled.multiple.artifacts"));
             errors.warning(RB.$("WARNING.validation.packager.multiple.artifacts", distribution.getName(),
@@ -236,9 +240,20 @@ public final class WingetPackagerValidator {
         if (packager.getInstaller().getModes().isEmpty()) {
             packager.getInstaller().setModes(parentPackager.getInstaller().getModes());
         }
+
         if (packager.getInstaller().getModes().isEmpty()) {
             packager.getInstaller().getModes().add(SILENT);
             packager.getInstaller().getModes().add(SILENT_WITH_PROGRESS);
+        }
+
+        if (distribution.getType() == org.jreleaser.model.Distribution.DistributionType.NATIVE_IMAGE ||
+            distribution.getType() == org.jreleaser.model.Distribution.DistributionType.BINARY ||
+            distribution.getType() == org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY ||
+            distribution.getType() == org.jreleaser.model.Distribution.DistributionType.JLINK) {
+            packager.getInstaller().setType(Installer.Type.ZIP);
+            packager.getInstaller().getModes().clear();
+            packager.getInstaller().setUpgradeBehavior((UpgradeBehavior) null);
+            packager.getInstaller().setScope((Scope) null);
         }
     }
 
