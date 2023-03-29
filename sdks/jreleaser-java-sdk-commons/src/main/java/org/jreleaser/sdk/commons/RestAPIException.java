@@ -28,7 +28,7 @@ import java.util.Map;
  * @since 0.2.0
  */
 public class RestAPIException extends RuntimeException {
-    private static final long serialVersionUID = -8653365831703118584L;
+    private static final long serialVersionUID = -4998504906274842288L;
 
     private final Request request;
     private final int status;
@@ -68,5 +68,9 @@ public class RestAPIException extends RuntimeException {
 
     public boolean isForbidden() {
         return 403 == status;
+    }
+
+    public boolean isUnprocessableEntity() {
+        return 422 == status;
     }
 }

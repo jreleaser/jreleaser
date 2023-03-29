@@ -20,7 +20,6 @@ dependencies {
     annotationProcessor "org.kordamp.jipsy:jipsy-processor:${jipsyVersion}"
 
     api project(':jreleaser-java-sdk-commons')
-    api "org.kohsuke:github-api:$githubVersion"
 
     testImplementation project(':jreleaser-test-support')
 }

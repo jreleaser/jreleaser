@@ -37,23 +37,17 @@ import org.jreleaser.sdk.git.ChangelogGenerator;
 import org.jreleaser.sdk.git.ChangelogProvider;
 import org.jreleaser.sdk.git.GitSdk;
 import org.jreleaser.sdk.git.ReleaseUtils;
+import org.jreleaser.sdk.github.api.GhAsset;
+import org.jreleaser.sdk.github.api.GhIssue;
+import org.jreleaser.sdk.github.api.GhLabel;
+import org.jreleaser.sdk.github.api.GhMilestone;
 import org.jreleaser.sdk.github.api.GhRelease;
 import org.jreleaser.sdk.github.api.GhReleaseNotes;
 import org.jreleaser.sdk.github.api.GhReleaseNotesParams;
-import org.kohsuke.github.GHAsset;
-import org.kohsuke.github.GHBranch;
-import org.kohsuke.github.GHIssue;
-import org.kohsuke.github.GHIssueState;
-import org.kohsuke.github.GHLabel;
-import org.kohsuke.github.GHMilestone;
-import org.kohsuke.github.GHRelease;
-import org.kohsuke.github.GHReleaseUpdater;
-import org.kohsuke.github.GHRepository;
+import org.jreleaser.sdk.github.api.GhRepository;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -127,7 +121,7 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
                 params.setPreviousTagName(extractTagName(tags.getPrevious().get()));
             }
             params.setTargetCommitish(github.getBranch());
-            GhReleaseNotes releaseNotes = new XGithub(context.getLogger(),
+            GhReleaseNotes releaseNotes = new Github(context.getLogger(),
                 github.getApiEndpoint(),
                 github.getToken(),
                 github.getConnectTimeout(),
@@ -142,26 +136,19 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
     protected boolean isTagInRemote(JReleaserContext context, String tagName) {
         org.jreleaser.model.internal.release.GithubReleaser github = context.getModel().getRelease().getGithub();
 
-        try {
-            Github api = new Github(context.getLogger(),
-                github.getApiEndpoint(),
-                github.getToken(),
-                github.getConnectTimeout(),
-                github.getReadTimeout());
-            GHRepository repository = api.findRepository(github.getOwner(), github.getName());
-            if (null == repository) {
-                // remote does not exist!
-                throw new IllegalStateException(RB.$("ERROR_git_repository_not_exists", github.getCanonicalRepoName()));
-            }
-
-            return null != repository.getRef("tags/" + tagName);
-        } catch (FileNotFoundException e) {
-            // OK, it means tag does not exist
-            return false;
-        } catch (IOException e) {
-            context.getLogger().trace(e);
-            throw new JReleaserException(e);
+        Github api = new Github(context.getLogger(),
+            github.getApiEndpoint(),
+            github.getToken(),
+            github.getConnectTimeout(),
+            github.getReadTimeout());
+        GhRepository repository = api.findRepository(github.getOwner(), github.getName());
+        if (null == repository) {
+            // remote does not exist!
+            throw new IllegalStateException(RB.$("ERROR_git_repository_not_exists", github.getCanonicalRepoName()));
         }
+
+        return api.listTags(github.getOwner(), github.getName()).stream()
+            .anyMatch(tag -> tag.getName().equals(tagName));
     }
 
     @Override
@@ -186,12 +173,12 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
                 github.getReadTimeout());
 
             if (!context.isDryrun()) {
-                Map<String, GHBranch> branches = api.listBranches(github.getOwner(), github.getName());
-                if (!branches.containsKey(pushBranch)) {
+                List<String> branchNames = api.listBranches(github.getOwner(), github.getName());
+                if (!branchNames.contains(pushBranch)) {
                     if (mustCheckoutBranch) {
                         GitSdk.of(context).checkoutBranch(github, pushBranch, true);
                     } else {
-                        throw new ReleaseException(RB.$("ERROR_git_release_branch_not_exists", pushBranch, branches.keySet()));
+                        throw new ReleaseException(RB.$("ERROR_git_release_branch_not_exists", pushBranch, branchNames));
                     }
                 }
             }
@@ -201,41 +188,41 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
             String changelog = context.getChangelog().getResolvedChangelog();
 
             context.getLogger().debug(RB.$("git.releaser.release.lookup"), tagName, github.getCanonicalRepoName());
-            GHRelease release = api.findReleaseByTag(github.getCanonicalRepoName(), tagName);
+            GhRelease release = api.findReleaseByTag(github.getOwner(), github.getName(), tagName);
             boolean snapshot = context.getModel().getProject().isSnapshot();
             if (null != release) {
                 context.getLogger().debug(RB.$("git.releaser.release.exists"), tagName);
                 if (github.isOverwrite() || snapshot) {
                     context.getLogger().debug(RB.$("git.releaser.release.delete"), tagName);
                     if (!context.isDryrun()) {
-                        release.delete();
+                        api.deleteRelease(github.getOwner(), github.getName(), tagName, release.getId());
                     }
                     context.getLogger().debug(RB.$("git.releaser.release.create"), tagName);
                     createRelease(api, tagName, changelog, github.isMatch());
                 } else if (github.getUpdate().isEnabled()) {
                     context.getLogger().debug(RB.$("git.releaser.release.update"), tagName);
                     if (!context.isDryrun()) {
-                        GHReleaseUpdater updater = release.update();
+                        GhRelease updater = new GhRelease();
                         if (github.getPrerelease().isEnabledSet()) {
-                            updater.prerelease(github.getPrerelease().isEnabled());
+                            updater.setPrerelease(github.getPrerelease().isEnabled());
                         }
                         if (github.isDraftSet()) {
-                            updater.draft(github.isDraft());
+                            updater.setDraft(github.isDraft());
                         }
                         if (github.getUpdate().getSections().contains(UpdateSection.TITLE)) {
                             context.getLogger().info(RB.$("git.releaser.release.update.title"), github.getEffectiveReleaseName());
-                            updater.name(github.getEffectiveReleaseName());
+                            updater.setName(github.getEffectiveReleaseName());
                         }
                         if (github.getUpdate().getSections().contains(UpdateSection.BODY)) {
                             context.getLogger().info(RB.$("git.releaser.release.update.body"));
-                            updater.body(changelog);
+                            updater.setBody(changelog);
                         }
-                        release = updater.update();
+                        api.updateRelease(github.getOwner(), github.getName(), release.getId(), updater);
 
                         if (github.getUpdate().getSections().contains(UpdateSection.ASSETS)) {
                             updateAssets(api, release);
                         }
-                        linkDiscussion(tagName, release);
+                        linkDiscussion(tagName, release, api);
                         updateIssues(github, api);
                     }
                 } else {
@@ -272,7 +259,7 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
             password,
             github.getConnectTimeout(),
             github.getReadTimeout());
-        GHRepository repository = api.findRepository(owner, repo);
+        GhRepository repository = api.findRepository(owner, repo);
         if (null == repository) {
             repository = api.createRepository(owner, repo);
         }
@@ -281,8 +268,8 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
             Repository.Kind.GITHUB,
             owner,
             repo,
-            repository.getUrl().toExternalForm(),
-            repository.getHttpTransportUrl());
+            repository.getHtmlUrl(),
+            repository.getCloneUrl());
     }
 
     @Override
@@ -290,7 +277,7 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
         if (NOREPLY_GITHUB_COM_EMAIL.equals(email)) return Optional.empty();
 
         try {
-            return new XGithub(context.getLogger(),
+            return new Github(context.getLogger(),
                 github.getApiEndpoint(),
                 github.getToken(),
                 github.getConnectTimeout(),
@@ -312,17 +299,7 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
             github.getConnectTimeout(),
             github.getReadTimeout());
 
-        List<Release> releases = new ArrayList<>();
-
-        for (GHRelease ghRelease : api.listReleases(owner, repo).toList()) {
-            if (ghRelease.isDraft() || ghRelease.isPrerelease()) continue;
-            releases.add(new Release(
-                ghRelease.getName(),
-                ghRelease.getTagName(),
-                ghRelease.getHtmlUrl().toExternalForm(),
-                ghRelease.getPublished_at()
-            ));
-        }
+        List<Release> releases = api.listReleases(owner, repo);
 
         VersionUtils.clearUnparseableTags();
         Pattern versionPattern = VersionUtils.resolveVersionPattern(context);
@@ -350,7 +327,7 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
         }
 
         if (deleteTags) {
-            deleteTags(api, github.getCanonicalRepoName(), tagName);
+            deleteTags(api, github.getOwner(), github.getName(), tagName);
         }
 
         // local tag
@@ -360,29 +337,46 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
         }
 
         // remote tag/release
-        GHRelease release = api.createRelease(github.getCanonicalRepoName(), tagName)
-            .commitish(github.getResolvedBranchPush(context.getModel()))
-            .name(github.getEffectiveReleaseName())
-            .draft(github.isDraft())
-            .prerelease(github.getPrerelease().isEnabled())
-            .body(changelog)
-            .create();
+        GhRelease release = new GhRelease();
+        release.setName(github.getEffectiveReleaseName());
+        release.setTagName(tagName);
+        release.setTargetCommitish(github.getResolvedBranchPush(context.getModel()));
+        release.setBody(changelog);
+        if (github.getPrerelease().isEnabledSet()) {
+            release.setPrerelease(github.getPrerelease().isEnabled());
+        }
+        if (github.isDraftSet()) {
+            release.setDraft(github.isDraft());
+        }
+
+        boolean isDraftBefore = release.isDraft();
+        release = api.createRelease(github.getOwner(), github.getName(), release);
         api.uploadAssets(release, assets);
 
         if (github.getMilestone().isClose() && !context.getModel().getProject().isSnapshot()) {
-            Optional<GHMilestone> milestone = api.findMilestoneByName(
+            Optional<GhMilestone> milestone = api.findMilestoneByName(
                 github.getOwner(),
                 github.getName(),
                 github.getMilestone().getEffectiveName());
-            if (milestone.isPresent()) {
-                api.closeMilestone(github.getOwner(),
-                    github.getName(),
-                    milestone.get());
-            }
+            milestone.ifPresent(gtMilestone -> api.closeMilestone(github.getOwner(),
+                github.getName(),
+                gtMilestone));
         }
 
-        linkDiscussion(tagName, release);
+        linkDiscussion(tagName, release, api);
         updateIssues(github, api);
+
+        context.getLogger().debug(RB.$("git.check.release.draft", github.getOwner(), github.getName(), release.getTagName()));
+        GhRelease newRelease = api.findReleaseById(github.getOwner(), github.getName(), release.getId());
+        boolean isDraftAfter = newRelease.isDraft();
+
+        if (!isDraftBefore && isDraftAfter) {
+            GhRelease updater = new GhRelease();
+            updater.setPrerelease(release.isPrerelease());
+            updater.setDraft(false);
+            updater.setTagName(release.getTagName());
+            api.updateRelease(github.getOwner(), github.getName(), release.getId(), updater);
+        }
     }
 
     private void updateIssues(org.jreleaser.model.internal.release.GithubReleaser github, Github api) throws IOException {
@@ -411,22 +405,22 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
             labelColor = labelColor.substring(1);
         }
 
-        GHRepository ghRepository = api.findRepository(github.getOwner(), github.getName());
-        GHLabel ghLabel = null;
+        GhLabel ghLabel = null;
 
         try {
             ghLabel = api.getOrCreateLabel(
-                ghRepository,
+                github.getOwner(),
+                github.getName(),
                 labelName,
                 labelColor,
                 github.getIssues().getLabel().getDescription());
-        } catch (IOException e) {
+        } catch (RestAPIException e) {
             throw new IllegalStateException(RB.$("ERROR_git_releaser_fetch_label", tagName, labelName), e);
         }
 
-        Optional<GHMilestone> milestone = Optional.empty();
+        Optional<GhMilestone> milestone = Optional.empty();
         Apply applyMilestone = github.getIssues().getApplyMilestone();
-        if (applyMilestone != Apply.NEVER) {
+        if (github.getMilestone().isClose() && !context.getModel().getProject().isSnapshot()) {
             milestone = api.findMilestoneByName(
                 github.getOwner(),
                 github.getName(),
@@ -441,33 +435,27 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
         }
 
         for (String issueNumber : issueNumbers) {
-            try {
-                Optional<GHIssue> op = api.findIssue(ghRepository, Integer.parseInt(issueNumber));
-                if (!op.isPresent()) continue;
+            Optional<GhIssue> op = api.findIssue(github.getOwner(), github.getName(), Integer.parseInt(issueNumber));
+            if (!op.isPresent()) continue;
 
-                GHIssue ghIssue = op.get();
-                if (ghIssue.getState() == GHIssueState.CLOSED && ghIssue.getLabels().stream().noneMatch(l -> l.getName().equals(labelName))) {
-                    context.getLogger().debug(RB.$("git.issue.release", issueNumber));
-                    ghIssue.addLabels(ghLabel);
-                    ghIssue.comment(comment);
+            GhIssue ghIssue = op.get();
+            if ("closed".equals(ghIssue.getState()) && ghIssue.getLabels().stream().noneMatch(l -> l.getName().equals(labelName))) {
+                context.getLogger().debug(RB.$("git.issue.release", issueNumber));
+                api.addLabelToIssue(github.getOwner(), github.getName(), ghIssue, ghLabel);
+                api.commentOnIssue(github.getOwner(), github.getName(), ghIssue, comment);
 
-                    if (milestone.isPresent()) {
-                        applyMilestone(issueNumber, ghIssue, applyMilestone, milestone.get());
-                    }
-                }
-            } catch (IOException e) {
-                throw new IllegalStateException(RB.$("ERROR_git_releaser_cannot_release", tagName, issueNumber), e);
+                milestone.ifPresent(ghMilestone -> applyMilestone(github, api, issueNumber, ghIssue, applyMilestone, ghMilestone));
             }
         }
     }
 
-    private void applyMilestone(String issueNumber, GHIssue ghIssue, Apply applyMilestone, GHMilestone targetMilestone) throws IOException {
-        GHMilestone issueMilestone = ghIssue.getMilestone();
+    private void applyMilestone(org.jreleaser.model.internal.release.GithubReleaser github, Github api, String issueNumber, GhIssue ghIssue, Apply applyMilestone, GhMilestone targetMilestone) {
+        GhMilestone issueMilestone = ghIssue.getMilestone();
         String targetMilestoneTitle = targetMilestone.getTitle();
 
         if (null == issueMilestone) {
             context.getLogger().debug(RB.$("git.issue.milestone.apply", targetMilestoneTitle, issueNumber));
-            ghIssue.setMilestone(targetMilestone);
+            api.setMilestoneOnIssue(github.getOwner(), github.getName(), ghIssue, targetMilestone);
         } else {
             String milestoneTitle = issueMilestone.getTitle();
 
@@ -480,7 +468,7 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
             } else if (applyMilestone == Apply.FORCE) {
                 if (!milestoneTitle.equals(targetMilestoneTitle)) {
                     context.getLogger().warn(RB.$("git.issue.milestone.force", targetMilestoneTitle, issueNumber, milestoneTitle));
-                    ghIssue.setMilestone(targetMilestone);
+                    api.setMilestoneOnIssue(github.getOwner(), github.getName(), ghIssue, targetMilestone);
                 } else {
                     context.getLogger().debug(uncapitalize(RB.$("git.issue.milestone.warn", issueNumber, milestoneTitle)));
                 }
@@ -488,11 +476,11 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
         }
     }
 
-    private void updateAssets(Github api, GHRelease release) throws IOException {
+    private void updateAssets(Github api, GhRelease release) throws IOException {
         Set<Asset> assetsToBeUpdated = new TreeSet<>();
         Set<Asset> assetsToBeUploaded = new TreeSet<>();
 
-        Map<String, GHAsset> existingAssets = api.listAssets(github.getOwner(), github.getName(), release);
+        Map<String, GhAsset> existingAssets = api.listAssets(github.getOwner(), github.getName(), release);
         Map<String, Asset> assetsToBePublished = new LinkedHashMap<>();
         assets.forEach(asset -> assetsToBePublished.put(asset.getFilename(), asset));
 
@@ -504,11 +492,11 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
             }
         });
 
-        api.updateAssets(release, assetsToBeUpdated, existingAssets);
+        api.updateAssets(github.getOwner(), github.getName(), release, assetsToBeUpdated, existingAssets);
         api.uploadAssets(release, assetsToBeUploaded);
     }
 
-    private void linkDiscussion(String tagName, GHRelease release) {
+    private void linkDiscussion(String tagName, GhRelease release, Github api) {
         String discussionCategoryName = github.getDiscussionCategoryName();
         if (context.getModel().getProject().isSnapshot() ||
             isBlank(discussionCategoryName) ||
@@ -519,15 +507,9 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
         if (context.isDryrun()) return;
 
         try {
-            XGithub xapi = new XGithub(context.getLogger(),
-                github.getApiEndpoint(),
-                github.getToken(),
-                github.getConnectTimeout(),
-                github.getReadTimeout());
-
             GhRelease ghRelease = new GhRelease();
             ghRelease.setDiscussionCategoryName(discussionCategoryName);
-            xapi.updateRelease(github.getOwner(),
+            api.updateRelease(github.getOwner(),
                 github.getName(),
                 tagName,
                 release.getId(),
@@ -539,12 +521,16 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
         }
     }
 
-    private void deleteTags(Github api, String repo, String tagName) {
+    private void deleteTags(Github api, String owner, String repo, String tagName) {
         // delete remote tag
         try {
-            api.deleteTag(repo, tagName);
-        } catch (IOException ignored) {
-            //noop
+            api.deleteTag(owner, repo, tagName);
+        } catch (RestAPIException e) {
+            if (e.isUnprocessableEntity()) {
+                // OK, tag does not exist on remote
+                return;
+            }
+            throw e;
         }
     }
 }

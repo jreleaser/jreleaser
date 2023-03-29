@@ -67,8 +67,9 @@ public final class DiscussionsAnnouncerValidator {
             announcer.setTitle(RB.$("default.discussion.title"));
         }
 
-        if (isBlank(announcer.getMessage()) && isBlank(announcer.getMessageTemplate())) {
-            announcer.setMessageTemplate(DEFAULT_DISCUSSIONS_TPL);
+        if (isNotBlank(announcer.getMessageTemplate()) &&
+            !Files.exists(context.getBasedir().resolve(announcer.getMessageTemplate().trim()))) {
+            errors.configuration(RB.$("validation_directory_not_exist", "discussions.messageTemplate", announcer.getMessageTemplate()));
         }
 
         if (isBlank(announcer.getMessage()) && isBlank(announcer.getMessageTemplate())) {
@@ -77,11 +78,6 @@ public final class DiscussionsAnnouncerValidator {
             } else {
                 announcer.setMessage(RB.$("default.release.message"));
             }
-        }
-
-        if (isNotBlank(announcer.getMessageTemplate()) &&
-            !Files.exists(context.getBasedir().resolve(announcer.getMessageTemplate().trim()))) {
-            errors.configuration(RB.$("validation_directory_not_exist", "discussions.messageTemplate", announcer.getMessageTemplate()));
         }
 
         validateTimeout(announcer);

@@ -17,62 +17,75 @@
  */
 package org.jreleaser.sdk.github;
 
-import org.apache.tika.Tika;
-import org.apache.tika.mime.MediaType;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import feign.form.FormEncoder;
+import feign.httpclient.ApacheHttpClient;
+import feign.jackson.JacksonDecoder;
+import feign.jackson.JacksonEncoder;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.logging.JReleaserLogger;
-import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.model.spi.release.Asset;
-import org.kohsuke.github.GHAsset;
-import org.kohsuke.github.GHBranch;
-import org.kohsuke.github.GHDiscussion;
-import org.kohsuke.github.GHException;
-import org.kohsuke.github.GHFileNotFoundException;
-import org.kohsuke.github.GHIOException;
-import org.kohsuke.github.GHIssue;
-import org.kohsuke.github.GHIssueState;
-import org.kohsuke.github.GHLabel;
-import org.kohsuke.github.GHMilestone;
-import org.kohsuke.github.GHOrganization;
-import org.kohsuke.github.GHRelease;
-import org.kohsuke.github.GHReleaseBuilder;
-import org.kohsuke.github.GHRepository;
-import org.kohsuke.github.GHTeam;
-import org.kohsuke.github.GitHub;
-import org.kohsuke.github.GitHubBuilder;
-import org.kohsuke.github.HttpConnector;
-import org.kohsuke.github.PagedIterable;
-import org.kohsuke.github.extras.ImpatientHttpConnector;
+import org.jreleaser.model.spi.release.Release;
+import org.jreleaser.model.spi.release.User;
+import org.jreleaser.sdk.commons.ClientUtils;
+import org.jreleaser.sdk.commons.RestAPIException;
+import org.jreleaser.sdk.github.api.GhAsset;
+import org.jreleaser.sdk.github.api.GhAttachment;
+import org.jreleaser.sdk.github.api.GhBranch;
+import org.jreleaser.sdk.github.api.GhDiscussion;
+import org.jreleaser.sdk.github.api.GhIssue;
+import org.jreleaser.sdk.github.api.GhLabel;
+import org.jreleaser.sdk.github.api.GhMilestone;
+import org.jreleaser.sdk.github.api.GhOrganization;
+import org.jreleaser.sdk.github.api.GhPackageVersion;
+import org.jreleaser.sdk.github.api.GhRelease;
+import org.jreleaser.sdk.github.api.GhReleaseNotes;
+import org.jreleaser.sdk.github.api.GhReleaseNotesParams;
+import org.jreleaser.sdk.github.api.GhRepository;
+import org.jreleaser.sdk.github.api.GhSearchUser;
+import org.jreleaser.sdk.github.api.GhTag;
+import org.jreleaser.sdk.github.api.GhUser;
+import org.jreleaser.sdk.github.api.GithubAPI;
+import org.jreleaser.sdk.github.internal.Page;
+import org.jreleaser.sdk.github.internal.PaginatingDecoder;
+import org.jreleaser.util.CollectionUtils;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.StreamSupport;
 
-import static org.jreleaser.sdk.git.GitSdk.REFS_TAGS;
-import static org.jreleaser.util.StringUtils.isBlank;
+import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toList;
+import static org.jreleaser.sdk.commons.ClientUtils.toFormData;
+import static org.jreleaser.util.StringUtils.requireNonBlank;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
 class Github {
-    static final String ENDPOINT = "https://api.github.com";
-    private final Tika tika = new Tika();
+    private static final String USERS_NOREPLY_GITHUB_COM = "@users.noreply.github.com";
+    private static final String ENDPOINT = "https://api.github.com";
 
     private final JReleaserLogger logger;
-    private final GitHub github;
+    private final GithubAPI api;
+    private final ObjectMapper objectMapper;
 
     Github(JReleaserLogger logger,
            String token,
            int connectTimeout,
-           int readTimeout) throws IOException {
+           int readTimeout) {
         this(logger, ENDPOINT, token, connectTimeout, readTimeout);
     }
 
@@ -80,123 +93,270 @@ class Github {
            String endpoint,
            String token,
            int connectTimeout,
-           int readTimeout) throws IOException {
-        this.logger = logger;
+           int readTimeout) {
+        this.logger = requireNonNull(logger, "'logger' must not be null");
+        requireNonBlank(token, "'token' must not be blank");
+        requireNonBlank(endpoint, "'endpoint' must not be blank");
 
-        if (isBlank(endpoint)) {
-            endpoint = ENDPOINT;
+        if (endpoint.endsWith("/")) {
+            endpoint = endpoint.substring(0, endpoint.length() - 1);
         }
 
-        github = new GitHubBuilder()
-            .withConnector(new JReleaserHttpConnector(connectTimeout, readTimeout))
-            .withEndpoint(endpoint)
-            .withOAuthToken(token)
-            .build();
+        this.objectMapper = new ObjectMapper()
+            .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .configure(SerializationFeature.INDENT_OUTPUT, true);
+
+        this.api = ClientUtils.builder(logger, connectTimeout, readTimeout)
+            .client(new ApacheHttpClient())
+            .encoder(new FormEncoder(new JacksonEncoder(objectMapper)))
+            .decoder(new PaginatingDecoder(new JacksonDecoder(objectMapper)))
+            .requestInterceptor(template -> {
+                template.header("Accept", "application/vnd.github+json");
+                template.header("X-GitHub-Api-Version", "2022-11-28");
+                template.header("Authorization", String.format("Bearer %s", token));
+            })
+            .target(GithubAPI.class, endpoint);
     }
 
-    PagedIterable<GHRelease> listReleases(String owner, String repo) throws IOException {
-        logger.debug(RB.$("git.list.releases"), owner, repo);
-        return github.getRepository(owner + "/" + repo)
-            .listReleases();
+    GhRepository findRepository(String owner, String repo) {
+        logger.debug(RB.$("git.repository.lookup"), owner, repo);
+        try {
+            return api.getRepository(owner, repo);
+        } catch (RestAPIException e) {
+            if (e.isNotFound()) {
+                // ok
+                return null;
+            }
+            throw e;
+        }
     }
 
-    Map<String, GHBranch> listBranches(String owner, String repo) throws IOException {
-        logger.debug(RB.$("git.list.branches"), owner, repo);
-        return github.getRepository(owner + "/" + repo)
-            .getBranches();
+    List<Release> listReleases(String owner, String repoName) {
+        logger.debug(RB.$("git.list.releases"), owner, repoName);
+
+        List<Release> releases = new ArrayList<>();
+
+        int pageCount = 0;
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("draft", false);
+        params.put("prerelease", false);
+        params.put("per_page", 20);
+
+        boolean consume = true;
+        do {
+            params.put("page", ++pageCount);
+            Page<List<GhRelease>> page = api.listReleases(owner, repoName, params);
+            page.getContent().stream()
+                .map(r -> new Release(
+                    r.getName(),
+                    r.getTagName(),
+                    r.getHtmlUrl(),
+                    r.getPublishedAt()
+                ))
+                .forEach(releases::add);
+
+            if (!page.hasLinks() || !page.getLinks().hasNext()) {
+                consume = false;
+            }
+        }
+        while (consume);
+
+        return releases;
     }
 
-    Map<String, GHAsset> listAssets(String owner, String repo, GHRelease release) throws IOException {
+    List<String> listBranches(String owner, String repoName) {
+        logger.debug(RB.$("git.list.branches"), owner, repoName);
+
+        List<String> branches = new ArrayList<>();
+
+        int pageCount = 0;
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("per_page", 20);
+
+        boolean consume = true;
+        do {
+            params.put("page", ++pageCount);
+            Page<List<GhBranch>> page = api.listBranches(owner, repoName, params);
+            page.getContent().stream()
+                .map(GhBranch::getName)
+                .forEach(branches::add);
+
+            if (!page.hasLinks() || !page.getLinks().hasNext()) {
+                consume = false;
+            }
+        }
+        while (consume);
+
+        return branches;
+    }
+
+    Map<String, GhAsset> listAssets(String owner, String repo, GhRelease release) {
         logger.debug(RB.$("git.list.assets.github"), owner, repo, release.getId());
 
-        Map<String, GHAsset> assets = new LinkedHashMap<>();
-        for (GHAsset asset : release.listAssets()) {
+        Map<String, GhAsset> assets = new LinkedHashMap<>();
+        for (GhAsset asset : api.listAssets(owner, repo, release.getId())) {
             assets.put(asset.getName(), asset);
         }
 
         return assets;
     }
 
-    GHRepository findRepository(String owner, String repo) throws IOException {
-        logger.debug(RB.$("git.repository.lookup"), owner, repo);
-        try {
-            return github.getRepository(owner + "/" + repo);
-        } catch (GHFileNotFoundException e) {
-            // OK, this means the repository does not exist
-            return null;
+    List<GhMilestone> listMilestones(String owner, String repoName, String state) {
+        logger.debug(RB.$("git.list.milestones"), owner, repoName, state);
+
+        List<GhMilestone> milestones = new ArrayList<>();
+
+        int pageCount = 0;
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("state", state);
+        params.put("per_page", 20);
+
+        boolean consume = true;
+        do {
+            params.put("page", ++pageCount);
+            Page<List<GhMilestone>> page = api.listMilestones(owner, repoName, params);
+            milestones.addAll(page.getContent());
+
+            if (!page.hasLinks() || !page.getLinks().hasNext()) {
+                consume = false;
+            }
         }
+        while (consume);
+
+        return milestones;
     }
 
-    GHRepository createRepository(String owner, String repo) throws IOException {
-        logger.debug(RB.$("git.repository.create"), owner, repo);
-
-        GHOrganization organization = resolveOrganization(owner);
-        if (null != organization) {
-            return organization.createRepository(repo)
-                .create();
-        }
-
-        return github.createRepository(repo)
-            .create();
-    }
-
-    Optional<GHMilestone> findMilestoneByName(String owner, String repo, String milestoneName) throws IOException {
+    Optional<GhMilestone> findMilestoneByName(String owner, String repo, String milestoneName) {
         logger.debug(RB.$("git.milestone.lookup"), milestoneName, owner, repo);
 
-        return findMilestone(owner, repo, milestoneName, GHIssueState.OPEN);
+        return findMilestone(owner, repo, milestoneName, "open");
     }
 
-    Optional<GHMilestone> findClosedMilestoneByName(String owner, String repo, String milestoneName) throws IOException {
+    Optional<GhMilestone> findClosedMilestoneByName(String owner, String repo, String milestoneName) {
         logger.debug(RB.$("git.milestone.lookup.closed"), milestoneName, owner, repo);
 
-        return findMilestone(owner, repo, milestoneName, GHIssueState.CLOSED);
+        return findMilestone(owner, repo, milestoneName, "closed");
     }
 
-    private Optional<GHMilestone> findMilestone(String owner, String repo, String milestoneName, GHIssueState state) throws IOException {
-        GHRepository repository = findRepository(owner, repo);
-        PagedIterable<GHMilestone> milestones = repository.listMilestones(state);
-        return StreamSupport.stream(milestones.spliterator(), false)
+    private Optional<GhMilestone> findMilestone(String owner, String repo, String milestoneName, String state) {
+        return listMilestones(owner, repo, state).stream()
             .filter(m -> milestoneName.equals(m.getTitle()))
             .findFirst();
     }
 
-    void closeMilestone(String owner, String repo, GHMilestone milestone) throws IOException {
+    void closeMilestone(String owner, String repo, GhMilestone milestone) {
         logger.debug(RB.$("git.milestone.close"), milestone.getTitle(), owner, repo);
 
-        milestone.close();
+        api.updateMilestone(CollectionUtils.<String, Object>map()
+            .e("state", "closed"), owner, repo, milestone.getNumber());
     }
 
-    GHRelease findReleaseByTag(String repo, String tagName) throws IOException {
-        logger.debug(RB.$("git.fetch.release.on.tag"), repo, tagName);
-        return github.getRepository(repo)
-            .getReleaseByTagName(tagName);
+    GhRepository createRepository(String owner, String repo) {
+        logger.debug(RB.$("git.repository.create"), owner, repo);
+
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("name", repo);
+        params.put("private", false);
+
+        GhOrganization organization = resolveOrganization(owner);
+        if (null != organization) {
+            return api.createRepository(params, owner);
+        }
+
+        return api.createRepository(params);
     }
 
-    void deleteTag(String repo, String tagName) throws IOException {
-        logger.debug(RB.$("git.delete.tag.from.repository"), tagName, repo);
-        github.getRepository(repo)
-            .getRef(REFS_TAGS + tagName)
-            .delete();
+    List<GhTag> listTags(String owner, String repoName) {
+        logger.debug(RB.$("git.list.milestones"), owner, repoName);
+
+        List<GhTag> tags = new ArrayList<>();
+
+        int pageCount = 0;
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("per_page", 20);
+
+        boolean consume = true;
+        do {
+            params.put("page", ++pageCount);
+            Page<List<GhTag>> page = api.listTags(owner, repoName, params);
+            tags.addAll(page.getContent());
+
+            if (!page.hasLinks() || !page.getLinks().hasNext()) {
+                consume = false;
+            }
+        }
+        while (consume);
+
+        return tags;
     }
 
-    GHReleaseBuilder createRelease(String repo, String tagName) throws IOException {
-        logger.debug(RB.$("git.create.release.repository"), repo, tagName);
-        return github.getRepository(repo)
-            .createRelease(tagName);
+    GhRelease findReleaseByTag(String owner, String repo, String tagName) {
+        logger.debug(RB.$("git.fetch.release.by.tag"), owner, repo, tagName);
+
+        try {
+            return api.getReleaseByTagName(owner, repo, tagName);
+        } catch (RestAPIException e) {
+            if (e.isNotFound()) {
+                // ok
+                return null;
+            }
+            throw e;
+        }
     }
 
-    void uploadAssets(GHRelease release, Set<Asset> assets) throws IOException {
+    GhRelease findReleaseById(String owner, String repo, Long id) {
+        logger.debug(RB.$("git.fetch.release.by.id"), owner, repo, id);
+
+        return api.getRelease(owner, repo, id);
+    }
+
+    void deleteTag(String owner, String repo, String tagName) throws RestAPIException {
+        logger.debug(RB.$("git.delete.tag.from"), tagName, owner, repo);
+
+        api.deleteTag(owner, repo, tagName);
+    }
+
+    GhRelease createRelease(String owner, String repo, GhRelease release) throws RestAPIException {
+        logger.debug(RB.$("git.create.release"), owner, repo, release.getTagName());
+
+        return api.createRelease(release, owner, repo);
+    }
+
+    void updateRelease(String owner, String repo, Long id, GhRelease release) throws RestAPIException {
+        logger.debug(RB.$("git.update.release"), owner, repo, release.getTagName());
+
+        api.updateRelease(release, owner, repo, id);
+    }
+
+    void deleteRelease(String owner, String repo, String tagName, Long id) throws RestAPIException {
+        logger.debug(RB.$("git.delete.release.from.id"), tagName, owner, repo, id);
+
+        try {
+            api.deleteRelease(owner, repo, id);
+        } catch (RestAPIException e) {
+            if (e.isNotFound()) {
+                // OK. Release might have been deleted but
+                // tag still exists.
+                return;
+            }
+            throw e;
+        }
+    }
+
+    void uploadAssets(GhRelease release, Set<Asset> assets) throws IOException {
         for (Asset asset : assets) {
             if (0 == Files.size(asset.getPath()) || !Files.exists(asset.getPath())) {
                 // do not upload empty or non existent files
                 continue;
             }
 
-            uploadOrUpdateAsset(release, asset, "git.upload.asset", "git.upload.asset.failure");
+            uploadOrUpdateAsset(asset, release, "git.upload.asset", "git.upload.asset.failure");
         }
     }
 
-    void updateAssets(GHRelease release, Set<Asset> assets, Map<String, GHAsset> existingAssets) throws IOException {
+    void updateAssets(String owner, String repo, GhRelease release, Set<Asset> assets, Map<String, GhAsset> existingAssets) throws IOException {
         for (Asset asset : assets) {
             if (0 == Files.size(asset.getPath()) || !Files.exists(asset.getPath())) {
                 // do not upload empty or non existent files
@@ -205,120 +365,254 @@ class Github {
 
             logger.debug(" " + RB.$("git.delete.asset"), asset.getFilename());
             try {
-                existingAssets.get(asset.getFilename()).delete();
-            } catch (IOException e) {
+                api.deleteAsset(owner, repo, existingAssets.get(asset.getFilename()).getId());
+            } catch (RestAPIException e) {
                 logger.error(" " + RB.$("git.delete.asset.failure"), asset.getFilename());
                 throw e;
             }
 
-            uploadOrUpdateAsset(release, asset, "git.delete.asset", "git.update.asset.failure");
+            uploadOrUpdateAsset(asset, release, "git.update.asset", "git.update.asset.failure");
         }
     }
 
-    private void uploadOrUpdateAsset(GHRelease release, Asset asset, String operationMessageKey, String operationErrorMessageKey) throws IOException {
+    private void uploadOrUpdateAsset(Asset asset, GhRelease release, String operationMessageKey, String operationErrorMessageKey) throws IOException {
         logger.info(" " + RB.$(operationMessageKey), asset.getFilename());
+
         try {
-            GHAsset ghasset = release.uploadAsset(asset.getPath().toFile(), MediaType.parse(tika.detect(asset.getPath())).toString());
-            if (!"uploaded".equalsIgnoreCase(ghasset.getState())) {
+            String uploadUrl = release.getUploadUrl();
+            if (uploadUrl.endsWith("{?name,label}")) {
+                uploadUrl = uploadUrl.substring(0, uploadUrl.length() - 13);
+            }
+
+            URI uri = new URI(uploadUrl + "?name=" + asset.getFilename());
+            GhAttachment attachment = api.uploadAsset(uri, toFormData(asset.getPath()));
+            if (!"uploaded".equalsIgnoreCase(attachment.getState())) {
                 logger.warn(" " + RB.$(operationErrorMessageKey), asset.getFilename());
             }
-        } catch (GHIOException ghioe) {
-            logger.trace(ghioe);
-            if ("Stream Closed".equals(ghioe.getMessage())) {
-                logger.warn(" " + RB.$("git.upload.asset.stream.closed"), asset.getFilename());
-            } else {
-                throw ghioe;
-            }
+        } catch (URISyntaxException shouldNeverHappen) {
+            logger.error(" " + RB.$(operationErrorMessageKey), asset.getFilename());
+            throw new IllegalStateException(RB.$("ERROR_unexpected_error"), shouldNeverHappen);
+        } catch (RestAPIException e) {
+            logger.error(" " + RB.$(operationErrorMessageKey), asset.getFilename());
+            throw e;
         }
     }
 
-    Optional<GHDiscussion> findDiscussion(String organization, String team, String title) throws IOException {
-        GHTeam ghTeam = resolveTeam(organization, team);
+    Optional<GhDiscussion> findDiscussion(String organization, String team, String title) throws IOException {
+        return listDiscussions(organization, team).stream()
+            .filter(d -> title.equals(d.getTitle()))
+            .findFirst();
+    }
 
+    List<GhDiscussion> listDiscussions(String organization, String team) {
+        logger.debug(RB.$("git.list.discussions"), organization, team);
+
+        List<GhDiscussion> discussions = new ArrayList<>();
+
+        int pageCount = 0;
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("per_page", 20);
+
+        boolean consume = true;
+        do {
+            params.put("page", ++pageCount);
+            Page<List<GhDiscussion>> page = api.listDiscussions(organization, team, params);
+            discussions.addAll(page.getContent());
+
+            if (!page.hasLinks() || !page.getLinks().hasNext()) {
+                consume = false;
+            }
+        }
+        while (consume);
+
+        return discussions;
+    }
+
+    void createDiscussion(String organization, String team, String title, String message) {
         try {
-            return StreamSupport.stream(ghTeam.listDiscussions().spliterator(), false)
-                .filter(d -> title.equals(d.getTitle()))
-                .findFirst();
-        } catch (GHException ghe) {
-            if (ghe.getCause() instanceof GHFileNotFoundException) {
-                // OK
-                return Optional.empty();
-            }
-            throw ghe;
+            logger.debug(RB.$("git.releaser.discussion.create"), title);
+
+            GhDiscussion discussion = new GhDiscussion();
+            discussion.setTitle(title);
+            discussion.setBody(message);
+
+            api.createDiscussion(discussion, organization, team);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    GHDiscussion createDiscussion(String organization, String team, String title, String message) throws IOException {
-        GHTeam ghTeam = resolveTeam(organization, team);
-
-        return ghTeam.createDiscussion(title)
-            .body(message)
-            .done();
-    }
-
-    GHLabel getOrCreateLabel(GHRepository repository, String labelName, String color, String description) throws IOException {
+    GhLabel getOrCreateLabel(String owner, String name, String labelName, String labelColor, String description) {
         logger.debug(RB.$("git.label.fetch", labelName));
 
-        try {
-            return repository.getLabel(labelName);
-        } catch (FileNotFoundException ok) {
-            logger.debug(RB.$("git.label.create", labelName));
-            return repository.createLabel(labelName, color, description);
+        List<GhLabel> labels = listLabels(owner, name);
+        Optional<GhLabel> label = labels.stream()
+            .filter(l -> l.getName().equals(labelName))
+            .findFirst();
+
+        if (label.isPresent()) {
+            return label.get();
         }
+
+        logger.debug(RB.$("git.label.create", labelName));
+        return api.createLabel(owner, name, labelName, labelColor, description);
     }
 
-    Optional<GHIssue> findIssue(GHRepository repository, int issueNumber) throws IOException {
+    public Optional<GhIssue> findIssue(String owner, String name, int issueNumber) {
         logger.debug(RB.$("git.issue.fetch", issueNumber));
         try {
-            return Optional.of(repository.getIssue(issueNumber));
-        } catch (FileNotFoundException ok) {
-            return Optional.empty();
+            return Optional.of(api.findIssue(owner, name, issueNumber));
+        } catch (RestAPIException e) {
+            if (e.isNotFound()) {
+                return Optional.empty();
+            }
+            throw e;
         }
     }
 
-    private GHOrganization resolveOrganization(String name) throws IOException {
+    void addLabelToIssue(String owner, String name, GhIssue issue, GhLabel label) {
+        logger.debug(RB.$("git.issue.label", label.getName(), issue.getNumber()));
+
+        Map<String, List<String>> labels = new LinkedHashMap<>();
+        List<String> list = labels.computeIfAbsent("labels", k -> new ArrayList<>());
+        list.addAll(issue.getLabels().stream().map(GhLabel::getName).collect(toList()));
+        list.add(label.getName());
+
+        api.labelIssue(labels, owner, name, issue.getNumber());
+    }
+
+    void commentOnIssue(String owner, String name, GhIssue issue, String comment) {
+        logger.debug(RB.$("git.issue.comment", issue.getNumber()));
+
+        Map<String, String> params = new LinkedHashMap<>();
+        params.put("body", comment);
+
+        api.commentIssue(params, owner, name, issue.getNumber());
+    }
+
+    void setMilestoneOnIssue(String owner, String name, GhIssue issue, GhMilestone milestone) {
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("milestone", milestone.getNumber());
+
+        api.updateIssue(params, owner, name, issue.getNumber());
+    }
+
+    private List<GhLabel> listLabels(String owner, String repoName) {
+        logger.debug(RB.$("git.list.labels"), owner, repoName);
+
+        List<GhLabel> labels = new ArrayList<>();
+
+        int pageCount = 0;
+        Map<String, Object> params = new LinkedHashMap<>();
+        params.put("limit", 20);
+
+        boolean consume = true;
+        do {
+            params.put("page", ++pageCount);
+            Page<List<GhLabel>> page = api.listLabels(owner, repoName, params);
+            labels.addAll(page.getContent());
+
+            if (!page.hasLinks() || !page.getLinks().hasNext()) {
+                consume = false;
+            }
+        }
+        while (consume);
+
+        return labels;
+    }
+
+    private GhOrganization resolveOrganization(String name) {
         try {
-            return github.getOrganization(name);
-        } catch (GHFileNotFoundException ignored) {
-            // OK, means the organization does not exist
-            return null;
+            return api.getOrganization(name);
+        } catch (RestAPIException e) {
+            if (e.isNotFound()) {
+                // ok
+                return null;
+            }
+            throw e;
         }
     }
 
-    private GHTeam resolveTeam(String organization, String team) throws IOException {
-        GHOrganization ghOrganization = null;
+    void updateRelease(String owner, String repo, String tag, Long id, GhRelease release) throws RestAPIException {
+        logger.debug(RB.$("git.update.release"), owner, repo, tag);
 
-        try {
-            ghOrganization = github.getOrganization(organization);
-        } catch (GHFileNotFoundException e) {
-            throw new IllegalStateException(RB.$("ERROR_git_organization_not_exist", organization));
-        }
-
-        GHTeam ghTeam = null;
-
-        try {
-            ghTeam = ghOrganization.getTeamByName(team);
-        } catch (IOException e) {
-            throw new IllegalStateException(RB.$("ERROR_git_team_not_exist"));
-        }
-
-        if (null == ghTeam) {
-            throw new IllegalStateException(RB.$("ERROR_git_team_not_exist"));
-        }
-
-        return ghTeam;
+        api.updateRelease(release, owner, repo, id);
     }
 
-    private static class JReleaserHttpConnector extends ImpatientHttpConnector {
-        public JReleaserHttpConnector(int connectTimeout, int readTimeout) {
-            super(HttpConnector.DEFAULT, connectTimeout * 1000, readTimeout * 1000);
+    private String getPrivateEmailUserId(String email) {
+        if (!email.endsWith(USERS_NOREPLY_GITHUB_COM)) return null;
+        String username = email.substring(0, email.indexOf("@"));
+        if (username.contains("+")) {
+            username = username.substring(username.indexOf("+") + 1);
+        }
+        return username;
+    }
+
+    Optional<User> findUser(String email, String name) throws RestAPIException {
+        logger.debug(RB.$("git.user.lookup"), name, email);
+
+        String username = getPrivateEmailUserId(email);
+        if (null != username) {
+            GhUser user = api.getUser(username);
+            if (null != user) {
+                return Optional.of(new User(user.getLogin(), email, user.getHtmlUrl()));
+            }
         }
 
-        @Override
-        public HttpURLConnection connect(URL url) throws IOException {
-            HttpURLConnection connection = super.connect(url);
-            connection.addRequestProperty("User-Agent", "JReleaser/" + JReleaserVersion.getPlainVersion());
-            return connection;
+        GhSearchUser search = api.searchUser(CollectionUtils.<String, String>mapOf("q", email));
+        if (search.getTotalCount() > 0) {
+            GhUser user = search.getItems().get(0);
+            return Optional.of(new User(user.getLogin(), email, user.getHtmlUrl()));
         }
+
+        return Optional.empty();
+    }
+
+    GhReleaseNotes generateReleaseNotes(String owner, String repo, GhReleaseNotesParams params) throws RestAPIException {
+        logger.info(RB.$("github.generate.release.notes"), owner, repo, params.getPreviousTagName(), params.getTagName());
+
+        return api.generateReleaseNotes(params, owner, repo);
+    }
+
+    List<GhPackageVersion> listPackageVersions(String packageType, String packageName) throws IOException {
+        logger.debug(RB.$("github.list.versions"), packageType, packageName);
+
+        List<GhPackageVersion> issues = new ArrayList<>();
+        Page<List<GhPackageVersion>> page = api.listPackageVersions0(packageType, packageName);
+        issues.addAll(page.getContent());
+
+        if (page.hasLinks() && page.getLinks().hasNext()) {
+            try {
+                collectPackageVersions(page, issues);
+            } catch (URISyntaxException e) {
+                throw new IOException(e);
+            }
+        }
+
+        return issues;
+    }
+
+    private void collectPackageVersions(Page<List<GhPackageVersion>> page, List<GhPackageVersion> issues) throws URISyntaxException {
+        URI next = new URI(page.getLinks().next());
+        logger.debug(next.toString());
+
+        page = api.listPackageVersions1(next);
+        issues.addAll(page.getContent());
+
+        if (page.hasLinks() && page.getLinks().hasNext()) {
+            collectPackageVersions(page, issues);
+        }
+    }
+
+    void deletePackageVersion(String packageType, String packageName, String packageVersion) throws RestAPIException {
+        logger.debug(RB.$("github.delete.package.version"), packageVersion, packageName);
+
+        api.deletePackageVersion(packageType, packageName, packageVersion);
+    }
+
+    void deletePackage(String packageType, String packageName) throws RestAPIException {
+        logger.debug(RB.$("github.delete.package"), packageType, packageName);
+
+        api.deletePackage(packageType, packageName);
     }
 }

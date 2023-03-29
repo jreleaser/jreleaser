@@ -74,7 +74,7 @@ public class GithubMavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
         String packageVersion = deployable.getVersion();
 
         try {
-            XGithub api = new XGithub(context.getLogger(),
+            Github api = new Github(context.getLogger(),
                 context.getModel().getRelease().getGithub().getApiEndpoint(),
                 token,
                 deployer.getConnectTimeout(),

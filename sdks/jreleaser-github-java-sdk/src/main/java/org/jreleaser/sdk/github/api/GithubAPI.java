@@ -21,6 +21,7 @@ import feign.Headers;
 import feign.Param;
 import feign.QueryMap;
 import feign.RequestLine;
+import feign.form.FormData;
 import org.jreleaser.infra.nativeimage.annotations.ProxyConfig;
 import org.jreleaser.sdk.github.internal.Page;
 
@@ -34,13 +35,107 @@ import java.util.Map;
  */
 @ProxyConfig
 public interface GithubAPI {
+    @RequestLine("GET /repos/{owner}/{repo}")
+    GhRepository getRepository(@Param("owner") String owner, @Param("repo") String repo);
+
+    @RequestLine("GET /orgs/{org}")
+    GhOrganization getOrganization(@Param("org") String org);
+
+    @RequestLine("POST /orgs/{org}/repos")
+    @Headers("Content-Type: application/json")
+    GhRepository createRepository(Map<String, Object> data, @Param("org") String org);
+
+    @RequestLine("POST /user/repos")
+    @Headers("Content-Type: application/json")
+    GhRepository createRepository(Map<String, Object> data);
+
+    @RequestLine("GET /repos/{owner}/{repo}/releases/tags/{tag}")
+    GhRelease getReleaseByTagName(@Param("owner") String owner, @Param("repo") String repo, @Param("tag") String tag);
+
+    @RequestLine("GET /repos/{owner}/{repo}/releases/{id}")
+    GhRelease getRelease(@Param("owner") String owner, @Param("repo") String repo, @Param("id") Long id);
+
+    @RequestLine("DELETE /repos/{owner}/{repo}/releases/{id}")
+    void deleteRelease(@Param("owner") String owner, @Param("repo") String repo, @Param("id") Long id);
+
+    @RequestLine("DELETE /repos/{owner}/{repo}/git/refs/tags/{tag}")
+    void deleteTag(@Param("owner") String owner, @Param("repo") String repo, @Param("tag") String tag);
+
+    @RequestLine("POST /repos/{owner}/{repo}/releases")
+    @Headers("Content-Type: application/json")
+    GhRelease createRelease(GhRelease release, @Param("owner") String owner, @Param("repo") String repo);
+
     @RequestLine("PATCH /repos/{owner}/{repo}/releases/{id}")
     @Headers("Content-Type: application/json")
     void updateRelease(GhRelease release, @Param("owner") String owner, @Param("repo") String repo, @Param("id") Long id);
 
+    @RequestLine("POST")
+    @Headers("Content-Type: application/octet-stream")
+    GhAttachment uploadAsset(URI uri, FormData file);
+
+    @RequestLine("GET /repos/{owner}/{repo}/milestones")
+    @Headers("Content-Type: application/json")
+    Page<List<GhMilestone>> listMilestones(@Param("owner") String owner, @Param("repo") String repo, @QueryMap Map<String, Object> q);
+
+    @RequestLine("PATCH /repos/{owner}/{repo}/milestones/{number}")
+    @Headers("Content-Type: application/json")
+    void updateMilestone(Map<String, Object> params, @Param("owner") String owner, @Param("repo") String repo, @Param("number") Integer number);
+
     @RequestLine("GET /search/users")
     @Headers("Content-Type: application/json")
     GhSearchUser searchUser(@QueryMap Map<String, String> q);
+
+    @RequestLine("GET /repos/{owner}/{repo}/releases")
+    @Headers("Content-Type: application/json")
+    Page<List<GhRelease>> listReleases(@Param("owner") String owner, @Param("repo") String repo, @QueryMap Map<String, Object> q);
+
+    @RequestLine("GET /repos/{owner}/{repo}/branches")
+    @Headers("Content-Type: application/json")
+    Page<List<GhBranch>> listBranches(@Param("owner") String owner, @Param("repo") String repo, @QueryMap Map<String, Object> q);
+
+    @RequestLine("GET /repos/{owner}/{repo}/releases/{releaseId}/assets")
+    @Headers("Content-Type: application/json")
+    List<GhAsset> listAssets(@Param("owner") String owner, @Param("repo") String repo, @Param("releaseId") Long releaseId);
+
+    @RequestLine("DELETE /repos/{owner}/{repo}/releases/assets/{assetId}")
+    @Headers("Content-Type: application/json")
+    void deleteAsset(@Param("owner") String owner, @Param("repo") String repo, @Param("assetId") Long assetId);
+
+    @RequestLine("GET /repos/{owner}/{repo}/labels")
+    @Headers("Content-Type: application/json")
+    Page<List<GhLabel>> listLabels(@Param("owner") String owner, @Param("repo") String repo, @QueryMap Map<String, Object> q);
+
+    @RequestLine("POST /repos/{owner}/{repo}/labels")
+    @Headers("Content-Type: application/json")
+    GhLabel createLabel(@Param("owner") String owner, @Param("repo") String repo, @Param("name") String name, @Param("color") String color, @Param("description") String description);
+
+    @RequestLine("GET /repos/{owner}/{repo}/issues/{issueNumber}")
+    @Headers("Content-Type: application/json")
+    GhIssue findIssue(@Param("owner") String owner, @Param("repo") String repo, @Param("issueNumber") int issueNumber);
+
+    @RequestLine("POST /repos/{owner}/{repo}/issues/{issueNumber}/labels")
+    @Headers("Content-Type: application/json")
+    void labelIssue(Map<String, List<String>> labels, @Param("owner") String owner, @Param("repo") String repo, @Param("issueNumber") Long issueNumber);
+
+    @RequestLine("POST /repos/{owner}/{repo}/issues/{issueNumber}/comments")
+    @Headers("Content-Type: application/json")
+    void commentIssue(Map<String, String> params, @Param("owner") String owner, @Param("repo") String repo, @Param("issueNumber") Long issueNumber);
+
+    @RequestLine("PATCH /repos/{owner}/{repo}/issues/{issueNumber}")
+    @Headers("Content-Type: application/json")
+    void updateIssue(Map<String, Object> params, @Param("owner") String owner, @Param("repo") String repo, @Param("issueNumber") Long issueNumber);
+
+    @RequestLine("GET /orgs/{org}/teams/{team}/discussions")
+    @Headers("Content-Type: application/json")
+    Page<List<GhDiscussion>> listDiscussions(@Param("org") String org, @Param("team") String team, @QueryMap Map<String, Object> q);
+
+    @RequestLine("POST /orgs/{org}/teams/{team}/discussions")
+    @Headers("Content-Type: application/json")
+    void createDiscussion(GhDiscussion discussion, @Param("org") String org, @Param("team") String team);
+
+    @RequestLine("GET /repos/{owner}/{repo}/tags")
+    @Headers("Content-Type: application/json")
+    Page<List<GhTag>> listTags(@Param("owner") String owner, @Param("repo") String repo, @QueryMap Map<String, Object> q);
 
     @RequestLine("GET /users/{username}")
     @Headers("Content-Type: application/json")

@@ -61,14 +61,4 @@ public class GhReleaseNotesParams {
     public void setConfigurationFilePath(String configurationFilePath) {
         this.configurationFilePath = configurationFilePath;
     }
-
-    @Override
-    public String toString() {
-        return "GhReleaseNotesParams{" +
-            "tagName='" + tagName + '\'' +
-            ", previousTagName='" + previousTagName + '\'' +
-            ", targetCommitish='" + targetCommitish + '\'' +
-            ", configurationFilePath='" + configurationFilePath + '\'' +
-            '}';
-    }
 }

@@ -85,15 +85,4 @@ public class GtIssue {
     public void setMilestone(GtMilestone milestone) {
         this.milestone = milestone;
     }
-
-    @Override
-    public String toString() {
-        return "GtIssue[" +
-            "id=" + id +
-            ", number=" + number +
-            ", title='" + title + '\'' +
-            ", state='" + state + '\'' +
-            ", labels=" + labels +
-            ']';
-    }
 }

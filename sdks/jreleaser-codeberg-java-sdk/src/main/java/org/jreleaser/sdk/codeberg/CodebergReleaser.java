@@ -287,6 +287,12 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
         release.setTagName(tagName);
         release.setTargetCommitish(codeberg.getResolvedBranchPush(context.getModel()));
         release.setBody(changelog);
+        if (codeberg.getPrerelease().isEnabledSet()) {
+            release.setPrerelease(codeberg.getPrerelease().isEnabled());
+        }
+        if (codeberg.isDraftSet()) {
+            release.setDraft(codeberg.isDraft());
+        }
 
         release = api.createRelease(codeberg.getOwner(), codeberg.getName(), release);
         api.uploadAssets(codeberg.getOwner(), codeberg.getName(), release, assets);

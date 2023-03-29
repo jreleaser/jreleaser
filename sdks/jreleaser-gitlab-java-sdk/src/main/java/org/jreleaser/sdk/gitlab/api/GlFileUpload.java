@@ -71,16 +71,6 @@ public class GlFileUpload {
         this.markdown = markdown;
     }
 
-    @Override
-    public String toString() {
-        return "FileUpload{" +
-            "alt='" + alt + '\'' +
-            ", url='" + url + '\'' +
-            ", fullPath='" + fullPath + '\'' +
-            ", markdown='" + markdown + '\'' +
-            '}';
-    }
-
     public GlLinkRequest toLinkRequest(String apiHost) {
         GlLinkRequest link = new GlLinkRequest();
         link.setName(getName());

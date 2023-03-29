@@ -15,20 +15,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.sdk.gitlab.api;
+package org.jreleaser.sdk.github.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * @author Andres Almiray
- * @since 1.3.0
+ * @since 1.6.0
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GlLabel {
+public class GhDiscussion {
     private Integer id;
-    private String name;
-    private String color;
-    private String description;
+    private Integer number;
+    private String title;
+    private String body;
 
     public Integer getId() {
         return id;
@@ -38,27 +38,27 @@ public class GlLabel {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public Integer getNumber() {
+        return number;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setNumber(Integer number) {
+        this.number = number;
     }
 
-    public String getColor() {
-        return color;
+    public String getTitle() {
+        return title;
     }
 
-    public void setColor(String color) {
-        this.color = color;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public String getDescription() {
-        return description;
+    public String getBody() {
+        return body;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setBody(String body) {
+        this.body = body;
     }
 }

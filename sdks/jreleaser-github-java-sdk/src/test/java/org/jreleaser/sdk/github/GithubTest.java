@@ -37,7 +37,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class XGithubTest {
+class GithubTest {
     @RegisterExtension
     WireMockExtension api = new WireMockExtension(options().dynamicPort());
 
@@ -45,7 +45,7 @@ class XGithubTest {
     @ValueSource(strings = {"jreleaserbot", "12345+jreleaserbot"})
     @DisplayName("Github user from private email id")
     void userFromPrivateEmailId(String username) throws IOException {
-        XGithub github = new XGithub(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG),
+        Github github = new Github(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG),
             api.baseUrl(),
             "GH_TOKEN",
             10000,
@@ -70,7 +70,7 @@ class XGithubTest {
     @Test
     @DisplayName("Github user not found")
     void userNotFound() throws IOException {
-        XGithub github = new XGithub(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG),
+        Github github = new Github(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG),
             api.baseUrl(),
             "GH_TOKEN",
             10000,
@@ -86,7 +86,7 @@ class XGithubTest {
     @Test
     @DisplayName("Github user found with Email")
     void userFoundByEmail() throws IOException {
-        XGithub github = new XGithub(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG),
+        Github github = new Github(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG),
             api.baseUrl(),
             "GH_TOKEN",
             10000,
@@ -95,7 +95,7 @@ class XGithubTest {
         stubFor(get(urlPathEqualTo(ApiEndpoints.SEARCH_USERS))
             .withQueryParam("q", equalTo("jreleaserbot@example.com"))
             .withHeader("Content-Type", equalTo("application/json"))
-            .withHeader("Authorization", equalTo("token GH_TOKEN"))
+            .withHeader("Authorization", equalTo("Bearer GH_TOKEN"))
             .willReturn(aResponse().withStatus(200).withBodyFile("gh_search_user_response_1.json")));
 
         Optional<User> user = github.findUser("jreleaserbot@example.com", "JReleaser");

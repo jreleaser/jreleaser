@@ -286,6 +286,12 @@ public class GiteaReleaser extends AbstractReleaser<org.jreleaser.model.api.rele
         release.setTagName(tagName);
         release.setTargetCommitish(gitea.getResolvedBranchPush(context.getModel()));
         release.setBody(changelog);
+        if (gitea.getPrerelease().isEnabledSet()) {
+            release.setPrerelease(gitea.getPrerelease().isEnabled());
+        }
+        if (gitea.isDraftSet()) {
+            release.setDraft(gitea.isDraft());
+        }
 
         release = api.createRelease(gitea.getOwner(), gitea.getName(), release);
         api.uploadAssets(gitea.getOwner(), gitea.getName(), release, assets);

@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.sdk.gitlab.api;
+package org.jreleaser.sdk.github.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -27,28 +27,28 @@ import java.util.List;
  * @since 1.3.0
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GlIssue {
-    private final List<String> labels = new ArrayList<>();
-    private Integer id;
-    private Integer iid;
+public class GhIssue {
+    private final List<GhLabel> labels = new ArrayList<>();
+    private Long id;
+    private Long number;
     private String title;
     private String state;
-    private GlMilestone milestone;
+    private GhMilestone milestone;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public Integer getIid() {
-        return iid;
+    public Long getNumber() {
+        return number;
     }
 
-    public void setIid(Integer iid) {
-        this.iid = iid;
+    public void setNumber(Long number) {
+        this.number = number;
     }
 
     public String getTitle() {
@@ -67,22 +67,22 @@ public class GlIssue {
         this.state = state;
     }
 
-    public List<String> getLabels() {
+    public List<GhLabel> getLabels() {
         return labels;
     }
 
-    public void setLabels(List<String> labels) {
+    public void setLabels(List<GhLabel> labels) {
         if (null != labels) {
             this.labels.clear();
             this.labels.addAll(labels);
         }
     }
 
-    public GlMilestone getMilestone() {
+    public GhMilestone getMilestone() {
         return milestone;
     }
 
-    public void setMilestone(GlMilestone milestone) {
+    public void setMilestone(GhMilestone milestone) {
         this.milestone = milestone;
     }
 }

@@ -70,15 +70,4 @@ public class GtLabel {
     public void setUrl(String url) {
         this.url = url;
     }
-
-    @Override
-    public String toString() {
-        return "GtLabel[" +
-            "id=" + id +
-            ", name='" + name + '\'' +
-            ", color='" + color + '\'' +
-            ", description='" + description + '\'' +
-            ", url='" + url + '\'' +
-            ']';
-    }
 }
