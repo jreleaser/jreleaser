@@ -53,8 +53,6 @@ These binaries provide their own Java runtime.
   sha256:jreleaser-native-{{projectEffectiveVersion}}-osx-x86_64.zip
 * {{#f_release_download_url}}jreleaser-native-{{projectEffectiveVersion}}-linux-x86_64.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-native-{{projectEffectiveVersion}}-linux-x86_64.zip.asc{{/f_release_download_url}})
   sha256:jreleaser-native-{{projectEffectiveVersion}}-linux-x86_64.zip
-* {{#f_release_download_url}}jreleaser-native-{{projectEffectiveVersion}}-windows-x86_64.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-native-{{projectEffectiveVersion}}-windows-x86_64.zip.asc{{/f_release_download_url}})
-  sha256:jreleaser-native-{{projectEffectiveVersion}}-windows-x86_64.zip
 
 ## Verify Provenance
 {{#includeSboms}}

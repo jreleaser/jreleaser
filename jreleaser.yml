@@ -255,8 +255,6 @@ assemble:
           platform: 'osx-x86_64'
         - path: '{{jdkPathPrefix}}/graal17Linux/{{graalFilePrefix}}'
           platform: 'linux-x86_64'
-        - path: '{{jdkPathPrefix}}/graal17Windows/{{graalFilePrefix}}'
-          platform: 'windows-x86_64'
       upx:
         active: ALWAYS
         version: '3.96'
@@ -439,8 +437,6 @@ distributions:
         platform: 'osx-x86_64'
       - path: '{{nativeImageDir}}/{{distributionName}}-{{projectEffectiveVersion}}-linux-x86_64.zip'
         platform: 'linux-x86_64'
-      - path: '{{nativeImageDir}}/{{distributionName}}-{{projectEffectiveVersion}}-windows-x86_64.zip'
-        platform: 'windows-x86_64'
 
 files:
   artifacts:
