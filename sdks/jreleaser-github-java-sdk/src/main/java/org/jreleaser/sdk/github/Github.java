@@ -398,7 +398,7 @@ class Github {
         }
     }
 
-    Optional<GhDiscussion> findDiscussion(String organization, String team, String title) throws IOException {
+    Optional<GhDiscussion> findDiscussion(String organization, String team, String title) {
         return listDiscussions(organization, team).stream()
             .filter(d -> title.equals(d.getTitle()))
             .findFirst();
@@ -429,17 +429,13 @@ class Github {
     }
 
     void createDiscussion(String organization, String team, String title, String message) {
-        try {
-            logger.debug(RB.$("git.releaser.discussion.create"), title);
+        logger.debug(RB.$("git.releaser.discussion.create"), title);
 
-            GhDiscussion discussion = new GhDiscussion();
-            discussion.setTitle(title);
-            discussion.setBody(message);
+        GhDiscussion discussion = new GhDiscussion();
+        discussion.setTitle(title);
+        discussion.setBody(message);
 
-            api.createDiscussion(discussion, organization, team);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        api.createDiscussion(discussion, organization, team);
     }
 
     GhLabel getOrCreateLabel(String owner, String name, String labelName, String labelColor, String description) {

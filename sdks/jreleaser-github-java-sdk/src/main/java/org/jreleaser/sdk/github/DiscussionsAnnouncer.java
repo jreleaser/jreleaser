@@ -24,8 +24,6 @@ import org.jreleaser.model.spi.announce.AnnounceException;
 import org.jreleaser.model.spi.announce.Announcer;
 import org.jreleaser.mustache.TemplateContext;
 
-import java.io.IOException;
-
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -90,7 +88,7 @@ public class DiscussionsAnnouncer implements Announcer<org.jreleaser.model.api.a
             }
 
             api.createDiscussion(discussions.getOrganization(), discussions.getTeam(), title, message);
-        } catch (IOException | IllegalStateException e) {
+        } catch (IllegalStateException e) {
             context.getLogger().trace(e);
             throw new AnnounceException(e);
         }
