@@ -198,36 +198,56 @@ public final class ClientUtils {
         }
     }
 
-    public static void postFile(JReleaserLogger logger,
-                                String url,
-                                int connectTimeout,
-                                int readTimeout,
-                                FormData data,
-                                Map<String, String> headers) throws UploadException {
+    public static Reader postFile(JReleaserLogger logger,
+                                  URI uri,
+                                  int connectTimeout,
+                                  int readTimeout,
+                                  FormData data,
+                                  Map<String, String> headers) throws UploadException {
         headers.put("METHOD", "POST");
-        uploadFile(logger, url, connectTimeout, readTimeout, data, headers);
+        return uploadFile(logger, uri, connectTimeout, readTimeout, data, headers);
     }
 
-    public static void putFile(JReleaserLogger logger,
-                               String url,
-                               int connectTimeout,
-                               int readTimeout,
-                               FormData data,
-                               Map<String, String> headers) throws UploadException {
+    public static Reader postFile(JReleaserLogger logger,
+                                  String url,
+                                  int connectTimeout,
+                                  int readTimeout,
+                                  FormData data,
+                                  Map<String, String> headers) throws UploadException {
+        headers.put("METHOD", "POST");
+        try {
+            return uploadFile(logger, new URI(url), connectTimeout, readTimeout, data, headers);
+        } catch (URISyntaxException e) {
+            logger.trace(e);
+            throw new UploadException(e);
+        }
+    }
+
+    public static Reader putFile(JReleaserLogger logger,
+                                 String url,
+                                 int connectTimeout,
+                                 int readTimeout,
+                                 FormData data,
+                                 Map<String, String> headers) throws UploadException {
         headers.put("METHOD", "PUT");
         headers.put("Expect", "100-continue");
-        uploadFile(logger, url, connectTimeout, readTimeout, data, headers);
+        try {
+            return uploadFile(logger, new URI(url), connectTimeout, readTimeout, data, headers);
+        } catch (URISyntaxException e) {
+            logger.trace(e);
+            throw new UploadException(e);
+        }
     }
 
-    private static void uploadFile(JReleaserLogger logger,
-                                   String url,
-                                   int connectTimeout,
-                                   int readTimeout,
-                                   FormData data,
-                                   Map<String, String> headers) throws UploadException {
+    private static Reader uploadFile(JReleaserLogger logger,
+                                     URI uri,
+                                     int connectTimeout,
+                                     int readTimeout,
+                                     FormData data,
+                                     Map<String, String> headers) throws UploadException {
         try {
             // create URL
-            URL theUrl = new URI(url).toURL();
+            URL theUrl = uri.toURL();
             logger.debug("url: {}", theUrl);
 
             // open connection
@@ -241,7 +261,9 @@ public final class ClientUtils {
             connection.setInstanceFollowRedirects(true);
 
             connection.setRequestMethod(headers.remove("METHOD"));
-            connection.addRequestProperty("Accept", "*/*");
+            if (!headers.containsKey("Accept")) {
+                connection.addRequestProperty("Accept", "*/*");
+            }
             connection.addRequestProperty("User-Agent", "JReleaser/" + JReleaserVersion.getPlainVersion());
             connection.addRequestProperty("Content-Length", data.getData().length + "");
             connection.setRequestProperty("Content-Type", data.getContentType());
@@ -286,7 +308,9 @@ public final class ClientUtils {
                 }
                 throw new UploadException(b.toString());
             }
-        } catch (URISyntaxException | IOException e) {
+
+            return new InputStreamReader(connection.getInputStream(), UTF_8);
+        } catch (IOException e) {
             logger.trace(e);
             throw new UploadException(e);
         }

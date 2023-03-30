@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import feign.form.FormData;
 import feign.form.FormEncoder;
 import feign.httpclient.ApacheHttpClient;
 import feign.jackson.JacksonDecoder;
@@ -31,6 +32,7 @@ import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.spi.release.Asset;
 import org.jreleaser.model.spi.release.Release;
 import org.jreleaser.model.spi.release.User;
+import org.jreleaser.model.spi.upload.UploadException;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.github.api.GhAsset;
@@ -55,6 +57,7 @@ import org.jreleaser.sdk.github.internal.PaginatingDecoder;
 import org.jreleaser.util.CollectionUtils;
 
 import java.io.IOException;
+import java.io.Reader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -77,10 +80,15 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
 class Github {
     private static final String USERS_NOREPLY_GITHUB_COM = "@users.noreply.github.com";
     private static final String ENDPOINT = "https://api.github.com";
+    private static final String GITHUB_API_VERSION = "2022-11-28";
+    private static final String GITHUB_MIME_TYPE = "application/vnd.github+json";
 
     private final JReleaserLogger logger;
-    private final GithubAPI api;
     private final ObjectMapper objectMapper;
+    private final GithubAPI api;
+    private final String token;
+    private final int connectTimeout;
+    private final int readTimeout;
 
     Github(JReleaserLogger logger,
            String token,
@@ -95,7 +103,9 @@ class Github {
            int connectTimeout,
            int readTimeout) {
         this.logger = requireNonNull(logger, "'logger' must not be null");
-        requireNonBlank(token, "'token' must not be blank");
+        this.token = requireNonBlank(token, "'token' must not be blank");
+        this.connectTimeout = connectTimeout;
+        this.readTimeout = readTimeout;
         requireNonBlank(endpoint, "'endpoint' must not be blank");
 
         if (endpoint.endsWith("/")) {
@@ -113,8 +123,8 @@ class Github {
             .encoder(new FormEncoder(new JacksonEncoder(objectMapper)))
             .decoder(new PaginatingDecoder(new JacksonDecoder(objectMapper)))
             .requestInterceptor(template -> {
-                template.header("Accept", "application/vnd.github+json");
-                template.header("X-GitHub-Api-Version", "2022-11-28");
+                template.header("Accept", GITHUB_MIME_TYPE);
+                template.header("X-GitHub-Api-Version", GITHUB_API_VERSION);
                 template.header("Authorization", String.format("Bearer %s", token));
             })
             .target(GithubAPI.class, endpoint);
@@ -385,7 +395,7 @@ class Github {
             }
 
             URI uri = new URI(uploadUrl + "?name=" + asset.getFilename());
-            GhAttachment attachment = api.uploadAsset(uri, toFormData(asset.getPath()));
+            GhAttachment attachment = uploadAsset(uri, toFormData(asset.getPath()));
             if (!"uploaded".equalsIgnoreCase(attachment.getState())) {
                 logger.warn(" " + RB.$(operationErrorMessageKey), asset.getFilename());
             }
@@ -395,7 +405,27 @@ class Github {
         } catch (RestAPIException e) {
             logger.error(" " + RB.$(operationErrorMessageKey), asset.getFilename());
             throw e;
+        } catch (UploadException e) {
+            logger.error(" " + RB.$(operationErrorMessageKey), asset.getFilename());
+            if (e.getCause() instanceof IOException) throw (IOException) e.getCause();
+            throw new IOException(e);
         }
+    }
+
+    private GhAttachment uploadAsset(URI uri, FormData data) throws UploadException, IOException {
+        Map<String, String> headers = new LinkedHashMap<>();
+        headers.put("Accept", GITHUB_MIME_TYPE);
+        headers.put("X-GitHub-Api-Version", GITHUB_API_VERSION);
+        headers.put("Authorization", String.format("Bearer %s", token));
+
+        Reader reader = ClientUtils.postFile(logger,
+            uri,
+            connectTimeout,
+            readTimeout,
+            data,
+            headers);
+
+        return objectMapper.readValue(reader, GhAttachment.class);
     }
 
     Optional<GhDiscussion> findDiscussion(String organization, String team, String title) {

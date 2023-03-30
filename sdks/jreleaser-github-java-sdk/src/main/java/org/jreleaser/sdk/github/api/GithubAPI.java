@@ -21,7 +21,6 @@ import feign.Headers;
 import feign.Param;
 import feign.QueryMap;
 import feign.RequestLine;
-import feign.form.FormData;
 import org.jreleaser.infra.nativeimage.annotations.ProxyConfig;
 import org.jreleaser.sdk.github.internal.Page;
 
@@ -68,10 +67,6 @@ public interface GithubAPI {
     @RequestLine("PATCH /repos/{owner}/{repo}/releases/{id}")
     @Headers("Content-Type: application/json")
     void updateRelease(GhRelease release, @Param("owner") String owner, @Param("repo") String repo, @Param("id") Long id);
-
-    @RequestLine("POST")
-    @Headers("Content-Type: application/octet-stream")
-    GhAttachment uploadAsset(URI uri, FormData file);
 
     @RequestLine("GET /repos/{owner}/{repo}/milestones")
     @Headers("Content-Type: application/json")
