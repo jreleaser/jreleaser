@@ -60,7 +60,6 @@ public class SmtpAnnouncer implements Announcer<org.jreleaser.model.api.announce
             message = smtp.getResolvedMessage(context);
         } else {
             TemplateContext props = new TemplateContext();
-            context.getChangelog().apply(props);
             context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
             message = smtp.getResolvedMessageTemplate(context, props);
         }

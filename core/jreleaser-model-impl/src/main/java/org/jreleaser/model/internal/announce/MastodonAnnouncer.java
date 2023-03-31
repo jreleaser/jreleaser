@@ -155,6 +155,7 @@ public final class MastodonAnnouncer extends AbstractAnnouncer<MastodonAnnouncer
 
     public String getResolvedStatusTemplate(JReleaserContext context, TemplateContext extraProps) {
         TemplateContext props = context.fullProps();
+        context.getChangelog().apply(props);
         applyTemplates(props, resolvedExtraProperties());
         props.set(KEY_TAG_NAME, context.getModel().getRelease().getReleaser().getEffectiveTagName(context.getModel()));
         props.set(KEY_PREVIOUS_TAG_NAME, context.getModel().getRelease().getReleaser().getResolvedPreviousTagName(context.getModel()));

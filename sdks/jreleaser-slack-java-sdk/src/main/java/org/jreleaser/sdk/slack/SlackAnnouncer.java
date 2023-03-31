@@ -65,7 +65,6 @@ public class SlackAnnouncer implements Announcer<org.jreleaser.model.api.announc
             message = slack.getResolvedMessage(context);
         } else {
             TemplateContext props = new TemplateContext();
-            context.getChangelog().apply(props);
             context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
             message = slack.getResolvedMessageTemplate(context, props);
         }

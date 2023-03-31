@@ -21,7 +21,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.extensions.api.workflow.WorkflowListenerException;
-import org.jreleaser.model.Constants;
 import org.jreleaser.model.api.JReleaserCommand;
 import org.jreleaser.model.api.hooks.ExecutionEvent;
 import org.jreleaser.model.internal.JReleaserContext;
@@ -34,6 +33,9 @@ import org.jreleaser.util.CollectionUtils;
 
 import java.util.Map;
 
+import static org.jreleaser.model.Constants.KEY_CHANGELOG;
+import static org.jreleaser.model.Constants.KEY_CHANGELOG_CHANGES;
+import static org.jreleaser.model.Constants.KEY_CHANGELOG_CONTRIBUTORS;
 import static org.jreleaser.mustache.MustacheUtils.passThrough;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -91,11 +93,9 @@ public class WebhooksAnnouncer implements Announcer<org.jreleaser.model.api.anno
         } else {
             TemplateContext props = new TemplateContext();
             if ("teams".equals(webhook.getName())) {
-                props.set(Constants.KEY_CHANGELOG, passThrough(convertLineEndings(context.getChangelog().getResolvedChangelog())));
-                props.set(Constants.KEY_CHANGELOG_CHANGES, passThrough(convertLineEndings(context.getChangelog().getFormattedChanges())));
-                props.set(Constants.KEY_CHANGELOG_CONTRIBUTORS, passThrough(convertLineEndings(context.getChangelog().getFormattedContributors())));
-            } else {
-                context.getChangelog().apply(props);
+                props.set(KEY_CHANGELOG, passThrough(convertLineEndings(context.getChangelog().getResolvedChangelog())));
+                props.set(KEY_CHANGELOG_CHANGES, passThrough(convertLineEndings(context.getChangelog().getFormattedChanges())));
+                props.set(KEY_CHANGELOG_CONTRIBUTORS, passThrough(convertLineEndings(context.getChangelog().getFormattedContributors())));
             }
             context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
             message = webhook.getResolvedMessageTemplate(context, props);

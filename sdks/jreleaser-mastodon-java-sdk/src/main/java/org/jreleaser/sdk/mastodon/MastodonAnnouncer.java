@@ -69,7 +69,6 @@ public class MastodonAnnouncer implements Announcer<org.jreleaser.model.api.anno
 
         if (isNotBlank(mastodon.getStatusTemplate())) {
             TemplateContext props = new TemplateContext();
-            context.getChangelog().apply(props);
             context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
             Arrays.stream(mastodon.getResolvedStatusTemplate(context, props)
                     .split(System.lineSeparator()))

@@ -70,7 +70,6 @@ public class LinkedinAnnouncer implements Announcer<org.jreleaser.model.api.anno
             message = Message.of(subject, text);
         } else {
             TemplateContext props = new TemplateContext();
-            context.getChangelog().apply(props);
             context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
             text = linkedin.getResolvedMessageTemplate(context, props);
         }

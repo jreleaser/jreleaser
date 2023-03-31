@@ -92,7 +92,6 @@ public class HttpAnnouncer implements Announcer<org.jreleaser.model.api.announce
             payload = announcer.getResolvedPayload(context);
         } else {
             TemplateContext props = context.props();
-            context.getChangelog().apply(props);
             context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
             payload = announcer.getResolvedPayloadTemplate(context, props);
         }

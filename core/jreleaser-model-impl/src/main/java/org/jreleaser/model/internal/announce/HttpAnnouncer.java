@@ -182,12 +182,14 @@ public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer, org.jr
 
     public String getResolvedPayload(JReleaserContext context) {
         TemplateContext props = context.fullProps();
+        context.getChangelog().apply(props);
         applyTemplates(props, resolvedExtraProperties());
         return resolveTemplate(payload, props);
     }
 
     public String getResolvedPayloadTemplate(JReleaserContext context, TemplateContext extraProps) {
         TemplateContext props = context.fullProps();
+        context.getChangelog().apply(props);
         applyTemplates(props, resolvedExtraProperties());
         props.set(KEY_TAG_NAME, context.getModel().getRelease().getReleaser()
             .getEffectiveTagName(context.getModel()));

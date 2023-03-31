@@ -69,7 +69,6 @@ public class TwitterAnnouncer implements Announcer<org.jreleaser.model.api.annou
 
         if (isNotBlank(twitter.getStatusTemplate())) {
             TemplateContext props = new TemplateContext();
-            context.getChangelog().apply(props);
             context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
             Arrays.stream(twitter.getResolvedStatusTemplate(context, props)
                     .split(System.lineSeparator()))

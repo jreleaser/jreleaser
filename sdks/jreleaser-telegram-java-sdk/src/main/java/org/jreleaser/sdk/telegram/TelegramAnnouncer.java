@@ -60,7 +60,6 @@ public class TelegramAnnouncer implements Announcer<org.jreleaser.model.api.anno
             message = telegram.getResolvedMessage(context);
         } else {
             TemplateContext props = new TemplateContext();
-            context.getChangelog().apply(props);
             context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
             message = telegram.getResolvedMessageTemplate(context, props);
         }

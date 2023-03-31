@@ -164,9 +164,11 @@ public interface JReleaserContext extends Serializable {
         }
 
         public void apply(TemplateContext props) {
-            props.set(KEY_CHANGELOG, passThrough(resolvedChangelog));
-            props.set(KEY_CHANGELOG_CHANGES, passThrough(formattedChanges));
-            props.set(KEY_CHANGELOG_CONTRIBUTORS, passThrough(formattedContributors));
+            if (!props.contains(KEY_CHANGELOG)) props.set(KEY_CHANGELOG, passThrough(resolvedChangelog));
+            if (!props.contains(KEY_CHANGELOG_CHANGES)) props.set(KEY_CHANGELOG_CHANGES, passThrough(formattedChanges));
+            if (!props.contains(KEY_CHANGELOG_CONTRIBUTORS)) {
+                props.set(KEY_CHANGELOG_CONTRIBUTORS, passThrough(formattedContributors));
+            }
         }
     }
 
