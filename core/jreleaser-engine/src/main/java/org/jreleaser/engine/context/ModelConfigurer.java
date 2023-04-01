@@ -64,6 +64,9 @@ public final class ModelConfigurer {
         try {
             repository = GitSdk.of(context).getRemote();
         } catch (Exception e) {
+            if (context.getMode() == Mode.ASSEMBLE ||
+                context.getMode() == Mode.DEPLOY ||
+                context.getMode() == Mode.DOWNLOAD) return;
             context.getLogger().trace(e);
             throw new JReleaserException(RB.$("ERROR_context_configurer_fail_git_remote"), e);
         }
