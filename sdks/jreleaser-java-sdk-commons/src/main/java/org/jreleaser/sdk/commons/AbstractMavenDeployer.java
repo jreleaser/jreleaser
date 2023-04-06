@@ -87,6 +87,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
     private static final String EXT_POM = ".pom";
     private static final String EXT_ASC = ".asc";
     private static final String EXT_MODULE = ".module";
+    private static final String EXT_NBM = ".nbm";
     private static final String[] EXT_CHECKSUMS = {".md5", ".sha1", ".sha256", ".sha512"};
 
     protected final JReleaserContext context;
@@ -499,7 +500,8 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
             String[] extensions = {
                 EXT_JAR, EXT_JAR + EXT_ASC,
                 EXT_POM, EXT_POM + EXT_ASC,
-                EXT_MODULE, EXT_MODULE + EXT_ASC
+                EXT_MODULE, EXT_MODULE + EXT_ASC,
+                EXT_NBM, EXT_NBM + EXT_ASC
             };
             for (String ext : extensions) {
                 matchers.add(fileSystem.getPathMatcher("glob:**/*" + ext));
