@@ -78,20 +78,12 @@ public class CommandExecutor {
                 error(err);
             }
 
-            Command.Result result = Command.Result.of(IoUtils.toString(out), IoUtils.toString(err), exitValue);
-
-            if (result.getExitValue() != 0) {
-                throw new CommandException(RB.$("ERROR_command_execution_exit_value", result.getExitValue()));
-            }
-
-            return result;
+            return Command.Result.of(IoUtils.toString(out), IoUtils.toString(err), exitValue);
         } catch (ProcessInitException e) {
             throw new CommandException(RB.$("ERROR_unexpected_error"), e.getCause());
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new CommandException(RB.$("ERROR_unexpected_error"), e);
-        } catch (CommandException e) {
-            throw e;
         } catch (Exception e) {
             throw new CommandException(RB.$("ERROR_unexpected_error"), e);
         }

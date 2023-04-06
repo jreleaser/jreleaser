@@ -142,8 +142,12 @@ public abstract class AbstractAssemblerProcessor<A extends org.jreleaser.model.a
 
     protected Command.Result executeCommand(Path directory, Command command) throws AssemblerProcessingException {
         try {
-            return new CommandExecutor(context.getLogger())
+            Command.Result result = new CommandExecutor(context.getLogger())
                 .executeCommand(directory, command);
+            if (result.getExitValue() != 0) {
+                throw new CommandException(RB.$("ERROR_command_execution_exit_value", result.getExitValue()));
+            }
+            return result;
         } catch (CommandException e) {
             throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
         }
@@ -151,8 +155,12 @@ public abstract class AbstractAssemblerProcessor<A extends org.jreleaser.model.a
 
     protected Command.Result executeCommand(Command command) throws AssemblerProcessingException {
         try {
-            return new CommandExecutor(context.getLogger())
+            Command.Result result = new CommandExecutor(context.getLogger())
                 .executeCommand(command);
+            if (result.getExitValue() != 0) {
+                throw new CommandException(RB.$("ERROR_command_execution_exit_value", result.getExitValue()));
+            }
+            return result;
         } catch (CommandException e) {
             throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
         }

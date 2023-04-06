@@ -90,9 +90,12 @@ public final class GpgCommandSigner {
             .arg(output.toAbsolutePath().toString())
             .arg(input.toAbsolutePath().toString());
 
-        new CommandExecutor(logger)
+        Command.Result result = new CommandExecutor(logger)
             .executeCommand(cmd,
                 new ByteArrayInputStream(passphrase.getBytes(UTF_8)));
+        if (result.getExitValue() != 0) {
+            throw new CommandException(RB.$("ERROR_command_execution_exit_value", result.getExitValue()));
+        }
     }
 
     public boolean verify(Path signature, Path target) throws CommandException {

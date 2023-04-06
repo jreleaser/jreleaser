@@ -136,11 +136,14 @@ public class DownloadableTool {
 
             Pattern pattern = Pattern.compile(verify);
 
+            Command.Result result = executeCommand(command);
+            if (result.getExitValue() != 0) {
+                throw new CommandException(RB.$("ERROR_command_execution_exit_value", result.getExitValue()));
+            }
+
             if (verifyErrorOutput) {
-                Command.Result result = executeCommand(command);
                 return pattern.matcher(result.getOut()).find() || pattern.matcher(result.getErr()).find();
             } else {
-                Command.Result result = executeCommand(command);
                 return pattern.matcher(result.getOut()).find();
             }
         } catch (CommandException e) {

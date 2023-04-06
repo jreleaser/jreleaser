@@ -54,8 +54,11 @@ public class Cosign extends AbstractTool {
             .arg(keyFile.toAbsolutePath().toString());
 
         try {
-            executeCommand(() -> new CommandExecutor(context.getLogger(), true)
+            Command.Result result = executeCommand(() -> new CommandExecutor(context.getLogger(), true)
                 .executeCommand(command, in));
+            if (result.getExitValue() != 0) {
+                throw new CommandException(RB.$("ERROR_command_execution_exit_value", result.getExitValue()));
+            }
             return true;
         } catch (CommandException e) {
             context.getLogger().debug(RB.$("ERROR_password_incorrect"));
@@ -70,9 +73,12 @@ public class Cosign extends AbstractTool {
 
         Path homeDir = resolveJReleaserHomeDir();
         try {
-            executeCommand(() -> new CommandExecutor(context.getLogger(), true)
+            Command.Result result = executeCommand(() -> new CommandExecutor(context.getLogger(), true)
                 .environment("COSIGN_PASSWORD", new String(password, UTF_8))
                 .executeCommand(homeDir, command));
+            if (result.getExitValue() != 0) {
+                throw new CommandException(RB.$("ERROR_command_execution_exit_value", result.getExitValue()));
+            }
         } catch (CommandException e) {
             throw new SigningException(RB.$("ERROR_unexpected_generate_key_pair"), e);
         }
@@ -94,8 +100,11 @@ public class Cosign extends AbstractTool {
             .arg(input.toAbsolutePath().toString());
 
         try {
-            executeCommand(() -> new CommandExecutor(context.getLogger(), true)
+            Command.Result result = executeCommand(() -> new CommandExecutor(context.getLogger(), true)
                 .executeCommand(command, in));
+            if (result.getExitValue() != 0) {
+                throw new CommandException(RB.$("ERROR_command_execution_exit_value", result.getExitValue()));
+            }
         } catch (CommandException e) {
             throw new SigningException(RB.$("ERROR_unexpected_error_signing", input.toAbsolutePath()), e);
         }
@@ -119,8 +128,11 @@ public class Cosign extends AbstractTool {
             .arg(input.toAbsolutePath().toString());
 
         try {
-            executeCommand(() -> new CommandExecutor(context.getLogger(), true)
+            Command.Result result = executeCommand(() -> new CommandExecutor(context.getLogger(), true)
                 .executeCommand(command));
+            if (result.getExitValue() != 0) {
+                throw new CommandException(RB.$("ERROR_command_execution_exit_value", result.getExitValue()));
+            }
         } catch (CommandException e) {
             throw new SigningException(RB.$("ERROR_signing_verify_signature",
                 context.relativizeToBasedir(signature)), e);
