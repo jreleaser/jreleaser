@@ -249,6 +249,5 @@ org.eclipse.jgit:org.eclipse.jgit
 MIT
 https://spdx.org/licenses/MIT.html
 
-org.kohsuke:github-api
 org.slf4j:slf4j-api
 org.slf4j:slf4j-simple
