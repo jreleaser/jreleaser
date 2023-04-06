@@ -217,7 +217,7 @@ jobs:
         run: |
           curl -sL https://raw.githubusercontent.com/jreleaser/jreleaser/main/.github/scripts/update-website.sh --output update-website.sh
           chmod +x update-website.sh
-          curl -sL https://github.com/jreleaser/jreleaser/releases/download/${TAG}/jreleaser-tool-provider-${VERSION}.jar --output jreleaser-cli.jar
+          curl -sL "https://github.com/jreleaser/jreleaser/releases/download/${TAG}/jreleaser-tool-provider-${VERSION}.jar" --output jreleaser-cli.jar
         env:
           TAG: "v${{ needs.precheck.outputs.version }}"
           VERSION: ${{ needs.precheck.outputs.version }}

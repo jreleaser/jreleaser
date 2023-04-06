@@ -83,7 +83,6 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
     private static final String PACKAGING_NBM = "nbm";
     private static final String PACKAGING_MAVEN_ARCHETYPE = "maven-archetype";
     private static final String MAVEN_METADATA_XML = "maven-metadata.xml";
-    private static final String EXT_AAR = ".aar";
     private static final String EXT_JAR = ".jar";
     private static final String EXT_POM = ".pom";
     private static final String EXT_ASC = ".asc";

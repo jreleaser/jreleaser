@@ -276,68 +276,68 @@ jobs:
           ./mvnw -B -ntp deploy -DaltDeploymentRepository=local::file:./target/staging-deploy
           echo "::endgroup::"
           echo "::group::➡️ json-schema"
-          java $JAVA_OPTS -jar jreleaser.jar json-schema
+          java "${JAVA_OPTS}" -jar jreleaser.jar json-schema
           echo "::endgroup::"
           echo "::group::➡️ env"
-          java $JAVA_OPTS -jar jreleaser.jar env
+          java "${JAVA_OPTS}" -jar jreleaser.jar env
           echo "::endgroup::"
           echo "::group::➡️ assemble"
-          java $JAVA_OPTS -jar jreleaser.jar assemble -PoutputDir=out
+          java "${JAVA_OPTS}" -jar jreleaser.jar assemble -PoutputDir=out
           echo "::endgroup::"
           echo "::group::➡️ config"
-          java $JAVA_OPTS -jar jreleaser.jar config -PoutputDir=out
+          java "${JAVA_OPTS}" -jar jreleaser.jar config -PoutputDir=out
           echo "::endgroup::"
           echo "::group::➡️ changelog"
-          java $JAVA_OPTS -jar jreleaser.jar changelog -PoutputDir=out
+          java "${JAVA_OPTS}" -jar jreleaser.jar changelog -PoutputDir=out
           echo "::endgroup::"
           echo "::group::➡️ download"
-          java $JAVA_OPTS -jar jreleaser.jar download -PoutputDir=out --dry-run
+          java "${JAVA_OPTS}" -jar jreleaser.jar download -PoutputDir=out --dry-run
           echo "::endgroup::"
           echo "::group::➡️ catalog"
-          java $JAVA_OPTS -jar jreleaser.jar catalog -PoutputDir=out --select-current-platform
+          java "${JAVA_OPTS}" -jar jreleaser.jar catalog -PoutputDir=out --select-current-platform
           echo "::endgroup::"
           echo "::group::➡️ checksum"
-          java $JAVA_OPTS -jar jreleaser.jar checksum -PoutputDir=out --select-current-platform
+          java "${JAVA_OPTS}" -jar jreleaser.jar checksum -PoutputDir=out --select-current-platform
           echo "::endgroup::"
           echo "::group::➡️ sign"
-          java $JAVA_OPTS -jar jreleaser.jar sign -PoutputDir=out --select-current-platform
+          java "${JAVA_OPTS}" -jar jreleaser.jar sign -PoutputDir=out --select-current-platform
           echo "::endgroup::"
           echo "::group::➡️ deploy"
-          java $JAVA_OPTS -jar jreleaser.jar deploy -PoutputDir=out --dry-run
+          java "${JAVA_OPTS}" -jar jreleaser.jar deploy -PoutputDir=out --dry-run
           echo "::endgroup::"
           echo "::group::➡️ upload"
-          java $JAVA_OPTS -jar jreleaser.jar upload --select-current-platform -PoutputDir=out --dry-run
+          java "${JAVA_OPTS}" -jar jreleaser.jar upload --select-current-platform -PoutputDir=out --dry-run
           echo "::endgroup::"
           echo "::group::➡️ release"
-          java $JAVA_OPTS -jar jreleaser.jar release --select-current-platform -PoutputDir=out --dry-run
+          java "${JAVA_OPTS}" -jar jreleaser.jar release --select-current-platform -PoutputDir=out --dry-run
           echo "::endgroup::"
           echo "::group::➡️ prepare"
-          java $JAVA_OPTS -jar jreleaser.jar prepare --select-current-platform -PoutputDir=out ${{ matrix.job.args }}
+          java "${JAVA_OPTS}" -jar jreleaser.jar prepare --select-current-platform -PoutputDir=out ${{ matrix.job.args }}
           echo "::endgroup::"
           echo "::group::➡️ package"
-          java $JAVA_OPTS -jar jreleaser.jar package --select-current-platform -PoutputDir=out ${{ matrix.job.args }}
+          java "${JAVA_OPTS}" -jar jreleaser.jar package --select-current-platform -PoutputDir=out ${{ matrix.job.args }}
           echo "::endgroup::"
           echo "::group::➡️ publish"
-          java $JAVA_OPTS -jar jreleaser.jar publish --select-current-platform -PoutputDir=out --dry-run ${{ matrix.job.args }}
+          java "${JAVA_OPTS}" -jar jreleaser.jar publish --select-current-platform -PoutputDir=out --dry-run ${{ matrix.job.args }}
           echo "::endgroup::"
           echo "::group::➡️ full-release"
-          java $JAVA_OPTS -jar jreleaser.jar full-release -PoutputDir=out --select-current-platform --dry-run ${{ matrix.job.args }}
+          java "${JAVA_OPTS}" -jar jreleaser.jar full-release -PoutputDir=out --select-current-platform --dry-run ${{ matrix.job.args }}
           echo "::endgroup::"
           echo "::group::➡️ announce"
-          java $JAVA_OPTS -jar jreleaser.jar announce -PoutputDir=out --dry-run
+          java "${JAVA_OPTS}" -jar jreleaser.jar announce -PoutputDir=out --dry-run
           echo "::endgroup::"
           echo "::group::➡️ template generate"
-          java $JAVA_OPTS -jar jreleaser.jar template generate --announcer discord
-          java $JAVA_OPTS -jar jreleaser.jar template generate --assembler-type jlink --assembler-name app-standalone
-          java $JAVA_OPTS -jar jreleaser.jar template generate --packager brew --distribution app
+          java "${JAVA_OPTS}" -jar jreleaser.jar template generate --announcer discord
+          java "${JAVA_OPTS}" -jar jreleaser.jar template generate --assembler-type jlink --assembler-name app-standalone
+          java "${JAVA_OPTS}" -jar jreleaser.jar template generate --packager brew --distribution app
           echo "::endgroup::"
           echo "::group::➡️ init"
-          java $JAVA_OPTS -jar jreleaser.jar init --overwrite --format yml
-          java $JAVA_OPTS -jar jreleaser.jar init --overwrite --format toml
-          java $JAVA_OPTS -jar jreleaser.jar init --overwrite --format json
+          java "${JAVA_OPTS}" -jar jreleaser.jar init --overwrite --format yml
+          java "${JAVA_OPTS}" -jar jreleaser.jar init --overwrite --format toml
+          java "${JAVA_OPTS}" -jar jreleaser.jar init --overwrite --format json
           echo "::endgroup::"
           echo "::group::➡️ auto-config"
-          java $JAVA_OPTS -jar jreleaser.jar release --auto-config --dry-run
+          java "${JAVA_OPTS}" -jar jreleaser.jar release --auto-config --dry-run
           echo "::endgroup::"
         env:
           JRELEASER_OUTPUT_DIRECTORY: out
@@ -980,7 +980,7 @@ jobs:
 
   coveralls:
     name: Coveralls
-    needs: [ build-cli, build-tool, build-ant, build-gradle, build-maven, unit-tests ]
+    needs: [ precheck, build-cli, build-tool, build-ant, build-gradle, build-maven, unit-tests ]
     if: endsWith(${{ needs.precheck.outputs.version }}, '-SNAPSHOT')
     continue-on-error: true
     runs-on: ubuntu-latest
@@ -1030,7 +1030,7 @@ jobs:
 
   codecov:
     name: Codecov
-    needs: [ build-cli, build-tool, build-ant, build-gradle, build-maven, unit-tests ]
+    needs: [ precheck, build-cli, build-tool, build-ant, build-gradle, build-maven, unit-tests ]
     if: endsWith(${{ needs.precheck.outputs.version }}, '-SNAPSHOT')
     continue-on-error: true
     runs-on: ubuntu-latest
@@ -1085,7 +1085,7 @@ jobs:
 
   sonar:
     name: Sonar
-    needs: [ build-cli, build-tool, build-ant, build-gradle, build-maven, unit-tests ]
+    needs: [ precheck, build-cli, build-tool, build-ant, build-gradle, build-maven, unit-tests ]
     if: endsWith(${{ needs.precheck.outputs.version }}, '-SNAPSHOT')
     continue-on-error: true
     runs-on: ubuntu-latest
