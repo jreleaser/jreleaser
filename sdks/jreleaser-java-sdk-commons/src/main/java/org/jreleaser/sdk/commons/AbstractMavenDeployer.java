@@ -42,12 +42,9 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.PathMatcher;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -64,6 +61,7 @@ import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.FileVisitResult.CONTINUE;
+import static org.jreleaser.util.CollectionUtils.setOf;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -79,15 +77,16 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
         Algorithm.SHA_512
     };
 
+    private static final String PACKAGING_AAR = "aar";
     private static final String PACKAGING_JAR = "jar";
     private static final String PACKAGING_POM = "pom";
+    private static final String PACKAGING_NBM = "nbm";
     private static final String PACKAGING_MAVEN_ARCHETYPE = "maven-archetype";
     private static final String MAVEN_METADATA_XML = "maven-metadata.xml";
+    private static final String EXT_AAR = ".aar";
     private static final String EXT_JAR = ".jar";
     private static final String EXT_POM = ".pom";
     private static final String EXT_ASC = ".asc";
-    private static final String EXT_MODULE = ".module";
-    private static final String EXT_NBM = ".nbm";
     private static final String[] EXT_CHECKSUMS = {".md5", ".sha1", ".sha256", ".sha512"};
 
     protected final JReleaserContext context;
@@ -259,7 +258,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
         }
 
         for (Deployable deployable : deployablesMap.values()) {
-            if (deployable.isSignature() || deployable.isChecksum()) continue;
+            if (deployable.isSignature() || deployable.isChecksum() || deployable.isMavenMetadata()) continue;
 
             Deployable signedDeployable = deployable.deriveByFilename(deployable.getFilename() + EXT_ASC);
             if (deployablesMap.containsKey(signedDeployable.getFullDeployPath())) {
@@ -360,6 +359,24 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
     }
 
     public static class Deployable implements Comparable<Deployable> {
+        private static final Set<String> JAR_EXCLUSIONS = setOf(
+            PACKAGING_POM,
+            PACKAGING_AAR
+        );
+
+        private static final Set<String> SOURCE_EXCLUSIONS = setOf(
+            PACKAGING_POM,
+            PACKAGING_NBM,
+            PACKAGING_AAR
+        );
+
+        private static final Set<String> JAVADOC_EXCLUSIONS = setOf(
+            PACKAGING_POM,
+            PACKAGING_NBM,
+            PACKAGING_MAVEN_ARCHETYPE,
+            PACKAGING_AAR
+        );
+
         private final String stagingRepository;
         private final String path;
         private final String filename;
@@ -395,15 +412,15 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
         }
 
         public boolean requiresJar() {
-            return isNotBlank(packaging) && !PACKAGING_POM.equals(packaging);
+            return isNotBlank(packaging) && !JAR_EXCLUSIONS.contains(packaging);
         }
 
         public boolean requiresSourcesJar() {
-            return isNotBlank(packaging) && !PACKAGING_POM.equals(packaging);
+            return isNotBlank(packaging) && !SOURCE_EXCLUSIONS.contains(packaging);
         }
 
         public boolean requiresJavadocJar() {
-            return isNotBlank(packaging) && !PACKAGING_POM.equals(packaging) && !PACKAGING_MAVEN_ARCHETYPE.equals(packaging);
+            return isNotBlank(packaging) && !JAVADOC_EXCLUSIONS.contains(packaging);
         }
 
         public String getGav() {
@@ -485,51 +502,44 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
             }
             return false;
         }
+
+        public boolean isMavenMetadata() {
+            return filename.endsWith(MAVEN_METADATA_XML);
+        }
     }
 
     private class DeployableCollector extends SimpleFileVisitor<Path> {
         private final Path root;
         private final Set<Deployable> deployables = new TreeSet<>();
-        private final List<PathMatcher> matchers = new ArrayList<>();
+        private final boolean projectIsSnapshot;
         private boolean failed;
 
         public DeployableCollector(Path root, boolean projectIsSnapshot) {
             this.root = root;
-
-            FileSystem fileSystem = FileSystems.getDefault();
-            String[] extensions = {
-                EXT_JAR, EXT_JAR + EXT_ASC,
-                EXT_POM, EXT_POM + EXT_ASC,
-                EXT_MODULE, EXT_MODULE + EXT_ASC,
-                EXT_NBM, EXT_NBM + EXT_ASC
-            };
-            for (String ext : extensions) {
-                matchers.add(fileSystem.getPathMatcher("glob:**/*" + ext));
-                for (String cs : EXT_CHECKSUMS) {
-                    matchers.add(fileSystem.getPathMatcher("glob:**/*" + ext + cs));
-                }
-            }
-
-            if (projectIsSnapshot) {
-                matchers.add(fileSystem.getPathMatcher("glob:**/" + MAVEN_METADATA_XML));
-                for (String cs : EXT_CHECKSUMS) {
-                    matchers.add(fileSystem.getPathMatcher("glob:**/" + MAVEN_METADATA_XML + cs));
-                }
-            }
+            this.projectIsSnapshot = projectIsSnapshot;
         }
 
         private void match(Path path) {
-            if (matchers.stream()
-                .anyMatch(matcher -> matcher.matches(path))) {
-                String stagingRepository = root.toAbsolutePath().toString();
-                String stagingPath = path.getParent().toAbsolutePath().toString();
-                deployables.add(new Deployable(
-                    stagingRepository,
-                    stagingPath.substring(stagingRepository.length()),
-                    resolvePackaging(path),
-                    path.getFileName().toString()
-                ));
+            String filename = path.getFileName().toString();
+
+            if (filename.contains(MAVEN_METADATA_XML)) {
+                if (projectIsSnapshot) {
+                    addDeployable(path);
+                }
+            } else {
+                addDeployable(path);
             }
+        }
+
+        private void addDeployable(Path path) {
+            String stagingRepository = root.toAbsolutePath().toString();
+            String stagingPath = path.getParent().toAbsolutePath().toString();
+            deployables.add(new Deployable(
+                stagingRepository,
+                stagingPath.substring(stagingRepository.length()),
+                resolvePackaging(path),
+                path.getFileName().toString()
+            ));
         }
 
         private String resolvePackaging(Path artifactPath) {
