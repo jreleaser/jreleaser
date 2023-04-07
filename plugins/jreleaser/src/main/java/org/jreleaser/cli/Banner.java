@@ -49,37 +49,30 @@ final class Banner {
     }
 
     public static void display(PrintWriter out) {
-        try {
-            File jreleaserDir = new File(System.getProperty("user.home"));
-            String envJreleaserDir = System.getenv("JRELEASER_DIR");
-            if (null != envJreleaserDir && !envJreleaserDir.isEmpty()) {
-                File dir = new File(envJreleaserDir);
-                if (dir.exists()) {
-                    jreleaserDir = dir;
-                }
+        File jreleaserDir = new File(System.getProperty("user.home"));
+        String envJreleaserDir = System.getenv("JRELEASER_DIR");
+        if (null != envJreleaserDir && !envJreleaserDir.isEmpty()) {
+            File dir = new File(envJreleaserDir);
+            if (dir.exists()) {
+                jreleaserDir = dir;
             }
+        }
 
-            File parent = new File(jreleaserDir, "/.jreleaser/caches");
-            File markerFile = getMarkerFile(parent, INSTANCE);
-            if (!markerFile.exists()) {
-                if (!JReleaserOutput.isQuiet()) out.println(INSTANCE.message);
-                markerFile.getParentFile().mkdirs();
-                PrintStream fout = newPrintStream(new FileOutputStream(markerFile));
-                fout.println("1");
-                fout.close();
+        File parent = new File(jreleaserDir, "/.jreleaser/caches");
+        File markerFile = getMarkerFile(parent, INSTANCE);
+        if (!markerFile.exists()) {
+            if (!JReleaserOutput.isQuiet()) out.println(INSTANCE.message);
+            markerFile.getParentFile().mkdirs();
+            writeQuietly(markerFile, "1");
+        } else {
+            try {
+                int count = Integer.parseInt(readQuietly(markerFile));
+                if (count < 3 && !JReleaserOutput.isQuiet()) out.println(INSTANCE.message);
+                writeQuietly(markerFile, (count + 1) + "");
+            } catch (NumberFormatException e) {
                 writeQuietly(markerFile, "1");
-            } else {
-                try {
-                    int count = Integer.parseInt(readQuietly(markerFile));
-                    if (count < 3 && !JReleaserOutput.isQuiet()) out.println(INSTANCE.message);
-                    writeQuietly(markerFile, (count + 1) + "");
-                } catch (NumberFormatException e) {
-                    writeQuietly(markerFile, "1");
-                    if (!JReleaserOutput.isQuiet()) out.println(INSTANCE.message);
-                }
+                if (!JReleaserOutput.isQuiet()) out.println(INSTANCE.message);
             }
-        } catch (IOException ignored) {
-            // noop
         }
     }
 
