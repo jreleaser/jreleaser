@@ -291,7 +291,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
     }
 
     private void verifyKeyIsPublished() {
-        Optional<String> publicKeyID = null;
+        Optional<String> publicKeyID = Optional.empty();
 
         try {
             publicKeyID = SigningUtils.getPublicKeyID(context.asImmutable());
