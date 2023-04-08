@@ -53,6 +53,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Provider;
 import java.security.Security;
+import java.util.Optional;
 
 import static org.bouncycastle.bcpg.CompressionAlgorithmTags.UNCOMPRESSED;
 
@@ -71,6 +72,16 @@ public final class SigningUtils {
 
     private SigningUtils() {
         // noop
+    }
+
+    public static Optional<String> getPublicKeyID(JReleaserContext context) throws SigningException {
+        if (context.getModel().getSigning().getMode() != org.jreleaser.model.Signing.Mode.COMMAND &&
+            context.getModel().getSigning().getMode() != org.jreleaser.model.Signing.Mode.COSIGN) {
+            Keyring keyring = context.createKeyring();
+            return Optional.of(Long.toHexString(keyring.readPublicKey().getKeyID()));
+        }
+
+        return Optional.empty();
     }
 
     public static void sign(JReleaserContext context, Path file) throws SigningException {

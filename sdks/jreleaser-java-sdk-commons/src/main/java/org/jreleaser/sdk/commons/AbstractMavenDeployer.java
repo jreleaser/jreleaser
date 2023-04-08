@@ -32,6 +32,7 @@ import org.jreleaser.sdk.tool.PomChecker;
 import org.jreleaser.sdk.tool.ToolException;
 import org.jreleaser.util.Algorithm;
 import org.jreleaser.util.ChecksumUtils;
+import org.jreleaser.util.CollectionUtils;
 import org.jreleaser.util.Errors;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -42,6 +43,11 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -51,6 +57,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -76,6 +83,11 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
         Algorithm.SHA_256,
         Algorithm.SHA_512
     };
+
+    private static final Map<String, String> KEY_SERVERS = CollectionUtils.<String, String>map()
+        .e("https://keys.openpgp.org", "https://keys.openpgp.org/search?q=%s")
+        .e("https://keyserver.ubuntu.com", "https://keyserver.ubuntu.com/pks/lookup?search=%s&fingerprint=on&options=mr&op=index")
+        .e("https://pgp.mit.edu", "https://pgp.mit.edu/pks/lookup?op=get&search=0x%s");
 
     private static final String PACKAGING_AAR = "aar";
     private static final String PACKAGING_JAR = "jar";
@@ -256,6 +268,8 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
             return;
         }
 
+        verifyKeyIsPublished();
+
         for (Deployable deployable : deployablesMap.values()) {
             if (deployable.isSignature() || deployable.isChecksum() || deployable.isMavenMetadata()) continue;
 
@@ -273,6 +287,49 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
             } finally {
                 context.getLogger().restorePrefix();
             }
+        }
+    }
+
+    private void verifyKeyIsPublished() {
+        Optional<String> publicKeyID = null;
+
+        try {
+            publicKeyID = SigningUtils.getPublicKeyID(context.asImmutable());
+        } catch (SigningException e) {
+            context.getLogger().warn(RB.$("ERROR_public_key_not_found"));
+            return;
+        }
+
+        if (!publicKeyID.isPresent()) {
+            context.getLogger().warn(RB.$("ERROR_public_key_not_found"));
+            return;
+        }
+
+        String keyID = publicKeyID.get().toUpperCase(Locale.ENGLISH);
+        boolean published = false;
+
+        context.getLogger().debug(RB.$("signing.check.published.key", keyID));
+        for (Map.Entry<String, String> e : KEY_SERVERS.entrySet()) {
+            try {
+                URL url = new URI(String.format(e.getValue(), keyID)).toURL();
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                if (connection.getResponseCode() < 400) {
+                    context.getLogger().debug(" + " + e.getKey());
+                    published = true;
+                } else {
+                    context.getLogger().debug(" x " + e.getKey());
+                }
+            } catch (MalformedURLException | URISyntaxException ignored) {
+                // ignored
+            } catch (IOException ex) {
+                context.getLogger().debug(RB.$("ERROR_unexpected_error"), ex);
+            }
+        }
+
+        if (published) {
+            context.getLogger().info(RB.$("signing.key.published", keyID));
+        } else {
+            context.getLogger().warn(RB.$("signing.key.not.published", keyID));
         }
     }
 
