@@ -117,6 +117,8 @@ public final class PlatformUtils {
 
         switch (parts.length) {
             case 1:
+                return osNameOrClassifier.contains("x86_64") ||
+                    osNameOrClassifier.contains("x86_32");
             case 2:
                 return "x86_64".equals(parts[1]) ||
                     "x86_32".equals(parts[1]);
@@ -131,6 +133,7 @@ public final class PlatformUtils {
 
         switch (parts.length) {
             case 1:
+                return osNameOrClassifier.contains("x86_32");
             case 2:
                 return "x86_32".equals(parts[1]);
             default:
@@ -144,6 +147,7 @@ public final class PlatformUtils {
 
         switch (parts.length) {
             case 1:
+                return osNameOrClassifier.contains("x86_64");
             case 2:
                 return "x86_64".equals(parts[1]);
             default:
@@ -157,6 +161,8 @@ public final class PlatformUtils {
 
         switch (parts.length) {
             case 1:
+                return osNameOrClassifier.contains("arm_32") ||
+                    osNameOrClassifier.contains("aarch_64");
             case 2:
                 return "arm_32".equals(parts[1]) ||
                     "aarch_64".equals(parts[1]);
@@ -171,6 +177,7 @@ public final class PlatformUtils {
 
         switch (parts.length) {
             case 1:
+                return osNameOrClassifier.contains("arm_32");
             case 2:
                 return "arm_32".equals(parts[1]);
             default:
@@ -184,6 +191,7 @@ public final class PlatformUtils {
 
         switch (parts.length) {
             case 1:
+                return osNameOrClassifier.contains("aarch_64");
             case 2:
                 return "aarch_64".equals(parts[1]);
             default:
@@ -195,13 +203,7 @@ public final class PlatformUtils {
         if (isBlank(osNameOrClassifier)) return false;
         String[] parts = osNameOrClassifier.split("-");
 
-        switch (parts.length) {
-            case 1:
-            case 2:
-                return "windows".equalsIgnoreCase(parts[0]);
-            default:
-                return false;
-        }
+        return "windows".equalsIgnoreCase(parts[0]);
     }
 
     public static boolean isMac(String osNameOrClassifier) {
@@ -215,29 +217,17 @@ public final class PlatformUtils {
         if (isBlank(osNameOrClassifier)) return false;
         String[] parts = osNameOrClassifier.split("-");
 
-        switch (parts.length) {
-            case 1:
-            case 2:
-                return OS_NAMES.contains(parts[0]) &&
-                    !"osx".equalsIgnoreCase(parts[0]) &&
-                    !"windows".equalsIgnoreCase(parts[0]);
-            default:
-                return false;
-        }
+        return OS_NAMES.contains(parts[0]) &&
+            !"osx".equalsIgnoreCase(parts[0]) &&
+            !"windows".equalsIgnoreCase(parts[0]);
     }
 
     public static boolean isLinux(String osNameOrClassifier) {
         if (isBlank(osNameOrClassifier)) return false;
         String[] parts = osNameOrClassifier.split("-");
 
-        switch (parts.length) {
-            case 1:
-            case 2:
-                return OS_NAMES.contains(parts[0]) &&
-                    parts[0].contains("linux");
-            default:
-                return false;
-        }
+        return OS_NAMES.contains(parts[0]) &&
+            parts[0].contains("linux");
     }
 
     public static boolean isAlpineLinux(String osNameOrClassifier) {
