@@ -65,7 +65,7 @@ class JReleaserProjectConfigurer {
     static void configure(Project project) {
         JReleaserExtensionImpl extension = (JReleaserExtensionImpl) project.extensions.findByType(JReleaserExtension)
 
-        boolean hasDistributionPlugin = configureDefaultDistribution(project, extension)
+        boolean hasDistributionPlugin = extension.dependsOnAssemble.getOrElse(true) && configureDefaultDistribution(project, extension)
 
         Provider<Directory> outputDirectory = project.layout.buildDirectory
             .dir('jreleaser')

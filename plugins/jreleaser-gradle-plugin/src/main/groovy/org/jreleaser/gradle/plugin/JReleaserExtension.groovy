@@ -59,6 +59,8 @@ interface JReleaserExtension {
 
     Property<Boolean> getStrict()
 
+    Property<Boolean> getDependsOnAssemble()
+
     Environment getEnvironment()
 
     Hooks getHooks()

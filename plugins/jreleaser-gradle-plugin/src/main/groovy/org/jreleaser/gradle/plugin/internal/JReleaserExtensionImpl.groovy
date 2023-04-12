@@ -85,6 +85,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     final Property<Boolean> dryrun
     final Property<Boolean> gitRootSearch
     final Property<Boolean> strict
+    final Property<Boolean> dependsOnAssemble
     final EnvironmentImpl environment
     final HooksImpl hooks
     final ProjectImpl project
@@ -117,6 +118,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         dryrun = objects.property(Boolean).convention(resolveBoolean(org.jreleaser.model.api.JReleaserContext.DRY_RUN))
         strict = objects.property(Boolean).convention(resolveBoolean(org.jreleaser.model.api.JReleaserContext.STRICT))
         gitRootSearch = objects.property(Boolean).convention(resolveBoolean(org.jreleaser.model.api.JReleaserContext.GIT_ROOT_SEARCH))
+        dependsOnAssemble = objects.property(Boolean).convention(true)
         environment = objects.newInstance(EnvironmentImpl, objects)
         hooks = objects.newInstance(HooksImpl, objects)
         project = objects.newInstance(ProjectImpl, objects, nameProvider, descriptionProvider, versionProvider)
