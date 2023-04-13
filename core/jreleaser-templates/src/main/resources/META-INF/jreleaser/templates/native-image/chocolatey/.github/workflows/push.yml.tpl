@@ -14,9 +14,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - uses: actions/setup-dotnet@v1
+      - uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '2.2.204'
+          dotnet-version: '6.0.16'
 
       - name: Find package
         shell: bash
