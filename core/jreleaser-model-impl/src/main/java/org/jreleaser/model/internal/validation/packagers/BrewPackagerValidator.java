@@ -88,6 +88,9 @@ public final class BrewPackagerValidator {
         if (packager.isMultiPlatform()) {
             packager.getCask().disable();
         }
+        if (isBlank(packager.getFormulaName())) {
+            packager.setFormulaName(distribution.getName());
+        }
 
         validateCask(context, distribution, packager, cask, errors);
         List<Artifact> candidateArtifacts = packager.resolveCandidateArtifacts(context, distribution);
@@ -112,10 +115,6 @@ public final class BrewPackagerValidator {
         List<BrewPackager.Dependency> dependencies = new ArrayList<>(parentPackager.getDependenciesAsList());
         dependencies.addAll(packager.getDependenciesAsList());
         packager.setDependenciesAsList(dependencies);
-
-        if (isBlank(packager.getFormulaName())) {
-            packager.setFormulaName(distribution.getName());
-        }
 
         if (!cask.isEnabled()) {
             validateArtifactPlatforms(distribution, packager, candidateArtifacts, errors);
