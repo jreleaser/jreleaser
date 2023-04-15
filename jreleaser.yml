@@ -206,6 +206,7 @@ assemble:
 
   jpackage:
     jreleaser-installer:
+      active: ALWAYS
       jlink: jreleaser-standalone
       attachPlatform: true
       exported: false
@@ -233,6 +234,7 @@ assemble:
 
   nativeImage:
     jreleaser-native:
+      active: ALWAYS
       java:
         version: 17
       imageName: '{{distributionName}}-{{projectEffectiveVersion}}'
