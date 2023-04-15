@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-54-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-55-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -80,6 +80,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://www.linkedin.com/in/timtebeek/"><img src="https://avatars.githubusercontent.com/u/1027334?v=4?s=100" width="100px;" alt="Tim te Beek"/><br /><sub><b>Tim te Beek</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=timtebeek" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/klausbrunner"><img src="https://avatars.githubusercontent.com/u/1649633?v=4?s=100" width="100px;" alt="Klaus Brunner"/><br /><sub><b>Klaus Brunner</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=klausbrunner" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/chiraqL"><img src="https://avatars.githubusercontent.com/u/71121515?v=4?s=100" width="100px;" alt="Chirag Lamsal"/><br /><sub><b>Chirag Lamsal</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=chiraqL" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/SimonVerhoeven"><img src="https://avatars.githubusercontent.com/u/5849845?v=4?s=100" width="100px;" alt="Simon Verhoeven"/><br /><sub><b>Simon Verhoeven</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=SimonVerhoeven" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
