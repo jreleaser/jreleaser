@@ -250,6 +250,10 @@ public final class ChocolateyPackagerValidator {
 
         Project project = context.getModel().getProject();
 
+        if (distribution.getTags().isEmpty()) {
+            errors.configuration(RB.$("validation_must_not_be_empty", "distribution.tags"));
+        }
+
         if (isBlank(project.getLinks().getLicense())) {
             errors.configuration(RB.$("ERROR_project_no_license_url"));
         }
