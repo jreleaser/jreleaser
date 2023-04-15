@@ -12,12 +12,12 @@ LABEL {{.}}
 RUN curl -Ls "{{distributionUrl}}" --output {{distributionArtifactFile}} && \
     unzip {{distributionArtifactFile}} && \
     rm {{distributionArtifactFile}} && \
-    chmod +x {{distributionArtifactFileName}}/bin/{{distributionExecutableUnix}}
+    chmod +x {{distributionArtifactRootEntryName}}/bin/{{distributionExecutableUnix}}
 
 {{#dockerPostCommands}}
 {{.}}
 {{/dockerPostCommands}}
 
-ENV PATH="${PATH}:/{{distributionArtifactFileName}}/bin"
+ENV PATH="${PATH}:/{{distributionArtifactRootEntryName}}/bin"
 
-ENTRYPOINT ["/{{distributionArtifactFileName}}/bin/{{distributionExecutableUnix}}"]
+ENTRYPOINT ["/{{distributionArtifactRootEntryName}}/bin/{{distributionExecutableUnix}}"]

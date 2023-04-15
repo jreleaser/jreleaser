@@ -58,7 +58,7 @@ extract_release() {
       set -e
 
       cd "$tmp_download_dir"
-      unzip -q "$filename" && mv "{{asdfDistributionArtifactFileName}}"/* "$ASDF_DOWNLOAD_PATH"
+      unzip -q "$filename" && mv "{{asdfDistributionArtifactRootEntryName}}"/* "$ASDF_DOWNLOAD_PATH"
     )
   else
     tar -xvf $filename -C "$ASDF_DOWNLOAD_PATH" --strip-components=1

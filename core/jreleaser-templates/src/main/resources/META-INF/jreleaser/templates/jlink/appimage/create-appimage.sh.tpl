@@ -5,7 +5,7 @@
 
 SYSTEM_ARCH="x86_64"
 DISTRIBUTION_FILE="{{appImageDistributionArtifactFile}}"
-DISTRIBUTION_FILE_NAME="{{appImageDistributionArtifactFileName}}"
+DISTRIBUTION_FILE_NAME="{{appImageDistributionArtifactRootEntryName}}"
 DISTRIBUTION_NAME="{{distributionExecutableName}}"
 DISTRIBUTION_EXEC="{{distributionExecutableUnix}}"
 DISTRIBUTION_ID="{{appImageComponentId}}"

@@ -206,7 +206,7 @@ assemble:
 
   jpackage:
     jreleaser-installer:
-      active: ALWAYS
+      active: NEVER
       jlink: jreleaser-standalone
       attachPlatform: true
       exported: false
@@ -234,7 +234,7 @@ assemble:
 
   nativeImage:
     jreleaser-native:
-      active: ALWAYS
+      active: NEVER
       java:
         version: 17
       imageName: '{{distributionName}}-{{projectEffectiveVersion}}'
@@ -406,6 +406,7 @@ distributions:
 
   jreleaser-installer:
     type: NATIVE_PACKAGE
+    active: NEVER
     winget:
       active: RELEASE
       package:
@@ -432,6 +433,7 @@ distributions:
         platform: 'windows-x86_64'
 
   jreleaser-native:
+    active: NEVER
     artifacts:
       - path: '{{nativeImageDir}}/{{distributionName}}-{{projectEffectiveVersion}}-osx-x86_64.zip'
         platform: 'osx-x86_64'

@@ -41,7 +41,6 @@ import static org.jreleaser.model.Constants.KEY_SPEC_PACKAGE_NAME;
 import static org.jreleaser.model.Constants.KEY_SPEC_RELEASE;
 import static org.jreleaser.model.Constants.KEY_SPEC_REQUIRES;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
-import static org.jreleaser.util.StringUtils.getFilename;
 
 /**
  * @author Andres Almiray
@@ -61,7 +60,6 @@ public class SpecPackagerProcessor extends AbstractRepositoryPackagerProcessor<S
     private void setupFiles(Distribution distribution, TemplateContext props) throws PackagerProcessingException {
         Artifact artifact = props.get(KEY_DISTRIBUTION_ARTIFACT);
         Path artifactPath = artifact.getResolvedPath(context, distribution);
-        String artifactFileName = getFilename(artifactPath.getFileName().toString(), packager.getSupportedFileExtensions(distribution.getType()));
 
         if (distribution.getType() == org.jreleaser.model.Distribution.DistributionType.FLAT_BINARY) {
             props.set(KEY_PROJECT_VERSION, context.getModel().getProject().version().toRpmVersion());
@@ -72,7 +70,7 @@ public class SpecPackagerProcessor extends AbstractRepositoryPackagerProcessor<S
         }
 
         try {
-            FileUtils.CategorizedArchive categorizedArchive = FileUtils.categorizeUnixArchive(artifactFileName,
+            FileUtils.CategorizedArchive categorizedArchive = FileUtils.categorizeUnixArchive(
                 distribution.getExecutable().resolveWindowsExtension(),
                 artifactPath);
 

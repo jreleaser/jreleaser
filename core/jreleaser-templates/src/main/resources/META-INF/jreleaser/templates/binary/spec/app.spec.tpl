@@ -17,7 +17,7 @@ Requires:  {{.}}
 {{projectLongDescription}}
 
 %prep
-%setup -q -n {{distributionArtifactFileName}}
+%setup -q -n {{distributionArtifactRootEntryName}}
 
 %install
 mkdir -p %{buildroot}%{_bindir}

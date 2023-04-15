@@ -5,7 +5,7 @@
   "license": "{{projectLicense}}",
   "url": "{{distributionUrl}}",
   "hash": "sha256:{{distributionChecksumSha256}}",
-  "extract_dir": "{{distributionArtifactFileName}}",
+  "extract_dir": "{{distributionArtifactRootEntryName}}",
   "bin": "{{distributionName}}.exe",
   "checkver": {
     "url": "{{scoopCheckverUrl}}"

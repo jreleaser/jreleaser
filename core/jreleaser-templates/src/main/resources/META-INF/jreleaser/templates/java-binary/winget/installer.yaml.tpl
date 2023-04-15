@@ -11,7 +11,7 @@ Installers:
     InstallerType: zip
     NestedInstallerType: portable
     NestedInstallerFiles:
-      - RelativeFilePath: {{distributionArtifactFileName}}\bin\{{distributionExecutableWindows}}
+      - RelativeFilePath: {{distributionArtifactRootEntryName}}\bin\{{distributionExecutableWindows}}
         PortableCommandAlias: {{distributionExecutableName}}
 ManifestType: installer
 ManifestVersion: 1.4.0

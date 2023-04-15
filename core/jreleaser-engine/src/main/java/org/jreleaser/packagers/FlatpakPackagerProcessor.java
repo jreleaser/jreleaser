@@ -74,7 +74,6 @@ import static org.jreleaser.model.Constants.SKIP_OPENJDK;
 import static org.jreleaser.packagers.AppdataUtils.isReleaseIncluded;
 import static org.jreleaser.packagers.AppdataUtils.resolveIcons;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
-import static org.jreleaser.util.StringUtils.getFilename;
 import static org.jreleaser.util.StringUtils.isFalse;
 
 /**
@@ -95,7 +94,6 @@ public class FlatpakPackagerProcessor extends AbstractRepositoryPackagerProcesso
     private void setupPrepare(Distribution distribution, TemplateContext props) throws PackagerProcessingException {
         Artifact artifact = props.get(KEY_DISTRIBUTION_ARTIFACT);
         Path artifactPath = artifact.getResolvedPath(context, distribution);
-        String artifactFileName = getFilename(artifactPath.getFileName().toString(), packager.getSupportedFileExtensions(distribution.getType()));
 
         if (distribution.getType() == org.jreleaser.model.Distribution.DistributionType.FLAT_BINARY) {
             props.set(KEY_SPEC_DIRECTORIES, emptyList());
@@ -103,7 +101,7 @@ public class FlatpakPackagerProcessor extends AbstractRepositoryPackagerProcesso
             props.set(KEY_SPEC_FILES, emptyList());
         } else {
             try {
-                FileUtils.CategorizedArchive categorizedArchive = FileUtils.categorizeUnixArchive(artifactFileName,
+                FileUtils.CategorizedArchive categorizedArchive = FileUtils.categorizeUnixArchive(
                     distribution.getExecutable().resolveWindowsExtension(),
                     artifactPath);
 

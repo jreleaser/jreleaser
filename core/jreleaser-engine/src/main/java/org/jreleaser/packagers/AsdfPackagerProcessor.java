@@ -31,11 +31,13 @@ import java.nio.file.Path;
 
 import static org.jreleaser.model.Constants.KEY_ASDF_DISTRIBUTION_ARTIFACT_FILE;
 import static org.jreleaser.model.Constants.KEY_ASDF_DISTRIBUTION_ARTIFACT_FILE_NAME;
+import static org.jreleaser.model.Constants.KEY_ASDF_DISTRIBUTION_ARTIFACT_ROOT_ENTRY_NAME;
 import static org.jreleaser.model.Constants.KEY_ASDF_DISTRIBUTION_URL;
 import static org.jreleaser.model.Constants.KEY_ASDF_PLUGIN_REPO_URL;
 import static org.jreleaser.model.Constants.KEY_ASDF_PLUGIN_TOOL_CHECK;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_NAME;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_ROOT_ENTRY_NAME;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_CLASS;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_MODULE;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_URL;
@@ -74,6 +76,9 @@ public class AsdfPackagerProcessor extends AbstractRepositoryPackagerProcessor<A
         str = props.get(KEY_DISTRIBUTION_ARTIFACT_FILE_NAME);
         str = str.replace(context.getModel().getProject().getEffectiveVersion(), "$version");
         props.set(KEY_ASDF_DISTRIBUTION_ARTIFACT_FILE_NAME, str);
+        str = props.get(KEY_DISTRIBUTION_ARTIFACT_ROOT_ENTRY_NAME);
+        str = str.replace(context.getModel().getProject().getEffectiveVersion(), "$version");
+        props.set(KEY_ASDF_DISTRIBUTION_ARTIFACT_ROOT_ENTRY_NAME, str);
         str = props.get(KEY_DISTRIBUTION_URL);
         str = str.replace(context.getModel().getProject().getEffectiveVersion(), "$version");
         props.set(KEY_ASDF_DISTRIBUTION_URL, str);

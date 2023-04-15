@@ -13,11 +13,11 @@ COPY assembly/* /
 
 RUN unzip {{distributionArtifactFile}} && \
     rm {{distributionArtifactFile}} && \
-    chmod +x {{distributionArtifactFileName}}/bin/{{distributionExecutableUnix}} && \
-    chmod +x {{distributionArtifactFileName}}/bin/java && \
-    mv /{{distributionExecutableName}}-entrypoint.sh /{{distributionArtifactFileName}}/bin && \
-    chmod +x /{{distributionArtifactFileName}}/bin/{{distributionExecutableName}}-entrypoint.sh && \
-    mv /{{distributionArtifactFileName}} /{{distributionExecutableName}}
+    chmod +x {{distributionArtifactRootEntryName}}/bin/{{distributionExecutableUnix}} && \
+    chmod +x {{distributionArtifactRootEntryName}}/bin/java && \
+    mv /{{distributionExecutableName}}-entrypoint.sh /{{distributionArtifactRootEntryName}}/bin && \
+    chmod +x /{{distributionArtifactRootEntryName}}/bin/{{distributionExecutableName}}-entrypoint.sh && \
+    mv /{{distributionArtifactRootEntryName}} /{{distributionExecutableName}}
 
 ENV PATH="${PATH}:/{{distributionExecutableName}}/bin"
 

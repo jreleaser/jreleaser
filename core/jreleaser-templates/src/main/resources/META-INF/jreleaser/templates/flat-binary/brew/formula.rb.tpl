@@ -19,7 +19,7 @@ class {{brewFormulaName}} < Formula
   {{/brewDependencies}}
 
   def install
-    bin.install "{{distributionArtifactFileName}}" => "{{distributionExecutableName}}"
+    bin.install "{{distributionArtifactRootEntryName}}" => "{{distributionExecutableName}}"
   end
 
   test do

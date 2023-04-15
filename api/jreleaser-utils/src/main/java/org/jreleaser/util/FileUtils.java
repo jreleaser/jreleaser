@@ -679,12 +679,64 @@ public final class FileUtils {
         }
     }
 
-    public static CategorizedArchive categorizeUnixArchive(String artifactFileName, String windowsExtension, Path archive) throws IOException {
+    public static String resolveRootEntryName(Path src) {
+        try {
+            String filename = src.getFileName().toString();
+            for (String extension : TAR_COMPRESSED_EXTENSIONS) {
+                if (filename.endsWith(extension)) {
+                    return resolveRootEntryNameCompressed(src);
+                }
+            }
+
+            try (InputStream fi = Files.newInputStream(src);
+                 InputStream bi = new BufferedInputStream(fi);
+                 ArchiveInputStream in = new ArchiveStreamFactory().createArchiveInputStream(bi)) {
+                return resolveRootEntryName(in);
+            } catch (ArchiveException e) {
+                throw new IOException(e.getMessage(), e);
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException(RB.$("ERROR_unexpected_error"), e);
+        }
+    }
+
+    public static String resolveRootEntryNameCompressed(Path src) throws IOException {
+        String filename = src.getFileName().toString();
+        String artifactFileName = getFilename(filename, FileType.getSupportedExtensions());
+        String artifactExtension = filename.substring(artifactFileName.length());
+        String artifactFileFormat = artifactExtension.substring(1);
+        FileType fileType = FileType.of(artifactFileFormat);
+
+        try (InputStream fi = Files.newInputStream(src);
+             InputStream bi = new BufferedInputStream(fi);
+             InputStream gzi = resolveCompressorInputStream(fileType, bi);
+             ArchiveInputStream in = new TarArchiveInputStream(gzi)) {
+            return resolveRootEntryName(in);
+        }
+    }
+
+    private static String resolveRootEntryName(ArchiveInputStream in) throws IOException {
+        ArchiveEntry entry = null;
+        while (null != (entry = in.getNextEntry())) {
+            if (!in.canReadEntryData(entry)) {
+                // log something?
+                continue;
+            }
+            String entryName = entry.getName();
+            return entryName.split("/")[0];
+        }
+
+        return "";
+    }
+
+    public static CategorizedArchive categorizeUnixArchive(String windowsExtension, Path archive) throws IOException {
         List<String> entries = FileUtils.inspectArchive(archive);
 
         Set<String> directories = new LinkedHashSet<>();
         List<String> binaries = new ArrayList<>();
         List<String> files = new ArrayList<>();
+
+        String rootEntryName = resolveRootEntryName(archive);
 
         entries.stream()
             // skip Windows executables
@@ -692,7 +744,7 @@ public final class FileUtils {
             // skip directories
             .filter(e -> !e.endsWith("/"))
             // remove root from name
-            .map(e -> e.substring(artifactFileName.length() + 1))
+            .map(e -> e.substring(rootEntryName.length() + 1))
             // match only binaries
             .filter(e -> e.startsWith("bin/"))
             .sorted()
@@ -707,7 +759,7 @@ public final class FileUtils {
             // skip directories
             .filter(e -> !e.endsWith("/"))
             // remove root from name
-            .map(e -> e.substring(artifactFileName.length() + 1))
+            .map(e -> e.substring(rootEntryName.length() + 1))
             // skip executables
             .filter(e -> !e.startsWith("bin/"))
             .sorted()

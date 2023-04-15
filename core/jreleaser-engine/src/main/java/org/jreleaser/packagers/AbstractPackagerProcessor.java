@@ -56,6 +56,7 @@ import static org.jreleaser.model.Constants.KEY_ARTIFACT_NAME;
 import static org.jreleaser.model.Constants.KEY_ARTIFACT_OS;
 import static org.jreleaser.model.Constants.KEY_ARTIFACT_PLATFORM;
 import static org.jreleaser.model.Constants.KEY_ARTIFACT_PLATFORM_REPLACED;
+import static org.jreleaser.model.Constants.KEY_ARTIFACT_ROOT_ENTRY_NAME;
 import static org.jreleaser.model.Constants.KEY_ARTIFACT_SIZE;
 import static org.jreleaser.model.Constants.KEY_ARTIFACT_VERSION;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT;
@@ -68,6 +69,7 @@ import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_NAME;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_OS;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_PLATFORM;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_PLATFORM_REPLACED;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_ROOT_ENTRY_NAME;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_SIZE;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_VERSION;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY;
@@ -77,6 +79,7 @@ import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_SIZE;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_URL;
 import static org.jreleaser.model.Constants.KEY_REVERSE_REPO_HOST;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
+import static org.jreleaser.util.FileUtils.resolveRootEntryName;
 import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.getFilename;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -96,6 +99,7 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
     private static final String FILE = "File";
     private static final String SIZE = "Size";
     private static final String FILE_NAME = "FileName";
+    private static final String ROOT_ENTRY_NAME = "RootEntryName";
     private static final String FILE_EXTENSION = "FileExtension";
     private static final String FILE_FORMAT = "FileFormat";
     private static final String CHECKSUM = "Checksum";
@@ -328,6 +332,7 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
 
             String artifactFile = artifact.getEffectivePath().getFileName().toString();
             String artifactFileName = getFilename(artifactFile, FileType.getSupportedExtensions());
+            String artifactRootEntryName = resolveRootEntryName(artifact.getEffectivePath());
             String artifactFileExtension = "";
             String artifactFileFormat = "";
 
@@ -370,6 +375,7 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
             safePut(props, ARTIFACT + artifactPlatform + FILE, artifactFile);
             safePut(props, ARTIFACT + artifactPlatform + SIZE, artifactSize);
             safePut(props, ARTIFACT + artifactPlatform + FILE_NAME, artifactFileName);
+            safePut(props, ARTIFACT + artifactPlatform + ROOT_ENTRY_NAME, artifactRootEntryName);
             safePut(props, ARTIFACT + artifactPlatform + FILE_EXTENSION, artifactFileExtension);
             safePut(props, ARTIFACT + artifactPlatform + FILE_FORMAT, artifactFileFormat);
 
@@ -380,6 +386,7 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
             safePut(props, ARTIFACT + artifactPlatformReplaced + FILE, artifactFile);
             safePut(props, ARTIFACT + artifactPlatformReplaced + SIZE, artifactSize);
             safePut(props, ARTIFACT + artifactPlatformReplaced + FILE_NAME, artifactFileName);
+            safePut(props, ARTIFACT + artifactPlatformReplaced + ROOT_ENTRY_NAME, artifactRootEntryName);
             safePut(props, ARTIFACT + artifactPlatformReplaced + FILE_EXTENSION, artifactFileExtension);
             safePut(props, ARTIFACT + artifactPlatformReplaced + FILE_FORMAT, artifactFileFormat);
 
@@ -415,6 +422,7 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
                 safePut(props, KEY_DISTRIBUTION_ARTIFACT_SIZE, artifactSize);
                 safePut(props, KEY_DISTRIBUTION_ARTIFACT_FILE, artifactFile);
                 safePut(props, KEY_DISTRIBUTION_ARTIFACT_FILE_NAME, artifactFileName);
+                safePut(props, KEY_DISTRIBUTION_ARTIFACT_ROOT_ENTRY_NAME, artifactRootEntryName);
                 safePut(props, KEY_DISTRIBUTION_ARTIFACT_FILE_EXTENSION, artifactFileExtension);
                 safePut(props, KEY_DISTRIBUTION_ARTIFACT_FILE_FORMAT, artifactFileFormat);
 
@@ -427,6 +435,7 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
                 safePut(props, KEY_ARTIFACT_SIZE, artifactSize);
                 safePut(props, KEY_ARTIFACT_FILE, artifactFile);
                 safePut(props, KEY_ARTIFACT_FILE_NAME, artifactFileName);
+                safePut(props, KEY_ARTIFACT_ROOT_ENTRY_NAME, artifactRootEntryName);
                 safePut(props, KEY_ARTIFACT_FILE_EXTENSION, artifactFileExtension);
                 safePut(props, KEY_ARTIFACT_FILE_FORMAT, artifactFileFormat);
 

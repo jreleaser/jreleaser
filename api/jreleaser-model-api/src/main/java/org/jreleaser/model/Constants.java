@@ -155,6 +155,7 @@ public interface Constants {
     String KEY_DISTRIBUTION_ARTIFACT_SIZE = "distributionArtifactSize";
     String KEY_DISTRIBUTION_ARTIFACT_FILE = "distributionArtifactFile";
     String KEY_DISTRIBUTION_ARTIFACT_FILE_NAME = "distributionArtifactFileName";
+    String KEY_DISTRIBUTION_ARTIFACT_ROOT_ENTRY_NAME = "distributionArtifactRootEntryName";
     String KEY_DISTRIBUTION_ARTIFACT_FILE_EXTENSION = "distributionArtifactFileExtension";
     String KEY_DISTRIBUTION_ARTIFACT_FILE_FORMAT = "distributionArtifactFileFormat";
     String KEY_DISTRIBUTION_ARTIFACT_ARCHIVE_FORMAT = "distributionArtifactArchiveFormat";
@@ -176,6 +177,7 @@ public interface Constants {
     String KEY_ARTIFACT_PLATFORM_REPLACED = "artifactPlatformReplaced";
     String KEY_ARTIFACT_FILE = "artifactFile";
     String KEY_ARTIFACT_FILE_NAME = "artifactFileName";
+    String KEY_ARTIFACT_ROOT_ENTRY_NAME = "artifactRootEntryName";
     String KEY_ARTIFACT_FILE_EXTENSION = "artifactFileExtension";
     String KEY_ARTIFACT_FILE_FORMAT = "artifactFileFormat";
     String KEY_ARTIFACT_NAME = "artifactName";
@@ -208,6 +210,7 @@ public interface Constants {
     String KEY_ASDF_DISTRIBUTION_ARTIFACT_FILE = "asdfDistributionArtifactFile";
     String KEY_ASDF_DISTRIBUTION_URL = "asdfDistributionUrl";
     String KEY_ASDF_DISTRIBUTION_ARTIFACT_FILE_NAME = "asdfDistributionArtifactFileName";
+    String KEY_ASDF_DISTRIBUTION_ARTIFACT_ROOT_ENTRY_NAME = "asdfDistributionArtifactRootEntryName";
 
     // Brew
     String KEY_BREW_FORMULA_NAME = "brewFormulaName";

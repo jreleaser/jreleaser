@@ -64,6 +64,7 @@ import static org.jreleaser.model.Constants.KEY_ARTIFACT_NAME;
 import static org.jreleaser.model.Constants.KEY_ARTIFACT_OS;
 import static org.jreleaser.model.Constants.KEY_ARTIFACT_PLATFORM;
 import static org.jreleaser.model.Constants.KEY_ARTIFACT_PLATFORM_REPLACED;
+import static org.jreleaser.model.Constants.KEY_ARTIFACT_ROOT_ENTRY_NAME;
 import static org.jreleaser.model.Constants.KEY_ARTIFACT_VERSION;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_ARCHIVE_FORMAT;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_EXTENSION;
@@ -74,6 +75,7 @@ import static org.jreleaser.model.Constants.KEY_PLATFORM;
 import static org.jreleaser.model.Constants.KEY_PROJECT_EFFECTIVE_VERSION;
 import static org.jreleaser.model.Constants.KEY_PROJECT_VERSION;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
+import static org.jreleaser.util.FileUtils.resolveRootEntryName;
 import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.getFilename;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -152,6 +154,7 @@ public final class Artifacts {
         String artifactFileName = getFilename(artifactFile, FileType.getSupportedExtensions());
         props.set(KEY_ARTIFACT_FILE, artifactFile);
         props.set(KEY_ARTIFACT_FILE_NAME, artifactFileName);
+        props.set(KEY_ARTIFACT_ROOT_ENTRY_NAME, resolveRootEntryName(artifact.getEffectivePath()));
 
         if (!artifactFile.equals(artifactFileName)) {
             String artifactExtension = artifactFile.substring(artifactFileName.length());

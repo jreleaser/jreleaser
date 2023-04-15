@@ -55,6 +55,7 @@ import static org.jreleaser.model.Constants.KEY_BREW_HAS_LIVECHECK;
 import static org.jreleaser.model.Constants.KEY_BREW_LIVECHECK;
 import static org.jreleaser.model.Constants.KEY_BREW_MULTIPLATFORM;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_NAME;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_ROOT_ENTRY_NAME;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_CLASS;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_MODULE;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_VERSION;
@@ -68,6 +69,7 @@ import static org.jreleaser.mustache.MustacheUtils.passThrough;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.FileType.ZIP;
+import static org.jreleaser.util.FileUtils.resolveRootEntryName;
 import static org.jreleaser.util.StringUtils.getFilename;
 import static org.jreleaser.util.StringUtils.getHyphenatedName;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -248,6 +250,7 @@ BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> 
                     TemplateContext newProps = new TemplateContext(props);
                     newProps.set(KEY_DISTRIBUTION_URL, artifactUrl);
                     newProps.set(KEY_DISTRIBUTION_ARTIFACT_FILE_NAME, artifactFileName);
+                    newProps.set(KEY_DISTRIBUTION_ARTIFACT_ROOT_ENTRY_NAME, resolveRootEntryName(artifact.getEffectivePath()));
                     newProps.set(KEY_DISTRIBUTION_CHECKSUM_SHA_256, artifact.getHash(Algorithm.SHA_256));
                     multiPlatforms.add(resolveTemplate(template, newProps));
                 }
@@ -261,6 +264,7 @@ BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> 
                 TemplateContext newProps = new TemplateContext(props);
                 newProps.set(KEY_DISTRIBUTION_URL, artifactUrl);
                 newProps.set(KEY_DISTRIBUTION_ARTIFACT_FILE_NAME, artifactFileName);
+                newProps.set(KEY_DISTRIBUTION_ARTIFACT_ROOT_ENTRY_NAME, resolveRootEntryName(osxIntelArtifact.getEffectivePath()));
                 newProps.set(KEY_DISTRIBUTION_CHECKSUM_SHA_256, osxIntelArtifact.getHash(Algorithm.SHA_256));
                 multiPlatforms.add(resolveTemplate(flatBinary ? TPL_LINUX_ARM_FLAT_BINARY : TPL_MAC_ARM, newProps));
             }
@@ -284,17 +288,17 @@ BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> 
 
     private boolean shouldAddJavaDependency(Distribution distribution) {
         if ((distribution.getType() == org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY ||
-                distribution.getType() == org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR) &&
-                !isTrue(packager.getExtraProperties().get(SKIP_JAVA))) {
+            distribution.getType() == org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR) &&
+            !isTrue(packager.getExtraProperties().get(SKIP_JAVA))) {
             return packager.getDependenciesAsList().stream()
-                    .map(BrewPackager.Dependency::getKey).noneMatch(BrewPackagerProcessor::isJdkDependency);
+                .map(BrewPackager.Dependency::getKey).noneMatch(BrewPackagerProcessor::isJdkDependency);
         }
         return false;
     }
 
     private static boolean isJdkDependency(String brewDependency) {
-        for(String alias: BREW_JDK_ALIASES) {
-            if(brewDependency.equals(alias) || brewDependency.startsWith(alias + "@")) {
+        for (String alias : BREW_JDK_ALIASES) {
+            if (brewDependency.equals(alias) || brewDependency.startsWith(alias + "@")) {
                 return true;
             }
         }
