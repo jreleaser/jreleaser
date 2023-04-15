@@ -174,11 +174,6 @@ public final class FlatpakPackagerValidator {
             packager.getFinishArgs().add("--env=JAVA_HOME=/app/jre");
         }
 
-        if (isBlank(packager.getRepository().getName())) {
-            packager.getRepository().setName(packager.getComponentId());
-        }
-        packager.getRepository().setTapName(packager.getComponentId());
-
         if (distribution.getStereotype() != Stereotype.CLI && distribution.getStereotype() != Stereotype.DESKTOP) {
             errors.configuration(RB.$("validation_stereotype_invalid",
                 "distribution." + distribution.getName() + ".stereotype",
@@ -189,6 +184,10 @@ public final class FlatpakPackagerValidator {
         validateCommitAuthor(packager, parentPackager);
         FlatpakPackager.FlatpakRepository repository = packager.getRepository();
         validateTap(context, distribution, repository, parentPackager.getRepository(), "flatpak.repository");
+        if (isBlank(repository.getName())) {
+            repository.setName(packager.getComponentId());
+        }
+        repository.setTapName(packager.getComponentId());
         validateTemplate(context, distribution, packager, parentPackager, errors);
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);
