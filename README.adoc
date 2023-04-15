@@ -45,7 +45,8 @@ image:https://img.shields.io/gradle-plugin-portal/v/{plugin-id}?logo=gradle["Gra
  * Ask questions on our link:https://github.com/{project-owner}/{project-name}/discussions[Discussions] page.
  * image:https://img.shields.io/twitter/follow/{project-name}?style=social[Twitter Follow]
  * image:https://img.shields.io/mastodon/follow/109318759441003625?domain=https%3A%2F%2Ffosstodon.org&style=social[Mastodon Follow]
- * Join our link:CONTRIBUTORS.md[contributors] by reporting bugs, proposing features, sending patches, promoting the project, helping others.
+ * image:https://img.shields.io/github/all-contributors/{project-owner}/{project-name}?label=contributors&logo=github[Contributors, link="CONTRIBUTORS.md"]
+ Join our link:CONTRIBUTORS.md[contributors] by reporting bugs, proposing features, sending patches, promoting the project, helping others.
 
 == Code of Conduct
 
@@ -61,6 +62,7 @@ image:https://img.shields.io/docker/pulls/{project-owner}/{project-owner}-alpine
 image:https://img.shields.io/flathub/downloads/org.jreleaser.cli?label=flathub&logo=flathub&logoColor=white[Flathub, link="https://github.com/flathub/org.jreleaser.cli"]
 image:https://img.shields.io/chocolatey/dt/{project-owner}?label=chocolatey&logo=chocolatey&logoColor=white[Chocolatey, link="https://community.chocolatey.org/packages/{project-owner}"]
 image:https://img.shields.io/github/downloads/{project-owner}/{project-name}-appimage/total?label=appimage&logo=linux&logoColor=white[AppImage, link="https://github.com/{project-owner}/{project-name}-appimage"]
+image:https://img.shields.io/homebrew/installs/dy/{project-name}?color=green&label=homebrew&logo=homebrew&logoColor=white[Homebrew, link="https://formulae.brew.sh/formula/{project-name}"]
 
 == Code Health
 
@@ -69,3 +71,4 @@ image:https://img.shields.io/coverallsCoverage/github/{project-owner}/{project-n
 image:https://img.shields.io/codecov/c/github/{project-owner}/{project-name}?label=codecov&logo=codecov&logoColor=white["Codecov", link="https://app.codecov.io/gh/{project-owner}/{project-name}"]
 image:https://img.shields.io/snyk/vulnerabilities/github/{project-owner}/{project-name}?logo=snyk[Snyk Vulnerabilities for GitHub Repo]
 image:https://sonarcloud.io/api/project_badges/measure?project=org_jreleaser_jreleaser&metric=security_rating[link="https://sonarcloud.io/summary/new_code?id=org_jreleaser_jreleaser"]
+image:https://img.shields.io/librariesio/github/{project-owner}/{project-name}?logo=libraries.io&logoColor=white["Libraries.io dependency status for GitHub repo", link="https://libraries.io/maven/org.jreleaser:{project-name}"]
