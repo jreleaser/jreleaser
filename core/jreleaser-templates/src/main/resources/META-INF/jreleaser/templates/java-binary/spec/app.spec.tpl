@@ -34,7 +34,7 @@ chmod 0755 %{buildroot}%{_bindir}/{{distributionExecutableName}}
 mkdir -p %{_appdir}/{{.}}
 {{/specDirectories}}
 {{#specBinaries}}
-install -p -m 755 bin/{{.}} %{_appdir}/bin/{{.}}
+install -p -m 755 {{.}} %{_appdir}/{{.}}
 {{/specBinaries}}
 {{#specFiles}}
 install -p -m 644 {{.}} %{_appdir}/{{.}}
@@ -43,7 +43,7 @@ install -p -m 644 {{.}} %{_appdir}/{{.}}
 %files
 %{_bindir}/%{name}
 {{#specBinaries}}
-%{_datadir}/%{name}/bin/{{.}}
+%{_datadir}/%{name}/{{.}}
 {{/specBinaries}}
 {{#specFiles}}
 %{_datadir}/%{name}/{{.}}

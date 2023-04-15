@@ -21,7 +21,7 @@ modules:
     buildsystem: simple
     build-commands:
       {{#flatpakBinaries}}
-      - install -Dm755 bin/{{.}} /app/bin/{{.}}
+      - install -Dm755 {{.}} /app/{{.}}
       {{/flatpakBinaries}}
       {{#flatpakFiles}}
       - install -Dm644 {{.}} /app/{{.}}

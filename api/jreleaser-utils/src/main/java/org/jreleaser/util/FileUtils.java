@@ -688,13 +688,16 @@ public final class FileUtils {
                 }
             }
 
-            try (InputStream fi = Files.newInputStream(src);
-                 InputStream bi = new BufferedInputStream(fi);
-                 ArchiveInputStream in = new ArchiveStreamFactory().createArchiveInputStream(bi)) {
-                return resolveRootEntryName(in);
-            } catch (ArchiveException e) {
-                throw new IOException(e.getMessage(), e);
+            if (filename.endsWith(ZIP.extension())) {
+                try (InputStream fi = Files.newInputStream(src);
+                     InputStream bi = new BufferedInputStream(fi);
+                     ArchiveInputStream in = new ArchiveStreamFactory().createArchiveInputStream(bi)) {
+                    return resolveRootEntryName(in);
+                } catch (ArchiveException e) {
+                    throw new IOException(e.getMessage(), e);
+                }
             }
+            return "";
         } catch (IOException e) {
             throw new IllegalStateException(RB.$("ERROR_unexpected_error"), e);
         }
@@ -745,31 +748,27 @@ public final class FileUtils {
             .filter(e -> !e.endsWith("/"))
             // remove root from name
             .map(e -> e.substring(rootEntryName.length() + 1))
-            // match only binaries
-            .filter(e -> e.startsWith("bin/"))
             .sorted()
             .forEach(entry -> {
-                String[] parts = entry.split("/");
-                binaries.add(parts[1]);
-            });
-
-        entries.stream()
-            // skip Windows executables
-            .filter(e -> !e.endsWith(windowsExtension))
-            // skip directories
-            .filter(e -> !e.endsWith("/"))
-            // remove root from name
-            .map(e -> e.substring(rootEntryName.length() + 1))
-            // skip executables
-            .filter(e -> !e.startsWith("bin/"))
-            .sorted()
-            .forEach(entry -> {
-                String[] parts = entry.split("/");
-                if (parts.length > 1) directories.add(parts[0]);
-                files.add(entry);
+                if (isBinaryEntry(entry)) {
+                    binaries.add(entry);
+                } else {
+                    String[] parts = entry.split("/");
+                    if (parts.length > 1) directories.add(parts[0]);
+                    files.add(entry);
+                }
             });
 
         return new CategorizedArchive(directories, binaries, files);
+    }
+
+    private static boolean isBinaryEntry(String entry) {
+        String[] parts = entry.split("/");
+        if (parts.length > 1) {
+            return "bin".equalsIgnoreCase(parts[parts.length - 2]);
+        }
+
+        return false;
     }
 
     public static List<String> inspectArchiveCompressed(Path src) throws IOException {
