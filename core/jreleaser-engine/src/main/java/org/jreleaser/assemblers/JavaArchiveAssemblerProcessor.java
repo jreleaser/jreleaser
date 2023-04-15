@@ -140,6 +140,7 @@ public class JavaArchiveAssemblerProcessor extends AbstractAssemblerProcessor<or
         }
 
         for (Glob glob : assembler.getJars()) {
+            if (!glob.resolveActiveAndSelected(context)) continue;
             glob.getResolvedArtifacts(context).stream()
                 .map(artifact -> artifact.getResolvedPath(context, assembler))
                 .forEach(paths::add);

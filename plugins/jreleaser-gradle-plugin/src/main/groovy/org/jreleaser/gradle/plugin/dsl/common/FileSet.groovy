@@ -27,10 +27,12 @@ import org.gradle.api.provider.SetProperty
  * @since 0.8.0
  */
 @CompileStatic
-interface FileSet extends ExtraProperties {
+interface FileSet extends Activatable, ExtraProperties {
     Property<String> getInput()
 
     Property<String> getOutput()
+
+    Property<String> getPlatform()
 
     Property<Boolean> getFailOnMissingInput()
 

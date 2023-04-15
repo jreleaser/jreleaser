@@ -27,7 +27,7 @@ import org.gradle.api.provider.Property
  * @since 0.1.0
  */
 @CompileStatic
-interface Glob extends ExtraProperties {
+interface Glob extends Activatable, ExtraProperties {
     Property<String> getPattern()
 
     Property<String> getPlatform()

@@ -28,6 +28,7 @@ import org.jreleaser.model.internal.assemble.JavaAssembler;
 import org.jreleaser.model.internal.assemble.JlinkAssembler;
 import org.jreleaser.model.internal.assemble.JpackageAssembler;
 import org.jreleaser.model.internal.assemble.NativeImageAssembler;
+import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.FileSet;
 import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.util.Errors;
@@ -132,14 +133,18 @@ public final class AssemblersValidator {
             assembler.setStereotype(context.getModel().getProject().getStereotype());
         }
 
+        for (Artifact artifact : assembler.getArtifacts()) {
+            artifact.resolveActiveAndSelected(context);
+        }
+
         validateGlobs(
-            assembler.getFiles(),
+            context, assembler.getFiles(),
             assembler.getType() + "." + assembler.getName() + ".files",
             errors);
 
         int i = 0;
         for (FileSet fileSet : assembler.getFileSets()) {
-            validateFileSet(mode, assembler, fileSet, i++, errors);
+            validateFileSet(context, mode, assembler, fileSet, i++, errors);
         }
 
         if (mode == Mode.ASSEMBLE) {
@@ -162,7 +167,7 @@ public final class AssemblersValidator {
         }
 
         validateGlobs(
-            assembler.getJars(),
+            context, assembler.getJars(),
             assembler.getType() + "." + assembler.getName() + ".jars",
             errors);
     }

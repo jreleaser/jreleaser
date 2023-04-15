@@ -60,7 +60,7 @@ public final class JlinkAssemblerResolver {
         }
 
         for (Artifact targetJdk : assembler.getTargetJdks()) {
-            if (!context.isPlatformSelected(targetJdk)) continue;
+            if (!targetJdk.isActiveAndSelected()) continue;
 
             String platform = targetJdk.getPlatform();
             String platformReplaced = assembler.getPlatform().applyReplacements(platform);
@@ -78,8 +78,8 @@ public final class JlinkAssemblerResolver {
                     assembler.getType(), assembler.getName(), assembler.getName()));
             } else {
                 Artifact artifact = Artifact.of(image, platform);
+                artifact.resolveActiveAndSelected(context);
                 artifact.setExtraProperties(assembler.getExtraProperties());
-                artifact.activate();
                 assembler.addOutput(artifact);
             }
         }

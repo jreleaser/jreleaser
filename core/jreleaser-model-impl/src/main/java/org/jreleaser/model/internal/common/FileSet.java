@@ -20,6 +20,7 @@ package org.jreleaser.model.internal.common;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.logging.JReleaserLogger;
+import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.JReleaserContext;
 
 import java.io.IOException;
@@ -37,6 +38,7 @@ import java.util.Set;
 
 import static java.nio.file.FileVisitResult.CONTINUE;
 import static java.nio.file.FileVisitResult.SKIP_SUBTREE;
+import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toSet;
@@ -47,9 +49,9 @@ import static org.jreleaser.util.CollectionUtils.setOf;
  * @author Andres Almiray
  * @since 0.8.0
  */
-public final class FileSet extends AbstractModelObject<FileSet> implements Domain, ExtraProperties {
+public final class FileSet extends AbstractActivatable<FileSet> implements Domain, ExtraProperties {
     private static final String GLOB_PREFIX = "glob:";
-    private static final long serialVersionUID = 1108903420380266057L;
+    private static final long serialVersionUID = 3335260583173529265L;
 
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private final Set<String> includes = new LinkedHashSet<>();
@@ -57,11 +59,29 @@ public final class FileSet extends AbstractModelObject<FileSet> implements Domai
 
     private String input;
     private String output;
+    private String platform;
     private Boolean failOnMissingInput;
+    @JsonIgnore
+    private boolean selected;
 
     @JsonIgnore
     private final org.jreleaser.model.api.common.FileSet immutable = new org.jreleaser.model.api.common.FileSet() {
-        private static final long serialVersionUID = 1386323645145691467L;
+        private static final long serialVersionUID = 6362560616892633246L;
+
+        @Override
+        public Active getActive() {
+            return FileSet.this.getActive();
+        }
+
+        @Override
+        public boolean isEnabled() {
+            return FileSet.this.isEnabled();
+        }
+
+        @Override
+        public boolean isSelected() {
+            return FileSet.this.isSelected();
+        }
 
         @Override
         public Set<String> getIncludes() {
@@ -81,6 +101,11 @@ public final class FileSet extends AbstractModelObject<FileSet> implements Domai
         @Override
         public String getOutput() {
             return output;
+        }
+
+        @Override
+        public String getPlatform() {
+            return platform;
         }
 
         @Override
@@ -104,18 +129,39 @@ public final class FileSet extends AbstractModelObject<FileSet> implements Domai
         }
     };
 
+    public FileSet() {
+        setActive(Active.ALWAYS);
+    }
+
     public org.jreleaser.model.api.common.FileSet asImmutable() {
         return immutable;
     }
 
     @Override
     public void merge(FileSet source) {
+        super.merge(source);
         this.input = merge(this.input, source.input);
         this.output = merge(this.output, source.output);
+        this.platform = merge(this.platform, source.platform);
         this.failOnMissingInput = merge(this.failOnMissingInput, source.failOnMissingInput);
         setIncludes(merge(this.includes, source.includes));
         setExcludes(merge(this.excludes, source.excludes));
+        this.selected = source.selected;
         setExtraProperties(merge(this.extraProperties, source.extraProperties));
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public boolean resolveActiveAndSelected(JReleaserContext context) {
+        resolveEnabled(context.getModel().getProject());
+        this.selected = context.isPlatformSelected(platform);
+        return isActiveAndSelected();
+    }
+
+    public boolean isActiveAndSelected() {
+        return isEnabled() && selected;
     }
 
     @Override
@@ -157,6 +203,14 @@ public final class FileSet extends AbstractModelObject<FileSet> implements Domai
         this.output = output;
     }
 
+    public String getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(String platform) {
+        this.platform = platform;
+    }
+
     public boolean isFailOnMissingInput() {
         return null == failOnMissingInput || failOnMissingInput;
     }
@@ -188,8 +242,11 @@ public final class FileSet extends AbstractModelObject<FileSet> implements Domai
     @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> props = new LinkedHashMap<>();
+        props.put("enabled", isEnabled());
+        props.put("active", getActive());
         props.put("input", input);
         props.put("output", output);
+        props.put("platform", platform);
         props.put("includes", includes);
         props.put("excludes", excludes);
         props.put("failOnMissingInput", failOnMissingInput);
@@ -218,6 +275,8 @@ public final class FileSet extends AbstractModelObject<FileSet> implements Domai
     }
 
     public Set<Path> getResolvedPaths(JReleaserContext context) throws IOException {
+        if (!isActiveAndSelected()) return emptySet();
+
         Path basedir = context.getBasedir().resolve(getResolvedInput(context)).normalize().toAbsolutePath();
 
         Set<String> resolvedIncludes = getResolvedIncludes(context);
@@ -241,7 +300,7 @@ public final class FileSet extends AbstractModelObject<FileSet> implements Domai
                 context.getLogger().debug(RB.$("ERROR_artifacts_glob_missing_input",
                     context.getBasedir().relativize(basedir)));
             }
-            return new LinkedHashSet<>();
+            return emptySet();
         }
 
         GlobResolver resolver = new GlobResolver(context.getLogger(), basedir, resolvedIncludes, resolvedExcludes);

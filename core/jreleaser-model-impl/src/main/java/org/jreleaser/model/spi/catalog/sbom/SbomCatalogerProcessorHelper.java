@@ -92,7 +92,7 @@ public abstract class SbomCatalogerProcessorHelper {
             for (Artifact artifact : Artifacts.resolveFiles(context)) {
                 if (!isArtifactSupported(artifact) ||
                     cataloger.isSkipped(artifact) ||
-                    !artifact.isActive() ||
+                    !artifact.isActiveAndSelected() ||
                     artifact.isOptional(context) && !artifact.resolvedPathExists()) {
                     continue;
                 }
@@ -104,7 +104,7 @@ public abstract class SbomCatalogerProcessorHelper {
             if (cataloger.isSkipped(distribution)) continue;
 
             for (Artifact artifact : distribution.getArtifacts()) {
-                if (!artifact.isActive() || cataloger.isSkipped(artifact)) continue;
+                if (!artifact.isActiveAndSelected() || cataloger.isSkipped(artifact)) continue;
                 // resolve
                 artifact.getEffectivePath(context, distribution);
                 if (!isArtifactSupported(artifact) ||

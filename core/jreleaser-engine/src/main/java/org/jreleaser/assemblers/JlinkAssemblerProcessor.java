@@ -76,9 +76,11 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
         SemanticVersion jdkVersion = SemanticVersion.of(readJavaVersion(jdkPath));
         context.getLogger().debug(RB.$("assembler.jlink.jdk"), jdkVersion, jdkPath.toAbsolutePath().toString());
 
+        boolean selectedJdks = false;
         // verify jdks
         for (Artifact targetJdk : assembler.getTargetJdks()) {
-            if (!context.isPlatformSelected(targetJdk)) continue;
+            if (!targetJdk.isActiveAndSelected()) continue;
+            selectedJdks = true;
 
             Path targetJdkPath = targetJdk.getEffectivePath(context, assembler);
             SemanticVersion targetJdkVersion = SemanticVersion.of(readJavaVersion(targetJdkPath));
@@ -88,6 +90,8 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
                 throw new AssemblerProcessingException(RB.$("ERROR_jlink_target_not_compatible", targetJdkVersion, jdkVersion));
             }
         }
+
+        if (!selectedJdks) return;
 
         Path assembleDirectory = props.get(KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
         Path inputsDirectory = assembleDirectory.resolve(INPUTS_DIRECTORY);
@@ -102,7 +106,7 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
         }
 
         for (Artifact targetJdk : assembler.getTargetJdks()) {
-            if (!context.isPlatformSelected(targetJdk)) continue;
+            if (!targetJdk.isActiveAndSelected()) continue;
 
             String platform = targetJdk.getPlatform();
             // copy jars to assembly

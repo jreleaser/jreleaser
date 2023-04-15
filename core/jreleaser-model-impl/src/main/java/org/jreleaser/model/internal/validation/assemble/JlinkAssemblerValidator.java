@@ -103,6 +103,7 @@ public final class JlinkAssemblerValidator {
 
         // validate jdks.platform is unique
         Map<String, List<Artifact>> byPlatform = assembler.getTargetJdks().stream()
+            .filter(Artifact::isActiveAndSelected)
             .collect(groupingBy(jdk -> isBlank(jdk.getPlatform()) ? "<nil>" : jdk.getPlatform()));
         if (byPlatform.containsKey("<nil>")) {
             errors.configuration(RB.$("validation_jlink_jdk_platform", assembler.getName()));
@@ -132,6 +133,7 @@ public final class JlinkAssemblerValidator {
             } else {
                 // find a compatible JDK in targets
                 Optional<Artifact> jdk = assembler.getTargetJdks().stream()
+                    .filter(Artifact::isActiveAndSelected)
                     .filter(j -> PlatformUtils.isCompatible(currentPlatform, j.getPlatform()))
                     .findFirst();
 
@@ -163,6 +165,8 @@ public final class JlinkAssemblerValidator {
             return;
         }
 
+        assembler.getMainJar().resolveActiveAndSelected(context);
+
         if (null == assembler.getArchiveFormat()) {
             assembler.setArchiveFormat(Archive.Format.ZIP);
         }
@@ -193,6 +197,7 @@ public final class JlinkAssemblerValidator {
             errors.configuration(RB.$("validation_is_null", "jlink." + jlink.getName() + ".targetJdk[" + index + "]"));
             return;
         }
+        if (!jdk.resolveActiveAndSelected(context)) return;
         if (isBlank(jdk.getPath())) {
             errors.configuration(RB.$("validation_must_not_be_null", "jlink." + jlink.getName() + ".targetJdk[" + index + "].path"));
         }

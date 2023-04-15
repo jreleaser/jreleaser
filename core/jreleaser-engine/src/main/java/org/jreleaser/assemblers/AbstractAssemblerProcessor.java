@@ -235,6 +235,7 @@ public abstract class AbstractAssemblerProcessor<A extends org.jreleaser.model.a
             Files.createDirectories(destination);
 
             for (Artifact artifact : assembler.getArtifacts()) {
+                if (!artifact.resolveEnabled(context.getModel().getProject())) continue;
                 Path incoming = artifact.getResolvedPath(context, assembler);
                 String platform = artifact.getPlatform();
                 if (filterByPlatform && isNotBlank(platformConstraint) && isNotBlank(platform) && !PlatformUtils.isCompatible(platformConstraint, platform)) {
@@ -264,6 +265,7 @@ public abstract class AbstractAssemblerProcessor<A extends org.jreleaser.model.a
 
         // resolve all first
         for (Glob glob : assembler.getFiles()) {
+            if (!glob.resolveActiveAndSelected(context)) continue;
             glob.getResolvedArtifacts(context).stream()
                 .map(artifact -> artifact.getResolvedPath(context, assembler))
                 .forEach(paths::add);
@@ -284,6 +286,7 @@ public abstract class AbstractAssemblerProcessor<A extends org.jreleaser.model.a
     protected void copyFileSets(JReleaserContext context, Path destination) throws AssemblerProcessingException {
         try {
             for (FileSet fileSet : assembler.getFileSets()) {
+                if (!fileSet.resolveActiveAndSelected(context)) continue;
                 Path src = context.getBasedir().resolve(fileSet.getResolvedInput(context));
                 Path dest = destination;
 

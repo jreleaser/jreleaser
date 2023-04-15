@@ -50,7 +50,7 @@ public final class SdkmanHelper {
 
     public static void collectArtifacts(JReleaserContext context, Distribution distribution, Map<String, String> platforms) {
         for (Artifact artifact : distribution.getArtifacts()) {
-            if (!artifact.isActive()) continue;
+            if (!artifact.isActiveAndSelected()) continue;
             // only zips are supported
             if (!artifact.getPath().endsWith(ZIP.extension())) {
                 context.getLogger().debug(RB.$("sdkman.no.artifacts.match"),

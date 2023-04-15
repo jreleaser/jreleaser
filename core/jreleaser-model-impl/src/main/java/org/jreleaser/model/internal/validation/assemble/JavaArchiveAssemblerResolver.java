@@ -62,8 +62,8 @@ public final class JavaArchiveAssemblerResolver {
                     assembler.getType(), assembler.getName(), assembler.getName()));
             } else {
                 Artifact artifact = Artifact.of(path);
+                artifact.resolveActiveAndSelected(context);
                 artifact.setExtraProperties(assembler.getExtraProperties());
-                artifact.activate();
                 assembler.addOutput(artifact);
             }
         }

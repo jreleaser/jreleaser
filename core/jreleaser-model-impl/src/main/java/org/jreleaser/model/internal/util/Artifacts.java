@@ -421,20 +421,19 @@ public final class Artifacts {
 
         // resolve artifacts
         for (Artifact artifact : files.getArtifacts()) {
-            if (!context.isPlatformSelected(artifact)) continue;
+            if (!artifact.resolveActiveAndSelected(context)) continue;
             Path effectivePath = artifact.getEffectivePath(context);
             if (null != effectivePath) {
-                artifact.activate();
                 paths.add(artifact);
+            } else {
+                artifact.deactivateAndUnselect();
             }
         }
 
         // resolve globs
         for (Glob glob : files.getGlobs()) {
-            for (Artifact artifact : glob.getResolvedArtifacts(context)) {
-                if (!artifact.isActive()) continue;
-                paths.add(artifact);
-            }
+            if (!glob.resolveActiveAndSelected(context)) continue;
+            paths.addAll(glob.getResolvedArtifacts(context));
         }
 
         files.setPaths(Artifact.sortArtifacts(paths));
@@ -453,17 +452,7 @@ public final class Artifacts {
             matchers.add(fileSystem.getPathMatcher(glob));
         }
 
-        GlobResolver resolver = new GlobResolver(logger, basedir, matchers);
-        try {
-            java.nio.file.Files.walkFileTree(basedir, resolver);
-            if (resolver.failed) {
-                throw new JReleaserException(RB.$("ERROR_artifacts_glob_resolution"));
-            }
-
-            return Artifact.sortArtifacts(resolver.artifacts);
-        } catch (IOException e) {
-            throw new JReleaserException(RB.$("ERROR_artifacts_unexpected_error_globs"), e);
-        }
+        return resolveArtifacts(logger, basedir, matchers);
     }
 
     public static Set<Artifact> resolveFiles(JReleaserLogger logger,
@@ -480,6 +469,10 @@ public final class Artifacts {
             matchers.add(fileSystem.getPathMatcher(resolveTemplate(glob, props)));
         }
 
+        return resolveArtifacts(logger, basedir, matchers);
+    }
+
+    private static Set<Artifact> resolveArtifacts(JReleaserLogger logger, Path basedir, List<PathMatcher> matchers) {
         GlobResolver resolver = new GlobResolver(logger, basedir, matchers);
         try {
             java.nio.file.Files.walkFileTree(basedir, resolver);
@@ -491,10 +484,6 @@ public final class Artifacts {
         } catch (IOException e) {
             throw new JReleaserException(RB.$("ERROR_artifacts_unexpected_error_globs"), e);
         }
-    }
-
-    public static Set<Artifact> resolveFiles(JReleaserContext context, Collection<String> globs) throws JReleaserException {
-        return resolveFiles(context, context.getBasedir(), globs);
     }
 
     public static Set<Artifact> resolveFiles(JReleaserContext context, Path directory, Collection<String> globs) throws JReleaserException {

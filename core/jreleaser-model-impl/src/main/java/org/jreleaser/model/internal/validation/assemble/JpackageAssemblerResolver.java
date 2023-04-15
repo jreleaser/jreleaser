@@ -58,6 +58,7 @@ public final class JpackageAssemblerResolver {
         if (!context.isPlatformSelected(jdk)) return;
 
         JpackageAssembler.PlatformPackager packager = assembler.getResolvedPlatformPackager();
+        if (!packager.getJdk().isActiveAndSelected()) return;
         String platform = jdk.getPlatform();
 
         for (String type : packager.getTypes()) {
@@ -71,8 +72,8 @@ public final class JpackageAssemblerResolver {
                         assembler.getType(), assembler.getName(), assembler.getName()));
                 } else {
                     Artifact artifact = Artifact.of(file.get(), platform);
+                    artifact.resolveActiveAndSelected(context);
                     artifact.setExtraProperties(assembler.getExtraProperties());
-                    artifact.activate();
                     assembler.addOutput(artifact);
                 }
             } catch (IOException e) {

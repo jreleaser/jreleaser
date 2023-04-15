@@ -141,10 +141,12 @@ public final class JpackageAssemblerValidator {
             }
 
             for (Artifact runtimeImage : candidateRuntimeImages) {
-                runtimeImage.activate();
+                runtimeImage.resolveActiveAndSelected(context);
                 assembler.addRuntimeImage(runtimeImage);
             }
         }
+
+        assembler.getMainJar().resolveActiveAndSelected(context);
 
         context.getLogger().debug("assemble.jpackage.{}.java", assembler.getName());
         if (!validateJava(context, assembler, errors)) {
@@ -190,6 +192,7 @@ public final class JpackageAssemblerValidator {
             }
             packager.getJdk().setPath(javaHome);
             packager.getJdk().setPlatform(PlatformUtils.getCurrentFull());
+            packager.getJdk().resolveActiveAndSelected(context);
         }
 
         if (packager.getTypes().isEmpty()) {
@@ -317,6 +320,7 @@ public final class JpackageAssemblerValidator {
             errors.configuration(RB.$("validation_is_null", "jpackage." + jpackage.getName() + ".runtimeImage[" + index + "]"));
             return;
         }
+        if (!runtimeImage.resolveActiveAndSelected(context)) return;
         if (isBlank(runtimeImage.getPath())) {
             errors.configuration(RB.$("validation_must_not_be_null", "jpackage." + jpackage.getName() + ".runtimeImage[" + index + "].path"));
         }

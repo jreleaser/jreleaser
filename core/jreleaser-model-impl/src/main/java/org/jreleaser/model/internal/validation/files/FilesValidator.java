@@ -50,10 +50,8 @@ public final class FilesValidator {
         }
 
         files.getArtifacts()
-            .forEach(artifact -> {
-                if (context.isPlatformSelected(artifact)) artifact.activate();
-            });
+            .forEach(artifact -> artifact.resolveActiveAndSelected(context));
 
-        validateGlobs(files.getGlobs(), "files.glob", errors);
+        validateGlobs(context, files.getGlobs(), "files.glob", errors);
     }
 }

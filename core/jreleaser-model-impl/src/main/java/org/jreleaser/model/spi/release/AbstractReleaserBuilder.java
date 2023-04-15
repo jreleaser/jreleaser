@@ -97,7 +97,7 @@ public abstract class AbstractReleaserBuilder<R extends Releaser<?>> implements 
 
         if (service.isFiles()) {
             for (Artifact artifact : Artifacts.resolveFiles(context)) {
-                if (!artifact.isActive() || artifact.extraPropertyIsTrue(KEY_SKIP_RELEASE) ||
+                if (!artifact.isActiveAndSelected() || artifact.extraPropertyIsTrue(KEY_SKIP_RELEASE) ||
                     artifact.isOptional(context) && !artifact.resolvedPathExists()) continue;
                 Path path = artifact.getEffectivePath(context);
                 assets.add(Asset.file(Artifact.of(path, artifact.getExtraProperties())));
@@ -117,7 +117,7 @@ public abstract class AbstractReleaserBuilder<R extends Releaser<?>> implements 
                     continue;
                 }
                 for (Artifact artifact : distribution.getArtifacts()) {
-                    if (!artifact.isActive() || artifact.extraPropertyIsTrue(KEY_SKIP_RELEASE) ||
+                    if (!artifact.isActiveAndSelected() || artifact.extraPropertyIsTrue(KEY_SKIP_RELEASE) ||
                         artifact.isOptional(context) && !artifact.resolvedPathExists()) continue;
                     Path path = artifact.getEffectivePath(context, distribution);
                     assets.add(Asset.file(Artifact.of(path, artifact.getExtraProperties()), distribution));

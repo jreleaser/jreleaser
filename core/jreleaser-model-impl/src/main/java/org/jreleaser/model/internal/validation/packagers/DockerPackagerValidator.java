@@ -255,7 +255,7 @@ public final class DockerPackagerValidator {
         validateRegistries(context, spec, docker, errors, element);
 
         long artifactCount = distribution.getArtifacts().stream()
-            .filter(Artifact::isActive)
+            .filter(Artifact::isActiveAndSelected)
             .count();
 
         if (artifactCount > 1 && spec.getMatchers().isEmpty()) {

@@ -263,17 +263,17 @@ public final class Validator {
                 parentTap.getBranchPush()));
     }
 
-    public static void validateGlobs(Collection<Glob> globs, String property, Errors errors) {
+    public static void validateGlobs(JReleaserContext context, Collection<Glob> globs, String property, Errors errors) {
         int i = 0;
         for (Glob glob : globs) {
-            if (isBlank(glob.getPattern())) {
+            if (glob.resolveActiveAndSelected(context) && isBlank(glob.getPattern())) {
                 errors.configuration(RB.$("validation_must_define_pattern", property + "[" + i + "]"));
             }
         }
     }
 
-    public static void validateFileSet(Mode mode, Assembler<?> assembler, FileSet fileSet, int index, Errors errors) {
-        if (mode.validateStandalone() && isBlank(fileSet.getInput())) {
+    public static void validateFileSet(JReleaserContext context, Mode mode, Assembler<?> assembler, FileSet fileSet, int index, Errors errors) {
+        if (mode.validateStandalone() && fileSet.resolveActiveAndSelected(context) && isBlank(fileSet.getInput())) {
             errors.configuration(RB.$("validation_must_not_be_null", assembler.getType() + "." + assembler.getName() + ".fileSet[" + index + "].input"));
         }
     }

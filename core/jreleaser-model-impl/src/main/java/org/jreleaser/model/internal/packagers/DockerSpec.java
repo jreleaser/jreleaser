@@ -171,7 +171,7 @@ public final class DockerSpec extends AbstractDockerConfiguration<DockerSpec> im
 
     public void setArtifact(Artifact artifact) {
         this.artifact = artifact;
-        this.artifact.activate();
+        this.artifact.select();
     }
 
     public String getName() {

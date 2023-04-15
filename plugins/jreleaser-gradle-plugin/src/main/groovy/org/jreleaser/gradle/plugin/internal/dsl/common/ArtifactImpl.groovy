@@ -24,8 +24,11 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.common.Artifact
+import org.jreleaser.model.Active
 
 import javax.inject.Inject
+
+import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
  *
@@ -35,6 +38,7 @@ import javax.inject.Inject
 @CompileStatic
 class ArtifactImpl implements Artifact {
     String name
+    final Property<Active> active
     final RegularFileProperty path
     final Property<String> transform
     final Property<String> platform
@@ -42,10 +46,18 @@ class ArtifactImpl implements Artifact {
 
     @Inject
     ArtifactImpl(ObjectFactory objects) {
+        active = objects.property(Active).convention(Providers.<Active> notDefined())
         path = objects.fileProperty().convention(Providers.notDefined())
         platform = objects.property(String).convention(Providers.<String> notDefined())
         transform = objects.property(String).convention(Providers.<String> notDefined())
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
+    }
+
+    @Override
+    void setActive(String str) {
+        if (isNotBlank(str)) {
+            active.set(Active.of(str.trim()))
+        }
     }
 
     @Override
@@ -59,6 +71,7 @@ class ArtifactImpl implements Artifact {
 
     org.jreleaser.model.internal.common.Artifact toModel() {
         org.jreleaser.model.internal.common.Artifact artifact = new org.jreleaser.model.internal.common.Artifact()
+        if (active.present) artifact.active = active.get()
         if (path.present) {
             artifact.path = path.asFile.get().absolutePath
         } else {

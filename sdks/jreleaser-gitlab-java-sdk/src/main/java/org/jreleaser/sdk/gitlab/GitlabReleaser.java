@@ -504,7 +504,7 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
 
         if (uploader.isFiles()) {
             for (Artifact artifact : Artifacts.resolveFiles(context)) {
-                if (!artifact.isActive()) continue;
+                if (!artifact.isActiveAndSelected()) continue;
                 Path path = artifact.getEffectivePath(context);
                 if (isSkip(artifact, keys)) continue;
                 if (Files.exists(path) && 0 != path.toFile().length()) {
@@ -517,7 +517,7 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
             for (Distribution distribution : context.getModel().getActiveDistributions()) {
                 if (isSkip(distribution, keys)) continue;
                 for (Artifact artifact : distribution.getArtifacts()) {
-                    if (!artifact.isActive()) continue;
+                    if (!artifact.isActiveAndSelected()) continue;
                     Path path = artifact.getEffectivePath(context, distribution);
                     if (isSkip(artifact, keys)) continue;
                     if (Files.exists(path) && 0 != path.toFile().length()) {

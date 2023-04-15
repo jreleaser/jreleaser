@@ -81,11 +81,7 @@ public final class NativeImageAssemblerValidator {
             return;
         }
 
-        if (null == assembler.getMainJar()) {
-            errors.configuration(RB.$("validation_is_null", "nativeImage." + assembler.getName() + ".mainJar"));
-            context.getLogger().debug(RB.$("validation.disabled.error"));
-            return;
-        }
+        assembler.getMainJar().resolveActiveAndSelected(context);
 
         context.getLogger().debug("assemble.nativeImage.{}.java", assembler.getName());
         validateJava(context, assembler, errors);
@@ -107,6 +103,7 @@ public final class NativeImageAssemblerValidator {
 
         // validate jdks.platform is unique
         Map<String, List<Artifact>> byPlatform = assembler.getGraalJdks().stream()
+            .filter(Artifact::isActiveAndSelected)
             .collect(groupingBy(jdk -> isBlank(jdk.getPlatform()) ? "<nil>" : jdk.getPlatform()));
         if (byPlatform.containsKey("<nil>")) {
             errors.configuration(RB.$("validation_nativeimage_jdk_platform", assembler.getName()));
@@ -131,9 +128,11 @@ public final class NativeImageAssemblerValidator {
                 // Use current
                 assembler.getGraal().setPath(javaHome);
                 assembler.getGraal().setPlatform(currentPlatform);
+                assembler.getGraal().resolveActiveAndSelected(context);
             } else {
                 // find a compatible JDK in targets
                 Optional<Artifact> jdk = assembler.getGraalJdks().stream()
+                    .filter(Artifact::isActiveAndSelected)
                     .filter(j -> PlatformUtils.isCompatible(currentPlatform, j.getPlatform()))
                     .findFirst();
 
@@ -149,6 +148,7 @@ public final class NativeImageAssemblerValidator {
                     // Can't tell if the current JDK will work but might as well use it
                     assembler.getGraal().setPath(javaHome);
                     assembler.getGraal().setPlatform(currentPlatform);
+                    assembler.getGraal().resolveActiveAndSelected(context);
                 }
             }
         }
@@ -183,6 +183,7 @@ public final class NativeImageAssemblerValidator {
             errors.configuration(RB.$("validation_is_null", "nativeImage." + nativeImage.getName() + ".graalJdk[" + index + "]"));
             return;
         }
+        if (!jdk.resolveActiveAndSelected(context)) return;
         if (isBlank(jdk.getPath())) {
             errors.configuration(RB.$("validation_must_not_be_null", "nativeImage." + nativeImage.getName() + ".graalJdk[" + index + "].path"));
         }

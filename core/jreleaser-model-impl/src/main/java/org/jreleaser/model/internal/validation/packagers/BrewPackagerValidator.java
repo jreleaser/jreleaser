@@ -150,7 +150,7 @@ public final class BrewPackagerValidator {
         int zipFound = 0;
         String pkgName = "";
         for (Artifact artifact : distribution.getArtifacts()) {
-            if (!artifact.isActive() || !PlatformUtils.isMac(artifact.getPlatform())) continue;
+            if (!artifact.isActiveAndSelected() || !PlatformUtils.isMac(artifact.getPlatform())) continue;
             if (artifact.getPath().endsWith(".dmg") && !isTrue(artifact.getExtraProperties().get(SKIP_BREW))) {
                 dmgFound++;
             } else if (artifact.getPath().endsWith(".pkg") && !isTrue(artifact.getExtraProperties().get(SKIP_BREW))) {

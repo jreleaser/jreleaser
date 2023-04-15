@@ -548,12 +548,12 @@ public class JReleaserContext {
     private void mergeArtifacts(org.jreleaser.model.internal.assemble.Assembler<?> assembler, org.jreleaser.model.internal.distributions.Distribution distribution) {
         for (Artifact incoming : assembler.getOutputs()) {
             Optional<Artifact> artifact = distribution.getArtifacts().stream()
-                .filter(a -> {
-                    if (isPlatformSelected(incoming)) incoming.activate();
-                    if (isPlatformSelected(a)) a.activate();
-                    if (incoming.isActive() && a.isActive()) {
+                .filter(other -> {
+                    if (isPlatformSelected(incoming)) incoming.select();
+                    if (isPlatformSelected(other)) other.select();
+                    if (incoming.isSelected() && other.isSelected()) {
                         Path p1 = incoming.getResolvedPath(this, assembler);
-                        Path p2 = a.getResolvedPath(this, distribution);
+                        Path p2 = other.getResolvedPath(this, distribution);
                         return p1.equals(p2);
                     }
                     return false;

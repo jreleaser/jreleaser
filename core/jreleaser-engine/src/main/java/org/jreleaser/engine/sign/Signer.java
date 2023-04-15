@@ -363,7 +363,7 @@ public final class Signer {
 
         if (signing.isFiles()) {
             for (Artifact artifact : Artifacts.resolveFiles(context)) {
-                if (!artifact.isActive() || artifact.extraPropertyIsTrue(KEY_SKIP_SIGNING) ||
+                if (!artifact.isActiveAndSelected() || artifact.extraPropertyIsTrue(KEY_SKIP_SIGNING) ||
                     artifact.isOptional(context) && !artifact.resolvedPathExists()) continue;
                 Path input = artifact.getEffectivePath(context);
                 Path output = signaturesDirectory.resolve(input.getFileName().toString().concat(extension));
@@ -377,7 +377,7 @@ public final class Signer {
             for (Distribution distribution : context.getModel().getActiveDistributions()) {
                 if (distribution.extraPropertyIsTrue(KEY_SKIP_SIGNING)) continue;
                 for (Artifact artifact : distribution.getArtifacts()) {
-                    if (!artifact.isActive() || artifact.extraPropertyIsTrue(KEY_SKIP_SIGNING)) continue;
+                    if (!artifact.isActiveAndSelected() || artifact.extraPropertyIsTrue(KEY_SKIP_SIGNING)) continue;
                     Path input = artifact.getEffectivePath(context, distribution);
                     if (artifact.isOptional(context) && !artifact.resolvedPathExists()) continue;
                     Path output = signaturesDirectory.resolve(input.getFileName().toString().concat(extension));

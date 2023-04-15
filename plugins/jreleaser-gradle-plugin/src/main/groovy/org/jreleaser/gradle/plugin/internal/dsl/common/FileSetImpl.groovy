@@ -24,6 +24,7 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.jreleaser.gradle.plugin.dsl.common.FileSet
+import org.jreleaser.model.Active
 
 import javax.inject.Inject
 
@@ -37,8 +38,10 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 @CompileStatic
 class FileSetImpl implements FileSet {
     String name
+    final Property<Active> active
     final Property<String> input
     final Property<String> output
+    final Property<String> platform
     final Property<Boolean> failOnMissingInput
     final SetProperty<String> includes
     final SetProperty<String> excludes
@@ -46,12 +49,21 @@ class FileSetImpl implements FileSet {
 
     @Inject
     FileSetImpl(ObjectFactory objects) {
+        active = objects.property(Active).convention(Providers.<Active> notDefined())
         input = objects.property(String).convention(Providers.<String> notDefined())
         output = objects.property(String).convention(Providers.<String> notDefined())
+        platform = objects.property(String).convention(Providers.<String> notDefined())
         failOnMissingInput = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         includes = objects.setProperty(String).convention(Providers.<Set<String>> notDefined())
         excludes = objects.setProperty(String).convention(Providers.<Set<String>> notDefined())
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
+    }
+
+    @Override
+    void setActive(String str) {
+        if (isNotBlank(str)) {
+            active.set(Active.of(str.trim()))
+        }
     }
 
     void include(String str) {
@@ -68,8 +80,10 @@ class FileSetImpl implements FileSet {
 
     org.jreleaser.model.internal.common.FileSet toModel() {
         org.jreleaser.model.internal.common.FileSet fileSet = new org.jreleaser.model.internal.common.FileSet()
+        if (active.present) fileSet.active = active.get()
         if (input.present) fileSet.input = input.get()
         if (output.present) fileSet.output = output.get()
+        if (platform.present) fileSet.platform = platform.get()
         if (failOnMissingInput.present) fileSet.failOnMissingInput = failOnMissingInput.get()
         fileSet.includes = (Set<String>) includes.getOrElse([] as Set<String>)
         fileSet.includes = (Set<String>) includes.getOrElse([] as Set<String>)

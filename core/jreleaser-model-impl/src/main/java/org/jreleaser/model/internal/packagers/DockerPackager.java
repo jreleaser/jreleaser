@@ -331,7 +331,7 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
     public List<Artifact> resolveCandidateArtifacts(JReleaserContext context, Distribution distribution) {
         if (distribution.getType() == FLAT_BINARY && supportsDistribution(distribution.getType())) {
             return distribution.getArtifacts().stream()
-                .filter(Artifact::isActive)
+                .filter(Artifact::isActiveAndSelected)
                 .filter(artifact -> supportsPlatform(artifact.getPlatform()))
                 .filter(this::isNotSkipped)
                 .sorted(Artifact.comparatorByPlatform())
@@ -342,7 +342,7 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
         fileExtensions.sort(naturalOrder());
 
         return distribution.getArtifacts().stream()
-            .filter(Artifact::isActive)
+            .filter(Artifact::isActiveAndSelected)
             .filter(artifact -> fileExtensions.stream().anyMatch(ext -> artifact.getResolvedPath(context, distribution).toString().endsWith(ext)))
             .filter(artifact -> supportsPlatform(artifact.getPlatform()))
             .filter(this::isNotSkipped)

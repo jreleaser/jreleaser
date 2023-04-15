@@ -19,6 +19,7 @@ package org.jreleaser.model.internal.common;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.bundle.RB;
+import org.jreleaser.model.Active;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.Assembler;
@@ -50,8 +51,8 @@ import static org.jreleaser.util.StringUtils.isTrue;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public final class Artifact extends AbstractModelObject<Artifact> implements Domain, ExtraProperties, Comparable<Artifact> {
-
+public final class Artifact extends AbstractActivatable<Artifact> implements Domain, ExtraProperties, Comparable<Artifact> {
+    private static final long serialVersionUID = -96035014026465740L;
 
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     @JsonIgnore
@@ -61,7 +62,7 @@ public final class Artifact extends AbstractModelObject<Artifact> implements Dom
     private String platform;
     private String transform;
     @JsonIgnore
-    private boolean active;
+    private boolean selected;
     @JsonIgnore
     private Path effectivePath;
     @JsonIgnore
@@ -71,11 +72,21 @@ public final class Artifact extends AbstractModelObject<Artifact> implements Dom
 
     @JsonIgnore
     private final org.jreleaser.model.api.common.Artifact immutable = new org.jreleaser.model.api.common.Artifact() {
-        private static final long serialVersionUID = 5096726011565071921L;
+        private static final long serialVersionUID = -5286060454190216979L;
 
         @Override
-        public boolean isActive() {
-            return Artifact.this.isActive();
+        public Active getActive() {
+            return Artifact.this.getActive();
+        }
+
+        @Override
+        public boolean isEnabled() {
+            return Artifact.this.isEnabled();
+        }
+
+        @Override
+        public boolean isSelected() {
+            return Artifact.this.isSelected();
         }
 
         @Override
@@ -129,27 +140,28 @@ public final class Artifact extends AbstractModelObject<Artifact> implements Dom
         }
     };
 
+    public Artifact() {
+        setActive(Active.ALWAYS);
+    }
+
     public org.jreleaser.model.api.common.Artifact asImmutable() {
         return immutable;
     }
 
     @Override
     public void merge(Artifact source) {
+        super.merge(source);
         this.effectivePath = merge(this.effectivePath, source.effectivePath);
         this.path = merge(this.path, source.path);
         this.platform = merge(this.platform, source.platform);
         this.transform = merge(this.transform, source.transform);
         this.resolvedPath = merge(this.resolvedPath, source.resolvedPath);
         this.resolvedTransform = merge(this.resolvedTransform, source.resolvedTransform);
-        this.active = source.active;
+        this.selected = source.selected;
         setExtraProperties(merge(this.extraProperties, source.extraProperties));
 
         // do not merge
         setHashes(source.hashes);
-    }
-
-    public boolean isActive() {
-        return active;
     }
 
     public boolean isOptional(JReleaserContext context) {
@@ -163,8 +175,27 @@ public final class Artifact extends AbstractModelObject<Artifact> implements Dom
         return isTrue(value);
     }
 
-    public void activate() {
-        this.active = true;
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public boolean resolveActiveAndSelected(JReleaserContext context) {
+        resolveEnabled(context.getModel().getProject());
+        this.selected = context.isPlatformSelected(this);
+        return isActiveAndSelected();
+    }
+
+    public boolean isActiveAndSelected() {
+        return isEnabled() && selected;
+    }
+
+    public void deactivateAndUnselect() {
+        disable();
+        this.selected = false;
+    }
+
+    public void select() {
+        this.selected = true;
     }
 
     public Path getEffectivePath() {
@@ -257,6 +288,8 @@ public final class Artifact extends AbstractModelObject<Artifact> implements Dom
     @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
+        map.put("enabled", isEnabled());
+        map.put("active", getActive());
         map.put("path", path);
         map.put("transform", transform);
         map.put("platform", platform);

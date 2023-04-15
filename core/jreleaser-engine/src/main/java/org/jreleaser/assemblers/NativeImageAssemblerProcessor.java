@@ -62,6 +62,8 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<or
 
     @Override
     protected void doAssemble(TemplateContext props) throws AssemblerProcessingException {
+        if (!assembler.getGraal().isActiveAndSelected()) return;
+
         // verify graal
         Path graalPath = assembler.getGraal().getEffectivePath(context, assembler);
         SemanticVersion javaVersion = SemanticVersion.of(readJavaVersion(graalPath));

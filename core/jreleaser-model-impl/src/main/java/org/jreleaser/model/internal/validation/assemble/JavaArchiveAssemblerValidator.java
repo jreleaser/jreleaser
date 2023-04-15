@@ -97,7 +97,7 @@ public final class JavaArchiveAssemblerValidator {
             errors.configuration(RB.$("validation_java_archive_empty_jars", assembler.getName()));
         } else {
             validateGlobs(
-                assembler.getJars(),
+                context, assembler.getJars(),
                 "java-archive." + assembler.getName() + ".jars",
                 errors);
         }
@@ -115,6 +115,7 @@ public final class JavaArchiveAssemblerValidator {
             assembler.getJava().setMainClass(project.getJava().getMainClass());
         }
 
+        assembler.getMainJar().resolveActiveAndSelected(context);
         boolean mainJarIsSet = isNotBlank(assembler.getMainJar().getPath());
         boolean mainClassIsSet = isNotBlank(assembler.getJava().getMainClass());
 

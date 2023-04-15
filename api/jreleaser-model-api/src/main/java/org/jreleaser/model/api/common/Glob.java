@@ -21,7 +21,9 @@ package org.jreleaser.model.api.common;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface Glob extends Domain, ExtraProperties {
+public interface Glob extends Domain, Activatable, ExtraProperties {
+    boolean isSelected();
+
     String getPattern();
 
     String getPlatform();

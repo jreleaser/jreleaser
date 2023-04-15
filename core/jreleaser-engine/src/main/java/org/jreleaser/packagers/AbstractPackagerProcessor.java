@@ -290,7 +290,7 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
                                             Distribution distribution,
                                             List<Artifact> artifacts) {
         List<Artifact> activeArtifacts = artifacts.stream()
-            .filter(Artifact::isActive)
+            .filter(Artifact::isActiveAndSelected)
             .collect(toList());
 
         if (activeArtifacts.isEmpty()) {

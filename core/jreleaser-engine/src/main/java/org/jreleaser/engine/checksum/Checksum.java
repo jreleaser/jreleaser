@@ -67,7 +67,7 @@ public final class Checksum {
 
         if (context.getModel().getChecksum().isFiles()) {
             for (Artifact artifact : Artifacts.resolveFiles(context)) {
-                if (!artifact.isActive() || artifact.extraPropertyIsTrue(KEY_SKIP_CHECKSUM) ||
+                if (!artifact.isActiveAndSelected() || artifact.extraPropertyIsTrue(KEY_SKIP_CHECKSUM) ||
                     artifact.isOptional(context) && !artifact.resolvedPathExists()) continue;
 
                 for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
@@ -80,7 +80,7 @@ public final class Checksum {
 
         for (Distribution distribution : context.getModel().getActiveDistributions()) {
             for (Artifact artifact : distribution.getArtifacts()) {
-                if (!artifact.isActive()) continue;
+                if (!artifact.isActiveAndSelected()) continue;
                 artifact.getEffectivePath(context, distribution);
                 if (artifact.isOptional(context) && !artifact.resolvedPathExists()) continue;
 

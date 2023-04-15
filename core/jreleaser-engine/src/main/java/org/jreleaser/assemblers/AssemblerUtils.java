@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.LinkedHashSet;
 import java.util.Properties;
 import java.util.Set;
@@ -81,6 +80,7 @@ public final class AssemblerUtils {
         }
 
         for (Glob glob : assembler.getJars()) {
+            if (!glob.resolveActiveAndSelected(context)) continue;
             String globPlatform = glob.getPlatform();
             boolean platformIsBlank = isBlank(platform) && isBlank(globPlatform);
             boolean platformIsCompatible = isNotBlank(platform) && isNotBlank(globPlatform) && PlatformUtils.isCompatible(platform, globPlatform);
@@ -106,14 +106,6 @@ public final class AssemblerUtils {
         }
 
         return copied;
-    }
-
-    public static Path maybeAdjust(Path path) {
-        if (PlatformUtils.isWindows()) {
-            return Paths.get(path.toString().replace("/", File.separator));
-        }
-
-        return path;
     }
 
     public static String maybeAdjust(String path) {

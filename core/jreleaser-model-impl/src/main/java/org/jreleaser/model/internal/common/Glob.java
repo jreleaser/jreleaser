@@ -19,6 +19,7 @@ package org.jreleaser.model.internal.common;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.bundle.RB;
+import org.jreleaser.model.Active;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.util.Artifacts;
@@ -32,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static java.nio.file.Files.exists;
+import static java.util.Collections.emptySet;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.unmodifiableMap;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -41,22 +43,39 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public final class Glob extends AbstractModelObject<Glob> implements Domain, ExtraProperties {
+public final class Glob extends AbstractActivatable<Glob> implements Domain, ExtraProperties {
     private static final String GLOB_PREFIX = "glob:";
     private static final String REGEX_PREFIX = "regex:";
-    private static final long serialVersionUID = 4512169122959023605L;
+    private static final long serialVersionUID = 3229164223309181365L;
 
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
 
     private String pattern;
     private String platform;
     @JsonIgnore
+    private boolean selected;
+    @JsonIgnore
     private Set<Artifact> artifacts;
     private String directory;
 
     @JsonIgnore
     private final org.jreleaser.model.api.common.Glob immutable = new org.jreleaser.model.api.common.Glob() {
-        private static final long serialVersionUID = -8118196314326497395L;
+        private static final long serialVersionUID = 7275219810370004662L;
+
+        @Override
+        public Active getActive() {
+            return Glob.this.getActive();
+        }
+
+        @Override
+        public boolean isEnabled() {
+            return Glob.this.isEnabled();
+        }
+
+        @Override
+        public boolean isSelected() {
+            return Glob.this.isSelected();
+        }
 
         @Override
         public String getPattern() {
@@ -89,15 +108,35 @@ public final class Glob extends AbstractModelObject<Glob> implements Domain, Ext
         }
     };
 
+    public Glob() {
+        setActive(Active.ALWAYS);
+    }
+
     public org.jreleaser.model.api.common.Glob asImmutable() {
         return immutable;
     }
 
     @Override
     public void merge(Glob source) {
+        super.merge(source);
         this.pattern = merge(this.pattern, source.pattern);
         this.platform = merge(this.platform, source.platform);
+        this.selected = source.selected;
         setExtraProperties(merge(this.extraProperties, source.extraProperties));
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public boolean resolveActiveAndSelected(JReleaserContext context) {
+        resolveEnabled(context.getModel().getProject());
+        this.selected = context.isPlatformSelected(platform);
+        return isActiveAndSelected();
+    }
+
+    public boolean isActiveAndSelected() {
+        return isEnabled() && selected;
     }
 
     @Override
@@ -149,6 +188,8 @@ public final class Glob extends AbstractModelObject<Glob> implements Domain, Ext
     @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> props = new LinkedHashMap<>();
+        props.put("enabled", isEnabled());
+        props.put("active", getActive());
         props.put("pattern", pattern);
         props.put("platform", platform);
         props.put("directory", directory);
@@ -161,13 +202,16 @@ public final class Glob extends AbstractModelObject<Glob> implements Domain, Ext
     }
 
     public Set<Artifact> getResolvedArtifactsPattern(JReleaserContext context) {
+        if (!isActiveAndSelected()) return emptySet();
+
         if (null == artifacts) {
             setPattern(Artifacts.resolveForGlob(getPattern(), context, this));
             normalizePattern();
             artifacts = Artifacts.resolveFiles(context, resolveDirectory(context), singletonList(pattern));
             artifacts.forEach(artifact -> {
                 artifact.setPlatform(platform);
-                if (context.isPlatformSelected(artifact)) artifact.activate();
+                artifact.setActive(getActive());
+                if (isSelected()) artifact.select();
                 artifact.setExtraProperties(getExtraProperties());
             });
         }

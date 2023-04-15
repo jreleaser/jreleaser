@@ -62,6 +62,8 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
     protected void doAssemble(TemplateContext props) throws AssemblerProcessingException {
         JpackageAssembler.PlatformPackager packager = assembler.getResolvedPlatformPackager();
 
+        if (!packager.getJdk().isActiveAndSelected()) return;
+
         // verify jdk
         Path jdkPath = packager.getJdk().getEffectivePath(context, assembler);
         SemanticVersion jdkVersion = SemanticVersion.of(readJavaVersion(jdkPath));

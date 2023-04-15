@@ -60,7 +60,7 @@ public final class NativeImageAssemblerResolver {
         }
 
         for (Artifact graalJdk : assembler.getGraalJdks()) {
-            if (!context.isPlatformSelected(graalJdk)) continue;
+            if (!graalJdk.isActiveAndSelected()) continue;
 
             String platform = graalJdk.getPlatform();
             String platformReplaced = assembler.getPlatform().applyReplacements(platform);
@@ -78,8 +78,8 @@ public final class NativeImageAssemblerResolver {
                     assembler.getType(), assembler.getName(), assembler.getName()));
             } else {
                 Artifact artifact = Artifact.of(image, platform);
+                artifact.resolveActiveAndSelected(context);
                 artifact.setExtraProperties(assembler.getExtraProperties());
-                artifact.activate();
                 assembler.addOutput(artifact);
             }
         }

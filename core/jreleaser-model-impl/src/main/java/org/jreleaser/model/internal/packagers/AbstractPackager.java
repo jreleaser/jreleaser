@@ -85,7 +85,7 @@ public abstract class AbstractPackager<A extends org.jreleaser.model.api.package
     public List<Artifact> resolveCandidateArtifacts(JReleaserContext context, Distribution distribution) {
         if (distribution.getType() == FLAT_BINARY && supportsDistribution(distribution.getType())) {
             return distribution.getArtifacts().stream()
-                .filter(Artifact::isActive)
+                .filter(Artifact::isActiveAndSelected)
                 .filter(artifact -> supportsPlatform(artifact.getPlatform()))
                 .filter(this::isNotSkipped)
                 .sorted(Artifact.comparatorByPlatform())
@@ -96,7 +96,7 @@ public abstract class AbstractPackager<A extends org.jreleaser.model.api.package
         fileExtensions.sort(naturalOrder());
 
         return distribution.getArtifacts().stream()
-            .filter(Artifact::isActive)
+            .filter(Artifact::isActiveAndSelected)
             .filter(artifact -> fileExtensions.stream().anyMatch(ext -> artifact.getResolvedPath(context, distribution).toString().endsWith(ext)))
             .filter(artifact -> supportsPlatform(artifact.getPlatform()))
             .filter(this::isNotSkipped)

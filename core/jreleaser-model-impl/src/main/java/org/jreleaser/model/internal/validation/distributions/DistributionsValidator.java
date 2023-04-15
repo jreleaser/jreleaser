@@ -178,7 +178,7 @@ public final class DistributionsValidator {
 
         int i = 0;
         for (Artifact artifact : distribution.getArtifacts()) {
-            if (artifact.isActive()) {
+            if (artifact.isActiveAndSelected()) {
                 validateArtifact(context, distribution, artifact, i++, errors);
                 if (distribution.getExtraProperties().containsKey(KEY_SKIP_RELEASE_SIGNATURES) &&
                     !artifact.getExtraProperties().containsKey(KEY_SKIP_RELEASE_SIGNATURES)) {
@@ -190,7 +190,7 @@ public final class DistributionsValidator {
 
         // validate artifact.platform is unique
         Map<String, List<Artifact>> byPlatform = distribution.getArtifacts().stream()
-            .filter(Artifact::isActive)
+            .filter(Artifact::isActiveAndSelected)
             .collect(groupingBy(artifact -> isBlank(artifact.getPlatform()) ? "<nil>" : artifact.getPlatform()));
         // check platforms by extension
         byPlatform.forEach((p, artifacts) -> {
@@ -224,8 +224,7 @@ public final class DistributionsValidator {
     private static boolean selectArtifactsByPlatform(JReleaserContext context, Distribution distribution) {
         boolean activeArtifacts = false;
         for (Artifact artifact : distribution.getArtifacts()) {
-            if (context.isPlatformSelected(artifact)) {
-                artifact.activate();
+            if (artifact.resolveActiveAndSelected(context)) {
                 activeArtifacts = true;
             }
         }

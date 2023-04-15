@@ -25,8 +25,8 @@ import java.nio.file.Path;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface Artifact extends Domain, ExtraProperties {
-    boolean isActive();
+public interface Artifact extends Domain, Activatable, ExtraProperties {
+    boolean isSelected();
 
     Path getEffectivePath();
 

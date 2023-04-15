@@ -23,7 +23,9 @@ import java.util.Set;
  * @author Andres Almiray
  * @since 0.8.0
  */
-public interface FileSet extends Domain, ExtraProperties {
+public interface FileSet extends Domain, Activatable, ExtraProperties {
+    boolean isSelected();
+
     Set<String> getIncludes();
 
     Set<String> getExcludes();
@@ -31,6 +33,8 @@ public interface FileSet extends Domain, ExtraProperties {
     String getInput();
 
     String getOutput();
+
+    String getPlatform();
 
     boolean isFailOnMissingInput();
 }
