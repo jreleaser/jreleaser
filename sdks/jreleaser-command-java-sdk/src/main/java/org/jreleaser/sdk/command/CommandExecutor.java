@@ -20,19 +20,21 @@ package org.jreleaser.sdk.command;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.util.IoUtils;
-import org.zeroturnaround.exec.ProcessExecutor;
-import org.zeroturnaround.exec.ProcessInitException;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
-
-import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
@@ -62,25 +64,15 @@ public class CommandExecutor {
         return this;
     }
 
-    public Command.Result executeCommand(ProcessExecutor processExecutor) throws CommandException {
+    private Command.Result executeCommand(ProcessExecutor processExecutor) throws CommandException {
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             ByteArrayOutputStream err = new ByteArrayOutputStream();
 
             int exitValue = processExecutor
-                .redirectOutput(out)
-                .redirectError(err)
-                .execute()
-                .getExitValue();
-
-            if (!quiet) {
-                debug(out);
-                error(err);
-            }
+                .execute(logger, quiet, out, err);
 
             return Command.Result.of(IoUtils.toString(out), IoUtils.toString(err), exitValue);
-        } catch (ProcessInitException e) {
-            throw new CommandException(RB.$("ERROR_unexpected_error"), e.getCause());
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new CommandException(RB.$("ERROR_unexpected_error"), e);
@@ -111,26 +103,82 @@ public class CommandExecutor {
 
     private ProcessExecutor createProcessExecutor(Command command) throws CommandException {
         try {
-            return new ProcessExecutor(command.asCommandLine())
-                .environment(environment);
+            return new ProcessExecutor(command, environment);
         } catch (IOException e) {
             throw new CommandException(RB.$("ERROR_unexpected_error"), e);
         }
     }
 
-    private void debug(ByteArrayOutputStream out) {
-        log(out, logger::debug);
-    }
+    private static class ProcessExecutor {
+        private final ProcessBuilder builder;
+        private InputStream input;
 
-    private void error(ByteArrayOutputStream err) {
-        log(err, logger::error);
-    }
+        private static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(2, new ThreadFactory() {
+            private final AtomicInteger counter = new AtomicInteger(1);
 
-    private void log(ByteArrayOutputStream stream, Consumer<? super String> consumer) {
-        String str = IoUtils.toString(stream);
-        if (isBlank(str)) return;
+            public Thread newThread(Runnable r) {
+                Thread t = Executors.defaultThreadFactory().newThread(r);
+                t.setDaemon(true);
+                t.setName("jreleaser-command-executor-" + counter.getAndIncrement());
+                return t;
+            }
+        });
 
-        Arrays.stream(str.split(System.lineSeparator()))
-            .forEach(consumer);
+        private ProcessExecutor(Command command, Map<String, String> environment) throws IOException {
+            this.builder = new ProcessBuilder(command.asCommandLine());
+            builder.environment().putAll(environment);
+        }
+
+        private ProcessExecutor directory(File directory) {
+            builder.directory(directory);
+            return this;
+        }
+
+        private ProcessExecutor redirectInput(InputStream input) {
+            this.input = input;
+            return this;
+        }
+
+        private int execute(JReleaserLogger logger, boolean quiet, OutputStream out, OutputStream err) throws IOException, InterruptedException {
+            Process process = builder.start();
+
+            if (null != input) {
+                PrintWriter writer = IoUtils.newPrintWriter(process.getOutputStream(), true);
+                IoUtils.withInputStream(input, writer::write);
+                writer.println();
+            }
+
+            IOException[] outException = handleStream(process.getInputStream(), out, s -> {
+                if (!quiet) logger.debug(s);
+            });
+            IOException[] errException = handleStream(process.getErrorStream(), err, s -> {
+                if (!quiet) logger.error(s);
+            });
+
+            int exitValue = process.waitFor();
+
+            if (null != outException[0]) throw outException[0];
+            if (null != errException[0]) throw errException[0];
+
+            return exitValue;
+        }
+
+        private IOException[] handleStream(InputStream input, OutputStream target, Consumer<? super String> log) {
+            IOException[] capture = new IOException[1];
+
+            EXECUTOR_SERVICE.submit(() -> {
+                try {
+                    PrintWriter writer = IoUtils.newPrintWriter(target, true);
+                    IoUtils.withLines(input, s -> {
+                        log.accept(s);
+                        writer.println(s);
+                    });
+                } catch (IOException e) {
+                    capture[0] = e;
+                }
+            });
+
+            return capture;
+        }
     }
 }

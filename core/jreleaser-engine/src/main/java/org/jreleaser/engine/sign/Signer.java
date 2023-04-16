@@ -52,7 +52,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.stream.Collectors.toList;
 import static org.jreleaser.model.api.signing.Signing.KEY_SKIP_SIGNING;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -132,7 +131,7 @@ public final class Signer {
 
         Path privateKeyFile = isNotBlank(privateKey) ? context.getBasedir().resolve(privateKey) : null;
         Path publicKeyFile = isNotBlank(publicKey) ? context.getBasedir().resolve(publicKey) : null;
-        byte[] password = (signing.getPassphrase() + System.lineSeparator()).getBytes(UTF_8);
+        String password = signing.getPassphrase();
 
         boolean forceSign = false;
         if (null == privateKeyFile) {
@@ -270,7 +269,7 @@ public final class Signer {
     }
 
     private static void sign(JReleaserContext context, List<SigningUtils.FilePair> files,
-                             Cosign cosign, Path privateKeyFile, byte[] password) throws SigningException {
+                             Cosign cosign, Path privateKeyFile, String password) throws SigningException {
         Path signaturesDirectory = context.getSignaturesDirectory();
 
         try {

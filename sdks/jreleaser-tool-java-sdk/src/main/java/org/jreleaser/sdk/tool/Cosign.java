@@ -24,7 +24,6 @@ import org.jreleaser.sdk.command.Command;
 import org.jreleaser.sdk.command.CommandException;
 import org.jreleaser.sdk.command.CommandExecutor;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +31,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -40,14 +38,14 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 1.0.0
  */
 public class Cosign extends AbstractTool {
+    private static final String COSIGN_PASSWORD = "COSIGN_PASSWORD";
+
     public Cosign(JReleaserContext context, String version) {
         //Cosign outputs its version information on the err-channel
         super(context, "cosign", version, true);
     }
 
-    public boolean checkPassword(Path keyFile, byte[] password) {
-        ByteArrayInputStream in = new ByteArrayInputStream(password);
-
+    public boolean checkPassword(Path keyFile, String password) {
         Command command = tool.asCommand()
             .arg("public-key")
             .arg("--key")
@@ -55,7 +53,8 @@ public class Cosign extends AbstractTool {
 
         try {
             Command.Result result = executeCommand(() -> new CommandExecutor(context.getLogger(), true)
-                .executeCommand(command, in));
+                .environment(COSIGN_PASSWORD, password)
+                .executeCommand(command));
             if (result.getExitValue() != 0) {
                 throw new CommandException(RB.$("ERROR_command_execution_exit_value", result.getExitValue()));
             }
@@ -67,14 +66,14 @@ public class Cosign extends AbstractTool {
         return false;
     }
 
-    public Path generateKeyPair(byte[] password) throws SigningException {
+    public Path generateKeyPair(String password) throws SigningException {
         Command command = tool.asCommand()
             .arg("generate-key-pair");
 
         Path homeDir = resolveJReleaserHomeDir();
         try {
             Command.Result result = executeCommand(() -> new CommandExecutor(context.getLogger(), true)
-                .environment("COSIGN_PASSWORD", new String(password, UTF_8))
+                .environment(COSIGN_PASSWORD, password)
                 .executeCommand(homeDir, command));
             if (result.getExitValue() != 0) {
                 throw new CommandException(RB.$("ERROR_command_execution_exit_value", result.getExitValue()));
@@ -87,10 +86,9 @@ public class Cosign extends AbstractTool {
         return homeDir.resolve("cosign.key");
     }
 
-    public void signBlob(Path keyFile, byte[] password, Path input, Path destinationDir) throws SigningException {
+    public void signBlob(Path keyFile, String password, Path input, Path destinationDir) throws SigningException {
         context.getLogger().info("{}", context.relativizeToBasedir(input));
 
-        ByteArrayInputStream in = new ByteArrayInputStream(password);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
         Command command = tool.asCommand()
@@ -101,7 +99,8 @@ public class Cosign extends AbstractTool {
 
         try {
             Command.Result result = executeCommand(() -> new CommandExecutor(context.getLogger(), true)
-                .executeCommand(command, in));
+                .environment(COSIGN_PASSWORD, password)
+                .executeCommand(command));
             if (result.getExitValue() != 0) {
                 throw new CommandException(RB.$("ERROR_command_execution_exit_value", result.getExitValue()));
             }

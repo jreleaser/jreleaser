@@ -17,15 +17,19 @@
  */
 package org.jreleaser.util;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Scanner;
+import java.util.function.Consumer;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -67,6 +71,21 @@ public final class IoUtils {
             return out.toString(UTF_8.name());
         } catch (UnsupportedEncodingException e) {
             throw new IllegalArgumentException(e);
+        }
+    }
+
+    public static void withInputStream(InputStream input, Consumer<? super Character> consumer) throws IOException {
+        try (InputStreamReader reader = new InputStreamReader(input)) {
+            int ch;
+            while ((ch = reader.read()) != -1) {
+                consumer.accept((char) ch);
+            }
+        }
+    }
+
+    public static void withLines(InputStream input, Consumer<? super String> consumer) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {
+            reader.lines().forEach(consumer);
         }
     }
 }
