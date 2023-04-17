@@ -225,7 +225,7 @@ jobs:
 
       - name: Commit
         env:
-          TAG: "${{ needs.release.outputs.tagname }}
+          TAG: ${{ needs.release.outputs.tagname }}
           VERSION: ${{ needs.precheck.outputs.version }}
           GH_BOT_EMAIL: ${{ vars.GH_BOT_EMAIL }}
         run: sh update-website.sh

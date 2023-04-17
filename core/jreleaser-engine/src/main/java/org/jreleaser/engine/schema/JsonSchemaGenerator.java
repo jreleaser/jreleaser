@@ -111,6 +111,7 @@ public final class JsonSchemaGenerator {
             configBuilder.with(Option.GETTER_METHODS);
             configBuilder.with(Option.NONSTATIC_NONVOID_NONGETTER_METHODS);
             configBuilder.with(Option.FIELDS_DERIVED_FROM_ARGUMENTFREE_METHODS);
+            configBuilder.with(Option.STRICT_TYPE_INFO);
             JacksonModule jacksonModule = new JacksonModule();
             configBuilder.with(jacksonModule);
             configBuilder.forTypesInGeneral()
