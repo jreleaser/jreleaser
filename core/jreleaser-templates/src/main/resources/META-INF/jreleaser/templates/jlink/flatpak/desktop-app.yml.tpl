@@ -37,6 +37,8 @@ modules:
         sha256: {{distributionChecksumSha256}}
       - type: file
         path: {{flatpakComponentId}}.metainfo.xml
+      - type: file
+        path: {{flatpakComponentId}}.desktop
       {{#flatpakIcons}}
       - type: file
         path: icons/{{width}}x{{height}}/{{distributionExecutable}}.png
