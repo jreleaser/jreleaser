@@ -67,7 +67,8 @@ jobs:
     needs: [precheck, jlink, jpackage, native-image]
     runs-on: ubuntu-latest
     outputs:
-      hashes: ${{ steps.hash.outputs.HASHES }}
+      hashes: ${{ steps.slsa.outputs.HASHES }}
+      tagname: ${{ steps.slsa.outputs.TAGNAME }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -156,22 +157,22 @@ jobs:
             out/jreleaser/trace.log
             out/jreleaser/output.properties
 
-      - name: SLSA hashes
+      - name: SLSA
         shell: bash
-        id: hash
+        id: slsa
         run: |
           echo "HASHES=$(cat out/jreleaser/checksums/checksums_sha256.txt | base64 -w0)" >> "$GITHUB_OUTPUT"
+          echo "TAGNAME=$(grep tagName out/jreleaser/output.properties | awk -F'=' '{print $2}')" >> "$GITHUB_OUTPUT"
 
   provenance:
     name: Provenance
     needs: [precheck, release]
-    uses: jreleaser/jreleaser/.github/workflows/step-provenance.yml@main
+    uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.5.0
     with:
-      project-version: ${{ needs.precheck.outputs.version }}
-      project-tag: 'v${{ needs.precheck.outputs.version }}'
-      hashes: ${{ needs.release.outputs.hashes }}
-    secrets:
-      gh-access-token: ${{ secrets.GIT_ACCESS_TOKEN }}
+      base64-subjects: ${{ needs.release.outputs.hashes }}
+      upload-assets: true
+      upload-tag-name: ${{ needs.release.outputs.tagname }}
+      provenance-name: jreleaser-all-${{ needs.precheck.outputs.version }}.intoto.jsonl
 
   update-wiki:
     name: Update Wiki
@@ -179,7 +180,7 @@ jobs:
     uses: jreleaser/jreleaser/.github/workflows/step-update-wiki.yml@main
     with:
       project-version: ${{ needs.precheck.outputs.version }}
-      project-tag: 'v${{ needs.precheck.outputs.version }}'
+      project-tag: ${{ needs.release.outputs.tagname }}
       template-params: '-PincludeSboms'
     secrets:
       gh-access-token: ${{ secrets.GIT_ACCESS_TOKEN }}
@@ -190,7 +191,7 @@ jobs:
     uses: jreleaser/jreleaser/.github/workflows/step-update-bach-info.yml@main
     with:
       project-version: ${{ needs.precheck.outputs.version }}
-      project-tag: 'v${{ needs.precheck.outputs.version }}'
+      project-tag: ${{ needs.release.outputs.tagname }}
     secrets:
       gh-access-token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
@@ -219,12 +220,12 @@ jobs:
           chmod +x update-website.sh
           curl -sL "https://github.com/jreleaser/jreleaser/releases/download/${TAG}/jreleaser-tool-provider-${VERSION}.jar" --output jreleaser-cli.jar
         env:
-          TAG: "v${{ needs.precheck.outputs.version }}"
+          TAG: ${{ needs.release.outputs.tagname }}
           VERSION: ${{ needs.precheck.outputs.version }}
 
       - name: Commit
         env:
-          TAG: "v${{ needs.precheck.outputs.version }}"
+          TAG: "${{ needs.release.outputs.tagname }}
           VERSION: ${{ needs.precheck.outputs.version }}
           GH_BOT_EMAIL: ${{ vars.GH_BOT_EMAIL }}
         run: sh update-website.sh
