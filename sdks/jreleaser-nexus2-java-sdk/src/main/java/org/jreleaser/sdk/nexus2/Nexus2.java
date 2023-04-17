@@ -121,7 +121,7 @@ public class Nexus2 {
     }
 
     public String findStagingProfileId(String groupId) throws Nexus2Exception {
-        return wrap(() -> {
+        return wrapNoDryrun(() -> {
             Data<List<StagingProfile>> data = api.getStagingProfiles();
             if (null == data || null == data.getData() || data.getData().isEmpty()) {
                 throw fail(RB.$("ERROR_nexus_find_staging_profile", groupId));
@@ -269,6 +269,18 @@ public class Nexus2 {
                 return callable.call();
             }
             return null;
+        } catch (Nexus2Exception e) {
+            logger.trace(e);
+            throw e;
+        } catch (Exception e) {
+            logger.trace(e);
+            throw new Nexus2Exception(RB.$("ERROR_unexpected_error"), e);
+        }
+    }
+
+    private <T> T wrapNoDryrun(Callable<T> callable) throws Nexus2Exception {
+        try {
+            return callable.call();
         } catch (Nexus2Exception e) {
             logger.trace(e);
             throw e;

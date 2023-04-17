@@ -68,39 +68,49 @@ public class Nexus2MavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
         String username = deployer.getUsername();
         String password = deployer.getPassword();
 
-        Nexus2 nexus = null;
-        if (!context.isDryrun()) {
-            nexus = new Nexus2(context.getLogger(), baseUrl, username, password,
-                deployer.getConnectTimeout(), deployer.getReadTimeout(), context.isDryrun(),
-                deployer.getTransitionDelay(), deployer.getTransitionMaxRetries());
-        }
+        Nexus2 nexus = new Nexus2(context.getLogger(), baseUrl, username, password,
+            deployer.getConnectTimeout(), deployer.getReadTimeout(), context.isDryrun(),
+            deployer.getTransitionDelay(), deployer.getTransitionMaxRetries());
 
         String groupId = context.getModel().getProject().getJava().getGroupId();
 
         String stagingProfileId = null;
         String stagingRepositoryId = null;
 
-        if (!isSnapshot && !context.isDryrun()) {
+        if (!isSnapshot) {
             try {
                 context.getLogger().info(RB.$("nexus.lookup.staging.profile", groupId));
                 stagingProfileId = nexus.findStagingProfileId(groupId);
             } catch (Nexus2Exception e) {
-                context.getLogger().trace(e);
                 if (e.getCause() instanceof NexusAPIException) {
                     NexusAPIException ne = (NexusAPIException) e.getCause();
-                    if (ne.isUnauthorized() || ne.isForbidden()) {
+                    if (context.isDryrun()) {
+                        if (ne.isUnauthorized() || ne.isForbidden()) {
+                            context.getLogger().warn(RB.$("ERROR_nexus_forbidden"));
+                        } else {
+                            context.getLogger().warn(RB.$("ERROR_nexus_find_staging_profile", groupId), e);
+                        }
+                    } else if (ne.isUnauthorized() || ne.isForbidden()) {
                         throw new DeployException(RB.$("ERROR_nexus_forbidden"), e);
                     }
+                    if (!context.isDryrun()) {
+                        throw new DeployException(RB.$("ERROR_nexus_find_staging_profile", groupId), e);
+                    }
+                } else if (context.isDryrun()) {
+                    context.getLogger().warn(RB.$("ERROR_nexus_find_staging_profile", groupId));
+                } else {
+                    throw new DeployException(RB.$("ERROR_nexus_find_staging_profile", groupId), e);
                 }
-                throw new DeployException(RB.$("ERROR_nexus_find_staging_profile", groupId), e);
             }
 
-            try {
-                context.getLogger().info(RB.$("nexus.create.staging.repository", groupId));
-                stagingRepositoryId = nexus.createStagingRepository(stagingProfileId, groupId);
-            } catch (Nexus2Exception e) {
-                context.getLogger().trace(e);
-                throw new DeployException(RB.$("ERROR_nexus_create_staging_repository", groupId), e);
+            if (!context.isDryrun()) {
+                try {
+                    context.getLogger().info(RB.$("nexus.create.staging.repository", groupId));
+                    stagingRepositoryId = nexus.createStagingRepository(stagingProfileId, groupId);
+                } catch (Nexus2Exception e) {
+                    context.getLogger().trace(e);
+                    throw new DeployException(RB.$("ERROR_nexus_create_staging_repository", groupId), e);
+                }
             }
         }
 
