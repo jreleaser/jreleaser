@@ -453,7 +453,7 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
     }
 
     protected List<Artifact> collectArtifacts(Distribution distribution) {
-        return packager.resolveNonOptionalArtifacts(context, distribution);
+        return packager.resolveArtifacts(context, distribution);
     }
 
     protected void info(ByteArrayOutputStream out) {

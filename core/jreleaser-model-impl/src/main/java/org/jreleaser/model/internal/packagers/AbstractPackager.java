@@ -43,7 +43,7 @@ import static org.jreleaser.model.Distribution.DistributionType.FLAT_BINARY;
  * @since 0.1.0
  */
 public abstract class AbstractPackager<A extends org.jreleaser.model.api.packagers.Packager, S extends AbstractPackager<A, S>> extends AbstractActivatable<S> implements Packager<A> {
-    private static final long serialVersionUID = 7367030829067542491L;
+    private static final long serialVersionUID = 7585826887268273790L;
 
     @JsonIgnore
     private final String type;
@@ -108,9 +108,9 @@ public abstract class AbstractPackager<A extends org.jreleaser.model.api.package
     }
 
     @Override
-    public List<Artifact> resolveNonOptionalArtifacts(JReleaserContext context, Distribution distribution) {
+    public List<Artifact> resolveArtifacts(JReleaserContext context, Distribution distribution) {
         return resolveCandidateArtifacts(context, distribution).stream()
-            .filter(artifact -> artifact.resolvedPathExists() && !artifact.isOptional(context))
+            .filter(Artifact::resolvedPathExists)
             .collect(toList());
     }
 

@@ -159,7 +159,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
                                          TemplateContext props,
                                          Path packageDirectory) throws PackagerProcessingException {
         if (packager.getActiveSpecs().isEmpty()) {
-            List<Artifact> artifacts = packager.resolveNonOptionalArtifacts(context, distribution);
+            List<Artifact> artifacts = packager.resolveArtifacts(context, distribution);
             packageDocker(distribution, props, packageDirectory, getPackager(), artifacts);
             return;
         }

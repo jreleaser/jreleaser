@@ -354,9 +354,9 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
     }
 
     @Override
-    public List<Artifact> resolveNonOptionalArtifacts(JReleaserContext context, Distribution distribution) {
+    public List<Artifact> resolveArtifacts(JReleaserContext context, Distribution distribution) {
         return resolveCandidateArtifacts(context, distribution).stream()
-            .filter(artifact -> artifact.resolvedPathExists() && !artifact.isOptional(context))
+            .filter(Artifact::resolvedPathExists)
             .collect(toList());
     }
 
