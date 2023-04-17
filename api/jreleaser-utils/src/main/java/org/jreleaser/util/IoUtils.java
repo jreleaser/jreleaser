@@ -75,7 +75,7 @@ public final class IoUtils {
     }
 
     public static void withInputStream(InputStream input, Consumer<? super Character> consumer) throws IOException {
-        try (InputStreamReader reader = new InputStreamReader(input)) {
+        try (InputStreamReader reader = new InputStreamReader(input, UTF_8)) {
             int ch;
             while ((ch = reader.read()) != -1) {
                 consumer.accept((char) ch);
@@ -84,7 +84,7 @@ public final class IoUtils {
     }
 
     public static void withLines(InputStream input, Consumer<? super String> consumer) throws IOException {
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(input, UTF_8))) {
             reader.lines().forEach(consumer);
         }
     }
