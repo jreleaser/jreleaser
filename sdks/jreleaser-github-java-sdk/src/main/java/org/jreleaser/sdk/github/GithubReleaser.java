@@ -188,7 +188,7 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
             String changelog = context.getChangelog().getResolvedChangelog();
 
             context.getLogger().debug(RB.$("git.releaser.release.lookup"), tagName, github.getCanonicalRepoName());
-            GhRelease release = api.findReleaseByTag(github.getOwner(), github.getName(), tagName);
+            GhRelease release = findReleaseByTag(api, tagName);
             boolean snapshot = context.getModel().getProject().isSnapshot();
             if (null != release) {
                 context.getLogger().debug(RB.$("git.releaser.release.exists"), tagName);
@@ -248,6 +248,11 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
             context.getLogger().trace(e);
             throw new ReleaseException(e);
         }
+    }
+
+    private GhRelease findReleaseByTag(Github api, String tagName) {
+        if (context.isDryrun()) return null;
+        return api.findReleaseByTag(github.getOwner(), github.getName(), tagName);
     }
 
     @Override

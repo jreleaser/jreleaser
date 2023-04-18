@@ -132,7 +132,7 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
             String changelog = context.getChangelog().getResolvedChangelog();
 
             context.getLogger().debug(RB.$("git.releaser.release.lookup"), tagName, gitlab.getCanonicalRepoName());
-            GlRelease release = api.findReleaseByTag(gitlab.getOwner(), gitlab.getName(), gitlab.getProjectIdentifier(), tagName);
+            GlRelease release = findReleaseByTag(api, tagName);
             boolean snapshot = context.getModel().getProject().isSnapshot();
             if (null != release) {
                 context.getLogger().debug(RB.$("git.releaser.release.exists"), tagName);
@@ -190,6 +190,11 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
             context.getLogger().trace(e);
             throw new ReleaseException(e);
         }
+    }
+
+    private GlRelease findReleaseByTag(Gitlab api, String tagName) {
+        if (context.isDryrun()) return null;
+        return api.findReleaseByTag(gitlab.getOwner(), gitlab.getName(), gitlab.getProjectIdentifier(), tagName);
     }
 
     @Override

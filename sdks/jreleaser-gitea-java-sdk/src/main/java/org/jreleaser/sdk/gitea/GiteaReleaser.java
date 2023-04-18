@@ -120,7 +120,7 @@ public class GiteaReleaser extends AbstractReleaser<org.jreleaser.model.api.rele
             String changelog = context.getChangelog().getResolvedChangelog();
 
             context.getLogger().debug(RB.$("git.releaser.release.lookup"), tagName, gitea.getCanonicalRepoName());
-            GtRelease release = api.findReleaseByTag(gitea.getOwner(), gitea.getName(), tagName);
+            GtRelease release = findReleaseByTag(api, tagName);
             boolean snapshot = context.getModel().getProject().isSnapshot();
             if (null != release) {
                 context.getLogger().debug(RB.$("git.releaser.release.exists"), tagName);
@@ -179,6 +179,11 @@ public class GiteaReleaser extends AbstractReleaser<org.jreleaser.model.api.rele
             context.getLogger().trace(e);
             throw new ReleaseException(e);
         }
+    }
+
+    private GtRelease findReleaseByTag(Gitea api, String tagName) {
+        if (context.isDryrun()) return null;
+        return api.findReleaseByTag(gitea.getOwner(), gitea.getName(), tagName);
     }
 
     protected Repository.Kind resolveRepositoryKind() {
