@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.spi.release;
+package org.jreleaser.sdk.git.release;
 
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.catalog.sbom.SbomCataloger;
@@ -26,6 +26,9 @@ import org.jreleaser.model.internal.release.BaseReleaser;
 import org.jreleaser.model.internal.signing.Signing;
 import org.jreleaser.model.internal.util.Artifacts;
 import org.jreleaser.model.spi.catalog.sbom.SbomCatalogerProcessorHelper;
+import org.jreleaser.model.spi.release.Asset;
+import org.jreleaser.model.spi.release.Releaser;
+import org.jreleaser.model.spi.release.ReleaserBuilder;
 import org.jreleaser.util.Algorithm;
 
 import java.io.File;

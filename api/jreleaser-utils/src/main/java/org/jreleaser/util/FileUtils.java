@@ -169,15 +169,7 @@ public final class FileUtils {
         try (ZipArchiveOutputStream out = new ZipArchiveOutputStream(dest.toFile())) {
             out.setMethod(ZipOutputStream.DEFLATED);
 
-            TreeSet<Path> paths = new TreeSet<>();
-            Files.walkFileTree(src, new SimpleFileVisitor<Path>() {
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    paths.add(file);
-                    return super.visitFile(file, attrs);
-                }
-            });
-
+            TreeSet<Path> paths = collectPaths(src);
             FileTime fileTime = null != options.getTimestamp() ? FileTime.from(options.getTimestamp().toInstant()) : null;
             for (Path path : paths) {
                 String entryName = src.relativize(path).toString();
@@ -256,19 +248,12 @@ public final class FileUtils {
         }
     }
 
+
     private static void tar(Path src, TarArchiveOutputStream out, ArchiveOptions options) throws IOException {
         out.setLongFileMode(options.getLongFileMode().toLongFileMode());
         out.setBigNumberMode(options.getBigNumberMode().toBigNumberMode());
 
-        TreeSet<Path> paths = new TreeSet<>();
-        Files.walkFileTree(src, new SimpleFileVisitor<Path>() {
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                paths.add(file);
-                return super.visitFile(file, attrs);
-            }
-        });
-
+        TreeSet<Path> paths = collectPaths(src);
         FileTime fileTime = null != options.getTimestamp() ? FileTime.from(options.getTimestamp().toInstant()) : null;
         for (Path path : paths) {
             String entryName = src.relativize(path).toString();
@@ -288,6 +273,18 @@ public final class FileUtils {
 
             out.closeArchiveEntry();
         }
+    }
+
+    private static TreeSet<Path> collectPaths(Path src) throws IOException {
+        TreeSet<Path> paths = new TreeSet<>();
+        Files.walkFileTree(src, new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                paths.add(file);
+                return super.visitFile(file, attrs);
+            }
+        });
+        return paths;
     }
 
     public static class ArchiveOptions {

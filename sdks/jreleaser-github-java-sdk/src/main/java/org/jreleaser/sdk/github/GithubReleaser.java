@@ -25,7 +25,6 @@ import org.jreleaser.model.UpdateSection;
 import org.jreleaser.model.api.common.Apply;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.util.VersionUtils;
-import org.jreleaser.model.spi.release.AbstractReleaser;
 import org.jreleaser.model.spi.release.Asset;
 import org.jreleaser.model.spi.release.Release;
 import org.jreleaser.model.spi.release.ReleaseException;
@@ -36,7 +35,7 @@ import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.git.ChangelogGenerator;
 import org.jreleaser.sdk.git.ChangelogProvider;
 import org.jreleaser.sdk.git.GitSdk;
-import org.jreleaser.sdk.git.ReleaseUtils;
+import org.jreleaser.sdk.git.release.AbstractReleaser;
 import org.jreleaser.sdk.github.api.GhAsset;
 import org.jreleaser.sdk.github.api.GhIssue;
 import org.jreleaser.sdk.github.api.GhLabel;
@@ -68,7 +67,7 @@ import static org.jreleaser.util.StringUtils.uncapitalize;
  * @since 0.1.0
  */
 public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.release.GithubReleaser> {
-    private static final long serialVersionUID = 1560414694353263225L;
+    private static final long serialVersionUID = -825713164586669508L;
 
     private static final String NOREPLY_GITHUB_COM_EMAIL = "noreply@github.com";
 
@@ -149,11 +148,6 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
 
         return api.listTags(github.getOwner(), github.getName()).stream()
             .anyMatch(tag -> tag.getName().equals(tagName));
-    }
-
-    @Override
-    protected void createTag() throws ReleaseException {
-        ReleaseUtils.createTag(context);
     }
 
     @Override

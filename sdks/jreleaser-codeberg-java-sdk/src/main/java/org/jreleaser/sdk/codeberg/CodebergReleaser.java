@@ -18,12 +18,10 @@
 package org.jreleaser.sdk.codeberg;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.UpdateSection;
 import org.jreleaser.model.api.common.Apply;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.util.VersionUtils;
-import org.jreleaser.model.spi.release.AbstractReleaser;
 import org.jreleaser.model.spi.release.Asset;
 import org.jreleaser.model.spi.release.Release;
 import org.jreleaser.model.spi.release.ReleaseException;
@@ -33,7 +31,7 @@ import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.git.ChangelogProvider;
 import org.jreleaser.sdk.git.GitSdk;
-import org.jreleaser.sdk.git.ReleaseUtils;
+import org.jreleaser.sdk.git.release.AbstractReleaser;
 import org.jreleaser.sdk.gitea.Gitea;
 import org.jreleaser.sdk.gitea.api.GtAsset;
 import org.jreleaser.sdk.gitea.api.GtIssue;
@@ -62,7 +60,7 @@ import static org.jreleaser.util.StringUtils.uncapitalize;
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.release.CodebergReleaser> {
-    private static final long serialVersionUID = 2353604736025160554L;
+    private static final long serialVersionUID = -4458608993449050365L;
 
     private final org.jreleaser.model.internal.release.CodebergReleaser codeberg;
 
@@ -74,20 +72,6 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
     @Override
     public org.jreleaser.model.api.release.CodebergReleaser getReleaser() {
         return codeberg.asImmutable();
-    }
-
-    @Override
-    public String generateReleaseNotes() throws IOException {
-        try {
-            return ChangelogProvider.getChangelog(context).trim();
-        } catch (IOException e) {
-            throw new JReleaserException(RB.$("ERROR_unexpected_error_changelog"), e);
-        }
-    }
-
-    @Override
-    protected void createTag() throws ReleaseException {
-        ReleaseUtils.createTag(context);
     }
 
     @Override

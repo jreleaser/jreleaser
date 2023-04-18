@@ -18,12 +18,10 @@
 package org.jreleaser.sdk.gitea;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.UpdateSection;
 import org.jreleaser.model.api.common.Apply;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.util.VersionUtils;
-import org.jreleaser.model.spi.release.AbstractReleaser;
 import org.jreleaser.model.spi.release.Asset;
 import org.jreleaser.model.spi.release.Release;
 import org.jreleaser.model.spi.release.ReleaseException;
@@ -33,7 +31,7 @@ import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.git.ChangelogProvider;
 import org.jreleaser.sdk.git.GitSdk;
-import org.jreleaser.sdk.git.ReleaseUtils;
+import org.jreleaser.sdk.git.release.AbstractReleaser;
 import org.jreleaser.sdk.gitea.api.GtAsset;
 import org.jreleaser.sdk.gitea.api.GtIssue;
 import org.jreleaser.sdk.gitea.api.GtLabel;
@@ -61,7 +59,7 @@ import static org.jreleaser.util.StringUtils.uncapitalize;
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class GiteaReleaser extends AbstractReleaser<org.jreleaser.model.api.release.GiteaReleaser> {
-    private static final long serialVersionUID = 3707425922206745692L;
+    private static final long serialVersionUID = -8160459963248847787L;
 
     private final org.jreleaser.model.internal.release.GiteaReleaser gitea;
 
@@ -73,20 +71,6 @@ public class GiteaReleaser extends AbstractReleaser<org.jreleaser.model.api.rele
     @Override
     public org.jreleaser.model.api.release.GiteaReleaser getReleaser() {
         return gitea.asImmutable();
-    }
-
-    @Override
-    public String generateReleaseNotes() throws IOException {
-        try {
-            return ChangelogProvider.getChangelog(context).trim();
-        } catch (IOException e) {
-            throw new JReleaserException(RB.$("ERROR_unexpected_error_changelog"), e);
-        }
-    }
-
-    @Override
-    protected void createTag() throws ReleaseException {
-        ReleaseUtils.createTag(context);
     }
 
     @Override

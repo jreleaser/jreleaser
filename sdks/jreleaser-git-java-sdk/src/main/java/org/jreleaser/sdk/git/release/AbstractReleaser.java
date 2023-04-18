@@ -15,12 +15,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.spi.release;
+package org.jreleaser.sdk.git.release;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.release.BaseReleaser;
+import org.jreleaser.model.spi.release.Asset;
+import org.jreleaser.model.spi.release.ReleaseException;
+import org.jreleaser.model.spi.release.Releaser;
+import org.jreleaser.sdk.git.ChangelogProvider;
 
+import java.io.IOException;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -54,7 +60,18 @@ public abstract class AbstractReleaser<A extends org.jreleaser.model.api.release
         }
     }
 
-    protected abstract void createTag() throws ReleaseException;
+    @Override
+    public String generateReleaseNotes() throws IOException {
+        try {
+            return ChangelogProvider.getChangelog(context).trim();
+        } catch (IOException e) {
+            throw new JReleaserException(RB.$("ERROR_unexpected_error_changelog"), e);
+        }
+    }
+
+    protected void createTag() throws ReleaseException {
+        ReleaseUtils.createTag(context);
+    }
 
     protected abstract void createRelease() throws ReleaseException;
 }

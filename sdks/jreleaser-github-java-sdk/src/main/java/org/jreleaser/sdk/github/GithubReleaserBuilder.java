@@ -17,7 +17,7 @@
  */
 package org.jreleaser.sdk.github;
 
-import org.jreleaser.model.spi.release.AbstractReleaserBuilder;
+import org.jreleaser.sdk.git.release.AbstractReleaserBuilder;
 
 /**
  * @author Andres Almiray

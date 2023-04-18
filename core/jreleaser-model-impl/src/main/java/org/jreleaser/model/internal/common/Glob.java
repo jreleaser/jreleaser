@@ -43,17 +43,10 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public final class Glob extends AbstractActivatable<Glob> implements Domain, ExtraProperties {
-    private static final String GLOB_PREFIX = "glob:";
-    private static final String REGEX_PREFIX = "regex:";
-    private static final long serialVersionUID = 3229164223309181365L;
-
-    private final Map<String, Object> extraProperties = new LinkedHashMap<>();
+public final class Glob extends AbstractArtifact<Glob> implements Domain, ExtraProperties {
+    private static final long serialVersionUID = -7355184705247562138L;
 
     private String pattern;
-    private String platform;
-    @JsonIgnore
-    private boolean selected;
     @JsonIgnore
     private Set<Artifact> artifacts;
     private String directory;
@@ -84,7 +77,7 @@ public final class Glob extends AbstractActivatable<Glob> implements Domain, Ext
 
         @Override
         public String getPlatform() {
-            return platform;
+            return Glob.this.getPlatform();
         }
 
         @Override
@@ -104,13 +97,9 @@ public final class Glob extends AbstractActivatable<Glob> implements Domain, Ext
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(Glob.this.getExtraProperties());
         }
     };
-
-    public Glob() {
-        setActive(Active.ALWAYS);
-    }
 
     public org.jreleaser.model.api.common.Glob asImmutable() {
         return immutable;
@@ -120,44 +109,6 @@ public final class Glob extends AbstractActivatable<Glob> implements Domain, Ext
     public void merge(Glob source) {
         super.merge(source);
         this.pattern = merge(this.pattern, source.pattern);
-        this.platform = merge(this.platform, source.platform);
-        this.selected = source.selected;
-        setExtraProperties(merge(this.extraProperties, source.extraProperties));
-    }
-
-    public boolean isSelected() {
-        return selected;
-    }
-
-    public boolean resolveActiveAndSelected(JReleaserContext context) {
-        resolveEnabled(context.getModel().getProject());
-        this.selected = context.isPlatformSelected(platform);
-        return isActiveAndSelected();
-    }
-
-    public boolean isActiveAndSelected() {
-        return isEnabled() && selected;
-    }
-
-    @Override
-    public String prefix() {
-        return "artifact";
-    }
-
-    @Override
-    public Map<String, Object> getExtraProperties() {
-        return extraProperties;
-    }
-
-    @Override
-    public void setExtraProperties(Map<String, Object> extraProperties) {
-        this.extraProperties.clear();
-        this.extraProperties.putAll(extraProperties);
-    }
-
-    @Override
-    public void addExtraProperties(Map<String, Object> extraProperties) {
-        this.extraProperties.putAll(extraProperties);
     }
 
     public String getPattern() {
@@ -167,14 +118,6 @@ public final class Glob extends AbstractActivatable<Glob> implements Domain, Ext
     public void setPattern(String pattern) {
         if (isBlank(pattern)) return;
         this.pattern = pattern.trim();
-    }
-
-    public String getPlatform() {
-        return platform;
-    }
-
-    public void setPlatform(String platform) {
-        this.platform = platform;
     }
 
     public String getDirectory() {
@@ -191,7 +134,7 @@ public final class Glob extends AbstractActivatable<Glob> implements Domain, Ext
         props.put("enabled", isEnabled());
         props.put("active", getActive());
         props.put("pattern", pattern);
-        props.put("platform", platform);
+        props.put("platform", getPlatform());
         props.put("directory", directory);
         props.put("extraProperties", getExtraProperties());
         return props;
@@ -209,7 +152,7 @@ public final class Glob extends AbstractActivatable<Glob> implements Domain, Ext
             normalizePattern();
             artifacts = Artifacts.resolveFiles(context, resolveDirectory(context), singletonList(pattern));
             artifacts.forEach(artifact -> {
-                artifact.setPlatform(platform);
+                artifact.setPlatform(getPlatform());
                 artifact.setActive(getActive());
                 if (isSelected()) artifact.select();
                 artifact.setExtraProperties(getExtraProperties());

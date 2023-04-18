@@ -49,20 +49,15 @@ import static org.jreleaser.util.CollectionUtils.setOf;
  * @author Andres Almiray
  * @since 0.8.0
  */
-public final class FileSet extends AbstractActivatable<FileSet> implements Domain, ExtraProperties {
-    private static final String GLOB_PREFIX = "glob:";
-    private static final long serialVersionUID = 3335260583173529265L;
+public final class FileSet extends AbstractArtifact<FileSet> implements Domain, ExtraProperties {
+    private static final long serialVersionUID = 4945222704477480182L;
 
-    private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private final Set<String> includes = new LinkedHashSet<>();
     private final Set<String> excludes = new LinkedHashSet<>();
 
     private String input;
     private String output;
-    private String platform;
     private Boolean failOnMissingInput;
-    @JsonIgnore
-    private boolean selected;
 
     @JsonIgnore
     private final org.jreleaser.model.api.common.FileSet immutable = new org.jreleaser.model.api.common.FileSet() {
@@ -105,7 +100,7 @@ public final class FileSet extends AbstractActivatable<FileSet> implements Domai
 
         @Override
         public String getPlatform() {
-            return platform;
+            return FileSet.this.getPlatform();
         }
 
         @Override
@@ -125,13 +120,9 @@ public final class FileSet extends AbstractActivatable<FileSet> implements Domai
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(FileSet.this.getExtraProperties());
         }
     };
-
-    public FileSet() {
-        setActive(Active.ALWAYS);
-    }
 
     public org.jreleaser.model.api.common.FileSet asImmutable() {
         return immutable;
@@ -142,31 +133,9 @@ public final class FileSet extends AbstractActivatable<FileSet> implements Domai
         super.merge(source);
         this.input = merge(this.input, source.input);
         this.output = merge(this.output, source.output);
-        this.platform = merge(this.platform, source.platform);
         this.failOnMissingInput = merge(this.failOnMissingInput, source.failOnMissingInput);
         setIncludes(merge(this.includes, source.includes));
         setExcludes(merge(this.excludes, source.excludes));
-        this.selected = source.selected;
-        setExtraProperties(merge(this.extraProperties, source.extraProperties));
-    }
-
-    public boolean isSelected() {
-        return selected;
-    }
-
-    public boolean resolveActiveAndSelected(JReleaserContext context) {
-        resolveEnabled(context.getModel().getProject());
-        this.selected = context.isPlatformSelected(platform);
-        return isActiveAndSelected();
-    }
-
-    public boolean isActiveAndSelected() {
-        return isEnabled() && selected;
-    }
-
-    @Override
-    public String prefix() {
-        return "artifact";
     }
 
     public Set<String> getIncludes() {
@@ -203,14 +172,6 @@ public final class FileSet extends AbstractActivatable<FileSet> implements Domai
         this.output = output;
     }
 
-    public String getPlatform() {
-        return platform;
-    }
-
-    public void setPlatform(String platform) {
-        this.platform = platform;
-    }
-
     public boolean isFailOnMissingInput() {
         return null == failOnMissingInput || failOnMissingInput;
     }
@@ -224,29 +185,13 @@ public final class FileSet extends AbstractActivatable<FileSet> implements Domai
     }
 
     @Override
-    public Map<String, Object> getExtraProperties() {
-        return extraProperties;
-    }
-
-    @Override
-    public void setExtraProperties(Map<String, Object> extraProperties) {
-        this.extraProperties.clear();
-        this.extraProperties.putAll(extraProperties);
-    }
-
-    @Override
-    public void addExtraProperties(Map<String, Object> extraProperties) {
-        this.extraProperties.putAll(extraProperties);
-    }
-
-    @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> props = new LinkedHashMap<>();
         props.put("enabled", isEnabled());
         props.put("active", getActive());
         props.put("input", input);
         props.put("output", output);
-        props.put("platform", platform);
+        props.put("platform", getPlatform());
         props.put("includes", includes);
         props.put("excludes", excludes);
         props.put("failOnMissingInput", failOnMissingInput);

@@ -18,16 +18,13 @@
 package org.jreleaser.sdk.generic.git;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.internal.JReleaserContext;
-import org.jreleaser.model.spi.release.AbstractReleaser;
 import org.jreleaser.model.spi.release.Asset;
 import org.jreleaser.model.spi.release.Release;
 import org.jreleaser.model.spi.release.ReleaseException;
 import org.jreleaser.model.spi.release.Repository;
 import org.jreleaser.model.spi.release.User;
-import org.jreleaser.sdk.git.ChangelogProvider;
-import org.jreleaser.sdk.git.ReleaseUtils;
+import org.jreleaser.sdk.git.release.AbstractReleaser;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -41,7 +38,7 @@ import java.util.Set;
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class GenericGitReleaser extends AbstractReleaser<org.jreleaser.model.api.release.GenericGitReleaser> {
-    private static final long serialVersionUID = -5681665139072711463L;
+    private static final long serialVersionUID = -6810299968968134132L;
 
     public GenericGitReleaser(JReleaserContext context, Set<Asset> assets) {
         super(context, assets);
@@ -53,27 +50,16 @@ public class GenericGitReleaser extends AbstractReleaser<org.jreleaser.model.api
     }
 
     @Override
-    public String generateReleaseNotes() throws IOException {
-        try {
-            return ChangelogProvider.getChangelog(context).trim();
-        } catch (IOException e) {
-            throw new JReleaserException(RB.$("ERROR_unexpected_error_changelog"), e);
-        }
-    }
-
-    @Override
     protected void createTag() throws ReleaseException {
         if (context.getModel().getRelease().getReleaser().isMatch()) {
-            ReleaseUtils.createTag(context);
+            super.createTag();
         }
     }
 
     @Override
     protected void createRelease() throws ReleaseException {
         context.getLogger().info(RB.$("generic.git.warning"));
-        if (context.getModel().getRelease().getReleaser().isMatch()) {
-            ReleaseUtils.createTag(context);
-        }
+        createTag();
     }
 
     @Override

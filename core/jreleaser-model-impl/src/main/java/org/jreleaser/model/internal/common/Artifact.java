@@ -51,18 +51,14 @@ import static org.jreleaser.util.StringUtils.isTrue;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public final class Artifact extends AbstractActivatable<Artifact> implements Domain, ExtraProperties, Comparable<Artifact> {
-    private static final long serialVersionUID = -96035014026465740L;
+public final class Artifact extends AbstractArtifact<Artifact> implements Domain, ExtraProperties, Comparable<Artifact> {
+    private static final long serialVersionUID = 4590895350785446198L;
 
-    private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     @JsonIgnore
     private final Map<Algorithm, String> hashes = new LinkedHashMap<>();
 
     private String path;
-    private String platform;
     private String transform;
-    @JsonIgnore
-    private boolean selected;
     @JsonIgnore
     private Path effectivePath;
     @JsonIgnore
@@ -116,7 +112,7 @@ public final class Artifact extends AbstractActivatable<Artifact> implements Dom
 
         @Override
         public String getPlatform() {
-            return platform;
+            return Artifact.this.getPlatform();
         }
 
         @Override
@@ -136,13 +132,9 @@ public final class Artifact extends AbstractActivatable<Artifact> implements Dom
 
         @Override
         public Map<String, Object> getExtraProperties() {
-            return unmodifiableMap(extraProperties);
+            return unmodifiableMap(Artifact.this.getExtraProperties());
         }
     };
-
-    public Artifact() {
-        setActive(Active.ALWAYS);
-    }
 
     public org.jreleaser.model.api.common.Artifact asImmutable() {
         return immutable;
@@ -153,12 +145,9 @@ public final class Artifact extends AbstractActivatable<Artifact> implements Dom
         super.merge(source);
         this.effectivePath = merge(this.effectivePath, source.effectivePath);
         this.path = merge(this.path, source.path);
-        this.platform = merge(this.platform, source.platform);
         this.transform = merge(this.transform, source.transform);
         this.resolvedPath = merge(this.resolvedPath, source.resolvedPath);
         this.resolvedTransform = merge(this.resolvedTransform, source.resolvedTransform);
-        this.selected = source.selected;
-        setExtraProperties(merge(this.extraProperties, source.extraProperties));
 
         // do not merge
         setHashes(source.hashes);
@@ -173,29 +162,6 @@ public final class Artifact extends AbstractActivatable<Artifact> implements Dom
         }
 
         return isTrue(value);
-    }
-
-    public boolean isSelected() {
-        return selected;
-    }
-
-    public boolean resolveActiveAndSelected(JReleaserContext context) {
-        resolveEnabled(context.getModel().getProject());
-        this.selected = context.isPlatformSelected(this);
-        return isActiveAndSelected();
-    }
-
-    public boolean isActiveAndSelected() {
-        return isEnabled() && selected;
-    }
-
-    public void deactivateAndUnselect() {
-        disable();
-        this.selected = false;
-    }
-
-    public void select() {
-        this.selected = true;
     }
 
     public Path getEffectivePath() {
@@ -248,14 +214,6 @@ public final class Artifact extends AbstractActivatable<Artifact> implements Dom
         this.hashes.putAll(hashes);
     }
 
-    public String getPlatform() {
-        return platform;
-    }
-
-    public void setPlatform(String platform) {
-        this.platform = platform;
-    }
-
     public String getTransform() {
         return transform;
     }
@@ -265,34 +223,13 @@ public final class Artifact extends AbstractActivatable<Artifact> implements Dom
     }
 
     @Override
-    public String prefix() {
-        return "artifact";
-    }
-
-    @Override
-    public Map<String, Object> getExtraProperties() {
-        return extraProperties;
-    }
-
-    @Override
-    public void setExtraProperties(Map<String, Object> extraProperties) {
-        this.extraProperties.clear();
-        this.extraProperties.putAll(extraProperties);
-    }
-
-    @Override
-    public void addExtraProperties(Map<String, Object> extraProperties) {
-        this.extraProperties.putAll(extraProperties);
-    }
-
-    @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
         map.put("active", getActive());
         map.put("path", path);
         map.put("transform", transform);
-        map.put("platform", platform);
+        map.put("platform", getPlatform());
         map.put("extraProperties", getExtraProperties());
         return map;
     }
@@ -318,8 +255,8 @@ public final class Artifact extends AbstractActivatable<Artifact> implements Dom
 
     public void mergeExtraProperties(Map<String, Object> extraProperties) {
         extraProperties.forEach((k, v) -> {
-            if (!this.extraProperties.containsKey(k)) {
-                this.extraProperties.put(k, v);
+            if (!getExtraProperties().containsKey(k)) {
+                getExtraProperties().put(k, v);
             }
         });
     }
@@ -422,9 +359,9 @@ public final class Artifact extends AbstractActivatable<Artifact> implements Dom
 
     public void mergeWith(Artifact other) {
         if (this == other) return;
-        if (isBlank(this.platform)) this.platform = other.platform;
+        if (isBlank(this.getPlatform())) this.setPlatform(other.getPlatform());
         if (isBlank(this.transform)) this.transform = other.transform;
-        mergeExtraProperties(other.extraProperties);
+        mergeExtraProperties(other.getExtraProperties());
     }
 
     public Artifact copy() {
@@ -441,8 +378,8 @@ public final class Artifact extends AbstractActivatable<Artifact> implements Dom
 
     public static Comparator<Artifact> comparatorByPlatform() {
         return (a1, a2) -> {
-            String p1 = a1.platform;
-            String p2 = a2.platform;
+            String p1 = a1.getPlatform();
+            String p2 = a2.getPlatform();
             if (isBlank(p1)) p1 = "";
             if (isBlank(p2)) p2 = "";
             return p1.compareTo(p2);
@@ -452,7 +389,7 @@ public final class Artifact extends AbstractActivatable<Artifact> implements Dom
     public static Artifact of(Path resolvedPath, String platform, Map<String, Object> props) {
         Artifact artifact = new Artifact();
         artifact.path = resolvedPath.toAbsolutePath().toString();
-        artifact.platform = platform;
+        artifact.setPlatform(platform);
         artifact.resolvedPath = resolvedPath;
         artifact.effectivePath = resolvedPath;
         artifact.setExtraProperties(props);
@@ -479,9 +416,9 @@ public final class Artifact extends AbstractActivatable<Artifact> implements Dom
     public static Artifact of(Path resolvedPath, String platform) {
         Artifact artifact = new Artifact();
         artifact.path = resolvedPath.toAbsolutePath().toString();
+        artifact.setPlatform(platform);
         artifact.resolvedPath = resolvedPath;
         artifact.effectivePath = resolvedPath;
-        artifact.platform = platform;
         return artifact;
     }
 }

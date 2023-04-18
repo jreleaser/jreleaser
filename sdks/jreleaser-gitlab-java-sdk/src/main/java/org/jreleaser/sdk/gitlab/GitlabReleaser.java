@@ -18,7 +18,6 @@
 package org.jreleaser.sdk.gitlab;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.UpdateSection;
 import org.jreleaser.model.api.common.Apply;
 import org.jreleaser.model.internal.JReleaserContext;
@@ -28,7 +27,6 @@ import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.upload.Uploader;
 import org.jreleaser.model.internal.util.Artifacts;
 import org.jreleaser.model.internal.util.VersionUtils;
-import org.jreleaser.model.spi.release.AbstractReleaser;
 import org.jreleaser.model.spi.release.Asset;
 import org.jreleaser.model.spi.release.Release;
 import org.jreleaser.model.spi.release.ReleaseException;
@@ -38,7 +36,7 @@ import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.git.ChangelogProvider;
 import org.jreleaser.sdk.git.GitSdk;
-import org.jreleaser.sdk.git.ReleaseUtils;
+import org.jreleaser.sdk.git.release.AbstractReleaser;
 import org.jreleaser.sdk.gitlab.api.GlFileUpload;
 import org.jreleaser.sdk.gitlab.api.GlIssue;
 import org.jreleaser.sdk.gitlab.api.GlLabel;
@@ -85,20 +83,6 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
     @Override
     public org.jreleaser.model.api.release.GitlabReleaser getReleaser() {
         return gitlab.asImmutable();
-    }
-
-    @Override
-    public String generateReleaseNotes() throws IOException {
-        try {
-            return ChangelogProvider.getChangelog(context).trim();
-        } catch (IOException e) {
-            throw new JReleaserException(RB.$("ERROR_unexpected_error_changelog"), e);
-        }
-    }
-
-    @Override
-    protected void createTag() throws ReleaseException {
-        ReleaseUtils.createTag(context);
     }
 
     @Override
