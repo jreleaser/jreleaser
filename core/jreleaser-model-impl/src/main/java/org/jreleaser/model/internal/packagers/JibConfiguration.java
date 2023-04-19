@@ -176,7 +176,7 @@ public interface JibConfiguration extends Domain, ExtraProperties, Activatable {
             }
 
             @Override
-            public int compareTo(org.jreleaser.model.api.packagers.JibPackager.Registry o) {
+            public int compareTo(org.jreleaser.model.api.packagers.JibConfiguration.Registry o) {
                 if (null == o) return -1;
                 return name.compareTo(o.getName());
             }

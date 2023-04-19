@@ -30,7 +30,7 @@ import org.kordamp.jipsy.annotations.ServiceProviderFor;
 public class JibPackagerProcessorFactory implements PackagerProcessorFactory<JibPackager, JibPackagerProcessor> {
     @Override
     public String getName() {
-        return org.jreleaser.model.api.packagers.JibPackager.TYPE;
+        return org.jreleaser.model.api.packagers.JibConfiguration.TYPE;
     }
 
     @Override

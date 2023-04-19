@@ -147,7 +147,7 @@ public final class JibPackagerValidator {
             packager.setFormat(parentPackager.getFormat());
         }
         if (null == packager.getFormat()) {
-            packager.setFormat(org.jreleaser.model.api.packagers.JibPackager.Format.DOCKER);
+            packager.setFormat(org.jreleaser.model.api.packagers.JibConfiguration.Format.DOCKER);
         }
         if (isBlank(packager.getWorkingDirectory())) {
             packager.setWorkingDirectory(parentPackager.getWorkingDirectory());
@@ -258,7 +258,7 @@ public final class JibPackagerValidator {
             spec.setFormat(jib.getFormat());
         }
         if (null == spec.getFormat()) {
-            spec.setFormat(org.jreleaser.model.api.packagers.JibPackager.Format.DOCKER);
+            spec.setFormat(org.jreleaser.model.api.packagers.JibConfiguration.Format.DOCKER);
         }
         if (isBlank(spec.getWorkingDirectory())) {
             spec.setWorkingDirectory(jib.getWorkingDirectory());
@@ -364,7 +364,7 @@ public final class JibPackagerValidator {
     private static void validateRegistries(JReleaserContext context, JibConfiguration self, JibConfiguration other, Errors errors, String element) {
         JReleaserModel model = context.getModel();
 
-        Set<JibPackager.Registry> registries = new LinkedHashSet<>();
+        Set<JibConfiguration.Registry> registries = new LinkedHashSet<>();
         registries.addAll(self.getRegistries());
         registries.addAll(other.getRegistries());
         self.setRegistries(registries);
@@ -374,7 +374,7 @@ public final class JibPackagerValidator {
             return;
         }
 
-        for (JibPackager.Registry registry : registries) {
+        for (JibConfiguration.Registry registry : registries) {
             BaseReleaser<?, ?> releaser = model.getRelease().getReleaser();
             String registryName = registry.getName();
 
@@ -403,11 +403,9 @@ public final class JibPackagerValidator {
                     registry.getPassword(),
                     (String) null));
 
-            if (isBlank(registry.getPassword())) {
-                if (isBlank(registry.getToPassword())) {
-                    errors.configuration(RB.$("validation_must_not_be_blank", element +
-                        ".registry." + registryName + ".toPassword"));
-                }
+            if (isBlank(registry.getPassword()) && isBlank(registry.getToPassword())) {
+                errors.configuration(RB.$("validation_must_not_be_blank", element +
+                    ".registry." + registryName + ".toPassword"));
             }
 
             registry.setToUsername(

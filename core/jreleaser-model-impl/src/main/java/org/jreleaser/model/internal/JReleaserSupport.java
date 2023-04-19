@@ -72,11 +72,11 @@ public final class JReleaserSupport {
         set.add(org.jreleaser.model.api.packagers.AsdfPackager.TYPE);
         set.add(org.jreleaser.model.api.packagers.BrewPackager.TYPE);
         set.add(org.jreleaser.model.api.packagers.ChocolateyPackager.TYPE);
-        set.add(org.jreleaser.model.api.packagers.DockerPackager.TYPE);
+        set.add(org.jreleaser.model.api.packagers.DockerConfiguration.TYPE);
         set.add(org.jreleaser.model.api.packagers.FlatpakPackager.TYPE);
         set.add(org.jreleaser.model.api.packagers.GofishPackager.TYPE);
         set.add(org.jreleaser.model.api.packagers.JbangPackager.TYPE);
-        set.add(org.jreleaser.model.api.packagers.JibPackager.TYPE);
+        set.add(org.jreleaser.model.api.packagers.JibConfiguration.TYPE);
         set.add(org.jreleaser.model.api.packagers.MacportsPackager.TYPE);
         set.add(org.jreleaser.model.api.packagers.ScoopPackager.TYPE);
         set.add(org.jreleaser.model.api.packagers.SdkmanPackager.TYPE);

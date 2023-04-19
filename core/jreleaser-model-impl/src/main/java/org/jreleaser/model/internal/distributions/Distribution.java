@@ -443,7 +443,7 @@ public final class Distribution extends Packagers<Distribution> implements Domai
                 return (T) getBrew();
             case org.jreleaser.model.api.packagers.ChocolateyPackager.TYPE:
                 return (T) getChocolatey();
-            case org.jreleaser.model.api.packagers.DockerPackager.TYPE:
+            case org.jreleaser.model.api.packagers.DockerConfiguration.TYPE:
                 return (T) getDocker();
             case org.jreleaser.model.api.packagers.FlatpakPackager.TYPE:
                 return (T) getFlatpak();
@@ -451,7 +451,7 @@ public final class Distribution extends Packagers<Distribution> implements Domai
                 return (T) getGofish();
             case org.jreleaser.model.api.packagers.JbangPackager.TYPE:
                 return (T) getJbang();
-            case org.jreleaser.model.api.packagers.JibPackager.TYPE:
+            case org.jreleaser.model.api.packagers.JibConfiguration.TYPE:
                 return (T) getJib();
             case org.jreleaser.model.api.packagers.MacportsPackager.TYPE:
                 return (T) getMacports();
