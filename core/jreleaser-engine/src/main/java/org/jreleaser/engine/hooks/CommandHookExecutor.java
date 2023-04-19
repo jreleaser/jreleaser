@@ -100,7 +100,7 @@ public final class CommandHookExecutor {
 
                 try {
                     Command command = new Command(commandLine);
-                    processOutput(executeCommand(context.getBasedir(), command));
+                    processOutput(executeCommand(context.getBasedir(), command, hook.isVerbose()));
                 } catch (CommandException e) {
                     if (!hook.isContinueOnError()) {
                         throw new JReleaserException(RB.$("ERROR_command_hook_unexpected_error"), e);
@@ -171,8 +171,8 @@ public final class CommandHookExecutor {
         return success;
     }
 
-    private Command.Result executeCommand(Path directory, Command command) throws CommandException {
-        Command.Result result = new CommandExecutor(context.getLogger())
+    private Command.Result executeCommand(Path directory, Command command, boolean verbose) throws CommandException {
+        Command.Result result = new CommandExecutor(context.getLogger(), verbose ? CommandExecutor.Output.VERBOSE : CommandExecutor.Output.DEBUG)
             .executeCommand(directory, command);
         if (result.getExitValue() != 0) {
             throw new CommandException(RB.$("ERROR_command_execution_exit_value", result.getExitValue()));

@@ -52,7 +52,7 @@ public class Cosign extends AbstractTool {
             .arg(keyFile.toAbsolutePath().toString());
 
         try {
-            Command.Result result = executeCommand(() -> new CommandExecutor(context.getLogger(), true)
+            Command.Result result = executeCommand(() -> new CommandExecutor(context.getLogger(), CommandExecutor.Output.QUIET)
                 .environment(COSIGN_PASSWORD, password)
                 .executeCommand(command));
             if (result.getExitValue() != 0) {
@@ -72,7 +72,7 @@ public class Cosign extends AbstractTool {
 
         Path homeDir = resolveJReleaserHomeDir();
         try {
-            Command.Result result = executeCommand(() -> new CommandExecutor(context.getLogger(), true)
+            Command.Result result = executeCommand(() -> new CommandExecutor(context.getLogger(), CommandExecutor.Output.QUIET)
                 .environment(COSIGN_PASSWORD, password)
                 .executeCommand(homeDir, command));
             if (result.getExitValue() != 0) {
@@ -98,7 +98,7 @@ public class Cosign extends AbstractTool {
             .arg(input.toAbsolutePath().toString());
 
         try {
-            Command.Result result = executeCommand(() -> new CommandExecutor(context.getLogger(), true)
+            Command.Result result = executeCommand(() -> new CommandExecutor(context.getLogger(), CommandExecutor.Output.QUIET)
                 .environment(COSIGN_PASSWORD, password)
                 .executeCommand(command));
             if (result.getExitValue() != 0) {
@@ -127,7 +127,7 @@ public class Cosign extends AbstractTool {
             .arg(input.toAbsolutePath().toString());
 
         try {
-            Command.Result result = executeCommand(() -> new CommandExecutor(context.getLogger(), true)
+            Command.Result result = executeCommand(() -> new CommandExecutor(context.getLogger(), CommandExecutor.Output.QUIET)
                 .executeCommand(command));
             if (result.getExitValue() != 0) {
                 throw new CommandException(RB.$("ERROR_command_execution_exit_value", result.getExitValue()));

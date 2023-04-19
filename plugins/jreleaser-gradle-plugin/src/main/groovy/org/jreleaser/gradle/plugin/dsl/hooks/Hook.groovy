@@ -32,6 +32,8 @@ import org.jreleaser.gradle.plugin.dsl.common.Activatable
 interface Hook extends Activatable {
     Property<Boolean> getContinueOnError()
 
+    Property<Boolean> getVerbose()
+
     Filter getFilter()
 
     void filter(Action<? super Filter> action)

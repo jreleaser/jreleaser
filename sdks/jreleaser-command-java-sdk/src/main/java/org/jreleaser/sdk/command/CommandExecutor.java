@@ -42,16 +42,22 @@ import java.util.function.Consumer;
  */
 public class CommandExecutor {
     private final JReleaserLogger logger;
-    private final boolean quiet;
+    private final Output output;
     private final Map<String, String> environment = new LinkedHashMap<>();
 
-    public CommandExecutor(JReleaserLogger logger) {
-        this(logger, false);
+    public enum Output {
+        QUIET,
+        DEBUG,
+        VERBOSE
     }
 
-    public CommandExecutor(JReleaserLogger logger, boolean quiet) {
+    public CommandExecutor(JReleaserLogger logger) {
+        this(logger, Output.DEBUG);
+    }
+
+    public CommandExecutor(JReleaserLogger logger, Output output) {
         this.logger = logger;
-        this.quiet = quiet;
+        this.output = output;
     }
 
     public CommandExecutor environment(Map<String, String> env) {
@@ -70,7 +76,7 @@ public class CommandExecutor {
             ByteArrayOutputStream err = new ByteArrayOutputStream();
 
             int exitValue = processExecutor
-                .execute(logger, quiet, out, err);
+                .execute(logger, output, out, err);
 
             return Command.Result.of(IoUtils.toString(out), IoUtils.toString(err), exitValue);
         } catch (InterruptedException e) {
@@ -139,7 +145,7 @@ public class CommandExecutor {
             return this;
         }
 
-        private int execute(JReleaserLogger logger, boolean quiet, OutputStream out, OutputStream err) throws IOException, InterruptedException {
+        private int execute(JReleaserLogger logger, Output output, OutputStream out, OutputStream err) throws IOException, InterruptedException {
             Process process = builder.start();
 
             if (null != input) {
@@ -149,10 +155,27 @@ public class CommandExecutor {
             }
 
             IOException[] outException = handleStream(process.getInputStream(), out, s -> {
-                if (!quiet) logger.debug(s);
+                switch (output) {
+                    case DEBUG:
+                        logger.debug(s);
+                        break;
+                    case VERBOSE:
+                        logger.plain(s);
+                        break;
+                    default:
+                        // noop
+                }
             });
             IOException[] errException = handleStream(process.getErrorStream(), err, s -> {
-                if (!quiet) logger.error(s);
+                switch (output) {
+                    case DEBUG:
+                        // fall-through
+                    case VERBOSE:
+                        logger.error(s);
+                        break;
+                    default:
+                        // noop
+                }
             });
 
             int exitValue = process.waitFor();

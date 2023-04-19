@@ -31,6 +31,8 @@ public interface Hook extends Domain, Activatable {
 
     boolean isContinueOnError();
 
+    boolean isVerbose();
+
     interface Filter extends Domain {
         Set<String> getIncludes();
 

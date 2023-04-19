@@ -234,7 +234,7 @@ public class DownloadableTool {
     }
 
     private Command.Result executeCommand(Command command) throws CommandException {
-        return new CommandExecutor(logger, true)
+        return new CommandExecutor(logger, CommandExecutor.Output.QUIET)
             .executeCommand(command);
     }
 

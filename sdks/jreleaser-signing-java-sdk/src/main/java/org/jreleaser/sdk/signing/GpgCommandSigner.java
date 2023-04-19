@@ -102,7 +102,7 @@ public final class GpgCommandSigner {
         Command cmd = createVerifyCommand()
             .arg(signature.toAbsolutePath().toString())
             .arg(target.toAbsolutePath().toString());
-        return new CommandExecutor(logger, true)
+        return new CommandExecutor(logger, CommandExecutor.Output.QUIET)
             .executeCommand(cmd).getExitValue() == 0;
     }
 

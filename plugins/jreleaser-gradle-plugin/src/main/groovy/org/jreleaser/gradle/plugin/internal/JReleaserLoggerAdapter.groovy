@@ -47,6 +47,13 @@ class JReleaserLoggerAdapter extends AbstractJReleaserLogger {
     }
 
     @Override
+    void plain(String message) {
+        String msg = formatMessage(message)
+        out.println(msg)
+        trace(msg)
+    }
+
+    @Override
     void debug(String message) {
         if (isLevelEnabled(Level.DEBUG)) {
             log(Level.DEBUG, message)
@@ -76,6 +83,11 @@ class JReleaserLoggerAdapter extends AbstractJReleaserLogger {
             log(Level.ERROR, message)
         }
         trace(Level.ERROR, message)
+    }
+
+    @Override
+    void plain(String message, Object... args) {
+        plain(MessageFormatter.arrayFormat(message, args).getMessage())
     }
 
     @Override
@@ -112,6 +124,16 @@ class JReleaserLoggerAdapter extends AbstractJReleaserLogger {
             log(Level.ERROR, msg)
         }
         trace(Level.ERROR, msg)
+    }
+
+    @Override
+    void plain(String message, Throwable throwable) {
+        String msg = formatMessage(message)
+        out.println(msg)
+        if (throwable) {
+            throwable.printStackTrace(out)
+        }
+        trace(msg, throwable)
     }
 
     @Override
@@ -197,7 +219,7 @@ class JReleaserLoggerAdapter extends AbstractJReleaserLogger {
 
     private void printThrowable(Throwable throwable) {
         if (null != throwable) {
-            throwable.printStackTrace(console.plain? out : new Colorizer(out))
+            throwable.printStackTrace(console.plain ? out : new Colorizer(out))
         }
     }
 

@@ -27,15 +27,17 @@ import java.util.Map;
  * @since 1.2.0
  */
 public abstract class AbstractHook<S extends AbstractHook<S>> extends AbstractActivatable<S> implements Hook {
-    private static final long serialVersionUID = -8314368794997861783L;
+    private static final long serialVersionUID = 6118067369961046144L;
 
     private final Filter filter = new Filter();
     protected Boolean continueOnError;
+    protected Boolean verbose;
 
     @Override
     public void merge(S source) {
         super.merge(source);
         this.continueOnError = merge(this.continueOnError, source.continueOnError);
+        this.verbose = merge(this.verbose, source.verbose);
         setFilter(source.getFilter());
     }
 
@@ -55,6 +57,21 @@ public abstract class AbstractHook<S extends AbstractHook<S>> extends AbstractAc
     }
 
     @Override
+    public boolean isVerbose() {
+        return null != verbose && verbose;
+    }
+
+    @Override
+    public void setVerbose(Boolean verbose) {
+        this.verbose = verbose;
+    }
+
+    @Override
+    public boolean isVerboseSet() {
+        return null != verbose;
+    }
+
+    @Override
     public Filter getFilter() {
         return filter;
     }
@@ -70,6 +87,7 @@ public abstract class AbstractHook<S extends AbstractHook<S>> extends AbstractAc
         map.put("enabled", isEnabled());
         map.put("active", getActive());
         map.put("continueOnError", isContinueOnError());
+        map.put("verbose", isVerbose());
         Map<String, Object> filterAsMap = filter.asMap(full);
         if (full || !filterAsMap.isEmpty()) {
             map.put("filter", filterAsMap);

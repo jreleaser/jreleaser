@@ -39,6 +39,8 @@ public interface JReleaserLogger {
 
     void restorePrefix();
 
+    void plain(String message);
+
     void debug(String message);
 
     void info(String message);
@@ -49,6 +51,8 @@ public interface JReleaserLogger {
 
     void trace(String message);
 
+    void plain(String message, Object... args);
+
     void debug(String message, Object... args);
 
     void info(String message, Object... args);
@@ -56,6 +60,8 @@ public interface JReleaserLogger {
     void warn(String message, Object... args);
 
     void error(String message, Object... args);
+
+    void plain(String message, Throwable throwable);
 
     void debug(String message, Throwable throwable);
 

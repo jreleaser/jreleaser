@@ -46,6 +46,12 @@ public interface Hook extends Domain, Activatable {
 
     boolean isContinueOnErrorSet();
 
+    boolean isVerbose();
+
+    void setVerbose(Boolean verbose);
+
+    boolean isVerboseSet();
+
     class Filter extends AbstractModelObject<Filter> implements Domain {
         private static final long serialVersionUID = 8811064830998012126L;
 

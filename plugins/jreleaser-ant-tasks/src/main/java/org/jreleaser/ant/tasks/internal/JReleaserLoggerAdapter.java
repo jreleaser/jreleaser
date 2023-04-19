@@ -41,6 +41,13 @@ public class JReleaserLoggerAdapter extends AbstractJReleaserLogger {
     }
 
     @Override
+    public void plain(String message) {
+        String msg = formatMessage(message);
+        delegate.log(msg, Project.MSG_INFO);
+        trace(msg);
+    }
+
+    @Override
     public void debug(String message) {
         String msg = DEBUG + formatMessage(message);
         delegate.log(msg, Project.MSG_DEBUG);
@@ -69,6 +76,11 @@ public class JReleaserLoggerAdapter extends AbstractJReleaserLogger {
     }
 
     @Override
+    public void plain(String message, Object... args) {
+        plain(MessageFormatter.arrayFormat(message, args).getMessage());
+    }
+
+    @Override
     public void debug(String message, Object... args) {
         debug(MessageFormatter.arrayFormat(message, args).getMessage());
     }
@@ -86,6 +98,13 @@ public class JReleaserLoggerAdapter extends AbstractJReleaserLogger {
     @Override
     public void error(String message, Object... args) {
         error(MessageFormatter.arrayFormat(message, args).getMessage());
+    }
+
+    @Override
+    public void plain(String message, Throwable throwable) {
+        String msg = formatMessage(message);
+        delegate.log(msg, throwable, Project.MSG_INFO);
+        trace(msg, throwable);
     }
 
     @Override

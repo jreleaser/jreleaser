@@ -41,11 +41,13 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 abstract class AbstractHook implements Hook {
     final Property<Active> active
     final Property<Boolean> continueOnError
+    final Property<Boolean> verbose
 
     @Inject
     AbstractHook(ObjectFactory objects) {
         active = objects.property(Active).convention(Providers.<Active> notDefined())
         continueOnError = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+        verbose = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
     }
 
     @Internal
@@ -73,6 +75,7 @@ abstract class AbstractHook implements Hook {
     protected <T extends org.jreleaser.model.internal.hooks.Hook> void fillHookProperties(T hook) {
         if (active.present) hook.active = active.get()
         if (continueOnError.present) hook.continueOnError = continueOnError.get()
+        if (verbose.present) hook.verbose = verbose.get()
     }
 
     static class FilterImpl implements Filter {
