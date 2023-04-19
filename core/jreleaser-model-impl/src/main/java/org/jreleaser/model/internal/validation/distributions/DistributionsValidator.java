@@ -51,6 +51,7 @@ import static org.jreleaser.model.internal.validation.packagers.FlatpakPackagerV
 import static org.jreleaser.model.internal.validation.packagers.GofishPackagerValidator.validateGofish;
 import static org.jreleaser.model.internal.validation.packagers.JbangPackagerValidator.postValidateJBang;
 import static org.jreleaser.model.internal.validation.packagers.JbangPackagerValidator.validateJbang;
+import static org.jreleaser.model.internal.validation.packagers.JibPackagerValidator.validateJib;
 import static org.jreleaser.model.internal.validation.packagers.MacportsPackagerValidator.validateMacports;
 import static org.jreleaser.model.internal.validation.packagers.ScoopPackagerValidator.validateScoop;
 import static org.jreleaser.model.internal.validation.packagers.SdkmanPackagerValidator.postValidateSdkman;
@@ -213,6 +214,7 @@ public final class DistributionsValidator {
         validateFlatpak(context, distribution, distribution.getFlatpak(), errors);
         validateGofish(context, distribution, distribution.getGofish(), errors);
         validateJbang(context, distribution, distribution.getJbang(), errors);
+        validateJib(context, distribution, distribution.getJib(), errors);
         validateMacports(context, distribution, distribution.getMacports(), errors);
         validateScoop(context, distribution, distribution.getScoop(), errors);
         validateSdkman(context, distribution, distribution.getSdkman(), errors);

@@ -1,6 +1,7 @@
 🚀 JReleaser {{projectVersion}} has been released! {{releaseNotesUrl}}
 📣 Announce releases to OpenCollective (@opencollect) {{projectLinkDocumentation}}/reference/announce/opencollective.html
 🔐 Generate SBOMs with cyclonedx-cli {{projectLinkDocumentation}}/reference/catalog/sbom/cyclonedx.html
+🏗 Jib is now supported as a packager. You may use it to build container images {{projectLinkDocumentation}}/reference/packagers/jib.html
 📦 Several improvements and fixes applied to the Flatpak package manager {{projectLinkDocumentation}}/reference/packagers/flatpak.html
 🍎 SINGLE_JAR distributions are now supported by Macports package manager {{projectLinkDocumentation}}/reference/packagers/macports.html
 🪟 Zip based distributions are now supported by Winget package manager {{projectLinkDocumentation}}/reference/packagers/winget.html

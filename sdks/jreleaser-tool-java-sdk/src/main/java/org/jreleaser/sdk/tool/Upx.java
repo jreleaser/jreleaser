@@ -17,14 +17,7 @@
  */
 package org.jreleaser.sdk.tool;
 
-import org.jreleaser.bundle.RB;
 import org.jreleaser.model.api.JReleaserContext;
-import org.jreleaser.sdk.command.Command;
-import org.jreleaser.sdk.command.CommandException;
-import org.jreleaser.sdk.command.CommandExecutor;
-
-import java.nio.file.Path;
-import java.util.List;
 
 /**
  * @author Andres Almiray
@@ -33,14 +26,5 @@ import java.util.List;
 public class Upx extends AbstractTool {
     public Upx(JReleaserContext context, String version) {
         super(context, "upx", version);
-    }
-
-    public void compress(Path parent, List<String> args) throws CommandException {
-        Command command = tool.asCommand().args(args);
-        Command.Result result = executeCommand(() -> new CommandExecutor(context.getLogger())
-            .executeCommand(parent, command));
-        if (result.getExitValue() != 0) {
-            throw new CommandException(RB.$("ERROR_command_execution_exit_value", result.getExitValue()));
-        }
     }
 }

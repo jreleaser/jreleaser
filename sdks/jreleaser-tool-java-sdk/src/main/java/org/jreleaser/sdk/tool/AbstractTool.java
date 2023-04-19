@@ -21,7 +21,11 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.api.JReleaserContext;
 import org.jreleaser.sdk.command.Command;
 import org.jreleaser.sdk.command.CommandException;
+import org.jreleaser.sdk.command.CommandExecutor;
 import org.jreleaser.util.PlatformUtils;
+
+import java.nio.file.Path;
+import java.util.List;
 
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 
@@ -64,6 +68,15 @@ public class AbstractTool {
         }
 
         return true;
+    }
+
+    public void invoke(Path parent, List<String> args) throws CommandException {
+        Command command = tool.asCommand().args(args);
+        Command.Result result = executeCommand(() -> new CommandExecutor(context.getLogger())
+            .executeCommand(parent, command));
+        if (result.getExitValue() != 0) {
+            throw new CommandException(RB.$("ERROR_command_execution_exit_value", result.getExitValue()));
+        }
     }
 
     protected Command.Result executeCommand(CommandExecution execution) throws CommandException {

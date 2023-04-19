@@ -251,7 +251,7 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<or
         context.getLogger().info("  upx {}", image.getFileName().toString());
 
         try {
-            upx.compress(image.getParent(), args);
+            upx.invoke(image.getParent(), args);
         } catch (CommandException e) {
             throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
         }

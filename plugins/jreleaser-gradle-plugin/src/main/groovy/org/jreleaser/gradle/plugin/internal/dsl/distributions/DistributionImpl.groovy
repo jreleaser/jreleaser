@@ -38,6 +38,7 @@ import org.jreleaser.gradle.plugin.dsl.packagers.DockerPackager
 import org.jreleaser.gradle.plugin.dsl.packagers.FlatpakPackager
 import org.jreleaser.gradle.plugin.dsl.packagers.GofishPackager
 import org.jreleaser.gradle.plugin.dsl.packagers.JbangPackager
+import org.jreleaser.gradle.plugin.dsl.packagers.JibPackager
 import org.jreleaser.gradle.plugin.dsl.packagers.MacportsPackager
 import org.jreleaser.gradle.plugin.dsl.packagers.ScoopPackager
 import org.jreleaser.gradle.plugin.dsl.packagers.SdkmanPackager
@@ -56,6 +57,7 @@ import org.jreleaser.gradle.plugin.internal.dsl.packagers.DockerPackagerImpl
 import org.jreleaser.gradle.plugin.internal.dsl.packagers.FlatpakPackagerImpl
 import org.jreleaser.gradle.plugin.internal.dsl.packagers.GofishPackagerImpl
 import org.jreleaser.gradle.plugin.internal.dsl.packagers.JbangPackagerImpl
+import org.jreleaser.gradle.plugin.internal.dsl.packagers.JibPackagerImpl
 import org.jreleaser.gradle.plugin.internal.dsl.packagers.MacportsPackagerImpl
 import org.jreleaser.gradle.plugin.internal.dsl.packagers.ScoopPackagerImpl
 import org.jreleaser.gradle.plugin.internal.dsl.packagers.SdkmanPackagerImpl
@@ -98,6 +100,7 @@ class DistributionImpl implements Distribution {
     final FlatpakPackagerImpl flatpak
     final GofishPackagerImpl gofish
     final JbangPackagerImpl jbang
+    final JibPackagerImpl jib
     final MacportsPackagerImpl macports
     final ScoopPackagerImpl scoop
     final SdkmanPackagerImpl sdkman
@@ -137,6 +140,7 @@ class DistributionImpl implements Distribution {
         flatpak = objects.newInstance(FlatpakPackagerImpl, objects)
         gofish = objects.newInstance(GofishPackagerImpl, objects)
         jbang = objects.newInstance(JbangPackagerImpl, objects)
+        jib = objects.newInstance(JibPackagerImpl, objects)
         macports = objects.newInstance(MacportsPackagerImpl, objects)
         scoop = objects.newInstance(ScoopPackagerImpl, objects)
         sdkman = objects.newInstance(SdkmanPackagerImpl, objects)
@@ -225,6 +229,11 @@ class DistributionImpl implements Distribution {
     @Override
     void jbang(Action<? super JbangPackager> action) {
         action.execute(jbang)
+    }
+
+    @Override
+    void jib(Action<? super JibPackager> action) {
+        action.execute(jib)
     }
 
     @Override
@@ -325,6 +334,11 @@ class DistributionImpl implements Distribution {
     }
 
     @Override
+    void jib(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JibPackager) Closure<Void> action) {
+        ConfigureUtil.configure(action, jib)
+    }
+
+    @Override
     void macports(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = MacportsPackager) Closure<Void> action) {
         ConfigureUtil.configure(action, macports)
     }
@@ -376,6 +390,7 @@ class DistributionImpl implements Distribution {
         if (flatpak.isSet()) distribution.flatpak = flatpak.toModel()
         if (gofish.isSet()) distribution.gofish = gofish.toModel()
         if (jbang.isSet()) distribution.jbang = jbang.toModel()
+        if (jib.isSet()) distribution.jib = jib.toModel()
         if (macports.isSet()) distribution.macports = macports.toModel()
         if (scoop.isSet()) distribution.scoop = scoop.toModel()
         if (sdkman.isSet()) distribution.sdkman = sdkman.toModel()

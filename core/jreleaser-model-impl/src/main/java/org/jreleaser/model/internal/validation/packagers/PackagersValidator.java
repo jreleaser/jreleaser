@@ -125,6 +125,15 @@ public final class PackagersValidator {
         );
 
         validatePackager(context,
+            packagers.getJib(),
+            packagers.getJib().getPackagerRepository()
+        );
+
+        if (!packagers.getJib().getSpecs().isEmpty()) {
+            errors.configuration(RB.$("validation_packagers_jib_specs"));
+        }
+
+        validatePackager(context,
             packagers.getMacports(),
             packagers.getMacports().getRepository()
         );

@@ -36,7 +36,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfiguration<S>> extends AbstractActivatable<S>
     implements DockerConfiguration, ExtraProperties {
-    private static final long serialVersionUID = 3786927554708927771L;
+    private static final long serialVersionUID = 9145623803421730899L;
 
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private final Map<String, String> labels = new LinkedHashMap<>();

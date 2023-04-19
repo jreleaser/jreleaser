@@ -75,7 +75,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public final class Distribution extends Packagers<Distribution> implements Domain, Activatable, ExtraProperties {
-    private static final long serialVersionUID = -1492592986871135365L;
+    private static final long serialVersionUID = 8423362983187267131L;
 
     private final List<String> tags = new ArrayList<>();
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
@@ -90,7 +90,7 @@ public final class Distribution extends Packagers<Distribution> implements Domai
 
     @JsonIgnore
     private final org.jreleaser.model.api.distributions.Distribution immutable = new org.jreleaser.model.api.distributions.Distribution() {
-        private static final long serialVersionUID = -3718386189666939473L;
+        private static final long serialVersionUID = 1918136121866210647L;
 
         private Set<? extends org.jreleaser.model.api.common.Artifact> artifacts;
 
@@ -197,6 +197,11 @@ public final class Distribution extends Packagers<Distribution> implements Domai
         @Override
         public org.jreleaser.model.api.packagers.JbangPackager getJbang() {
             return jbang.asImmutable();
+        }
+
+        @Override
+        public org.jreleaser.model.api.packagers.JibPackager getJib() {
+            return jib.asImmutable();
         }
 
         @Override
@@ -446,6 +451,8 @@ public final class Distribution extends Packagers<Distribution> implements Domai
                 return (T) getGofish();
             case org.jreleaser.model.api.packagers.JbangPackager.TYPE:
                 return (T) getJbang();
+            case org.jreleaser.model.api.packagers.JibPackager.TYPE:
+                return (T) getJib();
             case org.jreleaser.model.api.packagers.MacportsPackager.TYPE:
                 return (T) getMacports();
             case org.jreleaser.model.api.packagers.ScoopPackager.TYPE:

@@ -220,7 +220,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
 
             Command.Result result = Command.Result.empty();
             try {
-                pomChecker.invoke(context.getBasedir(), args);
+                pomChecker.check(context.getBasedir(), args);
             } catch (CommandException e) {
                 String plumbing = result.getErr();
                 String validation = result.getOut();

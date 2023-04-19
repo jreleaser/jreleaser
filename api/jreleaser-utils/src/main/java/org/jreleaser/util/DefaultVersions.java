@@ -27,10 +27,15 @@ public final class DefaultVersions {
     private static final DefaultVersions INSTANCE = new DefaultVersions();
 
     private final ResourceBundle bundle = ResourceBundle.getBundle("org.jreleaser.default_versions");
+    private final String jibVersion = bundle.getString("jib.version");
     private final String mvnVersion = bundle.getString("mvn.version");
     private final String pomcheckerVersion = bundle.getString("pomchecker.version");
     private final String cyclonedxVersion = bundle.getString("cyclonedx.version");
     private final String syftVersion = bundle.getString("syft.version");
+
+    public String getJibVersion() {
+        return jibVersion;
+    }
 
     public String getMvnVersion() {
         return mvnVersion;

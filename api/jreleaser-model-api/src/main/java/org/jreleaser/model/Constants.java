@@ -274,6 +274,21 @@ public interface Constants {
     String KEY_JBANG_CATALOG_REPO_URL = "jbangCatalogRepoUrl";
     String KEY_JBANG_CATALOG_REPO_CLONE_URL = "jbangCatalogRepoCloneUrl";
 
+    // Jib
+    String KEY_JIB_SPEC_NAME = "jibSpecName";
+    String KEY_JIB_BASE_IMAGE = "jibBaseImage";
+    String KEY_JIB_CREATION_TIME = "jibCreationTime";
+    String KEY_JIB_USER = "jibUser";
+    String KEY_JIB_FORMAT = "jibFormat";
+    String KEY_JIB_WORKING_DIRECTORY = "jibWorkingDirectory";
+    String KEY_JIB_HAS_VOLUMES = "jibHasVolumes";
+    String KEY_JIB_VOLUMES = "jibVolumes";
+    String KEY_JIB_HAS_EXPOSED_PORTS = "jibHasExposedPorts";
+    String KEY_JIB_EXPOSED_PORTS = "jibExposedPorts";
+    String KEY_JIB_HAS_ENVIRONMENT = "jibHasEnvironment";
+    String KEY_JIB_ENVIRONMENT = "jibEnvironment";
+    String KEY_JIB_LABELS = "jibLabels";
+
     // Macports
     String KEY_MACPORTS_APP_NAME = "macportsAppName";
     String KEY_MACPORTS_PACKAGE_NAME = "macportsPackageName";
@@ -336,7 +351,7 @@ public interface Constants {
     String KEY_FLATPAK_SDK = "flatpakSdk";
     String KEY_FLATPAK_INCLUDE_OPENJDK = "flatpakIncludeOpenJdk";
 
-    // winget
+    // Winget
     String KEY_WINGET_PACKAGE_IDENTIFIER = "wingetPackageIdentifier";
     String KEY_WINGET_PACKAGE_NAME = "wingetPackageName";
     String KEY_WINGET_PACKAGE_VERSION = "wingetPackageVersion";
@@ -395,4 +410,13 @@ public interface Constants {
     String SKIP_SBOM = "skipSbom";
     String SKIP_SBOM_CYCLONEDX = "skipSbomCyclonedx";
     String SKIP_SBOM_SYFT = "skipSbomSyft";
+
+    // Container Images
+    String DOCKER_IO = "docker.io";
+    String LABEL_OCI_IMAGE_TITLE = "org.opencontainers.image.title";
+    String LABEL_OCI_IMAGE_DESCRIPTION = "org.opencontainers.image.description";
+    String LABEL_OCI_IMAGE_REVISION = "org.opencontainers.image.revision";
+    String LABEL_OCI_IMAGE_VERSION = "org.opencontainers.image.version";
+    String LABEL_OCI_IMAGE_LICENSES = "org.opencontainers.image.licenses";
+    String LABEL_OCI_IMAGE_URL = "org.opencontainers.image.url";
 }

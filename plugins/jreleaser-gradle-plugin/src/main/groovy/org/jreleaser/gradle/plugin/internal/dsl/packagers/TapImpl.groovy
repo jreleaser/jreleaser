@@ -33,6 +33,7 @@ import org.jreleaser.model.internal.packagers.ChocolateyPackager
 import org.jreleaser.model.internal.packagers.FlatpakPackager
 import org.jreleaser.model.internal.packagers.GofishPackager
 import org.jreleaser.model.internal.packagers.JbangPackager
+import org.jreleaser.model.internal.packagers.JibPackager
 import org.jreleaser.model.internal.packagers.MacportsPackager
 import org.jreleaser.model.internal.packagers.ScoopPackager
 import org.jreleaser.model.internal.packagers.SnapPackager
@@ -137,6 +138,12 @@ class TapImpl implements Tap {
 
     GofishPackager.GofishRepository toGofishRepository() {
         GofishPackager.GofishRepository tap = new GofishPackager.GofishRepository()
+        convert(tap)
+        tap
+    }
+
+    JibPackager.JibRepository toJibRepository() {
+        JibPackager.JibRepository tap = new JibPackager.JibRepository()
         convert(tap)
         tap
     }

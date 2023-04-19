@@ -31,7 +31,7 @@ import static java.util.Collections.unmodifiableMap;
  * @since 0.1.0
  */
 public class Packagers<S extends Packagers<S>> extends AbstractActivatable<S> implements Domain {
-    private static final long serialVersionUID = -3865388447433152980L;
+    private static final long serialVersionUID = 6799849630017240270L;
 
     protected final AppImagePackager appImage = new AppImagePackager();
     protected final AsdfPackager asdf = new AsdfPackager();
@@ -41,6 +41,7 @@ public class Packagers<S extends Packagers<S>> extends AbstractActivatable<S> im
     protected final FlatpakPackager flatpak = new FlatpakPackager();
     protected final GofishPackager gofish = new GofishPackager();
     protected final JbangPackager jbang = new JbangPackager();
+    protected final JibPackager jib = new JibPackager();
     protected final MacportsPackager macports = new MacportsPackager();
     protected final ScoopPackager scoop = new ScoopPackager();
     protected final SdkmanPackager sdkman = new SdkmanPackager();
@@ -50,7 +51,7 @@ public class Packagers<S extends Packagers<S>> extends AbstractActivatable<S> im
 
     @JsonIgnore
     private final org.jreleaser.model.api.packagers.Packagers immutable = new org.jreleaser.model.api.packagers.Packagers() {
-        private static final long serialVersionUID = 4269097370946118575L;
+        private static final long serialVersionUID = -613241828881201495L;
 
         @Override
         public org.jreleaser.model.api.packagers.AppImagePackager getAppImage() {
@@ -90,6 +91,11 @@ public class Packagers<S extends Packagers<S>> extends AbstractActivatable<S> im
         @Override
         public org.jreleaser.model.api.packagers.JbangPackager getJbang() {
             return jbang.asImmutable();
+        }
+
+        @Override
+        public org.jreleaser.model.api.packagers.JibPackager getJib() {
+            return jib.asImmutable();
         }
 
         @Override
@@ -141,6 +147,7 @@ public class Packagers<S extends Packagers<S>> extends AbstractActivatable<S> im
             flatpak.isEnabled() ||
             gofish.isEnabled() ||
             jbang.isEnabled() ||
+            jib.isEnabled() ||
             macports.isEnabled() ||
             scoop.isEnabled() ||
             sdkman.isEnabled() ||
@@ -160,6 +167,7 @@ public class Packagers<S extends Packagers<S>> extends AbstractActivatable<S> im
         setFlatpak(source.flatpak);
         setGofish(source.gofish);
         setJbang(source.jbang);
+        setJib(source.jib);
         setMacports(source.macports);
         setScoop(source.scoop);
         setSdkman(source.sdkman);
@@ -232,6 +240,14 @@ public class Packagers<S extends Packagers<S>> extends AbstractActivatable<S> im
         this.jbang.merge(jbang);
     }
 
+    public JibPackager getJib() {
+        return jib;
+    }
+
+    public void setJib(JibPackager jib) {
+        this.jib.merge(jib);
+    }
+
     public MacportsPackager getMacports() {
         return macports;
     }
@@ -291,6 +307,7 @@ public class Packagers<S extends Packagers<S>> extends AbstractActivatable<S> im
         map.putAll(flatpak.asMap(full));
         map.putAll(gofish.asMap(full));
         map.putAll(jbang.asMap(full));
+        map.putAll(jib.asMap(full));
         map.putAll(macports.asMap(full));
         map.putAll(scoop.asMap(full));
         map.putAll(sdkman.asMap(full));

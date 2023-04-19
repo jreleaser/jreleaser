@@ -43,6 +43,8 @@ interface Packagers {
 
     JbangPackager getJbang()
 
+    JibPackager getJib()
+
     MacportsPackager getMacports()
 
     ScoopPackager getScoop()
@@ -71,6 +73,8 @@ interface Packagers {
 
     void jbang(Action<? super JbangPackager> action)
 
+    void jib(Action<? super JibPackager> action)
+
     void macports(Action<? super MacportsPackager> action)
 
     void scoop(Action<? super ScoopPackager> action)
@@ -98,6 +102,8 @@ interface Packagers {
     void gofish(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = GofishPackager) Closure<Void> action)
 
     void jbang(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JbangPackager) Closure<Void> action)
+
+    void jib(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JibPackager) Closure<Void> action)
 
     void macports(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = MacportsPackager) Closure<Void> action)
 

@@ -40,6 +40,8 @@ public interface Packagers extends Domain {
 
     JbangPackager getJbang();
 
+    JibPackager getJib();
+
     MacportsPackager getMacports();
 
     ScoopPackager getScoop();

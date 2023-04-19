@@ -23,6 +23,8 @@ import org.jreleaser.model.internal.assemble.Assembler;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.DockerPackager;
 import org.jreleaser.model.internal.packagers.DockerSpec;
+import org.jreleaser.model.internal.packagers.JibPackager;
+import org.jreleaser.model.internal.packagers.JibSpec;
 import org.jreleaser.model.internal.packagers.TemplatePackager;
 import org.jreleaser.util.Errors;
 
@@ -90,6 +92,20 @@ public final class TemplateValidator {
             !Files.exists(context.getBasedir().resolve(spec.getTemplateDirectory().trim()))) {
             errors.configuration(RB.$("validation_directory_not_exist",
                 "distribution." + distribution.getName() + ".docker." + spec.getName() + ".template", spec.getTemplateDirectory()));
+        }
+        if (isBlank(spec.getTemplateDirectory())) {
+            spec.setTemplateDirectory(defaultTemplateDirectory);
+        }
+    }
+
+    public static void validateTemplate(JReleaserContext context, Distribution distribution,
+                                        JibSpec spec, JibPackager jib, Errors errors) {
+        String defaultTemplateDirectory = "src/jreleaser/distributions/" + distribution.getName() + "/" + jib.getType() + "/" + spec.getName();
+        if (isNotBlank(spec.getTemplateDirectory()) &&
+            !defaultTemplateDirectory.equals(spec.getTemplateDirectory().trim()) &&
+            !Files.exists(context.getBasedir().resolve(spec.getTemplateDirectory().trim()))) {
+            errors.configuration(RB.$("validation_directory_not_exist",
+                "distribution." + distribution.getName() + ".jib." + spec.getName() + ".template", spec.getTemplateDirectory()));
         }
         if (isBlank(spec.getTemplateDirectory())) {
             spec.setTemplateDirectory(defaultTemplateDirectory);

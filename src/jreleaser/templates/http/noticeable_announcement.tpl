@@ -7,6 +7,7 @@ JReleaser {{projectVersion}} is now available! This release brings the following
 **Package:** Several improvements and fixes applied to [Flatpak]{{projectLinkDocumentation}}/reference/packagers/flatpak.html. `SINGLE_JAR`
 distributions are now supported by [Macports]({{projectLinkDocumentation}}/reference/packagers/macports.html). Zip
 based distributions are now supported by [Winget]({{projectLinkDocumentation}}/reference/packagers/winget.html).
+Jib is now supported as a packager; you may use it to build container images {{projectLinkDocumentation}}/reference/packagers/jib.html
 
 **Deploy:** Several updates to [Maven]({{projectLinkDocumentation}}/reference/deploy/maven/index.html) deployers. You may now individually
 override all checks defined by the `applyMavenCentralRules` property, skip checking for `-sources` and `-javadoc` JARs on a given

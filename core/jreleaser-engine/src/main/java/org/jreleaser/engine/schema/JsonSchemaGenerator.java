@@ -80,6 +80,7 @@ public final class JsonSchemaGenerator {
         mappings.put("Map<String, NativeImageAssembler>", "NativeImageAssemblerMap");
         mappings.put("Map<String, Distribution>", "DistributionMap");
         mappings.put("Map<String, DockerSpec>", "DockerSpecMap");
+        mappings.put("Map<String, JibSpec>", "JibSpecMap");
         mappings.put("Map<String, ArtifactoryUploader>", "ArtifactoryUploaderMap");
         mappings.put("Map<String, GiteaUploader>", "GiteaUploaderMap");
         mappings.put("Map<String, GitlabUploader>", "GitlabUploaderMap");

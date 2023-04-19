@@ -36,7 +36,7 @@ public class PomChecker extends AbstractTool {
         super(context, "pomchecker", version);
     }
 
-    public Command.Result invoke(Path parent, List<String> args) throws CommandException {
+    public Command.Result check(Path parent, List<String> args) throws CommandException {
         SemanticVersion semver = SemanticVersion.of(version);
         SemanticVersion ofz = SemanticVersion.of("1.5.0");
         if (ComparatorUtils.greaterThanOrEqualTo(semver, ofz)) {

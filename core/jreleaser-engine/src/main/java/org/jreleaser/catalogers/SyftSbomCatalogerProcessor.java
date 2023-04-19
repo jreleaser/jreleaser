@@ -190,7 +190,7 @@ public class SyftSbomCatalogerProcessor extends AbstractSbomCatalogerProcessor<S
         context.getLogger().info(" - {}", filename);
 
         try {
-            syft.execute(executionDirectory, args);
+            syft.invoke(executionDirectory, args);
         } catch (CommandException e) {
             throw new CatalogProcessingException(RB.$("ERROR_unexpected_error"), e);
         }

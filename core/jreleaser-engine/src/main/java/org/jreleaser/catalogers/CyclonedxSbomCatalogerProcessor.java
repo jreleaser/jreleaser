@@ -191,7 +191,7 @@ public class CyclonedxSbomCatalogerProcessor extends AbstractSbomCatalogerProces
         context.getLogger().info(" - {}", filename);
 
         try {
-            cyclonedx.execute(executionDirectory, args);
+            cyclonedx.invoke(executionDirectory, args);
         } catch (CommandException e) {
             throw new CatalogProcessingException(RB.$("ERROR_unexpected_error"), e);
         }

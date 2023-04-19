@@ -28,6 +28,7 @@ import org.jreleaser.gradle.plugin.dsl.packagers.DockerPackager
 import org.jreleaser.gradle.plugin.dsl.packagers.FlatpakPackager
 import org.jreleaser.gradle.plugin.dsl.packagers.GofishPackager
 import org.jreleaser.gradle.plugin.dsl.packagers.JbangPackager
+import org.jreleaser.gradle.plugin.dsl.packagers.JibPackager
 import org.jreleaser.gradle.plugin.dsl.packagers.MacportsPackager
 import org.jreleaser.gradle.plugin.dsl.packagers.Packagers
 import org.jreleaser.gradle.plugin.dsl.packagers.ScoopPackager
@@ -54,6 +55,7 @@ class PackagersImpl implements Packagers {
     final FlatpakPackagerImpl flatpak
     final GofishPackagerImpl gofish
     final JbangPackagerImpl jbang
+    final JibPackagerImpl jib
     final MacportsPackagerImpl macports
     final ScoopPackagerImpl scoop
     final SdkmanPackagerImpl sdkman
@@ -71,6 +73,7 @@ class PackagersImpl implements Packagers {
         flatpak = objects.newInstance(FlatpakPackagerImpl, objects)
         gofish = objects.newInstance(GofishPackagerImpl, objects)
         jbang = objects.newInstance(JbangPackagerImpl, objects)
+        jib = objects.newInstance(JibPackagerImpl, objects)
         macports = objects.newInstance(MacportsPackagerImpl, objects)
         scoop = objects.newInstance(ScoopPackagerImpl, objects)
         sdkman = objects.newInstance(SdkmanPackagerImpl, objects)
@@ -117,6 +120,11 @@ class PackagersImpl implements Packagers {
     @Override
     void jbang(Action<? super JbangPackager> action) {
         action.execute(jbang)
+    }
+
+    @Override
+    void jib(Action<? super JibPackager> action) {
+        action.execute(jib)
     }
 
     @Override
@@ -190,6 +198,11 @@ class PackagersImpl implements Packagers {
     }
 
     @Override
+    void jib(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JibPackager) Closure<Void> action) {
+        ConfigureUtil.configure(action, jib)
+    }
+
+    @Override
     void macports(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = MacportsPackager) Closure<Void> action) {
         ConfigureUtil.configure(action, macports)
     }
@@ -229,6 +242,7 @@ class PackagersImpl implements Packagers {
         if (flatpak.isSet()) packagers.flatpak = flatpak.toModel()
         if (gofish.isSet()) packagers.gofish = gofish.toModel()
         if (jbang.isSet()) packagers.jbang = jbang.toModel()
+        if (jib.isSet()) packagers.jib = jib.toModel()
         if (macports.isSet()) packagers.macports = macports.toModel()
         if (scoop.isSet()) packagers.scoop = scoop.toModel()
         if (sdkman.isSet()) packagers.sdkman = sdkman.toModel()
