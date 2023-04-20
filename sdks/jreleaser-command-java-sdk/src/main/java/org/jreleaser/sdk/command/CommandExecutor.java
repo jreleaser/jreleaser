@@ -132,7 +132,7 @@ public class CommandExecutor {
 
         private ProcessExecutor(Command command, Map<String, String> environment) throws IOException {
             this.builder = new ProcessBuilder(command.asCommandLine());
-            builder.environment().putAll(environment);
+            this.builder.environment().putAll(environment);
         }
 
         private ProcessExecutor directory(File directory) {

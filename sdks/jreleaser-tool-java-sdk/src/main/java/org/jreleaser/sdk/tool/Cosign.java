@@ -24,13 +24,13 @@ import org.jreleaser.sdk.command.Command;
 import org.jreleaser.sdk.command.CommandException;
 import org.jreleaser.sdk.command.CommandExecutor;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -89,10 +89,9 @@ public class Cosign extends AbstractTool {
     public void signBlob(Path keyFile, String password, Path input, Path destinationDir) throws SigningException {
         context.getLogger().info("{}", context.relativizeToBasedir(input));
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-
         Command command = tool.asCommand()
             .arg("sign-blob")
+            .arg("--yes")
             .arg("--key")
             .arg(keyFile.toAbsolutePath().toString())
             .arg(input.toAbsolutePath().toString());
@@ -104,15 +103,15 @@ public class Cosign extends AbstractTool {
             if (result.getExitValue() != 0) {
                 throw new CommandException(RB.$("ERROR_command_execution_exit_value", result.getExitValue()));
             }
+
+            try {
+                Path signature = destinationDir.resolve(input.getFileName() + ".sig");
+                Files.write(signature, result.getOut().getBytes(UTF_8));
+            } catch (IOException e) {
+                throw new SigningException(RB.$("ERROR_unexpected_error_signing", input), e);
+            }
         } catch (CommandException e) {
             throw new SigningException(RB.$("ERROR_unexpected_error_signing", input.toAbsolutePath()), e);
-        }
-
-        try {
-            Path signature = destinationDir.resolve(input.getFileName() + ".sig");
-            Files.write(signature, out.toByteArray());
-        } catch (IOException e) {
-            throw new SigningException(RB.$("ERROR_unexpected_error_signing", input), e);
         }
     }
 

@@ -22,6 +22,7 @@ import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.deploy.maven.MavenDeployer;
 import org.jreleaser.model.internal.signing.Signing;
+import org.jreleaser.util.DefaultVersions;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.PlatformUtils;
 
@@ -108,7 +109,7 @@ public final class SigningValidator {
             }
         } else if (signing.resolveMode() == org.jreleaser.model.Signing.Mode.COSIGN) {
             if (isBlank(signing.getCosign().getVersion())) {
-                errors.configuration(RB.$("validation_is_missing", "signing.cosign.version"));
+                signing.getCosign().setVersion(DefaultVersions.getInstance().getCosignVersion());
             }
 
             signing.getCosign().setPrivateKeyFile(
