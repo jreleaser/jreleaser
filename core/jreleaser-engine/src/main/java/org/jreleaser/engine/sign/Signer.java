@@ -338,7 +338,7 @@ public final class Signer {
         context.getLogger().debug(RB.$("signing.signing.files"),
             files.size(), context.relativizeToBasedir(signaturesDirectory));
 
-        PGPSignatureGenerator signatureGenerator = SigningUtils.initSignatureGenerator(context.getModel().getSigning().asImmutable(), keyring);
+        PGPSignatureGenerator signatureGenerator = SigningUtils.initSignatureGenerator(context.asImmutable(), keyring);
 
         for (SigningUtils.FilePair pair : files) {
             SigningUtils.sign(context.asImmutable(), signatureGenerator, pair.getInputFile(), pair.getSignatureFile());

@@ -56,6 +56,7 @@ import java.security.Security;
 import java.util.Optional;
 
 import static org.bouncycastle.bcpg.CompressionAlgorithmTags.UNCOMPRESSED;
+import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
@@ -229,12 +230,17 @@ public final class SigningUtils {
     }
 
     private static void sign(JReleaserContext context, Keyring keyring, FilePair pair) throws SigningException {
-        PGPSignatureGenerator signatureGenerator = initSignatureGenerator(context.getModel().getSigning(), keyring);
+        PGPSignatureGenerator signatureGenerator = initSignatureGenerator(context, keyring);
 
         sign(context, signatureGenerator, pair.inputFile, pair.signatureFile);
     }
 
-    public static PGPSignatureGenerator initSignatureGenerator(Signing signing, Keyring keyring) throws SigningException {
+    public static PGPSignatureGenerator initSignatureGenerator(JReleaserContext context, Keyring keyring) throws SigningException {
+        Signing signing = context.getModel().getSigning();
+        if (context.isDryrun() && isBlank(signing.getPassphrase())) {
+            return null;
+        }
+
         try {
             PGPSecretKey pgpSecretKey = keyring.readSecretKey();
 
@@ -257,6 +263,8 @@ public final class SigningUtils {
 
     public static void sign(JReleaserContext context, PGPSignatureGenerator signatureGenerator, Path input, Path output) throws SigningException {
         context.getLogger().info("{}", context.relativizeToBasedir(input));
+
+        if (null == signatureGenerator) return;
 
         PGPCompressedDataGenerator compressionStreamGenerator = new PGPCompressedDataGenerator(UNCOMPRESSED);
         try (OutputStream out = createOutputStream(context, output);
