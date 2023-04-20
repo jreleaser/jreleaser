@@ -13,6 +13,7 @@ Jib is now supported as a packager; you may use it to build container images {{p
 override all checks defined by the `applyMavenCentralRules` property, skip checking for `-sources` and `-javadoc` JARs on a given
 artifact. Nexus2 now checks if GPG keys are publicly available before deployment.
 
-**Hooks:** Command hooks may supply structured output that feeds into the resolved model {{projectLinkDocumentation}}/reference/hooks/command.html#_output
+**Hooks:** Scripts may be defined directly in the model via [Script Hooks]({{projectLinkDocumentation}}/reference/hooks/script.html).
+Command and script hooks may supply structured output that feeds into the resolved model {{projectLinkDocumentation}}/reference/hooks/command.html#_output
 
 [🚀 Changelog](https://github.com/jreleaser/jreleaser/releases/tag/{{tagName}}) [📝 Milestone]({{projectLinkVcsBrowser}}/milestone/25?closed=1)

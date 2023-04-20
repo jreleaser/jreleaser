@@ -40,6 +40,10 @@ public interface Hook extends Domain, Activatable {
 
     void setFilter(Filter filter);
 
+    Set<String> getPlatforms();
+
+    void setPlatforms(Set<String> platforms);
+
     boolean isContinueOnError();
 
     void setContinueOnError(Boolean continueOnError);

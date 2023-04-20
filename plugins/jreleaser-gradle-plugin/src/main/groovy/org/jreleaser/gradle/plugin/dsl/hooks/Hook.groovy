@@ -36,6 +36,10 @@ interface Hook extends Activatable {
 
     Filter getFilter()
 
+    SetProperty<String> getPlatforms()
+
+    void platform(String platform)
+
     void filter(Action<? super Filter> action)
 
     void filter(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Filter) Closure<Void> action)

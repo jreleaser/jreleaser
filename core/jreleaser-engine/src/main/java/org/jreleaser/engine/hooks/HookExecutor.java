@@ -23,11 +23,16 @@ import org.jreleaser.model.api.hooks.ExecutionEvent;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.hooks.CommandHook;
 import org.jreleaser.model.internal.hooks.CommandHooks;
+import org.jreleaser.model.internal.hooks.Hook;
+import org.jreleaser.model.internal.hooks.ScriptHook;
+import org.jreleaser.model.internal.hooks.ScriptHooks;
 import org.jreleaser.sdk.command.Command;
 import org.jreleaser.sdk.command.CommandException;
 import org.jreleaser.sdk.command.CommandExecutor;
 import org.jreleaser.util.PlatformUtils;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,15 +40,19 @@ import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
 
+import static java.lang.System.lineSeparator;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.file.StandardOpenOption.WRITE;
+
 /**
  * @author Andres Almiray
  * @since 1.2.0
  */
-public final class CommandHookExecutor {
+public final class HookExecutor {
     private static final String JRELEASER_OUTPUT = "JRELEASER_OUTPUT:";
     private final JReleaserContext context;
 
-    public CommandHookExecutor(JReleaserContext context) {
+    public HookExecutor(JReleaserContext context) {
         this.context = context;
     }
 
@@ -62,25 +71,88 @@ public final class CommandHookExecutor {
     private void executeHooks(ExecutionEvent event) {
         if (!context.getModel().getHooks().isEnabled()) return;
 
+        executeScriptHooks(event);
+        executeCommandHooks(event);
+    }
+
+    private void executeScriptHooks(ExecutionEvent event) {
+        ScriptHooks scriptHooks = context.getModel().getHooks().getScript();
+        if (!scriptHooks.isEnabled()) return;
+
+        final List<ScriptHook> hooks = new ArrayList<>();
+
+        switch (event.getType()) {
+            case BEFORE:
+                hooks.addAll((Collection<? extends ScriptHook>) filter(scriptHooks.getBefore(), event));
+                break;
+            case SUCCESS:
+                hooks.addAll((Collection<? extends ScriptHook>) filter(scriptHooks.getSuccess(), event));
+                break;
+            case FAILURE:
+                hooks.addAll((Collection<? extends ScriptHook>) filter(scriptHooks.getFailure(), event));
+                break;
+        }
+
+        if (!hooks.isEmpty()) {
+            context.getLogger().info(RB.$("hooks.script.execution"), event.getType().name().toLowerCase(Locale.ENGLISH), hooks.size());
+        }
+
+        context.getLogger().setPrefix("hooks");
+        context.getLogger().increaseIndent();
+
+        try {
+            for (ScriptHook hook : hooks) {
+                Path scriptFile = null;
+
+                try {
+                    scriptFile = createScriptFile(context, hook, event);
+                } catch (IOException e) {
+                    throw new JReleaserException(RB.$("ERROR_script_hook_create_error"), e);
+                }
+
+                String resolvedCmd = hook.getShell().expression().replace("{{script}}", scriptFile.toAbsolutePath().toString());
+                executeCommandLine(hook, resolvedCmd, resolvedCmd, "ERROR_script_hook_unexpected_error");
+            }
+        } finally {
+            context.getLogger().decreaseIndent();
+            context.getLogger().restorePrefix();
+        }
+    }
+
+    private Path createScriptFile(JReleaserContext context, ScriptHook hook, ExecutionEvent event) throws IOException {
+        String scriptContents = hook.getResolvedRun(context, event);
+        Path scriptFile = Files.createTempFile("jreleaser", hook.getShell().extension());
+
+        if (hook.getShell() == org.jreleaser.model.api.hooks.ScriptHook.Shell.PWSH ||
+            hook.getShell() == org.jreleaser.model.api.hooks.ScriptHook.Shell.POWERSHELL) {
+            scriptContents = "$ErrorActionPreference = 'stop'" + lineSeparator() + scriptContents;
+            scriptContents += lineSeparator() + "if ((Test-Path -LiteralPath variable:\\LASTEXITCODE)) { exit $LASTEXITCODE }";
+        }
+
+        Files.write(scriptFile, scriptContents.getBytes(UTF_8), WRITE);
+        return scriptFile;
+    }
+
+    private void executeCommandHooks(ExecutionEvent event) {
         CommandHooks commandHooks = context.getModel().getHooks().getCommand();
-        if (!context.getModel().getHooks().getCommand().isEnabled()) return;
+        if (!commandHooks.isEnabled()) return;
 
         final List<CommandHook> hooks = new ArrayList<>();
 
         switch (event.getType()) {
             case BEFORE:
-                hooks.addAll(filter(commandHooks.getBefore(), event));
+                hooks.addAll((Collection<? extends CommandHook>) filter(commandHooks.getBefore(), event));
                 break;
             case SUCCESS:
-                hooks.addAll(filter(commandHooks.getSuccess(), event));
+                hooks.addAll((Collection<? extends CommandHook>) filter(commandHooks.getSuccess(), event));
                 break;
             case FAILURE:
-                hooks.addAll(filter(commandHooks.getFailure(), event));
+                hooks.addAll((Collection<? extends CommandHook>) filter(commandHooks.getFailure(), event));
                 break;
         }
 
         if (!hooks.isEmpty()) {
-            context.getLogger().info(RB.$("hooks.execution"), event.getType().name().toLowerCase(Locale.ENGLISH), hooks.size());
+            context.getLogger().info(RB.$("hooks.command.execution"), event.getType().name().toLowerCase(Locale.ENGLISH), hooks.size());
         }
 
         context.getLogger().setPrefix("hooks");
@@ -89,30 +161,7 @@ public final class CommandHookExecutor {
         try {
             for (CommandHook hook : hooks) {
                 String resolvedCmd = hook.getResolvedCmd(context, event);
-
-                List<String> commandLine = null;
-
-                try {
-                    commandLine = parseCommand(resolvedCmd);
-                } catch (IllegalStateException e) {
-                    throw new JReleaserException(RB.$("ERROR_command_hook_parser_error", hook.getCmd()), e);
-                }
-
-                try {
-                    Command command = new Command(commandLine);
-                    processOutput(executeCommand(context.getBasedir(), command, hook.isVerbose()));
-                } catch (CommandException e) {
-                    if (!hook.isContinueOnError()) {
-                        throw new JReleaserException(RB.$("ERROR_command_hook_unexpected_error"), e);
-                    } else {
-                        if (null != e.getCause()) {
-                            context.getLogger().warn(e.getCause().getMessage());
-                        } else {
-                            context.getLogger().warn(e.getMessage());
-                        }
-                        context.getLogger().trace(RB.$("ERROR_command_hook_unexpected_error"), e);
-                    }
-                }
+                executeCommandLine(hook, hook.getCmd(), resolvedCmd, "ERROR_command_hook_unexpected_error");
             }
         } finally {
             context.getLogger().decreaseIndent();
@@ -120,9 +169,39 @@ public final class CommandHookExecutor {
         }
     }
 
+    private void executeCommandLine(Hook hook, String cmd, String resolvedCmd, String errorKey) {
+        try {
+            List<String> commandLine = null;
+
+            try {
+                commandLine = parseCommand(resolvedCmd);
+            } catch (IllegalStateException e) {
+                throw new JReleaserException(RB.$("ERROR_command_hook_parser_error", cmd), e);
+            }
+
+            try {
+                Command command = new Command(commandLine);
+                processOutput(executeCommand(context.getBasedir(), command, hook.isVerbose()));
+            } catch (CommandException e) {
+                if (!hook.isContinueOnError()) {
+                    throw new JReleaserException(RB.$(errorKey), e);
+                } else {
+                    if (null != e.getCause()) {
+                        context.getLogger().warn(e.getCause().getMessage());
+                    } else {
+                        context.getLogger().warn(e.getMessage());
+                    }
+                    context.getLogger().trace(RB.$(errorKey), e);
+                }
+            }
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void processOutput(Command.Result result) {
         if (!result.getOut().contains(JRELEASER_OUTPUT)) return;
-        for (String line : result.getOut().split(System.lineSeparator())) {
+        for (String line : result.getOut().split(lineSeparator())) {
             if (!line.startsWith(JRELEASER_OUTPUT)) continue;
             line = line.substring(JRELEASER_OUTPUT.length());
             int p = line.indexOf("=");
@@ -132,10 +211,10 @@ public final class CommandHookExecutor {
         }
     }
 
-    private Collection<? extends CommandHook> filter(List<CommandHook> hooks, ExecutionEvent event) {
-        List<CommandHook> tmp = new ArrayList<>();
+    private Collection<? extends Hook> filter(List<? extends Hook> hooks, ExecutionEvent event) {
+        List<Hook> tmp = new ArrayList<>();
 
-        for (CommandHook hook : hooks) {
+        for (Hook hook : hooks) {
             if (!hook.isEnabled()) continue;
 
             if (!hook.getFilter().getResolvedIncludes().isEmpty()) {
@@ -154,7 +233,7 @@ public final class CommandHookExecutor {
         return tmp;
     }
 
-    private boolean filterByPlatform(CommandHook hook) {
+    private boolean filterByPlatform(Hook hook) {
         if (hook.getPlatforms().isEmpty()) return true;
 
         boolean success = true;

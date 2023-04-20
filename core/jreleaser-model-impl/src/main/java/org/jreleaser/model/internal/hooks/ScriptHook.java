@@ -32,84 +32,104 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
 
 /**
  * @author Andres Almiray
- * @since 1.2.0
+ * @since 1.6.0
  */
-public final class CommandHook extends AbstractHook<CommandHook> {
-    private static final long serialVersionUID = 6669599201326933824L;
+public final class ScriptHook extends AbstractHook<ScriptHook> {
+    private static final long serialVersionUID = -8731244470036406905L;
 
-    private String cmd;
+    private String run;
+    private org.jreleaser.model.api.hooks.ScriptHook.Shell shell = org.jreleaser.model.api.hooks.ScriptHook.Shell.BASH;
 
     @JsonIgnore
-    private final org.jreleaser.model.api.hooks.CommandHook immutable = new org.jreleaser.model.api.hooks.CommandHook() {
-        private static final long serialVersionUID = -3291619799463077845L;
+    private final org.jreleaser.model.api.hooks.ScriptHook immutable = new org.jreleaser.model.api.hooks.ScriptHook() {
+        private static final long serialVersionUID = 1361811930359794440L;
 
         @Override
-        public String getCmd() {
-            return cmd;
+        public String getRun() {
+            return run;
+        }
+
+        @Override
+        public Shell getShell() {
+            return shell;
         }
 
         @Override
         public Set<String> getPlatforms() {
-            return unmodifiableSet(CommandHook.this.getPlatforms());
+            return unmodifiableSet(ScriptHook.this.getPlatforms());
         }
 
         @Override
         public Filter getFilter() {
-            return CommandHook.this.getFilter().asImmutable();
+            return ScriptHook.this.getFilter().asImmutable();
         }
 
         @Override
         public boolean isContinueOnError() {
-            return CommandHook.this.isContinueOnError();
+            return ScriptHook.this.isContinueOnError();
         }
 
         @Override
         public boolean isVerbose() {
-            return CommandHook.this.isVerbose();
+            return ScriptHook.this.isVerbose();
         }
 
         @Override
         public Active getActive() {
-            return CommandHook.this.getActive();
+            return ScriptHook.this.getActive();
         }
 
         @Override
         public boolean isEnabled() {
-            return CommandHook.this.isEnabled();
+            return ScriptHook.this.isEnabled();
         }
 
         @Override
         public Map<String, Object> asMap(boolean full) {
-            return unmodifiableMap(CommandHook.this.asMap(full));
+            return unmodifiableMap(ScriptHook.this.asMap(full));
         }
     };
 
-    public org.jreleaser.model.api.hooks.CommandHook asImmutable() {
+    public org.jreleaser.model.api.hooks.ScriptHook asImmutable() {
         return immutable;
     }
 
     @Override
-    public void merge(CommandHook source) {
+    public void merge(ScriptHook source) {
         super.merge(source);
-        this.cmd = merge(this.cmd, source.cmd);
+        this.run = merge(this.run, source.run);
+        this.shell = merge(this.shell, source.shell);
     }
 
-    public String getResolvedCmd(JReleaserContext context, ExecutionEvent event) {
+    public String getResolvedRun(JReleaserContext context, ExecutionEvent event) {
         TemplateContext props = context.fullProps();
         props.set("event", event);
-        return resolveTemplate(cmd, props);
+        return resolveTemplate(run, props);
     }
 
-    public String getCmd() {
-        return cmd;
+    public String getRun() {
+        return run;
     }
 
-    public void setCmd(String cmd) {
-        this.cmd = cmd;
+    public void setRun(String run) {
+        this.run = run;
+    }
+
+    public org.jreleaser.model.api.hooks.ScriptHook.Shell getShell() {
+        return shell;
+    }
+
+    public void setShell(org.jreleaser.model.api.hooks.ScriptHook.Shell shell) {
+        this.shell = shell;
+    }
+
+    public void setShell(String shell) {
+        setShell(org.jreleaser.model.api.hooks.ScriptHook.Shell.of(shell));
     }
 
     @Override
     public void asMap(boolean full, Map<String, Object> map) {
-        map.put("cmd", cmd);
+        map.put("shell", shell);
+        map.put("run", run);
     }
 }

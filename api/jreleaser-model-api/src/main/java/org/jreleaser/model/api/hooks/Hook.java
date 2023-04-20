@@ -29,6 +29,8 @@ import java.util.Set;
 public interface Hook extends Domain, Activatable {
     Filter getFilter();
 
+    Set<String> getPlatforms();
+
     boolean isContinueOnError();
 
     boolean isVerbose();

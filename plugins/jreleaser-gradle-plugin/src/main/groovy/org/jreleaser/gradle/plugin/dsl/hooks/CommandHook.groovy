@@ -30,8 +30,4 @@ import org.jreleaser.gradle.plugin.dsl.common.Activatable
 @CompileStatic
 interface CommandHook extends Hook, Activatable {
     Property<String> getCmd()
-
-    SetProperty<String> getPlatforms()
-
-    void platform(String platform)
 }

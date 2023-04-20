@@ -17,7 +17,7 @@
  */
 package org.jreleaser.workflow;
 
-import org.jreleaser.engine.hooks.CommandHookExecutor;
+import org.jreleaser.engine.hooks.HookExecutor;
 import org.jreleaser.model.api.JReleaserCommand;
 import org.jreleaser.model.internal.JReleaserContext;
 
@@ -39,7 +39,7 @@ public abstract class AbstractWorkflowItem implements WorkflowItem {
 
     @Override
     public void invoke(JReleaserContext context) {
-        CommandHookExecutor executor = new CommandHookExecutor(context);
+        HookExecutor executor = new HookExecutor(context);
         executor.execute(command.toStep(), () -> doInvoke(context));
     }
 

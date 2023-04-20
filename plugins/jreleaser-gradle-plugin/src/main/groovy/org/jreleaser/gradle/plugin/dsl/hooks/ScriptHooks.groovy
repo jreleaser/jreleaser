@@ -24,19 +24,19 @@ import org.jreleaser.gradle.plugin.dsl.common.Activatable
 /**
  *
  * @author Andres Almiray
- * @since 1.2.0
+ * @since 1.6.0
  */
 @CompileStatic
-interface Hooks extends Activatable {
-    CommandHooks getCommand()
+interface ScriptHooks extends Activatable {
+    void before(Action<? super ScriptHook> action)
 
-    ScriptHooks getScript()
+    void success(Action<? super ScriptHook> action)
 
-    void command(Action<? super CommandHooks> action)
+    void failure(Action<? super ScriptHook> action)
 
-    void script(Action<? super ScriptHooks> action)
+    void before(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ScriptHook) Closure<Void> action)
 
-    void command(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommandHooks) Closure<Void> action)
+    void success(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ScriptHook) Closure<Void> action)
 
-    void script(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ScriptHooks) Closure<Void> action)
+    void failure(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ScriptHook) Closure<Void> action)
 }

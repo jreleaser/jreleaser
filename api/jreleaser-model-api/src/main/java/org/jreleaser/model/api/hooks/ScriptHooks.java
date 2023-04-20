@@ -15,28 +15,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.gradle.plugin.dsl.hooks
+package org.jreleaser.model.api.hooks;
 
-import groovy.transform.CompileStatic
-import org.gradle.api.Action
-import org.jreleaser.gradle.plugin.dsl.common.Activatable
+import org.jreleaser.model.api.common.Activatable;
+import org.jreleaser.model.api.common.Domain;
+
+import java.util.List;
 
 /**
- *
  * @author Andres Almiray
- * @since 1.2.0
+ * @since 1.6.0
  */
-@CompileStatic
-interface Hooks extends Activatable {
-    CommandHooks getCommand()
+public interface ScriptHooks extends Domain, Activatable {
+    List<? extends ScriptHook> getBefore();
 
-    ScriptHooks getScript()
+    List<? extends ScriptHook> getSuccess();
 
-    void command(Action<? super CommandHooks> action)
-
-    void script(Action<? super ScriptHooks> action)
-
-    void command(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommandHooks) Closure<Void> action)
-
-    void script(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ScriptHooks) Closure<Void> action)
+    List<? extends ScriptHook> getFailure();
 }

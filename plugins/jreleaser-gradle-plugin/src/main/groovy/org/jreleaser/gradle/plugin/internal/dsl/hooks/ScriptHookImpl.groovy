@@ -22,39 +22,52 @@ import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
-import org.jreleaser.gradle.plugin.dsl.hooks.CommandHook
+import org.jreleaser.gradle.plugin.dsl.hooks.ScriptHook
 
 import javax.inject.Inject
+
+import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
  *
  * @author Andres Almiray
- * @since 1.2.0
+ * @since 1.6.0
  */
 @CompileStatic
-class CommandHookImpl extends AbstractHook implements CommandHook {
+class ScriptHookImpl extends AbstractHook implements ScriptHook {
     String name
-    final Property<String> cmd
+    final Property<String> run
+    final Property<org.jreleaser.model.api.hooks.ScriptHook.Shell> shell
     final FilterImpl filter
 
     @Inject
-    CommandHookImpl(ObjectFactory objects) {
+    ScriptHookImpl(ObjectFactory objects) {
         super(objects)
-        cmd = objects.property(String).convention(Providers.<String> notDefined())
+        run = objects.property(String).convention(Providers.<String> notDefined())
+        shell = objects.property(org.jreleaser.model.api.hooks.ScriptHook.Shell).convention(Providers.<org.jreleaser.model.api.hooks.ScriptHook.Shell> notDefined())
         filter = objects.newInstance(FilterImpl, objects)
     }
 
     @Internal
     boolean isSet() {
         super.isSet() ||
-            cmd.present ||
+            run.present ||
+            shell.present ||
             filter.isSet()
     }
 
-    org.jreleaser.model.internal.hooks.CommandHook toModel() {
-        org.jreleaser.model.internal.hooks.CommandHook hook = new org.jreleaser.model.internal.hooks.CommandHook()
+    @Override
+    void setShell(String str) {
+        if (isNotBlank(str)) {
+            shell.set(org.jreleaser.model.api.hooks.ScriptHook.Shell.of(str.trim()))
+        }
+    }
+
+    org.jreleaser.model.internal.hooks.ScriptHook toModel() {
+        org.jreleaser.model.internal.hooks.ScriptHook hook = new org.jreleaser.model.internal.hooks.ScriptHook()
         fillHookProperties(hook)
-        if (cmd.present) hook.cmd = cmd.get()
+        if (run.present) hook.run = run.get()
+        if (shell.present) hook.shell = shell.get()
         hook.filter = filter.toModel()
         hook
     }

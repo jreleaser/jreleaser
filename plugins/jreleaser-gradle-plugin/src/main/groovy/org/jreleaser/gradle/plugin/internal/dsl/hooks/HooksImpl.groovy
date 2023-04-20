@@ -24,6 +24,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.hooks.CommandHooks
 import org.jreleaser.gradle.plugin.dsl.hooks.Hooks
+import org.jreleaser.gradle.plugin.dsl.hooks.ScriptHooks
 import org.jreleaser.model.Active
 import org.kordamp.gradle.util.ConfigureUtil
 
@@ -40,11 +41,13 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 class HooksImpl implements Hooks {
     final Property<Active> active
     final CommandHooksImpl command
+    final ScriptHooksImpl script
 
     @Inject
     HooksImpl(ObjectFactory objects) {
         active = objects.property(Active).convention(Providers.<Active> notDefined())
         command = objects.newInstance(CommandHooksImpl, objects)
+        script = objects.newInstance(ScriptHooksImpl, objects)
     }
 
     @Override
@@ -60,14 +63,25 @@ class HooksImpl implements Hooks {
     }
 
     @Override
+    void script(Action<? super ScriptHooks> action) {
+        action.execute(script)
+    }
+
+    @Override
     void command(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommandHooks) Closure<Void> action) {
         ConfigureUtil.configure(action, command)
+    }
+
+    @Override
+    void script(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ScriptHooks) Closure<Void> action) {
+        ConfigureUtil.configure(action, script)
     }
 
     org.jreleaser.model.internal.hooks.Hooks toModel() {
         org.jreleaser.model.internal.hooks.Hooks hooks = new org.jreleaser.model.internal.hooks.Hooks()
         if (active.present) hooks.active = active.get()
         hooks.command = command.toModel()
+        hooks.script = script.toModel()
         hooks
     }
 }

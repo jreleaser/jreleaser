@@ -32,17 +32,23 @@ import static java.util.Collections.unmodifiableMap;
  * @since 1.2.0
  */
 public final class Hooks extends AbstractActivatable<Hooks> implements Domain {
-    private static final long serialVersionUID = -3700662003954701704L;
+    private static final long serialVersionUID = 6972671895393136081L;
 
     private final CommandHooks command = new CommandHooks();
+    private final ScriptHooks script = new ScriptHooks();
 
     @JsonIgnore
     private final org.jreleaser.model.api.hooks.Hooks immutable = new org.jreleaser.model.api.hooks.Hooks() {
-        private static final long serialVersionUID = -960078052893791966L;
+        private static final long serialVersionUID = 6110061902155343412L;
 
         @Override
         public org.jreleaser.model.api.hooks.CommandHooks getCommand() {
             return command.asImmutable();
+        }
+
+        @Override
+        public org.jreleaser.model.api.hooks.ScriptHooks getScript() {
+            return script.asImmutable();
         }
 
         @Override
@@ -73,11 +79,14 @@ public final class Hooks extends AbstractActivatable<Hooks> implements Domain {
     public void merge(Hooks source) {
         super.merge(source);
         setCommand(source.command);
+        setScript(source.script);
     }
 
     @Override
     public boolean isSet() {
-        return super.isSet() || command.isSet();
+        return super.isSet() ||
+            command.isSet() ||
+            script.isSet();
     }
 
     public CommandHooks getCommand() {
@@ -88,12 +97,21 @@ public final class Hooks extends AbstractActivatable<Hooks> implements Domain {
         this.command.merge(command);
     }
 
+    public ScriptHooks getScript() {
+        return script;
+    }
+
+    public void setScript(ScriptHooks script) {
+        this.script.merge(script);
+    }
+
     @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
         map.put("active", getActive());
         map.put("command", command.asMap(full));
+        map.put("script", script.asMap(full));
         return map;
     }
 }

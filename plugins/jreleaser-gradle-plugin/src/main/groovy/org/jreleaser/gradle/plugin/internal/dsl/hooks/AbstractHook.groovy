@@ -42,17 +42,20 @@ abstract class AbstractHook implements Hook {
     final Property<Active> active
     final Property<Boolean> continueOnError
     final Property<Boolean> verbose
+    final SetProperty<String> platforms
 
     @Inject
     AbstractHook(ObjectFactory objects) {
         active = objects.property(Active).convention(Providers.<Active> notDefined())
         continueOnError = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         verbose = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+        platforms = objects.setProperty(String).convention(Providers.<List<String>> notDefined())
     }
 
     @Internal
     boolean isSet() {
-        active.present
+        active.present ||
+            platforms.present
     }
 
     @Override
@@ -72,10 +75,18 @@ abstract class AbstractHook implements Hook {
         }
     }
 
+    @Override
+    void platform(String platform) {
+        if (isNotBlank(platform)) {
+            platforms.add(platform.trim())
+        }
+    }
+
     protected <T extends org.jreleaser.model.internal.hooks.Hook> void fillHookProperties(T hook) {
         if (active.present) hook.active = active.get()
         if (continueOnError.present) hook.continueOnError = continueOnError.get()
         if (verbose.present) hook.verbose = verbose.get()
+        hook.platforms = (Set<String>) platforms.getOrElse([] as Set<String>)
     }
 
     static class FilterImpl implements Filter {

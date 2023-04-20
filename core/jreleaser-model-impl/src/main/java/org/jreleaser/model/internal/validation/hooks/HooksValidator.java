@@ -24,6 +24,7 @@ import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.hooks.CommandHooksValidator.validateCommandHooks;
+import static org.jreleaser.model.internal.validation.hooks.ScriptHooksValidator.validateScriptHooks;
 
 /**
  * @author Andres Almiray
@@ -39,13 +40,15 @@ public final class HooksValidator {
 
         Hooks hooks = context.getModel().getHooks();
         validateCommandHooks(context, errors);
+        validateScriptHooks(context, errors);
 
         boolean activeSet = hooks.isActiveSet();
         resolveActivatable(context, hooks, "hooks", "ALWAYS");
         hooks.resolveEnabled(context.getModel().getProject());
 
         if (hooks.isEnabled()) {
-            boolean enabled = hooks.getCommand().isEnabled();
+            boolean enabled = hooks.getCommand().isEnabled() ||
+                hooks.getScript().isEnabled();
 
             if (!activeSet && !enabled) {
                 context.getLogger().debug(RB.$("validation.disabled"));

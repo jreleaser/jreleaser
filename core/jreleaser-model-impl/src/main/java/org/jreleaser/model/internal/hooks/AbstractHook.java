@@ -20,15 +20,18 @@ package org.jreleaser.model.internal.hooks;
 import org.jreleaser.model.internal.common.AbstractActivatable;
 
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Andres Almiray
  * @since 1.2.0
  */
 public abstract class AbstractHook<S extends AbstractHook<S>> extends AbstractActivatable<S> implements Hook {
-    private static final long serialVersionUID = 6118067369961046144L;
+    private static final long serialVersionUID = -1153410849922369686L;
 
+    private final Set<String> platforms = new LinkedHashSet<>();
     private final Filter filter = new Filter();
     protected Boolean continueOnError;
     protected Boolean verbose;
@@ -39,6 +42,7 @@ public abstract class AbstractHook<S extends AbstractHook<S>> extends AbstractAc
         this.continueOnError = merge(this.continueOnError, source.continueOnError);
         this.verbose = merge(this.verbose, source.verbose);
         setFilter(source.getFilter());
+        setPlatforms(merge(this.platforms, source.getPlatforms()));
     }
 
     @Override
@@ -82,12 +86,24 @@ public abstract class AbstractHook<S extends AbstractHook<S>> extends AbstractAc
     }
 
     @Override
+    public Set<String> getPlatforms() {
+        return platforms;
+    }
+
+    @Override
+    public void setPlatforms(Set<String> platforms) {
+        this.platforms.clear();
+        this.platforms.addAll(platforms);
+    }
+
+    @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
         map.put("active", getActive());
         map.put("continueOnError", isContinueOnError());
         map.put("verbose", isVerbose());
+        map.put("platforms", platforms);
         Map<String, Object> filterAsMap = filter.asMap(full);
         if (full || !filterAsMap.isEmpty()) {
             map.put("filter", filterAsMap);

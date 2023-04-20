@@ -17,14 +17,10 @@
  */
 package org.jreleaser.model.api.hooks;
 
-import java.util.Set;
-
 /**
  * @author Andres Almiray
  * @since 1.2.0
  */
 public interface CommandHook extends Hook {
     String getCmd();
-
-    Set<String> getPlatforms();
 }

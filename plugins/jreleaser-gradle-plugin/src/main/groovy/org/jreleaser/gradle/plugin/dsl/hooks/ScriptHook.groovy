@@ -18,25 +18,19 @@
 package org.jreleaser.gradle.plugin.dsl.hooks
 
 import groovy.transform.CompileStatic
-import org.gradle.api.Action
+import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.common.Activatable
 
 /**
  *
  * @author Andres Almiray
- * @since 1.2.0
+ * @since 1.6.0
  */
 @CompileStatic
-interface Hooks extends Activatable {
-    CommandHooks getCommand()
+interface ScriptHook extends Hook, Activatable {
+    Property<String> getRun()
 
-    ScriptHooks getScript()
+    Property<org.jreleaser.model.api.hooks.ScriptHook.Shell> getShell()
 
-    void command(Action<? super CommandHooks> action)
-
-    void script(Action<? super ScriptHooks> action)
-
-    void command(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommandHooks) Closure<Void> action)
-
-    void script(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ScriptHooks) Closure<Void> action)
+    void setShell(String str)
 }

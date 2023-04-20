@@ -26,4 +26,6 @@ import org.jreleaser.model.api.common.Domain;
  */
 public interface Hooks extends Domain, Activatable {
     CommandHooks getCommand();
+
+    ScriptHooks getScript();
 }
