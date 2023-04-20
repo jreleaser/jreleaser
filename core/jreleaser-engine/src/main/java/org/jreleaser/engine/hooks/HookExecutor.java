@@ -83,13 +83,13 @@ public final class HookExecutor {
 
         switch (event.getType()) {
             case BEFORE:
-                hooks.addAll((Collection<? extends ScriptHook>) filter(scriptHooks.getBefore(), event));
+                hooks.addAll((Collection<ScriptHook>) filter(scriptHooks.getBefore(), event));
                 break;
             case SUCCESS:
-                hooks.addAll((Collection<? extends ScriptHook>) filter(scriptHooks.getSuccess(), event));
+                hooks.addAll((Collection<ScriptHook>) filter(scriptHooks.getSuccess(), event));
                 break;
             case FAILURE:
-                hooks.addAll((Collection<? extends ScriptHook>) filter(scriptHooks.getFailure(), event));
+                hooks.addAll((Collection<ScriptHook>) filter(scriptHooks.getFailure(), event));
                 break;
         }
 
@@ -141,13 +141,13 @@ public final class HookExecutor {
 
         switch (event.getType()) {
             case BEFORE:
-                hooks.addAll((Collection<? extends CommandHook>) filter(commandHooks.getBefore(), event));
+                hooks.addAll((Collection<CommandHook>) filter(commandHooks.getBefore(), event));
                 break;
             case SUCCESS:
-                hooks.addAll((Collection<? extends CommandHook>) filter(commandHooks.getSuccess(), event));
+                hooks.addAll((Collection<CommandHook>) filter(commandHooks.getSuccess(), event));
                 break;
             case FAILURE:
-                hooks.addAll((Collection<? extends CommandHook>) filter(commandHooks.getFailure(), event));
+                hooks.addAll((Collection<CommandHook>) filter(commandHooks.getFailure(), event));
                 break;
         }
 
@@ -170,32 +170,28 @@ public final class HookExecutor {
     }
 
     private void executeCommandLine(Hook hook, String cmd, String resolvedCmd, String errorKey) {
+        List<String> commandLine = null;
+
         try {
-            List<String> commandLine = null;
+            commandLine = parseCommand(resolvedCmd);
+        } catch (IllegalStateException e) {
+            throw new JReleaserException(RB.$("ERROR_command_hook_parser_error", cmd), e);
+        }
 
-            try {
-                commandLine = parseCommand(resolvedCmd);
-            } catch (IllegalStateException e) {
-                throw new JReleaserException(RB.$("ERROR_command_hook_parser_error", cmd), e);
-            }
-
-            try {
-                Command command = new Command(commandLine);
-                processOutput(executeCommand(context.getBasedir(), command, hook.isVerbose()));
-            } catch (CommandException e) {
-                if (!hook.isContinueOnError()) {
-                    throw new JReleaserException(RB.$(errorKey), e);
+        try {
+            Command command = new Command(commandLine);
+            processOutput(executeCommand(context.getBasedir(), command, hook.isVerbose()));
+        } catch (CommandException e) {
+            if (!hook.isContinueOnError()) {
+                throw new JReleaserException(RB.$(errorKey), e);
+            } else {
+                if (null != e.getCause()) {
+                    context.getLogger().warn(e.getCause().getMessage());
                 } else {
-                    if (null != e.getCause()) {
-                        context.getLogger().warn(e.getCause().getMessage());
-                    } else {
-                        context.getLogger().warn(e.getMessage());
-                    }
-                    context.getLogger().trace(RB.$(errorKey), e);
+                    context.getLogger().warn(e.getMessage());
                 }
+                context.getLogger().trace(RB.$(errorKey), e);
             }
-        }catch(Exception e) {
-            e.printStackTrace();
         }
     }
 
