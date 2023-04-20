@@ -353,6 +353,18 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
     protected void publishDocker(TemplateContext props, DockerConfiguration docker) throws PackagerProcessingException {
         Map<String, List<String>> tagNames = resolveTagNames(docker, props);
 
+        if (context.isDryrun()) {
+            for (Map.Entry<String, List<String>> e : tagNames.entrySet()) {
+                Set<String> uniqueImageNames = e.getValue().stream()
+                    .map(tag -> tag.split(":")[0])
+                    .collect(toSet());
+                for (String imageName : uniqueImageNames) {
+                    context.getLogger().info(" - {}", imageName);
+                }
+            }
+            return;
+        }
+
         for (DockerConfiguration.Registry registry : docker.getRegistries()) {
             login(registry);
         }

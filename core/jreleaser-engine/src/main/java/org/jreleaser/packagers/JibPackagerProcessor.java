@@ -210,6 +210,16 @@ public class JibPackagerProcessor extends AbstractRepositoryPackagerProcessor<Ji
     }
 
     protected void publishJib(TemplateContext props, JibConfiguration jibc) throws PackagerProcessingException {
+        if (context.isDryrun()) {
+            for (JibPackager.Registry registry : jibc.getRegistries()) {
+                for (String imageName : jibc.getImageNames()) {
+                    imageName = registry.getServer() + "/" + resolveTemplate(imageName, props);
+                    context.getLogger().info(" - {}", imageName);
+                }
+            }
+            return;
+        }
+
         Jib jib = new Jib(context.asImmutable(), packager.getVersion());
         try {
             if (!jib.setup()) {
