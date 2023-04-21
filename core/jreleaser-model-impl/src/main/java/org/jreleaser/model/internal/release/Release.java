@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static java.util.Collections.unmodifiableMap;
+import static org.jreleaser.model.JReleaserOutput.nag;
 
 /**
  * @author Andres Almiray
@@ -122,6 +123,7 @@ public final class Release extends AbstractModelObject<Release> implements Domai
 
     public void setCodeberg(CodebergReleaser codeberg) {
         this.codeberg = codeberg;
+        nag("release.codeberg is deprecated since 1.6.0 and will be removed in 2.0.0. Use release.gitea instead");
     }
 
     public GenericGitReleaser getGeneric() {
