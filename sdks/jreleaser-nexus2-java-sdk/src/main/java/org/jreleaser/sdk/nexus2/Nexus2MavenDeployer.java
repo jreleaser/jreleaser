@@ -21,6 +21,7 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.spi.deploy.DeployException;
 import org.jreleaser.sdk.commons.AbstractMavenDeployer;
+import org.jreleaser.model.spi.deploy.maven.Deployable;
 import org.jreleaser.sdk.nexus2.api.NexusAPIException;
 
 import java.util.Set;

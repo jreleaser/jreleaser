@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
     SPDX-License-Identifier: Apache-2.0
@@ -310,7 +311,11 @@
                            distributions="${jreleaser.distributions}"
                            excludedDistributions="${jreleaser.excluded.distributions}"
                            catalogers="${jreleaser.catalogers}"
-                           excludedCatalogers="${jreleaser.excluded.catalogers}"/>
+                           excludedCatalogers="${jreleaser.excluded.catalogers}"
+                           deployerTypes="${jreleaser.deployer.types}"
+                           excludedDeployerTypes="${jreleaser.excluded.deployer.types}"
+                           deployerNames="${jreleaser.deployer.types}"
+                           excludedDeployerNames="${jreleaser.excluded.deployer.names}"/>
     </target>
 
     <target name="jreleaser-upload">

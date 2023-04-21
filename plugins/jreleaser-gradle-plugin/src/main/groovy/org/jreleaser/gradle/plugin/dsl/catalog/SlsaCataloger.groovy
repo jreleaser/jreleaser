@@ -15,23 +15,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.workflow;
+package org.jreleaser.gradle.plugin.dsl.catalog
 
-import org.jreleaser.engine.catalog.Catalogers;
-import org.jreleaser.model.api.JReleaserCommand;
-import org.jreleaser.model.internal.JReleaserContext;
+import groovy.transform.CompileStatic
+import org.gradle.api.provider.Property
 
 /**
+ *
  * @author Andres Almiray
- * @since 1.5.0
+ * @since 1.7.0
  */
-class CatalogWorkflowItem extends AbstractWorkflowItem {
-    protected CatalogWorkflowItem() {
-        super(JReleaserCommand.CATALOG);
-    }
+@CompileStatic
+interface SlsaCataloger extends Cataloger {
+    Property<String> getAttestationName()
 
-    @Override
-    protected void doInvoke(JReleaserContext context) {
-        Catalogers.catalog(context);
-    }
+    Property<Boolean> getArtifacts()
+
+    Property<Boolean> getFiles()
+
+    Property<Boolean> getDeployables()
 }

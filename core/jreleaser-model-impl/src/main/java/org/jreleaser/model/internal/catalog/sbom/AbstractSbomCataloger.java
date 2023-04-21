@@ -17,31 +17,23 @@
  */
 package org.jreleaser.model.internal.catalog.sbom;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.jreleaser.model.internal.common.AbstractActivatable;
-import org.jreleaser.model.internal.common.ExtraProperties;
+import org.jreleaser.model.internal.catalog.AbstractCataloger;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
  * @author Andres Almiray
  * @since 1.5.0
  */
-public abstract class AbstractSbomCataloger<S extends AbstractSbomCataloger<S, A>, A extends org.jreleaser.model.api.catalog.sbom.SbomCataloger> extends AbstractActivatable<S> implements SbomCataloger<A>, ExtraProperties {
-    private static final long serialVersionUID = -8115903657059268124L;
-
-    @JsonIgnore
-    private final String type;
-    private final Map<String, Object> extraProperties = new LinkedHashMap<>();
+public abstract class AbstractSbomCataloger<S extends AbstractSbomCataloger<S, A>, A extends org.jreleaser.model.api.catalog.sbom.SbomCataloger> extends AbstractCataloger<S, A> implements SbomCataloger<A> {
+    private static final long serialVersionUID = 2297157203661110390L;
 
     private final Pack pack = new Pack();
     protected Boolean distributions;
     protected Boolean files;
 
     protected AbstractSbomCataloger(String type) {
-        this.type = type;
+        super(type);
     }
 
     @Override
@@ -50,7 +42,6 @@ public abstract class AbstractSbomCataloger<S extends AbstractSbomCataloger<S, A
         this.distributions = merge(this.distributions, source.distributions);
         this.files = merge(this.files, source.files);
         setPack(source.getPack());
-        setExtraProperties(merge(this.extraProperties, source.getExtraProperties()));
     }
 
     @Override
@@ -58,39 +49,7 @@ public abstract class AbstractSbomCataloger<S extends AbstractSbomCataloger<S, A
         return super.isSet() ||
             null != distributions ||
             null != files ||
-            pack.isSet() ||
-            !extraProperties.isEmpty();
-    }
-
-    @Override
-    public String prefix() {
-        return getType();
-    }
-
-    @Override
-    public boolean isSnapshotSupported() {
-        return false;
-    }
-
-    @Override
-    public String getType() {
-        return type;
-    }
-
-    @Override
-    public Map<String, Object> getExtraProperties() {
-        return extraProperties;
-    }
-
-    @Override
-    public void setExtraProperties(Map<String, Object> extraProperties) {
-        this.extraProperties.clear();
-        this.extraProperties.putAll(extraProperties);
-    }
-
-    @Override
-    public void addExtraProperties(Map<String, Object> extraProperties) {
-        this.extraProperties.putAll(extraProperties);
+            pack.isSet();
     }
 
     @Override
@@ -134,22 +93,9 @@ public abstract class AbstractSbomCataloger<S extends AbstractSbomCataloger<S, A
     }
 
     @Override
-    public Map<String, Object> asMap(boolean full) {
-        if (!full && !isEnabled()) return Collections.emptyMap();
-
-        Map<String, Object> props = new LinkedHashMap<>();
-        props.put("enabled", isEnabled());
-        props.put("active", getActive());
+    protected void asMap(boolean full, Map<String, Object> props) {
         props.put("distributions", isDistributions());
         props.put("files", isFiles());
         props.put("pack", pack.asMap(full));
-        asMap(full, props);
-        props.put("extraProperties", getExtraProperties());
-
-        Map<String, Object> map = new LinkedHashMap<>();
-        map.put(this.getType(), props);
-        return map;
     }
-
-    protected abstract void asMap(boolean full, Map<String, Object> props);
 }

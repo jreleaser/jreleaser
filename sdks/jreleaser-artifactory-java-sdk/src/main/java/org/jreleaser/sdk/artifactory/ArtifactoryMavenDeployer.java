@@ -24,6 +24,7 @@ import org.jreleaser.model.spi.deploy.DeployException;
 import org.jreleaser.model.spi.upload.UploadException;
 import org.jreleaser.sdk.commons.AbstractMavenDeployer;
 import org.jreleaser.sdk.commons.ClientUtils;
+import org.jreleaser.model.spi.deploy.maven.Deployable;
 import org.jreleaser.util.Algorithm;
 import org.jreleaser.util.ChecksumUtils;
 

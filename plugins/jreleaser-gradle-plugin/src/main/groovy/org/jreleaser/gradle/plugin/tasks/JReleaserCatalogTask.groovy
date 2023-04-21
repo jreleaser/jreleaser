@@ -46,11 +46,31 @@ abstract class JReleaserCatalogTask extends AbstractJReleaserDistributionTask {
     @Optional
     final ListProperty<String> excludedCatalogers
 
+    @Input
+    @Optional
+    final ListProperty<String> deployerTypes
+
+    @Input
+    @Optional
+    final ListProperty<String> excludedDeployerTypes
+
+    @Input
+    @Optional
+    final ListProperty<String> deployerNames
+
+    @Input
+    @Optional
+    final ListProperty<String> excludedDeployerNames
+
     @Inject
     JReleaserCatalogTask(ObjectFactory objects) {
         super(objects)
         catalogers = objects.listProperty(String).convention([])
         excludedCatalogers = objects.listProperty(String).convention([])
+        deployerTypes = objects.listProperty(String).convention([])
+        excludedDeployerTypes = objects.listProperty(String).convention([])
+        deployerNames = objects.listProperty(String).convention([])
+        excludedDeployerNames = objects.listProperty(String).convention([])
     }
 
     @Option(option = 'cataloger', description = 'Include a cataloger (OPTIONAL).')
@@ -63,11 +83,35 @@ abstract class JReleaserCatalogTask extends AbstractJReleaserDistributionTask {
         this.excludedCatalogers.set(excludedCatalogers)
     }
 
+    @Option(option = 'deployer', description = 'Include a deployer by type (OPTIONAL).')
+    void setDeployerType(List<String> deployerTypes) {
+        this.deployerTypes.set(deployerTypes)
+    }
+
+    @Option(option = 'exclude-deployer', description = 'Exclude a deployer by type (OPTIONAL).')
+    void setExcludeDeployerType(List<String> excludedDeployerTypes) {
+        this.excludedDeployerTypes.set(excludedDeployerTypes)
+    }
+
+    @Option(option = 'deployer-name', description = 'Include a deployer by name (OPTIONAL).')
+    void setDeployerName(List<String> deployerNames) {
+        this.deployerNames.set(deployerNames)
+    }
+
+    @Option(option = 'exclude-deployer-name', description = 'Exclude a deployer by name (OPTIONAL).')
+    void setExcludeDeployerName(List<String> excludedDeployerNames) {
+        this.excludedDeployerNames.set(excludedDeployerNames)
+    }
+
     @TaskAction
     void performAction() {
         JReleaserContext ctx = super.setupContext()
         ctx.includedCatalogers = catalogers.orNull
         ctx.excludedCatalogers = excludedCatalogers.orNull
+        ctx.includedDeployerTypes = deployerTypes.orNull
+        ctx.excludedDeployerTypes = excludedDeployerTypes.orNull
+        ctx.includedDeployerNames = deployerNames.orNull
+        ctx.excludedDeployerNames = excludedDeployerNames.orNull
         Workflows.catalog(ctx).execute()
     }
 }

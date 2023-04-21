@@ -24,6 +24,7 @@ import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.catalog.Catalog
+import org.jreleaser.gradle.plugin.dsl.catalog.SlsaCataloger
 import org.jreleaser.gradle.plugin.dsl.catalog.sbom.Sbom
 import org.jreleaser.gradle.plugin.internal.dsl.catalog.sbom.SbomImpl
 import org.jreleaser.model.Active
@@ -42,11 +43,13 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 class CatalogImpl implements Catalog {
     final Property<Active> active
     final SbomImpl sbom
+    final SlsaCatalogerImpl slsa
 
     @Inject
     CatalogImpl(ObjectFactory objects) {
         active = objects.property(Active).convention(Providers.<Active> notDefined())
         sbom = objects.newInstance(SbomImpl, objects)
+        slsa = objects.newInstance(SlsaCatalogerImpl, objects)
     }
 
     @Override
@@ -62,15 +65,27 @@ class CatalogImpl implements Catalog {
     }
 
     @Override
+    void slsa(Action<? super SlsaCataloger> action) {
+        action.execute(slsa)
+    }
+
+    @Override
     @CompileDynamic
     void sbom(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Sbom) Closure<Void> action) {
         ConfigureUtil.configure(action, sbom)
+    }
+
+    @Override
+    @CompileDynamic
+    void slsa(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SlsaCataloger) Closure<Void> action) {
+        ConfigureUtil.configure(action, slsa)
     }
 
     org.jreleaser.model.internal.catalog.Catalog toModel() {
         org.jreleaser.model.internal.catalog.Catalog catalog = new org.jreleaser.model.internal.catalog.Catalog()
         if (active.present) catalog.active = active.get()
         catalog.sbom = sbom.toModel()
+        catalog.slsa = slsa.toModel()
         catalog
     }
 }

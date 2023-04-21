@@ -43,7 +43,7 @@ import static org.jreleaser.util.StringUtils.isTrue;
  * @since 1.5.0
  */
 public final class SyftSbomCataloger extends AbstractSbomCataloger<SyftSbomCataloger, org.jreleaser.model.api.catalog.sbom.SyftSbomCataloger> {
-    private static final long serialVersionUID = 8892967680009048184L;
+    private static final long serialVersionUID = 167717390683692845L;
 
     private final Set<org.jreleaser.model.api.catalog.sbom.SyftSbomCataloger.Format> formats = new LinkedHashSet<>();
     private String version;
@@ -155,6 +155,7 @@ public final class SyftSbomCataloger extends AbstractSbomCataloger<SyftSbomCatal
 
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
+        super.asMap(full, props);
         props.put("version", version);
         props.put("formats", formats);
     }

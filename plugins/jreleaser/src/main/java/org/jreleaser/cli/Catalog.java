@@ -21,6 +21,8 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.workflow.Workflows;
 import picocli.CommandLine;
 
+import java.util.Set;
+
 /**
  * @author Andres Almiray
  * @since 1.5.0
@@ -54,6 +56,22 @@ public class Catalog extends AbstractPlatformAwareModelCommand<Main> {
         String[] excludedCatalogers() {
             return null != exclude ? exclude.excludedCatalogers : null;
         }
+
+        String[] includedDeployerTypes() {
+            return null != include ? include.includedDeployerTypes : null;
+        }
+
+        String[] includedDeployerNames() {
+            return null != include ? include.includedDeployerNames : null;
+        }
+
+        String[] excludedDeployerTypes() {
+            return null != exclude ? exclude.excludedDeployerTypes : null;
+        }
+
+        String[] excludedDeployerNames() {
+            return null != exclude ? exclude.excludedDeployerNames : null;
+        }
     }
 
     static class Include {
@@ -64,6 +82,14 @@ public class Catalog extends AbstractPlatformAwareModelCommand<Main> {
         @CommandLine.Option(names = {"--cataloger"},
             paramLabel = "<cataloger>")
         String[] includedCatalogers;
+
+        @CommandLine.Option(names = {"-y", "--deployer"},
+            paramLabel = "<deployer>")
+        String[] includedDeployerTypes;
+
+        @CommandLine.Option(names = {"-yn", "--deployer-name"},
+            paramLabel = "<name>")
+        String[] includedDeployerNames;
     }
 
     static class Exclude {
@@ -74,6 +100,23 @@ public class Catalog extends AbstractPlatformAwareModelCommand<Main> {
         @CommandLine.Option(names = {"--exclude-cataloger"},
             paramLabel = "<cataloger>")
         String[] excludedCatalogers;
+
+        @CommandLine.Option(names = {"-xy", "--exclude-deployer"},
+            paramLabel = "<deployer>")
+        String[] excludedDeployerTypes;
+
+        @CommandLine.Option(names = {"-xyn", "--exclude-deployer-name"},
+            paramLabel = "<name>")
+        String[] excludedDeployerNames;
+    }
+
+    @Override
+    protected void collectCandidateDeprecatedArgs(Set<DeprecatedArg> args) {
+        super.collectCandidateDeprecatedArgs(args);
+        args.add(new DeprecatedArg("-y", "--deployer", "1.5.0"));
+        args.add(new DeprecatedArg("-yn", "--deployer-name", "1.5.0"));
+        args.add(new DeprecatedArg("-xy", "--exclude-deployer", "1.5.0"));
+        args.add(new DeprecatedArg("-xyn", "--exclude-deployer-name", "1.5.0"));
     }
 
     @Override
@@ -83,6 +126,10 @@ public class Catalog extends AbstractPlatformAwareModelCommand<Main> {
             context.setExcludedDistributions(collectEntries(composite.excludedDistributions()));
             context.setIncludedCatalogers(collectEntries(composite.includedCatalogers(), true));
             context.setExcludedCatalogers(collectEntries(composite.excludedCatalogers(), true));
+            context.setIncludedDeployerTypes(collectEntries(composite.includedDeployerTypes(), true));
+            context.setIncludedDeployerNames(collectEntries(composite.includedDeployerNames()));
+            context.setExcludedDeployerTypes(collectEntries(composite.excludedDeployerTypes(), true));
+            context.setExcludedDeployerNames(collectEntries(composite.excludedDeployerNames()));
         }
         Workflows.catalog(context).execute();
     }

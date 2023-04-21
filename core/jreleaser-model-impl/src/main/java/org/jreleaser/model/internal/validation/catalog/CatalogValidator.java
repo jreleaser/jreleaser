@@ -23,6 +23,7 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.catalog.Catalog;
 import org.jreleaser.util.Errors;
 
+import static org.jreleaser.model.internal.validation.catalog.SlsaValidator.validateSlsa;
 import static org.jreleaser.model.internal.validation.catalog.sbom.SbomCatalogersValidator.validateSbomCatalogers;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 
@@ -40,6 +41,7 @@ public final class CatalogValidator {
 
         Catalog catalog = context.getModel().getCatalog();
         validateSbomCatalogers(context, mode, errors);
+        validateSlsa(context, mode, errors);
 
         if (mode.validateConfig()) {
             boolean activeSet = catalog.isActiveSet();
@@ -47,7 +49,8 @@ public final class CatalogValidator {
             catalog.resolveEnabled(context.getModel().getProject());
 
             if (catalog.isEnabled()) {
-                boolean enabled = catalog.getSbom().isEnabled();
+                boolean enabled = catalog.getSbom().isEnabled() ||
+                    catalog.getSlsa().isEnabled();
 
                 if (!activeSet && !enabled) {
                     context.getLogger().debug(RB.$("validation.disabled"));
