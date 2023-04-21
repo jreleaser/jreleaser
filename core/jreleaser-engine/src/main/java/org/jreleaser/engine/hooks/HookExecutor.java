@@ -24,8 +24,10 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.hooks.CommandHook;
 import org.jreleaser.model.internal.hooks.CommandHooks;
 import org.jreleaser.model.internal.hooks.Hook;
+import org.jreleaser.model.internal.hooks.Hooks;
 import org.jreleaser.model.internal.hooks.ScriptHook;
 import org.jreleaser.model.internal.hooks.ScriptHooks;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.command.Command;
 import org.jreleaser.sdk.command.CommandException;
 import org.jreleaser.sdk.command.CommandExecutor;
@@ -36,13 +38,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import static java.lang.System.lineSeparator;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardOpenOption.WRITE;
+import static org.jreleaser.mustache.Templates.resolveTemplate;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -69,13 +75,25 @@ public final class HookExecutor {
     }
 
     private void executeHooks(ExecutionEvent event) {
-        if (!context.getModel().getHooks().isEnabled()) return;
+        Hooks hooks = context.getModel().getHooks();
+        if (!hooks.isEnabled()) return;
 
-        executeScriptHooks(event);
-        executeCommandHooks(event);
+        Map<String, String> rootEnv = resolveEnvironment(hooks.getEnvironment());
+        executeScriptHooks(event, rootEnv);
+        executeCommandHooks(event, rootEnv);
     }
 
-    private void executeScriptHooks(ExecutionEvent event) {
+    private Map<String, String> resolveEnvironment(Map<String, String> src) {
+        Map<String, String> env = new LinkedHashMap<>();
+        TemplateContext props = context.props();
+        src.forEach((k, v) -> {
+            String value = resolveTemplate(v, props);
+            if (isNotBlank(value)) env.put(k, value);
+        });
+        return env;
+    }
+
+    private void executeScriptHooks(ExecutionEvent event, Map<String, String> rootEnv) {
         ScriptHooks scriptHooks = context.getModel().getHooks().getScript();
         if (!scriptHooks.isEnabled()) return;
 
@@ -100,6 +118,10 @@ public final class HookExecutor {
         context.getLogger().setPrefix("hooks");
         context.getLogger().increaseIndent();
 
+        Map<String, String> localEnv = new LinkedHashMap<>(rootEnv);
+        localEnv.putAll(scriptHooks.getEnvironment());
+        localEnv = resolveEnvironment(localEnv);
+
         try {
             for (ScriptHook hook : hooks) {
                 Path scriptFile = null;
@@ -111,7 +133,7 @@ public final class HookExecutor {
                 }
 
                 String resolvedCmd = hook.getShell().expression().replace("{{script}}", scriptFile.toAbsolutePath().toString());
-                executeCommandLine(hook, resolvedCmd, resolvedCmd, "ERROR_script_hook_unexpected_error");
+                executeCommandLine(localEnv, hook, resolvedCmd, resolvedCmd, "ERROR_script_hook_unexpected_error");
             }
         } finally {
             context.getLogger().decreaseIndent();
@@ -133,7 +155,7 @@ public final class HookExecutor {
         return scriptFile;
     }
 
-    private void executeCommandHooks(ExecutionEvent event) {
+    private void executeCommandHooks(ExecutionEvent event, Map<String, String> rootEnv) {
         CommandHooks commandHooks = context.getModel().getHooks().getCommand();
         if (!commandHooks.isEnabled()) return;
 
@@ -158,10 +180,14 @@ public final class HookExecutor {
         context.getLogger().setPrefix("hooks");
         context.getLogger().increaseIndent();
 
+        Map<String, String> localEnv = new LinkedHashMap<>(rootEnv);
+        localEnv.putAll(commandHooks.getEnvironment());
+        localEnv = resolveEnvironment(localEnv);
+
         try {
             for (CommandHook hook : hooks) {
                 String resolvedCmd = hook.getResolvedCmd(context, event);
-                executeCommandLine(hook, hook.getCmd(), resolvedCmd, "ERROR_command_hook_unexpected_error");
+                executeCommandLine(localEnv, hook, hook.getCmd(), resolvedCmd, "ERROR_command_hook_unexpected_error");
             }
         } finally {
             context.getLogger().decreaseIndent();
@@ -169,8 +195,12 @@ public final class HookExecutor {
         }
     }
 
-    private void executeCommandLine(Hook hook, String cmd, String resolvedCmd, String errorKey) {
+    private void executeCommandLine(Map<String, String> localEnv, Hook hook, String cmd, String resolvedCmd, String errorKey) {
         List<String> commandLine = null;
+
+        Map<String, String> hookEnv = new LinkedHashMap<>(localEnv);
+        hookEnv.putAll(hook.getEnvironment());
+        hookEnv = resolveEnvironment(hookEnv);
 
         try {
             commandLine = parseCommand(resolvedCmd);
@@ -180,7 +210,7 @@ public final class HookExecutor {
 
         try {
             Command command = new Command(commandLine);
-            processOutput(executeCommand(context.getBasedir(), command, hook.isVerbose()));
+            processOutput(executeCommand(context.getBasedir(), command, hookEnv, hook.isVerbose()));
         } catch (CommandException e) {
             if (!hook.isContinueOnError()) {
                 throw new JReleaserException(RB.$(errorKey), e);
@@ -246,8 +276,9 @@ public final class HookExecutor {
         return success;
     }
 
-    private Command.Result executeCommand(Path directory, Command command, boolean verbose) throws CommandException {
+    private Command.Result executeCommand(Path directory, Command command, Map<String, String> env, boolean verbose) throws CommandException {
         Command.Result result = new CommandExecutor(context.getLogger(), verbose ? CommandExecutor.Output.VERBOSE : CommandExecutor.Output.DEBUG)
+            .environment(env)
             .executeCommand(directory, command);
         if (result.getExitValue() != 0) {
             throw new CommandException(RB.$("ERROR_command_execution_exit_value", result.getExitValue()));

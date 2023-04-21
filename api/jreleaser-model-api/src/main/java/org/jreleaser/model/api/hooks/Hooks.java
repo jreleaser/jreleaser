@@ -20,6 +20,8 @@ package org.jreleaser.model.api.hooks;
 import org.jreleaser.model.api.common.Activatable;
 import org.jreleaser.model.api.common.Domain;
 
+import java.util.Map;
+
 /**
  * @author Andres Almiray
  * @since 1.2.0
@@ -28,4 +30,6 @@ public interface Hooks extends Domain, Activatable {
     CommandHooks getCommand();
 
     ScriptHooks getScript();
+
+    Map<String, String> getEnvironment();
 }

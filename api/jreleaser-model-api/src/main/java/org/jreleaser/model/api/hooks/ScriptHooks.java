@@ -21,6 +21,7 @@ import org.jreleaser.model.api.common.Activatable;
 import org.jreleaser.model.api.common.Domain;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Andres Almiray
@@ -32,4 +33,6 @@ public interface ScriptHooks extends Domain, Activatable {
     List<? extends ScriptHook> getSuccess();
 
     List<? extends ScriptHook> getFailure();
+
+    Map<String, String> getEnvironment();
 }

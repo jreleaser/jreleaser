@@ -21,6 +21,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.hooks.CommandHooks
 import org.jreleaser.gradle.plugin.dsl.hooks.Hooks
@@ -42,18 +43,27 @@ class HooksImpl implements Hooks {
     final Property<Active> active
     final CommandHooksImpl command
     final ScriptHooksImpl script
+    final MapProperty<String, String> environment
 
     @Inject
     HooksImpl(ObjectFactory objects) {
         active = objects.property(Active).convention(Providers.<Active> notDefined())
         command = objects.newInstance(CommandHooksImpl, objects)
         script = objects.newInstance(ScriptHooksImpl, objects)
+        environment = objects.mapProperty(String, String).convention(Providers.notDefined())
     }
 
     @Override
     void setActive(String str) {
         if (isNotBlank(str)) {
             active.set(Active.of(str.trim()))
+        }
+    }
+
+    @Override
+    void environment(String key, String value) {
+        if (isNotBlank(key) && isNotBlank(value)) {
+            environment.put(key.trim(), value.trim())
         }
     }
 
@@ -80,6 +90,7 @@ class HooksImpl implements Hooks {
     org.jreleaser.model.internal.hooks.Hooks toModel() {
         org.jreleaser.model.internal.hooks.Hooks hooks = new org.jreleaser.model.internal.hooks.Hooks()
         if (active.present) hooks.active = active.get()
+        if (environment.present) hooks.environment.putAll(environment.get())
         hooks.command = command.toModel()
         hooks.script = script.toModel()
         hooks

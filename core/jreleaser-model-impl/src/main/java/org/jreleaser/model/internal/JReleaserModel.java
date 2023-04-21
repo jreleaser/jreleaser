@@ -455,6 +455,7 @@ public class JReleaserModel {
 
     public TemplateContext props() {
         TemplateContext props = new TemplateContext();
+        props.set("Model", this.asImmutable());
 
         String jreleaserCreationStamp = String.format("Generated with JReleaser %s at %s",
             JReleaserVersion.getPlainVersion(), timestamp);

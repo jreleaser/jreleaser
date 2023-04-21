@@ -41,11 +41,16 @@ public final class CommandHook extends AbstractHook<CommandHook> {
 
     @JsonIgnore
     private final org.jreleaser.model.api.hooks.CommandHook immutable = new org.jreleaser.model.api.hooks.CommandHook() {
-        private static final long serialVersionUID = -3291619799463077845L;
+        private static final long serialVersionUID = -3480210263046881645L;
 
         @Override
         public String getCmd() {
             return cmd;
+        }
+
+        @Override
+        public Map<String, String> getEnvironment() {
+            return unmodifiableMap(CommandHook.this.getEnvironment());
         }
 
         @Override

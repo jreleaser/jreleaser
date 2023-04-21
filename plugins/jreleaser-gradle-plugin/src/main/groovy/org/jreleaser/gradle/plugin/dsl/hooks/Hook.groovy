@@ -19,6 +19,7 @@ package org.jreleaser.gradle.plugin.dsl.hooks
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.jreleaser.gradle.plugin.dsl.common.Activatable
@@ -39,6 +40,10 @@ interface Hook extends Activatable {
     SetProperty<String> getPlatforms()
 
     void platform(String platform)
+
+    MapProperty<String, String> getEnvironment()
+
+    void environment(String key, String value)
 
     void filter(Action<? super Filter> action)
 

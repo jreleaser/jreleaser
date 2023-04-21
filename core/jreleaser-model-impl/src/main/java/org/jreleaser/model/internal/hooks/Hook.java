@@ -56,6 +56,12 @@ public interface Hook extends Domain, Activatable {
 
     boolean isVerboseSet();
 
+    Map<String, String> getEnvironment();
+
+    void setEnvironment(Map<String, String> environment);
+
+    void addEnvironment(Map<String, String> environment);
+
     class Filter extends AbstractModelObject<Filter> implements Domain {
         private static final long serialVersionUID = 8811064830998012126L;
 

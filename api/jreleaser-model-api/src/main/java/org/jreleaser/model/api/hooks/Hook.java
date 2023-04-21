@@ -20,6 +20,7 @@ package org.jreleaser.model.api.hooks;
 import org.jreleaser.model.api.common.Activatable;
 import org.jreleaser.model.api.common.Domain;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -34,6 +35,8 @@ public interface Hook extends Domain, Activatable {
     boolean isContinueOnError();
 
     boolean isVerbose();
+
+    Map<String, String> getEnvironment();
 
     interface Filter extends Domain {
         Set<String> getIncludes();

@@ -21,6 +21,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
@@ -43,6 +44,7 @@ abstract class AbstractHook implements Hook {
     final Property<Boolean> continueOnError
     final Property<Boolean> verbose
     final SetProperty<String> platforms
+    final MapProperty<String, String> environment
 
     @Inject
     AbstractHook(ObjectFactory objects) {
@@ -50,12 +52,20 @@ abstract class AbstractHook implements Hook {
         continueOnError = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         verbose = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         platforms = objects.setProperty(String).convention(Providers.<List<String>> notDefined())
+        environment = objects.mapProperty(String, String).convention(Providers.notDefined())
     }
 
     @Internal
     boolean isSet() {
         active.present ||
             platforms.present
+    }
+
+    @Override
+    void environment(String key, String value) {
+        if (isNotBlank(key) && isNotBlank(value)) {
+            environment.put(key.trim(), value.trim())
+        }
     }
 
     @Override
@@ -86,6 +96,7 @@ abstract class AbstractHook implements Hook {
         if (active.present) hook.active = active.get()
         if (continueOnError.present) hook.continueOnError = continueOnError.get()
         if (verbose.present) hook.verbose = verbose.get()
+        if (environment.present) hook.environment.putAll(environment.get())
         hook.platforms = (Set<String>) platforms.getOrElse([] as Set<String>)
     }
 

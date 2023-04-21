@@ -29,8 +29,9 @@ import java.util.Set;
  * @since 1.2.0
  */
 public abstract class AbstractHook<S extends AbstractHook<S>> extends AbstractActivatable<S> implements Hook {
-    private static final long serialVersionUID = -1153410849922369686L;
+    private static final long serialVersionUID = 8715506867292906978L;
 
+    private final Map<String, String> environment = new LinkedHashMap<>();
     private final Set<String> platforms = new LinkedHashSet<>();
     private final Filter filter = new Filter();
     protected Boolean continueOnError;
@@ -43,6 +44,7 @@ public abstract class AbstractHook<S extends AbstractHook<S>> extends AbstractAc
         this.verbose = merge(this.verbose, source.verbose);
         setFilter(source.getFilter());
         setPlatforms(merge(this.platforms, source.getPlatforms()));
+        setEnvironment(merge(this.environment, source.getEnvironment()));
     }
 
     @Override
@@ -97,6 +99,22 @@ public abstract class AbstractHook<S extends AbstractHook<S>> extends AbstractAc
     }
 
     @Override
+    public Map<String, String> getEnvironment() {
+        return environment;
+    }
+
+    @Override
+    public void setEnvironment(Map<String, String> environment) {
+        this.environment.clear();
+        this.environment.putAll(environment);
+    }
+
+    @Override
+    public void addEnvironment(Map<String, String> environment) {
+        this.environment.putAll(environment);
+    }
+
+    @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
@@ -108,6 +126,7 @@ public abstract class AbstractHook<S extends AbstractHook<S>> extends AbstractAc
         if (full || !filterAsMap.isEmpty()) {
             map.put("filter", filterAsMap);
         }
+        map.put("environment", environment);
         asMap(full, map);
 
         return map;

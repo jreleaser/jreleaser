@@ -28,6 +28,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Collections.unmodifiableMap;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -35,15 +36,16 @@ import static java.util.stream.Collectors.toList;
  * @since 1.2.0
  */
 public final class CommandHooks extends AbstractActivatable<CommandHooks> implements Domain {
-    private static final long serialVersionUID = 2902577556347608164L;
+    private static final long serialVersionUID = -4219715246005652046L;
 
     private final List<CommandHook> before = new ArrayList<>();
     private final List<CommandHook> success = new ArrayList<>();
     private final List<CommandHook> failure = new ArrayList<>();
+    private final Map<String, String> environment = new LinkedHashMap<>();
 
     @JsonIgnore
     private final org.jreleaser.model.api.hooks.CommandHooks immutable = new org.jreleaser.model.api.hooks.CommandHooks() {
-        private static final long serialVersionUID = 5109938718153117453L;
+        private static final long serialVersionUID = -1234820389402394468L;
 
         private List<? extends org.jreleaser.model.api.hooks.CommandHook> before;
         private List<? extends org.jreleaser.model.api.hooks.CommandHook> success;
@@ -80,6 +82,11 @@ public final class CommandHooks extends AbstractActivatable<CommandHooks> implem
         }
 
         @Override
+        public Map<String, String> getEnvironment() {
+            return unmodifiableMap(CommandHooks.this.getEnvironment());
+        }
+
+        @Override
         public Active getActive() {
             return CommandHooks.this.getActive();
         }
@@ -109,6 +116,7 @@ public final class CommandHooks extends AbstractActivatable<CommandHooks> implem
         setBefore(merge(this.before, source.before));
         setSuccess(merge(this.success, source.success));
         setFailure(merge(this.failure, source.failure));
+        setEnvironment(merge(this.environment, source.getEnvironment()));
     }
 
     @Override
@@ -164,11 +172,25 @@ public final class CommandHooks extends AbstractActivatable<CommandHooks> implem
         }
     }
 
+    public Map<String, String> getEnvironment() {
+        return environment;
+    }
+
+    public void setEnvironment(Map<String, String> environment) {
+        this.environment.clear();
+        this.environment.putAll(environment);
+    }
+
+    public void addEnvironment(Map<String, String> environment) {
+        this.environment.putAll(environment);
+    }
+
     @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
         map.put("active", getActive());
+        map.put("environment", environment);
 
         Map<String, Map<String, Object>> m = new LinkedHashMap<>();
         int i = 0;

@@ -42,7 +42,7 @@ public final class ScriptHook extends AbstractHook<ScriptHook> {
 
     @JsonIgnore
     private final org.jreleaser.model.api.hooks.ScriptHook immutable = new org.jreleaser.model.api.hooks.ScriptHook() {
-        private static final long serialVersionUID = 1361811930359794440L;
+        private static final long serialVersionUID = 2722804551401108790L;
 
         @Override
         public String getRun() {
@@ -52,6 +52,11 @@ public final class ScriptHook extends AbstractHook<ScriptHook> {
         @Override
         public Shell getShell() {
             return shell;
+        }
+
+        @Override
+        public Map<String, String> getEnvironment() {
+            return unmodifiableMap(ScriptHook.this.getEnvironment());
         }
 
         @Override

@@ -28,6 +28,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Collections.unmodifiableMap;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -35,15 +36,16 @@ import static java.util.stream.Collectors.toList;
  * @since 1.6.0
  */
 public final class ScriptHooks extends AbstractActivatable<ScriptHooks> implements Domain {
-    private static final long serialVersionUID = 1112353020099368302L;
+    private static final long serialVersionUID = -7608796505128220307L;
 
     private final List<ScriptHook> before = new ArrayList<>();
     private final List<ScriptHook> success = new ArrayList<>();
     private final List<ScriptHook> failure = new ArrayList<>();
+    private final Map<String, String> environment = new LinkedHashMap<>();
 
     @JsonIgnore
     private final org.jreleaser.model.api.hooks.ScriptHooks immutable = new org.jreleaser.model.api.hooks.ScriptHooks() {
-        private static final long serialVersionUID = -3615020453794757498L;
+        private static final long serialVersionUID = -2500325742137977937L;
 
         private List<? extends org.jreleaser.model.api.hooks.ScriptHook> before;
         private List<? extends org.jreleaser.model.api.hooks.ScriptHook> success;
@@ -80,6 +82,11 @@ public final class ScriptHooks extends AbstractActivatable<ScriptHooks> implemen
         }
 
         @Override
+        public Map<String, String> getEnvironment() {
+            return unmodifiableMap(ScriptHooks.this.getEnvironment());
+        }
+
+        @Override
         public Active getActive() {
             return ScriptHooks.this.getActive();
         }
@@ -109,6 +116,7 @@ public final class ScriptHooks extends AbstractActivatable<ScriptHooks> implemen
         setBefore(merge(this.before, source.before));
         setSuccess(merge(this.success, source.success));
         setFailure(merge(this.failure, source.failure));
+        setEnvironment(merge(this.environment, source.getEnvironment()));
     }
 
     @Override
@@ -164,11 +172,25 @@ public final class ScriptHooks extends AbstractActivatable<ScriptHooks> implemen
         }
     }
 
+    public Map<String, String> getEnvironment() {
+        return environment;
+    }
+
+    public void setEnvironment(Map<String, String> environment) {
+        this.environment.clear();
+        this.environment.putAll(environment);
+    }
+
+    public void addEnvironment(Map<String, String> environment) {
+        this.environment.putAll(environment);
+    }
+
     @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
         map.put("active", getActive());
+        map.put("environment", environment);
 
         Map<String, Map<String, Object>> m = new LinkedHashMap<>();
         int i = 0;

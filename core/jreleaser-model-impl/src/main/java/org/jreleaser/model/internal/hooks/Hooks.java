@@ -32,14 +32,15 @@ import static java.util.Collections.unmodifiableMap;
  * @since 1.2.0
  */
 public final class Hooks extends AbstractActivatable<Hooks> implements Domain {
-    private static final long serialVersionUID = 6972671895393136081L;
+    private static final long serialVersionUID = -5698247369155386191L;
 
+    private final Map<String, String> environment = new LinkedHashMap<>();
     private final CommandHooks command = new CommandHooks();
     private final ScriptHooks script = new ScriptHooks();
 
     @JsonIgnore
     private final org.jreleaser.model.api.hooks.Hooks immutable = new org.jreleaser.model.api.hooks.Hooks() {
-        private static final long serialVersionUID = 6110061902155343412L;
+        private static final long serialVersionUID = -3768581923578821278L;
 
         @Override
         public org.jreleaser.model.api.hooks.CommandHooks getCommand() {
@@ -49,6 +50,11 @@ public final class Hooks extends AbstractActivatable<Hooks> implements Domain {
         @Override
         public org.jreleaser.model.api.hooks.ScriptHooks getScript() {
             return script.asImmutable();
+        }
+
+        @Override
+        public Map<String, String> getEnvironment() {
+            return unmodifiableMap(Hooks.this.getEnvironment());
         }
 
         @Override
@@ -80,6 +86,7 @@ public final class Hooks extends AbstractActivatable<Hooks> implements Domain {
         super.merge(source);
         setCommand(source.command);
         setScript(source.script);
+        setEnvironment(merge(this.environment, source.getEnvironment()));
     }
 
     @Override
@@ -105,11 +112,25 @@ public final class Hooks extends AbstractActivatable<Hooks> implements Domain {
         this.script.merge(script);
     }
 
+    public Map<String, String> getEnvironment() {
+        return environment;
+    }
+
+    public void setEnvironment(Map<String, String> environment) {
+        this.environment.clear();
+        this.environment.putAll(environment);
+    }
+
+    public void addEnvironment(Map<String, String> environment) {
+        this.environment.putAll(environment);
+    }
+
     @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
         map.put("active", getActive());
+        map.put("environment", environment);
         map.put("command", command.asMap(full));
         map.put("script", script.asMap(full));
         return map;
