@@ -22,16 +22,13 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.catalog.sbom.SbomCataloger
-import org.jreleaser.model.Active
+import org.jreleaser.gradle.plugin.internal.dsl.catalog.AbstractCataloger
 import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
-
-import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
  *
@@ -39,31 +36,21 @@ import static org.jreleaser.util.StringUtils.isNotBlank
  * @since 1.5.0
  */
 @CompileStatic
-abstract class AbstractSbomCataloger implements SbomCataloger {
-    final Property<Active> active
+abstract class AbstractSbomCataloger extends AbstractCataloger implements SbomCataloger {
     final Property<Boolean> distributions
     final Property<Boolean> files
-    final MapProperty<String, Object> extraProperties
 
     @Inject
     AbstractSbomCataloger(ObjectFactory objects) {
-        active = objects.property(Active).convention(Providers.<Active> notDefined())
+        super(objects)
         distributions = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         files = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
-        extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
     }
 
-    @Override
-    void setActive(String str) {
-        if (isNotBlank(str)) {
-            active.set(Active.of(str.trim()))
-        }
-    }
 
     @Internal
     boolean isSet() {
-        active.present ||
-            extraProperties.present ||
+        super.isSet() ||
             distributions.present ||
             files.present
     }
@@ -80,8 +67,7 @@ abstract class AbstractSbomCataloger implements SbomCataloger {
     }
 
     protected <C extends org.jreleaser.model.internal.catalog.sbom.SbomCataloger> void fillProperties(C cataloger) {
-        if (active.present) cataloger.active = active.get()
-        if (extraProperties.present) cataloger.extraProperties.putAll(extraProperties.get())
+        super.fillProperties(cataloger)
         if (distributions.present) cataloger.distributions = distributions.get()
         if (files.present) cataloger.files = files.get()
     }

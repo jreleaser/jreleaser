@@ -31,7 +31,13 @@ import org.jreleaser.gradle.plugin.dsl.common.Activatable
 interface Catalog extends Activatable {
     Sbom getSbom()
 
+    SlsaCataloger getSlsa()
+
     void sbom(Action<? super Sbom> action)
 
+    void slsa(Action<? super SlsaCataloger> action)
+
     void sbom(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Sbom) Closure<Void> action)
+
+    void slsa(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SlsaCataloger) Closure<Void> action)
 }

@@ -33,17 +33,23 @@ import static java.util.Collections.unmodifiableMap;
  * @since 1.5.0
  */
 public final class Catalog extends AbstractActivatable<Catalog> implements Domain {
-    private static final long serialVersionUID = 2638276108047981372L;
+    private static final long serialVersionUID = -1338155149564894995L;
 
     private final Sbom sbom = new Sbom();
+    private final SlsaCataloger slsa = new SlsaCataloger();
 
     @JsonIgnore
     private final org.jreleaser.model.api.catalog.Catalog immutable = new org.jreleaser.model.api.catalog.Catalog() {
-        private static final long serialVersionUID = -8346576688349091865L;
+        private static final long serialVersionUID = 6865438805449170431L;
 
         @Override
         public org.jreleaser.model.api.catalog.sbom.Sbom getSbom() {
             return sbom.asImmutable();
+        }
+
+        @Override
+        public org.jreleaser.model.api.catalog.SlsaCataloger getSlsa() {
+            return slsa.asImmutable();
         }
 
         @Override
@@ -74,11 +80,14 @@ public final class Catalog extends AbstractActivatable<Catalog> implements Domai
     public void merge(Catalog source) {
         super.merge(source);
         setSbom(source.sbom);
+        setSlsa(source.slsa);
     }
 
     @Override
     public boolean isSet() {
-        return super.isSet() || sbom.isSet();
+        return super.isSet() ||
+            sbom.isSet() ||
+            slsa.isSet();
     }
 
     public Sbom getSbom() {
@@ -89,12 +98,21 @@ public final class Catalog extends AbstractActivatable<Catalog> implements Domai
         this.sbom.merge(sbom);
     }
 
+    public SlsaCataloger getSlsa() {
+        return slsa;
+    }
+
+    public void setSlsa(SlsaCataloger slsa) {
+        this.slsa.merge(slsa);
+    }
+
     @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
         map.put("active", getActive());
         map.put("sbom", sbom.asMap(full));
+        map.put("slsa", slsa.asMap(full));
         return map;
     }
 }

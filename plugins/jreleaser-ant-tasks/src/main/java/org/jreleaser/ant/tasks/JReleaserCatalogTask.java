@@ -30,6 +30,10 @@ import java.util.List;
 public class JReleaserCatalogTask extends AbstractDistributionAwareJReleaserTask {
     private final List<String> catalogers = new ArrayList<>();
     private final List<String> excludedCatalogers = new ArrayList<>();
+    private final List<String> deployerTypes = new ArrayList<>();
+    private final List<String> excludedDeployerTypes = new ArrayList<>();
+    private final List<String> deployerNames = new ArrayList<>();
+    private final List<String> excludedDeployerNames = new ArrayList<>();
 
     public void setCatalogers(String catalogers) {
         this.catalogers.addAll(expandAndCollect(catalogers));
@@ -51,11 +55,55 @@ public class JReleaserCatalogTask extends AbstractDistributionAwareJReleaserTask
         }
     }
 
+    public void setDeployerTypes(String deployerTypes) {
+        this.deployerTypes.addAll(expandAndCollect(deployerTypes));
+    }
+
+    public void setExcludedDeployerTypes(String excludedDeployerTypes) {
+        this.excludedDeployerTypes.addAll(expandAndCollect(excludedDeployerTypes));
+    }
+
+    public void setDeployerNames(String deployerNames) {
+        this.deployerNames.addAll(expandAndCollect(deployerNames));
+    }
+
+    public void setExcludedDeployerNames(String excludedDeployerNames) {
+        this.excludedDeployerNames.addAll(expandAndCollect(excludedDeployerNames));
+    }
+
+    public void setDeployerTypes(List<String> deployerTypes) {
+        if (null != deployerTypes) {
+            this.deployerTypes.addAll(deployerTypes);
+        }
+    }
+
+    public void setExcludedDeployerTypes(List<String> excludedDeployerTypes) {
+        if (null != excludedDeployerTypes) {
+            this.excludedDeployerTypes.addAll(excludedDeployerTypes);
+        }
+    }
+
+    public void setDeployerNames(List<String> deployerNames) {
+        if (null != deployerNames) {
+            this.deployerNames.addAll(deployerNames);
+        }
+    }
+
+    public void setExcludedDeployerNames(List<String> excludedDeployerNames) {
+        if (null != excludedDeployerNames) {
+            this.excludedDeployerNames.addAll(excludedDeployerNames);
+        }
+    }
+
     @Override
     protected JReleaserContext setupContext(JReleaserContext context) {
         super.setupContext(context);
         context.setIncludedCatalogers(collectEntries(catalogers, true));
         context.setExcludedCatalogers(collectEntries(excludedCatalogers, true));
+        context.setIncludedDeployerTypes(collectEntries(deployerTypes, true));
+        context.setExcludedDeployerTypes(collectEntries(excludedDeployerTypes, true));
+        context.setIncludedDeployerNames(deployerNames);
+        context.setExcludedDeployerNames(excludedDeployerNames);
         return context;
     }
 

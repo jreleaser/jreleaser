@@ -43,6 +43,30 @@ public class JReleaserCatalogMojo extends AbstractDistributionMojo {
     private String[] excludedCatalogers;
 
     /**
+     * Include a deployer by type.
+     */
+    @Parameter(property = "jreleaser.deployers")
+    private String[] includedDeployers;
+
+    /**
+     * Exclude a deployer by type.
+     */
+    @Parameter(property = "jreleaser.excluded.deployers")
+    private String[] excludedDeployers;
+
+    /**
+     * Include a deployer by name.
+     */
+    @Parameter(property = "jreleaser.deployer.names")
+    private String[] includedDeployerNames;
+
+    /**
+     * Exclude a deployer by name.
+     */
+    @Parameter(property = "jreleaser.excluded.deployer.names")
+    private String[] excludedDeployerNames;
+
+    /**
      * Skip execution.
      */
     @Parameter(property = "jreleaser.catalog.skip")
@@ -52,6 +76,10 @@ public class JReleaserCatalogMojo extends AbstractDistributionMojo {
     protected void doExecute(JReleaserContext context) {
         context.setIncludedCatalogers(collectEntries(includedCatalogers, true));
         context.setExcludedCatalogers(collectEntries(excludedCatalogers, true));
+        context.setIncludedDeployerTypes(collectEntries(includedDeployers, true));
+        context.setIncludedDeployerNames(collectEntries(includedDeployerNames));
+        context.setExcludedDeployerTypes(collectEntries(excludedDeployers, true));
+        context.setExcludedDeployerNames(collectEntries(excludedDeployerNames));
         Workflows.catalog(context).execute();
     }
 

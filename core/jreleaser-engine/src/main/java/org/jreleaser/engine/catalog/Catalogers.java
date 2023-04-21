@@ -15,23 +15,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.workflow;
+package org.jreleaser.engine.catalog;
 
-import org.jreleaser.engine.catalog.Catalogers;
-import org.jreleaser.model.api.JReleaserCommand;
+import org.jreleaser.bundle.RB;
+import org.jreleaser.engine.catalog.sbom.SbomCatalogers;
 import org.jreleaser.model.internal.JReleaserContext;
 
 /**
  * @author Andres Almiray
- * @since 1.5.0
+ * @since 1.6.0
  */
-class CatalogWorkflowItem extends AbstractWorkflowItem {
-    protected CatalogWorkflowItem() {
-        super(JReleaserCommand.CATALOG);
+public final class Catalogers {
+    private Catalogers() {
+        // noop
     }
 
-    @Override
-    protected void doInvoke(JReleaserContext context) {
-        Catalogers.catalog(context);
+    public static void catalog(JReleaserContext context) {
+        context.getLogger().info(RB.$("catalogers.header"));
+
+        if (!context.getModel().getCatalog().isEnabled()) {
+            context.getLogger().increaseIndent();
+            context.getLogger().info(RB.$("catalogers.not.enabled"));
+            context.getLogger().decreaseIndent();
+            return;
+        }
+
+        SbomCatalogers.catalog(context);
+        Slsa.catalog(context);
     }
 }

@@ -43,7 +43,7 @@ import static org.jreleaser.util.StringUtils.isTrue;
  * @since 1.6.0
  */
 public final class CyclonedxSbomCataloger extends AbstractSbomCataloger<CyclonedxSbomCataloger, org.jreleaser.model.api.catalog.sbom.CyclonedxSbomCataloger> {
-    private static final long serialVersionUID = -7848300020504914089L;
+    private static final long serialVersionUID = 7777323178191142222L;
 
     private final Set<org.jreleaser.model.api.catalog.sbom.CyclonedxSbomCataloger.Format> formats = new LinkedHashSet<>();
     private String version;
@@ -155,6 +155,7 @@ public final class CyclonedxSbomCataloger extends AbstractSbomCataloger<Cycloned
 
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
+        super.asMap(full, props);
         props.put("version", version);
         props.put("formats", formats);
     }

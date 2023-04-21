@@ -18,7 +18,6 @@
 package org.jreleaser.engine.catalog.sbom;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.extensions.api.workflow.WorkflowListenerException;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.api.JReleaserCommand;
 import org.jreleaser.model.api.hooks.ExecutionEvent;
@@ -36,6 +35,7 @@ import java.util.Set;
 
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.groupingBy;
+import static org.jreleaser.engine.catalog.CatalogerSupport.fireCatalogEvent;
 import static org.jreleaser.model.internal.JReleaserSupport.supportedSbomCatalogers;
 import static org.jreleaser.model.spi.catalog.sbom.SbomCatalogerProcessor.Result.SKIPPED;
 import static org.jreleaser.model.spi.catalog.sbom.SbomCatalogerProcessor.Result.UPTODATE;
@@ -50,7 +50,6 @@ public final class SbomCatalogers {
     }
 
     public static void catalog(JReleaserContext context) {
-        context.getLogger().info(RB.$("catalogers.sbom.header"));
         context.getLogger().increaseIndent();
         context.getLogger().setPrefix("sbom");
 
@@ -138,24 +137,6 @@ public final class SbomCatalogers {
             .context(context)
             .cataloger(cataloger)
             .build();
-    }
-
-    private static void fireCatalogEvent(ExecutionEvent event, JReleaserContext context, SbomCataloger<?> cataloger) {
-        if (!cataloger.isEnabled()) return;
-
-        try {
-            context.fireCatalogStepEvent(event, cataloger.asImmutable());
-        } catch (WorkflowListenerException e) {
-            context.getLogger().error(RB.$("listener.failure", e.getListener().getClass().getName()));
-            context.getLogger().trace(e);
-            if (event.getType() != ExecutionEvent.Type.FAILURE && !e.getListener().isContinueOnError()) {
-                if (e.getCause() instanceof RuntimeException) {
-                    throw (RuntimeException) e.getCause();
-                } else {
-                    throw new JReleaserException(RB.$("ERROR_unexpected_error"), e.getCause());
-                }
-            }
-        }
     }
 
     private static class SbomCatalogerOutcome {

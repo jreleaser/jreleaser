@@ -23,6 +23,7 @@ import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.api.signing.SigningException;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.spi.deploy.DeployException;
+import org.jreleaser.model.spi.deploy.maven.Deployable;
 import org.jreleaser.model.spi.deploy.maven.MavenDeployer;
 import org.jreleaser.model.spi.upload.UploadException;
 import org.jreleaser.sdk.command.Command;
@@ -51,7 +52,6 @@ import java.net.URL;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
@@ -59,7 +59,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
@@ -68,7 +67,11 @@ import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.FileVisitResult.CONTINUE;
-import static org.jreleaser.util.CollectionUtils.setOf;
+import static org.jreleaser.model.spi.deploy.maven.Deployable.EXT_ASC;
+import static org.jreleaser.model.spi.deploy.maven.Deployable.EXT_JAR;
+import static org.jreleaser.model.spi.deploy.maven.Deployable.EXT_POM;
+import static org.jreleaser.model.spi.deploy.maven.Deployable.MAVEN_METADATA_XML;
+import static org.jreleaser.model.spi.deploy.maven.Deployable.PACKAGING_JAR;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -89,17 +92,6 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
         .e("https://keyserver.ubuntu.com", "https://keyserver.ubuntu.com/pks/lookup?search=%s&fingerprint=on&options=mr&op=index")
         .e("https://pgp.mit.edu", "https://pgp.mit.edu/pks/lookup?op=get&search=0x%s");
 
-    private static final String PACKAGING_AAR = "aar";
-    private static final String PACKAGING_JAR = "jar";
-    private static final String PACKAGING_POM = "pom";
-    private static final String PACKAGING_NBM = "nbm";
-    private static final String PACKAGING_MAVEN_ARCHETYPE = "maven-archetype";
-    private static final String MAVEN_METADATA_XML = "maven-metadata.xml";
-    private static final String EXT_JAR = ".jar";
-    private static final String EXT_POM = ".pom";
-    private static final String EXT_ASC = ".asc";
-    private static final String[] EXT_CHECKSUMS = {".md5", ".sha1", ".sha256", ".sha512"};
-
     protected final JReleaserContext context;
 
     protected AbstractMavenDeployer(JReleaserContext context) {
@@ -108,41 +100,14 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
 
     protected Set<Deployable> collectDeployables() {
         Set<Deployable> deployables = new TreeSet<>();
-
         for (String stagingRepository : getDeployer().getStagingRepositories()) {
-            Path root = context.getBasedir().resolve(stagingRepository).normalize();
-
-            if (!Files.exists(root)) {
-                throw new JReleaserException(RB.$("validation_directory_not_exist",
-                    "maven." + getDeployer().getType() + "." + getDeployer().getName() + ".stagingRepository",
-                    context.relativizeToBasedir(root).toString()));
-            }
-
-            if (!root.toFile().isDirectory()) {
-                throw new JReleaserException(RB.$("validation_is_not_a_directory",
-                    "maven." + getDeployer().getType() + "." + getDeployer().getName() + ".stagingRepository",
-                    context.relativizeToBasedir(root).toString()));
-            }
-
-            try {
-                DeployableCollector collector = new DeployableCollector(root, context.getModel().getProject().isSnapshot());
-
-                java.nio.file.Files.walkFileTree(root, collector);
-                if (collector.failed) {
-                    throw new JReleaserException(RB.$("ERROR_deployer_stage_resolution"));
-                }
-
-                deployables.addAll(collector.deployables);
-            } catch (IOException e) {
-                throw new JReleaserException(RB.$("ERROR_deployer_unexpected_error_stage"), e);
-            }
+            collectDeployables(deployables, stagingRepository);
         }
 
         Map<String, Deployable> deployablesMap = deployables.stream()
             .collect(Collectors.toMap(Deployable::getFullDeployPath, Function.identity()));
 
-        Errors errors = new Errors();
-        checkMavenCentralRules(deployablesMap, errors);
+        Errors errors = checkMavenCentralRules(deployablesMap);
         if (errors.hasErrors()) {
             errors.logErrors(context.getLogger());
             throw new JReleaserException(RB.$("ERROR_deployer_maven_central_rules"));
@@ -154,7 +119,40 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
         return deployables;
     }
 
-    private void checkMavenCentralRules(Map<String, Deployable> deployablesMap, Errors errors) {
+    public Set<Deployable> collectDeployables(Set<Deployable> deployables, String stagingRepository) {
+        Path root = context.getBasedir().resolve(stagingRepository).normalize();
+
+        if (!Files.exists(root)) {
+            throw new JReleaserException(RB.$("validation_directory_not_exist",
+                "maven." + getDeployer().getType() + "." + getDeployer().getName() + ".stagingRepository",
+                context.relativizeToBasedir(root).toString()));
+        }
+
+        if (!root.toFile().isDirectory()) {
+            throw new JReleaserException(RB.$("validation_is_not_a_directory",
+                "maven." + getDeployer().getType() + "." + getDeployer().getName() + ".stagingRepository",
+                context.relativizeToBasedir(root).toString()));
+        }
+
+        try {
+            DeployableCollector collector = new DeployableCollector(root, context.getModel().getProject().isSnapshot());
+
+            java.nio.file.Files.walkFileTree(root, collector);
+            if (collector.failed) {
+                throw new JReleaserException(RB.$("ERROR_deployer_stage_resolution"));
+            }
+
+            deployables.addAll(collector.deployables);
+        } catch (IOException e) {
+            throw new JReleaserException(RB.$("ERROR_deployer_unexpected_error_stage"), e);
+        }
+
+        return deployables;
+    }
+
+    private Errors checkMavenCentralRules(Map<String, Deployable> deployablesMap) {
+        Errors errors = new Errors();
+
         // 1st check jar, sources, javadoc if applicable
         for (Deployable deployable : deployablesMap.values()) {
             if (!deployable.getFilename().endsWith(EXT_POM)) {
@@ -187,7 +185,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
         }
 
         if (!getDeployer().isVerifyPom()) {
-            return;
+            return errors;
         }
 
         PomChecker pomChecker = new PomChecker(context.asImmutable(),
@@ -195,11 +193,11 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
         try {
             if (!pomChecker.setup()) {
                 context.getLogger().warn(RB.$("tool_unavailable", "pomchecker"));
-                return;
+                return errors;
             }
         } catch (ToolException e) {
             context.getLogger().warn(RB.$("tool_unavailable", "pomchecker"), e);
-            return;
+            return errors;
         }
 
         // 2nd check pom
@@ -229,6 +227,8 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
                 handlePomcheckerResult(deployable.getLocalPath().getFileName().toString(), result, null, errors);
             }
         }
+
+        return errors;
     }
 
     private void handlePomcheckerResult(String filename, Command.Result result, CommandException e, Errors errors) {
@@ -395,7 +395,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
 
         for (Deployable deployable : deployables) {
             if (deployable.isSignature() || deployable.isChecksum()) continue;
-            Path localPath = Paths.get(deployable.getStagingRepository(), deployable.getPath(), deployable.getFilename());
+            Path localPath = deployable.getLocalPath();
             context.getLogger().info(" - {}", deployable.getFilename());
 
             if (!context.isDryrun()) {
@@ -422,156 +422,6 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
 
     protected void deleteExistingPackages(String baseUrl, String token, Set<Deployable> deployables) throws DeployException {
         // noop
-    }
-
-    public static class Deployable implements Comparable<Deployable> {
-        private static final Set<String> JAR_EXCLUSIONS = setOf(
-            PACKAGING_POM,
-            PACKAGING_AAR
-        );
-
-        private static final Set<String> SOURCE_EXCLUSIONS = setOf(
-            PACKAGING_POM,
-            PACKAGING_NBM,
-            PACKAGING_AAR
-        );
-
-        private static final Set<String> JAVADOC_EXCLUSIONS = setOf(
-            PACKAGING_POM,
-            PACKAGING_NBM,
-            PACKAGING_MAVEN_ARCHETYPE,
-            PACKAGING_AAR
-        );
-
-        private final String stagingRepository;
-        private final String path;
-        private final String filename;
-        private final String groupId;
-        private final String artifactId;
-        private final String version;
-        private final String packaging;
-
-        public Deployable(String stagingRepository, String path, String packaging, String filename) {
-            this.stagingRepository = stagingRepository;
-            this.path = path;
-            this.filename = filename;
-            this.packaging = packaging;
-
-            if (!MAVEN_METADATA_XML.equals(filename)) {
-                Path p = Paths.get(path);
-                this.version = p.getFileName().toString();
-                p = p.getParent();
-                this.artifactId = p.getFileName().toString();
-                p = p.getParent();
-                String gid = p.toString()
-                    .replace("/", ".")
-                    .replace("\\", ".");
-                if (gid.startsWith(".")) {
-                    gid = gid.substring(1);
-                }
-                this.groupId = gid;
-            } else {
-                this.version = "";
-                this.artifactId = "";
-                this.groupId = "";
-            }
-        }
-
-        public boolean requiresJar() {
-            return isNotBlank(packaging) && !JAR_EXCLUSIONS.contains(packaging);
-        }
-
-        public boolean requiresSourcesJar() {
-            return isNotBlank(packaging) && !SOURCE_EXCLUSIONS.contains(packaging);
-        }
-
-        public boolean requiresJavadocJar() {
-            return isNotBlank(packaging) && !JAVADOC_EXCLUSIONS.contains(packaging);
-        }
-
-        public String getGav() {
-            return groupId + ":" + artifactId + ":" + version;
-        }
-
-        public String getStagingRepository() {
-            return stagingRepository;
-        }
-
-        public String getPath() {
-            return path;
-        }
-
-        public String getFullDeployPath() {
-            return getDeployPath().substring(1) + "/" + getFilename();
-        }
-
-        public String getDeployPath() {
-            return path.replace("\\", "/");
-        }
-
-        public String getFilename() {
-            return filename;
-        }
-
-        public String getGroupId() {
-            return groupId;
-        }
-
-        public String getArtifactId() {
-            return artifactId;
-        }
-
-        public String getVersion() {
-            return version;
-        }
-
-        public Path getLocalPath() {
-            return Paths.get(stagingRepository, path, filename);
-        }
-
-        public Deployable deriveByFilename(String filename) {
-            return new Deployable(stagingRepository, path, packaging, filename);
-        }
-
-        public Deployable deriveByFilename(String packaging, String filename) {
-            return new Deployable(stagingRepository, path, packaging, filename);
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (null == o || getClass() != o.getClass()) return false;
-            Deployable that = (Deployable) o;
-            return stagingRepository.equals(that.stagingRepository) &&
-                path.equals(that.path) &&
-                filename.equals(that.filename);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(stagingRepository, path, filename);
-        }
-
-        @Override
-        public int compareTo(Deployable o) {
-            if (null == o) return -1;
-            return getFullDeployPath().compareTo(o.getFullDeployPath());
-        }
-
-        public boolean isSignature() {
-            return filename.endsWith(EXT_ASC);
-        }
-
-        public boolean isChecksum() {
-            for (String ext : EXT_CHECKSUMS) {
-                if (filename.endsWith(ext)) return true;
-            }
-            return false;
-        }
-
-        public boolean isMavenMetadata() {
-            return filename.endsWith(MAVEN_METADATA_XML);
-        }
     }
 
     private class DeployableCollector extends SimpleFileVisitor<Path> {

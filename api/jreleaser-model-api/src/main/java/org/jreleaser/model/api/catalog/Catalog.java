@@ -27,4 +27,6 @@ import org.jreleaser.model.api.common.Domain;
  */
 public interface Catalog extends Domain, Activatable {
     Sbom getSbom();
+
+    SlsaCataloger getSlsa();
 }

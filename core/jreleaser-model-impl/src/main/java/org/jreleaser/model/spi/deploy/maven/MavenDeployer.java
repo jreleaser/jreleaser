@@ -19,6 +19,8 @@ package org.jreleaser.model.spi.deploy.maven;
 
 import org.jreleaser.model.spi.deploy.DeployException;
 
+import java.util.Set;
+
 /**
  * @author Andres Almiray
  * @since 1.3.0
@@ -32,4 +34,6 @@ public interface MavenDeployer<A extends org.jreleaser.model.api.deploy.maven.Ma
     String getType();
 
     void deploy(String name) throws DeployException;
+
+    Set<Deployable> collectDeployables(Set<Deployable> deployables, String stagingRepository);
 }

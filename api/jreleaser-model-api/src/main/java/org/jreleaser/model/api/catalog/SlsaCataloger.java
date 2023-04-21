@@ -15,23 +15,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.workflow;
-
-import org.jreleaser.engine.catalog.Catalogers;
-import org.jreleaser.model.api.JReleaserCommand;
-import org.jreleaser.model.internal.JReleaserContext;
+package org.jreleaser.model.api.catalog;
 
 /**
  * @author Andres Almiray
- * @since 1.5.0
+ * @since 1.7.0
  */
-class CatalogWorkflowItem extends AbstractWorkflowItem {
-    protected CatalogWorkflowItem() {
-        super(JReleaserCommand.CATALOG);
-    }
+public interface SlsaCataloger extends Cataloger {
+    String KEY_SKIP_SLSA = "skipSlsa";
+    
+    String getAttestationName();
 
-    @Override
-    protected void doInvoke(JReleaserContext context) {
-        Catalogers.catalog(context);
-    }
+    boolean isArtifacts();
+
+    boolean isFiles();
+
+    boolean isDeployables();
 }

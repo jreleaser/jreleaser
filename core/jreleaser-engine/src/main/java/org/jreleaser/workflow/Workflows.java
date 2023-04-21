@@ -63,8 +63,8 @@ public final class Workflows {
     public static Workflow catalog(JReleaserContext context) {
         context.setCommand(JReleaserCommand.CATALOG);
         return new WorkflowImpl(context, asList(
-            new CatalogWorkflowItem(),
-            new ChecksumWorkflowItem()
+            new ChecksumWorkflowItem(),
+            new CatalogWorkflowItem()
         ));
     }
 
