@@ -533,6 +533,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "ge0ffrey",
+      "name": "Geoffrey De Smet",
+      "avatar_url": "https://avatars.githubusercontent.com/u/176880?v=4",
+      "profile": "https://www.linkedin.com/in/ge0ffrey/",
+      "contributions": [
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 7,
