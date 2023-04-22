@@ -72,3 +72,7 @@ image:https://img.shields.io/codecov/c/github/{project-owner}/{project-name}?lab
 image:https://img.shields.io/snyk/vulnerabilities/github/{project-owner}/{project-name}?logo=snyk[Snyk Vulnerabilities for GitHub Repo]
 image:https://sonarcloud.io/api/project_badges/measure?project=org_jreleaser_jreleaser&metric=security_rating[link="https://sonarcloud.io/summary/new_code?id=org_jreleaser_jreleaser"]
 image:https://img.shields.io/librariesio/github/{project-owner}/{project-name}?logo=libraries.io&logoColor=white["Libraries.io dependency status for GitHub repo", link="https://libraries.io/maven/org.jreleaser:{project-name}"]
+
+== Build from source
+
+See link:CONTRIBUTING.adoc[Contributing].
