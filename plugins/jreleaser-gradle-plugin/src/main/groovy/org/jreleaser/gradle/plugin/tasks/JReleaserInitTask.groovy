@@ -75,8 +75,8 @@ abstract class JReleaserInitTask extends DefaultTask {
     }
 
     @Option(option = 'format', description = 'Configuration file format (REQUIRED).')
-    void setFormat(String assemblerType) {
-        this.format.set(assemblerType)
+    void setFormat(String format) {
+        this.format.set(format)
     }
 
     @TaskAction

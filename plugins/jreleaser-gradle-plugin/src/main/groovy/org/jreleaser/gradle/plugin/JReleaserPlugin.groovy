@@ -301,8 +301,7 @@ class JReleaserPlugin implements Plugin<Project> {
                 void execute(JReleaserInitTask t) {
                     t.group = JRELEASER_GROUP
                     t.description = 'Create a jreleaser config file'
-                    t.outputDirectory.set(project.layout
-                        .projectDirectory)
+                    t.outputDirectory.set(project.layout.projectDirectory)
                 }
             })
 
