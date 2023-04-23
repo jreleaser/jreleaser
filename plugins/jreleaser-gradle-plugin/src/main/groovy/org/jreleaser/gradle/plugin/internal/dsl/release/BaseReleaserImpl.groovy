@@ -17,6 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.release
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
@@ -190,26 +191,31 @@ abstract class BaseReleaserImpl implements BaseReleaser {
     }
 
     @Override
+    @CompileDynamic
     void changelog(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Changelog) Closure<Void> action) {
         ConfigureUtil.configure(action, changelog)
     }
 
     @Override
+    @CompileDynamic
     void milestone(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Milestone) Closure<Void> action) {
         ConfigureUtil.configure(action, milestone)
     }
 
     @Override
+    @CompileDynamic
     void commitAuthor(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommitAuthor) Closure<Void> action) {
         ConfigureUtil.configure(action, commitAuthor)
     }
 
     @Override
+    @CompileDynamic
     void update(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Update) Closure<Void> action) {
         ConfigureUtil.configure(action, update)
     }
 
     @Override
+    @CompileDynamic
     void issues(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Issues) Closure<Void> action) {
         ConfigureUtil.configure(action, issues)
     }
@@ -369,6 +375,7 @@ abstract class BaseReleaserImpl implements BaseReleaser {
         }
 
         @Override
+        @CompileDynamic
         void label(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Label) Closure<Void> action) {
             ConfigureUtil.configure(action, label)
         }

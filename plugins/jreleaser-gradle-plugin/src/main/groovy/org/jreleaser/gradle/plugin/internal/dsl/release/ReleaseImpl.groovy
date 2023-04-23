@@ -17,6 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.release
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.model.ObjectFactory
@@ -78,26 +79,31 @@ class ReleaseImpl implements Release {
     }
 
     @Override
+    @CompileDynamic
     void github(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = GithubReleaser) Closure<Void> action) {
         ConfigureUtil.configure(action, github)
     }
 
     @Override
+    @CompileDynamic
     void gitlab(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = GitlabReleaser) Closure<Void> action) {
         ConfigureUtil.configure(action, gitlab)
     }
 
     @Override
+    @CompileDynamic
     void gitea(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = GiteaReleaser) Closure<Void> action) {
         ConfigureUtil.configure(action, gitea)
     }
 
     @Override
+    @CompileDynamic
     void codeberg(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CodebergReleaser) Closure<Void> action) {
         ConfigureUtil.configure(action, codeberg)
     }
 
     @Override
+    @CompileDynamic
     void generic(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = GenericGitReleaser) Closure<Void> action) {
         ConfigureUtil.configure(action, generic)
     }

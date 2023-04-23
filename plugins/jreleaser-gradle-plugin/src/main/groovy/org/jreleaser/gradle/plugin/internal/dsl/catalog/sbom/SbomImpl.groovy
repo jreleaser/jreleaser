@@ -69,11 +69,13 @@ class SbomImpl implements Sbom {
     }
 
     @Override
+    @CompileDynamic
     void cyclonedx(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CyclonedxSbomCataloger) Closure<Void> action) {
         ConfigureUtil.configure(action, cyclonedx)
     }
 
     @Override
+    @CompileDynamic
     void syft(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SyftSbomCataloger) Closure<Void> action) {
         ConfigureUtil.configure(action, syft)
     }

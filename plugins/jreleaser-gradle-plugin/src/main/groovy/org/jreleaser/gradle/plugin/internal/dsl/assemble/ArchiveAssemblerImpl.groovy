@@ -17,6 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.assemble
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
@@ -90,6 +91,7 @@ class ArchiveAssemblerImpl extends AbstractAssembler implements ArchiveAssembler
     }
 
     @Override
+    @CompileDynamic
     void options(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArchiveOptions) Closure<Void> action) {
         ConfigureUtil.configure(action, options)
     }

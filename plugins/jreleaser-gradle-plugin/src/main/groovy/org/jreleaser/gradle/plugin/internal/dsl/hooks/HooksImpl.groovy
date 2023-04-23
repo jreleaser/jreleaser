@@ -17,6 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.hooks
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
@@ -78,11 +79,13 @@ class HooksImpl implements Hooks {
     }
 
     @Override
+    @CompileDynamic
     void command(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommandHooks) Closure<Void> action) {
         ConfigureUtil.configure(action, command)
     }
 
     @Override
+    @CompileDynamic
     void script(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ScriptHooks) Closure<Void> action) {
         ConfigureUtil.configure(action, script)
     }

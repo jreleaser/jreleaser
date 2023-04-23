@@ -17,6 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.release
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
@@ -81,11 +82,13 @@ class GithubReleaserImpl extends BaseReleaserImpl implements GithubReleaser {
     }
 
     @Override
+    @CompileDynamic
     void prerelease(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Prerelease) Closure<Void> action) {
         ConfigureUtil.configure(action, prerelease)
     }
 
     @Override
+    @CompileDynamic
     void releaseNotes(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ReleaseNotes) Closure<Void> action) {
         ConfigureUtil.configure(action, releaseNotes)
     }

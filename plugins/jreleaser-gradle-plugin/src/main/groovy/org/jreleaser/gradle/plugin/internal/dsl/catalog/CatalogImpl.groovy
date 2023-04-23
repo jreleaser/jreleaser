@@ -17,6 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.catalog
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
@@ -61,6 +62,7 @@ class CatalogImpl implements Catalog {
     }
 
     @Override
+    @CompileDynamic
     void sbom(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Sbom) Closure<Void> action) {
         ConfigureUtil.configure(action, sbom)
     }

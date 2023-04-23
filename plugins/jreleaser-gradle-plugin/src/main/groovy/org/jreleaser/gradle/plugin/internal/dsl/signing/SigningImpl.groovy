@@ -17,6 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.signing
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.file.RegularFileProperty
@@ -112,11 +113,13 @@ class SigningImpl implements Signing {
     }
 
     @Override
+    @CompileDynamic
     void command(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Command) Closure<Void> action) {
         ConfigureUtil.configure(action, command)
     }
 
     @Override
+    @CompileDynamic
     void cosign(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Cosign) Closure<Void> action) {
         ConfigureUtil.configure(action, cosign)
     }
@@ -139,7 +142,7 @@ class SigningImpl implements Signing {
         signing
     }
 
-    private static class CommandImpl implements Command {
+    static class CommandImpl implements Command {
         final Property<String> executable
         final Property<String> keyName
         final Property<String> homeDir
@@ -186,7 +189,7 @@ class SigningImpl implements Signing {
         }
     }
 
-    private static class CosignImpl implements Cosign {
+    static class CosignImpl implements Cosign {
         final Property<String> version
         final RegularFileProperty privateKeyFile
         final RegularFileProperty publicKeyFile

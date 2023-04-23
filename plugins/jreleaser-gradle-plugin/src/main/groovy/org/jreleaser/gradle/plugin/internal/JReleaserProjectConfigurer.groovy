@@ -26,7 +26,6 @@ import org.gradle.api.file.Directory
 import org.gradle.api.plugins.JavaApplication
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildServiceSpec
-import org.gradle.util.GradleVersion
 import org.jreleaser.gradle.plugin.JReleaserExtension
 import org.jreleaser.gradle.plugin.tasks.JReleaseAutoConfigReleaseTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserAnnounceTask
@@ -48,7 +47,6 @@ import org.jreleaser.gradle.plugin.tasks.JReleaserTemplateEvalTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserTemplateGenerateTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserUploadTask
 import org.jreleaser.model.internal.JReleaserModel
-import org.jreleaser.version.SemanticVersion
 import org.kordamp.gradle.util.AnsiConsole
 
 import static org.kordamp.gradle.util.StringUtils.isBlank
@@ -400,18 +398,8 @@ class JReleaserProjectConfigurer {
         if (isBlank(model.project.java.mainClass)) {
             JavaApplication application = (JavaApplication) project.extensions.findByType(JavaApplication)
             if (application) {
-                SemanticVersion gradleVersion = SemanticVersion.of(GradleVersion.current().getVersion())
-                if (gradleVersion.major <= 6 && gradleVersion.minor < 4) {
-                    model.project.java.mainClass = application.mainClassName
-                } else {
-                    model.project.java.mainClass = application.mainClass.orNull
-                }
-
-                if (gradleVersion.major <= 6 && gradleVersion.minor < 4) {
-                    model.project.java.mainModule = ''
-                } else {
-                    model.project.java.mainModule = application.mainModule.orNull
-                }
+                model.project.java.mainClass = application.mainClass.orNull
+                model.project.java.mainModule = application.mainModule.orNull
             }
         }
     }

@@ -17,6 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.packagers
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
@@ -122,26 +123,31 @@ class WingetPackagerImpl extends AbstractRepositoryPackager implements WingetPac
     }
 
     @Override
+    @CompileDynamic
     void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action) {
         ConfigureUtil.configure(action, repository)
     }
 
     @Override
+    @CompileDynamic
     void commitAuthor(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommitAuthor) Closure<Void> action) {
         ConfigureUtil.configure(action, commitAuthor)
     }
 
     @Override
+    @CompileDynamic
     void wingetPackage(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Package) Closure<Void> action) {
         ConfigureUtil.configure(action, wingetPackage)
     }
 
     @Override
+    @CompileDynamic
     void publisher(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Publisher) Closure<Void> action) {
         ConfigureUtil.configure(action, publisher)
     }
 
     @Override
+    @CompileDynamic
     void installer(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Installer) Closure<Void> action) {
         ConfigureUtil.configure(action, installer)
     }

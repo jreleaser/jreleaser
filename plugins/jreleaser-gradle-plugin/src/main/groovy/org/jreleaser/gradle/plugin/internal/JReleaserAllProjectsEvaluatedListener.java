@@ -15,27 +15,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.gradle.plugin.internal
+package org.jreleaser.gradle.plugin.internal;
 
-import groovy.transform.CompileStatic
-import org.gradle.api.Project
-import org.kordamp.gradle.annotations.DependsOn
-import org.kordamp.gradle.listener.AllProjectsEvaluatedListener
+import org.gradle.api.Project;
+import org.kordamp.gradle.annotations.DependsOn;
+import org.kordamp.gradle.listener.AllProjectsEvaluatedListener;
 
-import javax.inject.Named
+import javax.inject.Named;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-@CompileStatic
-@DependsOn(['base', '*'])
-@Named('jreleaser')
-class JReleaserAllProjectsEvaluatedListener implements AllProjectsEvaluatedListener {
-    Runnable runnable
+@DependsOn({"base", "*"})
+@Named("jreleaser")
+public class JReleaserAllProjectsEvaluatedListener implements AllProjectsEvaluatedListener {
+    private Runnable runnable;
 
     @Override
-    void allProjectsEvaluated(Project project) {
-        runnable?.run()
+    public void allProjectsEvaluated(Project project) {
+        if (null != runnable) runnable.run();
+    }
+
+    public Runnable getRunnable() {
+        return runnable;
+    }
+
+    public void setRunnable(Runnable runnable) {
+        this.runnable = runnable;
     }
 }

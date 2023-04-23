@@ -17,6 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.deploy
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
@@ -61,6 +62,7 @@ class DeployImpl implements Deploy {
     }
 
     @Override
+    @CompileDynamic
     void maven(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Maven) Closure<Void> action) {
         ConfigureUtil.configure(action, maven)
     }

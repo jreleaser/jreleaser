@@ -17,6 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.assemble
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
@@ -139,31 +140,37 @@ class JpackageAssemblerImpl extends AbstractJavaAssembler implements JpackageAss
     }
 
     @Override
+    @CompileDynamic
     void runtimeImage(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
         ConfigureUtil.configure(action, runtimeImages.maybeCreate("runtimeImage-${runtimeImages.size()}".toString()))
     }
 
     @Override
+    @CompileDynamic
     void applicationPackage(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ApplicationPackage) Closure<Void> action) {
         ConfigureUtil.configure(action, applicationPackage)
     }
 
     @Override
+    @CompileDynamic
     void launcher(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Launcher) Closure<Void> action) {
         ConfigureUtil.configure(action, launcher)
     }
 
     @Override
+    @CompileDynamic
     void linux(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Linux) Closure<Void> action) {
         ConfigureUtil.configure(action, linux)
     }
 
     @Override
+    @CompileDynamic
     void windows(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Windows) Closure<Void> action) {
         ConfigureUtil.configure(action, windows)
     }
 
     @Override
+    @CompileDynamic
     void osx(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Osx) Closure<Void> action) {
         ConfigureUtil.configure(action, osx)
     }
@@ -300,6 +307,7 @@ class JpackageAssemblerImpl extends AbstractJavaAssembler implements JpackageAss
         }
 
         @Override
+        @CompileDynamic
         void jdk(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
             ConfigureUtil.configure(action, jdk)
         }

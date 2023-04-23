@@ -32,15 +32,14 @@ config {
 }
 
 dependencies {
-    compileOnly gradleApi()
+    compileOnly "dev.gradleplugins:gradle-api:$gradleVersion"
+    api "org.kordamp.gradle:base-gradle-plugin:$kordampVersion"
 
     api project(':jreleaser-engine')
     //config
     api project(':jreleaser-config-yaml')
     api project(':jreleaser-config-toml')
     api project(':jreleaser-config-json')
-
-    api "org.kordamp.gradle:base-gradle-plugin:$kordampPluginVersion"
 }
 
 processResources {
@@ -52,16 +51,4 @@ processResources {
             'name': project.pluginDisplayName
         )
     }
-}
-
-def scompat = project.findProperty('sourceCompatibility')
-def tcompat = project.findProperty('targetCompatibility')
-
-tasks.withType(JavaCompile) { JavaCompile c ->
-    if (scompat) c.sourceCompatibility = scompat
-    if (tcompat) c.targetCompatibility = tcompat
-}
-tasks.withType(GroovyCompile) { GroovyCompile c ->
-    if (scompat) c.sourceCompatibility = scompat
-    if (tcompat) c.targetCompatibility = tcompat
 }

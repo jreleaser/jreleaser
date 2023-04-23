@@ -17,6 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.extensions
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
@@ -66,6 +67,7 @@ class ExtensionImpl implements Extension {
     }
 
     @Override
+    @CompileDynamic
     void provider(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Provider) Closure<Void> action) {
         ConfigureUtil.configure(action, providers.maybeCreate("provider-${providers.size()}".toString()))
     }
