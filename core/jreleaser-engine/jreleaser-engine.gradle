@@ -23,7 +23,6 @@ dependencies {
     api project(':jreleaser-signing-java-sdk')
     api project(':jreleaser-command-java-sdk')
 
-    api project(':jreleaser-graalvm-sdk')
     api "org.apache.commons:commons-text:$commonsTextVersion"
     api "org.commonmark:commonmark:$commonmarkVersion"
     api "com.github.victools:jsonschema-generator:$jsonSchemaVersion"

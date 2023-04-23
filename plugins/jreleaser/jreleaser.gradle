@@ -26,18 +26,15 @@ application {
 
 jar {
     manifest {
-        attributes('Automatic-Module-Name': project.findProperty('automatic.module.name'))
+        attributes([
+            'Main-Class': 'org.jreleaser.cli.Main',
+            'Automatic-Module-Name': project.findProperty('automatic.module.name')
+        ])
     }
 }
 
 startScripts {
     classpath = files('$APP_HOME/lib/*')
-}
-
-jar {
-    manifest {
-        attributes('Main-Class': 'org.jreleaser.cli.Main')
-    }
 }
 
 config {
@@ -46,8 +43,13 @@ config {
     }
 }
 
+configurations {
+    graalvm
+}
+
 dependencies {
     api project(':jreleaser-engine')
+    graalvm project(':jreleaser-graalvm-sdk')
     //config
     api project(':jreleaser-config-yaml')
     api project(':jreleaser-config-toml')
@@ -151,4 +153,9 @@ copyDependencies {
     configuration = 'runtimeClasspath'
 }
 
-assemble.dependsOn copyDependencies
+task copyGraalvmJavaSdk(type: Copy) {
+    from configurations.graalvm
+    into 'build/dependencies/flat'
+}
+
+assemble.dependsOn copyDependencies, copyGraalvmJavaSdk
