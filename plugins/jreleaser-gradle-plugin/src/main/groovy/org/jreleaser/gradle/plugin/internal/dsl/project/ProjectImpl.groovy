@@ -17,6 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.project
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
@@ -153,6 +154,7 @@ class ProjectImpl implements Project {
     }
 
     @Override
+    @CompileDynamic
     void links(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Links) Closure<Void> action) {
         ConfigureUtil.configure(action, links)
     }
@@ -163,6 +165,7 @@ class ProjectImpl implements Project {
     }
 
     @Override
+    @CompileDynamic
     void java(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Java) Closure<Void> action) {
         ConfigureUtil.configure(action, java)
     }
@@ -173,6 +176,7 @@ class ProjectImpl implements Project {
     }
 
     @Override
+    @CompileDynamic
     void snapshot(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Snapshot) Closure<Void> action) {
         ConfigureUtil.configure(action, snapshot)
     }
@@ -183,6 +187,7 @@ class ProjectImpl implements Project {
     }
 
     @Override
+    @CompileDynamic
     void screenshot(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Screenshot) Closure<Void> action) {
         ConfigureUtil.configure(action, screenshots.maybeCreate("screenshot-${screenshots.size()}".toString()))
     }
@@ -193,6 +198,7 @@ class ProjectImpl implements Project {
     }
 
     @Override
+    @CompileDynamic
     void icon(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Icon) Closure<Void> action) {
         ConfigureUtil.configure(action, icons.maybeCreate("icons-${icons.size()}".toString()))
     }

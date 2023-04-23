@@ -137,6 +137,7 @@ abstract class AbstractMavenDeployer implements MavenDeployer {
     }
 
     @Override
+    @CompileDynamic
     void artifactOverride(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArtifactOverride) Closure<Void> action) {
         ConfigureUtil.configure(action, artifactOverrides.maybeCreate("artifact-${artifactOverrides.size()}".toString()))
     }

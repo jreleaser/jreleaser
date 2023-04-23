@@ -19,9 +19,5 @@ updates:
       - dependency-name: org.twitter4j:twitter4j-core
       # aws-java-sdk updates several times per week
       - dependency-name: com.amazonaws:aws-java-sdk-s3
-      # checkstyle requires Java 11+
-      - dependency-name: com.puppycrawl.tools:checkstyle
       # download-task 5.1.x fails due to gradle module metadata
       - dependency-name: de.undercouch:gradle-download-task
-      # error_prone_core 2.11.0+ requires Java 11+
-      - dependency-name: com.google.errorprone:error_prone_core

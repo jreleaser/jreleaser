@@ -17,6 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.hooks
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
@@ -117,16 +118,19 @@ class CommandHooksImpl implements CommandHooks {
     }
 
     @Override
+    @CompileDynamic
     void before(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommandHook) Closure<Void> action) {
         ConfigureUtil.configure(action, before.maybeCreate("before-${before.size()}".toString()))
     }
 
     @Override
+    @CompileDynamic
     void success(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommandHook) Closure<Void> action) {
         ConfigureUtil.configure(action, success.maybeCreate("success-${success.size()}".toString()))
     }
 
     @Override
+    @CompileDynamic
     void failure(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommandHook) Closure<Void> action) {
         ConfigureUtil.configure(action, failure.maybeCreate("failure-${failure.size()}".toString()))
     }

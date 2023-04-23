@@ -21,7 +21,8 @@ link:https://github.com/jreleaser/jreleaser/discussions[discussion] topic if you
 == How to build
 
 .Prerequisites
-Java 11.
+ - Java 11, up to 17.
+ - Gradle 7.6.1. Use the provided `gradlew` script!
 
 1. `git clone https://github.com/jreleaser/jreleaser.git`
 2. `cd jreleaser`

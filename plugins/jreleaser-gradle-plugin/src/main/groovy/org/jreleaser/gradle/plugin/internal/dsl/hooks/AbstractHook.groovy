@@ -17,6 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.hooks
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
@@ -74,6 +75,7 @@ abstract class AbstractHook implements Hook {
     }
 
     @Override
+    @CompileDynamic
     void filter(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Filter) Closure<Void> action) {
         ConfigureUtil.configure(action, filter)
     }

@@ -17,6 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.announce
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
@@ -77,6 +78,7 @@ class ArticleAnnouncerImpl extends AbstractAnnouncer implements ArticleAnnouncer
     }
 
     @Override
+    @CompileDynamic
     void file(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
         ConfigureUtil.configure(action, files.maybeCreate("files-${files.size()}".toString()))
     }
@@ -93,11 +95,13 @@ class ArticleAnnouncerImpl extends AbstractAnnouncer implements ArticleAnnouncer
     }
 
     @Override
+    @CompileDynamic
     void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action) {
         ConfigureUtil.configure(action, repository)
     }
 
     @Override
+    @CompileDynamic
     void commitAuthor(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommitAuthor) Closure<Void> action) {
         ConfigureUtil.configure(action, commitAuthor)
     }

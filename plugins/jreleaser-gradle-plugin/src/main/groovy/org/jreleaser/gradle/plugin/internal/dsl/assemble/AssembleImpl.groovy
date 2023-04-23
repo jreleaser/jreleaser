@@ -135,26 +135,31 @@ class AssembleImpl implements Assemble {
     }
 
     @Override
+    @CompileDynamic
     void archive(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, archive)
     }
 
     @Override
+    @CompileDynamic
     void javaArchive(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, javaArchive)
     }
 
     @Override
+    @CompileDynamic
     void jlink(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, jlink)
     }
 
     @Override
+    @CompileDynamic
     void jpackage(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, jpackage)
     }
 
     @Override
+    @CompileDynamic
     void nativeImage(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, nativeImage)
     }

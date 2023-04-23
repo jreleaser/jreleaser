@@ -17,6 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.announce
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
@@ -232,101 +233,121 @@ class AnnounceImpl implements Announce {
     }
 
     @Override
+    @CompileDynamic
     void article(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArticleAnnouncer) Closure<Void> action) {
         ConfigureUtil.configure(action, article)
     }
 
     @Override
+    @CompileDynamic
     void discord(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DiscordAnnouncer) Closure<Void> action) {
         ConfigureUtil.configure(action, discord)
     }
 
     @Override
+    @CompileDynamic
     void discourse(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DiscourseAnnouncer) Closure<Void> action) {
         ConfigureUtil.configure(action, discourse)
     }
 
     @Override
+    @CompileDynamic
     void discussions(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DiscussionsAnnouncer) Closure<Void> action) {
         ConfigureUtil.configure(action, discussions)
     }
 
     @Override
+    @CompileDynamic
     void gitter(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = GitterAnnouncer) Closure<Void> action) {
         ConfigureUtil.configure(action, gitter)
     }
 
     @Override
+    @CompileDynamic
     void googleChat(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = GoogleChatAnnouncer) Closure<Void> action) {
         ConfigureUtil.configure(action, googleChat)
     }
 
     @Override
+    @CompileDynamic
     void linkedin(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = LinkedinAnnouncer) Closure<Void> action) {
         ConfigureUtil.configure(action, linkedin)
     }
 
     @Override
+    @CompileDynamic
     void http(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, http)
     }
 
     @Override
+    @CompileDynamic
     void mail(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SmtpAnnouncer) Closure<Void> action) {
         ConfigureUtil.configure(action, smtp)
     }
 
     @Override
+    @CompileDynamic
     void smtp(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SmtpAnnouncer) Closure<Void> action) {
         ConfigureUtil.configure(action, smtp)
     }
 
     @Override
+    @CompileDynamic
     void mastodon(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = MastodonAnnouncer) Closure<Void> action) {
         ConfigureUtil.configure(action, mastodon)
     }
 
     @Override
+    @CompileDynamic
     void mattermost(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = MattermostAnnouncer) Closure<Void> action) {
         ConfigureUtil.configure(action, mattermost)
     }
 
     @Override
+    @CompileDynamic
     void openCollective(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = OpenCollectiveAnnouncer) Closure<Void> action) {
         ConfigureUtil.configure(action, openCollective)
     }
 
     @Override
+    @CompileDynamic
     void sdkman(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SdkmanAnnouncer) Closure<Void> action) {
         ConfigureUtil.configure(action, sdkman)
     }
 
     @Override
+    @CompileDynamic
     void slack(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SlackAnnouncer) Closure<Void> action) {
         ConfigureUtil.configure(action, slack)
     }
 
     @Override
+    @CompileDynamic
     void teams(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = TeamsAnnouncer) Closure<Void> action) {
         ConfigureUtil.configure(action, teams)
     }
 
     @Override
+    @CompileDynamic
     void telegram(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = TelegramAnnouncer) Closure<Void> action) {
         ConfigureUtil.configure(action, telegram)
     }
 
     @Override
+    @CompileDynamic
     void twitter(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = TwitterAnnouncer) Closure<Void> action) {
         ConfigureUtil.configure(action, twitter)
     }
 
     @Override
+    @CompileDynamic
     void zulip(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ZulipAnnouncer) Closure<Void> action) {
         ConfigureUtil.configure(action, zulip)
     }
 
     @Override
+    @CompileDynamic
     void webhooks(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, webhooks)
     }

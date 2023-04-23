@@ -17,6 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.catalog.sbom
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
@@ -73,6 +74,7 @@ abstract class AbstractSbomCataloger implements SbomCataloger {
     }
 
     @Override
+    @CompileDynamic
     void pack(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Pack) Closure<Void> action) {
         ConfigureUtil.configure(action, pack)
     }

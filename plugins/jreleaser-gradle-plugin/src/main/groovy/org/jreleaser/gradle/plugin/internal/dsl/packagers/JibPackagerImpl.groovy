@@ -98,16 +98,19 @@ class JibPackagerImpl extends AbstractJibConfiguration implements JibPackager {
     }
 
     @Override
+    @CompileDynamic
     void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JibRepository) Closure<Void> action) {
         ConfigureUtil.configure(action, repository)
     }
 
     @Override
+    @CompileDynamic
     void specs(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, specs)
     }
 
     @Override
+    @CompileDynamic
     void commitAuthor(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommitAuthor) Closure<Void> action) {
         ConfigureUtil.configure(action, commitAuthor)
     }

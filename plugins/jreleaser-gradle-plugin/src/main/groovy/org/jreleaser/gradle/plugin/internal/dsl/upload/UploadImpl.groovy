@@ -184,41 +184,49 @@ class UploadImpl implements Upload {
     }
 
     @Override
+    @CompileDynamic
     void artifactory(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, artifactory)
     }
 
     @Override
+    @CompileDynamic
     void ftp(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, ftp)
     }
 
     @Override
+    @CompileDynamic
     void gitea(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, gitea)
     }
 
     @Override
+    @CompileDynamic
     void gitlab(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, gitlab)
     }
 
     @Override
+    @CompileDynamic
     void http(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, http)
     }
 
     @Override
+    @CompileDynamic
     void s3(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, s3)
     }
 
     @Override
+    @CompileDynamic
     void scp(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, scp)
     }
 
     @Override
+    @CompileDynamic
     void sftp(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, sftp)
     }

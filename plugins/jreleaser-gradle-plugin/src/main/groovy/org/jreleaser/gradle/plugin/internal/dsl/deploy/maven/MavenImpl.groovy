@@ -159,36 +159,43 @@ class MavenImpl implements Maven {
     }
 
     @Override
+    @CompileDynamic
     void artifactory(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, artifactory)
     }
 
     @Override
+    @CompileDynamic
     void azure(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, azure)
     }
 
     @Override
+    @CompileDynamic
     void gitea(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, gitea)
     }
 
     @Override
+    @CompileDynamic
     void github(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, github)
     }
 
     @Override
+    @CompileDynamic
     void gitlab(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, gitlab)
     }
 
     @Override
+    @CompileDynamic
     void nexus2(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, nexus2)
     }
 
     @Override
+    @CompileDynamic
     void pomchecker(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Pomchecker) Closure<Void> action) {
         ConfigureUtil.configure(action, pomchecker)
     }

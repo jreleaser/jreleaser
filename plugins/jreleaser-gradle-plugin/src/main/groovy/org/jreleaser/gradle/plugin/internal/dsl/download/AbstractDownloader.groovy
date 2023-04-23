@@ -17,6 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.download
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
@@ -71,6 +72,7 @@ abstract class AbstractDownloader implements Downloader {
     }
 
     @Override
+    @CompileDynamic
     void asset(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Asset) Closure<Void> action) {
         ConfigureUtil.configure(action, assets.maybeCreate("asset-${assets.size()}".toString()))
     }
@@ -152,6 +154,7 @@ abstract class AbstractDownloader implements Downloader {
         }
 
         @Override
+        @CompileDynamic
         void unpack(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Unpack) Closure<Void> action) {
             ConfigureUtil.configure(action, unpack)
         }

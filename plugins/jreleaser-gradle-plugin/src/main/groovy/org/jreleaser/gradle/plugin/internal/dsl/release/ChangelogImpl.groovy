@@ -17,6 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.release
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.file.RegularFileProperty
@@ -188,6 +189,7 @@ class ChangelogImpl implements Changelog {
     }
 
     @Override
+    @CompileDynamic
     void category(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Category) Closure<Void> action) {
         CategoryImpl category = objects.newInstance(CategoryImpl, objects)
         ConfigureUtil.configure(action, category)
@@ -195,6 +197,7 @@ class ChangelogImpl implements Changelog {
     }
 
     @Override
+    @CompileDynamic
     void labeler(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Labeler) Closure<Void> action) {
         LabelerImpl labeler = objects.newInstance(LabelerImpl, objects)
         ConfigureUtil.configure(action, labeler)
@@ -202,6 +205,7 @@ class ChangelogImpl implements Changelog {
     }
 
     @Override
+    @CompileDynamic
     void replacer(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Replacer) Closure<Void> action) {
         ReplacerImpl replacer = objects.newInstance(ReplacerImpl, objects)
         ConfigureUtil.configure(action, replacer)
@@ -209,16 +213,19 @@ class ChangelogImpl implements Changelog {
     }
 
     @Override
+    @CompileDynamic
     void hide(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Hide) Closure<Void> action) {
         ConfigureUtil.configure(action, hide)
     }
 
     @Override
+    @CompileDynamic
     void contributors(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Contributors) Closure<Void> action) {
         ConfigureUtil.configure(action, contributors)
     }
 
     @Override
+    @CompileDynamic
     void append(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Append) Closure<Void> action) {
         ConfigureUtil.configure(action, append)
     }

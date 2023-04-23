@@ -17,6 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.packagers
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
@@ -105,16 +106,19 @@ class BrewPackagerImpl extends AbstractRepositoryPackager implements BrewPackage
     }
 
     @Override
+    @CompileDynamic
     void repoTap(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action) {
         ConfigureUtil.configure(action, repoTap)
     }
 
     @Override
+    @CompileDynamic
     void commitAuthor(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommitAuthor) Closure<Void> action) {
         ConfigureUtil.configure(action, commitAuthor)
     }
 
     @Override
+    @CompileDynamic
     void cask(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Cask) Closure<Void> action) {
         ConfigureUtil.configure(action, cask)
     }

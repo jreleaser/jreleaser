@@ -17,6 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.packagers
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.model.ObjectFactory
@@ -65,11 +66,13 @@ class GofishPackagerImpl extends AbstractRepositoryPackager implements GofishPac
     }
 
     @Override
+    @CompileDynamic
     void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action) {
         ConfigureUtil.configure(action, repository)
     }
 
     @Override
+    @CompileDynamic
     void commitAuthor(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommitAuthor) Closure<Void> action) {
         ConfigureUtil.configure(action, commitAuthor)
     }

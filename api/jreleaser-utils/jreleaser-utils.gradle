@@ -37,10 +37,11 @@ dependencies {
     api "com.github.luben:zstd-jni:$zstdVersion"
 }
 
-// test {
-//     // Required for junit-pioneer in JDK17+
-//     jvmArgs '--add-opens java.base/java.lang=ALL-UNNAMED'
-// }
+test {
+    // Required for junit-pioneer in JDK17+
+    jvmArgs '--add-opens', 'java.base/java.lang=ALL-UNNAMED',
+        '--add-opens', 'java.base/java.util=ALL-UNNAMED'
+}
 
 processResources {
     filesMatching(['**/*.properties']) {

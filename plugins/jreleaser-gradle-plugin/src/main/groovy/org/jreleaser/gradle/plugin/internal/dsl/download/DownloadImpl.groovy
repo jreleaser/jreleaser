@@ -119,21 +119,25 @@ class DownloadImpl implements Download {
     }
 
     @Override
+    @CompileDynamic
     void ftp(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, ftp)
     }
 
     @Override
+    @CompileDynamic
     void http(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, http)
     }
 
     @Override
+    @CompileDynamic
     void scp(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, scp)
     }
 
     @Override
+    @CompileDynamic
     void sftp(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, sftp)
     }

@@ -17,6 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.release
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
@@ -70,6 +71,7 @@ class CodebergReleaserImpl extends BaseReleaserImpl implements CodebergReleaser 
     }
 
     @Override
+    @CompileDynamic
     void prerelease(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Prerelease) Closure<Void> action) {
         ConfigureUtil.configure(action, prerelease)
     }

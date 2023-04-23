@@ -17,6 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.assemble
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
@@ -152,21 +153,25 @@ class JlinkAssemblerImpl extends AbstractJavaAssembler implements JlinkAssembler
     }
 
     @Override
+    @CompileDynamic
     void jdeps(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Jdeps) Closure<Void> action) {
         ConfigureUtil.configure(action, jdeps)
     }
 
     @Override
+    @CompileDynamic
     void jdk(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
         ConfigureUtil.configure(action, jdk)
     }
 
     @Override
+    @CompileDynamic
     void targetJdk(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
         ConfigureUtil.configure(action, targetJdks.maybeCreate("targetJdk-${targetJdks.size()}".toString()))
     }
 
     @Override
+    @CompileDynamic
     void options(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArchiveOptions) Closure<Void> action) {
         ConfigureUtil.configure(action, options)
     }

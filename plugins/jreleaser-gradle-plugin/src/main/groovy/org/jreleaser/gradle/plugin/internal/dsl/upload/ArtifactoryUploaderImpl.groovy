@@ -17,6 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.upload
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
@@ -90,6 +91,7 @@ class ArtifactoryUploaderImpl extends AbstractWebUploader implements Artifactory
     }
 
     @Override
+    @CompileDynamic
     void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArtifactoryRepository) Closure<Void> action) {
         ConfigureUtil.configure(action, repositories.maybeCreate("repository-${repositories.size()}".toString()))
     }
