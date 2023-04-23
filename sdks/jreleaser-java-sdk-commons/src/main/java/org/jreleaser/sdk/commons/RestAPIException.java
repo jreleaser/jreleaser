@@ -40,6 +40,7 @@ public class RestAPIException extends RuntimeException {
     }
 
     public RestAPIException(Request request, int status, String reason, Map<String, Collection<String>> headers) {
+        super(status + ": " + reason);
         this.request = request;
         this.status = status;
         this.reason = reason;
