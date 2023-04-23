@@ -68,6 +68,10 @@ jobs:
             out/jreleaser/trace.log
             out/jreleaser/output.properties
 
+      - name: Dependencies
+        run: |
+          ls -l plugins/jreleaser/build/dependencies/flat
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
