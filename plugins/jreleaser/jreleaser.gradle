@@ -155,7 +155,7 @@ copyDependencies {
 
 task copyGraalvmJavaSdk(type: Copy) {
     from configurations.graalvm
-    into 'build/dependencies/flat'
+    into 'build/dependencies/graalvm'
 }
 
 assemble.dependsOn copyDependencies, copyGraalvmJavaSdk

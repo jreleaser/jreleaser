@@ -71,6 +71,7 @@ jobs:
       - name: Dependencies
         run: |
           ls -l plugins/jreleaser/build/dependencies/flat
+          ls -l plugins/jreleaser/build/dependencies/graalvm
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3

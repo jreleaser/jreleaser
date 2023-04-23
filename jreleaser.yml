@@ -250,6 +250,7 @@ assemble:
         path: 'plugins/jreleaser/build/libs/jreleaser-{{projectVersion}}.jar'
       jars:
         - pattern: 'plugins/jreleaser/build/dependencies/flat/*.jar'
+        - pattern: 'plugins/jreleaser/build/dependencies/graalvm/*.jar'
       graalJdks:
         - path: '{{jdkPathPrefix}}/graal17Osx/{{graalFilePrefix}}/Contents/Home'
           platform: 'osx-x86_64'
