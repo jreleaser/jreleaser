@@ -28,7 +28,6 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.JReleaserModel;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.release.BaseReleaser;
-import org.jreleaser.model.internal.release.CodebergReleaser;
 import org.jreleaser.model.internal.release.GithubReleaser;
 import org.jreleaser.model.internal.release.GitlabReleaser;
 import org.jreleaser.model.internal.util.Artifacts;
@@ -492,13 +491,6 @@ public final class ModelAutoConfigurer {
                 case GITLAB:
                     service = new GitlabReleaser();
                     model.getRelease().setGitlab((GitlabReleaser) service);
-                    break;
-                case CODEBERG:
-                    service = new CodebergReleaser();
-                    model.getRelease().setCodeberg((CodebergReleaser) service);
-                    service.getPrerelease().setEnabled(prerelease);
-                    service.getPrerelease().setPattern(prereleasePattern);
-                    ((CodebergReleaser) service).setDraft(draft);
                     break;
                 default:
                     throw new JReleaserException(RB.$("ERROR_context_configurer_unsupported_url", repository.getHttpUrl()));

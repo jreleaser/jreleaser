@@ -24,7 +24,6 @@ import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.api.JReleaserModel;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.release.BaseReleaser;
-import org.jreleaser.model.internal.release.CodebergReleaser;
 import org.jreleaser.model.internal.release.GithubReleaser;
 import org.jreleaser.model.internal.release.GitlabReleaser;
 import org.jreleaser.model.spi.release.Commit;
@@ -82,9 +81,6 @@ public final class ModelConfigurer {
             case GITLAB:
                 autoConfigureGitlab(context, repository);
                 break;
-            case CODEBERG:
-                autoConfigureCodeberg(context, repository);
-                break;
             default:
                 autoConfigureOther(context, repository);
         }
@@ -118,23 +114,6 @@ public final class ModelConfigurer {
             }
         } else {
             context.getModel().getRelease().setGitlab(new GitlabReleaser());
-        }
-
-        fillGitProperties(context.getLogger(), context.getModel().getRelease().getReleaser(),
-            repository, context.getModel().getCommit());
-    }
-
-    private static void autoConfigureCodeberg(JReleaserContext context, Repository repository) {
-        BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
-
-        if (null != service) {
-            if (!(service instanceof CodebergReleaser)) {
-                context.getModel().getRelease().getReleaser().setMatch(false);
-                context.getModel().getRelease().getReleaser().setSkipTag(true);
-                context.getLogger().warn(RB.$("ERROR_context_configurer_detected_git"), "codeberg", service.getServiceName());
-            }
-        } else {
-            context.getModel().getRelease().setCodeberg(new CodebergReleaser());
         }
 
         fillGitProperties(context.getLogger(), context.getModel().getRelease().getReleaser(),

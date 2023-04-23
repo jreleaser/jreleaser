@@ -33,8 +33,6 @@ interface Release {
 
     GiteaReleaser getGitea()
 
-    CodebergReleaser getCodeberg()
-
     GenericGitReleaser getGeneric()
 
     void github(Action<? super GithubReleaser> action)
@@ -43,8 +41,6 @@ interface Release {
 
     void gitea(Action<? super GiteaReleaser> action)
 
-    void codeberg(Action<? super CodebergReleaser> action)
-
     void generic(Action<? super GenericGitReleaser> action)
 
     void github(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = GithubReleaser) Closure<Void> action)
@@ -52,8 +48,6 @@ interface Release {
     void gitlab(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = GitlabReleaser) Closure<Void> action)
 
     void gitea(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = GiteaReleaser) Closure<Void> action)
-
-    void codeberg(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CodebergReleaser) Closure<Void> action)
 
     void generic(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = GenericGitReleaser) Closure<Void> action)
 }

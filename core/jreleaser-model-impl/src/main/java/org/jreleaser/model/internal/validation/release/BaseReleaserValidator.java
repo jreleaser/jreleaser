@@ -27,7 +27,6 @@ import org.jreleaser.model.internal.JReleaserModel;
 import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.internal.release.BaseReleaser;
 import org.jreleaser.model.internal.release.Changelog;
-import org.jreleaser.model.internal.release.CodebergReleaser;
 import org.jreleaser.model.internal.release.GenericGitReleaser;
 import org.jreleaser.model.internal.release.GiteaReleaser;
 import org.jreleaser.model.internal.release.GithubReleaser;
@@ -245,11 +244,6 @@ public final class BaseReleaserValidator {
 
             if (service instanceof GiteaReleaser) {
                 GiteaReleaser g = (GiteaReleaser) service;
-                if (!g.isDraftSet()) g.setDraft(false);
-            }
-
-            if (service instanceof CodebergReleaser) {
-                CodebergReleaser g = (CodebergReleaser) service;
                 if (!g.isDraftSet()) g.setDraft(false);
             }
 

@@ -22,7 +22,6 @@ import org.jreleaser.extensions.api.workflow.WorkflowListenerException;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.api.JReleaserCommand;
 import org.jreleaser.model.api.hooks.ExecutionEvent;
-import org.jreleaser.model.api.release.CodebergReleaser;
 import org.jreleaser.model.api.release.GenericGitReleaser;
 import org.jreleaser.model.api.release.GiteaReleaser;
 import org.jreleaser.model.api.release.GithubReleaser;
@@ -83,9 +82,6 @@ public final class Releasers {
         }
         if (null != context.getModel().getRelease().getGitea()) {
             return (T) builders.get(GiteaReleaser.TYPE);
-        }
-        if (null != context.getModel().getRelease().getCodeberg()) {
-            return (T) builders.get(CodebergReleaser.TYPE);
         }
         if (null != context.getModel().getRelease().getGeneric()) {
             return (T) builders.get(GenericGitReleaser.TYPE);

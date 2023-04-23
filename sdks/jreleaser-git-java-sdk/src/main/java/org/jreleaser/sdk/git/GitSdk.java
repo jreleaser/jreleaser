@@ -118,9 +118,6 @@ public class GitSdk {
                 case "gitlab.com":
                     kind = Repository.Kind.GITLAB;
                     break;
-                case "codeberg.org":
-                    kind = Repository.Kind.CODEBERG;
-                    break;
                 default:
                     // noop
             }

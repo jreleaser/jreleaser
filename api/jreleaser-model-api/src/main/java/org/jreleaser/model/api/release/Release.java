@@ -30,8 +30,6 @@ public interface Release extends Domain {
 
     GiteaReleaser getGitea();
 
-    CodebergReleaser getCodeberg();
-
     GenericGitReleaser getGeneric();
 
     Releaser getReleaser();
