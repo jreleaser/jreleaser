@@ -21,7 +21,7 @@ dependencies {
 
     api project(':jreleaser-model-impl')
 
-    api "org.twitter4j:twitter4j-core:$twitter4jVersion"
-
-    testImplementation project(':jreleaser-test-support')
+    api("org.twitter4j:twitter4j-core:$twitter4jVersion") {
+        exclude group: 'org.jetbrains', module: 'annotations'
+    }
 }

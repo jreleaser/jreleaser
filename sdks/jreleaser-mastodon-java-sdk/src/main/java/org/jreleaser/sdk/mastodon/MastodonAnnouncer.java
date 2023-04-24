@@ -77,7 +77,6 @@ public class MastodonAnnouncer implements Announcer<org.jreleaser.model.api.anno
                 .forEach(statuses::add);
         }
         if (statuses.isEmpty() && !mastodon.getStatuses().isEmpty()) {
-            statuses.addAll(mastodon.getStatuses());
             mastodon.getStatuses().stream()
                 .filter(StringUtils::isNotBlank)
                 .map(String::trim)

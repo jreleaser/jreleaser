@@ -15,8 +15,6 @@ updates:
       - dependency-name: org.eclipse.jgit:org.eclipse.jgit
       # commons-net has a broken timestamp version -> 20030805.205232
       - dependency-name: commons-net:commons-net
-      # twitterj 4.1.x breaks BC
-      - dependency-name: org.twitter4j:twitter4j-core
       # aws-java-sdk updates several times per week
       - dependency-name: com.amazonaws:aws-java-sdk-s3
       # download-task 5.1.x fails due to gradle module metadata

@@ -31,7 +31,6 @@ public class UpdateStatusTwitterCommand extends AbstractTwitterCommand {
     private final List<String> statuses;
 
     private UpdateStatusTwitterCommand(JReleaserLogger logger,
-                                       String apiHost,
                                        int connectTimeout,
                                        int readTimeout,
                                        String consumerKey,
@@ -40,7 +39,7 @@ public class UpdateStatusTwitterCommand extends AbstractTwitterCommand {
                                        String accessTokenSecret,
                                        boolean dryrun,
                                        List<String> statuses) {
-        super(logger, apiHost, connectTimeout, readTimeout, consumerKey, consumerToken, accessToken, accessTokenSecret, dryrun);
+        super(logger, connectTimeout, readTimeout, consumerKey, consumerToken, accessToken, accessTokenSecret, dryrun);
         this.statuses = statuses;
     }
 
@@ -67,11 +66,9 @@ public class UpdateStatusTwitterCommand extends AbstractTwitterCommand {
 
         public UpdateStatusTwitterCommand build() {
             validate();
-            this.statuses = (List<String>) requireNonEmpty(statuses, "'statuses' must not be empty");
 
             return new UpdateStatusTwitterCommand(
                 logger,
-                apiHost,
                 connectTimeout,
                 readTimeout,
                 consumerKey,

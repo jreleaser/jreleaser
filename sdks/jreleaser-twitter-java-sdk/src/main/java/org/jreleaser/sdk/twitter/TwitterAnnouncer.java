@@ -77,7 +77,6 @@ public class TwitterAnnouncer implements Announcer<org.jreleaser.model.api.annou
                 .forEach(statuses::add);
         }
         if (statuses.isEmpty() && !twitter.getStatuses().isEmpty()) {
-            statuses.addAll(twitter.getStatuses());
             twitter.getStatuses().stream()
                 .filter(StringUtils::isNotBlank)
                 .map(String::trim)

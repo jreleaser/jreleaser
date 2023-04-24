@@ -31,7 +31,6 @@ abstract class AbstractTwitterCommand implements TwitterCommand {
     protected final Twitter twitter;
 
     protected AbstractTwitterCommand(JReleaserLogger logger,
-                                     String apiHost,
                                      int connectTimeout,
                                      int readTimeout,
                                      String consumerKey,
@@ -39,7 +38,7 @@ abstract class AbstractTwitterCommand implements TwitterCommand {
                                      String accessToken,
                                      String accessTokenSecret,
                                      boolean dryrun) {
-        this.twitter = new Twitter(logger, apiHost, connectTimeout, readTimeout, consumerKey, consumerToken, accessToken, accessTokenSecret, dryrun);
+        this.twitter = new Twitter(logger, connectTimeout, readTimeout, consumerKey, consumerToken, accessToken, accessTokenSecret, dryrun);
         this.dryrun = dryrun;
     }
 
@@ -50,7 +49,6 @@ abstract class AbstractTwitterCommand implements TwitterCommand {
         protected String consumerToken;
         protected String accessToken;
         protected String accessTokenSecret;
-        protected String apiHost = "https://api.twitter.com/1.1/";
         protected int connectTimeout = 20;
         protected int readTimeout = 60;
 
@@ -88,11 +86,6 @@ abstract class AbstractTwitterCommand implements TwitterCommand {
             return self();
         }
 
-        public S apiHost(String apiHost) {
-            this.apiHost = requireNonBlank(apiHost, "'apiHost' must not be blank").trim();
-            return self();
-        }
-
         public S connectTimeout(int connectTimeout) {
             this.connectTimeout = connectTimeout;
             return self();
@@ -104,7 +97,6 @@ abstract class AbstractTwitterCommand implements TwitterCommand {
         }
 
         protected void validate() {
-            requireNonBlank(apiHost, "'apiHost' must not be blank");
             requireNonBlank(consumerKey, "'consumerKey' must not be blank");
             requireNonBlank(consumerToken, "'consumerToken' must not be blank");
             requireNonBlank(accessToken, "'accessToken' must not be blank");

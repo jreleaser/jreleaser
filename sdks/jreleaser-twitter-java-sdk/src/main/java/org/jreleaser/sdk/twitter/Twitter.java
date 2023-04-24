@@ -19,10 +19,9 @@ package org.jreleaser.sdk.twitter;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.logging.JReleaserLogger;
-import twitter4j.Status;
-import twitter4j.StatusUpdate;
-import twitter4j.TwitterFactory;
-import twitter4j.conf.ConfigurationBuilder;
+import twitter4j.v1.Status;
+import twitter4j.v1.StatusUpdate;
+import twitter4j.v1.TwitterV1;
 
 import java.util.List;
 
@@ -35,11 +34,10 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  */
 public class Twitter {
     private final JReleaserLogger logger;
-    private final twitter4j.Twitter twitter;
     private final boolean dryrun;
+    private final TwitterV1 twitter;
 
     public Twitter(JReleaserLogger logger,
-                   String apiHost,
                    int connectTimeout,
                    int readTimeout,
                    String consumerKey,
@@ -48,7 +46,6 @@ public class Twitter {
                    String accessTokenSecret,
                    boolean dryrun) {
         requireNonNull(logger, "'logger' must not be null");
-        requireNonBlank(apiHost, "'apiHost' must not be blank");
         requireNonBlank(consumerKey, "'consumerKey' must not be blank");
         requireNonBlank(consumerToken, "'consumerToken' must not be blank");
         requireNonBlank(accessToken, "'accessToken' must not be blank");
@@ -56,26 +53,21 @@ public class Twitter {
 
         this.logger = logger;
         this.dryrun = dryrun;
-        this.twitter = new TwitterFactory(
-            new ConfigurationBuilder()
-                .setRestBaseURL(apiHost)
-                .setHttpConnectionTimeout(connectTimeout * 1000)
-                .setHttpReadTimeout(readTimeout * 1000)
-                .setOAuthConsumerKey(consumerKey)
-                .setOAuthConsumerSecret(consumerToken)
-                .setOAuthAccessToken(accessToken)
-                .setOAuthAccessTokenSecret(accessTokenSecret)
-                .build())
-            .getInstance();
+        this.twitter = twitter4j.Twitter.newBuilder()
+            .oAuthConsumer(consumerKey, consumerToken)
+            .oAuthAccessToken(accessToken, accessTokenSecret)
+            .httpConnectionTimeout(connectTimeout * 1000)
+            .httpReadTimeout(readTimeout * 1000)
+            .build().v1();
 
         this.logger.debug(RB.$("workflow.dryrun"), dryrun);
     }
 
     public void updateStatus(List<String> statuses) throws TwitterException {
         wrap(() -> {
-            Status status = twitter.updateStatus(statuses.get(0));
+            Status status = twitter.tweets().updateStatus(statuses.get(0));
             for (int i = 1; i < statuses.size(); i++) {
-                status = twitter.updateStatus(new StatusUpdate(statuses.get(i))
+                status = twitter.tweets().updateStatus(StatusUpdate.of(statuses.get(i))
                     .inReplyToStatusId(status.getId()));
             }
         });
