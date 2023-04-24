@@ -45,7 +45,7 @@ import static org.jreleaser.bundle.RB.$
  * @since 1.4.0
  */
 @CompileStatic
-@UntrackedTask
+@UntrackedTask(because = 'writes to project.basedir')
 abstract class JReleaserInitTask extends DefaultTask {
     static final String NAME = 'jreleaserInit'
 

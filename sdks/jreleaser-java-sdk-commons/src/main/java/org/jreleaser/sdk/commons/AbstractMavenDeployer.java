@@ -220,22 +220,30 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
 
             Command.Result result = Command.Result.empty();
             try {
-                pomChecker.check(context.getBasedir(), args);
+                result = pomChecker.check(context.getBasedir(), args);
             } catch (CommandException e) {
-                String plumbing = result.getErr();
-                String validation = result.getOut();
-
-                // 1st check out -> validation issues
-                if (isNotBlank(validation)) {
-                    errors.configuration(validation);
-                } else if (isNotBlank(plumbing)) {
-                    // 2nd check err -> plumbing issues
-                    errors.configuration(plumbing);
-                } else {
-                    // command failed and we've got no clue!
-                    errors.configuration(e.getMessage());
-                }
+                handlePomcheckerResult(deployable.getLocalPath().getFileName().toString(), result, e, errors);
             }
+
+            if (result.getExitValue() != 0) {
+                handlePomcheckerResult(deployable.getLocalPath().getFileName().toString(), result, null, errors);
+            }
+        }
+    }
+
+    private void handlePomcheckerResult(String filename, Command.Result result, CommandException e, Errors errors) {
+        String plumbing = result.getErr();
+        String validation = result.getOut();
+
+        // 1st check out -> validation issues
+        if (isNotBlank(validation)) {
+            errors.configuration(RB.$("ERROR_deployer_pomchecker_header", filename, validation));
+        } else if (isNotBlank(plumbing)) {
+            // 2nd check err -> plumbing issues
+            errors.configuration(RB.$("ERROR_deployer_pomchecker_header", filename, plumbing));
+        } else if (null != e) {
+            // command failed and we've got no clue!
+            errors.configuration(e.getMessage());
         }
     }
 
