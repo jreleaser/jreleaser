@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-56-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-57-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -82,6 +82,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/chiraqL"><img src="https://avatars.githubusercontent.com/u/71121515?v=4?s=100" width="100px;" alt="Chirag Lamsal"/><br /><sub><b>Chirag Lamsal</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=chiraqL" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/SimonVerhoeven"><img src="https://avatars.githubusercontent.com/u/5849845?v=4?s=100" width="100px;" alt="Simon Verhoeven"/><br /><sub><b>Simon Verhoeven</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=SimonVerhoeven" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://www.linkedin.com/in/ge0ffrey/"><img src="https://avatars.githubusercontent.com/u/176880?v=4?s=100" width="100px;" alt="Geoffrey De Smet"/><br /><sub><b>Geoffrey De Smet</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/issues?q=author%3Age0ffrey" title="Bug reports">🐛</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/crschnick"><img src="https://avatars.githubusercontent.com/u/72509152?v=4?s=100" width="100px;" alt="Christopher Schnick"/><br /><sub><b>Christopher Schnick</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/issues?q=author%3Acrschnick" title="Bug reports">🐛</a></td>
     </tr>
   </tbody>
 </table>
