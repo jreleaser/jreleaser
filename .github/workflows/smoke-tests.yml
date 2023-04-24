@@ -680,17 +680,17 @@ jobs:
           ./gradlew jreleaserAnnounce -PoutputDir=build -S
           echo "::endgroup::"
           echo "::group::➡️ template generate"
-          ./gradlew jreleaserTemplateGenerate --announcer-name discord
-          ./gradlew jreleaserTemplateGenerate --assembler-type jlink --assembler-name app-standalone
-          ./gradlew jreleaserTemplateGenerate --packager-name brew --distribution-name app
+          ./gradlew jreleaserTemplateGenerate -S --announcer-name discord
+          ./gradlew jreleaserTemplateGenerate -S --assembler-type jlink --assembler-name app-standalone
+          ./gradlew jreleaserTemplateGenerate -S --packager-name brew --distribution-name app
           echo "::endgroup::"
           echo "::group::➡️ init"
-          ./gradlew jreleaserInit --overwrite --format yml
-          ./gradlew jreleaserInit --overwrite --format toml
-          ./gradlew jreleaserInit --overwrite --format json
+          ./gradlew jreleaserInit -S --overwrite --format yml
+          ./gradlew jreleaserInit -S --overwrite --format toml
+          ./gradlew jreleaserInit -S --overwrite --format json
           echo "::endgroup::"
           echo "::group::➡️ auto-config"
-          ./gradlew jreleaserAutoConfigRelease
+          ./gradlew jreleaserAutoConfigRelease -S
           echo "::endgroup::"
         env:
           JRELEASER_OUTPUT_DIRECTORY: out
