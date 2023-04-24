@@ -28,6 +28,7 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.UntrackedTask
 import org.gradle.api.tasks.options.Option
 import org.jreleaser.engine.init.Init
 import org.jreleaser.gradle.plugin.internal.JReleaserLoggerService
@@ -44,6 +45,7 @@ import static org.jreleaser.bundle.RB.$
  * @since 1.4.0
  */
 @CompileStatic
+@UntrackedTask
 abstract class JReleaserInitTask extends DefaultTask {
     static final String NAME = 'jreleaserInit'
 
