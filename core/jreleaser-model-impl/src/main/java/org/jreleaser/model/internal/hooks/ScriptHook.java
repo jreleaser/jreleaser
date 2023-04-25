@@ -42,7 +42,7 @@ public final class ScriptHook extends AbstractHook<ScriptHook> {
 
     @JsonIgnore
     private final org.jreleaser.model.api.hooks.ScriptHook immutable = new org.jreleaser.model.api.hooks.ScriptHook() {
-        private static final long serialVersionUID = 2722804551401108790L;
+        private static final long serialVersionUID = 8771352191826189819L;
 
         @Override
         public String getRun() {
@@ -77,6 +77,11 @@ public final class ScriptHook extends AbstractHook<ScriptHook> {
         @Override
         public boolean isVerbose() {
             return ScriptHook.this.isVerbose();
+        }
+
+        @Override
+        public String getCondition() {
+            return ScriptHook.this.getCondition();
         }
 
         @Override

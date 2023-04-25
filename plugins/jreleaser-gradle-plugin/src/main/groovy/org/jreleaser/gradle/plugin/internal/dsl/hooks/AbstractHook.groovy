@@ -44,6 +44,7 @@ abstract class AbstractHook implements Hook {
     final Property<Active> active
     final Property<Boolean> continueOnError
     final Property<Boolean> verbose
+    final Property<String> condition
     final SetProperty<String> platforms
     final MapProperty<String, String> environment
 
@@ -52,6 +53,7 @@ abstract class AbstractHook implements Hook {
         active = objects.property(Active).convention(Providers.<Active> notDefined())
         continueOnError = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         verbose = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+        condition = objects.property(String).convention(Providers.<String> notDefined())
         platforms = objects.setProperty(String).convention(Providers.<List<String>> notDefined())
         environment = objects.mapProperty(String, String).convention(Providers.notDefined())
     }
@@ -59,7 +61,11 @@ abstract class AbstractHook implements Hook {
     @Internal
     boolean isSet() {
         active.present ||
-            platforms.present
+            continueOnError.present ||
+            verbose.present ||
+            condition.present ||
+            platforms.present ||
+            environment.present
     }
 
     @Override
@@ -98,6 +104,7 @@ abstract class AbstractHook implements Hook {
         if (active.present) hook.active = active.get()
         if (continueOnError.present) hook.continueOnError = continueOnError.get()
         if (verbose.present) hook.verbose = verbose.get()
+        if (condition.present) hook.condition = condition.get()
         if (environment.present) hook.environment.putAll(environment.get())
         hook.platforms = (Set<String>) platforms.getOrElse([] as Set<String>)
     }

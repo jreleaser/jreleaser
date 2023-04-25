@@ -48,6 +48,7 @@ import static java.lang.System.lineSeparator;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardOpenOption.WRITE;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
+import static org.jreleaser.util.StringUtils.isFalse;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -242,6 +243,10 @@ public final class HookExecutor {
 
         for (Hook hook : hooks) {
             if (!hook.isEnabled()) continue;
+
+            if (isNotBlank(hook.getCondition()) && isFalse(context.eval(hook.getCondition()))) {
+                continue;
+            }
 
             if (!hook.getFilter().getResolvedIncludes().isEmpty()) {
                 if (hook.getFilter().getResolvedIncludes().contains(event.getName()) && filterByPlatform(hook)) {

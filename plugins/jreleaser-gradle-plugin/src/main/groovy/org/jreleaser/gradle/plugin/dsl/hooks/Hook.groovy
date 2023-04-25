@@ -35,6 +35,8 @@ interface Hook extends Activatable {
 
     Property<Boolean> getVerbose()
 
+    Property<String> getCondition()
+
     Filter getFilter()
 
     SetProperty<String> getPlatforms()

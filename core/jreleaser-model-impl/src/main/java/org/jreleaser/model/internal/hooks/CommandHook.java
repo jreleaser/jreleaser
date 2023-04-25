@@ -41,7 +41,7 @@ public final class CommandHook extends AbstractHook<CommandHook> {
 
     @JsonIgnore
     private final org.jreleaser.model.api.hooks.CommandHook immutable = new org.jreleaser.model.api.hooks.CommandHook() {
-        private static final long serialVersionUID = -3480210263046881645L;
+        private static final long serialVersionUID = -5508866361578364076L;
 
         @Override
         public String getCmd() {
@@ -71,6 +71,11 @@ public final class CommandHook extends AbstractHook<CommandHook> {
         @Override
         public boolean isVerbose() {
             return CommandHook.this.isVerbose();
+        }
+
+        @Override
+        public String getCondition() {
+            return CommandHook.this.getCondition();
         }
 
         @Override

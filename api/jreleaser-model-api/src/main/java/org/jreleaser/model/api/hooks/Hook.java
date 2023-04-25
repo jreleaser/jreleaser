@@ -36,6 +36,8 @@ public interface Hook extends Domain, Activatable {
 
     boolean isVerbose();
 
+    String getCondition();
+
     Map<String, String> getEnvironment();
 
     interface Filter extends Domain {

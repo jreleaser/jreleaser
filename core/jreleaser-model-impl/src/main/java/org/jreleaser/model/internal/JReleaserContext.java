@@ -154,6 +154,7 @@ public class JReleaserContext {
 
     private org.jreleaser.model.spi.release.Releaser<?> releaser;
     private JReleaserCommand command;
+    private final JReleaserScriptEvaluator scriptEvaluator = new JReleaserScriptEvaluator();
 
     @JsonIgnore
     private final org.jreleaser.model.api.JReleaserContext immutable = new org.jreleaser.model.api.JReleaserContext() {
@@ -446,6 +447,10 @@ public class JReleaserContext {
 
     public org.jreleaser.model.api.JReleaserContext asImmutable() {
         return immutable;
+    }
+
+    public Object eval(String script) {
+        return scriptEvaluator.eval(this, script);
     }
 
     public Path relativize(Path basedir, Path other) {

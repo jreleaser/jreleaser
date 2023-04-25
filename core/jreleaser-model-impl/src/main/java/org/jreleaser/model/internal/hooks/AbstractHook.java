@@ -29,19 +29,21 @@ import java.util.Set;
  * @since 1.2.0
  */
 public abstract class AbstractHook<S extends AbstractHook<S>> extends AbstractActivatable<S> implements Hook {
-    private static final long serialVersionUID = 8715506867292906978L;
+    private static final long serialVersionUID = -4116420563092875433L;
 
     private final Map<String, String> environment = new LinkedHashMap<>();
     private final Set<String> platforms = new LinkedHashSet<>();
     private final Filter filter = new Filter();
     protected Boolean continueOnError;
     protected Boolean verbose;
+    protected String condition;
 
     @Override
     public void merge(S source) {
         super.merge(source);
         this.continueOnError = merge(this.continueOnError, source.continueOnError);
         this.verbose = merge(this.verbose, source.verbose);
+        this.condition = merge(this.condition, source.condition);
         setFilter(source.getFilter());
         setPlatforms(merge(this.platforms, source.getPlatforms()));
         setEnvironment(merge(this.environment, source.getEnvironment()));
@@ -75,6 +77,16 @@ public abstract class AbstractHook<S extends AbstractHook<S>> extends AbstractAc
     @Override
     public boolean isVerboseSet() {
         return null != verbose;
+    }
+
+    @Override
+    public String getCondition() {
+        return condition;
+    }
+
+    @Override
+    public void setCondition(String condition) {
+        this.condition = condition;
     }
 
     @Override
@@ -122,6 +134,7 @@ public abstract class AbstractHook<S extends AbstractHook<S>> extends AbstractAc
         map.put("continueOnError", isContinueOnError());
         map.put("verbose", isVerbose());
         map.put("platforms", platforms);
+        map.put("condition", condition);
         Map<String, Object> filterAsMap = filter.asMap(full);
         if (full || !filterAsMap.isEmpty()) {
             map.put("filter", filterAsMap);
