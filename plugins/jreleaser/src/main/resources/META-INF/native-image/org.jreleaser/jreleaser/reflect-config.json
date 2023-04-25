@@ -710,35 +710,5 @@
     "allDeclaredFields": true,
     "allPublicConstructors": true,
     "allPublicMethods": true
-  },
-  {
-    "name": "twitter4j.HttpClientImpl",
-    "allDeclaredFields": true,
-    "allPublicConstructors": true,
-    "allPublicMethods": true
-  },
-  {
-    "name": "twitter4j.SLF4JLoggerFactory",
-    "allDeclaredFields": true,
-    "allPublicConstructors": true,
-    "allPublicMethods": true
-  },
-  {
-    "name": "twitter4j.TwitterImpl",
-    "allDeclaredFields": true,
-    "allPublicConstructors": true,
-    "allPublicMethods": true
-  },
-  {
-    "name": "twitter4j.conf.PropertyConfiguration",
-    "allDeclaredFields": true,
-    "allPublicConstructors": true,
-    "allPublicMethods": true
-  },
-  {
-    "name": "twitter4j.conf.PropertyConfigurationFactory",
-    "allDeclaredFields": true,
-    "allPublicConstructors": true,
-    "allPublicMethods": true
   }
 ]
