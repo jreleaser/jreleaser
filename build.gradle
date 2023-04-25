@@ -181,6 +181,26 @@ gradleProjects {
                 }
             }
         }
+        dirs(['api', 'core', 'sdks', 'plugins']) {
+            cyclonedxBom {
+                includeConfigs = ['runtimeClasspath']
+                projectType = project.projectDir.absolutePath.contains('plugins')? 'application' : 'library'
+                outputName = "${project.name}-${project.version}-cyclonedx".toString()
+                destination = file('build/reports/cyclonedx')
+                includeLicenseText = false
+            }
+
+            publishing {
+                publications {
+                    main(MavenPublication) {
+                        artifact classifier: 'cyclonedx', source: new File(cyclonedxBom.destination.get(), cyclonedxBom.outputName.get() + '.xml')
+                        artifact classifier: 'cyclonedx', source: new File(cyclonedxBom.destination.get(), cyclonedxBom.outputName.get() + '.json')
+                    }
+                }
+            }
+
+            project.generatePomFileForMainPublication.dependsOn(cyclonedxBom)
+        }
     }
 }
 

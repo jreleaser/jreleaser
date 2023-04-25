@@ -40,6 +40,7 @@ buildscript {
         classpath "org.ow2.asm:asm-tree:$asmVersion"
         classpath "org.kordamp.gradle:oci-gradle-build-cache-plugin:$ociBuildCacheVersion"
         classpath "org.moditect:moditect-gradle-plugin:$moditectPluginVersion"
+        classpath "org.cyclonedx:cyclonedx-gradle-plugin:$cyclonedxPluginVersion"
     }
 }
 
@@ -63,8 +64,12 @@ projects {
             id 'org.kordamp.gradle.errorprone'
             id 'org.kordamp.gradle.sonar'
         }
-        dirs(['infra', 'api', 'core', 'sdks', 'plugins']) {
+        dir('infra') {
             id 'java-library'
+        }
+        dirs(['api', 'core', 'sdks', 'plugins']) {
+            id 'java-library'
+            id 'org.cyclonedx.bom'
         }
     }
 }
