@@ -91,7 +91,7 @@ public class Nexus2MavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
                             context.getLogger().warn(RB.$("ERROR_nexus_find_staging_profile", groupId), e);
                         }
                     } else if (ne.isUnauthorized() || ne.isForbidden()) {
-                        throw new DeployException(RB.$("ERROR_nexus_forbidden"), e);
+                        throw new DeployException(RB.$("ERROR_nexus_forbidden"), ne);
                     }
                     if (!context.isDryrun()) {
                         throw new DeployException(RB.$("ERROR_nexus_find_staging_profile", groupId), e);

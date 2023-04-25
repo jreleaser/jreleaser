@@ -321,6 +321,8 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
             try {
                 URL url = new URI(String.format(e.getValue(), keyID)).toURL();
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setConnectTimeout(20_000);
+                connection.setReadTimeout(40_000);
                 if (connection.getResponseCode() < 400) {
                     context.getLogger().debug(" + " + e.getKey());
                     published = true;
@@ -330,7 +332,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
             } catch (MalformedURLException | URISyntaxException ignored) {
                 // ignored
             } catch (IOException ex) {
-                context.getLogger().debug(RB.$("ERROR_unexpected_error"), ex);
+                context.getLogger().debug(RB.$("ERROR_unexpected_error") + " " + ex.getMessage());
             }
         }
 
