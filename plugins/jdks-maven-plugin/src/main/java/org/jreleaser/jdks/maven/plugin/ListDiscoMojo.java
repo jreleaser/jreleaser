@@ -25,6 +25,8 @@ import org.jreleaser.sdk.disco.RestAPIException;
 
 import java.util.List;
 
+import static org.jreleaser.util.StringUtils.isNotBlank;
+
 /**
  * Lists all configured JDKs with the Foojay's Disco API.
  *
@@ -51,8 +53,12 @@ public class ListDiscoMojo extends AbstractDiscoMojo {
             getLog().info("archiveType:   " + pkg.getArchiveType());
             getLog().info("platform:      " + pkg.getPlatform());
             getLog().info("distribution:  " + pkg.getDistribution());
-            getLog().info("libcType:      " + pkg.getLibcType());
             getLog().info("javafxBundled: " + pkg.isJavafxBundled());
+            getLog().info("packageType:   " + pkg.getPackageType());
+            if (isNotBlank(pkg.getReleaseStatus())) getLog().info("releaseStatus: " + pkg.getReleaseStatus());
+            if (isNotBlank(pkg.getTermOfSupport())) getLog().info("termOfSupport: " + pkg.getTermOfSupport());
+            if (isNotBlank(pkg.getBitness())) getLog().info("bitness:       " + pkg.getBitness());
+            if (isNotBlank(pkg.getLibcType())) getLog().info("libcType:      " + pkg.getLibcType());
             getLog().info("package(s):    " + packages.size());
 
             for (org.jreleaser.sdk.disco.api.Pkg dpkg : packages) {

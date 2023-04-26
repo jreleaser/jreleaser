@@ -41,6 +41,10 @@ public class Pkg {
     private String libc_type;
     private boolean javafxBundled;
     private boolean directlyDownloadable;
+    private String packageType = "jdk";
+    private String releaseStatus;
+    private String termOfSupport;
+    private String bitness;
     private String filename;
     private Links links;
 
@@ -133,6 +137,38 @@ public class Pkg {
         this.directlyDownloadable = directlyDownloadable;
     }
 
+    public String getPackageType() {
+        return packageType;
+    }
+
+    public void setPackageType(String packageType) {
+        this.packageType = packageType;
+    }
+
+    public String getReleaseStatus() {
+        return releaseStatus;
+    }
+
+    public void setReleaseStatus(String releaseStatus) {
+        this.releaseStatus = releaseStatus;
+    }
+
+    public String getTermOfSupport() {
+        return termOfSupport;
+    }
+
+    public void setTermOfSupport(String termOfSupport) {
+        this.termOfSupport = termOfSupport;
+    }
+
+    public String getBitness() {
+        return bitness;
+    }
+
+    public void setBitness(String bitness) {
+        this.bitness = bitness;
+    }
+
     public String getFilename() {
         return filename;
     }
@@ -157,7 +193,10 @@ public class Pkg {
             ", architecture='" + architecture + '\'' +
             ", archiveType='" + archiveType + '\'' +
             ", javafxBundled='" + javafxBundled + '\'' +
-            ", packageType='jdk'";
+            ", packageType='" + packageType + "'";
+        if (isNotBlank(termOfSupport)) s += ", termOfSupport='" + termOfSupport + '\'';
+        if (isNotBlank(releaseStatus)) s += ", releaseStatus='" + releaseStatus + '\'';
+        if (isNotBlank(bitness)) s += ", bitness='" + bitness + '\'';
         if (isNotBlank(libc_type)) s += ", libcType='" + libc_type + '\'';
         s += ']';
 
@@ -172,7 +211,10 @@ public class Pkg {
         map.put("architecture", architecture);
         map.put("archive_type", archiveType);
         map.put("javafx_bundled", String.valueOf(javafxBundled));
-        map.put("package_type", "jdk");
+        map.put("package_type", packageType);
+        if (isNotBlank(termOfSupport)) map.put("term_of_support", termOfSupport);
+        if (isNotBlank(releaseStatus)) map.put("release_status", releaseStatus);
+        if (isNotBlank(bitness)) map.put("bitness", bitness);
         if (isNotBlank(libc_type)) map.put("libc_type", libc_type);
         return map;
     }

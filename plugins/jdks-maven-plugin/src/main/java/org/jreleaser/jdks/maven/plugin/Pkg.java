@@ -34,6 +34,10 @@ public class Pkg {
     private String platform;
     private String libcType;
     private boolean javafxBundled;
+    private String packageType = "jdk";
+    private String releaseStatus;
+    private String termOfSupport;
+    private String bitness;
 
     public void validate(Errors errors) {
         if (isBlank(name)) {
@@ -114,17 +118,51 @@ public class Pkg {
         this.javafxBundled = javafxBundled;
     }
 
+    public String getPackageType() {
+        return packageType;
+    }
+
+    public void setPackageType(String packageType) {
+        this.packageType = packageType;
+    }
+
+    public String getReleaseStatus() {
+        return releaseStatus;
+    }
+
+    public void setReleaseStatus(String releaseStatus) {
+        this.releaseStatus = releaseStatus;
+    }
+
+    public String getTermOfSupport() {
+        return termOfSupport;
+    }
+
+    public void setTermOfSupport(String termOfSupport) {
+        this.termOfSupport = termOfSupport;
+    }
+
+    public String getBitness() {
+        return bitness;
+    }
+
+    public void setBitness(String bitness) {
+        this.bitness = bitness;
+    }
+
     @Override
     public String toString() {
         String s = "[name='" + name + "'" +
             ", version='" + version + "'" +
             ", archiveType='" + archiveType + "'" +
             ", distribution='" + distribution + "'" +
-            ", platform='" + platform + "'";
+            ", platform='" + platform + "'" +
+            ", packageType='" + packageType + "'";
 
-        if (isNotBlank(libcType)) {
-            s += ", libcType='" + libcType + "'";
-        }
+        if (isNotBlank(termOfSupport)) s += ", termOfSupport='" + termOfSupport + "'";
+        if (isNotBlank(releaseStatus)) s += ", releaseStatus='" + releaseStatus + "'";
+        if (isNotBlank(bitness)) s += ", bitness='" + bitness + "'";
+        if (isNotBlank(libcType)) s += ", libcType='" + libcType + "'";
 
         return s + ", javafxBundled='" + javafxBundled + "']";
     }
@@ -142,9 +180,11 @@ public class Pkg {
         pkg.setArchitecture(architecture);
         pkg.setArchiveType(archiveType);
         pkg.setJavafxBundled(javafxBundled);
-        if (isNotBlank(libcType)) {
-            pkg.setLibc_type(libcType);
-        }
+        pkg.setPackageType(packageType);
+        if (isNotBlank(termOfSupport)) pkg.setTermOfSupport(termOfSupport);
+        if (isNotBlank(releaseStatus)) pkg.setReleaseStatus(releaseStatus);
+        if (isNotBlank(bitness)) pkg.setBitness(bitness);
+        if (isNotBlank(libcType)) pkg.setLibc_type(libcType);
         return pkg;
     }
 }
