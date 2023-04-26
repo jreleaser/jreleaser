@@ -58,6 +58,9 @@ public class SetupJdksMojo extends AbstractJdksMojo {
     @Parameter(property = "jdks.setup.skip")
     private boolean skip;
 
+    @Parameter(property = "jdks.setup.unpack", defaultValue = "true")
+    private boolean unpack;
+
     @Component
     private ArchiverManager archiverManager;
 
@@ -72,10 +75,10 @@ public class SetupJdksMojo extends AbstractJdksMojo {
                 .filter(j -> j.getName().equals(jdkName))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Jdk " + jdkName + " was not found"));
-            jdkHelper.setupJdk(jdk);
+            jdkHelper.setupJdk(jdk, unpack);
         } else {
             for (Jdk jdk : jdks) {
-                jdkHelper.setupJdk(jdk);
+                jdkHelper.setupJdk(jdk, unpack);
             }
         }
     }

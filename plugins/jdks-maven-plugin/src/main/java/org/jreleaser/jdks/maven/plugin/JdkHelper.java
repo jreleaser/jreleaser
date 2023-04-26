@@ -69,7 +69,7 @@ public class JdkHelper {
         this.archiverManager = archiverManager;
     }
 
-    public void setupJdk(Jdk jdk) throws MojoExecutionException {
+    public void setupJdk(Jdk jdk, boolean unpack) throws MojoExecutionException {
         File jdkExtractDirectory = new File(outputDirectory, jdk.getName());
 
         boolean downloaded = false;
@@ -88,10 +88,10 @@ public class JdkHelper {
                 } catch (IOException e) {
                     throw new MojoExecutionException("Unexpected error", e);
                 }
-                extractJdk(jdkExtractDirectory, jdk);
+                extractJdk(jdkExtractDirectory, jdk, unpack);
             }
         } else {
-            extractJdk(jdkExtractDirectory, jdk);
+            extractJdk(jdkExtractDirectory, jdk, unpack);
         }
     }
 
@@ -169,7 +169,8 @@ public class JdkHelper {
         return filename.substring(0, filename.lastIndexOf('.'));
     }
 
-    private void extractJdk(File jdkExtractDirectory, Jdk jdk) throws MojoExecutionException {
+    private void extractJdk(File jdkExtractDirectory, Jdk jdk, boolean unpack) throws MojoExecutionException {
+        if (!unpack) return;
         File inputFile = new File(jdkExtractDirectory, getFilename(jdk));
 
         try {

@@ -20,6 +20,7 @@ package org.jreleaser.jdks.maven.plugin;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.sdk.disco.Disco;
@@ -39,6 +40,9 @@ public class SetupDiscoMojo extends AbstractDiscoMojo {
     @Component
     private ArchiverManager archiverManager;
 
+    @Parameter(property = "disco.setup.unpack", defaultValue = "true")
+    private boolean unpack;
+
     @Override
     protected void doExecute(Disco disco) throws MojoExecutionException {
         JdkHelper jdkHelper = new JdkHelper(project, getLog(), outputDirectory,
@@ -47,7 +51,7 @@ public class SetupDiscoMojo extends AbstractDiscoMojo {
         for (Pkg pkg : pkgs) {
             Jdk jdk = resolvePkg(pkg, disco);
             if (null != jdk) {
-                jdkHelper.setupJdk(jdk);
+                jdkHelper.setupJdk(jdk, unpack);
             }
         }
     }
