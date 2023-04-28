@@ -20,11 +20,9 @@ package org.jreleaser.engine.checksum;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.internal.JReleaserContext;
-import org.jreleaser.model.internal.catalog.sbom.SbomCataloger;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.util.Artifacts;
-import org.jreleaser.model.spi.catalog.sbom.SbomCatalogerProcessorHelper;
 import org.jreleaser.util.Algorithm;
 import org.jreleaser.util.ChecksumUtils;
 
@@ -88,18 +86,6 @@ public final class Checksum {
                     readHash(context, distribution, algorithm, artifact);
                     List<String> list = checksums.computeIfAbsent(algorithm, k -> new ArrayList<>());
                     list.add(artifact.getHash(algorithm) + "  " + artifact.getEffectivePath(context, distribution).getFileName());
-                }
-            }
-        }
-
-        List<? extends SbomCataloger<?>> catalogers = context.getModel().getCatalog().getSbom().findAllActiveSbomCatalogers();
-        for (SbomCataloger<?> cataloger : catalogers) {
-            if (!cataloger.getPack().isEnabled()) continue;
-            for (Artifact artifact : SbomCatalogerProcessorHelper.resolveArtifacts(context, cataloger)) {
-                for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
-                    readHash(context, algorithm, artifact);
-                    List<String> list = checksums.computeIfAbsent(algorithm, k -> new ArrayList<>());
-                    list.add(artifact.getHash(algorithm) + "  " + artifact.getEffectivePath(context).getFileName());
                 }
             }
         }
