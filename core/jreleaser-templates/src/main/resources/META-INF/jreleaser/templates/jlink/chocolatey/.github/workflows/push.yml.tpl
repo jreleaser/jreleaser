@@ -16,7 +16,7 @@ jobs:
       
       - uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '6.0.16'
+          dotnet-version: '5.0.x'
 
       - name: Find package
         shell: bash
