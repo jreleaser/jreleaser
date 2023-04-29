@@ -685,7 +685,7 @@ public final class FileUtils {
                 }
             }
 
-            if (filename.endsWith(ZIP.extension())) {
+            if (filename.endsWith(ZIP.extension()) || filename.endsWith(TAR.extension())) {
                 try (InputStream fi = Files.newInputStream(src);
                      InputStream bi = new BufferedInputStream(fi);
                      ArchiveInputStream in = new ArchiveStreamFactory().createArchiveInputStream(bi)) {
