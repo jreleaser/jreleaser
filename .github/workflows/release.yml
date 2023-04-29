@@ -216,17 +216,20 @@ jobs:
           distribution: ${{ vars.JAVA_DISTRO }}
 
       - name: Download assets
+        shell: bash
         run: |
           curl -sL https://raw.githubusercontent.com/jreleaser/jreleaser/main/.github/scripts/update-website.sh --output update-website.sh
-          chmod +x update-website.sh
           curl -sL "https://github.com/jreleaser/jreleaser/releases/download/${TAG}/jreleaser-tool-provider-${VERSION}.jar" --output jreleaser-cli.jar
         env:
           TAG: ${{ needs.release.outputs.tagname }}
           VERSION: ${{ needs.precheck.outputs.version }}
 
       - name: Commit
+        shell: bash
         env:
           TAG: ${{ needs.release.outputs.tagname }}
           VERSION: ${{ needs.precheck.outputs.version }}
           GH_BOT_EMAIL: ${{ vars.GH_BOT_EMAIL }}
-        run: sh update-website.sh
+        run: |
+          chmod +x update-website.sh
+          ./update-website.sh
