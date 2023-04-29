@@ -237,6 +237,7 @@ public abstract class AbstractAssemblerProcessor<A extends org.jreleaser.model.a
             for (Artifact artifact : assembler.getArtifacts()) {
                 if (!artifact.resolveEnabled(context.getModel().getProject())) continue;
                 Path incoming = artifact.getResolvedPath(context, assembler);
+                if (artifact.isOptional(context) && !artifact.resolvedPathExists()) continue;
                 String platform = artifact.getPlatform();
                 if (filterByPlatform && isNotBlank(platformConstraint) && isNotBlank(platform) && !PlatformUtils.isCompatible(platformConstraint, platform)) {
                     context.getLogger().debug(RB.$("assembler.artifact.filter"), incoming.getFileName());
