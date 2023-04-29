@@ -6,8 +6,6 @@
 
 set -e
 
-TAG="v${VERSION}"
-
 echo "⚙️ Refreshing working copy"
 git merge origin/development
 
@@ -30,7 +28,7 @@ PREVIOUS_RELEASE=$(grep -h -A5 "${ANCHOR_START}" ${PAGE} | tail -n 5)
 
 HEAD=$(head -n "${AS}" "${PAGE}")
 TAIL=$(tail -n +"${AE}" "${PAGE}")
-ATAG=${TAG//\./-}
+ATAG="${TAG//\./-}"
 
 cat << EOF > "${PAGE}"
 ${HEAD}
