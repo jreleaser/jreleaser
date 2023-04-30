@@ -31,7 +31,6 @@ import org.jreleaser.util.PlatformUtils;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -41,6 +40,7 @@ import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toList;
+import static org.jreleaser.model.Constants.SKIP_CASK_DISPLAY_NAME_TRANSFORM;
 import static org.jreleaser.model.Distribution.DistributionType.BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.FLAT_BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
@@ -207,6 +207,7 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
 
     public BrewPackager() {
         super(TYPE);
+        this.cask.setOwner(this);
     }
 
     @Override
@@ -278,6 +279,7 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
 
     public void setCask(Cask cask) {
         this.cask.merge(cask);
+        this.cask.setOwner(this);
     }
 
     public void setDependencies(Map<String, String> dependencies) {
@@ -447,7 +449,7 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
     }
 
     public static final class Cask extends AbstractModelObject<Cask> implements Domain {
-        private static final long serialVersionUID = 7405724862627754232L;
+        private static final long serialVersionUID = -8511530978828845393L;
 
         private final List<CaskItem> uninstall = new ArrayList<>();
         private final List<CaskItem> zap = new ArrayList<>();
@@ -457,6 +459,8 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
         private String pkgName;
         private String appName;
         private String appcast;
+        @JsonIgnore
+        private BrewPackager owner;
 
         @JsonIgnore
         private final org.jreleaser.model.api.packagers.BrewPackager.Cask immutable = new org.jreleaser.model.api.packagers.BrewPackager.Cask() {
@@ -546,6 +550,10 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
             setZapItems(merge(this.zap, source.zap));
         }
 
+        public void setOwner(BrewPackager owner) {
+            this.owner = owner;
+        }
+
         public void enable() {
             this.enabled = true;
         }
@@ -574,14 +582,6 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
             return appcast;
         }
 
-        public String getResolvedCaskName(JReleaserContext context) {
-            if (isBlank(cachedCaskName)) {
-                cachedCaskName = resolveTemplate(name, context.getModel().props());
-                cachedCaskName = cachedCaskName.toLowerCase(Locale.ENGLISH);
-            }
-            return cachedCaskName;
-        }
-
         public String getResolvedCaskName(TemplateContext props) {
             if (isBlank(cachedCaskName)) {
                 cachedCaskName = resolveTemplate(name, props);
@@ -593,30 +593,19 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
             return cachedCaskName;
         }
 
-        public String getResolvedDisplayName(JReleaserContext context) {
-            if (isBlank(cachedDisplayName)) {
-                cachedDisplayName = resolveTemplate(displayName, context.getModel().props());
-                cachedDisplayName = getClassNameForLowerCaseHyphenSeparatedName(cachedDisplayName);
-            }
-            return cachedDisplayName;
-        }
-
         public String getResolvedDisplayName(TemplateContext props) {
             if (isBlank(cachedDisplayName)) {
                 cachedDisplayName = resolveTemplate(displayName, props);
-                cachedDisplayName = getNaturalName(getClassNameForLowerCaseHyphenSeparatedName(cachedDisplayName));
+                if (isFalse(owner.getExtraProperty(SKIP_CASK_DISPLAY_NAME_TRANSFORM))) {
+                    cachedDisplayName = getNaturalName(getClassNameForLowerCaseHyphenSeparatedName(cachedDisplayName));
+                }
             } else if (cachedDisplayName.contains("{{")) {
                 cachedDisplayName = resolveTemplate(cachedDisplayName, props);
-                cachedDisplayName = getNaturalName(getClassNameForLowerCaseHyphenSeparatedName(cachedDisplayName));
+                if (isFalse(owner.getExtraProperty(SKIP_CASK_DISPLAY_NAME_TRANSFORM))) {
+                    cachedDisplayName = getNaturalName(getClassNameForLowerCaseHyphenSeparatedName(cachedDisplayName));
+                }
             }
             return cachedDisplayName;
-        }
-
-        public String getResolvedAppName(JReleaserContext context) {
-            if (isBlank(cachedAppName)) {
-                cachedAppName = resolveTemplate(appName, context.getModel().props());
-            }
-            return cachedAppName;
         }
 
         public String getResolvedAppName(TemplateContext props) {
@@ -626,13 +615,6 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
                 cachedAppName = resolveTemplate(cachedAppName, props);
             }
             return cachedAppName;
-        }
-
-        public String getResolvedPkgName(JReleaserContext context) {
-            if (isBlank(cachedPkgName)) {
-                cachedPkgName = resolveTemplate(pkgName, context.getModel().props());
-            }
-            return cachedPkgName;
         }
 
         public String getResolvedPkgName(TemplateContext props) {

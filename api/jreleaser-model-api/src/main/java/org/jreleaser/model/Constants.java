@@ -410,6 +410,7 @@ public interface Constants {
     String SKIP_SBOM = "skipSbom";
     String SKIP_SBOM_CYCLONEDX = "skipSbomCyclonedx";
     String SKIP_SBOM_SYFT = "skipSbomSyft";
+    String SKIP_CASK_DISPLAY_NAME_TRANSFORM = "skipCaskDisplayNameTransform";
 
     // Container Images
     String DOCKER_IO = "docker.io";

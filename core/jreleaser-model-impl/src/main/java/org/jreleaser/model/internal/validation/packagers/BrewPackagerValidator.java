@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
+import static org.jreleaser.model.Constants.SKIP_CASK_DISPLAY_NAME_TRANSFORM;
 import static org.jreleaser.model.api.packagers.BrewPackager.SKIP_BREW;
 import static org.jreleaser.model.internal.validation.common.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.internal.validation.common.TemplateValidator.validateTemplate;
@@ -92,7 +93,8 @@ public final class BrewPackagerValidator {
             packager.setFormulaName(distribution.getName());
         }
 
-        validateCask(context, distribution, packager, cask, errors);
+        mergeExtraProperties(packager, parentPackager);
+        validateCask(context, distribution, packager, cask, parentPackager.getCask(), errors);
         List<Artifact> candidateArtifacts = packager.resolveCandidateArtifacts(context, distribution);
         if (candidateArtifacts.isEmpty()) {
             context.getLogger().debug(RB.$("validation.disabled.no.artifacts"));
@@ -106,7 +108,6 @@ public final class BrewPackagerValidator {
         BrewPackager.HomebrewTap tap = packager.getTap();
         validateTap(context, distribution, tap, parentPackager.getTap(), "brew.tap");
         validateTemplate(context, distribution, packager, parentPackager, errors);
-        mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);
         if (isBlank(packager.getDownloadUrl())) {
             packager.setDownloadUrl(parentPackager.getDownloadUrl());
@@ -137,7 +138,8 @@ public final class BrewPackagerValidator {
         return cask;
     }
 
-    private static void validateCask(JReleaserContext context, Distribution distribution, BrewPackager packager, BrewPackager.Cask cask, Errors errors) {
+    private static void validateCask(JReleaserContext context, Distribution distribution, BrewPackager packager,
+                                     BrewPackager.Cask cask, BrewPackager.Cask parentCask, Errors errors) {
         if (null == cask || cask.isEnabledSet() && !cask.isEnabled()) {
             return;
         }
@@ -195,6 +197,28 @@ public final class BrewPackagerValidator {
 
         cask.enable();
 
+        if (isBlank(cask.getName())) {
+            cask.setName(parentCask.getName());
+        }
+        if (isBlank(cask.getPkgName())) {
+            cask.setPkgName(parentCask.getPkgName());
+        }
+        if (isBlank(cask.getAppName())) {
+            cask.setPkgName(parentCask.getAppName());
+        }
+        if (isBlank(cask.getDisplayName())) {
+            cask.setDisplayName(parentCask.getDisplayName());
+        }
+        if (isBlank(cask.getAppcast())) {
+            cask.setAppcast(parentCask.getAppcast());
+        }
+        if (cask.getZapItems().isEmpty()) {
+            cask.getZapItems().addAll(parentCask.getZapItems());
+        }
+        if (cask.getUninstallItems().isEmpty()) {
+            cask.getUninstallItems().addAll(parentCask.getUninstallItems());
+        }
+
         if (isBlank(cask.getPkgName()) && isNotBlank(pkgName)) {
             cask.setPkgName(pkgName);
         }
@@ -216,6 +240,9 @@ public final class BrewPackagerValidator {
         if (isBlank(cask.getName())) {
             cask.setName(packager.getResolvedFormulaName(context).toLowerCase(Locale.ENGLISH));
         }
+        if (isNotBlank(cask.getDisplayName()) && !packager.getExtraProperties().containsKey(SKIP_CASK_DISPLAY_NAME_TRANSFORM)) {
+            packager.getExtraProperties().put(SKIP_CASK_DISPLAY_NAME_TRANSFORM, "true");
+        }
         if (isBlank(cask.getDisplayName())) {
             cask.setDisplayName(packager.getResolvedFormulaName(context));
         }
@@ -235,7 +262,7 @@ public final class BrewPackagerValidator {
 
         map = context.getModel().getActiveDistributions().stream()
             .filter(d -> d.getBrew().getCask().isEnabled())
-            .collect(groupingBy(d -> d.getBrew().getCask().getResolvedCaskName(context)));
+            .collect(groupingBy(d -> d.getBrew().getCask().getResolvedCaskName(context.props())));
 
         map.forEach((caskName, distributions) -> {
             if (distributions.size() > 1) {
