@@ -166,7 +166,7 @@ public final class Glob extends AbstractArtifact<Glob> implements Domain, ExtraP
         // resolve directory
         Path path = context.getBasedir();
         if (isNotBlank(directory)) {
-            directory = Artifacts.resolveForGlob(directory, context, this);
+            directory = normalizeForWindows(Artifacts.resolveForGlob(directory, context, this));
             path = context.getBasedir().resolve(Paths.get(directory)).normalize();
             if (context.getMode().validatePaths() && !exists(path)) {
                 throw new JReleaserException(RB.$("ERROR_path_does_not_exist", context.relativizeToBasedir(path)));
@@ -191,13 +191,22 @@ public final class Glob extends AbstractArtifact<Glob> implements Domain, ExtraP
         }
 
         if (!Paths.get(test).isAbsolute()) {
-            this.pattern = prefix + root + File.separator + path;
+            if (path.startsWith(root)) {
+                this.pattern = prefix + path;
+            } else {
+                this.pattern = prefix + root + File.separator + path;
+            }
         } else {
             this.pattern = prefix + path;
         }
 
-        if (PlatformUtils.isWindows()) {
-            this.pattern = pattern.replace("/", "\\\\");
-        }
+        this.pattern = normalizeForWindows(this.pattern);
+    }
+
+    private String normalizeForWindows(String str) {
+        if (!PlatformUtils.isWindows()) return str;
+        return str.replace("/", "\\")
+            .replace("\\\\", "\\")
+            .replace("\\", "\\\\");
     }
 }
