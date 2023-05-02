@@ -102,16 +102,10 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
 
             if (!context.isDryrun()) {
                 List<String> branchNames = api.listBranches(gitlab.getOwner(), gitlab.getName(), gitlab.getProjectIdentifier());
-                if (!branchNames.contains(pushBranch)) {
-                    if (mustCheckoutBranch) {
-                        GitSdk.of(context).checkoutBranch(gitlab, pushBranch, true);
-                    } else {
-                        throw new ReleaseException(RB.$("ERROR_git_release_branch_not_exists", pushBranch, branchNames));
-                    }
+                if (mustCheckoutBranch) {
+                    GitSdk.of(context).checkoutBranch(gitlab, pushBranch, !branchNames.contains(pushBranch));
                 }
             }
-
-            GitSdk.of(context).checkoutBranch(pushBranch);
 
             String changelog = context.getChangelog().getResolvedChangelog();
 
