@@ -168,16 +168,10 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
 
             if (!context.isDryrun()) {
                 List<String> branchNames = api.listBranches(github.getOwner(), github.getName());
-                if (!branchNames.contains(pushBranch)) {
-                    if (mustCheckoutBranch) {
-                        GitSdk.of(context).checkoutBranch(github, pushBranch, true);
-                    } else {
-                        throw new ReleaseException(RB.$("ERROR_git_release_branch_not_exists", pushBranch, branchNames));
-                    }
+                if (mustCheckoutBranch) {
+                    GitSdk.of(context).checkoutBranch(github, pushBranch, !branchNames.contains(pushBranch));
                 }
             }
-
-            GitSdk.of(context).checkoutBranch(pushBranch);
 
             String changelog = context.getChangelog().getResolvedChangelog();
 

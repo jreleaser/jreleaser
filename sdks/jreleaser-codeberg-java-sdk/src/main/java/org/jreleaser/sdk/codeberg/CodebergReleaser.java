@@ -91,16 +91,10 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
 
             if (!context.isDryrun()) {
                 List<String> branchNames = api.listBranches(codeberg.getOwner(), codeberg.getName());
-                if (!branchNames.contains(pushBranch)) {
-                    if (mustCheckoutBranch) {
-                        GitSdk.of(context).checkoutBranch(codeberg, pushBranch, true);
-                    } else {
-                        throw new ReleaseException(RB.$("ERROR_git_release_branch_not_exists", pushBranch, branchNames));
-                    }
+                if (mustCheckoutBranch) {
+                    GitSdk.of(context).checkoutBranch(codeberg, pushBranch, !branchNames.contains(pushBranch));
                 }
             }
-
-            GitSdk.of(context).checkoutBranch(pushBranch);
 
             String changelog = context.getChangelog().getResolvedChangelog();
 
