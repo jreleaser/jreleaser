@@ -1,0 +1,71 @@
+/*
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Copyright 2020-2023 The JReleaser authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.jreleaser.sdk.bluesky;
+
+import org.jreleaser.bundle.RB;
+import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.spi.announce.AnnounceException;
+import org.jreleaser.model.spi.announce.Announcer;
+import org.jreleaser.mustache.TemplateContext;
+import org.jreleaser.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.jreleaser.model.Constants.KEY_PREVIOUS_TAG_NAME;
+import static org.jreleaser.model.Constants.KEY_TAG_NAME;
+import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
+import static org.jreleaser.mustache.Templates.resolveTemplate;
+import static org.jreleaser.util.StringUtils.isNotBlank;
+
+/**
+ * @author Simon Verhoeven
+ * @since 1.7.0
+ */
+@org.jreleaser.infra.nativeimage.annotations.NativeImage
+public class BlueskyAnnouncer implements Announcer<org.jreleaser.model.api.announce.BlueskyAnnouncer> {
+    private final JReleaserContext context;
+    private final org.jreleaser.model.internal.announce.BlueskyAnnouncer Bluesky;
+
+    public BlueskyAnnouncer(JReleaserContext context) {
+        this.context = context;
+        this.Bluesky = context.getModel().getAnnounce().getBluesky();
+    }
+
+    @Override
+    public org.jreleaser.model.api.announce.BlueskyAnnouncer getAnnouncer() {
+        return Bluesky.asImmutable();
+    }
+
+    @Override
+    public String getName() {
+        return org.jreleaser.model.api.announce.BlueskyAnnouncer.TYPE;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return Bluesky.isEnabled();
+    }
+
+    @Override
+    public void announce() throws AnnounceException {
+        // TODO BeJUG
+        // See for inspiration: https://gitlab.com/JoeSondow/fishies/-/blob/master/src/main/java/sondow/fishies/Bluesky.java
+    }
+}

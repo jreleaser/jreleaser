@@ -35,6 +35,7 @@ dependencies {
     annotationProcessor "org.kordamp.jipsy:jipsy-processor:${jipsyVersion}"
 
     // announce
+    api project(':jreleaser-bluesky-java-sdk')
     api project(':jreleaser-discord-java-sdk')
     api project(':jreleaser-discourse-java-sdk')
     api project(':jreleaser-gitter-java-sdk')

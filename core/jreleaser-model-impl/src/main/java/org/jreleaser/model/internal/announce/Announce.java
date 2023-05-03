@@ -41,6 +41,7 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
     private static final long serialVersionUID = -6058903517417564327L;
 
     private final ArticleAnnouncer article = new ArticleAnnouncer();
+    private final BlueskyAnnouncer bluesky = new BlueskyAnnouncer();
     private final DiscordAnnouncer discord = new DiscordAnnouncer();
     private final DiscourseAnnouncer discourse = new DiscourseAnnouncer();
     private final DiscussionsAnnouncer discussions = new DiscussionsAnnouncer();
@@ -194,6 +195,7 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
     public void merge(Announce source) {
         super.merge(source);
         setArticle(source.article);
+        setBluesky(source.bluesky);
         setDiscord(source.discord);
         setDiscourse(source.discourse);
         setDiscussions(source.discussions);
@@ -229,6 +231,14 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
 
     public void setArticle(ArticleAnnouncer article) {
         this.article.merge(article);
+    }
+
+    public BlueskyAnnouncer getBluesky() {
+        return bluesky;
+    }
+
+    public void setBluesky(BlueskyAnnouncer bluesky) {
+        this.bluesky.merge(bluesky);
     }
 
     @JsonPropertyDescription("announce.discord is deprecated since 1.4.0 and will be removed in 2.0.0")
@@ -425,6 +435,7 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         map.put("enabled", isEnabled());
         map.put("active", getActive());
         map.putAll(article.asMap(full));
+        map.putAll(bluesky.asMap(full));
         map.putAll(discord.asMap(full));
         map.putAll(discourse.asMap(full));
         map.putAll(discussions.asMap(full));
