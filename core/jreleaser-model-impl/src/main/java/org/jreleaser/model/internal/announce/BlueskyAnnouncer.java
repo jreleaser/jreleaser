@@ -32,15 +32,15 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.unmodifiableMap;
-import static org.jreleaser.model.Constants.*;
-import static org.jreleaser.model.api.announce.MastodonAnnouncer.TYPE;
+import static org.jreleaser.model.Constants.KEY_PREVIOUS_TAG_NAME;
+import static org.jreleaser.model.Constants.KEY_TAG_NAME;
+import static org.jreleaser.model.api.announce.BlueskyAnnouncer.TYPE;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplate;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
-import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
- * @author Andres Almiray
- * @since 0.4.0
+ * @author BEJUG
+ * @since 1.7.0
  */
 public final class BlueskyAnnouncer extends AbstractAnnouncer<BlueskyAnnouncer, org.jreleaser.model.api.announce.BlueskyAnnouncer> {
     private static final long serialVersionUID = 9152609285615015647L;

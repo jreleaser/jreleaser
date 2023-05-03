@@ -17,8 +17,6 @@
  */
 package org.jreleaser.sdk.bluesky.api;
 
-import feign.Headers;
-import feign.RequestLine;
 import org.jreleaser.infra.nativeimage.annotations.ProxyConfig;
 
 /**

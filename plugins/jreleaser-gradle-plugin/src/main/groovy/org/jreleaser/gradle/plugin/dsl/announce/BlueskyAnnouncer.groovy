@@ -24,7 +24,7 @@ import org.gradle.api.provider.Property
 /**
  *
  * @author Tom Cools
- * @since 0.2.0
+ * @since 1.7.0
  */
 @CompileStatic
 interface BlueskyAnnouncer extends Announcer {

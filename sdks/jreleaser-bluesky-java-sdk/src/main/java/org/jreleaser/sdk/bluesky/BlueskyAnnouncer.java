@@ -17,22 +17,9 @@
  */
 package org.jreleaser.sdk.bluesky;
 
-import org.jreleaser.bundle.RB;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.spi.announce.AnnounceException;
 import org.jreleaser.model.spi.announce.Announcer;
-import org.jreleaser.mustache.TemplateContext;
-import org.jreleaser.util.StringUtils;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.jreleaser.model.Constants.KEY_PREVIOUS_TAG_NAME;
-import static org.jreleaser.model.Constants.KEY_TAG_NAME;
-import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
-import static org.jreleaser.mustache.Templates.resolveTemplate;
-import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Simon Verhoeven
@@ -41,16 +28,16 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class BlueskyAnnouncer implements Announcer<org.jreleaser.model.api.announce.BlueskyAnnouncer> {
     private final JReleaserContext context;
-    private final org.jreleaser.model.internal.announce.BlueskyAnnouncer Bluesky;
+    private final org.jreleaser.model.internal.announce.BlueskyAnnouncer bluesky;
 
     public BlueskyAnnouncer(JReleaserContext context) {
         this.context = context;
-        this.Bluesky = context.getModel().getAnnounce().getBluesky();
+        this.bluesky = context.getModel().getAnnounce().getBluesky();
     }
 
     @Override
     public org.jreleaser.model.api.announce.BlueskyAnnouncer getAnnouncer() {
-        return Bluesky.asImmutable();
+        return bluesky.asImmutable();
     }
 
     @Override
@@ -60,7 +47,7 @@ public class BlueskyAnnouncer implements Announcer<org.jreleaser.model.api.annou
 
     @Override
     public boolean isEnabled() {
-        return Bluesky.isEnabled();
+        return bluesky.isEnabled();
     }
 
     @Override

@@ -15,26 +15,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.api.announce;
+package org.jreleaser.model.internal.validation.announce;
 
-import java.util.List;
+import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.announce.BlueskyAnnouncer;
+import org.jreleaser.util.Errors;
 
 /**
- * @author Tom cools
+ * @author BEJUG
  * @since 1.7.0
  */
-public interface BlueskyAnnouncer extends Announcer {
-    String TYPE = "bluesky";
+public class BlueskyAnnouncerValidator {
+    private BlueskyAnnouncerValidator() {
+        // noop
+    }
 
-    String getHost();
-
-    String getScreenName();
-
-    String getPassword();
-
-    String getStatus();
-
-    List<String> getStatuses();
-
-    String getStatusTemplate();
+    public static void validateBluesky(JReleaserContext context, BlueskyAnnouncer announcer, Errors errors) {
+        context.getLogger().debug("announce.bluesky");
+        //TODO BEJUG
+    }
 }
