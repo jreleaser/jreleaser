@@ -17,10 +17,76 @@
  */
 package org.jreleaser.sdk.bluesky;
 
+import org.jreleaser.bundle.RB;
+import org.jreleaser.logging.JReleaserLogger;
+import org.jreleaser.sdk.bluesky.api.BlueskyAPI;
+import org.jreleaser.sdk.commons.RestAPIException;
+
+import java.util.List;
+
+import static java.util.Objects.requireNonNull;
+
 /**
  * @author Tom cools
  * @since 1.7.0
  */
 public class BlueskySdk {
-    // TODO BeJUG
+    private final JReleaserLogger logger;
+    private final BlueskyAPI api;
+    private final boolean dryrun;
+
+    private BlueskySdk(JReleaserLogger logger,
+                        boolean dryrun) {
+        this.logger = requireNonNull(logger, "'logger' must not be null");
+        this.dryrun = dryrun;
+
+        //TODO setup api
+        api = null;
+
+        this.logger.debug(RB.$("workflow.dryrun"), dryrun);
+    }
+
+    public void skeet(List<String> statuses) throws BlueskyException {
+        //TODO bejug placeholder
+    }
+
+    private void wrap(Runnable runnable) throws BlueskyException {
+        try {
+            if (!dryrun) runnable.run();
+        } catch (RestAPIException e) {
+            logger.trace(e);
+            throw new BlueskyException(RB.$("sdk.operation.failed", "Bluesky"), e);
+        }
+    }
+
+    public static Builder builder(JReleaserLogger logger) {
+        return new Builder(logger);
+    }
+
+    public static class Builder {
+        private final JReleaserLogger logger;
+        private boolean dryrun;
+
+        private Builder(JReleaserLogger logger) {
+            this.logger = requireNonNull(logger, "'logger' must not be null");
+        }
+
+        public Builder dryrun(boolean dryrun) {
+            this.dryrun = dryrun;
+            return this;
+        }
+
+        private void validate() {
+            // TODO BEJUG
+        }
+
+        public BlueskySdk build() {
+            validate();
+
+            return new BlueskySdk(
+                logger,
+                dryrun);
+        }
+    }
+
 }
