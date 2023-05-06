@@ -17,9 +17,17 @@
  */
 package org.jreleaser.model.internal.validation.announce;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.announce.BlueskyAnnouncer;
 import org.jreleaser.util.Errors;
+
+import java.nio.file.Files;
+
+import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
+import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
+import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author BEJUG
@@ -32,6 +40,21 @@ public class BlueskyAnnouncerValidator {
 
     public static void validateBluesky(JReleaserContext context, BlueskyAnnouncer announcer, Errors errors) {
         context.getLogger().debug("announce.bluesky");
-        //TODO BEJUG
+        resolveActivatable(context, announcer, "announce.bluesky", "NEVER");
+        if (!announcer.resolveEnabledWithSnapshot(context.getModel().getProject())) {
+            context.getLogger().debug(RB.$("validation.disabled"));
+            return;
+        }
+
+        if (isNotBlank(announcer.getStatusTemplate()) &&
+            !Files.exists(context.getBasedir().resolve(announcer.getStatusTemplate().trim()))) {
+            errors.configuration(RB.$("validation_directory_not_exist", "bluesky.statusTemplate", announcer.getStatusTemplate()));
+        }
+
+        if (isBlank(announcer.getStatus()) && isBlank(announcer.getStatusTemplate()) && announcer.getStatuses().isEmpty()) {
+            announcer.setStatus(RB.$("default.release.message"));
+        }
+
+        validateTimeout(announcer);
     }
 }
