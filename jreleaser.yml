@@ -132,6 +132,11 @@ deploy:
           - build/repos/local/release
 
 announce:
+  bluesky:
+    active: RELEASE
+    #TODO BEJUG keep this host given future federation, or keep it fixed?
+    host: https://staging.bsky.app/
+    statusTemplate: src/jreleaser/bluesky.tpl
   twitter:
     active: RELEASE
     statusTemplate: src/jreleaser/twitter.tpl
