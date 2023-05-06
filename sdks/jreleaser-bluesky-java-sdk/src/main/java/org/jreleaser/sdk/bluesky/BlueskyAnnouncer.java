@@ -17,9 +17,22 @@
  */
 package org.jreleaser.sdk.bluesky;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.spi.announce.AnnounceException;
 import org.jreleaser.model.spi.announce.Announcer;
+import org.jreleaser.mustache.TemplateContext;
+import org.jreleaser.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.jreleaser.model.Constants.KEY_PREVIOUS_TAG_NAME;
+import static org.jreleaser.model.Constants.KEY_TAG_NAME;
+import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
+import static org.jreleaser.mustache.Templates.resolveTemplate;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Simon Verhoeven
@@ -52,7 +65,49 @@ public class BlueskyAnnouncer implements Announcer<org.jreleaser.model.api.annou
 
     @Override
     public void announce() throws AnnounceException {
-        // TODO BeJUG
-        // See for inspiration: https://gitlab.com/JoeSondow/fishies/-/blob/master/src/main/java/sondow/fishies/Bluesky.java
+        List<String> statuses = new ArrayList<>();
+
+        if (isNotBlank(bluesky.getStatusTemplate())) {
+            TemplateContext props = new TemplateContext();
+            context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
+            Arrays.stream(bluesky.getResolvedStatusTemplate(context, props)
+                    .split(System.lineSeparator()))
+                .filter(StringUtils::isNotBlank)
+                .map(String::trim)
+                .forEach(statuses::add);
+        }
+        if (statuses.isEmpty() && !bluesky.getStatuses().isEmpty()) {
+            bluesky.getStatuses().stream()
+                .filter(StringUtils::isNotBlank)
+                .map(String::trim)
+                .forEach(statuses::add);
+        }
+        if (statuses.isEmpty()) {
+            statuses.add(bluesky.getStatus());
+        }
+
+        for (int i = 0; i < statuses.size(); i++) {
+            String status = getResolvedMessage(context, statuses.get(i));
+            context.getLogger().info(RB.$("bluesky.tweet"), status);
+            context.getLogger().debug(RB.$("bluesky.tweet.size"), status.length());
+            statuses.set(i, status);
+        }
+
+        try {
+            BlueskySdk sdk = BlueskySdk.builder(context.getLogger())
+                .dryrun(context.isDryrun())
+                .build();
+            sdk.skeet(statuses);
+        } catch (BlueskyException e) {
+            throw new AnnounceException(e);
+        }
+    }
+
+    private String getResolvedMessage(JReleaserContext context, String message) {
+        TemplateContext props = context.fullProps();
+        applyTemplates(props, context.getModel().getAnnounce().getTwitter().resolvedExtraProperties());
+        props.set(KEY_TAG_NAME, context.getModel().getRelease().getReleaser().getEffectiveTagName(context.getModel()));
+        props.set(KEY_PREVIOUS_TAG_NAME, context.getModel().getRelease().getReleaser().getResolvedPreviousTagName(context.getModel()));
+        return resolveTemplate(message, props);
     }
 }
