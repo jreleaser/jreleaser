@@ -21,7 +21,7 @@ import java.util.List;
 
 /**
  * @author Tom cools
- * @since 0.4.0
+ * @since 1.7.0
  */
 public interface BlueskyAnnouncer extends Announcer {
     String TYPE = "bluesky";

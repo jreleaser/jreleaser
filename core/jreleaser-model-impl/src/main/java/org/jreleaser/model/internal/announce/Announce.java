@@ -73,6 +73,11 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         }
 
         @Override
+        public org.jreleaser.model.api.announce.BlueskyAnnouncer getBluesky() {
+            return bluesky.asImmutable();
+        }
+
+        @Override
         public org.jreleaser.model.api.announce.DiscordAnnouncer getDiscord() {
             return discord.asImmutable();
         }
@@ -469,6 +474,8 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         switch (name.toLowerCase(Locale.ENGLISH).trim()) {
             case org.jreleaser.model.api.announce.ArticleAnnouncer.TYPE:
                 return (A) getArticle();
+            case org.jreleaser.model.api.announce.BlueskyAnnouncer.TYPE:
+                return (A) getBluesky();
             case org.jreleaser.model.api.announce.DiscordAnnouncer.TYPE:
                 return (A) getDiscord();
             case org.jreleaser.model.api.announce.DiscourseAnnouncer.TYPE:

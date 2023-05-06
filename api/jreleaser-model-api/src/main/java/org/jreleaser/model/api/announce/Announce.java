@@ -29,6 +29,8 @@ import java.util.Map;
 public interface Announce extends Domain, Activatable {
     ArticleAnnouncer getArticle();
 
+    BlueskyAnnouncer getBluesky();
+
     DiscordAnnouncer getDiscord();
 
     DiscourseAnnouncer getDiscourse();

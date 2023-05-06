@@ -31,6 +31,8 @@ import org.jreleaser.gradle.plugin.dsl.common.Activatable
 interface Announce extends Activatable {
     ArticleAnnouncer getArticle()
 
+    BlueskyAnnouncer getBluesky()
+
     DiscordAnnouncer getDiscord()
 
     DiscourseAnnouncer getDiscourse()
@@ -72,6 +74,8 @@ interface Announce extends Activatable {
 
     void article(Action<? super ArticleAnnouncer> action)
 
+    void bluesky(Action<? super BlueskyAnnouncer> action)
+
     void discord(Action<? super DiscordAnnouncer> action)
 
     void discourse(Action<? super DiscourseAnnouncer> action)
@@ -111,6 +115,8 @@ interface Announce extends Activatable {
     void webhooks(Action<? super NamedDomainObjectContainer<WebhookAnnouncer>> action)
 
     void article(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArticleAnnouncer) Closure<Void> action)
+
+    void bluesky(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = BlueskyAnnouncer) Closure<Void> action)
 
     void discord(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DiscordAnnouncer) Closure<Void> action)
 
