@@ -38,7 +38,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.1.0
  */
 public final class Announce extends AbstractActivatable<Announce> implements Domain {
-    private static final long serialVersionUID = -6058903517417564327L;
+    private static final long serialVersionUID = 8244852443096292765L;
 
     private final ArticleAnnouncer article = new ArticleAnnouncer();
     private final BlueskyAnnouncer bluesky = new BlueskyAnnouncer();
