@@ -132,10 +132,6 @@ deploy:
           - build/repos/local/release
 
 announce:
-  bluesky:
-    active: RELEASE
-    host: https://bsky.social/
-    statusTemplate: src/jreleaser/bluesky.tpl
   twitter:
     active: RELEASE
     statusTemplate: src/jreleaser/twitter.tpl
