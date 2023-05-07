@@ -30,7 +30,7 @@ import org.gradle.api.provider.Property
 interface BlueskyAnnouncer extends Announcer {
     Property<String> getHost()
 
-    Property<String> getScreenName()
+    Property<String> getHandle()
 
     Property<String> getPassword()
 

@@ -24,8 +24,10 @@ import org.jreleaser.util.Errors;
 
 import java.nio.file.Files;
 
+import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -40,11 +42,40 @@ public class BlueskyAnnouncerValidator {
 
     public static void validateBluesky(JReleaserContext context, BlueskyAnnouncer announcer, Errors errors) {
         context.getLogger().debug("announce.bluesky");
+
         resolveActivatable(context, announcer, "announce.bluesky", "NEVER");
         if (!announcer.resolveEnabledWithSnapshot(context.getModel().getProject())) {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
+
+        announcer.setHost(
+            checkProperty(context,
+                listOf(
+                    "announce.bluesky.host",
+                    "bluesky.host"),
+                "announce.bluesky.host",
+                announcer.getHost(),
+                errors));
+
+        announcer.setHandle(
+            checkProperty(context,
+                listOf(
+                    "announce.bluesky.handle",
+                    "bluesky.handle"),
+                "announce.bluesky.handle",
+                announcer.getHost(),
+                errors));
+
+        announcer.setPassword(
+            checkProperty(context,
+                listOf(
+                    "announce.bluesky.password",
+                    "bluesky.handle"),
+                "announce.bluesky.password",
+                announcer.getPassword(),
+                errors,
+                context.isDryrun()));
 
         if (isNotBlank(announcer.getStatusTemplate()) &&
             !Files.exists(context.getBasedir().resolve(announcer.getStatusTemplate().trim()))) {

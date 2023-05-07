@@ -15,16 +15,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.sdk.bluesky;
+package org.jreleaser.sdk.bluesky.api;
 
-/**
- * @author Simon Verhoeven
- * @since 1.7.0
- */
-public class BlueskyException extends Exception {
-    private static final long serialVersionUID = -3233004732629558982L;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-    public BlueskyException(String message, Throwable cause) {
-        super(message, cause);
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class CreateRecordResponse {
+    private String uri;
+
+    private String cid;
+
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
+
+    public String getCid() {
+        return cid;
+    }
+
+    public void setCid(String cid) {
+        this.cid = cid;
     }
 }

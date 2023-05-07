@@ -17,61 +17,67 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.announce
 
+import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.announce.BlueskyAnnouncer
+
+import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
  *
  * @author BEJUG
  * @since 1.7.0
  */
-//TODO BEJUG
 class BlueskyAnnouncerImpl extends AbstractAnnouncer implements BlueskyAnnouncer {
+    final Property<String> host
+    final Property<String> handle
+    final Property<String> password
+    final Property<String> status
+    final Property<String> statusTemplate
+    final ListProperty<String> statuses
+
     BlueskyAnnouncerImpl(ObjectFactory objects) {
         super(objects)
-    }
-
-    @Override
-    Property<String> getHost() {
-        return null
-    }
-
-    @Override
-    Property<String> getScreenName() {
-        return null
-    }
-
-    @Override
-    Property<String> getPassword() {
-        return null
-    }
-
-    @Override
-    Property<String> getStatus() {
-        return null
-    }
-
-    @Override
-    Property<String> getStatusTemplate() {
-        return null
-    }
-
-    @Override
-    ListProperty<String> getStatuses() {
-        return null
+        host = objects.property(String).convention(Providers.<String> notDefined())
+        handle = objects.property(String).convention(Providers.<String> notDefined())
+        password = objects.property(String).convention(Providers.<String> notDefined())
+        status = objects.property(String).convention(Providers.<String> notDefined())
+        statusTemplate = objects.property(String).convention(Providers.<String> notDefined())
+        statuses = objects.listProperty(String).convention(Providers.<List<String>> notDefined())
     }
 
     @Override
     void status(String message) {
+        if (isNotBlank(message)) {
+            statuses.add(message.trim())
+        }
+    }
 
+    @Override
+    @Internal
+    boolean isSet() {
+        super.isSet() ||
+            host.present ||
+            handle.present ||
+            password.present ||
+            status.present ||
+            statusTemplate.present ||
+            statuses.present
     }
 
     org.jreleaser.model.internal.announce.BlueskyAnnouncer toModel() {
         org.jreleaser.model.internal.announce.BlueskyAnnouncer announcer = new org.jreleaser.model.internal.announce.BlueskyAnnouncer()
         fillProperties(announcer)
-        //TODO BEJUG
+
+        if (host.present) announcer.host = host.get()
+        if (handle.present) announcer.handle = handle.get()
+        if (password.present) announcer.password = password.get()
+        if (status.present) announcer.status = status.get()
+        if (statusTemplate.present) announcer.statusTemplate = statusTemplate.get()
+        announcer.statuses = (List<String>) statuses.getOrElse([])
         announcer
     }
 }
