@@ -25,6 +25,7 @@ import org.jreleaser.sdk.commons.RestAPIException;
 import java.util.List;
 
 import static java.util.Objects.requireNonNull;
+import static org.jreleaser.util.StringUtils.requireNonBlank;
 
 /**
  * @author Tom cools
@@ -36,8 +37,14 @@ public class BlueskySdk {
     private final boolean dryrun;
 
     private BlueskySdk(JReleaserLogger logger,
+                       String host,
+                       int connectTimeout,
+                       int readTimeout,
                         boolean dryrun) {
-        this.logger = requireNonNull(logger, "'logger' must not be null");
+        requireNonNull(logger, "'logger' must not be null");
+        requireNonBlank(host, "'host' must not be blank");
+
+        this.logger = logger;
         this.dryrun = dryrun;
 
         //TODO setup api
@@ -66,6 +73,9 @@ public class BlueskySdk {
     public static class Builder {
         private final JReleaserLogger logger;
         private boolean dryrun;
+        private String host;
+        private int connectTimeout = 20;
+        private int readTimeout = 60;
 
         private Builder(JReleaserLogger logger) {
             this.logger = requireNonNull(logger, "'logger' must not be null");
@@ -76,8 +86,23 @@ public class BlueskySdk {
             return this;
         }
 
+        public Builder host(String host) {
+            this.host = requireNonBlank(host, "'host' must not be blank").trim();
+            return this;
+        }
+
+        public Builder connectTimeout(int connectTimeout) {
+            this.connectTimeout = connectTimeout;
+            return this;
+        }
+
+        public Builder readTimeout(int readTimeout) {
+            this.readTimeout = readTimeout;
+            return this;
+        }
+
         private void validate() {
-            // TODO BEJUG
+            requireNonBlank(host, "'host' must not be blank");
         }
 
         public BlueskySdk build() {
@@ -85,6 +110,9 @@ public class BlueskySdk {
 
             return new BlueskySdk(
                 logger,
+                host,
+                connectTimeout,
+                readTimeout,
                 dryrun);
         }
     }
