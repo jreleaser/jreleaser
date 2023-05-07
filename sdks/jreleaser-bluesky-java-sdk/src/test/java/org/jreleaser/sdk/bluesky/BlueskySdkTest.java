@@ -17,29 +17,68 @@
  */
 package org.jreleaser.sdk.bluesky;
 
+import com.github.tomakehurst.wiremock.client.WireMock;
+import org.jreleaser.logging.SimpleJReleaserLoggerAdapter;
 import org.jreleaser.test.WireMockExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
+import java.util.Collections;
+import java.util.List;
+
+import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.jreleaser.test.WireMockStubs.verifyJsonRequestContains;
 
 class BlueskySdkTest {
+
+    private static final String RECORD_ENDPOINT = "/xrpc/com.atproto.repo.createRecord";
 
     @RegisterExtension
     WireMockExtension api = new WireMockExtension(options().dynamicPort());
 
     @Test
     void testUpdateStatus() throws BlueskyException {
-        // TODO BeJUG
+        BlueskySdk sdk = baseBuilder().build();
+
+        sdk.skeet(Collections.singletonList("success"));
+
+        verifyJsonRequestContains(postRequestedFor(urlEqualTo(RECORD_ENDPOINT)), "\"text\" : \"success\"");
     }
 
     @Test
-    void testDryrun() throws BlueskyException {
-        // TODO BeJUG
+    void givenDryRun_whenExecutingSkeet_shouldNotMatchAnyEndpoint() throws BlueskyException {
+        BlueskySdk sdk = baseBuilder()
+            .dryrun(true)
+            .build();
+
+        sdk.skeet(Collections.singletonList("success"));
+
+        // then:
+        assertThat(WireMock.findUnmatchedRequests())
+            .isEmpty();
     }
 
     @Test
     void testUpdateStatuses() throws BlueskyException {
-        // TODO BeJUG
+        BlueskySdk sdk = baseBuilder().build();
+
+        sdk.skeet(List.of("success-one", "success-two"));
+
+        verifyJsonRequestContains(postRequestedFor(urlEqualTo(RECORD_ENDPOINT)), "\"text\" : \"success-one\"");
+        verifyJsonRequestContains(postRequestedFor(urlEqualTo(RECORD_ENDPOINT)), "\"text\" : \"success-two\"");
+    }
+
+    private BlueskySdk.Builder baseBuilder() {
+        return BlueskySdk
+            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
+            .handle("API-HANDLE")
+            .password("API-PASSWORD")
+            .host(api.baseUrl())
+            .dryrun(false)
+            .connectTimeout(20)
+            .readTimeout(60);
     }
 }

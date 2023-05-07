@@ -28,7 +28,7 @@ public interface BlueskyAnnouncer extends Announcer {
 
     String getHost();
 
-    String getScreenName();
+    String getHandle();
 
     String getPassword();
 

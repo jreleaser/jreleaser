@@ -32,11 +32,14 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.unmodifiableMap;
+import static org.jreleaser.model.Constants.HIDE;
 import static org.jreleaser.model.Constants.KEY_PREVIOUS_TAG_NAME;
 import static org.jreleaser.model.Constants.KEY_TAG_NAME;
+import static org.jreleaser.model.Constants.UNSET;
 import static org.jreleaser.model.api.announce.BlueskyAnnouncer.TYPE;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplate;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author BEJUG
@@ -47,7 +50,7 @@ public final class BlueskyAnnouncer extends AbstractAnnouncer<BlueskyAnnouncer, 
 
     private final List<String> statuses = new ArrayList<>();
     private String host;
-    private String screenName;
+    private String handle;
     private String password;
     private String status;
     private String statusTemplate;
@@ -67,8 +70,8 @@ public final class BlueskyAnnouncer extends AbstractAnnouncer<BlueskyAnnouncer, 
         }
 
         @Override
-        public String getScreenName() {
-            return screenName;
+        public String getHandle() {
+            return handle;
         }
 
         @Override
@@ -150,7 +153,7 @@ public final class BlueskyAnnouncer extends AbstractAnnouncer<BlueskyAnnouncer, 
     public void merge(BlueskyAnnouncer source) {
         super.merge(source);
         this.host = merge(this.host, source.host);
-        this.screenName = merge(this.screenName, source.screenName);
+        this.handle = merge(this.handle, source.handle);
         this.password = merge(this.password, source.password);
         this.status = merge(this.status, source.status);
         setStatuses(merge(this.statuses, source.statuses));
@@ -183,12 +186,12 @@ public final class BlueskyAnnouncer extends AbstractAnnouncer<BlueskyAnnouncer, 
         this.host = host;
     }
 
-    public String getScreenName() {
-        return screenName;
+    public String getHandle() {
+        return handle;
     }
 
-    public void setScreenName(String screenName) {
-        this.screenName = screenName;
+    public void setHandle(String handle) {
+        this.handle = handle;
     }
 
     public String getPassword() {
@@ -227,9 +230,8 @@ public final class BlueskyAnnouncer extends AbstractAnnouncer<BlueskyAnnouncer, 
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("host", host);
-        // TODO BEJUG: figure out where this goes to.
-        // props.put("screenName", isNotBlank(accessToken) ? HIDE : UNSET);
-        // props.put("password", isNotBlank(accessToken) ? HIDE : UNSET);
+        props.put("handle", isNotBlank(handle) ? HIDE : UNSET);
+        props.put("password", isNotBlank(password) ? HIDE : UNSET);
         props.put("status", status);
         props.put("statuses", statuses);
         props.put("statusTemplate", statusTemplate);

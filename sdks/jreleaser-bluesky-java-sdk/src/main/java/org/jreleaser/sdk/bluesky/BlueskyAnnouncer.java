@@ -99,6 +99,9 @@ public class BlueskyAnnouncer implements Announcer<org.jreleaser.model.api.annou
                 .connectTimeout(bluesky.getConnectTimeout())
                 .readTimeout(bluesky.getReadTimeout())
                 .dryrun(context.isDryrun())
+                .host(bluesky.getHost())
+                .handle(bluesky.getHandle())
+                .password(bluesky.getPassword())
                 .build();
             sdk.skeet(statuses);
         } catch (BlueskyException e) {

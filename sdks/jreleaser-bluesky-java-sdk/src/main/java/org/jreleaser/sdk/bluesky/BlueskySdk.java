@@ -17,9 +17,21 @@
  */
 package org.jreleaser.sdk.bluesky;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import feign.form.FormEncoder;
+import feign.jackson.JacksonDecoder;
+import feign.jackson.JacksonEncoder;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.sdk.bluesky.api.BlueskyAPI;
+import org.jreleaser.sdk.bluesky.api.CreateSessionRequest;
+import org.jreleaser.sdk.bluesky.api.CreateSessionResponse;
+import org.jreleaser.sdk.bluesky.api.CreateTextRecordRequest;
+import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.commons.RestAPIException;
 
 import java.util.List;
@@ -35,26 +47,47 @@ public class BlueskySdk {
     private final JReleaserLogger logger;
     private final BlueskyAPI api;
     private final boolean dryrun;
+    private final String handle;
+    private final String password;
 
     private BlueskySdk(JReleaserLogger logger,
+                       boolean dryrun,
                        String host,
+                       String handle,
+                       String password,
                        int connectTimeout,
-                       int readTimeout,
-                        boolean dryrun) {
-        requireNonNull(logger, "'logger' must not be null");
-        requireNonBlank(host, "'host' must not be blank");
+                       int readTimeout) {
+        requireNonNull(host, "'host' may not be null");
 
-        this.logger = logger;
+        this.logger = requireNonNull(logger, "'logger' must not be null");
         this.dryrun = dryrun;
+        this.handle = requireNonNull(handle, "'handle' may not be null");
+        this.password = requireNonNull(password, "'password' may not be null");
 
-        //TODO setup api
-        api = null;
+        ObjectMapper objectMapper = new ObjectMapper()
+            .setPropertyNamingStrategy(PropertyNamingStrategies.LOWER_CAMEL_CASE)
+            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .configure(SerializationFeature.INDENT_OUTPUT, true);
+
+        api = ClientUtils.builder(logger, connectTimeout, readTimeout)
+            .encoder(new FormEncoder(new JacksonEncoder(objectMapper)))
+            .decoder(new JacksonDecoder(objectMapper))
+            .target(BlueskyAPI.class, host);
 
         this.logger.debug(RB.$("workflow.dryrun"), dryrun);
     }
 
     public void skeet(List<String> statuses) throws BlueskyException {
-        //TODO bejug placeholder
+        wrap(() -> {
+            CreateSessionRequest sessionRequest = CreateSessionRequest.of(handle, password);
+            CreateSessionResponse session = api.createSession(sessionRequest);
+
+            for (String status : statuses) {
+                CreateTextRecordRequest record = CreateTextRecordRequest.of(session.getDid(), status);
+                api.createRecord(record, session.getAccessJwt());
+            }
+        });
     }
 
     private void wrap(Runnable runnable) throws BlueskyException {
@@ -74,6 +107,8 @@ public class BlueskySdk {
         private final JReleaserLogger logger;
         private boolean dryrun;
         private String host;
+        private String handle;
+        private String password;
         private int connectTimeout = 20;
         private int readTimeout = 60;
 
@@ -87,7 +122,17 @@ public class BlueskySdk {
         }
 
         public Builder host(String host) {
-            this.host = requireNonBlank(host, "'host' must not be blank").trim();
+            this.host = host;
+            return this;
+        }
+
+        public Builder handle(String handle) {
+            this.handle = requireNonNull(handle, "'handle' must not be null");
+            return this;
+        }
+
+        public Builder password(String password) {
+            this.password = requireNonNull(password, "'password' must not be null");
             return this;
         }
 
@@ -103,6 +148,8 @@ public class BlueskySdk {
 
         private void validate() {
             requireNonBlank(host, "'host' must not be blank");
+            requireNonBlank(handle, "'handle' must not be blank");
+            requireNonBlank(password, "'password' must not be blank");
         }
 
         public BlueskySdk build() {
@@ -110,10 +157,12 @@ public class BlueskySdk {
 
             return new BlueskySdk(
                 logger,
+                dryrun,
                 host,
+                handle,
+                password,
                 connectTimeout,
-                readTimeout,
-                dryrun);
+                readTimeout);
         }
     }
 
