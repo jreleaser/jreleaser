@@ -19,6 +19,7 @@ package org.jreleaser.sdk.bluesky;
 
 /**
  * @author Simon Verhoeven
+ * @author Tom Cools
  * @since 1.7.0
  */
 public class BlueskyException extends Exception {

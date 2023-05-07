@@ -42,7 +42,8 @@ import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
- * @author BEJUG
+ * @author Simon Verhoeven
+ * @author Tom Cools
  * @since 1.7.0
  */
 public final class BlueskyAnnouncer extends AbstractAnnouncer<BlueskyAnnouncer, org.jreleaser.model.api.announce.BlueskyAnnouncer> {

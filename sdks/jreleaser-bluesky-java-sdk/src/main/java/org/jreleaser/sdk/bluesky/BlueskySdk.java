@@ -39,8 +39,9 @@ import java.util.List;
 import static java.util.Objects.requireNonNull;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 
-/**
- * @author Tom cools
+ /**
+ * @author Tom Cools
+ * @author Simon Verhoeven
  * @since 1.7.0
  */
 public class BlueskySdk {

@@ -36,6 +36,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Simon Verhoeven
+ * @author Tom Cools
  * @since 1.7.0
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage

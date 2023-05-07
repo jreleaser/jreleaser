@@ -19,8 +19,9 @@ package org.jreleaser.model.api.announce;
 
 import java.util.List;
 
-/**
- * @author Tom cools
+ /**
+ * @author Tom Cools
+ * @author Simon Verhoeven
  * @since 1.7.0
  */
 public interface BlueskyAnnouncer extends Announcer {
