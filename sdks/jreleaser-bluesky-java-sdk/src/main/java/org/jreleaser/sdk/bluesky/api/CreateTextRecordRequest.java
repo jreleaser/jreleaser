@@ -23,6 +23,11 @@ import java.time.LocalDateTime;
 
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 
+/**
+ * @author Simon Verhoeven
+ * @author Tom Cools
+ * @since 1.7.0
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CreateTextRecordRequest {
     private final static String BLUESKY_POST_COLLECTION = "app.bsky.feed.post";

@@ -21,6 +21,11 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 
+/**
+ * @author Simon Verhoeven
+ * @author Tom Cools
+ * @since 1.7.0
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CreateSessionRequest {
     private String identifier;
