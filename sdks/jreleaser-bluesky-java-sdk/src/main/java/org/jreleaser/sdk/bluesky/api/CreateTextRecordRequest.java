@@ -37,7 +37,7 @@ public class CreateTextRecordRequest {
         o.collection = BLUESKY_POST_COLLECTION;
 
         TextRecord textRecord = new TextRecord();
-        textRecord.text = requireNonBlank(text, "'repo' must not be blank").trim();
+        textRecord.text = requireNonBlank(text, "'text' must not be blank").trim();
         textRecord.createdAt = LocalDateTime.now().toString();
         o.record = textRecord;
         return o;
@@ -77,7 +77,7 @@ public class CreateTextRecordRequest {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    static class TextRecord {
+    public static class TextRecord {
         private String text;
 
         private String createdAt;
