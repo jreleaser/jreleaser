@@ -88,8 +88,8 @@ public class BlueskyAnnouncer implements Announcer<org.jreleaser.model.api.annou
 
         for (int i = 0; i < statuses.size(); i++) {
             String status = getResolvedMessage(context, statuses.get(i));
-            context.getLogger().info(RB.$("bluesky.tweet"), status);
-            context.getLogger().debug(RB.$("bluesky.tweet.size"), status.length());
+            context.getLogger().info(RB.$("bluesky.skeet"), status);
+            context.getLogger().debug(RB.$("bluesky.skeet.size"), status.length());
             statuses.set(i, status);
         }
 
