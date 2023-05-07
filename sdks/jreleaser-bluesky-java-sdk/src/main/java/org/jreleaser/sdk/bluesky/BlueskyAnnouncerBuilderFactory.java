@@ -22,6 +22,7 @@ import org.kordamp.jipsy.annotations.ServiceProviderFor;
 
 /**
  * @author Simon Verhoeven
+ * @author Tom Cools
  * @since 1.7.0
  */
 @ServiceProviderFor(AnnouncerBuilderFactory.class)

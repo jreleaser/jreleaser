@@ -24,6 +24,7 @@ import org.jreleaser.infra.nativeimage.annotations.ProxyConfig;
 
 /**
  * @author Simon Verhoeven
+ * @author Tom Cools
  * @since 1.7.0
  */
 @ProxyConfig

@@ -21,6 +21,7 @@ import org.jreleaser.model.spi.announce.AbstractAnnouncerBuilder;
 
 /**
  * @author Simon Verhoeven
+ * @author Tom Cools
  * @since 1.7.0
  */
 public class BlueskyAnnouncerBuilder extends AbstractAnnouncerBuilder<BlueskyAnnouncer> {

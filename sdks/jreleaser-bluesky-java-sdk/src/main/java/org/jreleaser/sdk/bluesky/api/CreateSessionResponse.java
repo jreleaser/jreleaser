@@ -19,6 +19,11 @@ package org.jreleaser.sdk.bluesky.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+/**
+ * @author Simon Verhoeven
+ * @author Tom Cools
+ * @since 1.7.0
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CreateSessionResponse {
     private String accessJwt;

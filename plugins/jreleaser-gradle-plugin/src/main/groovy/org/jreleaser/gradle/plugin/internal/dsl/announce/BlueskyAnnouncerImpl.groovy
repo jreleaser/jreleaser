@@ -28,7 +28,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
  *
- * @author BEJUG
+ * @author Simon Verhoeven
+ * @author Tom Cools
  * @since 1.7.0
  */
 class BlueskyAnnouncerImpl extends AbstractAnnouncer implements BlueskyAnnouncer {
