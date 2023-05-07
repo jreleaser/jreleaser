@@ -24,6 +24,7 @@ import org.jreleaser.util.Errors;
 
 import java.nio.file.Files;
 
+import static org.jreleaser.model.api.announce.BlueskyAnnouncer.BLUESKY_ACCESS_TOKEN;
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
@@ -72,7 +73,7 @@ public class BlueskyAnnouncerValidator {
             checkProperty(context,
                 listOf(
                     "announce.bluesky.password",
-                    "bluesky.handle"),
+                    BLUESKY_ACCESS_TOKEN),
                 "announce.bluesky.password",
                 announcer.getPassword(),
                 errors,

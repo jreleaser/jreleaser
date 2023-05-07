@@ -26,6 +26,7 @@ import java.util.List;
  */
 public interface BlueskyAnnouncer extends Announcer {
     String TYPE = "bluesky";
+    String BLUESKY_ACCESS_TOKEN = "BLUESKY_ACCESS_TOKEN";
 
     String getHost();
 
