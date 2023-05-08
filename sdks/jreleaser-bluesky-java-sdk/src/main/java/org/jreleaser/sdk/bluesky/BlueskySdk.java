@@ -39,7 +39,7 @@ import java.util.List;
 import static java.util.Objects.requireNonNull;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 
- /**
+/**
  * @author Tom Cools
  * @author Simon Verhoeven
  * @since 1.7.0
@@ -48,7 +48,8 @@ public class BlueskySdk {
     private final JReleaserLogger logger;
     private final BlueskyAPI api;
     private final boolean dryrun;
-    private final String did;
+    private final String handle;
+    private final String password;
 
     private BlueskySdk(JReleaserLogger logger,
                        boolean dryrun,
@@ -59,8 +60,9 @@ public class BlueskySdk {
                        int readTimeout) {
         this.logger = requireNonNull(logger, "'logger' must not be null");
         requireNonBlank(host, "'host' must not be blank");
-        requireNonBlank(handle, "'handle' must not be blank");
-        requireNonBlank(password, "'password' must not be blank");
+        this.handle = requireNonBlank(handle, "'handle' must not be blank");
+        this.password = requireNonBlank(password, "'password' must not be blank");
+        this.dryrun = dryrun;
 
         ObjectMapper objectMapper = new ObjectMapper()
             .setPropertyNamingStrategy(PropertyNamingStrategies.LOWER_CAMEL_CASE)
@@ -68,36 +70,22 @@ public class BlueskySdk {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .configure(SerializationFeature.INDENT_OUTPUT, true);
 
-        this.dryrun = dryrun;
-
-        CreateSessionResponse sessionResponse = authenticate(logger, host, handle, password, connectTimeout, readTimeout, objectMapper);
-        this.did = sessionResponse.getDid();
-        String accessToken = sessionResponse.getAccessJwt();
-
-        this.api = ClientUtils.builder(logger, connectTimeout, readTimeout)
+        api = ClientUtils.builder(logger, connectTimeout, readTimeout)
             .encoder(new FormEncoder(new JacksonEncoder(objectMapper)))
             .decoder(new JacksonDecoder(objectMapper))
-            .requestInterceptor(template -> template.header("Authorization", String.format("Bearer %s", accessToken)))
             .target(BlueskyAPI.class, host);
 
         this.logger.debug(RB.$("workflow.dryrun"), dryrun);
     }
 
-     private static CreateSessionResponse authenticate(JReleaserLogger logger, String host, String handle, String password, int connectTimeout, int readTimeout, ObjectMapper objectMapper) {
-         BlueskyAPI authApi = ClientUtils.builder(logger, connectTimeout, readTimeout)
-             .encoder(new FormEncoder(new JacksonEncoder(objectMapper)))
-             .decoder(new JacksonDecoder(objectMapper))
-             .target(BlueskyAPI.class, host);
-
-         CreateSessionRequest sessionRequest = CreateSessionRequest.of(handle, password);
-         return authApi.createSession(sessionRequest);
-     }
-
-     public void skeet(List<String> statuses) throws BlueskyException {
+    public void skeet(List<String> statuses) throws BlueskyException {
         wrap(() -> {
+            CreateSessionRequest sessionRequest = CreateSessionRequest.of(handle, password);
+            CreateSessionResponse session = api.createSession(sessionRequest);
+
             for (String status : statuses) {
-                CreateTextRecordRequest record = CreateTextRecordRequest.of(did, status);
-                api.createRecord(record);
+                CreateTextRecordRequest record = CreateTextRecordRequest.of(session.getDid(), status);
+                api.createRecord(record, session.getAccessJwt());
             }
         });
     }

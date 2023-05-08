@@ -18,6 +18,7 @@
 package org.jreleaser.sdk.bluesky.api;
 
 import feign.Headers;
+import feign.Param;
 import feign.RequestLine;
 import org.jreleaser.infra.nativeimage.annotations.ProxyConfig;
 
@@ -34,6 +35,6 @@ public interface BlueskyAPI {
     CreateSessionResponse createSession(CreateSessionRequest request);
 
     @RequestLine("POST /xrpc/com.atproto.repo.createRecord")
-    @Headers({"Content-Type: application/json"})
-    CreateRecordResponse createRecord(CreateTextRecordRequest request);
+    @Headers({"Content-Type: application/json", "Authorization: Bearer {accessToken}"})
+    CreateRecordResponse createRecord(CreateTextRecordRequest request, @Param("accessToken") String accessToken);
 }
