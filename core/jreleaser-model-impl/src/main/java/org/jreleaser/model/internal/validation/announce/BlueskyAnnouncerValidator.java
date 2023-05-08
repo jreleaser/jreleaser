@@ -66,7 +66,7 @@ public class BlueskyAnnouncerValidator {
                     "announce.bluesky.handle",
                     "bluesky.handle"),
                 "announce.bluesky.handle",
-                announcer.getHost(),
+                announcer.getHandle(),
                 errors));
 
         announcer.setPassword(

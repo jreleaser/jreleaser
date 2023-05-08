@@ -97,12 +97,11 @@ public class BlueskyAnnouncer implements Announcer<org.jreleaser.model.api.annou
         try {
             BlueskySdk sdk = BlueskySdk.builder(context.getLogger())
                 .host(bluesky.getHost())
+                .handle(bluesky.getHandle())
+                .password(bluesky.getPassword())
                 .connectTimeout(bluesky.getConnectTimeout())
                 .readTimeout(bluesky.getReadTimeout())
                 .dryrun(context.isDryrun())
-                .host(bluesky.getHost())
-                .handle(bluesky.getHandle())
-                .password(bluesky.getPassword())
                 .build();
             sdk.skeet(statuses);
         } catch (BlueskyException e) {

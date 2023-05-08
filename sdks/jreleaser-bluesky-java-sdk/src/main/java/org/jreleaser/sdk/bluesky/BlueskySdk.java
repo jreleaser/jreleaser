@@ -39,7 +39,7 @@ import java.util.List;
 import static java.util.Objects.requireNonNull;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 
- /**
+/**
  * @author Tom Cools
  * @author Simon Verhoeven
  * @since 1.7.0
@@ -58,12 +58,11 @@ public class BlueskySdk {
                        String password,
                        int connectTimeout,
                        int readTimeout) {
-        requireNonNull(host, "'host' may not be null");
-
         this.logger = requireNonNull(logger, "'logger' must not be null");
+        requireNonBlank(host, "'host' must not be blank");
+        this.handle = requireNonBlank(handle, "'handle' must not be blank");
+        this.password = requireNonBlank(password, "'password' must not be blank");
         this.dryrun = dryrun;
-        this.handle = requireNonNull(handle, "'handle' may not be null");
-        this.password = requireNonNull(password, "'password' may not be null");
 
         ObjectMapper objectMapper = new ObjectMapper()
             .setPropertyNamingStrategy(PropertyNamingStrategies.LOWER_CAMEL_CASE)
