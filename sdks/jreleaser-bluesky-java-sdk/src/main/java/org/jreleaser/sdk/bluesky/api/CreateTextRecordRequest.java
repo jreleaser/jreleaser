@@ -18,6 +18,7 @@
 package org.jreleaser.sdk.bluesky.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDateTime;
 
@@ -82,6 +83,9 @@ public class CreateTextRecordRequest {
 
         private String createdAt;
 
+        @JsonProperty("$type")
+        private String type;
+
         public String getText() {
             return text;
         }
@@ -96,6 +100,14 @@ public class CreateTextRecordRequest {
 
         public void setCreatedAt(String createdAt) {
             this.createdAt = createdAt;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public void setType(String type) {
+            this.type = type;
         }
     }
 

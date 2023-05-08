@@ -48,8 +48,7 @@ public class BlueskySdk {
     private final JReleaserLogger logger;
     private final BlueskyAPI api;
     private final boolean dryrun;
-    private final String handle;
-    private final String password;
+    private final String did;
 
     private BlueskySdk(JReleaserLogger logger,
                        boolean dryrun,
@@ -58,12 +57,10 @@ public class BlueskySdk {
                        String password,
                        int connectTimeout,
                        int readTimeout) {
-        requireNonNull(host, "'host' may not be null");
-
         this.logger = requireNonNull(logger, "'logger' must not be null");
-        this.dryrun = dryrun;
-        this.handle = requireNonNull(handle, "'handle' may not be null");
-        this.password = requireNonNull(password, "'password' may not be null");
+        requireNonBlank(host, "'host' must not be blank");
+        requireNonBlank(handle, "'handle' must not be blank");
+        requireNonBlank(password, "'password' must not be blank");
 
         ObjectMapper objectMapper = new ObjectMapper()
             .setPropertyNamingStrategy(PropertyNamingStrategies.LOWER_CAMEL_CASE)
@@ -71,22 +68,36 @@ public class BlueskySdk {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .configure(SerializationFeature.INDENT_OUTPUT, true);
 
-        api = ClientUtils.builder(logger, connectTimeout, readTimeout)
+        this.dryrun = dryrun;
+
+        CreateSessionResponse sessionResponse = authenticate(logger, host, handle, password, connectTimeout, readTimeout, objectMapper);
+        this.did = sessionResponse.getDid();
+        String accessToken = sessionResponse.getAccessJwt();
+
+        this.api = ClientUtils.builder(logger, connectTimeout, readTimeout)
             .encoder(new FormEncoder(new JacksonEncoder(objectMapper)))
             .decoder(new JacksonDecoder(objectMapper))
+            .requestInterceptor(template -> template.header("Authorization", String.format("Bearer %s", accessToken)))
             .target(BlueskyAPI.class, host);
 
         this.logger.debug(RB.$("workflow.dryrun"), dryrun);
     }
 
-    public void skeet(List<String> statuses) throws BlueskyException {
-        wrap(() -> {
-            CreateSessionRequest sessionRequest = CreateSessionRequest.of(handle, password);
-            CreateSessionResponse session = api.createSession(sessionRequest);
+     private static CreateSessionResponse authenticate(JReleaserLogger logger, String host, String handle, String password, int connectTimeout, int readTimeout, ObjectMapper objectMapper) {
+         BlueskyAPI authApi = ClientUtils.builder(logger, connectTimeout, readTimeout)
+             .encoder(new FormEncoder(new JacksonEncoder(objectMapper)))
+             .decoder(new JacksonDecoder(objectMapper))
+             .target(BlueskyAPI.class, host);
 
+         CreateSessionRequest sessionRequest = CreateSessionRequest.of(handle, password);
+         return authApi.createSession(sessionRequest);
+     }
+
+     public void skeet(List<String> statuses) throws BlueskyException {
+        wrap(() -> {
             for (String status : statuses) {
-                CreateTextRecordRequest record = CreateTextRecordRequest.of(session.getDid(), status);
-                api.createRecord(record, session.getAccessJwt());
+                CreateTextRecordRequest record = CreateTextRecordRequest.of(did, status);
+                api.createRecord(record);
             }
         });
     }
