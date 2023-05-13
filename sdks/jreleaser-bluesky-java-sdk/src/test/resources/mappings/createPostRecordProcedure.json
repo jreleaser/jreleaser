@@ -19,10 +19,11 @@
     },
     "response": {
         "status": 200,
-        "body": "{ \"uri\": \"TEST_URI\", \"cid\": \"TEST_CID\"}",
+        "body": "{ \"uri\": \"{{jsonPath request.body '$.record.text'}}\", \"cid\": \"TEST_CID\"}",
         "headers": {
             "Content-Type": "application/json"
-        }
+        },
+        "transformers": ["response-template"]
     },
     "uuid": "6a7d059f-0afe-4111-92f1-916eb38c89c3",
     "persistent": true,
