@@ -18,6 +18,7 @@
 package org.jreleaser.sdk.bluesky;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
 import org.jreleaser.logging.SimpleJReleaserLoggerAdapter;
 import org.jreleaser.test.WireMockExtension;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,9 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import java.util.Collections;
 import java.util.List;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.absent;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.matchingJsonPath;
 import static com.github.tomakehurst.wiremock.client.WireMock.postRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
@@ -37,7 +41,9 @@ class BlueskySdkTest {
     private static final String RECORD_ENDPOINT = "/xrpc/com.atproto.repo.createRecord";
 
     @RegisterExtension
-    WireMockExtension api = new WireMockExtension(options().dynamicPort());
+    WireMockExtension api = new WireMockExtension(options()
+        .extensions(new ResponseTemplateTransformer(false))
+        .dynamicPort());
 
     @Test
     void testUpdateStatus() throws BlueskyException {
@@ -65,10 +71,23 @@ class BlueskySdkTest {
     void testUpdateStatuses() throws BlueskyException {
         BlueskySdk sdk = baseBuilder().build();
 
-        sdk.skeet(List.of("success-one", "success-two"));
+        sdk.skeet(List.of("success-one", "success-two", "success-three"));
 
-        verifyJsonRequestContains(postRequestedFor(urlEqualTo(RECORD_ENDPOINT)), "\"text\" : \"success-one\"");
-        verifyJsonRequestContains(postRequestedFor(urlEqualTo(RECORD_ENDPOINT)), "\"text\" : \"success-two\"");
+        api.verify(postRequestedFor(urlEqualTo(RECORD_ENDPOINT))
+            .withRequestBody(matchingJsonPath("$.record.text", equalTo("success-one"))
+                .and(matchingJsonPath("$.record.reply", absent()))));
+
+        api.verify(postRequestedFor(urlEqualTo(RECORD_ENDPOINT))
+            .withRequestBody(matchingJsonPath("$.record.text", equalTo("success-two"))
+                .and(matchingJsonPath("$.record.reply.root.uri", equalTo("success-one")))
+                .and(matchingJsonPath("$.record.reply.parent.uri", equalTo("success-one")))
+            ));
+
+        api.verify(postRequestedFor(urlEqualTo(RECORD_ENDPOINT))
+            .withRequestBody(matchingJsonPath("$.record.text", equalTo("success-three"))
+                .and(matchingJsonPath("$.record.reply.root.uri", equalTo("success-one")))
+                .and(matchingJsonPath("$.record.reply.parent.uri", equalTo("success-two")))
+            ));
     }
 
     private BlueskySdk.Builder baseBuilder() {

@@ -32,16 +32,30 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CreateTextRecordRequest {
     private final static String BLUESKY_POST_COLLECTION = "app.bsky.feed.post";
+
     public static CreateTextRecordRequest of(String repo, String text) {
-        CreateTextRecordRequest o = new CreateTextRecordRequest();
-        o.repo = requireNonBlank(repo, "'repo' must not be blank").trim();
-        o.collection = BLUESKY_POST_COLLECTION;
+        CreateTextRecordRequest request = new CreateTextRecordRequest();
+        request.repo = requireNonBlank(repo, "'repo' must not be blank").trim();
+        request.collection = BLUESKY_POST_COLLECTION;
 
         TextRecord textRecord = new TextRecord();
         textRecord.text = requireNonBlank(text, "'text' must not be blank").trim();
         textRecord.createdAt = LocalDateTime.now().toString();
-        o.record = textRecord;
-        return o;
+        request.record = textRecord;
+
+        return request;
+    }
+
+    public static CreateTextRecordRequest of(String repo, String text, CreateRecordResponse root, CreateRecordResponse parent) {
+        CreateTextRecordRequest request = CreateTextRecordRequest.of(repo, text);
+
+        ReplyReference reply = new ReplyReference();
+        reply.root = root;
+        reply.parent = parent;
+
+        request.record.setReply(reply);
+
+        return request;
     }
 
     private String repo;
@@ -83,6 +97,8 @@ public class CreateTextRecordRequest {
 
         private String createdAt;
 
+        private ReplyReference reply;
+
         @JsonProperty("$type")
         private String type;
 
@@ -102,6 +118,14 @@ public class CreateTextRecordRequest {
             this.createdAt = createdAt;
         }
 
+        public ReplyReference getReply() {
+            return reply;
+        }
+
+        public void setReply(ReplyReference reply) {
+            this.reply = reply;
+        }
+
         public String getType() {
             return type;
         }
@@ -111,5 +135,26 @@ public class CreateTextRecordRequest {
         }
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class ReplyReference {
+        private CreateRecordResponse root;
 
+        private CreateRecordResponse parent;
+
+        public CreateRecordResponse getRoot() {
+            return root;
+        }
+
+        public void setRoot(CreateRecordResponse root) {
+            this.root = root;
+        }
+
+        public CreateRecordResponse getParent() {
+            return parent;
+        }
+
+        public void setParent(CreateRecordResponse parent) {
+            this.parent = parent;
+        }
+    }
 }

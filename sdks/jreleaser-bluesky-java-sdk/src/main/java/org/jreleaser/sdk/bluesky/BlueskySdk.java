@@ -28,6 +28,7 @@ import feign.jackson.JacksonEncoder;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.sdk.bluesky.api.BlueskyAPI;
+import org.jreleaser.sdk.bluesky.api.CreateRecordResponse;
 import org.jreleaser.sdk.bluesky.api.CreateSessionRequest;
 import org.jreleaser.sdk.bluesky.api.CreateSessionResponse;
 import org.jreleaser.sdk.bluesky.api.CreateTextRecordRequest;
@@ -80,14 +81,25 @@ public class BlueskySdk {
 
     public void skeet(List<String> statuses) throws BlueskyException {
         wrap(() -> {
-            CreateSessionRequest sessionRequest = CreateSessionRequest.of(handle, password);
-            CreateSessionResponse session = api.createSession(sessionRequest);
+            CreateSessionResponse session = createSession();
+            String identifier = session.getDid();
 
-            for (String status : statuses) {
-                CreateTextRecordRequest record = CreateTextRecordRequest.of(session.getDid(), status);
-                api.createRecord(record, session.getAccessJwt());
+            // To skeet a thread, the first and previous statuses must be added to a new status.
+            CreateTextRecordRequest firstStatusRequest = CreateTextRecordRequest.of(identifier, statuses.get(0));
+            CreateRecordResponse firstStatus = api.createRecord(firstStatusRequest, session.getAccessJwt());
+            CreateRecordResponse previousStatus = firstStatus;
+
+            for (int i = 1; i < statuses.size(); i++) {
+                String status = statuses.get(i);
+                CreateTextRecordRequest nextStatusRequest = CreateTextRecordRequest.of(identifier, status, firstStatus, previousStatus);
+                previousStatus = api.createRecord(nextStatusRequest, session.getAccessJwt());
             }
         });
+    }
+
+    private CreateSessionResponse createSession() {
+        CreateSessionRequest sessionRequest = CreateSessionRequest.of(handle, password);
+        return api.createSession(sessionRequest);
     }
 
     private void wrap(Runnable runnable) throws BlueskyException {
