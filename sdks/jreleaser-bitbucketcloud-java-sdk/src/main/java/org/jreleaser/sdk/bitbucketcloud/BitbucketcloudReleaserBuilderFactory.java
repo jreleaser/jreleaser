@@ -15,25 +15,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.api.release;
+package org.jreleaser.sdk.bitbucketcloud;
 
-import org.jreleaser.model.api.common.Domain;
+import org.jreleaser.model.spi.release.ReleaserBuilderFactory;
+import org.kordamp.jipsy.annotations.ServiceProviderFor;
 
 /**
- * @author Andres Almiray
- * @since 0.1.0
+ * @author Hasnae Rehioui
+ * @since 1.7.0
  */
-public interface Release extends Domain {
-    BitbucketcloudReleaser getBitbucketcloud();
-    GithubReleaser getGithub();
+@ServiceProviderFor(ReleaserBuilderFactory.class)
+public class BitbucketcloudReleaserBuilderFactory implements ReleaserBuilderFactory<BitbucketcloudReleaser, BitbucketcloudReleaserBuilder> {
+    @Override
+    public String getName() {
+        return org.jreleaser.model.api.release.BitbucketcloudReleaser.TYPE;
+    }
 
-    GitlabReleaser getGitlab();
-
-    GiteaReleaser getGitea();
-
-    CodebergReleaser getCodeberg();
-
-    GenericGitReleaser getGeneric();
-
-    Releaser getReleaser();
+    @Override
+    public BitbucketcloudReleaserBuilder getBuilder() {
+        return new BitbucketcloudReleaserBuilder();
+    }
 }

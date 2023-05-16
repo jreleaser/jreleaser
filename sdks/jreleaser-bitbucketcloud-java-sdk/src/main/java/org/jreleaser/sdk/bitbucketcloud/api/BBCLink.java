@@ -15,25 +15,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.api.release;
+package org.jreleaser.sdk.bitbucketcloud.api;
 
-import org.jreleaser.model.api.common.Domain;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
- * @author Andres Almiray
- * @since 0.1.0
+ * @author Hasnae Rehioui
+ * @since 1.7.0
  */
-public interface Release extends Domain {
-    BitbucketcloudReleaser getBitbucketcloud();
-    GithubReleaser getGithub();
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class BBCLink {
+    private String href;
+    private String name;
 
-    GitlabReleaser getGitlab();
+    public String getHref() {
+        return href;
+    }
 
-    GiteaReleaser getGitea();
+    public void setHref(String href) {
+        this.href = href;
+    }
 
-    CodebergReleaser getCodeberg();
+    public String getName() {
+        return name;
+    }
 
-    GenericGitReleaser getGeneric();
-
-    Releaser getReleaser();
+    public void setName(String name) {
+        this.name = name;
+    }
 }

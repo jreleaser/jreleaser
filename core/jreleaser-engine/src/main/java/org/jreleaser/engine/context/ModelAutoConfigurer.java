@@ -28,6 +28,7 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.JReleaserModel;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.release.BaseReleaser;
+import org.jreleaser.model.internal.release.BitbucketcloudReleaser;
 import org.jreleaser.model.internal.release.CodebergReleaser;
 import org.jreleaser.model.internal.release.GithubReleaser;
 import org.jreleaser.model.internal.release.GitlabReleaser;
@@ -480,8 +481,12 @@ public final class ModelAutoConfigurer {
         try {
             boolean grs = resolveBoolean(org.jreleaser.model.api.JReleaserContext.GIT_ROOT_SEARCH, gitRootSearch);
             Repository repository = GitSdk.of(basedir, grs).getRemote();
-            BaseReleaser<?, ?> service = null;
+            BaseReleaser<?, ?> service;
             switch (repository.getKind()) {
+                case BITBUCKETCLOUD:
+                    service = new BitbucketcloudReleaser();
+                    model.getRelease().setBitbucketcloud((BitbucketcloudReleaser) service);
+                    break;
                 case GITHUB:
                     service = new GithubReleaser();
                     model.getRelease().setGithub((GithubReleaser) service);

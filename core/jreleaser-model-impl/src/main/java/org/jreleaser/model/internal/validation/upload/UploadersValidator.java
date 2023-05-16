@@ -25,6 +25,7 @@ import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.upload.ArtifactoryUploaderValidator.validateArtifactory;
+import static org.jreleaser.model.internal.validation.upload.BitbucketcloudUploaderValidator.validateBitbucketcloud;
 import static org.jreleaser.model.internal.validation.upload.FtpUploaderValidator.validateFtpUploader;
 import static org.jreleaser.model.internal.validation.upload.GiteaUploaderValidator.validateGiteaUploader;
 import static org.jreleaser.model.internal.validation.upload.GitlabUploaderValidator.validateGitlabUploader;
@@ -47,6 +48,7 @@ public final class UploadersValidator {
         context.getLogger().debug("upload");
 
         validateArtifactory(context, mode, errors);
+        validateBitbucketcloud(context, mode, errors);
         validateFtpUploader(context, mode, errors);
         validateGiteaUploader(context, mode, errors);
         validateGitlabUploader(context, mode, errors);
@@ -62,6 +64,7 @@ public final class UploadersValidator {
 
             if (upload.isEnabled()) {
                 boolean enabled = !upload.getActiveArtifactories().isEmpty() ||
+                    !upload.getActiveBitbucketclouds().isEmpty() ||
                     !upload.getActiveFtps().isEmpty() ||
                     !upload.getActiveGiteas().isEmpty() ||
                     !upload.getActiveGitlabs().isEmpty() ||

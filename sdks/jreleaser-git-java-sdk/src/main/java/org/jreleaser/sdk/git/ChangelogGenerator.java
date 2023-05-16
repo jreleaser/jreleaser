@@ -360,10 +360,11 @@ public class ChangelogGenerator {
         commits.stream()
             .sorted(revCommitComparator)
             .map(rc -> "conventional-commits".equals(changelog.getPreset()) ? ConventionalCommit.of(rc) : Commit.of(rc))
-            .map(c -> c.extractIssues(context))
             .peek(c -> {
                 applyLabels(c, changelog.getLabelers());
-
+                if (context.getModel().getRelease().getReleaser().getIssues().isEnabled()) {
+                    c.extractIssues(context);
+                }
                 if (!changelog.getContributors().isEnabled()) return;
 
                 if (!changelog.getHide().containsContributor(c.author.name)) {
