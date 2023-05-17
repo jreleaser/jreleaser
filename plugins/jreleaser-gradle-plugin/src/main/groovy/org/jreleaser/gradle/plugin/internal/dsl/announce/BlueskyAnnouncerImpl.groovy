@@ -17,12 +17,15 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.announce
 
+import groovy.transform.CompileStatic
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.announce.BlueskyAnnouncer
+
+import javax.inject.Inject
 
 import static org.jreleaser.util.StringUtils.isNotBlank
 
@@ -32,6 +35,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
  * @author Tom Cools
  * @since 1.7.0
  */
+@CompileStatic
 class BlueskyAnnouncerImpl extends AbstractAnnouncer implements BlueskyAnnouncer {
     final Property<String> host
     final Property<String> handle
@@ -40,6 +44,7 @@ class BlueskyAnnouncerImpl extends AbstractAnnouncer implements BlueskyAnnouncer
     final Property<String> statusTemplate
     final ListProperty<String> statuses
 
+    @Inject
     BlueskyAnnouncerImpl(ObjectFactory objects) {
         super(objects)
         host = objects.property(String).convention(Providers.<String> notDefined())
