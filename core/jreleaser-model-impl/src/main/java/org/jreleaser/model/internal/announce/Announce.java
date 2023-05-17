@@ -38,9 +38,10 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.1.0
  */
 public final class Announce extends AbstractActivatable<Announce> implements Domain {
-    private static final long serialVersionUID = -6058903517417564327L;
+    private static final long serialVersionUID = 8244852443096292765L;
 
     private final ArticleAnnouncer article = new ArticleAnnouncer();
+    private final BlueskyAnnouncer bluesky = new BlueskyAnnouncer();
     private final DiscordAnnouncer discord = new DiscordAnnouncer();
     private final DiscourseAnnouncer discourse = new DiscourseAnnouncer();
     private final DiscussionsAnnouncer discussions = new DiscussionsAnnouncer();
@@ -69,6 +70,11 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         @Override
         public org.jreleaser.model.api.announce.ArticleAnnouncer getArticle() {
             return article.asImmutable();
+        }
+
+        @Override
+        public org.jreleaser.model.api.announce.BlueskyAnnouncer getBluesky() {
+            return bluesky.asImmutable();
         }
 
         @Override
@@ -194,6 +200,7 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
     public void merge(Announce source) {
         super.merge(source);
         setArticle(source.article);
+        setBluesky(source.bluesky);
         setDiscord(source.discord);
         setDiscourse(source.discourse);
         setDiscussions(source.discussions);
@@ -229,6 +236,14 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
 
     public void setArticle(ArticleAnnouncer article) {
         this.article.merge(article);
+    }
+
+    public BlueskyAnnouncer getBluesky() {
+        return bluesky;
+    }
+
+    public void setBluesky(BlueskyAnnouncer bluesky) {
+        this.bluesky.merge(bluesky);
     }
 
     @JsonPropertyDescription("announce.discord is deprecated since 1.4.0 and will be removed in 2.0.0")
@@ -425,6 +440,7 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         map.put("enabled", isEnabled());
         map.put("active", getActive());
         map.putAll(article.asMap(full));
+        map.putAll(bluesky.asMap(full));
         map.putAll(discord.asMap(full));
         map.putAll(discourse.asMap(full));
         map.putAll(discussions.asMap(full));
@@ -458,6 +474,8 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         switch (name.toLowerCase(Locale.ENGLISH).trim()) {
             case org.jreleaser.model.api.announce.ArticleAnnouncer.TYPE:
                 return (A) getArticle();
+            case org.jreleaser.model.api.announce.BlueskyAnnouncer.TYPE:
+                return (A) getBluesky();
             case org.jreleaser.model.api.announce.DiscordAnnouncer.TYPE:
                 return (A) getDiscord();
             case org.jreleaser.model.api.announce.DiscourseAnnouncer.TYPE:

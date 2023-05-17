@@ -24,6 +24,7 @@ import org.jreleaser.model.internal.announce.Announce;
 import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.internal.validation.announce.ArticleAnnouncerValidator.validateArticle;
+import static org.jreleaser.model.internal.validation.announce.BlueskyAnnouncerValidator.validateBluesky;
 import static org.jreleaser.model.internal.validation.announce.DiscordAnnouncerValidator.validateDiscord;
 import static org.jreleaser.model.internal.validation.announce.DiscourseAnnouncerValidator.validateDiscourse;
 import static org.jreleaser.model.internal.validation.announce.DiscussionsAnnouncerValidator.validateDiscussions;
@@ -63,6 +64,7 @@ public final class AnnouncersValidator {
         }
 
         validateArticle(context, announce.getArticle(), errors);
+        validateBluesky(context, announce.getBluesky(), errors);
         validateDiscussions(context, announce.getDiscussions(), errors);
         validateDiscord(context, announce.getDiscord(), errors);
         validateDiscourse(context, announce.getDiscourse(), errors);
@@ -88,6 +90,7 @@ public final class AnnouncersValidator {
 
         if (announce.isEnabled()) {
             boolean enabled = announce.getArticle().isEnabled() ||
+                announce.getBluesky().isEnabled() ||
                 announce.getDiscord().isEnabled() ||
                 announce.getDiscourse().isEnabled() ||
                 announce.getDiscussions().isEnabled() ||

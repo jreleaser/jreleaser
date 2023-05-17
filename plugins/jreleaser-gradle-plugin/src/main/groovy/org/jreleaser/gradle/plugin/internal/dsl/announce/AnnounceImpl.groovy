@@ -27,6 +27,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.announce.Announce
 import org.jreleaser.gradle.plugin.dsl.announce.ArticleAnnouncer
+import org.jreleaser.gradle.plugin.dsl.announce.BlueskyAnnouncer
 import org.jreleaser.gradle.plugin.dsl.announce.DiscordAnnouncer
 import org.jreleaser.gradle.plugin.dsl.announce.DiscourseAnnouncer
 import org.jreleaser.gradle.plugin.dsl.announce.DiscussionsAnnouncer
@@ -61,6 +62,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 class AnnounceImpl implements Announce {
     final Property<Active> active
     final ArticleAnnouncerImpl article
+    final BlueskyAnnouncerImpl bluesky
     final DiscordAnnouncerImpl discord
     final DiscourseAnnouncerImpl discourse
     final DiscussionsAnnouncerImpl discussions
@@ -84,6 +86,7 @@ class AnnounceImpl implements Announce {
     AnnounceImpl(ObjectFactory objects) {
         active = objects.property(Active).convention(Providers.<Active> notDefined())
         article = objects.newInstance(ArticleAnnouncerImpl, objects)
+        bluesky = objects.newInstance(BlueskyAnnouncerImpl, objects)
         discord = objects.newInstance(DiscordAnnouncerImpl, objects)
         discourse = objects.newInstance(DiscourseAnnouncerImpl, objects)
         discussions = objects.newInstance(DiscussionsAnnouncerImpl, objects)
@@ -135,6 +138,11 @@ class AnnounceImpl implements Announce {
     @Override
     void article(Action<? super ArticleAnnouncer> action) {
         action.execute(article)
+    }
+
+    @Override
+    void bluesky(Action<? super BlueskyAnnouncer> action) {
+        action.execute(bluesky)
     }
 
     @Override
@@ -236,6 +244,12 @@ class AnnounceImpl implements Announce {
     @CompileDynamic
     void article(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArticleAnnouncer) Closure<Void> action) {
         ConfigureUtil.configure(action, article)
+    }
+
+    @Override
+    @CompileDynamic
+    void bluesky(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = BlueskyAnnouncer) Closure<Void> action) {
+        ConfigureUtil.configure(action, bluesky)
     }
 
     @Override
@@ -356,6 +370,7 @@ class AnnounceImpl implements Announce {
         org.jreleaser.model.internal.announce.Announce announce = new org.jreleaser.model.internal.announce.Announce()
         if (active.present) announce.active = active.get()
         if (article.isSet()) announce.article = article.toModel()
+        if (bluesky.isSet()) announce.bluesky = bluesky.toModel()
         if (discord.isSet()) announce.discord = discord.toModel()
         if (discourse.isSet()) announce.discourse = discourse.toModel()
         if (discussions.isSet()) announce.discussions = discussions.toModel()
