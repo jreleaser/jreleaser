@@ -33,7 +33,7 @@ public final class CatalogerSupport {
         // noop
     }
 
-    public static void fireCatalogEvent(ExecutionEvent event, JReleaserContext context, Cataloger cataloger) {
+    public static void fireCatalogEvent(ExecutionEvent event, JReleaserContext context, Cataloger<?> cataloger) {
         try {
             context.fireCatalogStepEvent(event, cataloger.asImmutable());
         } catch (WorkflowListenerException e) {
