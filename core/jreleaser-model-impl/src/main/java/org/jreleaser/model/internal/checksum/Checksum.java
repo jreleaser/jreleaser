@@ -38,16 +38,17 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
  * @since 0.4.0
  */
 public final class Checksum extends AbstractModelObject<Checksum> implements Domain {
-    private static final long serialVersionUID = -2684650548296767434L;
+    private static final long serialVersionUID = -5866288321297540463L;
 
     private final Set<Algorithm> algorithms = new LinkedHashSet<>();
     private Boolean individual;
     private String name;
+    private Boolean artifacts;
     private Boolean files;
 
     @JsonIgnore
     private final org.jreleaser.model.api.checksum.Checksum immutable = new org.jreleaser.model.api.checksum.Checksum() {
-        private static final long serialVersionUID = -7632183071376409444L;
+        private static final long serialVersionUID = -8504526869358696688L;
 
         @Override
         public String getName() {
@@ -62,6 +63,11 @@ public final class Checksum extends AbstractModelObject<Checksum> implements Dom
         @Override
         public Set<Algorithm> getAlgorithms() {
             return unmodifiableSet(algorithms);
+        }
+
+        @Override
+        public boolean isArtifacts() {
+            return Checksum.this.isArtifacts();
         }
 
         @Override
@@ -83,6 +89,7 @@ public final class Checksum extends AbstractModelObject<Checksum> implements Dom
     public void merge(Checksum source) {
         this.name = merge(this.name, source.name);
         this.individual = merge(this.individual, source.individual);
+        this.artifacts = merge(this.artifacts, source.artifacts);
         this.files = merge(this.files, source.files);
         setAlgorithms(merge(this.algorithms, source.algorithms));
     }
@@ -134,6 +141,18 @@ public final class Checksum extends AbstractModelObject<Checksum> implements Dom
         this.algorithms.addAll(algorithms);
     }
 
+    public boolean isArtifacts() {
+        return null == artifacts || artifacts;
+    }
+
+    public void setArtifacts(Boolean artifacts) {
+        this.artifacts = artifacts;
+    }
+
+    public boolean isArtifactsSet() {
+        return null != artifacts;
+    }
+
     public boolean isFiles() {
         return null == files || files;
     }
@@ -152,6 +171,7 @@ public final class Checksum extends AbstractModelObject<Checksum> implements Dom
         props.put("name", name);
         props.put("individual", isIndividual());
         props.put("algorithms", algorithms);
+        props.put("artifacts", isArtifacts());
         props.put("files", isFiles());
         return props;
     }

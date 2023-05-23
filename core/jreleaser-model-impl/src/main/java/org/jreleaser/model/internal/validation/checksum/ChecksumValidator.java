@@ -36,6 +36,14 @@ public final class ChecksumValidator {
         context.getLogger().debug("checksum");
         Checksum checksum = context.getModel().getChecksum();
 
+        if (!checksum.isArtifactsSet()) {
+            checksum.setArtifacts(true);
+        }
+
+        if (!checksum.isFilesSet()) {
+            checksum.setFiles(true);
+        }
+
         if (!checksum.isIndividualSet()) {
             checksum.setIndividual(false);
         }

@@ -61,6 +61,7 @@ public abstract class AbstractArtifactUploader<A extends org.jreleaser.model.api
         List<String> keys = getUploader().resolveSkipKeys();
         Checksum checksum = context.getModel().getChecksum();
         boolean uploadChecksums = getUploader().isChecksums() && !(getUploader() instanceof ArtifactoryUploader);
+        boolean isChecksumsEnabled = checksum.isFiles() || checksum.isArtifacts();
 
         if (getUploader().isFiles()) {
             for (Artifact artifact : Artifacts.resolveFiles(context)) {
@@ -69,7 +70,9 @@ public abstract class AbstractArtifactUploader<A extends org.jreleaser.model.api
                 if (isSkip(artifact, keys)) continue;
                 if (Files.exists(path) && 0 != path.toFile().length()) {
                     artifacts.add(artifact);
-                    if (uploadChecksums && isIndividual(context, artifact) &&
+                    if (uploadChecksums &&
+                        checksum.isFiles() &&
+                        isIndividual(context, artifact) &&
                         !artifact.extraPropertyIsTrue(KEY_SKIP_CHECKSUM)) {
                         for (Algorithm algorithm : checksum.getAlgorithms()) {
                             artifacts.add(Artifact.of(context.getChecksumsDirectory()
@@ -94,7 +97,9 @@ public abstract class AbstractArtifactUploader<A extends org.jreleaser.model.api
                             artifact.getExtraProperties().put(KEY_PLATFORM_REPLACED, platformReplaced);
                         }
                         artifacts.add(artifact);
-                        if (uploadChecksums && isIndividual(context, distribution, artifact)) {
+                        if (uploadChecksums &&
+                            checksum.isArtifacts() &&
+                            isIndividual(context, distribution, artifact)) {
                             for (Algorithm algorithm : checksum.getAlgorithms()) {
                                 artifacts.add(Artifact.of(context.getChecksumsDirectory()
                                     .resolve(distribution.getName())
@@ -106,7 +111,7 @@ public abstract class AbstractArtifactUploader<A extends org.jreleaser.model.api
             }
         }
 
-        if (uploadChecksums) {
+        if (uploadChecksums && isChecksumsEnabled) {
             for (Algorithm algorithm : checksum.getAlgorithms()) {
                 Path checksums = context.getChecksumsDirectory()
                     .resolve(checksum.getResolvedName(context, algorithm));

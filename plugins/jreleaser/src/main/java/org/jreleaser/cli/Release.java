@@ -233,6 +233,9 @@ public class Release extends AbstractPlatformAwareModelCommand<Main> {
         @CommandLine.Option(names = {"--skip-release"})
         boolean skipRelease;
 
+        @CommandLine.Option(names = {"--skip-checksums"})
+        boolean skipChecksums;
+
         @CommandLine.Option(names = {"--branch"})
         String branch;
 
@@ -342,6 +345,7 @@ public class Release extends AbstractPlatformAwareModelCommand<Main> {
             .updateSections(collectUpdateSections())
             .skipTag(composite.autoConfig.skipTag)
             .skipRelease(composite.autoConfig.skipRelease)
+            .skipChecksums(composite.autoConfig.skipChecksums)
             .changelog(composite.autoConfig.changelog)
             .changelogFormatted(composite.autoConfig.changelogFormatted)
             .username(composite.autoConfig.username)

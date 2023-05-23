@@ -97,6 +97,7 @@ public abstract class AbstractReleaserBuilder<R extends Releaser<?>> implements 
 
         Set<Asset> assets = new LinkedHashSet<>();
         Checksum checksum = context.getModel().getChecksum();
+        boolean isChecksumsEnabled = checksum.isFiles() || checksum.isArtifacts();
 
         if (service.isFiles()) {
             for (Artifact artifact : Artifacts.resolveFiles(context)) {
@@ -104,7 +105,9 @@ public abstract class AbstractReleaserBuilder<R extends Releaser<?>> implements 
                     artifact.isOptional(context) && !artifact.resolvedPathExists()) continue;
                 Path path = artifact.getEffectivePath(context);
                 assets.add(Asset.file(Artifact.of(path, artifact.getExtraProperties())));
-                if (service.isChecksums() && isIndividual(context, artifact) &&
+                if (service.isChecksums() &&
+                    checksum.isFiles() &&
+                    isIndividual(context, artifact) &&
                     !artifact.extraPropertyIsTrue(KEY_SKIP_CHECKSUM)) {
                     for (Algorithm algorithm : checksum.getAlgorithms()) {
                         assets.add(Asset.checksum(Artifact.of(context.getChecksumsDirectory()
@@ -124,7 +127,9 @@ public abstract class AbstractReleaserBuilder<R extends Releaser<?>> implements 
                         artifact.isOptional(context) && !artifact.resolvedPathExists()) continue;
                     Path path = artifact.getEffectivePath(context, distribution);
                     assets.add(Asset.file(Artifact.of(path, artifact.getExtraProperties()), distribution));
-                    if (service.isChecksums() && isIndividual(context, distribution, artifact)) {
+                    if (service.isChecksums() &&
+                        checksum.isArtifacts() &&
+                        isIndividual(context, distribution, artifact)) {
                         for (Algorithm algorithm : checksum.getAlgorithms()) {
                             assets.add(Asset.checksum(Artifact.of(context.getChecksumsDirectory()
                                 .resolve(distribution.getName())
@@ -135,7 +140,7 @@ public abstract class AbstractReleaserBuilder<R extends Releaser<?>> implements 
             }
         }
 
-        if (service.isChecksums()) {
+        if (service.isChecksums() && isChecksumsEnabled) {
             for (Algorithm algorithm : checksum.getAlgorithms()) {
                 Path checksums = context.getChecksumsDirectory()
                     .resolve(checksum.getResolvedName(context, algorithm));

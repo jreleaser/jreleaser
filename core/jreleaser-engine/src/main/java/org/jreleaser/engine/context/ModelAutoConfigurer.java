@@ -88,6 +88,7 @@ public final class ModelAutoConfigurer {
     private boolean update;
     private boolean skipTag;
     private boolean skipRelease;
+    private boolean skipChecksums;
     private String changelog;
     private boolean changelogFormatted;
     private String username;
@@ -252,6 +253,11 @@ public final class ModelAutoConfigurer {
 
     public ModelAutoConfigurer skipRelease(boolean skipRelease) {
         this.skipRelease = skipRelease;
+        return this;
+    }
+
+    public ModelAutoConfigurer skipChecksums(boolean skipChecksums) {
+        this.skipChecksums = skipChecksums;
         return this;
     }
 
@@ -432,6 +438,7 @@ public final class ModelAutoConfigurer {
         if (!updateSections.isEmpty()) logger.info("- release.updateSections: " + updateSections);
         if (skipTag) logger.info("- release.skipTag: true");
         if (skipRelease) logger.info("- release.skipRelease: true");
+        if (skipChecksums) logger.info("- checksums.disabled: true");
         if (null != prerelease && prerelease) logger.info("- release.prerelease: true");
         if (isNotBlank(prereleasePattern)) logger.info("- release.prerelease.pattern: {}", prereleasePattern);
         if (null != draft && draft) logger.info("- release.draft: true");
@@ -526,6 +533,12 @@ public final class ModelAutoConfigurer {
             if (changelogFormatted) service.getChangelog().setFormatted(Active.ALWAYS);
         } catch (IOException e) {
             throw new JReleaserException(e.getMessage());
+        }
+
+        if (skipChecksums) {
+            model.getChecksum().setArtifacts(false);
+            model.getChecksum().setFiles(false);
+            model.getSigning().setChecksums(false);
         }
 
         if (signing) {
