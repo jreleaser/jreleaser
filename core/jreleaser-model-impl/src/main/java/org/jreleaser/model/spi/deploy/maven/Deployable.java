@@ -39,7 +39,8 @@ public class Deployable implements Comparable<Deployable> {
     public static final String EXT_JAR = ".jar";
     public static final String EXT_POM = ".pom";
     public static final String EXT_ASC = ".asc";
-    public static final String[] EXT_CHECKSUMS = {".md5", ".sha1", ".sha256", ".sha512"};
+
+    private static final String[] EXT_CHECKSUMS = {".md5", ".sha1", ".sha256", ".sha512"};
 
     private static final Set<String> JAR_EXCLUSIONS = setOf(
         PACKAGING_POM,
