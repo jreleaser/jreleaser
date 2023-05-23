@@ -31,7 +31,7 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CreateTextRecordRequest {
-    private final static String BLUESKY_POST_COLLECTION = "app.bsky.feed.post";
+    private static final String BLUESKY_POST_COLLECTION = "app.bsky.feed.post";
 
     public static CreateTextRecordRequest of(String repo, String text) {
         CreateTextRecordRequest request = new CreateTextRecordRequest();
