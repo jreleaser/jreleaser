@@ -36,5 +36,7 @@ public interface Checksum extends Domain {
 
     Set<Algorithm> getAlgorithms();
 
+    boolean isArtifacts();
+
     boolean isFiles();
 }

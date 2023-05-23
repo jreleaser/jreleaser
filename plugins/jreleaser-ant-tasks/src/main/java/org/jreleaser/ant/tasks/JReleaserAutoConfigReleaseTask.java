@@ -91,6 +91,7 @@ public class JReleaserAutoConfigReleaseTask extends Task {
     private boolean update;
     private boolean skipTag;
     private boolean skipRelease;
+    private boolean skipChecksums;
     private String changelog;
     private boolean changelogFormatted;
     private String username;
@@ -220,6 +221,10 @@ public class JReleaserAutoConfigReleaseTask extends Task {
         this.skipRelease = skipRelease;
     }
 
+    public void setSkipChecksums(boolean skipChecksums) {
+        this.skipChecksums = skipChecksums;
+    }
+
     public void setChangelog(String changelog) {
         this.changelog = changelog;
     }
@@ -312,6 +317,7 @@ public class JReleaserAutoConfigReleaseTask extends Task {
             .updateSections(collectUpdateSections())
             .skipTag(skipTag)
             .skipRelease(skipRelease)
+            .skipChecksums(skipChecksums)
             .changelog(changelog)
             .changelogFormatted(changelogFormatted)
             .username(username)

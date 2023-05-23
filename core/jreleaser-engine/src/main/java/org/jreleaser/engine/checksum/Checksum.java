@@ -76,16 +76,18 @@ public final class Checksum {
             }
         }
 
-        for (Distribution distribution : context.getModel().getActiveDistributions()) {
-            for (Artifact artifact : distribution.getArtifacts()) {
-                if (!artifact.isActiveAndSelected()) continue;
-                artifact.getEffectivePath(context, distribution);
-                if (artifact.isOptional(context) && !artifact.resolvedPathExists()) continue;
+        if (context.getModel().getChecksum().isArtifacts()) {
+            for (Distribution distribution : context.getModel().getActiveDistributions()) {
+                for (Artifact artifact : distribution.getArtifacts()) {
+                    if (!artifact.isActiveAndSelected()) continue;
+                    artifact.getEffectivePath(context, distribution);
+                    if (artifact.isOptional(context) && !artifact.resolvedPathExists()) continue;
 
-                for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
-                    readHash(context, distribution, algorithm, artifact);
-                    List<String> list = checksums.computeIfAbsent(algorithm, k -> new ArrayList<>());
-                    list.add(artifact.getHash(algorithm) + "  " + artifact.getEffectivePath(context, distribution).getFileName());
+                    for (Algorithm algorithm : context.getModel().getChecksum().getAlgorithms()) {
+                        readHash(context, distribution, algorithm, artifact);
+                        List<String> list = checksums.computeIfAbsent(algorithm, k -> new ArrayList<>());
+                        list.add(artifact.getHash(algorithm) + "  " + artifact.getEffectivePath(context, distribution).getFileName());
+                    }
                 }
             }
         }
