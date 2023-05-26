@@ -234,8 +234,8 @@ public final class Slsa {
     private static class Attestations {
         private final Set<Attestation> attestations = new LinkedHashSet<>();
 
-        public String getVersion() {
-            return "1";
+        public Integer getVersion() {
+            return 1;
         }
 
         public Set<Attestation> getAttestations() {

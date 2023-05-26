@@ -30,12 +30,12 @@ import static org.jreleaser.model.internal.validation.common.Validator.resolveAc
  * @author Andres Almiray
  * @since 1.7.0
  */
-public final class SlsaValidator {
-    private SlsaValidator() {
+public final class SlsaCatalogerValidator {
+    private SlsaCatalogerValidator() {
         // noop
     }
 
-    public static void validateSlsa(JReleaserContext context, Mode mode, Errors errors) {
+    public static void validateSlsaCataloger(JReleaserContext context, Mode mode, Errors errors) {
         SlsaCataloger slsa = context.getModel().getCatalog().getSlsa();
         context.getLogger().debug("catalog.slsa");
 
@@ -47,7 +47,7 @@ public final class SlsaValidator {
 
         slsa.setAttestationName(
             checkProperty(context,
-                "slsa.attestation.name",
+                "catalog.slsa.attestation.name",
                 "slsa.attestationName",
                 slsa.getAttestationName(),
                 "{{projectName}}-{{projectEffectiveVersion}}"));
