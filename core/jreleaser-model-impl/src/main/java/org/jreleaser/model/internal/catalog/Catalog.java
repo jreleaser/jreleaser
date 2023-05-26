@@ -112,7 +112,7 @@ public final class Catalog extends AbstractActivatable<Catalog> implements Domai
         map.put("enabled", isEnabled());
         map.put("active", getActive());
         map.put("sbom", sbom.asMap(full));
-        map.put("slsa", slsa.asMap(full));
+        map.putAll(slsa.asMap(full));
         return map;
     }
 }
