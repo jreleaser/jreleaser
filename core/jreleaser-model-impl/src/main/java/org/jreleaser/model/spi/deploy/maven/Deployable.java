@@ -39,6 +39,9 @@ public class Deployable implements Comparable<Deployable> {
     public static final String EXT_JAR = ".jar";
     public static final String EXT_POM = ".pom";
     public static final String EXT_ASC = ".asc";
+    public static final String EXT_MODULE = ".module";
+    public static final String EXT_XML = ".xml";
+    public static final String EXT_JSON = ".json";
 
     private static final String[] EXT_CHECKSUMS = {".md5", ".sha1", ".sha256", ".sha512"};
 
@@ -179,6 +182,9 @@ public class Deployable implements Comparable<Deployable> {
         return !isPom() &&
             !isSignature() &&
             !isChecksum() &&
+            !isJson() &&
+            !isXml() &&
+            !isGradleMetadata() &&
             !isMavenMetadata();
     }
 
@@ -195,6 +201,18 @@ public class Deployable implements Comparable<Deployable> {
             if (filename.endsWith(ext)) return true;
         }
         return false;
+    }
+
+    public boolean isJson() {
+        return filename.endsWith(EXT_JSON);
+    }
+
+    public boolean isXml() {
+        return filename.endsWith(EXT_XML);
+    }
+
+    public boolean isGradleMetadata() {
+        return filename.endsWith(EXT_MODULE);
     }
 
     public boolean isMavenMetadata() {
