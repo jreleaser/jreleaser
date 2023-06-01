@@ -213,6 +213,9 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
                 getDeployer().isSnapshotSupported()) {
                 args.add("--no-release");
             }
+            if (pomChecker.hasNoFailOnWarningSupport()) {
+                args.add("--no-fail-on-warning");
+            }
             args.add("--file");
             args.add(deployable.getLocalPath().toAbsolutePath().toString());
 
