@@ -560,8 +560,18 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "SirCremefresh",
+      "name": "Donato Wolfisberg",
+      "avatar_url": "https://avatars.githubusercontent.com/u/20863779?v=4",
+      "profile": "https://wolfisberg.dev",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
-  "skipCi": true
+  "skipCi": true,
+  "commitType": "docs"
 }
