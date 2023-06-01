@@ -87,6 +87,12 @@ public final class MavenDeployersValidator {
         if (isBlank(maven.getPomchecker().getVersion())) {
             maven.getPomchecker().setVersion(DefaultVersions.getInstance().getPomcheckerVersion());
         }
+        if (!maven.getPomchecker().isFailOnWarningSet()) {
+            maven.getPomchecker().setFailOnWarning(true);
+        }
+        if (!maven.getPomchecker().isFailOnErrorSet()) {
+            maven.getPomchecker().setFailOnError(true);
+        }
     }
 
     static void validateMavenDeployer(JReleaserContext context, MavenDeployer<?> mavenDeployer, Errors errors) {

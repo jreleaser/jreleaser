@@ -73,5 +73,7 @@ interface Maven extends Activatable {
     @CompileStatic
     interface Pomchecker {
         Property<String> getVersion()
+        Property<Boolean> getFailOnError()
+        Property<Boolean> getFailOnWarning()
     }
 }
