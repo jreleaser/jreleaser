@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-60-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-61-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -88,6 +88,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://www.tomcools.be/"><img src="https://avatars.githubusercontent.com/u/11362563?v=4?s=100" width="100px;" alt="Tom Cools"/><br /><sub><b>Tom Cools</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=TomCools" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://wolfisberg.dev"><img src="https://avatars.githubusercontent.com/u/20863779?v=4?s=100" width="100px;" alt="Donato Wolfisberg"/><br /><sub><b>Donato Wolfisberg</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=SirCremefresh" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/jankohout95"><img src="https://avatars.githubusercontent.com/u/100849407?v=4?s=100" width="100px;" alt="Jan Kohout"/><br /><sub><b>Jan Kohout</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=jankohout95" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/fgaignat"><img src="https://avatars.githubusercontent.com/u/23083528?v=4?s=100" width="100px;" alt="fgaignat"/><br /><sub><b>fgaignat</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=fgaignat" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
