@@ -43,5 +43,7 @@ public interface Maven extends Domain, Activatable {
 
     interface Pomchecker extends Domain {
         String getVersion();
+        boolean isFailOnWarning();
+        boolean isFailOnError();
     }
 }

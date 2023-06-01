@@ -22,6 +22,7 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.api.signing.SigningException;
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.deploy.maven.Maven;
 import org.jreleaser.model.spi.deploy.DeployException;
 import org.jreleaser.model.spi.deploy.maven.Deployable;
 import org.jreleaser.model.spi.deploy.maven.MavenDeployer;
@@ -44,34 +45,19 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.net.*;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.FileVisitResult.CONTINUE;
-import static org.jreleaser.model.spi.deploy.maven.Deployable.EXT_ASC;
-import static org.jreleaser.model.spi.deploy.maven.Deployable.EXT_JAR;
-import static org.jreleaser.model.spi.deploy.maven.Deployable.EXT_POM;
-import static org.jreleaser.model.spi.deploy.maven.Deployable.MAVEN_METADATA_XML;
-import static org.jreleaser.model.spi.deploy.maven.Deployable.PACKAGING_JAR;
+import static org.jreleaser.model.spi.deploy.maven.Deployable.*;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -188,8 +174,9 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
             return errors;
         }
 
+        Maven.Pomchecker pomcheckerModel = context.getModel().getDeploy().getMaven().getPomchecker();
         PomChecker pomChecker = new PomChecker(context.asImmutable(),
-            context.getModel().getDeploy().getMaven().getPomchecker().getVersion());
+            pomcheckerModel.getVersion());
         try {
             if (!pomChecker.setup()) {
                 context.getLogger().warn(RB.$("tool_unavailable", "pomchecker"));
@@ -213,8 +200,13 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
                 getDeployer().isSnapshotSupported()) {
                 args.add("--no-release");
             }
-            if (pomChecker.hasNoFailOnWarningSupport()) {
-                args.add("--no-fail-on-warning");
+            if (pomChecker.isVersionCompatibleWith("1.9.0")) {
+                if (!pomcheckerModel.isFailOnWarning()) {
+                    args.add("--no-fail-on-warning");
+                }
+                if (!pomcheckerModel.isFailOnError()) {
+                    args.add("--no-fail-on-error");
+                }
             }
             args.add("--file");
             args.add(deployable.getLocalPath().toAbsolutePath().toString());

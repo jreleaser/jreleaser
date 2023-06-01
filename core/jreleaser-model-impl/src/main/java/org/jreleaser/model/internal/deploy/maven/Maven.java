@@ -24,12 +24,7 @@ import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.common.Activatable;
 import org.jreleaser.model.internal.common.Domain;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static java.util.Collections.unmodifiableMap;
 import static java.util.function.Function.identity;
@@ -432,17 +427,29 @@ public final class Maven extends AbstractActivatable<Maven> implements Domain, A
     }
 
     public static final class Pomchecker extends AbstractModelObject<Pomchecker> implements Domain {
-        private static final long serialVersionUID = 8467928554400937980L;
-
+        private static final long serialVersionUID = -3338690712854794960L;
         private String version;
+        private Boolean failOnWarning;
+        private Boolean failOnError;
+
 
         @JsonIgnore
         private final org.jreleaser.model.api.deploy.maven.Maven.Pomchecker immutable = new org.jreleaser.model.api.deploy.maven.Maven.Pomchecker() {
-            private static final long serialVersionUID = -7691641757680849149L;
+            private static final long serialVersionUID = 3245901294277040203L;
 
             @Override
             public String getVersion() {
                 return version;
+            }
+
+            @Override
+            public boolean isFailOnWarning() {
+                return failOnWarning;
+            }
+
+            @Override
+            public boolean isFailOnError() {
+                return failOnError;
             }
 
             @Override
@@ -458,6 +465,8 @@ public final class Maven extends AbstractActivatable<Maven> implements Domain, A
         @Override
         public void merge(Pomchecker source) {
             this.version = merge(this.version, source.version);
+            this.failOnWarning = merge(this.failOnWarning, source.failOnWarning);
+            this.failOnError = merge(this.failOnError, source.failOnError);
         }
 
         public String getVersion() {
@@ -468,10 +477,36 @@ public final class Maven extends AbstractActivatable<Maven> implements Domain, A
             this.version = version;
         }
 
+        public boolean isFailOnWarning() {
+            return failOnWarning != null && failOnWarning;
+        }
+
+        public boolean isFailOnWarningSet() {
+            return failOnWarning != null;
+        }
+
+        public void setFailOnWarning(Boolean failOnWarning) {
+            this.failOnWarning = failOnWarning;
+        }
+
+        public boolean isFailOnError() {
+            return failOnError != null && failOnError;
+        }
+
+        public boolean isFailOnErrorSet() {
+            return failOnError != null;
+        }
+
+        public void setFailOnError(Boolean failOnError) {
+            this.failOnError = failOnError;
+        }
+
         @Override
         public Map<String, Object> asMap(boolean full) {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("version", version);
+            map.put("failOnWarning", isFailOnWarning());
+            map.put("failOnError", isFailOnError());
             return map;
         }
     }
