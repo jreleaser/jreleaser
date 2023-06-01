@@ -219,15 +219,21 @@ class MavenImpl implements Maven {
     @CompileStatic
     static class PomcheckerImpl implements Pomchecker {
         final Property<String> version
+        final Property<Boolean> failOnError
+        final Property<Boolean> failOnWarning
 
         @Inject
         PomcheckerImpl(ObjectFactory objects) {
             version = objects.property(String).convention(Providers.<String> notDefined())
+            failOnError = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+            failOnWarning = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         }
 
         org.jreleaser.model.internal.deploy.maven.Maven.Pomchecker toModel() {
             org.jreleaser.model.internal.deploy.maven.Maven.Pomchecker pomchecker = new org.jreleaser.model.internal.deploy.maven.Maven.Pomchecker()
             if (version.present) pomchecker.version = version.get()
+            if (failOnError.present) pomchecker.failOnError = failOnError.get()
+            if (failOnWarning.present) pomchecker.failOnWarning = failOnWarning.get()
             pomchecker
         }
     }
