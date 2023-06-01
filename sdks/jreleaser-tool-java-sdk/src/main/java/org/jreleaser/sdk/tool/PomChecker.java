@@ -47,4 +47,8 @@ public class PomChecker extends AbstractTool {
         return executeCommand(() -> new CommandExecutor(context.getLogger())
             .executeCommand(parent, command));
     }
+
+    public boolean hasNoFailOnWarningSupport(){
+        return SemanticVersion.of(version).compareTo(SemanticVersion.of("1.9.0")) >= 0;
+    }
 }
