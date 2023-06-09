@@ -21,7 +21,7 @@ jobs:
       - name: Find package
         shell: bash
         run: |
-          echo "PACKAGE_NAME=$(ls {{distributionName}}/*.nuspec)" >> $GITHUB_ENV
+          echo "PACKAGE_NAME=$(ls {{chocolateyPackageName}}/*.nuspec)" >> $GITHUB_ENV
 
       - name: Pack
         shell: powershell
