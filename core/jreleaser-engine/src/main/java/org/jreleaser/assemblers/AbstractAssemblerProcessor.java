@@ -71,6 +71,7 @@ public abstract class AbstractAssemblerProcessor<A extends org.jreleaser.model.a
     public static final String INPUTS_DIRECTORY = "inputs";
     public static final String WORK_DIRECTORY = "work";
     public static final String JARS_DIRECTORY = "jars";
+    public static final String ARCHIVE_DIRECTORY = "archive";
 
     protected final JReleaserContext context;
     protected S assembler;

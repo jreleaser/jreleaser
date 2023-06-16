@@ -65,7 +65,7 @@ public final class JpackageAssemblerResolver {
             try {
                 Optional<Path> file = listFilesAndProcess(baseOutputDirectory, files ->
                     files.filter(path -> path.getFileName().toString().endsWith(type))
-                        .findFirst());
+                        .findFirst().orElse(null));
 
                 if (!file.isPresent()) {
                     errors.assembly(RB.$("validation_missing_assembly",

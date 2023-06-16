@@ -92,8 +92,10 @@ public final class JpackageAssemblerValidator {
         JpackageAssembler.ApplicationPackage applicationPackage = assembler.getApplicationPackage();
         packager.enable();
 
+        boolean hasJavaArchive = false;
         if (isNotBlank(assembler.getJlink())) {
             JlinkAssembler jlink = context.getModel().getAssemble().findJlink(assembler.getJlink());
+            hasJavaArchive = jlink.getJavaArchive().isSet();
 
             Path baseOutputDirectory = context.getAssembleDirectory()
                 .resolve(jlink.getName())
@@ -146,7 +148,9 @@ public final class JpackageAssemblerValidator {
             }
         }
 
-        assembler.getMainJar().resolveActiveAndSelected(context);
+        if (!hasJavaArchive) {
+            assembler.getMainJar().resolveActiveAndSelected(context);
+        }
 
         context.getLogger().debug("assemble.jpackage.{}.java", assembler.getName());
         if (!validateJava(context, assembler, errors)) {

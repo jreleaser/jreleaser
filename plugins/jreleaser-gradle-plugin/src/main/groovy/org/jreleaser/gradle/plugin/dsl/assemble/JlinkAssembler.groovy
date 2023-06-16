@@ -59,6 +59,8 @@ interface JlinkAssembler extends JavaAssembler {
 
     void options(Action<? super ArchiveOptions> action)
 
+    void javaArchive(Action<? super JavaArchive> action)
+
     void jdeps(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Jdeps) Closure<Void> action)
 
     void jdk(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
@@ -66,6 +68,8 @@ interface JlinkAssembler extends JavaAssembler {
     void targetJdk(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
 
     void options(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArchiveOptions) Closure<Void> action)
+
+    void javaArchive(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JavaArchive) Closure<Void> action)
 
     @CompileStatic
     interface Jdeps {
@@ -78,5 +82,14 @@ interface JlinkAssembler extends JavaAssembler {
         Property<Boolean> getUseWildcardInPath()
 
         SetProperty<String> getTargets()
+    }
+
+    @CompileStatic
+    interface JavaArchive {
+        Property<String> getPath()
+
+        Property<String> getMainJarName()
+
+        Property<String> getLibDirectoryName()
     }
 }

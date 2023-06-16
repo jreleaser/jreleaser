@@ -160,12 +160,23 @@ public final class JlinkAssemblerValidator {
             assembler.getArgs().add("--strip-debug");
         }
 
-        if (null == assembler.getMainJar()) {
-            errors.configuration(RB.$("validation_is_null", "jlink." + assembler.getName() + ".mainJar"));
+        boolean hasJavaArchive = assembler.getJavaArchive().isSet();
+        if (hasJavaArchive) {
+            if (isBlank(assembler.getJavaArchive().getMainJarName())) {
+                assembler.getJavaArchive().setMainJarName("{{projectName}}-{{projectVersion}}.jar");
+            }
+            if (isBlank(assembler.getJavaArchive().getLibDirectoryName())) {
+                assembler.getJavaArchive().setLibDirectoryName("lib");
+            }
+        }
+
+        if (!validateJavaAssembler(context, mode, assembler, errors, !hasJavaArchive)) {
             return;
         }
 
-        assembler.getMainJar().resolveActiveAndSelected(context);
+        if (!hasJavaArchive) {
+            assembler.getMainJar().resolveActiveAndSelected(context);
+        }
 
         if (null == assembler.getArchiveFormat()) {
             assembler.setArchiveFormat(Archive.Format.ZIP);
@@ -174,8 +185,6 @@ public final class JlinkAssemblerValidator {
         if (null == assembler.getOptions().getTimestamp()) {
             assembler.getOptions().setTimestamp(context.getModel().resolveArchiveTimestamp());
         }
-
-        validateJavaAssembler(context, mode, assembler, errors, true);
 
         if (!assembler.getJdeps().isEnabledSet()) {
             assembler.getJdeps().setEnabled(true);

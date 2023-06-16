@@ -152,13 +152,13 @@ public final class AssemblersValidator {
         }
     }
 
-    public static void validateJavaAssembler(JReleaserContext context, Mode mode, JavaAssembler<?> assembler, Errors errors, boolean checkMainJar) {
+    public static boolean validateJavaAssembler(JReleaserContext context, Mode mode, JavaAssembler<?> assembler, Errors errors, boolean checkMainJar) {
         validateAssembler(context, mode, assembler, errors);
 
         if (checkMainJar) {
             if (null == assembler.getMainJar()) {
                 errors.configuration(RB.$("validation_is_null", assembler.getType() + "." + assembler.getName() + ".mainJar"));
-                return;
+                return false;
             }
 
             if (isBlank(assembler.getMainJar().getPath())) {
@@ -170,6 +170,8 @@ public final class AssemblersValidator {
             context, assembler.getJars(),
             assembler.getType() + "." + assembler.getName() + ".jars",
             errors);
+
+        return true;
     }
 
     public static boolean validateJava(JReleaserContext context, JavaAssembler<?> assembler, Errors errors) {

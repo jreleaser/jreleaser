@@ -47,13 +47,14 @@ import static java.util.stream.Collectors.toSet;
 import static org.jreleaser.model.api.assemble.JlinkAssembler.TYPE;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
  * @since 0.2.0
  */
 public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, org.jreleaser.model.api.assemble.JlinkAssembler> {
-
+    private static final long serialVersionUID = 7359918516454561904L;
 
     private final Set<Artifact> targetJdks = new LinkedHashSet<>();
     private final Set<String> moduleNames = new LinkedHashSet<>();
@@ -62,6 +63,7 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
     private final Artifact jdk = new Artifact();
     private final Jdeps jdeps = new Jdeps();
     private final ArchiveOptions options = new ArchiveOptions();
+    private final JavaArchive javaArchive = new JavaArchive();
 
     private String imageName;
     private String imageNameTransform;
@@ -70,7 +72,7 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
 
     @JsonIgnore
     private final org.jreleaser.model.api.assemble.JlinkAssembler immutable = new org.jreleaser.model.api.assemble.JlinkAssembler() {
-
+        private static final long serialVersionUID = 755465061270292328L;
 
         private Set<? extends org.jreleaser.model.api.common.Artifact> artifacts;
         private List<? extends org.jreleaser.model.api.common.FileSet> fileSets;
@@ -132,6 +134,11 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
         @Override
         public boolean isCopyJars() {
             return JlinkAssembler.this.isCopyJars();
+        }
+
+        @Override
+        public JavaArchive getJavaArchive() {
+            return JlinkAssembler.this.getJavaArchive().asImmutable();
         }
 
         @Override
@@ -286,6 +293,7 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
         this.imageNameTransform = merge(this.imageNameTransform, source.imageNameTransform);
         this.archiveFormat = merge(this.archiveFormat, source.archiveFormat);
         this.copyJars = merge(this.copyJars, source.copyJars);
+        setJavaArchive(source.javaArchive);
         setOptions(source.options);
         setJdeps(source.jdeps);
         setJdk(source.jdk);
@@ -414,6 +422,14 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
         return null != copyJars;
     }
 
+    public JavaArchive getJavaArchive() {
+        return javaArchive;
+    }
+
+    public void setJavaArchive(JavaArchive javaArchive) {
+        this.javaArchive.merge(javaArchive);
+    }
+
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         super.asMap(full, props);
@@ -425,6 +441,7 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
         props.put("additionalModuleNames", additionalModuleNames);
         props.put("args", args);
         props.put("jdeps", jdeps.asMap(full));
+        if (javaArchive.isSet()) props.put("javaArchive", javaArchive.asMap(full));
         Map<String, Map<String, Object>> mappedJdks = new LinkedHashMap<>();
         int i = 0;
         for (Artifact targetJdk : getTargetJdks()) {
@@ -556,6 +573,87 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
             props.put("ignoreMissingDeps", isIgnoreMissingDeps());
             props.put("useWildcardInPath", isUseWildcardInPath());
             props.put("targets", targets);
+            return props;
+        }
+    }
+
+    public static final class JavaArchive extends AbstractModelObject<JavaArchive> implements Domain {
+        private static final long serialVersionUID = -9036487748517901046L;
+
+        private String path;
+        private String mainJarName;
+        private String libDirectoryName;
+
+        @JsonIgnore
+        private final org.jreleaser.model.api.assemble.JlinkAssembler.JavaArchive immutable = new org.jreleaser.model.api.assemble.JlinkAssembler.JavaArchive() {
+            private static final long serialVersionUID = 2914047534822441167L;
+
+            @Override
+            public String getPath() {
+                return path;
+            }
+
+            @Override
+            public String getMainJarName() {
+                return mainJarName;
+            }
+
+            @Override
+            public String getLibDirectoryName() {
+                return libDirectoryName;
+            }
+
+            @Override
+            public Map<String, Object> asMap(boolean full) {
+                return unmodifiableMap(JavaArchive.this.asMap(full));
+            }
+        };
+
+        public org.jreleaser.model.api.assemble.JlinkAssembler.JavaArchive asImmutable() {
+            return immutable;
+        }
+
+        @Override
+        public void merge(JavaArchive source) {
+            this.path = this.merge(this.path, source.path);
+            this.mainJarName = this.merge(this.mainJarName, source.mainJarName);
+            this.libDirectoryName = this.merge(this.libDirectoryName, source.libDirectoryName);
+        }
+
+        public boolean isSet() {
+            return isNotBlank(path);
+        }
+
+        public String getPath() {
+            return path;
+        }
+
+        public void setPath(String path) {
+            this.path = path;
+        }
+
+        public String getMainJarName() {
+            return mainJarName;
+        }
+
+        public void setMainJarName(String mainJarName) {
+            this.mainJarName = mainJarName;
+        }
+
+        public String getLibDirectoryName() {
+            return libDirectoryName;
+        }
+
+        public void setLibDirectoryName(String libDirectoryName) {
+            this.libDirectoryName = libDirectoryName;
+        }
+
+        @Override
+        public Map<String, Object> asMap(boolean full) {
+            Map<String, Object> props = new LinkedHashMap<>();
+            props.put("path", path);
+            props.put("mainJarName", mainJarName);
+            props.put("libDirectoryName", libDirectoryName);
             return props;
         }
     }

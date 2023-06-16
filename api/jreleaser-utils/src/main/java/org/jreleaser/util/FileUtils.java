@@ -124,14 +124,16 @@ public final class FileUtils {
     }
 
     public static void listFilesAndConsume(Path path, Consumer<Stream<Path>> consumer) throws IOException {
+        if (!Files.exists(path)) return;
         try (Stream<Path> files = Files.list(path)) {
             consumer.accept(files);
         }
     }
 
-    public static <T> T listFilesAndProcess(Path path, Function<Stream<Path>, T> function) throws IOException {
+    public static <T> Optional<T> listFilesAndProcess(Path path, Function<Stream<Path>, T> function) throws IOException {
+        if (!Files.exists(path)) return Optional.empty();
         try (Stream<Path> files = Files.list(path)) {
-            return function.apply(files);
+            return Optional.ofNullable(function.apply(files));
         }
     }
 
@@ -393,6 +395,7 @@ public final class FileUtils {
 
     public static void unpackArchive(Path src, Path dest, boolean removeRootEntry, boolean cleanDirectory) throws IOException {
         String filename = src.getFileName().toString();
+
         for (String extension : TAR_COMPRESSED_EXTENSIONS) {
             if (filename.endsWith(extension)) {
                 unpackArchiveCompressed(src, dest, removeRootEntry);
@@ -403,9 +406,10 @@ public final class FileUtils {
         if (cleanDirectory) deleteFiles(dest, true);
         File destinationDir = dest.toFile();
 
+        String rootEntryName = resolveRootEntryName(src);
         if (filename.endsWith(ZIP.extension())) {
             try (ZipFile zipFile = new ZipFile(src.toFile())) {
-                unpackArchive(removeRootEntry ? filename + "/" : "", destinationDir, zipFile);
+                unpackArchive(removeRootEntry ? rootEntryName + "/" : "", destinationDir, zipFile);
             }
             return;
         }
@@ -414,9 +418,7 @@ public final class FileUtils {
              InputStream bi = new BufferedInputStream(fi);
              ArchiveInputStream in = new ArchiveStreamFactory().createArchiveInputStream(bi)) {
 
-            // subtract .zip, .tar
-            filename = filename.substring(0, filename.length() - 4);
-            unpackArchive(removeRootEntry ? filename + "/" : "", destinationDir, in);
+            unpackArchive(removeRootEntry ? rootEntryName + "/" : "", destinationDir, in);
         } catch (ArchiveException e) {
             throw new IOException(e.getMessage(), e);
         }
@@ -436,6 +438,7 @@ public final class FileUtils {
 
         String filename = src.getFileName().toString();
         String artifactFileName = getFilename(filename, FileType.getSupportedExtensions());
+        String rootEntryName = resolveRootEntryName(src);
         String artifactExtension = filename.substring(artifactFileName.length());
         String artifactFileFormat = artifactExtension.substring(1);
         FileType fileType = FileType.of(artifactFileFormat);
@@ -444,7 +447,7 @@ public final class FileUtils {
              InputStream bi = new BufferedInputStream(fi);
              InputStream gzi = resolveCompressorInputStream(fileType, bi);
              ArchiveInputStream in = new TarArchiveInputStream(gzi)) {
-            unpackArchive(removeRootEntry ? artifactFileName + "/" : "", destinationDir, in);
+            unpackArchive(removeRootEntry ? rootEntryName + "/" : "", destinationDir, in);
         }
     }
 
@@ -867,10 +870,13 @@ public final class FileUtils {
     }
 
     public static void copyFiles(JReleaserLogger logger, Path source, Path target, Predicate<Path> filter) throws IOException {
+        if (!Files.exists(source)) return;
+
         Predicate<Path> actualFilter = null != filter ? filter : path -> true;
         IOException[] thrown = new IOException[1];
 
         try (Stream<Path> stream = Files.list(source)) {
+            Files.createDirectories(target);
             stream
                 .filter(Files::isRegularFile)
                 .filter(actualFilter)

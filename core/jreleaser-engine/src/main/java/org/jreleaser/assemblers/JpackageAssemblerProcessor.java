@@ -21,6 +21,7 @@ import org.apache.commons.compress.utils.IOUtils;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Constants;
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.assemble.JlinkAssembler;
 import org.jreleaser.model.internal.assemble.JpackageAssembler;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.spi.assemble.AssemblerProcessingException;
@@ -35,6 +36,7 @@ import org.jreleaser.version.SemanticVersion;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
@@ -88,6 +90,32 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
         // copy jars to inputs
         context.getLogger().debug(RB.$("assembler.copy.jars"), context.relativizeToBasedir(filesDirectory));
         if (isBlank(assembler.getJava().getMainModule())) {
+            if (isNotBlank(assembler.getJlink())) {
+                JlinkAssembler jlink = context.getModel().getAssemble().findJlink(assembler.getJlink());
+                if (jlink.getJavaArchive().isSet()) {
+                    String archiveFile = resolveTemplate(jlink.getJavaArchive().getPath(), props);
+                    Path archivePath = context.getBasedir().resolve(Paths.get(archiveFile));
+                    if (!Files.exists(archivePath)) {
+                        throw new AssemblerProcessingException(RB.$("ERROR_path_does_not_exist", archivePath));
+                    }
+
+                    Path archiveDirectory = inputsDirectory.resolve(ARCHIVE_DIRECTORY);
+                    try {
+                        FileUtils.unpackArchive(archivePath, archiveDirectory, true);
+                    } catch (IOException e) {
+                        throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
+                    }
+
+                    String libDirectoryName = resolveTemplate(jlink.getJavaArchive().getLibDirectoryName(), props);
+                    Path libPath = inputsDirectory.resolve(ARCHIVE_DIRECTORY).resolve(libDirectoryName);
+                    try {
+                        FileUtils.copyFiles(context.getLogger(), libPath, filesDirectory);
+                    } catch (IOException e) {
+                        throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
+                    }
+                }
+            }
+
             copyJars(context, assembler, filesDirectory, "");
             copyJars(context, assembler, filesDirectory, platform);
         }
@@ -223,10 +251,25 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
             cmd.arg("--module")
                 .arg(moduleName + "/" + assembler.getJava().getMainClass());
         } else {
+            String mainJarPath = "";
+
+            if (isNotBlank(assembler.getMainJar().getPath())) {
+                mainJarPath = assembler.getMainJar().getResolvedPath().getFileName().toString();
+            }
+
+            if (isNotBlank(assembler.getJlink())) {
+                JlinkAssembler jlink = context.getModel().getAssemble().findJlink(assembler.getJlink());
+                if (jlink.getJavaArchive().isSet()) {
+                    String mainJarName = resolveTemplate(jlink.getJavaArchive().getMainJarName(), props);
+                    Path filesDirectory = inputsDirectory.resolve(FILES_DIRECTORY);
+                    mainJarPath = filesDirectory.resolve(mainJarName).getFileName().toString();
+                }
+            }
+
             cmd.arg("--main-class")
                 .arg(assembler.getJava().getMainClass())
                 .arg("--main-jar")
-                .arg(maybeQuote(assembler.getMainJar().getResolvedPath().getFileName().toString()));
+                .arg(maybeQuote(mainJarPath));
         }
 
         // Launcher
@@ -276,7 +319,7 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
             try {
                 Optional<Path> artifact = listFilesAndProcess(assembleDirectory, files ->
                     files.filter(path -> path.getFileName().toString().endsWith(type))
-                        .findFirst());
+                        .findFirst().orElse(null));
 
                 if (artifact.isPresent()) {
                     String dest = artifact.get().getFileName().toString()

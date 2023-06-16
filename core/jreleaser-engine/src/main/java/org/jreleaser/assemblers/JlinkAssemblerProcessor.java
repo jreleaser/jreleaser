@@ -34,7 +34,9 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Stream;
@@ -105,15 +107,43 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
             imageName = assembler.getResolvedImageNameTransform(context);
         }
 
+        boolean hasJavaArchive = assembler.getJavaArchive().isSet();
+
+        if (hasJavaArchive) {
+            String archiveFile = resolveTemplate(assembler.getJavaArchive().getPath(), props);
+            Path archivePath = context.getBasedir().resolve(Paths.get(archiveFile));
+            if (!Files.exists(archivePath)) {
+                throw new AssemblerProcessingException(RB.$("ERROR_path_does_not_exist", archivePath));
+            }
+
+            Path archiveDirectory = inputsDirectory.resolve(ARCHIVE_DIRECTORY);
+            try {
+                FileUtils.unpackArchive(archivePath, archiveDirectory, true);
+            } catch (IOException e) {
+                throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
+            }
+        }
+
+        // copy jars to assembly
+        Path jarsDirectory = inputsDirectory.resolve(JARS_DIRECTORY);
+        Path universalJarsDirectory = jarsDirectory.resolve(UNIVERSAL_DIRECTORY);
+
+        if (hasJavaArchive) {
+            String libDirectoryName = resolveTemplate(assembler.getJavaArchive().getLibDirectoryName(), props);
+            Path libPath = inputsDirectory.resolve(ARCHIVE_DIRECTORY).resolve(libDirectoryName);
+            try {
+                FileUtils.copyFiles(context.getLogger(), libPath, universalJarsDirectory);
+            } catch (IOException e) {
+                throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
+            }
+        }
+        context.getLogger().debug(RB.$("assembler.copy.jars"), context.relativizeToBasedir(universalJarsDirectory));
+        copyJars(context, assembler, universalJarsDirectory, "");
+
         for (Artifact targetJdk : assembler.getTargetJdks()) {
             if (!targetJdk.isActiveAndSelected()) continue;
 
             String platform = targetJdk.getPlatform();
-            // copy jars to assembly
-            Path jarsDirectory = inputsDirectory.resolve(JARS_DIRECTORY);
-            Path universalJarsDirectory = jarsDirectory.resolve(UNIVERSAL_DIRECTORY);
-            context.getLogger().debug(RB.$("assembler.copy.jars"), context.relativizeToBasedir(universalJarsDirectory));
-            copyJars(context, assembler, universalJarsDirectory, "");
             Path platformJarsDirectory = jarsDirectory.resolve(platform);
             context.getLogger().debug(RB.$("assembler.copy.jars"), context.relativizeToBasedir(platformJarsDirectory));
             copyJars(context, assembler, platformJarsDirectory, platform);
@@ -145,7 +175,9 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
         String finalImageName = imageName + "-" + platformReplaced;
         context.getLogger().info("- {}", finalImageName);
 
+        boolean hasJavaArchive = assembler.getJavaArchive().isSet();
         Path inputsDirectory = assembleDirectory.resolve(INPUTS_DIRECTORY);
+        Path archiveDirectory = inputsDirectory.resolve(ARCHIVE_DIRECTORY);
         Path jarsDirectory = inputsDirectory.resolve(JARS_DIRECTORY);
         Path workDirectory = assembleDirectory.resolve(WORK_DIRECTORY + "-" + platform);
         Path imageDirectory = workDirectory.resolve(finalImageName).toAbsolutePath();
@@ -165,7 +197,7 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
 
             try {
                 Path platformJarsDirectory = jarsDirectory.resolve(platform).toAbsolutePath();
-                if (listFilesAndProcess(platformJarsDirectory, Stream::count) > 1) {
+                if (listFilesAndProcess(platformJarsDirectory, Stream::count).orElse(0L) > 1) {
                     modulePath += File.pathSeparator + maybeQuote(platformJarsDirectory.toString());
                 }
             } catch (IOException e) {
@@ -219,11 +251,13 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
             try {
                 Files.createDirectories(binDirectory);
 
-                Set<Path> launchers = listFilesAndProcess(inputsDirectory.resolve(BIN_DIRECTORY), files -> files.collect(toSet()));
-                for (Path srcLauncher : launchers) {
-                    Path destLauncher = binDirectory.resolve(srcLauncher.getFileName());
-                    Files.copy(srcLauncher, destLauncher);
-                    FileUtils.grantExecutableAccess(destLauncher);
+                Optional<Set<Path>> launchers = listFilesAndProcess(inputsDirectory.resolve(BIN_DIRECTORY), files -> files.collect(toSet()));
+                if (launchers.isPresent()) {
+                    for (Path srcLauncher : launchers.get()) {
+                        Path destLauncher = binDirectory.resolve(srcLauncher.getFileName());
+                        Files.copy(srcLauncher, destLauncher);
+                        FileUtils.grantExecutableAccess(destLauncher);
+                    }
                 }
             } catch (IOException e) {
                 throw new AssemblerProcessingException(RB.$("ERROR_assembler_copy_launcher",
@@ -247,6 +281,21 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
                 Path candidateBinary = imageDirectory.resolve(BIN_DIRECTORY).resolve(fileName);
                 return !Files.exists(candidateBinary);
             });
+
+            if (hasJavaArchive) {
+                String libDirectory = resolveTemplate(assembler.getJavaArchive().getLibDirectoryName(), props);
+                String archivePathName = archiveDirectory.toString();
+                FileUtils.copyFiles(context.getLogger(),
+                    archiveDirectory,
+                    imageDirectory, path -> {
+                        String fileName = path.getFileName().toString();
+                        if (!fileName.endsWith(JAR.extension())) return true;
+                        return !path.getParent().toString()
+                            .substring(archivePathName.length())
+                            .contains(libDirectory);
+                    });
+            }
+
             copyArtifacts(context, imageDirectory, platform, true);
             copyFiles(context, imageDirectory);
             copyFileSets(context, imageDirectory);
@@ -329,21 +378,22 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
             if (join) {
                 StringBuilder pathBuilder = new StringBuilder();
 
-                String s = listFilesAndProcess(jarsDirectory.resolve(UNIVERSAL_DIRECTORY), files ->
+                listFilesAndProcess(jarsDirectory.resolve(UNIVERSAL_DIRECTORY), files ->
                     files.map(Path::toAbsolutePath)
                         .map(Object::toString)
-                        .collect(joining(File.pathSeparator)));
-                pathBuilder.append(s);
+                        .collect(joining(File.pathSeparator)))
+                    .ifPresent(pathBuilder::append);
 
-                String platformSpecific = listFilesAndProcess(jarsDirectory.resolve(platform), files ->
+                listFilesAndProcess(jarsDirectory.resolve(platform), files ->
                     files.map(Path::toAbsolutePath)
                         .map(Object::toString)
-                        .collect(joining(File.pathSeparator)));
-
-                if (isNotBlank(platformSpecific)) {
-                    pathBuilder.append(File.pathSeparator)
-                        .append(platformSpecific);
-                }
+                        .collect(joining(File.pathSeparator)))
+                    .ifPresent(platformSpecific -> {
+                        if (isNotBlank(platformSpecific)) {
+                            pathBuilder.append(File.pathSeparator)
+                                .append(platformSpecific);
+                        }
+                    });
 
                 cmd.arg(pathBuilder.toString());
             } else {
@@ -358,7 +408,7 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
                         .forEach(cmd::arg));
             }
         } catch (IOException e) {
-            throw new AssemblerProcessingException(RB.$("ERROR_assembler_jdeps_error", e.getMessage()));
+            throw new AssemblerProcessingException(RB.$("ERROR_assembler_jdeps_error", e.getMessage(), e));
         }
     }
 

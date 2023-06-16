@@ -53,6 +53,8 @@ public interface JlinkAssembler extends Assembler, JavaAssembler {
 
     boolean isCopyJars();
 
+    JavaArchive getJavaArchive();
+
     interface Jdeps extends Domain, EnabledAware {
         String getMultiRelease();
 
@@ -61,5 +63,13 @@ public interface JlinkAssembler extends Assembler, JavaAssembler {
         boolean isUseWildcardInPath();
 
         Set<String> getTargets();
+    }
+
+    interface JavaArchive extends Domain {
+        String getPath();
+
+        String getMainJarName();
+
+        String getLibDirectoryName();
     }
 }

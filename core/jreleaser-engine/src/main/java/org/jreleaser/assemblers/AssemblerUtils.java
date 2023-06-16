@@ -75,7 +75,7 @@ public final class AssemblerUtils {
         Set<Path> paths = new LinkedHashSet<>();
 
         // resolve all first
-        if (isBlank(platform)) {
+        if (isBlank(platform) && isNotBlank(assembler.getMainJar().getPath())) {
             paths.add(assembler.getMainJar().getEffectivePath(context, assembler));
         }
 

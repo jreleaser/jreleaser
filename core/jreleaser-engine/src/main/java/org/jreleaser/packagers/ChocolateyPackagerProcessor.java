@@ -176,7 +176,7 @@ public class ChocolateyPackagerProcessor extends AbstractRepositoryPackagerProce
                 files.map(Path::getFileName)
                     .map(Path::toString)
                     .filter(s -> s.endsWith(".nupkg"))
-                    .findFirst());
+                    .findFirst().orElse(null));
 
             if (nuget.isPresent()) {
                 cmd = new Command("choco")

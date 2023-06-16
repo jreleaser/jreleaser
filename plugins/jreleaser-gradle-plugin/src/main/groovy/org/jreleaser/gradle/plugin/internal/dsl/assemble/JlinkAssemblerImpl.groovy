@@ -63,6 +63,7 @@ class JlinkAssemblerImpl extends AbstractJavaAssembler implements JlinkAssembler
     final ArchiveOptionsImpl options
 
     private final JdepsImpl jdeps
+    private final JavaArchiveImpl javaArchive
     private final ArtifactImpl jdk
     final NamedDomainObjectContainer<ArtifactImpl> targetJdks
 
@@ -80,6 +81,7 @@ class JlinkAssemblerImpl extends AbstractJavaAssembler implements JlinkAssembler
         java = objects.newInstance(JavaImpl, objects)
         platform = objects.newInstance(PlatformImpl, objects)
         jdeps = objects.newInstance(JdepsImpl, objects)
+        javaArchive = objects.newInstance(JavaArchiveImpl, objects)
         jdk = objects.newInstance(ArtifactImpl, objects)
         jdk.setName('jdk')
         options = objects.newInstance(ArchiveOptionsImpl, objects)
@@ -110,6 +112,7 @@ class JlinkAssemblerImpl extends AbstractJavaAssembler implements JlinkAssembler
             args.present ||
             java.isSet() ||
             jdeps.isSet() ||
+            javaArchive.isSet() ||
             jdk.isSet() ||
             moduleNames.present ||
             additionalModuleNames.present ||
@@ -146,6 +149,11 @@ class JlinkAssemblerImpl extends AbstractJavaAssembler implements JlinkAssembler
     }
 
     @Override
+    void javaArchive(Action<? super JavaArchive> action) {
+        action.execute(javaArchive)
+    }
+
+    @Override
     void setActive(String str) {
         if (isNotBlank(str)) {
             active.set(Active.of(str.trim()))
@@ -176,12 +184,19 @@ class JlinkAssemblerImpl extends AbstractJavaAssembler implements JlinkAssembler
         ConfigureUtil.configure(action, options)
     }
 
+    @Override
+    @CompileDynamic
+    void javaArchive(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JavaArchive) Closure<Void> action) {
+        ConfigureUtil.configure(action, javaArchive)
+    }
+
     org.jreleaser.model.internal.assemble.JlinkAssembler toModel() {
         org.jreleaser.model.internal.assemble.JlinkAssembler assembler = new org.jreleaser.model.internal.assemble.JlinkAssembler()
         assembler.name = name
         fillProperties(assembler)
         assembler.args = (List<String>) args.getOrElse([])
         if (jdeps.isSet()) assembler.jdeps = jdeps.toModel()
+        if (javaArchive.isSet()) assembler.javaArchive = javaArchive.toModel()
         if (jdk.isSet()) assembler.jdk = jdk.toModel()
         assembler.archiveFormat = archiveFormat.get()
         assembler.java = java.toModel()
@@ -235,6 +250,36 @@ class JlinkAssemblerImpl extends AbstractJavaAssembler implements JlinkAssembler
             if (useWildcardInPath.present) jdeps.useWildcardInPath = useWildcardInPath.get()
             jdeps.targets = (Set<String>) targets.getOrElse([] as Set)
             jdeps
+        }
+    }
+
+
+    @CompileStatic
+    static class JavaArchiveImpl implements JavaArchive {
+        final Property<String> path
+        final Property<String> mainJarName
+        final Property<String> libDirectoryName
+
+        @Inject
+        JavaArchiveImpl(ObjectFactory objects) {
+            path = objects.property(String).convention(Providers.<String> notDefined())
+            mainJarName = objects.property(String).convention(Providers.<String> notDefined())
+            libDirectoryName = objects.property(String).convention(Providers.<String> notDefined())
+        }
+
+        @Internal
+        boolean isSet() {
+            path.present ||
+                mainJarName.present ||
+                libDirectoryName.present
+        }
+
+        org.jreleaser.model.internal.assemble.JlinkAssembler.JavaArchive toModel() {
+            org.jreleaser.model.internal.assemble.JlinkAssembler.JavaArchive javaArchive = new org.jreleaser.model.internal.assemble.JlinkAssembler.JavaArchive()
+            if (path.present) javaArchive.path = path.get()
+            if (mainJarName.present) javaArchive.mainJarName = mainJarName.get()
+            if (libDirectoryName.present) javaArchive.libDirectoryName = libDirectoryName.get()
+            javaArchive
         }
     }
 }
