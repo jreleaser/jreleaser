@@ -564,6 +564,8 @@ public final class StringUtils {
             name = name.substring(0, name.length() - 7);
         }
 
+        if (name.contains("-")) return name.toLowerCase(Locale.ENGLISH);
+
         String naturalName = getNaturalName(getShortName(name));
         return naturalName.replaceAll("\\s", "-").toLowerCase(Locale.ENGLISH);
     }

@@ -170,6 +170,7 @@ class StringUtilsTest {
 
     @Test
     void testGetHyphenatedName() {
+        assertEquals("string-utils", StringUtils.getHyphenatedName("string-utils"));
         assertEquals("string-utils", StringUtils.getHyphenatedName(StringUtils.class));
         assertEquals("string-utils", StringUtils.getHyphenatedName(StringUtils.class.getName()));
     }

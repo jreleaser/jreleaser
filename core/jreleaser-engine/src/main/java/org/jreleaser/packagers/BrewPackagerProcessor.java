@@ -326,7 +326,8 @@ BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> 
         } else if (packager.isMultiPlatform()) {
             if (CASK_RB.equals(fileName) || FORMULA_RB.equals(fileName)) return;
             writeFile(content, FORMULA_MULTI_RB.equals(fileName) ?
-                outputDirectory.resolve(FORMULA).resolve(distribution.getExecutable().getName().concat(RB)) :
+                outputDirectory.resolve(FORMULA)
+                    .resolve(getHyphenatedName(packager.getFormulaName()).concat(RB)) :
                 outputDirectory.resolve(fileName));
         } else {
             if (CASK_RB.equals(fileName) || FORMULA_MULTI_RB.equals(fileName)) return;
