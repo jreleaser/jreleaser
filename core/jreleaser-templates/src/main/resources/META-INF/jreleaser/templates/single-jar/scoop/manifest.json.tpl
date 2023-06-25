@@ -12,10 +12,10 @@
     ]
   },
   {{#distributionJavaMainModule}}
-  "pre_install": "\"@java -p \"$dir\\{{distributionArtifactFile}}\" -m \"{{distributionJavaMainModule}}/{{distributionJavaMainClass}}\" %*\" | out-file -en oem \"$dir\\{{distributionExecutableWindows}}\"",
+  "pre_install": "\"@java -p \"\"$dir\\{{distributionArtifactFile}}\"\" -m \"{{distributionJavaMainModule}}/{{distributionJavaMainClass}}\" %*\" | out-file -en oem \"$dir\\{{distributionExecutableWindows}}\"",
   {{/distributionJavaMainModule}}
   {{^distributionJavaMainModule}}
-  "pre_install": "\"@java -jar \"$dir\\{{distributionArtifactFile}}\" %*\" | out-file -en oem \"$dir\\{{distributionExecutableWindows}}\"",
+  "pre_install": "\"@java -jar \"\"$dir\\{{distributionArtifactFile}}\"\" %*\" | out-file -en oem \"$dir\\{{distributionExecutableWindows}}\"",
   {{/distributionJavaMainModule}}
   "bin": "{{distributionExecutableWindows}}",
   "checkver": {
