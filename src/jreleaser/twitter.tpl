@@ -1,12 +1,7 @@
 🚀 JReleaser {{projectVersion}} has been released! {{releaseNotesUrl}}
-📣 Announce releases to OpenCollective (@opencollect) {{projectLinkDocumentation}}/reference/announce/opencollective.html
-🔐 Generate SBOMs with cyclonedx-cli {{projectLinkDocumentation}}/reference/catalog/sbom/cyclonedx.html
-🏗 Jib is now supported as a packager. You may use it to build container images {{projectLinkDocumentation}}/reference/packagers/jib.html
-📦 Several improvements and fixes applied to the Flatpak package manager {{projectLinkDocumentation}}/reference/packagers/flatpak.html
-🍎 SINGLE_JAR distributions are now supported by Macports package manager {{projectLinkDocumentation}}/reference/packagers/macports.html
-🪟 Zip based distributions are now supported by Winget package manager {{projectLinkDocumentation}}/reference/packagers/winget.html
-🤖 Script hooks let you define custom scripts directly in the model {{projectLinkDocumentation}}/reference/hooks/script.html
-💻 Command and script hooks may supply structured output that feeds into the resolved model {{projectLinkDocumentation}}/reference/hooks/command.html#_output
-🦉 Several updates to Maven deployers. Nexus2 now checks if GPG keys are publicly available before deployment {{projectLinkDocumentation}}/reference/deploy/maven/index.html
-📝 Full list of changes available at the {{milestoneName}} milestone {{projectLinkVcsBrowser}}/milestone/25?closed=1
+😅 This is mostly a fix release with a handful of enhancements. We'd like to thank our most recent contributors https://github.com/jreleaser/jreleaser/blob/main/CONTRIBUTORS.md
+📣 Announce releases to BlueSky {{projectLinkDocumentation}}/reference/announce/bluesky.html
+📦 Various fixes to Homebrew, Scoop, Chocolatey, Spec {{projectLinkDocumentation}}/reference/packagers/index.html
+🏗 Archives may be used as input in the JLink assembler {{projectLinkDocumentation}}/reference/assemble/jlink.html
+📝 Full list of changes available at the {{milestoneName}} milestone {{projectLinkVcsBrowser}}/milestone/256?closed=1
 🙏 As always, feedback is welcome. Feel free to raise a ticket at {{projectLinkBugTracker}}
