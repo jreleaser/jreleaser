@@ -40,7 +40,7 @@ jobs:
           distribution: ${{ vars.JAVA_DISTRO }}
           cache: gradle
 
-      - uses: jfrog/frogbot@723a97d728dfb0df968193b1fc189a1fe8c119ab
+      - uses: jfrog/frogbot@7ae41fe4c3bd9e6633e9f2d510eb151e213cabd4
         env:
           JF_URL: ${{ secrets.JFROG_PLATFORM_URL }}
           JF_ACCESS_TOKEN: ${{ secrets.JFROG_ACCESS_TOKEN }}
