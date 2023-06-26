@@ -41,7 +41,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 1.3.0
  */
 public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A>, A extends org.jreleaser.model.api.deploy.maven.MavenDeployer> extends AbstractActivatable<S> implements MavenDeployer<A>, ExtraProperties {
-    private static final long serialVersionUID = 4927436336504358521L;
+    private static final long serialVersionUID = 3334353868339083386L;
 
     @JsonIgnore
     private final String type;
@@ -354,7 +354,12 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
         props.set("username", username);
         props.set("owner", username);
         props.setAll(getExtraProperties());
-        return resolveTemplate(url, props);
+        return normalizeUrl(resolveTemplate(url, props));
+    }
+
+    protected String normalizeUrl(String url) {
+        if (isNotBlank(url) && !url.endsWith("/")) return url + "/";
+        return url;
     }
 
     @Override

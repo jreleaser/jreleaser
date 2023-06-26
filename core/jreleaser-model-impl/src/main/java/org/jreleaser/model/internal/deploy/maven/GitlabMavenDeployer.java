@@ -201,7 +201,7 @@ public final class GitlabMavenDeployer extends AbstractMavenDeployer<GitlabMaven
         props.set("owner", getUsername());
         props.set("projectIdentifier", projectIdentifier);
         props.setAll(getExtraProperties());
-        return resolveTemplate(getUrl(), props);
+        return normalizeUrl(resolveTemplate(getUrl(), props));
     }
 
     @Override

@@ -201,7 +201,7 @@ public final class GithubMavenDeployer extends AbstractMavenDeployer<GithubMaven
         props.set("owner", getUsername());
         props.set("repository", repository);
         props.setAll(getExtraProperties());
-        return resolveTemplate(getUrl(), props);
+        return normalizeUrl(resolveTemplate(getUrl(), props));
     }
 
     @Override
