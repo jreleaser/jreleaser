@@ -10,7 +10,7 @@ echo "⚙️ Refreshing working copy"
 git merge origin/development
 
 echo "📝 Updating versions"
-sed -i -e "s/^\version\:\ early-access.*/version: latest/g" docs/antora.yml
+sed -i -e "s/^version\:\ early-access.*/version: latest/g" docs/antora.yml
 sed -i -e "s/jreleaser-version\:\ .*/jreleaser-version: ${VERSION}/g" docs/antora.yml
 sed -i -e "s/jreleaser-effective-version\:\ .*/jreleaser-effective-version: ${VERSION}/g" docs/antora.yml
 sed -i -e "s/jreleaser-tag\:\ .*/jreleaser-tag: ${TAG}/g" docs/antora.yml
