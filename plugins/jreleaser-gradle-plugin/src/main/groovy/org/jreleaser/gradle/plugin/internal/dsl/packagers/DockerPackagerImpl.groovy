@@ -182,7 +182,7 @@ class DockerPackagerImpl extends AbstractDockerConfiguration implements DockerPa
             if (tagName.present) tap.tagName = tagName.get()
             if (branch.present) tap.branch = branch.get()
             if (branchPush.present) tap.branchPush = branchPush.get()
-            if (username.present) tap.name = username.get()
+            if (username.present) tap.username = username.get()
             if (token.present) tap.token = token.get()
             if (commitMessage.present) tap.commitMessage = commitMessage.get()
             if (versionedSubfolders.present) tap.versionedSubfolders = versionedSubfolders.get()
