@@ -108,10 +108,12 @@ public final class DockerPackagerValidator {
         if (!repository.isVersionedSubfoldersSet()) {
             repository.setVersionedSubfolders(parentPackager.getPackagerRepository().isVersionedSubfolders());
         }
+        validateTap(context, distribution, repository, parentPackager.getRepositoryTap(), "docker.repository");
+
+        // perform after validateTap so that repository.name isn't squashed
         if (isBlank(repository.getName())) {
             repository.setName(project.getName() + "-docker");
         }
-        validateTap(context, distribution, repository, parentPackager.getRepositoryTap(), "docker.repository");
 
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);
