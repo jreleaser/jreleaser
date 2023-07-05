@@ -605,6 +605,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "cwensel",
+      "name": "Chris K Wensel",
+      "avatar_url": "https://avatars.githubusercontent.com/u/24684?v=4",
+      "profile": "http://chris.wensel.net",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
