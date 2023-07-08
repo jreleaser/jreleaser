@@ -149,11 +149,7 @@ public class GiteaReleaser extends AbstractReleaser<org.jreleaser.model.api.rele
                 context.getLogger().debug(RB.$("git.releaser.release.create"), tagName);
                 createRelease(api, tagName, changelog, snapshot && gitea.isMatch());
             }
-        } catch (RestAPIException e) {
-            context.getLogger().trace(e.getStatus() + " " + e.getReason());
-            context.getLogger().trace(e);
-            throw new ReleaseException(e);
-        } catch (IOException | IllegalStateException e) {
+        } catch (RestAPIException | IOException | IllegalStateException e) {
             context.getLogger().trace(e);
             throw new ReleaseException(e);
         }

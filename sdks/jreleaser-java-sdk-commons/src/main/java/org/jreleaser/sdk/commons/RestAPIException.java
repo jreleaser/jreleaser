@@ -23,27 +23,39 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
+import static org.jreleaser.util.StringUtils.isNotBlank;
+
 /**
  * @author Andres Almiray
  * @since 0.2.0
  */
 public class RestAPIException extends RuntimeException {
-    private static final long serialVersionUID = -4998504906274842288L;
+    private static final long serialVersionUID = -3807652106740042028L;
 
     private final Request request;
     private final int status;
     private final String reason;
+    private final String body;
     private final Map<String, Collection<String>> headers;
 
     public RestAPIException(int status, String reason) {
         this(null, status, reason, Collections.emptyMap());
     }
 
+    public RestAPIException(int status, String reason, String body) {
+        this(null, status, reason, body, Collections.emptyMap());
+    }
+
     public RestAPIException(Request request, int status, String reason, Map<String, Collection<String>> headers) {
-        super(status + ": " + reason);
+        this(request, status, reason, "", headers);
+    }
+
+    public RestAPIException(Request request, int status, String reason, String body, Map<String, Collection<String>> headers) {
+        super(status + ": " + reason + (isNotBlank(body) ? System.lineSeparator() + body : ""));
         this.request = request;
         this.status = status;
         this.reason = reason;
+        this.body = body;
         this.headers = headers;
     }
 
@@ -57,6 +69,10 @@ public class RestAPIException extends RuntimeException {
 
     public String getReason() {
         return reason;
+    }
+
+    public String getBody() {
+        return body;
     }
 
     public Map<String, Collection<String>> getHeaders() {

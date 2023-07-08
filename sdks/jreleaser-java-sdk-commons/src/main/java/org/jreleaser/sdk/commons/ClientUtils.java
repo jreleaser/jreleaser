@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Client;
 import feign.Feign;
 import feign.Request;
+import feign.Response;
 import feign.form.FormData;
 import feign.form.FormEncoder;
 import feign.jackson.JacksonDecoder;
@@ -110,8 +111,19 @@ public final class ClientUtils {
             .encoder(new FormEncoder(new JacksonEncoder()))
             .decoder(new JacksonDecoder())
             .requestInterceptor(template -> template.header("User-Agent", "JReleaser/" + JReleaserVersion.getPlainVersion()))
-            .errorDecoder((methodKey, response) -> new RestAPIException(response.request(), response.status(), response.reason(), response.headers()))
+            .errorDecoder((methodKey, response) -> new RestAPIException(response.request(), response.status(), response.reason(), toString(logger, response.body()), response.headers()))
             .options(new Request.Options(connectTimeout, TimeUnit.SECONDS, readTimeout, TimeUnit.SECONDS, true));
+    }
+
+    private static String toString(JReleaserLogger logger, Response.Body body) {
+        if (null == body) return "";
+
+        try (Reader reader = body.asReader(UTF_8)) {
+            return IOUtils.toString(reader);
+        } catch (IOException e) {
+            logger.trace(e);
+            return "";
+        }
     }
 
     public static void webhook(JReleaserLogger logger,
