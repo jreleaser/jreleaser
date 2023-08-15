@@ -154,6 +154,7 @@ public final class Glob extends AbstractArtifact<Glob> implements Domain, ExtraP
             artifacts.forEach(artifact -> {
                 artifact.setPlatform(getPlatform());
                 artifact.setActive(getActive());
+                artifact.resolveEnabled(context.getModel().getProject());
                 if (isSelected()) artifact.select();
                 artifact.setExtraProperties(getExtraProperties());
             });
