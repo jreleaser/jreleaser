@@ -41,13 +41,13 @@ import javax.inject.Inject
 class JbangPackagerImpl extends AbstractRepositoryPackager implements JbangPackager {
     final Property<String> alias
     final CommitAuthorImpl commitAuthor
-    final TapImpl catalog
+    final TapImpl repository
 
     @Inject
     JbangPackagerImpl(ObjectFactory objects) {
         super(objects)
         alias = objects.property(String).convention(Providers.<String> notDefined())
-        catalog = objects.newInstance(TapImpl, objects)
+        repository = objects.newInstance(TapImpl, objects)
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
     }
 
@@ -55,13 +55,23 @@ class JbangPackagerImpl extends AbstractRepositoryPackager implements JbangPacka
     @Internal
     boolean isSet() {
         super.isSet() ||
-            catalog.isSet() ||
+            repository.isSet() ||
             commitAuthor.isSet()
     }
 
     @Override
+    Tap getCatalog() {
+        getRepository()
+    }
+
+    @Override
+    void repository(Action<? super Tap> action) {
+        action.execute(repository)
+    }
+
+    @Override
     void catalog(Action<? super Tap> action) {
-        action.execute(catalog)
+        repository(action)
     }
 
     @Override
@@ -71,8 +81,14 @@ class JbangPackagerImpl extends AbstractRepositoryPackager implements JbangPacka
 
     @Override
     @CompileDynamic
+    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action) {
+        ConfigureUtil.configure(action, repository)
+    }
+
+    @Override
+    @CompileDynamic
     void catalog(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action) {
-        ConfigureUtil.configure(action, catalog)
+        repository(action)
     }
 
     @Override
@@ -86,7 +102,7 @@ class JbangPackagerImpl extends AbstractRepositoryPackager implements JbangPacka
         fillPackagerProperties(packager)
         fillTemplatePackagerProperties(packager)
         if (alias.present) packager.alias = alias.get()
-        if (catalog.isSet()) packager.catalog = catalog.toJbangCatalog()
+        if (repository.isSet()) packager.repository = repository.toJbangRepository()
         if (commitAuthor.isSet()) packager.commitAuthor = commitAuthor.toModel()
         packager
     }

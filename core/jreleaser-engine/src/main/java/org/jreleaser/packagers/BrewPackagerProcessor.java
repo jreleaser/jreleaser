@@ -60,6 +60,11 @@ import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_CLASS;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_MODULE;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_VERSION;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_URL;
+import static org.jreleaser.model.Constants.KEY_HOMEBREW_REPOSITORY_ALIAS;
+import static org.jreleaser.model.Constants.KEY_HOMEBREW_REPOSITORY_CLONE_URL;
+import static org.jreleaser.model.Constants.KEY_HOMEBREW_REPOSITORY_NAME;
+import static org.jreleaser.model.Constants.KEY_HOMEBREW_REPOSITORY_OWNER;
+import static org.jreleaser.model.Constants.KEY_HOMEBREW_REPOSITORY_URL;
 import static org.jreleaser.model.Constants.KEY_HOMEBREW_TAP_NAME;
 import static org.jreleaser.model.Constants.KEY_HOMEBREW_TAP_REPO_CLONE_URL;
 import static org.jreleaser.model.Constants.KEY_HOMEBREW_TAP_REPO_NAME;
@@ -163,13 +168,21 @@ BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> 
 
         props.set(KEY_BREW_FORMULA_NAME, packager.getResolvedFormulaName(props));
 
-        props.set(KEY_HOMEBREW_TAP_REPO_OWNER, packager.getTap().getOwner());
-        props.set(KEY_HOMEBREW_TAP_REPO_NAME, packager.getTap().getResolvedName());
-        props.set(KEY_HOMEBREW_TAP_NAME, packager.getTap().getResolvedName().substring("homebrew-".length()));
+        props.set(KEY_HOMEBREW_TAP_REPO_OWNER, packager.getRepository().getOwner());
+        props.set(KEY_HOMEBREW_TAP_REPO_NAME, packager.getRepository().getResolvedName());
+        props.set(KEY_HOMEBREW_TAP_NAME, packager.getRepository().getResolvedName().substring("homebrew-".length()));
         props.set(KEY_HOMEBREW_TAP_REPO_URL,
-            releaser.getResolvedRepoUrl(context.getModel(), packager.getTap().getOwner(), packager.getTap().getResolvedName()));
+            releaser.getResolvedRepoUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
         props.set(KEY_HOMEBREW_TAP_REPO_CLONE_URL,
-            releaser.getResolvedRepoCloneUrl(context.getModel(), packager.getTap().getOwner(), packager.getTap().getResolvedName()));
+            releaser.getResolvedRepoCloneUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
+
+        props.set(KEY_HOMEBREW_REPOSITORY_OWNER, packager.getRepository().getOwner());
+        props.set(KEY_HOMEBREW_REPOSITORY_NAME, packager.getRepository().getResolvedName());
+        props.set(KEY_HOMEBREW_REPOSITORY_ALIAS, packager.getRepository().getResolvedName().substring("homebrew-".length()));
+        props.set(KEY_HOMEBREW_REPOSITORY_URL,
+            releaser.getResolvedRepoUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
+        props.set(KEY_HOMEBREW_REPOSITORY_CLONE_URL,
+            releaser.getResolvedRepoCloneUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
 
         props.set(KEY_BREW_HAS_LIVECHECK, packager.hasLivecheck());
         if (packager.hasLivecheck()) {

@@ -24,6 +24,7 @@ import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.GofishPackager;
 import org.jreleaser.model.internal.release.Releaser;
+import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 
 import java.util.List;
@@ -35,7 +36,6 @@ import static org.jreleaser.model.internal.validation.common.TemplateValidator.v
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateCommitAuthor;
 import static org.jreleaser.model.internal.validation.common.Validator.validateContinueOnError;
-import static org.jreleaser.model.internal.validation.common.Validator.validateTap;
 import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -90,7 +90,7 @@ public final class GofishPackagerValidator {
 
         validateCommitAuthor(packager, parentPackager);
         GofishPackager.GofishRepository repository = packager.getRepository();
-        validateTap(context, distribution, repository, parentPackager.getRepository(), "gofish.repository");
+        Validator.validateRepository(context, distribution, repository, parentPackager.getRepository(), "gofish.repository");
         validateTemplate(context, distribution, packager, parentPackager, errors);
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);

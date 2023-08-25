@@ -24,6 +24,7 @@ import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.BrewPackager;
 import org.jreleaser.model.internal.release.Releaser;
+import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.PlatformUtils;
 
@@ -41,7 +42,6 @@ import static org.jreleaser.model.internal.validation.common.TemplateValidator.v
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateCommitAuthor;
 import static org.jreleaser.model.internal.validation.common.Validator.validateContinueOnError;
-import static org.jreleaser.model.internal.validation.common.Validator.validateTap;
 import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -105,8 +105,8 @@ public final class BrewPackagerValidator {
         }
 
         validateCommitAuthor(packager, parentPackager);
-        BrewPackager.HomebrewTap tap = packager.getTap();
-        validateTap(context, distribution, tap, parentPackager.getTap(), "brew.tap");
+        BrewPackager.HomebrewRepository tap = packager.getRepository();
+        Validator.validateRepository(context, distribution, tap, parentPackager.getRepository(), "brew.repository");
         validateTemplate(context, distribution, packager, parentPackager, errors);
         validateContinueOnError(packager, parentPackager);
         if (isBlank(packager.getDownloadUrl())) {

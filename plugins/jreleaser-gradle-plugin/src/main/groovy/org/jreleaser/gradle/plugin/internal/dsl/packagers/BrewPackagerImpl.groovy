@@ -46,7 +46,7 @@ class BrewPackagerImpl extends AbstractRepositoryPackager implements BrewPackage
     final Property<String> formulaName
     final Property<Boolean> multiPlatform
     final CommitAuthorImpl commitAuthor
-    final TapImpl repoTap
+    final TapImpl repository
     final CaskImpl cask
     final MapProperty<String, String> dependencies
     final ListProperty<String> livecheck
@@ -56,7 +56,7 @@ class BrewPackagerImpl extends AbstractRepositoryPackager implements BrewPackage
         super(objects)
         formulaName = objects.property(String).convention(Providers.<String> notDefined())
         multiPlatform = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
-        repoTap = objects.newInstance(TapImpl, objects)
+        repository = objects.newInstance(TapImpl, objects)
         cask = objects.newInstance(CaskImpl, objects)
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
         dependencies = objects.mapProperty(String, String).convention(Providers.notDefined())
@@ -84,15 +84,25 @@ class BrewPackagerImpl extends AbstractRepositoryPackager implements BrewPackage
             formulaName.present ||
             multiPlatform.present ||
             dependencies.present ||
-            repoTap.isSet() ||
+            repository.isSet() ||
             commitAuthor.isSet() ||
             livecheck.present ||
             cask.isSet()
     }
 
     @Override
+    Tap getRepoTap() {
+        getRepository()
+    }
+
+    @Override
     void repoTap(Action<? super Tap> action) {
-        action.execute(repoTap)
+        repository(action)
+    }
+
+    @Override
+    void repository(Action<? super Tap> action) {
+        action.execute(repository)
     }
 
     @Override
@@ -108,7 +118,13 @@ class BrewPackagerImpl extends AbstractRepositoryPackager implements BrewPackage
     @Override
     @CompileDynamic
     void repoTap(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action) {
-        ConfigureUtil.configure(action, repoTap)
+        ConfigureUtil.configure(action, repository)
+    }
+
+    @Override
+    @CompileDynamic
+    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action) {
+        ConfigureUtil.configure(action, repository)
     }
 
     @Override
@@ -129,7 +145,7 @@ class BrewPackagerImpl extends AbstractRepositoryPackager implements BrewPackage
         fillTemplatePackagerProperties(packager)
         if (formulaName.present) packager.formulaName = formulaName.get()
         if (multiPlatform.present) packager.multiPlatform = multiPlatform.get()
-        if (repoTap.isSet()) packager.tap = repoTap.toHomebrewTap()
+        if (repository.isSet()) packager.repository = repository.toHomebrewRepository()
         if (commitAuthor.isSet()) packager.commitAuthor = commitAuthor.toModel()
         if (dependencies.present) packager.dependencies = dependencies.get()
         if (livecheck.present) packager.livecheck = (livecheck.get() as List<String>)

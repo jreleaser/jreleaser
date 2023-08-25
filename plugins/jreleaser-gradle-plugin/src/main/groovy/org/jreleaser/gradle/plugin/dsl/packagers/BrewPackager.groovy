@@ -42,10 +42,21 @@ interface BrewPackager extends RepositoryPackager {
 
     void dependency(String key)
 
+    Tap getRepository()
+
+    @Deprecated
+    void repository(Action<? super Tap> action)
+
+    @Deprecated
+    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action)
+
+    @Deprecated
     Tap getRepoTap()
 
+    @Deprecated
     void repoTap(Action<? super Tap> action)
 
+    @Deprecated
     void repoTap(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action)
 
     Cask getCask()

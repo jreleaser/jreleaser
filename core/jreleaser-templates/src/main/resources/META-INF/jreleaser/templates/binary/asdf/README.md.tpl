@@ -23,7 +23,7 @@ Plugin:
 ```shell
 asdf plugin add {{distributionName}}
 # or
-asdf plugin add {{distributionName}} {{asdfPluginRepoUrl}}.git
+asdf plugin add {{distributionName}} {{asdfPluginRepositoryUrl}}.git
 ```
 
 {{distributionName}}:

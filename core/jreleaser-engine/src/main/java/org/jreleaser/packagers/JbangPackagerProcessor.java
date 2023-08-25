@@ -36,6 +36,8 @@ import static org.jreleaser.model.Constants.KEY_JBANG_ALIAS_NAME;
 import static org.jreleaser.model.Constants.KEY_JBANG_CATALOG_REPO_CLONE_URL;
 import static org.jreleaser.model.Constants.KEY_JBANG_CATALOG_REPO_URL;
 import static org.jreleaser.model.Constants.KEY_JBANG_DISTRIBUTION_GA;
+import static org.jreleaser.model.Constants.KEY_JBANG_REPOSITORY_CLONE_URL;
+import static org.jreleaser.model.Constants.KEY_JBANG_REPOSITORY_URL;
 import static org.jreleaser.model.Constants.KEY_JBANG_SCRIPT_NAME;
 import static org.jreleaser.model.Constants.KEY_REVERSE_DOMAIN;
 import static org.jreleaser.model.Constants.KEY_REVERSE_REPO_HOST;
@@ -72,9 +74,14 @@ public class JbangPackagerProcessor extends AbstractRepositoryPackagerProcessor<
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
 
         props.set(KEY_JBANG_CATALOG_REPO_URL,
-            releaser.getResolvedRepoUrl(context.getModel(), packager.getCatalog().getOwner(), packager.getCatalog().getResolvedName()));
+            releaser.getResolvedRepoUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
         props.set(KEY_JBANG_CATALOG_REPO_CLONE_URL,
-            releaser.getResolvedRepoCloneUrl(context.getModel(), packager.getCatalog().getOwner(), packager.getCatalog().getResolvedName()));
+            releaser.getResolvedRepoCloneUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
+
+        props.set(KEY_JBANG_REPOSITORY_URL,
+            releaser.getResolvedRepoUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
+        props.set(KEY_JBANG_REPOSITORY_CLONE_URL,
+            releaser.getResolvedRepoCloneUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
 
         String aliasName = sanitizeAlias(packager.getAlias());
         String scriptName = aliasName;

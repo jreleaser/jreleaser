@@ -46,6 +46,8 @@ import static org.jreleaser.model.Constants.KEY_APPIMAGE_DISTRIBUTION_ARTIFACT_F
 import static org.jreleaser.model.Constants.KEY_APPIMAGE_DISTRIBUTION_URL;
 import static org.jreleaser.model.Constants.KEY_APPIMAGE_ICONS;
 import static org.jreleaser.model.Constants.KEY_APPIMAGE_RELEASES;
+import static org.jreleaser.model.Constants.KEY_APPIMAGE_REPOSITORY_NAME;
+import static org.jreleaser.model.Constants.KEY_APPIMAGE_REPOSITORY_OWNER;
 import static org.jreleaser.model.Constants.KEY_APPIMAGE_REPO_NAME;
 import static org.jreleaser.model.Constants.KEY_APPIMAGE_REPO_OWNER;
 import static org.jreleaser.model.Constants.KEY_APPIMAGE_REQUIRES_TERMINAL;
@@ -117,6 +119,8 @@ public class AppImagePackagerProcessor extends AbstractRepositoryPackagerProcess
         props.set(KEY_APPIMAGE_REQUIRES_TERMINAL, getPackager().isRequiresTerminal());
         props.set(KEY_APPIMAGE_REPO_OWNER, packager.getRepository().getOwner());
         props.set(KEY_APPIMAGE_REPO_NAME, packager.getRepository().getName());
+        props.set(KEY_APPIMAGE_REPOSITORY_OWNER, packager.getRepository().getOwner());
+        props.set(KEY_APPIMAGE_REPOSITORY_NAME, packager.getRepository().getName());
 
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
         String str = props.get(KEY_DISTRIBUTION_ARTIFACT_FILE);

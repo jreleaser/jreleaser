@@ -48,6 +48,7 @@ import static org.jreleaser.model.Distribution.DistributionType.JLINK;
 import static org.jreleaser.model.Distribution.DistributionType.NATIVE_IMAGE;
 import static org.jreleaser.model.Distribution.DistributionType.NATIVE_PACKAGE;
 import static org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR;
+import static org.jreleaser.model.JReleaserOutput.nag;
 import static org.jreleaser.model.api.packagers.BrewPackager.SKIP_BREW;
 import static org.jreleaser.model.api.packagers.BrewPackager.TYPE;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
@@ -68,7 +69,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser.model.api.packagers.BrewPackager, BrewPackager> {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
-    private static final long serialVersionUID = -6367949798240946095L;
+    private static final long serialVersionUID = -9118527881092408298L;
 
     static {
         Set<String> extensions = setOf(ZIP.extension());
@@ -83,7 +84,7 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
 
     private final List<Dependency> dependencies = new ArrayList<>();
     private final List<String> livecheck = new ArrayList<>();
-    private final HomebrewTap tap = new HomebrewTap();
+    private final HomebrewRepository repository = new HomebrewRepository();
     private final Cask cask = new Cask();
 
     private String formulaName;
@@ -92,7 +93,7 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
 
     @JsonIgnore
     private final org.jreleaser.model.api.packagers.BrewPackager immutable = new org.jreleaser.model.api.packagers.BrewPackager() {
-        private static final long serialVersionUID = -7968635280218751108L;
+        private static final long serialVersionUID = 4523118379723768454L;
 
         @Override
         public String getFormulaName() {
@@ -105,8 +106,13 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
         }
 
         @Override
+        public org.jreleaser.model.api.packagers.PackagerRepository getRepository() {
+            return repository.asImmutable();
+        }
+
+        @Override
         public org.jreleaser.model.api.packagers.PackagerRepository getTap() {
-            return tap.asImmutable();
+            return getRepository();
         }
 
         @Override
@@ -121,7 +127,7 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
 
         @Override
         public org.jreleaser.model.api.packagers.PackagerRepository getPackagerRepository() {
-            return getTap();
+            return getRepository();
         }
 
         @Override
@@ -220,7 +226,7 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
         super.merge(source);
         this.formulaName = merge(this.formulaName, source.formulaName);
         this.multiPlatform = merge(this.multiPlatform, source.multiPlatform);
-        setTap(source.tap);
+        setRepository(source.repository);
         setDependenciesAsList(merge(this.dependencies, source.dependencies));
         setLivecheck(merge(this.livecheck, source.livecheck));
         setCask(source.cask);
@@ -265,12 +271,23 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
         return null != multiPlatform;
     }
 
-    public HomebrewTap getTap() {
-        return tap;
+    public HomebrewRepository getRepository() {
+        return repository;
     }
 
-    public void setTap(HomebrewTap repository) {
-        this.tap.merge(repository);
+    public void setRepository(HomebrewRepository repository) {
+        this.repository.merge(repository);
+    }
+
+    @Deprecated
+    public HomebrewRepository getTap() {
+        return getRepository();
+    }
+
+    @Deprecated
+    public void setTap(HomebrewRepository repository) {
+        nag("brew.tap is deprecated since 1.8.0 and will be removed in 2.0.0. Use brew.repository instead");
+        setRepository(repository);
     }
 
     public Cask getCask() {
@@ -335,7 +352,7 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
         super.asMap(full, props);
         props.put("formulaName", formulaName);
         props.put("multiPlatform", isMultiPlatform());
-        props.put("tap", tap.asMap(full));
+        props.put("repository", repository.asMap(full));
         props.put("dependencies", dependencies);
         props.put("livecheck", livecheck);
         props.put("cask", cask.asMap(full));
@@ -343,11 +360,11 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
 
     @Override
     public RepositoryTap getRepositoryTap() {
-        return getPackagerRepository();
+        return getRepository();
     }
 
     public PackagerRepository getPackagerRepository() {
-        return getTap();
+        return getRepository();
     }
 
     @Override
@@ -440,10 +457,10 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
         }
     }
 
-    public static final class HomebrewTap extends PackagerRepository {
-        private static final long serialVersionUID = -2283978797852378530L;
+    public static final class HomebrewRepository extends PackagerRepository {
+        private static final long serialVersionUID = 5221738236173499392L;
 
-        public HomebrewTap() {
+        public HomebrewRepository() {
             super("homebrew", "homebrew-tap");
         }
     }

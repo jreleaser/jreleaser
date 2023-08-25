@@ -24,6 +24,7 @@ import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.SpecPackager;
 import org.jreleaser.model.internal.release.Releaser;
+import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 
 import java.util.Collections;
@@ -35,7 +36,6 @@ import static org.jreleaser.model.internal.validation.common.TemplateValidator.v
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateCommitAuthor;
 import static org.jreleaser.model.internal.validation.common.Validator.validateContinueOnError;
-import static org.jreleaser.model.internal.validation.common.Validator.validateTap;
 import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -106,7 +106,7 @@ public final class SpecPackagerValidator {
 
         validateCommitAuthor(packager, parentPackager);
         SpecPackager.SpecRepository repository = packager.getRepository();
-        validateTap(context, distribution, repository, parentPackager.getRepository(), "spec.repository");
+        Validator.validateRepository(context, distribution, repository, parentPackager.getRepository(), "spec.repository");
         validateTemplate(context, distribution, packager, parentPackager, errors);
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);

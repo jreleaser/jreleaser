@@ -44,9 +44,18 @@ interface ChocolateyPackager extends RepositoryPackager {
 
     Property<Boolean> getRemoteBuild()
 
+    Tap getRepository()
+
+    void repository(Action<? super Tap> action)
+
+    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action)
+
+    @Deprecated
     Tap getBucket()
 
+    @Deprecated
     void bucket(Action<? super Tap> action)
 
+    @Deprecated
     void bucket(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action)
 }

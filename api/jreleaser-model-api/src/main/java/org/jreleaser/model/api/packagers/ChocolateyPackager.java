@@ -43,5 +43,8 @@ public interface ChocolateyPackager extends RepositoryPackager {
 
     boolean isRemoteBuild();
 
+    PackagerRepository getRepository();
+
+    @Deprecated
     PackagerRepository getBucket();
 }

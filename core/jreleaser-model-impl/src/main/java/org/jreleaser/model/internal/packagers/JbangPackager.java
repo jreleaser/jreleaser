@@ -36,6 +36,7 @@ import static java.util.Collections.unmodifiableSet;
 import static org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JLINK;
 import static org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR;
+import static org.jreleaser.model.JReleaserOutput.nag;
 import static org.jreleaser.model.api.packagers.JbangPackager.TYPE;
 
 /**
@@ -44,7 +45,7 @@ import static org.jreleaser.model.api.packagers.JbangPackager.TYPE;
  */
 public final class JbangPackager extends AbstractRepositoryPackager<org.jreleaser.model.api.packagers.JbangPackager, JbangPackager> {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
-    private static final long serialVersionUID = 7475917126983967203L;
+    private static final long serialVersionUID = -781152922661597391L;
 
     static {
         SUPPORTED.put(JAVA_BINARY, emptySet());
@@ -52,12 +53,12 @@ public final class JbangPackager extends AbstractRepositoryPackager<org.jrelease
         SUPPORTED.put(SINGLE_JAR, emptySet());
     }
 
-    private final JbangRepository catalog = new JbangRepository();
+    private final JbangRepository repository = new JbangRepository();
     private String alias;
 
     @JsonIgnore
     private final org.jreleaser.model.api.packagers.JbangPackager immutable = new org.jreleaser.model.api.packagers.JbangPackager() {
-        private static final long serialVersionUID = -3477595656026714700L;
+        private static final long serialVersionUID = -1240188702088587276L;
 
         @Override
         public String getAlias() {
@@ -65,13 +66,18 @@ public final class JbangPackager extends AbstractRepositoryPackager<org.jrelease
         }
 
         @Override
+        public org.jreleaser.model.api.packagers.PackagerRepository getRepository() {
+            return repository.asImmutable();
+        }
+
+        @Override
         public org.jreleaser.model.api.packagers.PackagerRepository getCatalog() {
-            return catalog.asImmutable();
+            return getRepository();
         }
 
         @Override
         public org.jreleaser.model.api.packagers.PackagerRepository getPackagerRepository() {
-            return getCatalog();
+            return getRepository();
         }
 
         @Override
@@ -168,7 +174,7 @@ public final class JbangPackager extends AbstractRepositoryPackager<org.jrelease
     public void merge(JbangPackager source) {
         super.merge(source);
         this.alias = merge(this.alias, source.alias);
-        setCatalog(source.catalog);
+        setRepository(source.repository);
     }
 
     public String getAlias() {
@@ -179,28 +185,39 @@ public final class JbangPackager extends AbstractRepositoryPackager<org.jrelease
         this.alias = alias;
     }
 
-    public JbangRepository getCatalog() {
-        return catalog;
+    public JbangRepository getRepository() {
+        return repository;
     }
 
-    public void setCatalog(JbangRepository tap) {
-        this.catalog.merge(tap);
+    public void setRepository(JbangRepository repository) {
+        this.repository.merge(repository);
+    }
+
+    @Deprecated
+    public JbangRepository getCatalog() {
+        return getRepository();
+    }
+
+    @Deprecated
+    public void setCatalog(JbangRepository repository) {
+        nag("jbang.catalog is deprecated since 1.8.0 and will be removed in 2.0.0. Use jbang.repository instead");
+        setRepository(repository);
     }
 
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         super.asMap(full, props);
         props.put("alias", alias);
-        props.put("catalog", catalog.asMap(full));
+        props.put("repository", repository.asMap(full));
     }
 
     @Override
     public RepositoryTap getRepositoryTap() {
-        return getPackagerRepository();
+        return getRepository();
     }
 
     public PackagerRepository getPackagerRepository() {
-        return getCatalog();
+        return getRepository();
     }
 
     @Override
@@ -229,7 +246,7 @@ public final class JbangPackager extends AbstractRepositoryPackager<org.jrelease
     }
 
     public static final class JbangRepository extends PackagerRepository {
-        private static final long serialVersionUID = -800139841211856966L;
+        private static final long serialVersionUID = 2261733570528326153L;
 
         public JbangRepository() {
             super("jbang", "jbang-catalog");

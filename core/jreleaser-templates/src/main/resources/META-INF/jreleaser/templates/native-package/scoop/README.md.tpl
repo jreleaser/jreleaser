@@ -7,7 +7,7 @@
 2. Add this bucket to scoop:
 
 ```
-scoop bucket add {{repoOwner}} {{scoopBucketRepoCloneUrl}}
+scoop bucket add {{repoOwner}} {{scoopRepositoryCloneUrl}}
 ```
 
 3. Install tools via `scoop install`:

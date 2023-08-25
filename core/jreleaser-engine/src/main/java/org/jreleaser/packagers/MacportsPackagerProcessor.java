@@ -42,8 +42,10 @@ import static org.jreleaser.model.Constants.KEY_MACPORTS_DISTRIBUTION_URL;
 import static org.jreleaser.model.Constants.KEY_MACPORTS_JAVA_VERSION;
 import static org.jreleaser.model.Constants.KEY_MACPORTS_MAINTAINERS;
 import static org.jreleaser.model.Constants.KEY_MACPORTS_PACKAGE_NAME;
+import static org.jreleaser.model.Constants.KEY_MACPORTS_REPOSITORY_CLONE_URL;
 import static org.jreleaser.model.Constants.KEY_MACPORTS_REPOSITORY_REPO_CLONE_URL;
 import static org.jreleaser.model.Constants.KEY_MACPORTS_REPOSITORY_REPO_URL;
+import static org.jreleaser.model.Constants.KEY_MACPORTS_REPOSITORY_URL;
 import static org.jreleaser.model.Constants.KEY_MACPORTS_REVISION;
 import static org.jreleaser.model.Constants.KEY_PROJECT_LONG_DESCRIPTION;
 import static org.jreleaser.model.api.packagers.MacportsPackager.APP_NAME;
@@ -77,6 +79,11 @@ public class MacportsPackagerProcessor extends AbstractRepositoryPackagerProcess
         props.set(KEY_MACPORTS_REPOSITORY_REPO_URL,
             releaser.getResolvedRepoUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
         props.set(KEY_MACPORTS_REPOSITORY_REPO_CLONE_URL,
+            releaser.getResolvedRepoCloneUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
+
+        props.set(KEY_MACPORTS_REPOSITORY_URL,
+            releaser.getResolvedRepoUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
+        props.set(KEY_MACPORTS_REPOSITORY_CLONE_URL,
             releaser.getResolvedRepoCloneUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
 
         List<String> longDescription = Arrays.asList(context.getModel().getProject().getLongDescription().split("\\n"));

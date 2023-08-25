@@ -31,5 +31,8 @@ public interface ScoopPackager extends RepositoryPackager {
 
     String getAutoupdateUrl();
 
+    PackagerRepository getRepository();
+
+    @Deprecated
     PackagerRepository getBucket();
 }

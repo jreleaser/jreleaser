@@ -192,74 +192,74 @@ public final class Validator {
         }
     }
 
-    public static void validateTap(JReleaserContext context, Distribution distribution,
-                                   RepositoryTap tap, RepositoryTap parentTap, String property) {
-        validateTap(context, distribution, tap, parentTap, property, "RELEASE");
+    public static void validateRepository(JReleaserContext context, Distribution distribution,
+                                          RepositoryTap repository, RepositoryTap parentTap, String property) {
+        validateRepository(context, distribution, repository, parentTap, property, "RELEASE");
     }
 
-    public static void validateTap(JReleaserContext context, Distribution distribution,
-                                   RepositoryTap tap, RepositoryTap parentTap, String property, String activeDefaultValue) {
+    public static void validateRepository(JReleaserContext context, Distribution distribution,
+                                          RepositoryTap repository, RepositoryTap parentTap, String property, String activeDefaultValue) {
         String distributionName = distribution.getName();
-        if (!tap.isActiveSet() && parentTap.isActiveSet()) {
-            tap.setActive(parentTap.getActive());
+        if (!repository.isActiveSet() && parentTap.isActiveSet()) {
+            repository.setActive(parentTap.getActive());
         }
-        resolveActivatable(context, tap, "distributions." + distributionName + "." + property, activeDefaultValue);
-        tap.resolveEnabled(context.getModel().getProject());
+        resolveActivatable(context, repository, "distributions." + distributionName + "." + property, activeDefaultValue);
+        repository.resolveEnabled(context.getModel().getProject());
 
-        validateOwner(tap, parentTap);
+        validateOwner(repository, parentTap);
 
-        if (isBlank(tap.getCommitMessage()) && isNotBlank(parentTap.getCommitMessage())) {
-            tap.setCommitMessage(parentTap.getCommitMessage());
+        if (isBlank(repository.getCommitMessage()) && isNotBlank(parentTap.getCommitMessage())) {
+            repository.setCommitMessage(parentTap.getCommitMessage());
         }
-        if (isBlank(tap.getCommitMessage())) {
-            tap.setCommitMessage("{{distributionName}} {{tagName}}");
+        if (isBlank(repository.getCommitMessage())) {
+            repository.setCommitMessage("{{distributionName}} {{tagName}}");
         }
-        if (isBlank(tap.getTagName()) && isNotBlank(parentTap.getTagName())) {
-            tap.setTagName(parentTap.getTagName());
+        if (isBlank(repository.getTagName()) && isNotBlank(parentTap.getTagName())) {
+            repository.setTagName(parentTap.getTagName());
         }
-        if (isBlank(tap.getName()) && isNotBlank(parentTap.getName())) {
-            tap.setName(parentTap.getName());
+        if (isBlank(repository.getName()) && isNotBlank(parentTap.getName())) {
+            repository.setName(parentTap.getName());
         }
 
         BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
 
-        String tapBasename = tap.getBasename();
+        String tapBasename = repository.getBasename();
         String serviceName = service.getServiceName();
 
-        tap.setUsername(
+        repository.setUsername(
             checkProperty(context,
                 listOf(
                     "distributions." + distributionName + "." + property + ".username",
                     tapBasename + "." + serviceName + ".username"),
                 "distributions." + distributionName + "." + property + ".username",
-                tap.getUsername(),
+                repository.getUsername(),
                 parentTap.getUsername()));
 
-        tap.setToken(
+        repository.setToken(
             checkProperty(context,
                 listOf(
                     "distributions." + distributionName + "." + property + ".token",
                     tapBasename + "." + serviceName + ".token"),
                 "distributions." + distributionName + "." + property + ".token",
-                tap.getToken(),
+                repository.getToken(),
                 parentTap.getToken()));
 
-        tap.setBranch(
+        repository.setBranch(
             checkProperty(context,
                 listOf(
                     "distributions." + distributionName + "." + property + ".branch",
                     tapBasename + "." + serviceName + ".branch"),
                 "distributions." + distributionName + "." + property + ".branch",
-                tap.getBranch(),
+                repository.getBranch(),
                 parentTap.getBranch()));
 
-        tap.setBranchPush(
+        repository.setBranchPush(
             checkProperty(context,
                 listOf(
                     "distributions." + distributionName + "." + property + ".branch.push",
                     tapBasename + "." + serviceName + ".branch.push"),
                 "distributions." + distributionName + "." + property + ".branch.push",
-                tap.getBranchPush(),
+                repository.getBranchPush(),
                 parentTap.getBranchPush()));
     }
 

@@ -1,6 +1,6 @@
 <div align="center">
 
-# asdf-{{distributionName}} [![Build]({{asdfPluginRepoUrl}}/actions/workflows/build.yml/badge.svg)]({{asdfPluginRepoUrl}}/actions/workflows/build.yml)
+# asdf-{{distributionName}} [![Build]({{asdfPluginRepositoryUrl}}/actions/workflows/build.yml/badge.svg)]({{asdfPluginRepositoryUrl}}/actions/workflows/build.yml)
 
 [{{distributionName}}]({{projectLinkHomepage}}) plugin for the [asdf version manager](https://asdf-vm.com).
 
@@ -23,7 +23,7 @@ Plugin:
 ```shell
 asdf plugin add {{distributionName}}
 # or
-asdf plugin add {{distributionName}} {{asdfPluginRepoUrl}}.git
+asdf plugin add {{distributionName}} {{asdfPluginRepositoryUrl}}.git
 ```
 
 {{distributionName}}:

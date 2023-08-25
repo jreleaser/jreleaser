@@ -43,7 +43,7 @@ class ScoopPackagerImpl extends AbstractRepositoryPackager implements ScoopPacka
     final Property<String> checkverUrl
     final Property<String> autoupdateUrl
     final CommitAuthorImpl commitAuthor
-    final TapImpl bucket
+    final TapImpl repository
 
     @Inject
     ScoopPackagerImpl(ObjectFactory objects) {
@@ -51,7 +51,7 @@ class ScoopPackagerImpl extends AbstractRepositoryPackager implements ScoopPacka
         packageName = objects.property(String).convention(Providers.<String> notDefined())
         checkverUrl = objects.property(String).convention(Providers.<String> notDefined())
         autoupdateUrl = objects.property(String).convention(Providers.<String> notDefined())
-        bucket = objects.newInstance(TapImpl, objects)
+        repository = objects.newInstance(TapImpl, objects)
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
     }
 
@@ -62,13 +62,23 @@ class ScoopPackagerImpl extends AbstractRepositoryPackager implements ScoopPacka
             packageName.present ||
             checkverUrl.present ||
             autoupdateUrl.present ||
-            bucket.isSet() ||
+            repository.isSet() ||
             commitAuthor.isSet()
     }
 
     @Override
+    Tap getBucket() {
+        getRepository()
+    }
+
+    @Override
+    void repository(Action<? super Tap> action) {
+        action.execute(repository)
+    }
+
+    @Override
     void bucket(Action<? super Tap> action) {
-        action.execute(bucket)
+        repository(action)
     }
 
     @Override
@@ -78,8 +88,13 @@ class ScoopPackagerImpl extends AbstractRepositoryPackager implements ScoopPacka
 
     @Override
     @CompileDynamic
+    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action) {
+        ConfigureUtil.configure(action, repository)
+    }
+
+    @Override
     void bucket(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action) {
-        ConfigureUtil.configure(action, bucket)
+        repository(action)
     }
 
     @Override
@@ -93,7 +108,7 @@ class ScoopPackagerImpl extends AbstractRepositoryPackager implements ScoopPacka
         fillPackagerProperties(packager)
         fillTemplatePackagerProperties(packager)
         if (packageName.present) packager.packageName = packageName.get()
-        if (bucket.isSet()) packager.bucket = bucket.toScoopBucket()
+        if (repository.isSet()) packager.repository = repository.toScoopRepository()
         if (commitAuthor.isSet()) packager.commitAuthor = commitAuthor.toModel()
         if (checkverUrl.present) packager.checkverUrl = checkverUrl.get()
         if (autoupdateUrl.present) packager.autoupdateUrl = autoupdateUrl.get()

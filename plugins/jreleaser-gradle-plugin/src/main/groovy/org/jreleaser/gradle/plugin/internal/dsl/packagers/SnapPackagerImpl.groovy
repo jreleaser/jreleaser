@@ -53,7 +53,7 @@ class SnapPackagerImpl extends AbstractRepositoryPackager implements SnapPackage
     final Property<String> confinement
     final RegularFileProperty exportedLogin
     final Property<Boolean> remoteBuild
-    final TapImpl snap
+    final TapImpl repository
     final CommitAuthorImpl commitAuthor
     final SetProperty<String> localPlugs
     final SetProperty<String> localSlots
@@ -73,7 +73,7 @@ class SnapPackagerImpl extends AbstractRepositoryPackager implements SnapPackage
         remoteBuild = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         localPlugs = objects.setProperty(String).convention(Providers.<Set<String>> notDefined())
         localSlots = objects.setProperty(String).convention(Providers.<Set<String>> notDefined())
-        snap = objects.newInstance(TapImpl, objects)
+        repository = objects.newInstance(TapImpl, objects)
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
 
         plugs = objects.domainObjectContainer(Plug, new NamedDomainObjectFactory<Plug>() {
@@ -137,13 +137,23 @@ class SnapPackagerImpl extends AbstractRepositoryPackager implements SnapPackage
             localSlots.present ||
             plugs.size() ||
             slots.size() ||
-            snap.isSet() ||
+            repository.isSet() ||
             commitAuthor.isSet()
     }
 
     @Override
+    Tap getSnap() {
+        getRepository()
+    }
+
+    @Override
+    void repository(Action<? super Tap> action) {
+        action.execute(repository)
+    }
+
+    @Override
     void snap(Action<? super Tap> action) {
-        action.execute(snap)
+        repository(action)
     }
 
     @Override
@@ -192,20 +202,25 @@ class SnapPackagerImpl extends AbstractRepositoryPackager implements SnapPackage
 
     @Override
     @CompileDynamic
+    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action) {
+        ConfigureUtil.configure(action, repository)
+    }
+
+    @Override
     void snap(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action) {
-        ConfigureUtil.configure(action, snap)
+        repository(action)
     }
 
     org.jreleaser.model.internal.packagers.SnapPackager toModel() {
         org.jreleaser.model.internal.packagers.SnapPackager packager = new org.jreleaser.model.internal.packagers.SnapPackager()
         fillPackagerProperties(packager)
         fillTemplatePackagerProperties(packager)
-        if (snap.isSet()) packager.snap = snap.toSnapTap()
+        if (repository.isSet()) packager.snap = repository.toSnapRepository()
         if (packageName.present) packager.packageName = packageName.get()
         if (base.present) packager.base = base.get()
         if (grade.present) packager.grade = grade.get()
         if (confinement.present) packager.confinement = confinement.get()
-        if (snap.isSet()) packager.snap = snap.toSnapTap()
+        if (repository.isSet()) packager.snap = repository.toSnapRepository()
         if (commitAuthor.isSet()) packager.commitAuthor = commitAuthor.toModel()
         if (exportedLogin.present) {
             packager.exportedLogin = exportedLogin.get().asFile.absolutePath

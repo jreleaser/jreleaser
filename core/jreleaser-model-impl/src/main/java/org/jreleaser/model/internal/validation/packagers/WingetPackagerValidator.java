@@ -28,6 +28,7 @@ import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.WingetPackager;
 import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.internal.release.Releaser;
+import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 
 import java.util.ArrayList;
@@ -42,7 +43,6 @@ import static org.jreleaser.model.internal.validation.common.TemplateValidator.v
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateCommitAuthor;
 import static org.jreleaser.model.internal.validation.common.Validator.validateContinueOnError;
-import static org.jreleaser.model.internal.validation.common.Validator.validateTap;
 import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -104,7 +104,7 @@ public final class WingetPackagerValidator {
 
         validateCommitAuthor(packager, parentPackager);
         WingetPackager.WingetRepository repository = packager.getRepository();
-        validateTap(context, distribution, repository, parentPackager.getRepository(), "winget.repository");
+        Validator.validateRepository(context, distribution, repository, parentPackager.getRepository(), "winget.repository");
         validateTemplate(context, distribution, packager, parentPackager, errors);
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);

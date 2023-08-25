@@ -189,8 +189,12 @@ public interface Constants {
     String KEY_ARCHIVE_FORMAT = "archiveFormat";
 
     // AppImage
+    @Deprecated
     String KEY_APPIMAGE_REPO_OWNER = "appImageRepoOwner";
+    @Deprecated
     String KEY_APPIMAGE_REPO_NAME = "appImageRepoName";
+    String KEY_APPIMAGE_REPOSITORY_OWNER = "appImageRepositoryOwner";
+    String KEY_APPIMAGE_REPOSITORY_NAME = "appImageRepositoryName";
     String KEY_APPIMAGE_COMPONENT_ID = "appImageComponentId";
     String KEY_APPIMAGE_CATEGORIES = "appImageCategories";
     String KEY_APPIMAGE_CATEGORIES_BY_COMMA = "appImageCategoriesByComma";
@@ -205,7 +209,9 @@ public interface Constants {
     String KEY_APPIMAGE_DISTRIBUTION_ARTIFACT_FILE_NAME = "appImageDistributionArtifactFileName";
 
     // Asdf
+    @Deprecated
     String KEY_ASDF_PLUGIN_REPO_URL = "asdfPluginRepoUrl";
+    String KEY_ASDF_PLUGIN_REPOSITORY_URL = "asdfPluginRepositoryUrl";
     String KEY_ASDF_PLUGIN_TOOL_CHECK = "asdfPluginToolCheck";
     String KEY_ASDF_DISTRIBUTION_ARTIFACT_FILE = "asdfDistributionArtifactFile";
     String KEY_ASDF_DISTRIBUTION_URL = "asdfDistributionUrl";
@@ -215,11 +221,21 @@ public interface Constants {
     // Brew
     String KEY_BREW_FORMULA_NAME = "brewFormulaName";
     String KEY_BREW_DEPENDENCIES = "brewDependencies";
+    @Deprecated
     String KEY_HOMEBREW_TAP_REPO_OWNER = "brewTapRepoOwner";
+    @Deprecated
     String KEY_HOMEBREW_TAP_REPO_NAME = "brewTapRepoName";
+    @Deprecated
     String KEY_HOMEBREW_TAP_NAME = "brewTapName";
+    @Deprecated
     String KEY_HOMEBREW_TAP_REPO_URL = "brewTapRepoUrl";
+    @Deprecated
     String KEY_HOMEBREW_TAP_REPO_CLONE_URL = "brewTapRepoCloneUrl";
+    String KEY_HOMEBREW_REPOSITORY_OWNER = "brewRepositoryOwner";
+    String KEY_HOMEBREW_REPOSITORY_NAME = "brewRepositoryName";
+    String KEY_HOMEBREW_REPOSITORY_ALIAS = "brewRepositoryAlias";
+    String KEY_HOMEBREW_REPOSITORY_URL = "brewRepositoryUrl";
+    String KEY_HOMEBREW_REPOSITORY_CLONE_URL = "brewRepositoryCloneUrl";
     String KEY_BREW_HAS_LIVECHECK = "brewHasLivecheck";
     String KEY_BREW_LIVECHECK = "brewLivecheck";
     String KEY_BREW_CASK_NAME = "brewCaskName";
@@ -249,8 +265,12 @@ public interface Constants {
     String KEY_SCOOP_CHECKVER_URL = "scoopCheckverUrl";
     String KEY_SCOOP_AUTOUPDATE_URL = "scoopAutoupdateUrl";
     String KEY_SCOOP_AUTOUPDATE_EXTRACT_DIR = "scoopAutoupdateExtractDir";
+    @Deprecated
     String KEY_SCOOP_BUCKET_REPO_URL = "scoopBucketRepoUrl";
+    @Deprecated
     String KEY_SCOOP_BUCKET_REPO_CLONE_URL = "scoopBucketRepoCloneUrl";
+    String KEY_SCOOP_REPOSITORY_URL = "scoopRepositoryUrl";
+    String KEY_SCOOP_REPOSITORY_CLONE_URL = "scoopRepositoryCloneUrl";
 
     // Sdkman
     String KEY_SDKMAN_CANDIDATE = "sdkmanCandidate";
@@ -264,15 +284,23 @@ public interface Constants {
     String KEY_CHOCOLATEY_ICON_URL = "chocolateyIconUrl";
     String KEY_CHOCOLATEY_SOURCE = "chocolateySource";
     String KEY_CHOCOLATEY_PACKAGE_SOURCE_URL = "chocolateyPackageSourceUrl";
+    @Deprecated
     String KEY_CHOCOLATEY_BUCKET_REPO_URL = "chocolateyBucketRepoUrl";
+    @Deprecated
     String KEY_CHOCOLATEY_BUCKET_REPO_CLONE_URL = "chocolateyBucketRepoCloneUrl";
+    String KEY_CHOCOLATEY_REPOSITORY_URL = "chocolateyRepositoryUrl";
+    String KEY_CHOCOLATEY_REPOSITORY_CLONE_URL = "chocolateyRepositoryCloneUrl";
 
     // Jbang
     String KEY_JBANG_ALIAS_NAME = "jbangAliasName";
     String KEY_JBANG_SCRIPT_NAME = "jbangScriptName";
     String KEY_JBANG_DISTRIBUTION_GA = "jbangDistributionGA";
+    @Deprecated
     String KEY_JBANG_CATALOG_REPO_URL = "jbangCatalogRepoUrl";
+    @Deprecated
     String KEY_JBANG_CATALOG_REPO_CLONE_URL = "jbangCatalogRepoCloneUrl";
+    String KEY_JBANG_REPOSITORY_URL = "jbangRepositoryUrl";
+    String KEY_JBANG_REPOSITORY_CLONE_URL = "jbangRepositoryCloneUrl";
 
     // Jib
     String KEY_JIB_SPEC_NAME = "jibSpecName";
@@ -298,8 +326,12 @@ public interface Constants {
     String KEY_MACPORTS_DISTRIBUTION_URL = "macportsDistributionUrl";
     String KEY_MACPORTS_DISTNAME = "macportsDistname";
     String KEY_MACPORTS_JAVA_VERSION = "macportsJavaVersion";
+    @Deprecated
     String KEY_MACPORTS_REPOSITORY_REPO_URL = "macportsRepositoryRepoUrl";
+    @Deprecated
     String KEY_MACPORTS_REPOSITORY_REPO_CLONE_URL = "macportsRepositoryRepoCloneUrl";
+    String KEY_MACPORTS_REPOSITORY_URL = "macportsRepositoryUrl";
+    String KEY_MACPORTS_REPOSITORY_CLONE_URL = "macportsRepositoryCloneUrl";
 
     // Snap
     String KEY_SNAP_PACKAGE_NAME = "snapPackageName";
@@ -316,8 +348,12 @@ public interface Constants {
     String KEY_SNAP_LOCAL_SLOTS = "snapLocalSlots";
     String KEY_SNAP_HAS_ARCHITECTURES = "hasArchitectures";
     String KEY_SNAP_ARCHITECTURES = "snapArchitectures";
+    @Deprecated
     String KEY_SNAP_REPO_URL = "snapRepoUrl";
+    @Deprecated
     String KEY_SNAP_REPO_CLONE_URL = "snapRepoCloneUrl";
+    String KEY_SNAP_REPOSITORY_URL = "snapRepositoryUrl";
+    String KEY_SNAP_REPOSITORY_CLONE_URL = "snapRepositoryCloneUrl";
 
     // Spec
     String KEY_SPEC_PACKAGE_NAME = "specPackageName";
@@ -326,10 +362,16 @@ public interface Constants {
     String KEY_SPEC_DIRECTORIES = "specDirectories";
     String KEY_SPEC_BINARIES = "specBinaries";
     String KEY_SPEC_FILES = "specFiles";
+    String KEY_SPEC_REPOSITORY_URL = "specRepositoryUrl";
+    String KEY_SPEC_REPOSITORY_CLONE_URL = "specRepositoryCloneUrl";
 
     // Flatpak
+    @Deprecated
     String KEY_FLATPAK_REPO_OWNER = "flatpakRepoOwner";
+    @Deprecated
     String KEY_FLATPAK_REPO_NAME = "flatpakRepoName";
+    String KEY_FLATPAK_REPOSITORY_OWNER = "flatpakRepositoryOwner";
+    String KEY_FLATPAK_REPOSITORY_NAME = "flatpakRepositoryName";
     String KEY_FLATPAK_COMPONENT_ID = "flatpakComponentId";
     String KEY_FLATPAK_CATEGORIES = "flatpakCategories";
     String KEY_FLATPAK_CATEGORIES_BY_COMMA = "flatpakCategoriesByComma";

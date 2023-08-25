@@ -27,6 +27,7 @@ import org.jreleaser.model.internal.packagers.JibPackager;
 import org.jreleaser.model.internal.packagers.JibSpec;
 import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.internal.release.BaseReleaser;
+import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.DefaultVersions;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.PlatformUtils;
@@ -53,7 +54,6 @@ import static org.jreleaser.model.internal.validation.common.Validator.checkProp
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateCommitAuthor;
 import static org.jreleaser.model.internal.validation.common.Validator.validateContinueOnError;
-import static org.jreleaser.model.internal.validation.common.Validator.validateTap;
 import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.isGraalVMDistribution;
 import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.util.CollectionUtils.listOf;
@@ -125,7 +125,7 @@ public final class JibPackagerValidator {
         if (isBlank(repository.getName())) {
             repository.setName(project.getName() + "-jib");
         }
-        validateTap(context, distribution, repository, parentPackager.getRepositoryTap(), "jib.repository");
+        Validator.validateRepository(context, distribution, repository, parentPackager.getRepositoryTap(), "jib.repository");
 
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);

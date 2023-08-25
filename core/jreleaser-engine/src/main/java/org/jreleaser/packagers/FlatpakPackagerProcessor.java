@@ -57,6 +57,8 @@ import static org.jreleaser.model.Constants.KEY_FLATPAK_HAS_SDK_EXTENSIONS;
 import static org.jreleaser.model.Constants.KEY_FLATPAK_HAS_SDK_FINISH_ARGS;
 import static org.jreleaser.model.Constants.KEY_FLATPAK_INCLUDE_OPENJDK;
 import static org.jreleaser.model.Constants.KEY_FLATPAK_RELEASES;
+import static org.jreleaser.model.Constants.KEY_FLATPAK_REPOSITORY_NAME;
+import static org.jreleaser.model.Constants.KEY_FLATPAK_REPOSITORY_OWNER;
 import static org.jreleaser.model.Constants.KEY_FLATPAK_REPO_NAME;
 import static org.jreleaser.model.Constants.KEY_FLATPAK_REPO_OWNER;
 import static org.jreleaser.model.Constants.KEY_FLATPAK_RUNTIME;
@@ -154,6 +156,8 @@ public class FlatpakPackagerProcessor extends AbstractRepositoryPackagerProcesso
         props.set(KEY_FLATPAK_DEVELOPER_NAME, getPackager().getDeveloperName());
         props.set(KEY_FLATPAK_REPO_OWNER, packager.getRepository().getOwner());
         props.set(KEY_FLATPAK_REPO_NAME, packager.getRepository().getName());
+        props.set(KEY_FLATPAK_REPOSITORY_OWNER, packager.getRepository().getOwner());
+        props.set(KEY_FLATPAK_REPOSITORY_NAME, packager.getRepository().getName());
         props.set(KEY_FLATPAK_HAS_SDK_EXTENSIONS, !packager.getSdkExtensions().isEmpty());
         props.set(KEY_FLATPAK_SDK_EXTENSIONS, packager.getSdkExtensions());
         props.set(KEY_FLATPAK_HAS_SDK_FINISH_ARGS, !packager.getFinishArgs().isEmpty());

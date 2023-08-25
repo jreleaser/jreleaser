@@ -21,6 +21,7 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.SpecPackager;
+import org.jreleaser.model.internal.release.BaseReleaser;
 import org.jreleaser.model.spi.packagers.PackagerProcessingException;
 import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.util.FileUtils;
@@ -39,6 +40,8 @@ import static org.jreleaser.model.Constants.KEY_SPEC_DIRECTORIES;
 import static org.jreleaser.model.Constants.KEY_SPEC_FILES;
 import static org.jreleaser.model.Constants.KEY_SPEC_PACKAGE_NAME;
 import static org.jreleaser.model.Constants.KEY_SPEC_RELEASE;
+import static org.jreleaser.model.Constants.KEY_SPEC_REPOSITORY_CLONE_URL;
+import static org.jreleaser.model.Constants.KEY_SPEC_REPOSITORY_URL;
 import static org.jreleaser.model.Constants.KEY_SPEC_REQUIRES;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 
@@ -96,6 +99,12 @@ public class SpecPackagerProcessor extends AbstractRepositoryPackagerProcessor<S
         props.set(KEY_SPEC_PACKAGE_NAME, packager.getPackageName());
         props.set(KEY_SPEC_RELEASE, packager.getRelease());
         props.set(KEY_SPEC_REQUIRES, packager.getRequires());
+
+        BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
+        props.set(KEY_SPEC_REPOSITORY_URL,
+            releaser.getResolvedRepoUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
+        props.set(KEY_SPEC_REPOSITORY_CLONE_URL,
+            releaser.getResolvedRepoCloneUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
     }
 
     @Override

@@ -59,8 +59,16 @@ interface SnapPackager extends RepositoryPackager {
 
     void localSlot(String slot)
 
+    Tap getRepository()
+
+    void repository(Action<? super Tap> action)
+
+    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action)
+
+    @Deprecated
     Tap getSnap()
 
+    @Deprecated
     void snap(Action<? super Tap> action)
 
     void architecture(Action<? super Architecture> action)
@@ -69,6 +77,7 @@ interface SnapPackager extends RepositoryPackager {
 
     void slots(Action<? super NamedDomainObjectContainer<Slot>> action)
 
+    @Deprecated
     void snap(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action)
 
     void architecture(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Architecture) Closure<Void> action)

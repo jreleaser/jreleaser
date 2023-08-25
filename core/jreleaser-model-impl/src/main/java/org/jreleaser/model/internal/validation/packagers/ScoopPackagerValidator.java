@@ -24,6 +24,7 @@ import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.ScoopPackager;
 import org.jreleaser.model.internal.release.BaseReleaser;
+import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 
 import java.util.List;
@@ -35,7 +36,6 @@ import static org.jreleaser.model.internal.validation.common.TemplateValidator.v
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateCommitAuthor;
 import static org.jreleaser.model.internal.validation.common.Validator.validateContinueOnError;
-import static org.jreleaser.model.internal.validation.common.Validator.validateTap;
 import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -87,8 +87,8 @@ public final class ScoopPackagerValidator {
         candidateArtifacts.forEach(artifact -> artifact.getExtraProperties().put(INDIVIDUAL_CHECKSUM, true));
 
         validateCommitAuthor(packager, parentPackager);
-        ScoopPackager.ScoopRepository bucket = packager.getBucket();
-        validateTap(context, distribution, bucket, parentPackager.getBucket(), "scoop.bucket");
+        ScoopPackager.ScoopRepository bucket = packager.getRepository();
+        Validator.validateRepository(context, distribution, bucket, parentPackager.getRepository(), "scoop.repository");
         validateTemplate(context, distribution, packager, parentPackager, errors);
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);

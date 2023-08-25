@@ -26,6 +26,7 @@ import org.jreleaser.model.internal.common.Icon;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.FlatpakPackager;
 import org.jreleaser.model.internal.release.Releaser;
+import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 
 import java.util.List;
@@ -40,7 +41,6 @@ import static org.jreleaser.model.internal.validation.common.Validator.validateC
 import static org.jreleaser.model.internal.validation.common.Validator.validateContinueOnError;
 import static org.jreleaser.model.internal.validation.common.Validator.validateIcons;
 import static org.jreleaser.model.internal.validation.common.Validator.validateScreenshots;
-import static org.jreleaser.model.internal.validation.common.Validator.validateTap;
 import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -183,7 +183,7 @@ public final class FlatpakPackagerValidator {
 
         validateCommitAuthor(packager, parentPackager);
         FlatpakPackager.FlatpakRepository repository = packager.getRepository();
-        validateTap(context, distribution, repository, parentPackager.getRepository(), "flatpak.repository");
+        Validator.validateRepository(context, distribution, repository, parentPackager.getRepository(), "flatpak.repository");
         if (isBlank(repository.getName())) {
             repository.setName(packager.getComponentId());
         }

@@ -46,6 +46,7 @@ import static org.jreleaser.model.Distribution.DistributionType.JLINK;
 import static org.jreleaser.model.Distribution.DistributionType.NATIVE_IMAGE;
 import static org.jreleaser.model.Distribution.DistributionType.NATIVE_PACKAGE;
 import static org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR;
+import static org.jreleaser.model.JReleaserOutput.nag;
 import static org.jreleaser.model.api.packagers.SnapPackager.SKIP_SNAP;
 import static org.jreleaser.model.api.packagers.SnapPackager.TYPE;
 import static org.jreleaser.util.CollectionUtils.setOf;
@@ -68,7 +69,7 @@ import static org.jreleaser.util.StringUtils.isFalse;
  */
 public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser.model.api.packagers.SnapPackager, SnapPackager> {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
-    private static final long serialVersionUID = 4351951573944850125L;
+    private static final long serialVersionUID = 478495088345166846L;
 
     static {
         Set<String> extensions = setOf(
@@ -94,7 +95,7 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
     private final List<Plug> plugs = new ArrayList<>();
     private final List<Slot> slots = new ArrayList<>();
     private final List<Architecture> architectures = new ArrayList<>();
-    private final SnapRepository snap = new SnapRepository();
+    private final SnapRepository repository = new SnapRepository();
 
     private String packageName;
     private String base = "core20";
@@ -105,7 +106,7 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
 
     @JsonIgnore
     private final org.jreleaser.model.api.packagers.SnapPackager immutable = new org.jreleaser.model.api.packagers.SnapPackager() {
-        private static final long serialVersionUID = -8321640926545215502L;
+        private static final long serialVersionUID = 7513685922871763049L;
 
         private List<? extends org.jreleaser.model.api.packagers.SnapPackager.Architecture> architectures;
         private List<? extends org.jreleaser.model.api.packagers.SnapPackager.Slot> slots;
@@ -182,13 +183,18 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
         }
 
         @Override
+        public org.jreleaser.model.api.packagers.PackagerRepository getRepository() {
+            return repository.asImmutable();
+        }
+
+        @Override
         public org.jreleaser.model.api.packagers.PackagerRepository getSnap() {
-            return snap.asImmutable();
+            return getRepository();
         }
 
         @Override
         public org.jreleaser.model.api.packagers.PackagerRepository getPackagerRepository() {
-            return getSnap();
+            return getRepository();
         }
 
         @Override
@@ -295,7 +301,7 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
         setPlugs(merge(this.plugs, source.plugs));
         setSlots(merge(this.slots, source.slots));
         setArchitectures(merge(this.architectures, source.architectures));
-        setSnap(source.snap);
+        setRepository(source.repository);
     }
 
     public String getPackageName() {
@@ -405,12 +411,23 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
         return null != remoteBuild;
     }
 
-    public SnapRepository getSnap() {
-        return snap;
+    public SnapRepository getRepository() {
+        return repository;
     }
 
+    public void setRepository(SnapRepository repository) {
+        this.repository.merge(repository);
+    }
+
+    @Deprecated
+    public SnapRepository getSnap() {
+        return getRepository();
+    }
+
+    @Deprecated
     public void setSnap(SnapRepository repository) {
-        this.snap.merge(repository);
+        nag("snap.snap is deprecated since 1.8.0 and will be removed in 2.0.0. Use snap.repository instead");
+        setRepository(repository);
     }
 
     @Override
@@ -422,7 +439,7 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
         props.put("confinement", confinement);
         props.put("exportedLogin", exportedLogin);
         props.put("remoteBuild", isRemoteBuild());
-        props.put("snap", snap.asMap(full));
+        props.put("repository", repository.asMap(full));
         props.put("localPlugs", localPlugs);
         props.put("localSlots", localSlots);
 
@@ -447,11 +464,11 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
 
     @Override
     public RepositoryTap getRepositoryTap() {
-        return getPackagerRepository();
+        return getRepository();
     }
 
     public PackagerRepository getPackagerRepository() {
-        return getSnap();
+        return getRepository();
     }
 
     @Override

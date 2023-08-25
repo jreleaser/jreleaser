@@ -30,9 +30,18 @@ import org.gradle.api.provider.Property
 interface JbangPackager extends RepositoryPackager {
     Property<String> getAlias()
 
+    Tap getRepository()
+
+    void repository(Action<? super Tap> action)
+
+    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action)
+
+    @Deprecated
     Tap getCatalog()
 
+    @Deprecated
     void catalog(Action<? super Tap> action)
 
+    @Deprecated
     void catalog(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action)
 }

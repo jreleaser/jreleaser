@@ -50,6 +50,8 @@ import static org.jreleaser.model.Constants.KEY_SNAP_LOCAL_PLUGS;
 import static org.jreleaser.model.Constants.KEY_SNAP_LOCAL_SLOTS;
 import static org.jreleaser.model.Constants.KEY_SNAP_PACKAGE_NAME;
 import static org.jreleaser.model.Constants.KEY_SNAP_PLUGS;
+import static org.jreleaser.model.Constants.KEY_SNAP_REPOSITORY_CLONE_URL;
+import static org.jreleaser.model.Constants.KEY_SNAP_REPOSITORY_URL;
 import static org.jreleaser.model.Constants.KEY_SNAP_REPO_CLONE_URL;
 import static org.jreleaser.model.Constants.KEY_SNAP_REPO_URL;
 import static org.jreleaser.model.Constants.KEY_SNAP_SLOTS;
@@ -116,9 +118,14 @@ public class SnapPackagerProcessor extends AbstractRepositoryPackagerProcessor<S
             MustacheUtils.passThrough("|" + System.lineSeparator() + desc));
 
         props.set(KEY_SNAP_REPO_URL,
-            releaser.getResolvedRepoUrl(context.getModel(), packager.getSnap().getOwner(), packager.getSnap().getResolvedName()));
+            releaser.getResolvedRepoUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
         props.set(KEY_SNAP_REPO_CLONE_URL,
-            releaser.getResolvedRepoCloneUrl(context.getModel(), packager.getSnap().getOwner(), packager.getSnap().getResolvedName()));
+            releaser.getResolvedRepoCloneUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
+
+        props.set(KEY_SNAP_REPOSITORY_URL,
+            releaser.getResolvedRepoUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
+        props.set(KEY_SNAP_REPOSITORY_CLONE_URL,
+            releaser.getResolvedRepoCloneUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
 
         props.set(KEY_SNAP_PACKAGE_NAME, packager.getPackageName());
         props.set(KEY_SNAP_BASE, packager.getBase());

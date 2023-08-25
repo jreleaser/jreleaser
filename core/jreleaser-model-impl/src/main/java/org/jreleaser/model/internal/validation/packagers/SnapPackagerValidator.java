@@ -24,6 +24,7 @@ import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.SnapPackager;
 import org.jreleaser.model.internal.release.Releaser;
+import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 
 import java.nio.file.Files;
@@ -40,7 +41,6 @@ import static org.jreleaser.model.internal.validation.common.TemplateValidator.v
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateCommitAuthor;
 import static org.jreleaser.model.internal.validation.common.Validator.validateContinueOnError;
-import static org.jreleaser.model.internal.validation.common.Validator.validateTap;
 import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -89,8 +89,8 @@ public final class SnapPackagerValidator {
         }
 
         validateCommitAuthor(packager, parentPackager);
-        SnapPackager.SnapRepository snap = packager.getSnap();
-        validateTap(context, distribution, snap, parentPackager.getSnap(), "snap.snap");
+        SnapPackager.SnapRepository snap = packager.getRepository();
+        Validator.validateRepository(context, distribution, snap, parentPackager.getRepository(), "snap.repository");
         if (isBlank(snap.getName())) {
             snap.setName(distribution.getName() + "-snap");
         }

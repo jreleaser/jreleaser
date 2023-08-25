@@ -2,8 +2,8 @@
 
 :linkattrs:
 :executable:      {{distributionExecutableName}}
-:project-owner:   {{appImageRepoOwner}}
-:project-name:    {{appImageRepoName}}
+:project-owner:   {{appImageRepositoryOwner}}
+:project-name:    {{appImageRepositoryName}}
 :project-version: {{projectVersion}}
 :project-tag:     {{tagName}}
 

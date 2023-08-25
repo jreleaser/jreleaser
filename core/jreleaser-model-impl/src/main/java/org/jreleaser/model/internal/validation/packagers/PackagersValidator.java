@@ -78,12 +78,12 @@ public final class PackagersValidator {
 
         validatePackager(context,
             packagers.getBrew(),
-            packagers.getBrew().getTap()
+            packagers.getBrew().getRepository()
         );
 
         validatePackager(context,
             packagers.getChocolatey(),
-            packagers.getChocolatey().getBucket()
+            packagers.getChocolatey().getRepository()
         );
 
         validatePackager(context,
@@ -121,7 +121,7 @@ public final class PackagersValidator {
 
         validatePackager(context,
             packagers.getJbang(),
-            packagers.getJbang().getCatalog()
+            packagers.getJbang().getRepository()
         );
 
         validatePackager(context,
@@ -143,17 +143,17 @@ public final class PackagersValidator {
 
         validatePackager(context,
             packagers.getScoop(),
-            packagers.getScoop().getBucket()
+            packagers.getScoop().getRepository()
         );
 
-        if (isBlank(packagers.getScoop().getBucket().getName())) {
-            packagers.getScoop().getBucket().setName("scoop-" + gitService.getOwner());
+        if (isBlank(packagers.getScoop().getRepository().getName())) {
+            packagers.getScoop().getRepository().setName("scoop-" + gitService.getOwner());
         }
-        packagers.getScoop().getBucket().setTapName("scoop-" + gitService.getOwner());
+        packagers.getScoop().getRepository().setTapName("scoop-" + gitService.getOwner());
 
         validatePackager(context,
             packagers.getSnap(),
-            packagers.getSnap().getSnap()
+            packagers.getSnap().getRepository()
         );
 
         validatePackager(context,

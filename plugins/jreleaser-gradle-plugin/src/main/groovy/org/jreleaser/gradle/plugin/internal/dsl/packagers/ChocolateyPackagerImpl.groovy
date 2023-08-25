@@ -48,7 +48,7 @@ class ChocolateyPackagerImpl extends AbstractRepositoryPackager implements Choco
     final Property<String> source
     final Property<Boolean> remoteBuild
     final CommitAuthorImpl commitAuthor
-    final TapImpl bucket
+    final TapImpl repository
 
     @Inject
     ChocolateyPackagerImpl(ObjectFactory objects) {
@@ -61,7 +61,7 @@ class ChocolateyPackagerImpl extends AbstractRepositoryPackager implements Choco
         iconUrl = objects.property(String).convention(Providers.<String> notDefined())
         source = objects.property(String).convention(Providers.<String> notDefined())
         remoteBuild = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
-        bucket = objects.newInstance(TapImpl, objects)
+        repository = objects.newInstance(TapImpl, objects)
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
     }
 
@@ -77,13 +77,23 @@ class ChocolateyPackagerImpl extends AbstractRepositoryPackager implements Choco
             iconUrl.present ||
             source.present ||
             remoteBuild.present ||
-            bucket.isSet() ||
+            repository.isSet() ||
             commitAuthor.isSet()
     }
 
     @Override
+    Tap getBucket() {
+        getRepository()
+    }
+
+    @Override
     void bucket(Action<? super Tap> action) {
-        action.execute(bucket)
+        repository(action)
+    }
+
+    @Override
+    void repository(Action<? super Tap> action) {
+        action.execute(repository)
     }
 
     @Override
@@ -94,7 +104,13 @@ class ChocolateyPackagerImpl extends AbstractRepositoryPackager implements Choco
     @Override
     @CompileDynamic
     void bucket(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action) {
-        ConfigureUtil.configure(action, bucket)
+        repository(action)
+    }
+
+    @Override
+    @CompileDynamic
+    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action) {
+        ConfigureUtil.configure(action, repository)
     }
 
     @Override
@@ -107,7 +123,7 @@ class ChocolateyPackagerImpl extends AbstractRepositoryPackager implements Choco
         org.jreleaser.model.internal.packagers.ChocolateyPackager packager = new org.jreleaser.model.internal.packagers.ChocolateyPackager()
         fillPackagerProperties(packager)
         fillTemplatePackagerProperties(packager)
-        if (bucket.isSet()) packager.bucket = bucket.toChocolateyBucket()
+        if (repository.isSet()) packager.repository = repository.toChocolateyRepository()
         if (commitAuthor.isSet()) packager.commitAuthor = commitAuthor.toModel()
         if (packageName.present) packager.packageName = packageName.get()
         if (packageVersion.present) packager.packageVersion = packageVersion.get()

@@ -33,7 +33,6 @@ import org.jreleaser.model.internal.packagers.ChocolateyPackager
 import org.jreleaser.model.internal.packagers.FlatpakPackager
 import org.jreleaser.model.internal.packagers.GofishPackager
 import org.jreleaser.model.internal.packagers.JbangPackager
-import org.jreleaser.model.internal.packagers.JibPackager
 import org.jreleaser.model.internal.packagers.MacportsPackager
 import org.jreleaser.model.internal.packagers.ScoopPackager
 import org.jreleaser.model.internal.packagers.SnapPackager
@@ -94,7 +93,7 @@ class TapImpl implements Tap {
             commitMessage.present
     }
 
-    private void convert(AbstractRepositoryTap into) {
+    private <T extends AbstractRepositoryTap> T convert(T into) {
         if (active.present) into.active = active.get()
         if (repoOwner.present) into.owner = repoOwner.get()
         if (name.present) into.name = name.get()
@@ -104,89 +103,58 @@ class TapImpl implements Tap {
         if (username.present) into.username = username.get()
         if (token.present) into.token = token.get()
         if (commitMessage.present) into.commitMessage = commitMessage.get()
+        into
     }
 
     AppImagePackager.AppImageRepository toAppImageRepository() {
-        AppImagePackager.AppImageRepository tap = new AppImagePackager.AppImageRepository()
-        convert(tap)
-        tap
+        convert(new AppImagePackager.AppImageRepository())
     }
 
     AsdfPackager.AsdfRepository toAsdfRepository() {
-        AsdfPackager.AsdfRepository tap = new AsdfPackager.AsdfRepository()
-        convert(tap)
-        tap
+        convert(new AsdfPackager.AsdfRepository())
     }
 
-    BrewPackager.HomebrewTap toHomebrewTap() {
-        BrewPackager.HomebrewTap tap = new BrewPackager.HomebrewTap()
-        convert(tap)
-        tap
+    BrewPackager.HomebrewRepository toHomebrewRepository() {
+        convert(new BrewPackager.HomebrewRepository())
     }
 
     MacportsPackager.MacportsRepository toMacportsRepository() {
-        MacportsPackager.MacportsRepository tap = new MacportsPackager.MacportsRepository()
-        convert(tap)
-        tap
+        convert(new MacportsPackager.MacportsRepository())
     }
 
     FlatpakPackager.FlatpakRepository toFlatpakRepository() {
-        FlatpakPackager.FlatpakRepository tap = new FlatpakPackager.FlatpakRepository()
-        convert(tap)
-        tap
+        convert(new FlatpakPackager.FlatpakRepository())
     }
 
     GofishPackager.GofishRepository toGofishRepository() {
-        GofishPackager.GofishRepository tap = new GofishPackager.GofishRepository()
-        convert(tap)
-        tap
-    }
-
-    JibPackager.JibRepository toJibRepository() {
-        JibPackager.JibRepository tap = new JibPackager.JibRepository()
-        convert(tap)
-        tap
+        convert(new GofishPackager.GofishRepository())
     }
 
     SpecPackager.SpecRepository toSpecRepository() {
-        SpecPackager.SpecRepository tap = new SpecPackager.SpecRepository()
-        convert(tap)
-        tap
+        convert(new SpecPackager.SpecRepository())
     }
 
-    SnapPackager.SnapRepository toSnapTap() {
-        SnapPackager.SnapRepository tap = new SnapPackager.SnapRepository()
-        convert(tap)
-        tap
+    SnapPackager.SnapRepository toSnapRepository() {
+        convert(new SnapPackager.SnapRepository())
     }
 
     ArticleAnnouncer.Repository toRepository() {
-        ArticleAnnouncer.Repository tap = new ArticleAnnouncer.Repository()
-        convert(tap)
-        tap
+        convert(new ArticleAnnouncer.Repository())
     }
 
-    ScoopPackager.ScoopRepository toScoopBucket() {
-        ScoopPackager.ScoopRepository tap = new ScoopPackager.ScoopRepository()
-        convert(tap)
-        tap
+    ScoopPackager.ScoopRepository toScoopRepository() {
+        convert(new ScoopPackager.ScoopRepository())
     }
 
-    ChocolateyPackager.ChocolateyRepository toChocolateyBucket() {
-        ChocolateyPackager.ChocolateyRepository tap = new ChocolateyPackager.ChocolateyRepository()
-        convert(tap)
-        tap
+    ChocolateyPackager.ChocolateyRepository toChocolateyRepository() {
+        convert(new ChocolateyPackager.ChocolateyRepository())
     }
 
-    JbangPackager.JbangRepository toJbangCatalog() {
-        JbangPackager.JbangRepository tap = new JbangPackager.JbangRepository()
-        convert(tap)
-        tap
+    JbangPackager.JbangRepository toJbangRepository() {
+        convert(new JbangPackager.JbangRepository())
     }
 
     WingetPackager.WingetRepository toWingetRepository() {
-        WingetPackager.WingetRepository tap = new WingetPackager.WingetRepository()
-        convert(tap)
-        tap
+        convert(new WingetPackager.WingetRepository())
     }
 }

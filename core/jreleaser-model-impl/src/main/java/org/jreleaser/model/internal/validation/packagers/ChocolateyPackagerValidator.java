@@ -25,6 +25,7 @@ import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.ChocolateyPackager;
 import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.internal.release.Releaser;
+import org.jreleaser.model.internal.validation.common.Validator;
 import org.jreleaser.util.Errors;
 import org.jreleaser.version.ChronVer;
 import org.jreleaser.version.JavaModuleVersion;
@@ -44,7 +45,6 @@ import static org.jreleaser.model.internal.validation.common.Validator.checkProp
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateCommitAuthor;
 import static org.jreleaser.model.internal.validation.common.Validator.validateContinueOnError;
-import static org.jreleaser.model.internal.validation.common.Validator.validateTap;
 import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.util.CollectionUtils.listOf;
@@ -96,8 +96,8 @@ public final class ChocolateyPackagerValidator {
         }
 
         validateCommitAuthor(packager, parentPackager);
-        ChocolateyPackager.ChocolateyRepository bucket = packager.getBucket();
-        validateTap(context, distribution, bucket, parentPackager.getBucket(), "chocolatey.bucket");
+        ChocolateyPackager.ChocolateyRepository bucket = packager.getRepository();
+        Validator.validateRepository(context, distribution, bucket, parentPackager.getRepository(), "chocolatey.repository");
         validateTemplate(context, distribution, packager, parentPackager, errors);
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);

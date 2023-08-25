@@ -53,6 +53,9 @@ public interface SnapPackager extends RepositoryPackager {
 
     boolean isRemoteBuild();
 
+    PackagerRepository getRepository();
+
+    @Deprecated
     PackagerRepository getSnap();
 
     interface Plug extends Domain {

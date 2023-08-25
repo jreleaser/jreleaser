@@ -36,7 +36,7 @@ import static org.jreleaser.model.internal.validation.common.TemplateValidator.v
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateCommitAuthor;
 import static org.jreleaser.model.internal.validation.common.Validator.validateContinueOnError;
-import static org.jreleaser.model.internal.validation.common.Validator.validateTap;
+import static org.jreleaser.model.internal.validation.common.Validator.validateRepository;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -66,8 +66,8 @@ public final class JbangPackagerValidator {
         }
 
         validateCommitAuthor(packager, parentPackager);
-        JbangPackager.JbangRepository catalog = packager.getCatalog();
-        validateTap(context, distribution, catalog, parentPackager.getCatalog(), "jbang.catalog", "ALWAYS");
+        JbangPackager.JbangRepository catalog = packager.getRepository();
+        validateRepository(context, distribution, catalog, parentPackager.getRepository(), "jbang.repository", "ALWAYS");
         validateTemplate(context, distribution, packager, parentPackager, errors);
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);

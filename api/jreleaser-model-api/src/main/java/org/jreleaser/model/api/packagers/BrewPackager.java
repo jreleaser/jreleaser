@@ -33,6 +33,9 @@ public interface BrewPackager extends RepositoryPackager {
 
     boolean isMultiPlatform();
 
+    PackagerRepository getRepository();
+
+    @Deprecated
     PackagerRepository getTap();
 
     Cask getCask();

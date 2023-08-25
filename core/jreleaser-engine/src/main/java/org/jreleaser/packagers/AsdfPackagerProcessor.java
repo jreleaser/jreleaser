@@ -33,6 +33,7 @@ import static org.jreleaser.model.Constants.KEY_ASDF_DISTRIBUTION_ARTIFACT_FILE;
 import static org.jreleaser.model.Constants.KEY_ASDF_DISTRIBUTION_ARTIFACT_FILE_NAME;
 import static org.jreleaser.model.Constants.KEY_ASDF_DISTRIBUTION_ARTIFACT_ROOT_ENTRY_NAME;
 import static org.jreleaser.model.Constants.KEY_ASDF_DISTRIBUTION_URL;
+import static org.jreleaser.model.Constants.KEY_ASDF_PLUGIN_REPOSITORY_URL;
 import static org.jreleaser.model.Constants.KEY_ASDF_PLUGIN_REPO_URL;
 import static org.jreleaser.model.Constants.KEY_ASDF_PLUGIN_TOOL_CHECK;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE;
@@ -68,6 +69,7 @@ public class AsdfPackagerProcessor extends AbstractRepositoryPackagerProcessor<A
         String repoUrl = releaser.getResolvedRepoUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName());
 
         props.set(KEY_ASDF_PLUGIN_REPO_URL, repoUrl);
+        props.set(KEY_ASDF_PLUGIN_REPOSITORY_URL, repoUrl);
         props.set(KEY_ASDF_PLUGIN_TOOL_CHECK, resolveTemplate(packager.getToolCheck(), props));
 
         String str = props.get(KEY_DISTRIBUTION_ARTIFACT_FILE);

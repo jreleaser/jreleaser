@@ -42,6 +42,8 @@ import static org.jreleaser.model.Constants.KEY_SCOOP_BUCKET_REPO_CLONE_URL;
 import static org.jreleaser.model.Constants.KEY_SCOOP_BUCKET_REPO_URL;
 import static org.jreleaser.model.Constants.KEY_SCOOP_CHECKVER_URL;
 import static org.jreleaser.model.Constants.KEY_SCOOP_PACKAGE_NAME;
+import static org.jreleaser.model.Constants.KEY_SCOOP_REPOSITORY_CLONE_URL;
+import static org.jreleaser.model.Constants.KEY_SCOOP_REPOSITORY_URL;
 import static org.jreleaser.model.Constants.KEY_TAG_NAME;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
@@ -69,9 +71,13 @@ public class ScoopPackagerProcessor extends AbstractRepositoryPackagerProcessor<
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
 
         props.set(KEY_SCOOP_BUCKET_REPO_URL,
-            releaser.getResolvedRepoUrl(context.getModel(), packager.getBucket().getOwner(), packager.getBucket().getResolvedName()));
+            releaser.getResolvedRepoUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
         props.set(KEY_SCOOP_BUCKET_REPO_CLONE_URL,
-            releaser.getResolvedRepoCloneUrl(context.getModel(), packager.getBucket().getOwner(), packager.getBucket().getResolvedName()));
+            releaser.getResolvedRepoCloneUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
+        props.set(KEY_SCOOP_REPOSITORY_URL,
+            releaser.getResolvedRepoUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
+        props.set(KEY_SCOOP_REPOSITORY_CLONE_URL,
+            releaser.getResolvedRepoCloneUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
 
         props.set(KEY_SCOOP_PACKAGE_NAME, packager.getPackageName());
         props.set(KEY_SCOOP_CHECKVER_URL, resolveCheckverUrl(props));

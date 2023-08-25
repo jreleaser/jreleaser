@@ -39,6 +39,8 @@ import static org.jreleaser.model.Constants.KEY_CHOCOLATEY_ICON_URL;
 import static org.jreleaser.model.Constants.KEY_CHOCOLATEY_PACKAGE_NAME;
 import static org.jreleaser.model.Constants.KEY_CHOCOLATEY_PACKAGE_SOURCE_URL;
 import static org.jreleaser.model.Constants.KEY_CHOCOLATEY_PACKAGE_VERSION;
+import static org.jreleaser.model.Constants.KEY_CHOCOLATEY_REPOSITORY_CLONE_URL;
+import static org.jreleaser.model.Constants.KEY_CHOCOLATEY_REPOSITORY_URL;
 import static org.jreleaser.model.Constants.KEY_CHOCOLATEY_SOURCE;
 import static org.jreleaser.model.Constants.KEY_CHOCOLATEY_TITLE;
 import static org.jreleaser.model.Constants.KEY_CHOCOLATEY_USERNAME;
@@ -109,13 +111,16 @@ public class ChocolateyPackagerProcessor extends AbstractRepositoryPackagerProce
             context.getLogger().warn(RB.$("ERROR_project_no_license_url"));
         }
 
-        String repoUrl = releaser.getResolvedRepoUrl(context.getModel());
-        String bucketRepoUrl = releaser.getResolvedRepoUrl(context.getModel(), packager.getBucket().getOwner(), packager.getBucket().getResolvedName());
+        String releaseUrl = releaser.getResolvedRepoUrl(context.getModel());
+        String repositoryUrl = releaser.getResolvedRepoUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName());
 
-        props.set(KEY_CHOCOLATEY_PACKAGE_SOURCE_URL, packager.isRemoteBuild() ? bucketRepoUrl : repoUrl);
-        props.set(KEY_CHOCOLATEY_BUCKET_REPO_URL, bucketRepoUrl);
+        props.set(KEY_CHOCOLATEY_BUCKET_REPO_URL, repositoryUrl);
         props.set(KEY_CHOCOLATEY_BUCKET_REPO_CLONE_URL,
-            releaser.getResolvedRepoCloneUrl(context.getModel(), packager.getBucket().getOwner(), packager.getBucket().getResolvedName()));
+            releaser.getResolvedRepoCloneUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
+        props.set(KEY_CHOCOLATEY_PACKAGE_SOURCE_URL, packager.isRemoteBuild() ? repositoryUrl : releaseUrl);
+        props.set(KEY_CHOCOLATEY_REPOSITORY_URL, repositoryUrl);
+        props.set(KEY_CHOCOLATEY_REPOSITORY_CLONE_URL,
+            releaser.getResolvedRepoCloneUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
 
         props.set(KEY_CHOCOLATEY_PACKAGE_NAME, packager.getPackageName());
         props.set(KEY_CHOCOLATEY_PACKAGE_VERSION, resolveTemplate(packager.getPackageVersion(), props));

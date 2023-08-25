@@ -26,5 +26,8 @@ public interface JbangPackager extends RepositoryPackager {
 
     String getAlias();
 
+    PackagerRepository getRepository();
+
+    @Deprecated
     PackagerRepository getCatalog();
 }
