@@ -21,10 +21,10 @@ import feign.form.FormData;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.spi.deploy.DeployException;
+import org.jreleaser.model.spi.deploy.maven.Deployable;
 import org.jreleaser.model.spi.upload.UploadException;
 import org.jreleaser.sdk.commons.AbstractMavenDeployer;
 import org.jreleaser.sdk.commons.ClientUtils;
-import org.jreleaser.model.spi.deploy.maven.Deployable;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -72,10 +72,6 @@ public class AzureMavenDeployer extends AbstractMavenDeployer<org.jreleaser.mode
         String baseUrl = deployer.getResolvedUrl(context.fullProps());
         String username = deployer.getUsername();
         String password = deployer.getPassword();
-
-        if (!baseUrl.endsWith("/")) {
-            baseUrl += "/";
-        }
 
         for (Deployable deployable : deployables) {
             Path localPath = Paths.get(deployable.getStagingRepository(), deployable.getPath(), deployable.getFilename());

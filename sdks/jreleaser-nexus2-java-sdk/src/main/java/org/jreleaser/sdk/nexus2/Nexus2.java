@@ -224,9 +224,14 @@ public class Nexus2 {
 
             StringBuilder url = new StringBuilder(apiHost);
             if (isNotBlank(stagingRepositoryId)) {
-                url.append("/staging/deployByRepositoryId/")
+                url.append("staging/deployByRepositoryId/")
                     .append(stagingRepositoryId);
             }
+
+            if (!path.startsWith("/")) {
+                url.append("/");
+            }
+
             url.append(path)
                 .append("/")
                 .append(filename);
