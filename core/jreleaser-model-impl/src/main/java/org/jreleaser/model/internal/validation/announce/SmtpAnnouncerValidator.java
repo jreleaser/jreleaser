@@ -101,7 +101,7 @@ public final class SmtpAnnouncerValidator {
         }
 
         if (isBlank(announcer.getMessage()) && isBlank(announcer.getMessageTemplate())) {
-            announcer.setMessageTemplate("src/jreleaser/templates/mail.tpl");
+            announcer.setMessageTemplate("src/jreleaser/templates/smtp.tpl");
         }
 
         if (isNotBlank(announcer.getMessageTemplate()) &&
