@@ -20,6 +20,7 @@ package org.jreleaser.templates;
 import org.apache.commons.io.IOUtils;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.logging.JReleaserLogger;
+import org.jreleaser.model.JReleaserException;
 
 import java.io.BufferedWriter;
 import java.io.FileOutputStream;
@@ -106,7 +107,17 @@ public class TemplateGenerator {
             throw fail(e);
         }
 
-        TemplateResource value = TemplateUtils.resolveTemplate(logger, "announcers/" + announcerName + ".tpl");
+        TemplateResource value = null;
+
+        try {
+            value = TemplateUtils.resolveTemplate(logger, "announcers/" + announcerName + ".tpl");
+        } catch (JReleaserException e) {
+            if (e.getMessage().contains("classpath")) {
+                throw new JReleaserException(RB.$("templates.announcer.no.template", announcerName));
+            } else {
+                throw e;
+            }
+        }
 
         Path outputFile = outputDirectory.resolve(announcerName + ".tpl");
         logger.info(RB.$("templates.writing.file"), outputFile.toAbsolutePath());
