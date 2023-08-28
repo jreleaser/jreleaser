@@ -47,6 +47,7 @@ import org.jreleaser.sdk.github.api.GhRepository;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +56,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.sdk.git.ChangelogProvider.extractIssues;
 import static org.jreleaser.sdk.git.ChangelogProvider.storeIssues;
@@ -173,7 +175,7 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
                 }
             }
 
-            String changelog = context.getChangelog().getResolvedChangelog();
+            String changelog = normalizeChangelog(context.getChangelog().getResolvedChangelog());
 
             context.getLogger().debug(RB.$("git.releaser.release.lookup"), tagName, github.getCanonicalRepoName());
             GhRelease release = findReleaseByTag(api, tagName);
@@ -232,6 +234,22 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
             context.getLogger().trace(e);
             throw new ReleaseException(e);
         }
+    }
+
+    private String normalizeChangelog(String changelog) throws ReleaseException {
+        if (changelog.length() > 10_000) {
+            try {
+                Path tmp = Files.createTempDirectory("jreleaser");
+                Path releaseMd = tmp.resolve("RELEASE.md");
+                Files.write(releaseMd, changelog.getBytes(UTF_8));
+                assets.add(Asset.file(releaseMd));
+            } catch (IOException e) {
+                throw new ReleaseException(e);
+            }
+            context.getLogger().warn(RB.$("github.release.changelog.trimmed"));
+            return changelog.substring(0, 9995) + " ...";
+        }
+        return changelog;
     }
 
     private GhRelease findReleaseByTag(Github api, String tagName) {
