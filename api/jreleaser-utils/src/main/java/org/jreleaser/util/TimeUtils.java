@@ -19,6 +19,7 @@ package org.jreleaser.util;
 
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.util.Locale;
 
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 import static org.jreleaser.util.StringUtils.padLeft;
@@ -42,7 +43,7 @@ public final class TimeUtils {
     public static String formatDuration(double time) {
         if (time <= 0d) time = 0d;
 
-        String formatted = String.format("%.3f", time) + " s";
+        String formatted = String.format(Locale.ENGLISH, "%.3f", time) + " s";
 
         if (time >= 60d) {
             int seconds = (int) time;
