@@ -29,9 +29,9 @@ public interface SdkmanAPI {
     @RequestLine("POST /announce/struct")
     void announce(Announce announce);
 
-    @RequestLine("PUT /default")
+    @RequestLine("PUT /candidates/default")
     void setDefault(Candidate candidate);
 
-    @RequestLine("POST /release")
+    @RequestLine("POST /versions")
     void release(Release release);
 }

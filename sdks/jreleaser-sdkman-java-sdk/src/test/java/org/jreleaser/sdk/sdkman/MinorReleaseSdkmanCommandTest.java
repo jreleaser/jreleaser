@@ -29,7 +29,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.jreleaser.sdk.sdkman.ApiEndpoints.ANNOUNCE_ENDPOINT;
-import static org.jreleaser.sdk.sdkman.ApiEndpoints.RELEASE_ENDPOINT;
+import static org.jreleaser.sdk.sdkman.ApiEndpoints.VERSIONS_ENDPOINT;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class MinorReleaseSdkmanCommandTest {
@@ -39,7 +39,7 @@ class MinorReleaseSdkmanCommandTest {
     @Test
     void testMinorReleaseWithAnnouncement() throws SdkmanException {
         // given:
-        stubFor(post(urlEqualTo(RELEASE_ENDPOINT))
+        stubFor(post(urlEqualTo(VERSIONS_ENDPOINT))
             .willReturn(okJson("{\"status\": 201, \"message\":\"success\"}")));
         stubFor(post(urlEqualTo(ANNOUNCE_ENDPOINT))
             .willReturn(okJson("{\"status\": 201, \"message\":\"success\"}")));
@@ -61,7 +61,7 @@ class MinorReleaseSdkmanCommandTest {
         command.execute();
 
         // then:
-        Stubs.verifyPost(RELEASE_ENDPOINT, "{\n" +
+        Stubs.verifyPost(VERSIONS_ENDPOINT, "{\n" +
             "   \"candidate\": \"jreleaser\",\n" +
             "   \"version\": \"1.0.0\",\n" +
             "   \"platform\": \"UNIVERSAL\",\n" +
@@ -76,7 +76,7 @@ class MinorReleaseSdkmanCommandTest {
     @Test
     void testError() {
         // given:
-        stubFor(post(urlEqualTo(RELEASE_ENDPOINT))
+        stubFor(post(urlEqualTo(VERSIONS_ENDPOINT))
             .willReturn(aResponse().withStatus(500)));
 
         MinorReleaseSdkmanCommand command = MinorReleaseSdkmanCommand

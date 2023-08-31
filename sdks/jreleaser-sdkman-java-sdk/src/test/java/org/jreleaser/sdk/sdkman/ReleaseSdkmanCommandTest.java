@@ -37,7 +37,7 @@ class ReleaseSdkmanCommandTest {
     @Test
     void testSingleUniversalRelease() throws SdkmanException {
         // given:
-        stubFor(post(urlEqualTo(ApiEndpoints.RELEASE_ENDPOINT))
+        stubFor(post(urlEqualTo(ApiEndpoints.VERSIONS_ENDPOINT))
             .willReturn(okJson("{\"status\": 201, \"message\":\"success\"}")));
 
         ReleaseSdkmanCommand command = ReleaseSdkmanCommand
@@ -57,7 +57,7 @@ class ReleaseSdkmanCommandTest {
         command.execute();
 
         // then:
-        Stubs.verifyPost(ApiEndpoints.RELEASE_ENDPOINT, "{\n" +
+        Stubs.verifyPost(ApiEndpoints.VERSIONS_ENDPOINT, "{\n" +
             "   \"candidate\": \"jreleaser\",\n" +
             "   \"version\": \"1.0.0\",\n" +
             "   \"platform\": \"UNIVERSAL\",\n" +
@@ -68,7 +68,7 @@ class ReleaseSdkmanCommandTest {
     @Test
     void testSinglePlatformRelease() throws SdkmanException {
         // given:
-        stubFor(post(urlEqualTo(ApiEndpoints.RELEASE_ENDPOINT))
+        stubFor(post(urlEqualTo(ApiEndpoints.VERSIONS_ENDPOINT))
             .willReturn(okJson("{\"status\": 201, \"message\":\"success\"}")));
 
         ReleaseSdkmanCommand command = ReleaseSdkmanCommand
@@ -88,7 +88,7 @@ class ReleaseSdkmanCommandTest {
         command.execute();
 
         // then:
-        Stubs.verifyPost(ApiEndpoints.RELEASE_ENDPOINT, "{\n" +
+        Stubs.verifyPost(ApiEndpoints.VERSIONS_ENDPOINT, "{\n" +
             "   \"candidate\": \"jreleaser\",\n" +
             "   \"version\": \"1.0.0\",\n" +
             "   \"platform\": \"MAC_OSX\",\n" +
@@ -99,7 +99,7 @@ class ReleaseSdkmanCommandTest {
     @Test
     void testMultiPlatformRelease() throws SdkmanException {
         // given:
-        stubFor(post(urlEqualTo(ApiEndpoints.RELEASE_ENDPOINT))
+        stubFor(post(urlEqualTo(ApiEndpoints.VERSIONS_ENDPOINT))
             .willReturn(okJson("{\"status\": 201, \"message\":\"success\"}")));
 
         ReleaseSdkmanCommand command = ReleaseSdkmanCommand
@@ -121,19 +121,19 @@ class ReleaseSdkmanCommandTest {
         command.execute();
 
         // then:
-        Stubs.verifyPost(ApiEndpoints.RELEASE_ENDPOINT, "{\n" +
+        Stubs.verifyPost(ApiEndpoints.VERSIONS_ENDPOINT, "{\n" +
             "   \"candidate\": \"jreleaser\",\n" +
             "   \"version\": \"1.0.0\",\n" +
             "   \"platform\": \"MAC_OSX\",\n" +
             "   \"url\": \"https://host/jreleaser-1.0.0-mac.zip\"\n" +
             "}");
-        Stubs.verifyPost(ApiEndpoints.RELEASE_ENDPOINT, "{\n" +
+        Stubs.verifyPost(ApiEndpoints.VERSIONS_ENDPOINT, "{\n" +
             "   \"candidate\": \"jreleaser\",\n" +
             "   \"version\": \"1.0.0\",\n" +
             "   \"platform\": \"WINDOWS_64\",\n" +
             "   \"url\": \"https://host/jreleaser-1.0.0-win.zip\"\n" +
             "}");
-        Stubs.verifyPost(ApiEndpoints.RELEASE_ENDPOINT, "{\n" +
+        Stubs.verifyPost(ApiEndpoints.VERSIONS_ENDPOINT, "{\n" +
             "   \"candidate\": \"jreleaser\",\n" +
             "   \"version\": \"1.0.0\",\n" +
             "   \"platform\": \"LINUX_64\",\n" +
@@ -144,7 +144,7 @@ class ReleaseSdkmanCommandTest {
     @Test
     void testError() {
         // given:
-        stubFor(post(urlEqualTo(ApiEndpoints.RELEASE_ENDPOINT))
+        stubFor(post(urlEqualTo(ApiEndpoints.VERSIONS_ENDPOINT))
             .willReturn(aResponse().withStatus(500)));
 
         ReleaseSdkmanCommand command = ReleaseSdkmanCommand
