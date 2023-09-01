@@ -148,6 +148,9 @@ jobs:
           JRELEASER_OPENCOLLECTIVE_TOKEN: ${{ secrets.OPENCOLLECTIVE_TOKEN }}
           NOTICEABLE_AUTHOR_EMAIL: ${{ secrets.NOTICEABLE_AUTHOR_EMAIL }}
           NOTICEABLE_PROJECTID: ${{ secrets.NOTICEABLE_PROJECTID }}
+          JRELEASER_BLUESKY_HOST: ${{ secrets.BLUESKY_HOST }}
+          JRELEASER_BLUESKY_HANDLE: ${{ secrets.BLUESKY_HANDLE }}
+          JRELEASER_BLUESKY_PASSWORD: ${{ secrets.BLUESKY_PASSWORD }}
 
       - name: JReleaser release output
         if: always()
