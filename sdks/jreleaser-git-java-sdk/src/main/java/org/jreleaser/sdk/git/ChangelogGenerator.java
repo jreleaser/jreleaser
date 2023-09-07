@@ -642,7 +642,11 @@ public class ChangelogGenerator {
             shortHash = rc.getId().abbreviate(7).name();
             body = rc.getFullMessage();
             String[] lines = split(body);
-            title = lines[0];
+            if (lines.length > 0) {
+                title = lines[0];
+            } else {
+                title = "";
+            }
             author = new Author(rc.getAuthorIdent().getName(), rc.getAuthorIdent().getEmailAddress());
             addContributor(rc.getCommitterIdent().getName(), rc.getCommitterIdent().getEmailAddress());
             for (String line : lines) {
