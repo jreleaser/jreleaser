@@ -72,6 +72,7 @@ public final class DefaultMustacheExtensionPoint implements MustacheExtensionPoi
         context.set("f_capitalize", new CapitalizeFunction());
         context.set("f_uncapitalize", new UncapitalizeFunction());
         context.set("f_md2html", new MarkdownToHtmlFunction());
+        context.set("f_file_exists", new FileExistsFunction());
         context.set("f_file_read", new FileReadFunction());
         context.set("f_file_size", new FileSizeFunction());
         EnumSet.allOf(Algorithm.class)
@@ -179,6 +180,21 @@ public final class DefaultMustacheExtensionPoint implements MustacheExtensionPoi
             Node document = parser.parse(input);
             HtmlRenderer renderer = HtmlRenderer.builder().build();
             return renderer.render(document).trim();
+        }
+    }
+
+    private static class FileExistsFunction implements Function<Object, Boolean> {
+        @Override
+        public Boolean apply(Object input) {
+            if (input instanceof Path) {
+                return Files.exists((Path) input);
+            } else if (input instanceof File) {
+                return Files.exists(((File) input).toPath());
+            } else if (input instanceof CharSequence) {
+                return Files.exists(Paths.get(String.valueOf(input).trim()));
+            }
+
+            throw new IllegalStateException(RB.$("ERROR_invalid_file_input", input));
         }
     }
 
