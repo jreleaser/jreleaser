@@ -31,7 +31,7 @@ dependencies {
     // checksum
     api "commons-codec:commons-codec:$commonsCodecVersion"
     api "org.apache.commons:commons-compress:$commonsCompressVersion"
-    api "org.bouncycastle:bcpg-jdk18on:$bouncyCastleVersion"
+    api "org.bouncycastle:bcpg-jdk15to18:$bouncyCastleVersion"
     api "org.slf4j:jcl-over-slf4j:$slf4jVersion"
     api "org.tukaani:xz:$xzVersion"
     api "com.github.luben:zstd-jni:$zstdVersion"

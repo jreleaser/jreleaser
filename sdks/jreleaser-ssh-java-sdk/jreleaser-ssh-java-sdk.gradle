@@ -20,5 +20,13 @@ dependencies {
     annotationProcessor "org.kordamp.jipsy:jipsy-processor:${jipsyVersion}"
 
     api project(':jreleaser-java-sdk-commons')
-    api "com.hierynomus:sshj:$sshjVersion"
+    api("com.hierynomus:sshj:$sshjVersion") {
+        exclude group: 'org.bouncycastle', module: 'bcprov-jdk18on'
+        exclude group: 'org.bouncycastle', module: 'bcpkix-jdk18on'
+        exclude group: 'org.bouncycastle', module: 'bcutil-jdk18on'
+    }
+    api "org.bouncycastle:bcpg-jdk15to18:$bouncyCastleVersion"
+    api "org.bouncycastle:bcprov-jdk15to18:$bouncyCastleVersion"
+    api "org.bouncycastle:bcpkix-jdk15to18:$bouncyCastleVersion"
+    api "org.bouncycastle:bcutil-jdk15to18:$bouncyCastleVersion"
 }
