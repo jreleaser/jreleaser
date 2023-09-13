@@ -16,6 +16,6 @@
  * limitations under the License.
  */
 dependencies {
-    api "org.bouncycastle:bcpg-jdk15on:$bouncyCastleVersion"
+    api "org.bouncycastle:bcpg-jdk18on:$bouncyCastleVersion"
     compileOnly "org.graalvm.nativeimage:svm:$graalVersion"
 }
