@@ -52,7 +52,7 @@ jobs:
       tagname: ${{ steps.slsa.outputs.TAGNAME }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.0
         with:
           fetch-depth: 0
 
