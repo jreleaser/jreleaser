@@ -48,6 +48,9 @@ import static org.jreleaser.assemblers.AssemblerUtils.readJavaVersion;
 import static org.jreleaser.model.Constants.KEY_ARCHIVE_FORMAT;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_EXECUTABLE;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_CLASS;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_JAR;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_MODULE;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.util.FileType.BAT;
 import static org.jreleaser.util.FileType.JAR;
@@ -68,6 +71,14 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
     @Override
     protected void fillAssemblerProperties(TemplateContext props) {
         super.fillAssemblerProperties(props);
+        if (isNotBlank(assembler.getMainJar().getPath())) {
+            props.set(KEY_DISTRIBUTION_JAVA_MAIN_JAR, assembler.getMainJar().getEffectivePath(context, assembler)
+                .getFileName());
+        } else {
+            props.set(KEY_DISTRIBUTION_JAVA_MAIN_JAR, "");
+        }
+        props.set(KEY_DISTRIBUTION_JAVA_MAIN_CLASS, assembler.getJava().getMainClass());
+        props.set(KEY_DISTRIBUTION_JAVA_MAIN_MODULE, assembler.getJava().getMainModule());
         props.set(KEY_DISTRIBUTION_EXECUTABLE, assembler.getExecutable());
     }
 
