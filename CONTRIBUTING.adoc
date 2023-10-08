@@ -42,7 +42,7 @@ clean and regenerate the plugin descriptor on every change that modifies/affects
  parameters to a MOJO, that is
 `./gradlew :jreleaser-maven-plugin:clean :jreleaser-maven-plugin:publishToMavenLocal --no-build-cache`.
 
-TIP: You maye use link:https://github.com/kordamp/gm[] instead in which case the commands are shorter, for example
+TIP: You may use link:https://github.com/kordamp/gm[] instead in which case the commands are shorter, for example
 `./gradlew publishToMavenLocal` becomes `gm install`.
 
 === Pull Request Process
