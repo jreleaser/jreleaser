@@ -28,12 +28,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.1
         with:
           fetch-depth: 0
 
       - name: Checkout wiki
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.1
         with:
           repository: jreleaser/jreleaser.wiki
           path: wiki
