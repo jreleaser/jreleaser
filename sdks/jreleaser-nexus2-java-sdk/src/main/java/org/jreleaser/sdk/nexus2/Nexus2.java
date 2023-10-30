@@ -61,6 +61,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -424,7 +425,7 @@ public class Nexus2 {
                     response.status(),
                     response.reason(),
                     response.request().httpMethod(),
-                    null,
+                    (Date) null,
                     response.request());
             }
 
