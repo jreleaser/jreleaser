@@ -296,7 +296,7 @@ distributions:
       remoteBuild: true
       title: JReleaser
       iconUrl: 'https://rawcdn.githack.com/jreleaser/jreleaser/0934fa1fa3f0bd09c0c8c39fbdeb5df2ce507457/src/media/icon_128x128.png'
-      bucket:
+      repository:
         active: RELEASE
     jbang:
       active: ALWAYS
@@ -312,7 +312,7 @@ distributions:
         name: jreleaser-macports
     scoop:
       active: ALWAYS
-      bucket:
+      repository:
         active: RELEASE
     sdkman:
       active: RELEASE
@@ -373,7 +373,7 @@ distributions:
       active: ALWAYS
       formulaName: jreleaser
       multiPlatform: true
-      tap:
+      repository:
         active: RELEASE
         commitMessage: 'jreleaser {{tagName}}'
     docker:
