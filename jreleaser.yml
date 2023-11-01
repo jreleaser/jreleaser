@@ -293,6 +293,7 @@ distributions:
         branchPush: '{{projectName}}-{{tagName}}'
     chocolatey:
       active: ALWAYS
+      continueOnError: true
       remoteBuild: true
       title: JReleaser
       iconUrl: 'https://rawcdn.githack.com/jreleaser/jreleaser/0934fa1fa3f0bd09c0c8c39fbdeb5df2ce507457/src/media/icon_128x128.png'
@@ -300,8 +301,10 @@ distributions:
         active: RELEASE
     jbang:
       active: ALWAYS
+      continueOnError: true
     macports:
       active: ALWAYS
+      continueOnError: true
       categories:
         - devel
         - java
@@ -312,6 +315,7 @@ distributions:
         name: jreleaser-macports
     scoop:
       active: ALWAYS
+      continueOnError: true
       repository:
         active: RELEASE
     sdkman:
@@ -319,6 +323,7 @@ distributions:
       continueOnError: true
     snap:
       active: ALWAYS
+      continueOnError: true
       remoteBuild: true
       base: core18
       architectures:
@@ -339,6 +344,7 @@ distributions:
         - dot-config-files
     spec:
       active: ALWAYS
+      continueOnError: true
       repository:
         active: RELEASE
         name: jreleaser-copr
@@ -361,6 +367,7 @@ distributions:
   jreleaser-standalone:
     appImage:
       active: ALWAYS
+      continueOnError: true
       componentId: org.jreleaser.cli
       developerName: JReleaser
       categories:
@@ -371,6 +378,7 @@ distributions:
         commitMessage: 'jreleaser {{tagName}}'
     brew:
       active: ALWAYS
+      continueOnError: true
       formulaName: jreleaser
       multiPlatform: true
       repository:
@@ -378,6 +386,7 @@ distributions:
         commitMessage: 'jreleaser {{tagName}}'
     docker:
       active: ALWAYS
+      continueOnError: true
       repository:
         active: ALWAYS
         commitMessage: 'jreleaser {{tagName}}'
@@ -412,6 +421,7 @@ distributions:
     type: NATIVE_PACKAGE
     winget:
       active: RELEASE
+      continueOnError: true
       package:
         name: jreleaser
       repository:
