@@ -116,3 +116,9 @@ task versionFile {
 }
 
 classes.dependsOn(versionFile)
+
+afterEvaluate {
+    def shadowJar = project.tasks.findByName('shadowJar')
+    def publishMainPublicationToMavenLocal = project.tasks.findByName('publishMainPublicationToMavenLocal')
+    if (publishMainPublicationToMavenLocal && shadowJar) publishMainPublicationToMavenLocal.dependsOn(shadowJar)
+}

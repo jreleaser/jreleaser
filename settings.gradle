@@ -22,7 +22,7 @@ buildscript {
         gradlePluginPortal()
     }
     dependencies {
-        classpath "gradle.plugin.com.github.johnrengelman:shadow:$shadowPluginVersion"
+        classpath "com.github.johnrengelman:shadow:$shadowPluginVersion"
         classpath "org.kordamp.gradle:java-project-gradle-plugin:$kordampPluginVersion"
         classpath "org.kordamp.gradle:groovy-project-gradle-plugin:$kordampPluginVersion"
         classpath "org.kordamp.gradle:plugin-gradle-plugin:$kordampPluginVersion"
@@ -85,6 +85,9 @@ enforce {
         r.ignoreWhenIdentical.set(true)
         r.dependency("dev.gradleplugins:gradle-api:$gradleVersion".toString()) { d->
             d.ignore('org.apache.commons.logging.*')
+        }
+        r.dependency("com.google.guava:guava:$guavaVersion".toString()) { d->
+            d.ignore('com.google.common.*')
         }
     }
 
