@@ -57,6 +57,6 @@ public final class WireMockStubs {
         maybeJson = maybeJson.trim().replaceAll("\\r\\n", "\\n");
         verify(builder.withHeader("Content-Type", containing("application/json"))
             .withHeader("Accept", or(equalTo("*/*"), equalTo("application/json")))
-            .withRequestBody(maybeJson.startsWith("{") ? containing(maybeJson.substring(1, maybeJson.length() - 1)) : containing(maybeJson)));
+            .withRequestBody(equalToJson(maybeJson)));
     }
 }
