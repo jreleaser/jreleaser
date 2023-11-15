@@ -23,6 +23,7 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
+import org.commonmark.renderer.text.TextContentRenderer;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.extensions.api.mustache.MustacheExtensionPoint;
 import org.jreleaser.model.Constants;
@@ -48,6 +49,8 @@ import java.util.function.UnaryOperator;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.Files.readAllBytes;
 import static org.jreleaser.util.ChecksumUtils.checksum;
+import static org.jreleaser.util.MarkdownUtils.createMarkdownParser;
+import static org.jreleaser.util.MarkdownUtils.createTextContentRenderer;
 
 /**
  * @author Andres Almiray
@@ -176,8 +179,10 @@ public final class DefaultMustacheExtensionPoint implements MustacheExtensionPoi
     private static class MarkdownToHtmlFunction implements UnaryOperator<String> {
         @Override
         public String apply(String input) {
-            Parser parser = Parser.builder().build();
-            Node document = parser.parse(input);
+            Parser parser = createMarkdownParser();
+            TextContentRenderer markdown = createTextContentRenderer();
+            String normalizedInput = markdown.render(parser.parse(input));
+            Node document = parser.parse(normalizedInput);
             HtmlRenderer renderer = HtmlRenderer.builder().build();
             return renderer.render(document).trim();
         }

@@ -24,7 +24,6 @@ dependencies {
     api project(':jreleaser-command-java-sdk')
 
     api "org.apache.commons:commons-text:$commonsTextVersion"
-    api "org.commonmark:commonmark:$commonmarkVersion"
     api "com.github.victools:jsonschema-generator:$jsonSchemaVersion"
     api "com.github.victools:jsonschema-module-jackson:$jsonSchemaVersion"
 

@@ -35,6 +35,8 @@ dependencies {
     api "org.slf4j:jcl-over-slf4j:$slf4jVersion"
     api "org.tukaani:xz:$xzVersion"
     api "com.github.luben:zstd-jni:$zstdVersion"
+    api "org.commonmark:commonmark:$commonmarkVersion"
+    api "org.commonmark:commonmark-ext-autolink:$commonmarkVersion"
 }
 
 test {
