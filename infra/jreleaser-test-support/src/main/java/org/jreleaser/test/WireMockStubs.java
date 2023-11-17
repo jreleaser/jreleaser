@@ -50,13 +50,13 @@ public final class WireMockStubs {
         maybeJson = maybeJson.trim().replaceAll("\\r\\n", "\\n");
         verify(builder.withHeader("Content-Type", containing("application/x-www-form-urlencoded"))
             .withHeader("Accept", equalTo("*/*"))
-            .withRequestBody(maybeJson.startsWith("{") ? containing(maybeJson.substring(1, maybeJson.length() - 1)) : containing(maybeJson)));
+            .withRequestBody(maybeJson.startsWith("{") ? equalToJson(maybeJson) : containing(maybeJson)));
     }
 
     public static void verifyJsonRequestContains(RequestPatternBuilder builder, String maybeJson) {
         maybeJson = maybeJson.trim().replaceAll("\\r\\n", "\\n");
         verify(builder.withHeader("Content-Type", containing("application/json"))
             .withHeader("Accept", or(equalTo("*/*"), equalTo("application/json")))
-            .withRequestBody(equalToJson(maybeJson)));
+            .withRequestBody(maybeJson.startsWith("{") ? equalToJson(maybeJson) : containing(maybeJson)));
     }
 }
