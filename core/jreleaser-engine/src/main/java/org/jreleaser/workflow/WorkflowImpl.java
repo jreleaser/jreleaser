@@ -19,6 +19,7 @@ package org.jreleaser.workflow;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.engine.context.ModelValidator;
+import org.jreleaser.engine.hooks.HookExecutor;
 import org.jreleaser.extensions.api.ExtensionManagerHolder;
 import org.jreleaser.extensions.api.workflow.WorkflowListenerException;
 import org.jreleaser.model.JReleaserException;
@@ -37,6 +38,7 @@ import static org.jreleaser.util.TimeUtils.formatDuration;
  * @since 0.1.0
  */
 class WorkflowImpl implements Workflow {
+    private static final String SESSION = "session";
     private final JReleaserContext context;
     private final List<WorkflowItem> items = new ArrayList<>();
 
@@ -87,13 +89,25 @@ class WorkflowImpl implements Workflow {
         logFilters("workflow.included.announcers", context.getIncludedAnnouncers());
         logFilters("workflow.excluded.announcers", context.getExcludedAnnouncers());
 
+        HookExecutor hooks = new HookExecutor(context);
+
         try {
-            context.fireSessionStartEvent();
-        } catch (WorkflowListenerException e) {
-            context.getLogger().error(RB.$("listener.failure", e.getListener().getClass().getName()));
+            hooks.executeHooks(ExecutionEvent.before(SESSION));
+        } catch (RuntimeException e) {
+            context.getLogger().error(RB.$("ERROR_hooks_unexpected_error"));
             context.getLogger().trace(e);
-            if (!e.getListener().isContinueOnError()) {
-                startSessionException = e.getCause();
+            startSessionException = e;
+        }
+
+        if (null == startSessionException) {
+            try {
+                context.fireSessionStartEvent();
+            } catch (WorkflowListenerException e) {
+                context.getLogger().error(RB.$("listener.failure", e.getListener().getClass().getName()));
+                context.getLogger().trace(e);
+                if (!e.getListener().isContinueOnError()) {
+                    startSessionException = e.getCause();
+                }
             }
         }
 
@@ -172,6 +186,13 @@ class WorkflowImpl implements Workflow {
                 throw new JReleaserException(RB.$("ERROR_unexpected_error"), startSessionException);
             }
         } else if (null != endSessionException) {
+            try {
+                hooks.executeHooks(ExecutionEvent.failure(SESSION, endSessionException));
+            } catch (RuntimeException e) {
+                context.getLogger().error(RB.$("ERROR_hooks_unexpected_error"));
+                context.getLogger().trace(e);
+            }
+
             context.getLogger().error(RB.$("workflow.failure"), formatDuration(duration));
             context.getLogger().trace(endSessionException);
             if (endSessionException instanceof RuntimeException) {
@@ -188,8 +209,22 @@ class WorkflowImpl implements Workflow {
                         throw new JReleaserException(RB.$("ERROR_unexpected_error"), listenerException);
                     }
                 }
+                try {
+                    hooks.executeHooks(ExecutionEvent.success(SESSION));
+                } catch (RuntimeException e) {
+                    context.getLogger().error(RB.$("ERROR_hooks_unexpected_error"));
+                    context.getLogger().trace(e);
+                }
+
                 context.getLogger().info(RB.$("workflow.success"), formatDuration(duration));
             } else {
+                try {
+                    hooks.executeHooks(ExecutionEvent.failure(SESSION, stepException));
+                } catch (RuntimeException e) {
+                    context.getLogger().error(RB.$("ERROR_hooks_unexpected_error"));
+                    context.getLogger().trace(e);
+                }
+
                 context.getLogger().error(RB.$("workflow.failure"), formatDuration(duration));
                 context.getLogger().trace(stepException);
                 throw stepException;

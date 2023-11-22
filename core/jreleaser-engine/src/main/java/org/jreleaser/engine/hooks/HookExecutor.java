@@ -75,7 +75,7 @@ public final class HookExecutor {
         executeHooks(ExecutionEvent.success(step));
     }
 
-    private void executeHooks(ExecutionEvent event) {
+    public void executeHooks(ExecutionEvent event) {
         Hooks hooks = context.getModel().getHooks();
         if (!hooks.isEnabled()) return;
 

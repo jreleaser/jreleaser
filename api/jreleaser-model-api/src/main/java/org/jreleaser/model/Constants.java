@@ -433,6 +433,7 @@ public interface Constants {
 
     // Directories
     String KEY_BASEDIR = "basedir";
+    String KEY_COMMAND = "command";
     String KEY_BASE_OUTPUT_DIRECTORY = "baseOutputDirectory";
     String KEY_OUTPUT_DIRECTORY = "outputDirectory";
     String KEY_CHECKSUMS_DIRECTORY = "checksumDirectory";
