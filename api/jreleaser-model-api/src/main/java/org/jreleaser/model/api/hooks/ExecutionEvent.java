@@ -17,7 +17,11 @@
  */
 package org.jreleaser.model.api.hooks;
 
+import org.jreleaser.mustache.MustacheUtils;
+
+import java.io.PrintWriter;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.util.Locale;
 
 import static java.util.Objects.requireNonNull;
@@ -29,7 +33,7 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @since 1.2.0
  */
 public class ExecutionEvent implements Serializable {
-    private static final long serialVersionUID = 2808775834615403354L;
+    private static final long serialVersionUID = -3014674027923578251L;
 
     private final Type type;
     private final String name;
@@ -60,6 +64,14 @@ public class ExecutionEvent implements Serializable {
 
     public Throwable getFailure() {
         return failure;
+    }
+
+    public String getStacktrace() {
+        if (null == failure) return "";
+
+        StringWriter sw = new StringWriter();
+        failure.printStackTrace(new PrintWriter(sw, true));
+        return MustacheUtils.passThrough(sw.toString());
     }
 
     public static ExecutionEvent before(String name) {
