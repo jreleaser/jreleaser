@@ -915,7 +915,7 @@ public class JReleaserContext {
         props.set(Constants.KEY_DOWNLOAD_DIRECTORY, getDownloadDirectory());
         props.set(Constants.KEY_ASSEMBLE_DIRECTORY, getAssembleDirectory());
         props.set(Constants.KEY_ARTIFACTS_DIRECTORY, getArtifactsDirectory());
-        props.set(Constants.KEY_COMMAND, getCommand().toStep());
+        if (null != getCommand()) props.set(Constants.KEY_COMMAND, getCommand().toStep());
         return props;
     }
 
