@@ -77,11 +77,17 @@ public final class HookExecutor {
 
     public void executeHooks(ExecutionEvent event) {
         Hooks hooks = context.getModel().getHooks();
-        if (!hooks.isEnabled()) return;
+        if (!hooks.isEnabled() || evaluateCondition(hooks.getCondition())) {
+            return;
+        }
 
         Map<String, String> rootEnv = resolveEnvironment(hooks.getEnvironment());
         executeScriptHooks(event, rootEnv);
         executeCommandHooks(event, rootEnv);
+    }
+
+    private boolean evaluateCondition(String condition) {
+        return isNotBlank(condition) && isFalse(context.eval(condition));
     }
 
     private Map<String, String> resolveEnvironment(Map<String, String> src) {
@@ -96,7 +102,9 @@ public final class HookExecutor {
 
     private void executeScriptHooks(ExecutionEvent event, Map<String, String> rootEnv) {
         ScriptHooks scriptHooks = context.getModel().getHooks().getScript();
-        if (!scriptHooks.isEnabled()) return;
+        if (!scriptHooks.isEnabled() || evaluateCondition(scriptHooks.getCondition())) {
+            return;
+        }
 
         final List<ScriptHook> hooks = new ArrayList<>();
 
@@ -158,7 +166,9 @@ public final class HookExecutor {
 
     private void executeCommandHooks(ExecutionEvent event, Map<String, String> rootEnv) {
         CommandHooks commandHooks = context.getModel().getHooks().getCommand();
-        if (!commandHooks.isEnabled()) return;
+        if (!commandHooks.isEnabled() || evaluateCondition(commandHooks.getCondition())) {
+            return;
+        }
 
         final List<CommandHook> hooks = new ArrayList<>();
 
@@ -242,9 +252,7 @@ public final class HookExecutor {
         List<Hook> tmp = new ArrayList<>();
 
         for (Hook hook : hooks) {
-            if (!hook.isEnabled()) continue;
-
-            if (isNotBlank(hook.getCondition()) && isFalse(context.eval(hook.getCondition()))) {
+            if (!hook.isEnabled() || evaluateCondition(hook.getCondition())) {
                 continue;
             }
 

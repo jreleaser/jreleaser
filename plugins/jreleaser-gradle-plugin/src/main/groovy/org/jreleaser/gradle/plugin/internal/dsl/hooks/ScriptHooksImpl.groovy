@@ -47,11 +47,13 @@ class ScriptHooksImpl implements ScriptHooks {
     final NamedDomainObjectContainer<ScriptHookImpl> before
     final NamedDomainObjectContainer<ScriptHookImpl> success
     final NamedDomainObjectContainer<ScriptHookImpl> failure
+    final Property<String> condition
     final MapProperty<String, String> environment
 
     @Inject
     ScriptHooksImpl(ObjectFactory objects) {
         active = objects.property(Active).convention(Providers.<Active> notDefined())
+        condition = objects.property(String).convention(Providers.<String> notDefined())
         environment = objects.mapProperty(String, String).convention(Providers.notDefined())
 
         before = objects.domainObjectContainer(ScriptHookImpl, new NamedDomainObjectFactory<ScriptHookImpl>() {
@@ -142,6 +144,7 @@ class ScriptHooksImpl implements ScriptHooks {
         before.forEach { ScriptHookImpl hook -> scriptHooks.addBefore(hook.toModel()) }
         success.forEach { ScriptHookImpl hook -> scriptHooks.addSuccess(hook.toModel()) }
         failure.forEach { ScriptHookImpl hook -> scriptHooks.addFailure(hook.toModel()) }
+        if (condition.present) scriptHooks.condition = condition.get()
         if (environment.present) scriptHooks.environment.putAll(environment.get())
 
         scriptHooks

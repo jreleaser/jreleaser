@@ -44,6 +44,7 @@ class HooksImpl implements Hooks {
     final Property<Active> active
     final CommandHooksImpl command
     final ScriptHooksImpl script
+    final Property<String> condition
     final MapProperty<String, String> environment
 
     @Inject
@@ -51,6 +52,7 @@ class HooksImpl implements Hooks {
         active = objects.property(Active).convention(Providers.<Active> notDefined())
         command = objects.newInstance(CommandHooksImpl, objects)
         script = objects.newInstance(ScriptHooksImpl, objects)
+        condition = objects.property(String).convention(Providers.<String> notDefined())
         environment = objects.mapProperty(String, String).convention(Providers.notDefined())
     }
 
@@ -93,6 +95,7 @@ class HooksImpl implements Hooks {
     org.jreleaser.model.internal.hooks.Hooks toModel() {
         org.jreleaser.model.internal.hooks.Hooks hooks = new org.jreleaser.model.internal.hooks.Hooks()
         if (active.present) hooks.active = active.get()
+        if (condition.present) hooks.condition = condition.get()
         if (environment.present) hooks.environment.putAll(environment.get())
         hooks.command = command.toModel()
         hooks.script = script.toModel()

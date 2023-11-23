@@ -36,20 +36,27 @@ import static java.util.stream.Collectors.toList;
  * @since 1.6.0
  */
 public final class ScriptHooks extends AbstractActivatable<ScriptHooks> implements Domain {
-    private static final long serialVersionUID = -7608796505128220307L;
+    private static final long serialVersionUID = -8421249812402488941L;
 
     private final List<ScriptHook> before = new ArrayList<>();
     private final List<ScriptHook> success = new ArrayList<>();
     private final List<ScriptHook> failure = new ArrayList<>();
     private final Map<String, String> environment = new LinkedHashMap<>();
 
+    private String condition;
+
     @JsonIgnore
     private final org.jreleaser.model.api.hooks.ScriptHooks immutable = new org.jreleaser.model.api.hooks.ScriptHooks() {
-        private static final long serialVersionUID = -2500325742137977937L;
+        private static final long serialVersionUID = 6010707122339136759L;
 
         private List<? extends org.jreleaser.model.api.hooks.ScriptHook> before;
         private List<? extends org.jreleaser.model.api.hooks.ScriptHook> success;
         private List<? extends org.jreleaser.model.api.hooks.ScriptHook> failure;
+
+        @Override
+        public String getCondition() {
+            return ScriptHooks.this.getCondition();
+        }
 
         @Override
         public List<? extends org.jreleaser.model.api.hooks.ScriptHook> getBefore() {
@@ -113,6 +120,7 @@ public final class ScriptHooks extends AbstractActivatable<ScriptHooks> implemen
     @Override
     public void merge(ScriptHooks source) {
         super.merge(source);
+        this.condition = merge(this.condition, source.condition);
         setBefore(merge(this.before, source.before));
         setSuccess(merge(this.success, source.success));
         setFailure(merge(this.failure, source.failure));
@@ -125,6 +133,14 @@ public final class ScriptHooks extends AbstractActivatable<ScriptHooks> implemen
             !before.isEmpty() ||
             !success.isEmpty() ||
             !failure.isEmpty();
+    }
+
+    public String getCondition() {
+        return condition;
+    }
+
+    public void setCondition(String condition) {
+        this.condition = condition;
     }
 
     public List<ScriptHook> getBefore() {
@@ -190,6 +206,7 @@ public final class ScriptHooks extends AbstractActivatable<ScriptHooks> implemen
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
         map.put("active", getActive());
+        map.put("condition", condition);
         map.put("environment", environment);
 
         Map<String, Map<String, Object>> m = new LinkedHashMap<>();

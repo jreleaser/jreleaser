@@ -20,6 +20,7 @@ package org.jreleaser.gradle.plugin.dsl.hooks
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.provider.MapProperty
+import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.common.Activatable
 
 /**
@@ -32,6 +33,8 @@ interface Hooks extends Activatable {
     CommandHooks getCommand()
 
     ScriptHooks getScript()
+
+    Property<String> getCondition()
 
     MapProperty<String, String> getEnvironment()
 

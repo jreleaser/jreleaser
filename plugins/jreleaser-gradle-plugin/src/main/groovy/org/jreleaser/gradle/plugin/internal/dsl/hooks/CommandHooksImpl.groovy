@@ -47,11 +47,13 @@ class CommandHooksImpl implements CommandHooks {
     final NamedDomainObjectContainer<CommandHookImpl> before
     final NamedDomainObjectContainer<CommandHookImpl> success
     final NamedDomainObjectContainer<CommandHookImpl> failure
+    final Property<String> condition
     final MapProperty<String, String> environment
 
     @Inject
     CommandHooksImpl(ObjectFactory objects) {
         active = objects.property(Active).convention(Providers.<Active> notDefined())
+        condition = objects.property(String).convention(Providers.<String> notDefined())
         environment = objects.mapProperty(String, String).convention(Providers.notDefined())
 
         before = objects.domainObjectContainer(CommandHookImpl, new NamedDomainObjectFactory<CommandHookImpl>() {
@@ -142,6 +144,7 @@ class CommandHooksImpl implements CommandHooks {
         before.forEach { CommandHookImpl hook -> commandHooks.addBefore(hook.toModel()) }
         success.forEach { CommandHookImpl hook -> commandHooks.addSuccess(hook.toModel()) }
         failure.forEach { CommandHookImpl hook -> commandHooks.addFailure(hook.toModel()) }
+        if (condition.present) commandHooks.condition = condition.get()
         if (environment.present) commandHooks.environment.putAll(environment.get())
 
         commandHooks

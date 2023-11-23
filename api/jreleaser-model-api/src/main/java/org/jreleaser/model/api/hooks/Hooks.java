@@ -32,4 +32,6 @@ public interface Hooks extends Domain, Activatable {
     ScriptHooks getScript();
 
     Map<String, String> getEnvironment();
+
+    String getCondition();
 }

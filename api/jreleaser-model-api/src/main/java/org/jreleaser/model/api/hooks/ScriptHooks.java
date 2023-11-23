@@ -35,4 +35,6 @@ public interface ScriptHooks extends Domain, Activatable {
     List<? extends ScriptHook> getFailure();
 
     Map<String, String> getEnvironment();
+
+    String getCondition();
 }

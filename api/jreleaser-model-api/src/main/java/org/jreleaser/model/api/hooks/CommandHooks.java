@@ -35,4 +35,6 @@ public interface CommandHooks extends Domain, Activatable {
     List<? extends CommandHook> getFailure();
 
     Map<String, String> getEnvironment();
+
+    String getCondition();
 }

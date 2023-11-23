@@ -32,15 +32,17 @@ import static java.util.Collections.unmodifiableMap;
  * @since 1.2.0
  */
 public final class Hooks extends AbstractActivatable<Hooks> implements Domain {
-    private static final long serialVersionUID = -5698247369155386191L;
+    private static final long serialVersionUID = 4377142072279197602L;
 
     private final Map<String, String> environment = new LinkedHashMap<>();
     private final CommandHooks command = new CommandHooks();
     private final ScriptHooks script = new ScriptHooks();
 
+    private String condition;
+
     @JsonIgnore
     private final org.jreleaser.model.api.hooks.Hooks immutable = new org.jreleaser.model.api.hooks.Hooks() {
-        private static final long serialVersionUID = -3768581923578821278L;
+        private static final long serialVersionUID = 2022724962028193279L;
 
         @Override
         public org.jreleaser.model.api.hooks.CommandHooks getCommand() {
@@ -50,6 +52,11 @@ public final class Hooks extends AbstractActivatable<Hooks> implements Domain {
         @Override
         public org.jreleaser.model.api.hooks.ScriptHooks getScript() {
             return script.asImmutable();
+        }
+
+        @Override
+        public String getCondition() {
+            return Hooks.this.getCondition();
         }
 
         @Override
@@ -84,6 +91,7 @@ public final class Hooks extends AbstractActivatable<Hooks> implements Domain {
     @Override
     public void merge(Hooks source) {
         super.merge(source);
+        this.condition = merge(this.condition, source.condition);
         setCommand(source.command);
         setScript(source.script);
         setEnvironment(merge(this.environment, source.getEnvironment()));
@@ -112,6 +120,14 @@ public final class Hooks extends AbstractActivatable<Hooks> implements Domain {
         this.script.merge(script);
     }
 
+    public String getCondition() {
+        return condition;
+    }
+
+    public void setCondition(String condition) {
+        this.condition = condition;
+    }
+
     public Map<String, String> getEnvironment() {
         return environment;
     }
@@ -130,6 +146,7 @@ public final class Hooks extends AbstractActivatable<Hooks> implements Domain {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
         map.put("active", getActive());
+        map.put("condition", condition);
         map.put("environment", environment);
         map.put("command", command.asMap(full));
         map.put("script", script.asMap(full));

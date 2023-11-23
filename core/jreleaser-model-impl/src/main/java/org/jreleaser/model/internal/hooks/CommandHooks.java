@@ -36,20 +36,27 @@ import static java.util.stream.Collectors.toList;
  * @since 1.2.0
  */
 public final class CommandHooks extends AbstractActivatable<CommandHooks> implements Domain {
-    private static final long serialVersionUID = -4219715246005652046L;
+    private static final long serialVersionUID = 8839490415968211931L;
 
     private final List<CommandHook> before = new ArrayList<>();
     private final List<CommandHook> success = new ArrayList<>();
     private final List<CommandHook> failure = new ArrayList<>();
     private final Map<String, String> environment = new LinkedHashMap<>();
 
+    private String condition;
+
     @JsonIgnore
     private final org.jreleaser.model.api.hooks.CommandHooks immutable = new org.jreleaser.model.api.hooks.CommandHooks() {
-        private static final long serialVersionUID = -1234820389402394468L;
+        private static final long serialVersionUID = -7458290511859894710L;
 
         private List<? extends org.jreleaser.model.api.hooks.CommandHook> before;
         private List<? extends org.jreleaser.model.api.hooks.CommandHook> success;
         private List<? extends org.jreleaser.model.api.hooks.CommandHook> failure;
+
+        @Override
+        public String getCondition() {
+            return CommandHooks.this.getCondition();
+        }
 
         @Override
         public List<? extends org.jreleaser.model.api.hooks.CommandHook> getBefore() {
@@ -113,6 +120,7 @@ public final class CommandHooks extends AbstractActivatable<CommandHooks> implem
     @Override
     public void merge(CommandHooks source) {
         super.merge(source);
+        this.condition = merge(this.condition, source.condition);
         setBefore(merge(this.before, source.before));
         setSuccess(merge(this.success, source.success));
         setFailure(merge(this.failure, source.failure));
@@ -125,6 +133,14 @@ public final class CommandHooks extends AbstractActivatable<CommandHooks> implem
             !before.isEmpty() ||
             !success.isEmpty() ||
             !failure.isEmpty();
+    }
+
+    public String getCondition() {
+        return condition;
+    }
+
+    public void setCondition(String condition) {
+        this.condition = condition;
     }
 
     public List<CommandHook> getBefore() {
@@ -190,6 +206,7 @@ public final class CommandHooks extends AbstractActivatable<CommandHooks> implem
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
         map.put("active", getActive());
+        map.put("condition", condition);
         map.put("environment", environment);
 
         Map<String, Map<String, Object>> m = new LinkedHashMap<>();
