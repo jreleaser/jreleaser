@@ -47,10 +47,10 @@ public final class MarkdownUtils {
 
         @Override
         public void visit(Link link) {
-            writeLink(link, link.getTitle(), link.getDestination());
+            rewriteLink(link, link.getTitle(), link.getDestination());
         }
 
-        private void writeLink(Node node, String title, String destination) {
+        private void rewriteLink(Node node, String title, String destination) {
             boolean hasChild = node.getFirstChild() != null;
             boolean hasTitle = title != null && !title.equals(destination);
             boolean hasDestination = destination != null && !destination.equals("");
