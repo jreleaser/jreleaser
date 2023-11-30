@@ -137,6 +137,8 @@ interface Changelog extends ExtraProperties {
 
         Property<String> getBody()
 
+        Property<String> getContributor()
+
         Property<Integer> getOrder()
     }
 

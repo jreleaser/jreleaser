@@ -356,6 +356,7 @@ class ChangelogImpl implements Changelog {
         final Property<String> label
         final Property<String> title
         final Property<String> body
+        final Property<String> contributor
         final Property<Integer> order
 
         @Inject
@@ -363,6 +364,7 @@ class ChangelogImpl implements Changelog {
             label = objects.property(String).convention(Providers.<String> notDefined())
             title = objects.property(String).convention(Providers.<String> notDefined())
             body = objects.property(String).convention(Providers.<String> notDefined())
+            contributor = objects.property(String).convention(Providers.<String> notDefined())
             order = objects.property(Integer).convention(Providers.<Integer> notDefined())
         }
 
@@ -371,6 +373,7 @@ class ChangelogImpl implements Changelog {
             labeler.label = label.orNull
             labeler.title = title.orNull
             labeler.body = body.orNull
+            labeler.contributor = contributor.orNull
             labeler.order = order.orNull
             labeler
         }

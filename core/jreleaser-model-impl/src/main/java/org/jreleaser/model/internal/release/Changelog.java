@@ -51,6 +51,7 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.StringUtils.normalizeRegexPattern;
 
 /**
  * @author Andres Almiray
@@ -900,16 +901,17 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
             return o1.getOrder().compareTo(o2.getOrder());
         };
 
-        private static final long serialVersionUID = 1510091671085545316L;
+        private static final long serialVersionUID = -4123935426541119426L;
 
         private String label;
         private String title;
         private String body;
+        private String contributor;
         private Integer order;
 
         @JsonIgnore
         private final org.jreleaser.model.api.release.Changelog.Labeler immutable = new org.jreleaser.model.api.release.Changelog.Labeler() {
-            private static final long serialVersionUID = -6780960364911032512L;
+            private static final long serialVersionUID = -2795460013799421769L;
 
             @Override
             public String getLabel() {
@@ -924,6 +926,11 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
             @Override
             public String getBody() {
                 return body;
+            }
+
+            @Override
+            public String getContributor() {
+                return contributor;
             }
 
             @Override
@@ -946,6 +953,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
             this.label = merge(this.label, source.label);
             this.title = merge(this.title, source.title);
             this.body = merge(this.body, source.body);
+            this.contributor = merge(this.contributor, source.contributor);
             this.order = merge(this.order, source.order);
         }
 
@@ -973,6 +981,14 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
             this.body = body;
         }
 
+        public String getContributor() {
+            return contributor;
+        }
+
+        public void setContributor(String contributor) {
+            this.contributor = contributor;
+        }
+
         public Integer getOrder() {
             return order;
         }
@@ -987,12 +1003,13 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
             if (null == o || getClass() != o.getClass()) return false;
             Labeler labeler = (Labeler) o;
             return Objects.equals(title, labeler.title) &&
-                Objects.equals(body, labeler.body);
+                Objects.equals(body, labeler.body) &&
+                Objects.equals(contributor, labeler.contributor);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(title, body);
+            return Objects.hash(title, body, contributor);
         }
 
         @Override
@@ -1001,6 +1018,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
             map.put("label", label);
             map.put("title", title);
             map.put("body", body);
+            map.put("contributor", contributor);
             map.put("order", order);
             return map;
         }
@@ -1081,6 +1099,8 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
 
     public static final class Hide extends AbstractModelObject<Hide> implements Domain {
         private static final long serialVersionUID = 314185207203186567L;
+
+        private static final String REGEX_PREFIX = "regex:";
 
         private final Set<String> categories = new LinkedHashSet<>();
         private final Set<String> contributors = new LinkedHashSet<>();
@@ -1189,7 +1209,12 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
             if (isNotBlank(name)) {
                 String n = name.trim();
                 for (String contributor : contributors) {
-                    if (n.contains(contributor) || n.matches(contributor)) {
+                    if (contributor.startsWith(REGEX_PREFIX)) {
+                        String regex = contributor.substring(REGEX_PREFIX.length());
+                        if (n.matches(normalizeRegexPattern(regex))) {
+                            return true;
+                        }
+                    } else if (n.contains(contributor) || n.matches(contributor)) {
                         return true;
                     }
                 }

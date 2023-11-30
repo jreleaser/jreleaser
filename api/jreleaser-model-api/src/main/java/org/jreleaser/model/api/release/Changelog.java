@@ -112,6 +112,8 @@ public interface Changelog extends Domain, EnabledAware, ExtraProperties {
 
         String getBody();
 
+        String getContributor();
+
         Integer getOrder();
     }
 

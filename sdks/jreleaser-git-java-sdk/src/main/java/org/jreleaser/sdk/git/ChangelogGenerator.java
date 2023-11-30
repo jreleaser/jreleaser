@@ -366,11 +366,13 @@ public class ChangelogGenerator {
 
                 if (!changelog.getContributors().isEnabled()) return;
 
-                if (!changelog.getHide().containsContributor(c.author.name)) {
+                if (!changelog.getHide().containsContributor(c.author.name) &&
+                    !changelog.getHide().containsContributor(c.author.email)) {
                     contributors.add(new Contributor(c.author));
                 }
                 c.committers.stream()
                     .filter(author -> !changelog.getHide().containsContributor(author.name))
+                    .filter(author -> !changelog.getHide().containsContributor(author.email))
                     .forEach(author -> contributors.add(new Contributor(author)));
             })
             .filter(c -> checkLabels(c, changelog))
@@ -545,31 +547,68 @@ public class ChangelogGenerator {
 
     private void applyLabels(Commit commit, Set<Changelog.Labeler> labelers) {
         for (Changelog.Labeler labeler : labelers) {
-            if (isNotBlank(labeler.getTitle())) {
-                if (labeler.getTitle().startsWith(REGEX_PREFIX)) {
-                    String regex = labeler.getTitle().substring(REGEX_PREFIX.length());
+            String label = labeler.getLabel();
+
+            String title = labeler.getTitle();
+            if (isNotBlank(title)) {
+                if (title.startsWith(REGEX_PREFIX)) {
+                    String regex = title.substring(REGEX_PREFIX.length());
                     if (commit.title.matches(normalizeRegexPattern(regex))) {
-                        commit.labels.add(labeler.getLabel());
+                        commit.labels.add(label);
                     }
                 } else {
-                    if (commit.title.contains(labeler.getTitle()) || commit.title.matches(toSafeRegexPattern(labeler.getTitle()))) {
-                        commit.labels.add(labeler.getLabel());
+                    if (matches(commit.title, title)) {
+                        commit.labels.add(label);
                     }
                 }
             }
-            if (isNotBlank(labeler.getBody())) {
-                if (labeler.getBody().startsWith(REGEX_PREFIX)) {
-                    String regex = labeler.getBody().substring(REGEX_PREFIX.length());
+
+            String body = labeler.getBody();
+            if (isNotBlank(body)) {
+                if (body.startsWith(REGEX_PREFIX)) {
+                    String regex = body.substring(REGEX_PREFIX.length());
                     if (commit.body.matches(normalizeRegexPattern(regex))) {
-                        commit.labels.add(labeler.getLabel());
+                        commit.labels.add(label);
                     }
                 } else {
-                    if (commit.body.contains(labeler.getBody()) || commit.body.matches(toSafeRegexPattern(labeler.getBody()))) {
-                        commit.labels.add(labeler.getLabel());
+                    if (matches(commit.body, body)) {
+                        commit.labels.add(label);
+                    }
+                }
+            }
+
+            String contributor = labeler.getContributor();
+            if (isNotBlank(contributor)) {
+                if (contributor.startsWith(REGEX_PREFIX)) {
+                    String regex = contributor.substring(REGEX_PREFIX.length());
+                    if (commit.author.name.matches(normalizeRegexPattern(regex)) ||
+                        commit.author.email.matches(normalizeRegexPattern(regex))) {
+                        commit.labels.add(label);
+                    }
+                    for (Author committer : commit.committers) {
+                        if (committer.name.matches(normalizeRegexPattern(regex)) ||
+                            committer.email.matches(normalizeRegexPattern(regex))) {
+                            commit.labels.add(label);
+                        }
+                    }
+                } else {
+                    if (matches(commit.author.name, contributor) ||
+                        matches(commit.author.email, contributor)) {
+                        commit.labels.add(label);
+                    }
+                    for (Author committer : commit.committers) {
+                        if (matches(committer.name, contributor) ||
+                            matches(committer.email, contributor)) {
+                            commit.labels.add(label);
+                        }
                     }
                 }
             }
         }
+    }
+
+    private boolean matches(String haystack, String needle) {
+        return haystack.contains(needle) || haystack.matches(toSafeRegexPattern(needle));
     }
 
     protected boolean checkLabels(Commit commit, Changelog changelog) {

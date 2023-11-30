@@ -388,8 +388,12 @@ public final class BaseReleaserValidator {
                 if (isBlank(labeler.getLabel())) {
                     errors.configuration(RB.$("validation_is_missing", service.getServiceName() + ".changelog.labelers[" + i + "].label"));
                 }
-                if (isBlank(labeler.getTitle()) && isBlank(labeler.getBody())) {
-                    errors.configuration(RB.$("validation_git_required", service.getServiceName() + ".changelog.labelers[" + i + "] title", "body"));
+                if (isBlank(labeler.getTitle()) && isBlank(labeler.getBody()) && isBlank(labeler.getContributor())) {
+                    errors.configuration(RB.$("validation_git_required", service.getServiceName() + ".changelog.labelers[" + i + "] title", "body", "contributor"));
+                }
+
+                if (isNotBlank(labeler.getContributor())) {
+                    changelog.getHide().getContributors().add(labeler.getContributor());
                 }
 
                 i++;
