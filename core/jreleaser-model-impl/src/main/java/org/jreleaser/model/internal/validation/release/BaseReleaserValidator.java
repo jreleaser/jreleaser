@@ -377,7 +377,7 @@ public final class BaseReleaserValidator {
                 .collect(groupingBy(Changelog.Category::getTitle));
             byTitle.forEach((title, categories) -> {
                 if (categories.size() > 1) {
-                    errors.configuration(RB.$("validationgetChangelog_multiple_categories", service.getServiceName(), title));
+                    errors.configuration(RB.$("validation_changelog_multiple_categories", service.getServiceName(), title));
                 }
             });
         }
@@ -392,7 +392,7 @@ public final class BaseReleaserValidator {
                     errors.configuration(RB.$("validation_git_required", service.getServiceName() + ".changelog.labelers[" + i + "] title", "body", "contributor"));
                 }
 
-                if (isNotBlank(labeler.getContributor())) {
+                if (isNotBlank(labeler.getContributor()) && changelog.getExcludeLabels().contains(labeler.getLabel())) {
                     changelog.getHide().getContributors().add(labeler.getContributor());
                 }
 
