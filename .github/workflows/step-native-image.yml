@@ -42,7 +42,7 @@ jobs:
           github-token: ${{ secrets.gh-access-token }}
 
       - name: Setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ vars.JAVA_VERSION }}
           distribution: ${{ vars.JAVA_DISTRO }}
