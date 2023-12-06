@@ -194,9 +194,9 @@ jobs:
         if: always()
         shell: bash
         run: |
-          rm -rf ~/.m2/repository/org/jreleaser
-          rm -rf ~/.gradle/caches/modules-2/files-2.1/org.jreleaser
           ./gradlew -stop
+          rm -rf ~/.m2/repository/org/jreleaser
+          rm -rf ~/.gradle/caches/modules-2/files-2.1/org.jreleaser          
 
   build-tool:
     name: 'Tool ${{ matrix.job.os }}'
@@ -373,9 +373,9 @@ jobs:
         if: always()
         shell: bash
         run: |
+          ./gradlew -stop
           rm -rf ~/.m2/repository/org/jreleaser
           rm -rf ~/.gradle/caches/modules-2/files-2.1/org.jreleaser
-          ./gradlew -stop
 
   build-ant:
     name: 'Ant ${{ matrix.job.os }}'
@@ -550,9 +550,9 @@ jobs:
         if: always()
         shell: bash
         run: |
+          ./gradlew -stop
           rm -rf ~/.m2/repository/org/jreleaser
           rm -rf ~/.gradle/caches/modules-2/files-2.1/org.jreleaser
-          ./gradlew -stop
 
   build-gradle:
     name: 'Gradle ${{ matrix.job.os }}'
@@ -739,9 +739,9 @@ jobs:
         if: always()
         shell: bash
         run: |
+          ./gradlew -stop
           rm -rf ~/.m2/repository/org/jreleaser
           rm -rf ~/.gradle/caches/modules-2/files-2.1/org.jreleaser
-          ./gradlew -stop
 
   build-maven:
     name: 'Maven ${{ matrix.job.os }}'
@@ -917,9 +917,9 @@ jobs:
         if: always()
         shell: bash
         run: |
+          ./gradlew -stop
           rm -rf ~/.m2/repository/org/jreleaser
           rm -rf ~/.gradle/caches/modules-2/files-2.1/org.jreleaser
-          ./gradlew -stop
 
   unit-tests:
     name: 'Unit Test ${{ matrix.os }}'
@@ -975,8 +975,8 @@ jobs:
         if: always()
         shell: bash
         run: |
-          rm -rf ~/.gradle/caches/build-cache-1
           ./gradlew -stop
+          rm -rf ~/.gradle/caches/build-cache-1
 
   coveralls:
     name: Coveralls
