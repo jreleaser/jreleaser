@@ -22,6 +22,7 @@ import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.common.Java
 
@@ -40,6 +41,7 @@ class JavaImpl implements Java {
     final Property<String> mainModule
     final Property<String> mainClass
     final Property<Boolean> multiProject
+    final SetProperty<String> options
     final MapProperty<String, Object> extraProperties
 
     @Inject
@@ -50,6 +52,7 @@ class JavaImpl implements Java {
         mainModule = objects.property(String).convention(Providers.<String> notDefined())
         mainClass = objects.property(String).convention(Providers.<String> notDefined())
         multiProject = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+        options = objects.setProperty(String).convention(Providers.<Set<String>> notDefined())
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
     }
 
@@ -61,6 +64,7 @@ class JavaImpl implements Java {
             mainModule.present ||
             mainClass.present ||
             multiProject.present ||
+            options.present ||
             extraProperties.present
     }
 
@@ -73,6 +77,7 @@ class JavaImpl implements Java {
         if (mainModule.present) java.mainModule = mainModule.get()
         if (mainClass.present) java.mainClass = mainClass.get()
         if (multiProject.present) java.multiProject = multiProject.get()
+        java.options = (Set<String>) options.getOrElse([] as Set<String>)
         if (extraProperties.present) java.extraProperties.putAll(extraProperties.get())
         java
     }

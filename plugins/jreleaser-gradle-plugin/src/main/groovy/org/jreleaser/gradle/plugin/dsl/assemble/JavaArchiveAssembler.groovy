@@ -19,7 +19,6 @@ package org.jreleaser.gradle.plugin.dsl.assemble
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
-import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.jreleaser.gradle.plugin.dsl.common.ArchiveOptions
@@ -70,6 +69,6 @@ interface JavaArchiveAssembler extends Assembler {
 
         Property<String> getMainClass()
 
-        ListProperty<String> getOptions()
+        SetProperty<String> getOptions()
     }
 }

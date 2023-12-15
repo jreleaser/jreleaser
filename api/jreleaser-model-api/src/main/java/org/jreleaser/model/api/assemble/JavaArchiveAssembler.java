@@ -53,6 +53,6 @@ public interface JavaArchiveAssembler extends Assembler {
 
         String getMainModule();
 
-        List<String> getOptions();
+        Set<String> getOptions();
     }
 }

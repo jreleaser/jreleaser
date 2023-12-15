@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 import static java.lang.String.join;
@@ -101,7 +100,7 @@ public class JavaArchiveAssemblerProcessor extends AbstractAssemblerProcessor<or
         }
         props.set(KEY_DISTRIBUTION_JAVA_MAIN_CLASS, assembler.getJava().getMainClass());
         props.set(KEY_DISTRIBUTION_JAVA_MAIN_MODULE, assembler.getJava().getMainModule());
-        List<String> javaOptions = assembler.getJava().getOptions();
+        Set<String> javaOptions = assembler.getJava().getOptions();
         props.set(KEY_DISTRIBUTION_JAVA_OPTIONS, !javaOptions.isEmpty() ? passThrough(join(" ", javaOptions)) : "");
         props.set(KEY_DISTRIBUTION_EXECUTABLE, assembler.getExecutable().getName());
     }

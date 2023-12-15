@@ -84,7 +84,7 @@ CLASSPATH="$JARSDIR"
 {{^distributionJavaMainModule}}
 CLASSPATH="$JARSDIR/*"
 {{/distributionJavaMainModule}}
-JAVA_OPTS="{{distributionJavaOptions}}"
+JAVA_OPTS="$JAVA_OPTS {{distributionJavaOptions}}"
 
 # Increase the maximum file descriptors if we can.
 if ! "$cygwin" && ! "$darwin" && ! "$nonstop" ; then

@@ -57,6 +57,7 @@ set CLASSPATH="%JARSDIRS%"
 {{^distributionJavaMainModule}}
 set CLASSPATH="%JARSDIRS%\*"
 {{/distributionJavaMainModule}}
+set JAVA_OPTS="%JAVA_OPTS% {{distributionJavaOptions}}"
 
 @REM Reaching here means variables are defined and arguments have been captured
 :endInit

@@ -41,6 +41,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Stream;
 
+import static java.lang.String.join;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toSet;
 import static org.jreleaser.assemblers.AssemblerUtils.copyJars;
@@ -51,6 +52,8 @@ import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_EXECUTABLE;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_CLASS;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_JAR;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_MODULE;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_OPTIONS;
+import static org.jreleaser.mustache.MustacheUtils.passThrough;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.util.FileType.BAT;
 import static org.jreleaser.util.FileType.JAR;
@@ -79,6 +82,8 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
         }
         props.set(KEY_DISTRIBUTION_JAVA_MAIN_CLASS, assembler.getJava().getMainClass());
         props.set(KEY_DISTRIBUTION_JAVA_MAIN_MODULE, assembler.getJava().getMainModule());
+        Set<String> javaOptions = assembler.getJava().getOptions();
+        props.set(KEY_DISTRIBUTION_JAVA_OPTIONS, !javaOptions.isEmpty() ? passThrough(join(" ", javaOptions)) : "");
         props.set(KEY_DISTRIBUTION_EXECUTABLE, assembler.getExecutable());
     }
 

@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model.api.common;
 
+import java.util.Set;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -33,4 +35,6 @@ public interface Java extends Domain, ExtraProperties, EnabledAware {
     String getMainClass();
 
     String getMainModule();
+
+    Set<String> getOptions();
 }

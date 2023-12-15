@@ -54,7 +54,7 @@ set CLASSPATH="%JARSDIRS%"
 {{^distributionJavaMainModule}}
 set CLASSPATH="%JARSDIRS%\*"
 {{/distributionJavaMainModule}}
-set JAVA_OPTS="{{distributionJavaOptions}}"
+set JAVA_OPTS="%JAVA_OPTS% {{distributionJavaOptions}}"
 
 @rem Execute
 {{#distributionJavaMainModule}}

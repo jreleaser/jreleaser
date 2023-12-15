@@ -127,6 +127,7 @@ public final class JlinkAssemblerValidator {
                     return;
                 }
                 // Use current
+                assembler.getJdk().resolveEnabled(context.getModel().getProject());
                 assembler.getJdk().setPath(javaHome);
                 assembler.getJdk().setPlatform(currentPlatform);
                 assembler.addTargetJdk(assembler.getJdk());
@@ -151,6 +152,7 @@ public final class JlinkAssemblerValidator {
                     assembler.getJdk().setPlatform(currentPlatform);
                 }
             }
+            assembler.getJdk().select();
         }
 
         if (assembler.getArgs().isEmpty()) {

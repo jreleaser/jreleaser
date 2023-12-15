@@ -64,6 +64,7 @@ CLASSPATH="$JARSDIR"
 {{^distributionJavaMainModule}}
 CLASSPATH="$JARSDIR/*"
 {{/distributionJavaMainModule}}
+JAVA_OPTS="$JAVA_OPTS {{distributionJavaOptions}}"
 
 # Increase the maximum file descriptors if we can.
 if ! "$cygwin" && ! "$darwin" && ! "$nonstop" ; then
@@ -90,7 +91,7 @@ fi
 #   * the main class name
 #   * -classpath
 #   * -Dkey settings
-#   * DEFAULT_JAVA_OPTS and JAVA_OPTS environment variables.
+#   * DEFAULT_JAVA_OPTS and $JAVA_OPTS environment variables.
 
 # For Cygwin or MSYS, switch paths to Windows format before running java
 if "$cygwin" || "$msys" ; then

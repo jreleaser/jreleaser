@@ -30,6 +30,7 @@ import org.jreleaser.model.internal.assemble.JpackageAssembler;
 import org.jreleaser.model.internal.assemble.NativeImageAssembler;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.FileSet;
+import org.jreleaser.model.internal.common.Java;
 import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.util.Errors;
 
@@ -177,29 +178,37 @@ public final class AssemblersValidator {
     public static boolean validateJava(JReleaserContext context, JavaAssembler<?> assembler, Errors errors) {
         Project project = context.getModel().getProject();
 
-        if (!assembler.getJava().isEnabledSet() && project.getJava().isEnabledSet()) {
-            assembler.getJava().setEnabled(project.getJava().isEnabled());
+        Java assemblerJava = assembler.getJava();
+        Java projectJava = project.getJava();
+
+        if (!assemblerJava.isEnabledSet() && projectJava.isEnabledSet()) {
+            assemblerJava.setEnabled(projectJava.isEnabled());
         }
-        if (!assembler.getJava().isEnabledSet()) {
-            assembler.getJava().setEnabled(assembler.getJava().isSet());
+        if (!assemblerJava.isEnabledSet()) {
+            assemblerJava.setEnabled(assemblerJava.isSet());
         }
 
-        if (!assembler.getJava().isEnabled()) return false;
+        if (!assemblerJava.isEnabled()) return false;
 
-        if (isBlank(assembler.getJava().getArtifactId())) {
-            assembler.getJava().setArtifactId(project.getJava().getArtifactId());
+        if (isBlank(assemblerJava.getArtifactId())) {
+            assemblerJava.setArtifactId(projectJava.getArtifactId());
         }
-        if (isBlank(assembler.getJava().getGroupId())) {
-            assembler.getJava().setGroupId(project.getJava().getGroupId());
+        if (isBlank(assemblerJava.getGroupId())) {
+            assemblerJava.setGroupId(projectJava.getGroupId());
         }
-        if (isBlank(assembler.getJava().getVersion())) {
-            assembler.getJava().setVersion(project.getJava().getVersion());
+        if (isBlank(assemblerJava.getVersion())) {
+            assemblerJava.setVersion(projectJava.getVersion());
         }
-        if (isBlank(assembler.getJava().getMainModule())) {
-            assembler.getJava().setMainModule(project.getJava().getMainModule());
+        if (isBlank(assemblerJava.getMainModule())) {
+            assemblerJava.setMainModule(projectJava.getMainModule());
         }
-        if (isBlank(assembler.getJava().getMainClass())) {
-            assembler.getJava().setMainClass(project.getJava().getMainClass());
+        if (isBlank(assemblerJava.getMainClass())) {
+            assemblerJava.setMainClass(projectJava.getMainClass());
+        }
+        if (assemblerJava.getOptions().isEmpty()) {
+            assemblerJava.setOptions(projectJava.getOptions());
+        } else {
+            assemblerJava.addOptions(projectJava.getOptions());
         }
 
         return true;

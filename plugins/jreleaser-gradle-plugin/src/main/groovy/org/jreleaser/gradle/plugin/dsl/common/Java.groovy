@@ -18,7 +18,9 @@
 package org.jreleaser.gradle.plugin.dsl.common
 
 import groovy.transform.CompileStatic
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 
 /**
  *
@@ -38,4 +40,6 @@ interface Java extends ExtraProperties {
     Property<String> getMainClass()
 
     Property<Boolean> getMultiProject()
+
+    SetProperty<String> getOptions()
 }

@@ -21,9 +21,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static java.util.Collections.unmodifiableMap;
+import static java.util.Collections.unmodifiableSet;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -31,9 +34,10 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public final class Java extends AbstractModelObject<Java> implements Domain, ExtraProperties, EnabledAware {
-    private static final long serialVersionUID = -2234061310893799176L;
+    private static final long serialVersionUID = 1081407969607813088L;
 
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
+    private final Set<String> options = new LinkedHashSet<>();
 
     private Boolean enabled;
     private String version;
@@ -45,7 +49,7 @@ public final class Java extends AbstractModelObject<Java> implements Domain, Ext
 
     @JsonIgnore
     private final org.jreleaser.model.api.common.Java immutable = new org.jreleaser.model.api.common.Java() {
-        private static final long serialVersionUID = 1595567967292822458L;
+        private static final long serialVersionUID = 2703756550892777093L;
 
         @Override
         public String getVersion() {
@@ -75,6 +79,11 @@ public final class Java extends AbstractModelObject<Java> implements Domain, Ext
         @Override
         public String getMainModule() {
             return mainModule;
+        }
+
+        @Override
+        public Set<String> getOptions() {
+            return unmodifiableSet(options);
         }
 
         @Override
@@ -111,6 +120,7 @@ public final class Java extends AbstractModelObject<Java> implements Domain, Ext
         this.mainModule = merge(this.mainModule, source.mainModule);
         this.mainClass = merge(this.mainClass, source.mainClass);
         this.multiProject = merge(this.multiProject, source.multiProject);
+        setOptions(merge(this.options, source.options));
         setExtraProperties(merge(this.extraProperties, source.extraProperties));
     }
 
@@ -186,6 +196,19 @@ public final class Java extends AbstractModelObject<Java> implements Domain, Ext
         this.mainModule = mainModule;
     }
 
+    public Set<String> getOptions() {
+        return options;
+    }
+
+    public void setOptions(Set<String> options) {
+        this.options.clear();
+        this.options.addAll(options);
+    }
+
+    public void addOptions(Set<String> options) {
+        this.options.addAll(options);
+    }
+
     public boolean isMultiProjectSet() {
         return null != multiProject;
     }
@@ -213,6 +236,7 @@ public final class Java extends AbstractModelObject<Java> implements Domain, Ext
             isNotBlank(artifactId) ||
             isNotBlank(mainModule) ||
             isNotBlank(mainClass) ||
+            !options.isEmpty() ||
             isMultiProjectSet() ||
             !extraProperties.isEmpty();
     }
@@ -228,6 +252,7 @@ public final class Java extends AbstractModelObject<Java> implements Domain, Ext
         map.put("artifactId", artifactId);
         map.put("mainModule", mainModule);
         map.put("mainClass", mainClass);
+        if (!options.isEmpty()) map.put("options", options);
         map.put("multiProject", isMultiProject());
         map.put("extraProperties", getExtraProperties());
         return map;

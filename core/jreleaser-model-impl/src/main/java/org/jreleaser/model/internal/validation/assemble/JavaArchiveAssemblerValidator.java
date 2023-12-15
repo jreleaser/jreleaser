@@ -114,6 +114,11 @@ public final class JavaArchiveAssemblerValidator {
         if (isBlank(assembler.getJava().getMainClass())) {
             assembler.getJava().setMainClass(project.getJava().getMainClass());
         }
+        if (assembler.getJava().getOptions().isEmpty()) {
+            assembler.getJava().setOptions(project.getJava().getOptions());
+        } else {
+            assembler.getJava().addOptions(project.getJava().getOptions());
+        }
 
         assembler.getMainJar().resolveActiveAndSelected(context);
         boolean mainJarIsSet = isNotBlank(assembler.getMainJar().getPath());

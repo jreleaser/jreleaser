@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toList;
@@ -345,15 +344,15 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
     }
 
     public static final class Java extends AbstractModelObject<org.jreleaser.model.internal.assemble.JavaArchiveAssembler.Java> implements Domain {
-        private static final long serialVersionUID = 7202113953208274002L;
+        private static final long serialVersionUID = -5383920072074242097L;
 
-        private final List<String> options = new ArrayList<>();
+        private final Set<String> options = new LinkedHashSet<>();
         private String mainModule;
         private String mainClass;
 
         @JsonIgnore
         private final org.jreleaser.model.api.assemble.JavaArchiveAssembler.Java immutable = new org.jreleaser.model.api.assemble.JavaArchiveAssembler.Java() {
-            private static final long serialVersionUID = 5951754473564143458L;
+            private static final long serialVersionUID = -2130856687512099219L;
 
             @Override
             public String getMainClass() {
@@ -366,8 +365,8 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
             }
 
             @Override
-            public List<String> getOptions() {
-                return unmodifiableList(options);
+            public Set<String> getOptions() {
+                return unmodifiableSet(options);
             }
 
             @Override
@@ -403,16 +402,16 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
             this.mainModule = mainModule;
         }
 
-        public List<String> getOptions() {
+        public Set<String> getOptions() {
             return options;
         }
 
-        public void setOptions(List<String> options) {
+        public void setOptions(Set<String> options) {
             this.options.clear();
             this.options.addAll(options);
         }
 
-        public void addOptions(List<String> options) {
+        public void addOptions(Set<String> options) {
             this.options.addAll(options);
         }
 

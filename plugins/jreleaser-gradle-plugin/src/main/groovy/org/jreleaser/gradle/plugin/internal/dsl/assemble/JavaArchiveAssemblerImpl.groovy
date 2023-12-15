@@ -24,7 +24,6 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
@@ -179,13 +178,13 @@ class JavaArchiveAssemblerImpl extends AbstractAssembler implements JavaArchiveA
     static class JavaImpl implements JavaArchiveAssembler.Java {
         final Property<String> mainModule
         final Property<String> mainClass
-        final ListProperty<String> options
+        final SetProperty<String> options
 
         @Inject
         JavaImpl(ObjectFactory objects) {
             mainModule = objects.property(String).convention(Providers.<String> notDefined())
             mainClass = objects.property(String).convention(Providers.<String> notDefined())
-            options = objects.listProperty(String).convention(Providers.<List<String>> notDefined())
+            options = objects.setProperty(String).convention(Providers.<Set<String>> notDefined())
         }
 
         @Internal
@@ -199,7 +198,7 @@ class JavaArchiveAssemblerImpl extends AbstractAssembler implements JavaArchiveA
             org.jreleaser.model.internal.assemble.JavaArchiveAssembler.Java java = new org.jreleaser.model.internal.assemble.JavaArchiveAssembler.Java()
             if (mainModule.present) java.mainModule = mainModule.get()
             if (mainClass.present) java.mainClass = mainClass.get()
-            java.options = (List<String>) options.getOrElse([] as List<String>)
+            java.options = (Set<String>) options.getOrElse([] as Set<String>)
             java
         }
     }
