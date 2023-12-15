@@ -25,6 +25,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.common.CommitAuthor
 import org.jreleaser.gradle.plugin.dsl.packagers.BrewPackager
@@ -44,23 +45,27 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 @CompileStatic
 class BrewPackagerImpl extends AbstractRepositoryPackager implements BrewPackager {
     final Property<String> formulaName
+    final Property<String> downloadStrategy
     final Property<Boolean> multiPlatform
     final CommitAuthorImpl commitAuthor
     final TapImpl repository
     final CaskImpl cask
     final MapProperty<String, String> dependencies
     final ListProperty<String> livecheck
+    final SetProperty<String> requireRelative
 
     @Inject
     BrewPackagerImpl(ObjectFactory objects) {
         super(objects)
         formulaName = objects.property(String).convention(Providers.<String> notDefined())
+        downloadStrategy = objects.property(String).convention(Providers.<String> notDefined())
         multiPlatform = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         repository = objects.newInstance(TapImpl, objects)
         cask = objects.newInstance(CaskImpl, objects)
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
         dependencies = objects.mapProperty(String, String).convention(Providers.notDefined())
         livecheck = objects.listProperty(String).convention(Providers.<List<String>> notDefined())
+        requireRelative = objects.setProperty(String).convention(Providers.<Set<String>> notDefined())
     }
 
     @Override
@@ -82,11 +87,13 @@ class BrewPackagerImpl extends AbstractRepositoryPackager implements BrewPackage
     boolean isSet() {
         super.isSet() ||
             formulaName.present ||
+            downloadStrategy.present ||
             multiPlatform.present ||
             dependencies.present ||
             repository.isSet() ||
             commitAuthor.isSet() ||
             livecheck.present ||
+            requireRelative.present ||
             cask.isSet()
     }
 
@@ -144,11 +151,13 @@ class BrewPackagerImpl extends AbstractRepositoryPackager implements BrewPackage
         fillPackagerProperties(packager)
         fillTemplatePackagerProperties(packager)
         if (formulaName.present) packager.formulaName = formulaName.get()
+        if (downloadStrategy.present) packager.downloadStrategy = downloadStrategy.get()
         if (multiPlatform.present) packager.multiPlatform = multiPlatform.get()
         if (repository.isSet()) packager.repository = repository.toHomebrewRepository()
         if (commitAuthor.isSet()) packager.commitAuthor = commitAuthor.toModel()
         if (dependencies.present) packager.dependencies = dependencies.get()
         if (livecheck.present) packager.livecheck = (livecheck.get() as List<String>)
+        if (requireRelative.present) packager.requireRelative = (requireRelative.get() as Set<String>)
         if (cask.isSet()) packager.cask = cask.toModel()
         packager
     }

@@ -1,8 +1,12 @@
 # {{jreleaserCreationStamp}}
+{{#brewRequireRelative}}
+require_relative "{{.}}"
+{{/brewRequireRelative}}
+
 cask "{{brewCaskName}}" do
   desc "{{projectDescription}}"
   homepage "{{projectLinkHomepage}}"
-  url "{{distributionUrl}}",
+  url "{{distributionUrl}}"{{#brewDownloadStrategy}}, :using => {{.}}{{/brewDownloadStrategy}},
       verified: "{{repoHost}}"
   version "{{projectVersion}}"
   sha256 "{{distributionChecksumSha256}}"

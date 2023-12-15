@@ -30,6 +30,7 @@ import org.jreleaser.util.PlatformUtils;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -69,7 +70,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser.model.api.packagers.BrewPackager, BrewPackager> {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
-    private static final long serialVersionUID = -9118527881092408298L;
+    private static final long serialVersionUID = -2068963278096348674L;
 
     static {
         Set<String> extensions = setOf(ZIP.extension());
@@ -84,20 +85,27 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
 
     private final List<Dependency> dependencies = new ArrayList<>();
     private final List<String> livecheck = new ArrayList<>();
+    private final Set<String> requireRelative = new LinkedHashSet<>();
     private final HomebrewRepository repository = new HomebrewRepository();
     private final Cask cask = new Cask();
 
     private String formulaName;
     private String cachedFormulaName;
+    private String downloadStrategy;
     private Boolean multiPlatform;
 
     @JsonIgnore
     private final org.jreleaser.model.api.packagers.BrewPackager immutable = new org.jreleaser.model.api.packagers.BrewPackager() {
-        private static final long serialVersionUID = 4523118379723768454L;
+        private static final long serialVersionUID = -5776275819147353630L;
 
         @Override
         public String getFormulaName() {
             return formulaName;
+        }
+
+        @Override
+        public String getDownloadStrategy() {
+            return downloadStrategy;
         }
 
         @Override
@@ -123,6 +131,11 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
         @Override
         public List<String> getLivecheck() {
             return unmodifiableList(livecheck);
+        }
+
+        @Override
+        public Set<String> getRequireRelative() {
+            return unmodifiableSet(requireRelative);
         }
 
         @Override
@@ -226,9 +239,11 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
         super.merge(source);
         this.formulaName = merge(this.formulaName, source.formulaName);
         this.multiPlatform = merge(this.multiPlatform, source.multiPlatform);
+        this.downloadStrategy = merge(this.downloadStrategy, source.downloadStrategy);
         setRepository(source.repository);
         setDependenciesAsList(merge(this.dependencies, source.dependencies));
         setLivecheck(merge(this.livecheck, source.livecheck));
+        setRequireRelative(merge(this.requireRelative, source.requireRelative));
         setCask(source.cask);
     }
 
@@ -257,6 +272,14 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
 
     public void setFormulaName(String formulaName) {
         this.formulaName = formulaName;
+    }
+
+    public String getDownloadStrategy() {
+        return downloadStrategy;
+    }
+
+    public void setDownloadStrategy(String downloadStrategy) {
+        this.downloadStrategy = downloadStrategy;
     }
 
     public boolean isMultiPlatform() {
@@ -347,14 +370,25 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
         return !livecheck.isEmpty();
     }
 
+    public Set<String> getRequireRelative() {
+        return requireRelative;
+    }
+
+    public void setRequireRelative(Set<String> requireRelative) {
+        this.requireRelative.clear();
+        this.requireRelative.addAll(requireRelative);
+    }
+
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         super.asMap(full, props);
         props.put("formulaName", formulaName);
+        props.put("downloadStrategy", downloadStrategy);
         props.put("multiPlatform", isMultiPlatform());
         props.put("repository", repository.asMap(full));
         props.put("dependencies", dependencies);
         props.put("livecheck", livecheck);
+        props.put("requireRelative", requireRelative);
         props.put("cask", cask.asMap(full));
     }
 

@@ -22,6 +22,7 @@ import org.gradle.api.Action
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 
 /**
  *
@@ -31,6 +32,10 @@ import org.gradle.api.provider.Property
 @CompileStatic
 interface BrewPackager extends RepositoryPackager {
     Property<String> getFormulaName()
+
+    Property<String> getDownloadStrategy()
+
+    SetProperty<String> getRequireRelative()
 
     Property<Boolean> getMultiPlatform()
 

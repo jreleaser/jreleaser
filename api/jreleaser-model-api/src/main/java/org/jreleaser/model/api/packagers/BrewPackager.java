@@ -20,6 +20,7 @@ package org.jreleaser.model.api.packagers;
 import org.jreleaser.model.api.common.Domain;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Andres Almiray
@@ -30,6 +31,10 @@ public interface BrewPackager extends RepositoryPackager {
     String SKIP_BREW = "skipBrew";
 
     String getFormulaName();
+
+    String getDownloadStrategy();
+
+    Set<String> getRequireRelative();
 
     boolean isMultiPlatform();
 

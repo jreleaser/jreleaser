@@ -29,9 +29,11 @@ import org.jreleaser.util.Errors;
 import org.jreleaser.util.PlatformUtils;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -92,6 +94,25 @@ public final class BrewPackagerValidator {
         if (isBlank(packager.getFormulaName())) {
             packager.setFormulaName(distribution.getName());
         }
+        if (isBlank(packager.getDownloadStrategy())) {
+            packager.setDownloadStrategy(parentPackager.getDownloadStrategy());
+        }
+
+        if (distribution.getType() == org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR ||
+            distribution.getType() == org.jreleaser.model.Distribution.DistributionType.FLAT_BINARY &&
+            isBlank(packager.getDownloadStrategy())) {
+            packager.setDownloadStrategy(":nounzip");
+        }
+
+        Set<String> tmpSet = new LinkedHashSet<>();
+        tmpSet.addAll(parentPackager.getRequireRelative());
+        tmpSet.addAll(packager.getRequireRelative());
+        packager.setRequireRelative(tmpSet);
+
+        List<String> tmpList = new ArrayList<>();
+        tmpList.addAll(parentPackager.getLivecheck());
+        tmpList.addAll(packager.getLivecheck());
+        packager.setLivecheck(tmpList);
 
         mergeExtraProperties(packager, parentPackager);
         validateCask(context, distribution, packager, cask, parentPackager.getCask(), errors);

@@ -1,8 +1,12 @@
 # {{jreleaserCreationStamp}}
+{{#brewRequireRelative}}
+require_relative "{{.}}"
+{{/brewRequireRelative}}
+
 class {{brewFormulaName}} < Formula
   desc "{{projectDescription}}"
   homepage "{{projectLinkHomepage}}"
-  url "{{distributionUrl}}"
+  url "{{distributionUrl}}"{{#brewDownloadStrategy}}, :using => {{.}}{{/brewDownloadStrategy}}
   version "{{projectVersion}}"
   sha256 "{{distributionChecksumSha256}}"
   license "{{projectLicense}}"

@@ -238,6 +238,8 @@ public interface Constants {
     String KEY_HOMEBREW_REPOSITORY_CLONE_URL = "brewRepositoryCloneUrl";
     String KEY_BREW_HAS_LIVECHECK = "brewHasLivecheck";
     String KEY_BREW_LIVECHECK = "brewLivecheck";
+    String KEY_BREW_DOWNLOAD_STRATEGY = "brewDownloadStrategy";
+    String KEY_BREW_REQUIRE_RELATIVE = "brewRequireRelative";
     String KEY_BREW_CASK_NAME = "brewCaskName";
     String KEY_BREW_CASK_DISPLAY_NAME = "brewCaskDisplayName";
     String KEY_BREW_CASK_HAS_PKG = "brewCaskHasPkg";

@@ -1,4 +1,8 @@
 # {{jreleaserCreationStamp}}
+{{#brewRequireRelative}}
+require_relative "{{.}}"
+{{/brewRequireRelative}}
+
 class {{brewFormulaName}} < Formula
   desc "{{projectDescription}}"
   homepage "{{projectLinkHomepage}}"

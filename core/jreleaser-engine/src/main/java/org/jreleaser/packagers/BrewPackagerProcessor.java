@@ -50,10 +50,12 @@ import static org.jreleaser.model.Constants.KEY_BREW_CASK_PKG;
 import static org.jreleaser.model.Constants.KEY_BREW_CASK_UNINSTALL;
 import static org.jreleaser.model.Constants.KEY_BREW_CASK_ZAP;
 import static org.jreleaser.model.Constants.KEY_BREW_DEPENDENCIES;
+import static org.jreleaser.model.Constants.KEY_BREW_DOWNLOAD_STRATEGY;
 import static org.jreleaser.model.Constants.KEY_BREW_FORMULA_NAME;
 import static org.jreleaser.model.Constants.KEY_BREW_HAS_LIVECHECK;
 import static org.jreleaser.model.Constants.KEY_BREW_LIVECHECK;
 import static org.jreleaser.model.Constants.KEY_BREW_MULTIPLATFORM;
+import static org.jreleaser.model.Constants.KEY_BREW_REQUIRE_RELATIVE;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_FILE_NAME;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_ROOT_ENTRY_NAME;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_CLASS;
@@ -90,24 +92,24 @@ BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> 
     private static final String KEY_DISTRIBUTION_CHECKSUM_SHA_256 = "distributionChecksumSha256";
 
     private static final String TPL_MAC_ARM = "  if OS.mac? && Hardware::CPU.arm?\n" +
-        "    url \"{{distributionUrl}}\"\n" +
+        "    url \"{{distributionUrl}}\"{{#brewDownloadStrategy}}, :using => {{.}}{{/brewDownloadStrategy}}\n" +
         "    sha256 \"{{distributionChecksumSha256}}\"\n" +
         "  end\n";
     private static final String TPL_MAC_INTEL = "  if OS.mac? && Hardware::CPU.intel?\n" +
-        "    url \"{{distributionUrl}}\"\n" +
+        "    url \"{{distributionUrl}}\"{{#brewDownloadStrategy}}, :using => {{.}}{{/brewDownloadStrategy}}\n" +
         "    sha256 \"{{distributionChecksumSha256}}\"\n" +
         "  end\n";
     private static final String TPL_LINUX_ARM = "  if OS.linux? && Hardware::CPU.arm? && Hardware::CPU.is_64_bit?\n" +
-        "    url \"{{distributionUrl}}\"\n" +
+        "    url \"{{distributionUrl}}\"{{#brewDownloadStrategy}}, :using => {{.}}{{/brewDownloadStrategy}}\n" +
         "    sha256 \"{{distributionChecksumSha256}}\"\n" +
         "  end\n";
     private static final String TPL_LINUX_INTEL = "  if OS.linux? && Hardware::CPU.intel?\n" +
-        "    url \"{{distributionUrl}}\"\n" +
+        "    url \"{{distributionUrl}}\"{{#brewDownloadStrategy}}, :using => {{.}}{{/brewDownloadStrategy}}\n" +
         "    sha256 \"{{distributionChecksumSha256}}\"\n" +
         "  end\n";
 
     private static final String TPL_MAC_ARM_FLAT_BINARY = "  if OS.mac? && Hardware::CPU.arm?\n" +
-        "    url \"{{distributionUrl}}\"\n" +
+        "    url \"{{distributionUrl}}\"{{#brewDownloadStrategy}}, :using => {{.}}{{/brewDownloadStrategy}}\n" +
         "    sha256 \"{{distributionChecksumSha256}}\"\n" +
         "\n" +
         "    def install\n" +
@@ -115,7 +117,7 @@ BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> 
         "    end\n" +
         "  end\n";
     private static final String TPL_MAC_INTEL_FLAT_BINARY = "  if OS.mac? && Hardware::CPU.intel?\n" +
-        "    url \"{{distributionUrl}}\"\n" +
+        "    url \"{{distributionUrl}}\"{{#brewDownloadStrategy}}, :using => {{.}}{{/brewDownloadStrategy}}\n" +
         "    sha256 \"{{distributionChecksumSha256}}\"\n" +
         "\n" +
         "    def install\n" +
@@ -123,7 +125,7 @@ BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> 
         "    end\n" +
         "  end\n";
     private static final String TPL_LINUX_ARM_FLAT_BINARY = "  if OS.linux? && Hardware::CPU.arm? && Hardware::CPU.is_64_bit?\n" +
-        "    url \"{{distributionUrl}}\"\n" +
+        "    url \"{{distributionUrl}}\"{{#brewDownloadStrategy}}, :using => {{.}}{{/brewDownloadStrategy}}\n" +
         "    sha256 \"{{distributionChecksumSha256}}\"\n" +
         "\n" +
         "    def install\n" +
@@ -131,7 +133,7 @@ BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> 
         "    end\n" +
         "  end\n";
     private static final String TPL_LINUX_INTEL_FLAT_BINARY = "  if OS.linux? && Hardware::CPU.intel?\n" +
-        "    url \"{{distributionUrl}}\"\n" +
+        "    url \"{{distributionUrl}}\"{{#brewDownloadStrategy}}, :using => {{.}}{{/brewDownloadStrategy}}\n" +
         "    sha256 \"{{distributionChecksumSha256}}\"\n" +
         "\n" +
         "    def install\n" +
@@ -167,6 +169,8 @@ BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> 
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
 
         props.set(KEY_BREW_FORMULA_NAME, packager.getResolvedFormulaName(props));
+        props.set(KEY_BREW_DOWNLOAD_STRATEGY, packager.getDownloadStrategy());
+        props.set(KEY_BREW_REQUIRE_RELATIVE, packager.getRequireRelative());
 
         props.set(KEY_HOMEBREW_TAP_REPO_OWNER, packager.getRepository().getOwner());
         props.set(KEY_HOMEBREW_TAP_REPO_NAME, packager.getRepository().getResolvedName());
