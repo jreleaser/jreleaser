@@ -20,11 +20,14 @@ package org.jreleaser.sdk.nexus2;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.spi.deploy.DeployException;
-import org.jreleaser.sdk.commons.AbstractMavenDeployer;
 import org.jreleaser.model.spi.deploy.maven.Deployable;
+import org.jreleaser.sdk.commons.AbstractMavenDeployer;
 import org.jreleaser.sdk.nexus2.api.NexusAPIException;
 
 import java.util.Set;
+
+import static org.jreleaser.util.StringUtils.capitalize;
+import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
 
 /**
  * @author Andres Almiray
@@ -82,6 +85,7 @@ public class Nexus2MavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
             try {
                 context.getLogger().info(RB.$("nexus.lookup.staging.profile", groupId));
                 stagingProfileId = nexus.findStagingProfileId(groupId);
+                context.getAdditionalProperties().put(prefix("stagingProfileId"), stagingProfileId);
             } catch (Nexus2Exception e) {
                 if (e.getCause() instanceof NexusAPIException) {
                     NexusAPIException ne = (NexusAPIException) e.getCause();
@@ -108,6 +112,7 @@ public class Nexus2MavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
                 try {
                     context.getLogger().info(RB.$("nexus.create.staging.repository", groupId));
                     stagingRepositoryId = nexus.createStagingRepository(stagingProfileId, groupId);
+                    context.getAdditionalProperties().put(prefix("stagingRepositoryId"), stagingRepositoryId);
                 } catch (Nexus2Exception e) {
                     context.getLogger().trace(e);
                     throw new DeployException(RB.$("ERROR_nexus_create_staging_repository", groupId), e);
@@ -151,5 +156,12 @@ public class Nexus2MavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
                 throw new DeployException(RB.$("ERROR_nexus_release_repository", stagingRepositoryId), e);
             }
         }
+    }
+
+    private String prefix(String input) {
+        return "deploy" +
+            capitalize(getDeployer().getType()) +
+            getClassNameForLowerCaseHyphenSeparatedName(getDeployer().getName()) +
+            capitalize(input);
     }
 }

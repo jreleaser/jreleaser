@@ -77,6 +77,7 @@ import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableMap;
 import static org.jreleaser.model.Constants.KEY_COMMIT_FULL_HASH;
 import static org.jreleaser.model.Constants.KEY_COMMIT_SHORT_HASH;
 import static org.jreleaser.model.Constants.KEY_GRAALVM_NAGIVE_IMAGE;
@@ -125,6 +126,7 @@ public class JReleaserContext {
     private final Configurer configurer;
     private final Errors errors = new Errors();
     private final Changelog changelog = new Changelog();
+    private final Map<String, Object> additionalProperties = new LinkedHashMap<>();
 
     private final List<String> selectedPlatforms = new ArrayList<>();
     private final List<String> rejectedPlatforms = new ArrayList<>();
@@ -158,7 +160,7 @@ public class JReleaserContext {
 
     @JsonIgnore
     private final org.jreleaser.model.api.JReleaserContext immutable = new org.jreleaser.model.api.JReleaserContext() {
-        private static final long serialVersionUID = 4782005131002875174L;
+        private static final long serialVersionUID = -897799871224857906L;
 
         @Override
         public Path relativize(Path basedir, Path other) {
@@ -378,6 +380,11 @@ public class JReleaserContext {
         @Override
         public Changelog getChangelog() {
             return JReleaserContext.this.changelog;
+        }
+
+        @Override
+        public Map<String, Object> getAdditionalProperties() {
+            return unmodifiableMap(JReleaserContext.this.getAdditionalProperties());
         }
     };
 
@@ -925,6 +932,10 @@ public class JReleaserContext {
         return props;
     }
 
+    public Map<String, Object> getAdditionalProperties() {
+        return additionalProperties;
+    }
+
     @Override
     public String toString() {
         return "JReleaserContext[" +
@@ -981,6 +992,8 @@ public class JReleaserContext {
         safePut(project.prefix() + capitalize(KEY_VERSION_WEEK), resolvedExtraProperties, props);
         safePut(project.prefix() + capitalize(KEY_VERSION_MICRO), resolvedExtraProperties, props);
         safePut(project.prefix() + capitalize(KEY_VERSION_MODIFIER), resolvedExtraProperties, props);
+
+        props.putAll(getAdditionalProperties());
 
         Path output = getOutputDirectory().resolve("output.properties");
 

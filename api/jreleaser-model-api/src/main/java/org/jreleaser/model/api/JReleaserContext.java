@@ -25,6 +25,7 @@ import org.jreleaser.mustache.TemplateContext;
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 
 import static org.jreleaser.model.Constants.KEY_CHANGELOG;
 import static org.jreleaser.model.Constants.KEY_CHANGELOG_CHANGES;
@@ -131,6 +132,8 @@ public interface JReleaserContext extends Serializable {
     Keyring createKeyring() throws SigningException;
 
     Changelog getChangelog();
+
+    Map<String, Object> getAdditionalProperties();
 
     class Changelog implements Serializable {
         private static final long serialVersionUID = -7619174395858420344L;
