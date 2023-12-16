@@ -139,6 +139,8 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
     private Errors checkMavenCentralRules(Map<String, Deployable> deployablesMap) {
         Errors errors = new Errors();
 
+        context.getLogger().info(RB.$("deployers.maven.prerequesites"));
+
         // 1st check jar, sources, javadoc if applicable
         for (Deployable deployable : deployablesMap.values()) {
             if (!deployable.getFilename().endsWith(EXT_POM)) {
@@ -173,6 +175,8 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
         if (!getDeployer().isVerifyPom()) {
             return errors;
         }
+
+        context.getLogger().info(RB.$("deployers.maven.verify.poms"));
 
         Maven.Pomchecker pomcheckerModel = context.getModel().getDeploy().getMaven().getPomchecker();
         PomChecker pomChecker = new PomChecker(context.asImmutable(),
@@ -210,6 +214,8 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
             }
             args.add("--file");
             args.add(deployable.getLocalPath().toAbsolutePath().toString());
+
+            context.getLogger().debug(RB.$("deployers.maven.verify.pom", deployable.getLocalPath()));
 
             Command.Result result = Command.Result.empty();
             try {
@@ -311,7 +317,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
         String keyID = publicKeyID.get().toUpperCase(Locale.ENGLISH);
         boolean published = false;
 
-        context.getLogger().debug(RB.$("signing.check.published.key", keyID));
+        context.getLogger().info(RB.$("signing.check.published.key", keyID));
         for (Map.Entry<String, String> e : KEY_SERVERS.entrySet()) {
             try {
                 URL url = new URI(String.format(e.getValue(), keyID)).toURL();
