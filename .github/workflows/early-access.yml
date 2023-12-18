@@ -57,25 +57,25 @@ jobs:
           fetch-depth: 0
 
       - name: Download artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: artifacts
           path: plugins
 
       - name: Download jlink
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: jlink
           path: out/jreleaser/assemble/jreleaser-standalone/jlink
 
       - name: Download jpackage
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: jpackage
           path: out/jreleaser/assemble/jreleaser-installer/jpackage
 
       - name: Download native-image
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: native-image
           path: out/jreleaser/assemble/jreleaser-native/native-image

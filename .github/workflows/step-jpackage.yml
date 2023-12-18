@@ -31,13 +31,13 @@ jobs:
           ref: main
 
       - name: Download artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: artifacts
           path: plugins
 
       - name: Download jlink
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: jlink
           path: out/jreleaser/assemble/jreleaser-standalone/jlink
