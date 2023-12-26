@@ -155,4 +155,30 @@ public final class Env {
 
         return value;
     }
+
+    public static String resolve(Collection<String> keys, Properties values) {
+        List<String> sysKeys = keys.stream()
+            .map(Env::sysKey)
+            .collect(toList());
+
+        List<String> envKeys = keys.stream()
+            .map(Env::envKey)
+            .collect(toList());
+
+        String value = sysKeys.stream()
+            .filter(System.getProperties()::containsKey)
+            .map(System::getProperty)
+            .findFirst()
+            .orElse(null);
+
+        if (isBlank(value)) {
+            value = envKeys.stream()
+                .filter(values::containsKey)
+                .map(values::getProperty)
+                .findFirst()
+                .orElse(null);
+        }
+
+        return value;
+    }
 }

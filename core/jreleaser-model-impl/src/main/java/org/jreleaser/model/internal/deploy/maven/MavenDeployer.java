@@ -105,6 +105,8 @@ public interface MavenDeployer<A extends org.jreleaser.model.api.deploy.maven.Ma
 
     String getResolvedUrl(TemplateContext props);
 
+    List<String> keysFor(String property);
+
     final class ArtifactOverride extends AbstractModelObject<ArtifactOverride> implements Domain {
         private static final long serialVersionUID = 2308197517238220999L;
 

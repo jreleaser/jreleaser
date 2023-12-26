@@ -34,6 +34,7 @@ import java.util.Set;
 import static org.jreleaser.model.Constants.HIDE;
 import static org.jreleaser.model.Constants.UNSET;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
+import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -41,7 +42,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 1.3.0
  */
 public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A>, A extends org.jreleaser.model.api.deploy.maven.MavenDeployer> extends AbstractActivatable<S> implements MavenDeployer<A>, ExtraProperties {
-    private static final long serialVersionUID = 3334353868339083386L;
+    private static final long serialVersionUID = 3476368095568953617L;
 
     @JsonIgnore
     private final String type;
@@ -369,5 +370,14 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
         }
 
         return authorization;
+    }
+
+    @Override
+    public List<String> keysFor(String property) {
+        return listOf(
+            "deploy.maven." + getType() + "." + getName() + "." + property,
+            "deploy.maven." + getType() + "." + property,
+            getType() + "." + getName() + "." + property,
+            getType() + "." + property);
     }
 }

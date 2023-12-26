@@ -17,8 +17,10 @@
  */
 package org.jreleaser.sdk.nexus2;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.RuntimeJsonMappingException;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import dev.failsafe.Failsafe;
 import dev.failsafe.RetryPolicy;
 import dev.failsafe.function.CheckedPredicate;
@@ -69,7 +71,9 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toList;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 import static org.jreleaser.util.StringUtils.uncapitalize;
@@ -135,6 +139,21 @@ public class Nexus2 {
                 .max(Comparator.comparingInt(profile -> profile.getName().length()))
                 .map(StagingProfile::getId)
                 .orElseThrow(() -> fail(RB.$("ERROR_nexus_find_staging_profile", groupId)));
+        });
+    }
+
+    public List<StagingProfileRepository> findStagingProfileRepositories(String profileId, String groupId) throws Nexus2Exception {
+        return wrap(() -> {
+            Data<List<StagingProfileRepository>> data = api.getStagingProfileRepositories();
+            if (null == data || null == data.getData()) {
+                throw fail(RB.$("ERROR_nexus_create_staging_repository", groupId));
+            }
+
+            return data.getData().stream()
+                .filter(r -> r.getProfileId().equals(profileId))
+                .filter(r -> r.getProfileName().equals(groupId))
+                .sorted(comparing(StagingProfileRepository::getUpdated).reversed())
+                .collect(toList());
         });
     }
 
@@ -329,8 +348,11 @@ public class Nexus2 {
     }
 
     static class ContentNegotiationDecoder implements Decoder {
-        private final XmlDecoder xml = new XmlDecoder();
-        private final JacksonDecoder json = new JacksonDecoder();
+        private final XmlDecoder xml = new XmlDecoder((XmlMapper) new XmlMapper()
+            .registerModule(new JavaTimeModule()));
+
+        private final JacksonDecoder json = new JacksonDecoder(new ObjectMapper()
+            .registerModule(new JavaTimeModule()));
 
         @Override
         public Object decode(Response response, Type type) throws IOException, DecodeException, FeignException {

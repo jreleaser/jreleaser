@@ -111,11 +111,7 @@ public final class MavenDeployersValidator {
 
         mavenDeployer.setUrl(
             checkProperty(context,
-                listOf(
-                    "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".url",
-                    "deploy.maven." + mavenDeployer.getType() + ".url",
-                    mavenDeployer.getType() + "." + mavenDeployer.getName() + ".url",
-                    mavenDeployer.getType() + ".url"),
+                mavenDeployer.keysFor("url"),
                 "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".url",
                 mavenDeployer.getUrl(),
                 errors));
@@ -146,11 +142,7 @@ public final class MavenDeployersValidator {
             case BASIC:
                 mavenDeployer.setUsername(
                     checkProperty(context,
-                        listOf(
-                            "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".username",
-                            "deploy.maven." + mavenDeployer.getType() + ".username",
-                            mavenDeployer.getType() + "." + mavenDeployer.getName() + ".username",
-                            mavenDeployer.getType() + ".username"),
+                        mavenDeployer.keysFor("username"),
                         "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".username",
                         mavenDeployer.getUsername(),
                         service.getUsername()));

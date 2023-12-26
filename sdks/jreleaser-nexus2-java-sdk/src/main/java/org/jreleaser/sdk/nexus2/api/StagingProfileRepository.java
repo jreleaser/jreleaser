@@ -19,6 +19,7 @@ package org.jreleaser.sdk.nexus2.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.time.Instant;
 import java.util.Locale;
 
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -34,6 +35,8 @@ public class StagingProfileRepository {
     private String repositoryId;
     private String type;
     private boolean transitioning;
+    private Instant created;
+    private Instant updated;
 
     public String getProfileId() {
         return profileId;
@@ -79,6 +82,22 @@ public class StagingProfileRepository {
         return State.of(type);
     }
 
+    public Instant getCreated() {
+        return created;
+    }
+
+    public void setCreated(Instant created) {
+        this.created = created;
+    }
+
+    public Instant getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(Instant updated) {
+        this.updated = updated;
+    }
+
     @Override
     public String toString() {
         return "StagingProfileRepository{" +
@@ -86,6 +105,8 @@ public class StagingProfileRepository {
             ", profileName='" + profileName + '\'' +
             ", repositoryId='" + repositoryId + '\'' +
             ", type='" + type + '\'' +
+            ", created='" + created + '\'' +
+            ", updated='" + updated + '\'' +
             ", transitioning=" + transitioning +
             '}';
     }

@@ -18,16 +18,23 @@
 package org.jreleaser.sdk.nexus2;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.Stage;
+import org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.StageOperation;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.spi.deploy.DeployException;
 import org.jreleaser.model.spi.deploy.maven.Deployable;
 import org.jreleaser.sdk.commons.AbstractMavenDeployer;
 import org.jreleaser.sdk.nexus2.api.NexusAPIException;
+import org.jreleaser.sdk.nexus2.api.StagingProfileRepository;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSeparatedName;
+import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -35,6 +42,7 @@ import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSepar
  */
 public class Nexus2MavenDeployer extends AbstractMavenDeployer<org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer,
     org.jreleaser.model.internal.deploy.maven.Nexus2MavenDeployer> {
+
     private org.jreleaser.model.internal.deploy.maven.Nexus2MavenDeployer deployer;
 
     public Nexus2MavenDeployer(JReleaserContext context) {
@@ -58,10 +66,36 @@ public class Nexus2MavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
 
     @Override
     public void deploy(String name) throws DeployException {
-        Set<Deployable> deployables = collectDeployables();
+        Stage startStage = deployer.getStartStage();
+        Stage endStage = deployer.getEndStage();
+        StageOperation op = StageOperation.of(startStage, endStage);
+        String stagingProfileId = deployer.getStagingProfileId();
+        String stagingRepositoryId = deployer.getStagingRepositoryId();
 
-        if (deployables.isEmpty()) {
-            context.getLogger().info(RB.$("artifacts.no.match"));
+        if (null != startStage) {
+            context.getLogger().debug(RB.$("set.to", "start.stage", startStage));
+        }
+        if (null != endStage) {
+            context.getLogger().debug(RB.$("set.to", "end.stage", endStage));
+        }
+        if (null != op) {
+            context.getLogger().info(RB.$("set.to", "nexus2", op));
+        }
+        if (isNotBlank(stagingProfileId)) {
+            context.getLogger().debug(RB.$("set.to", "stagingProfileId", stagingProfileId));
+        }
+        if (isNotBlank(stagingProfileId)) {
+            context.getLogger().debug(RB.$("set.to", "stagingRepositoryId", stagingRepositoryId));
+        }
+
+        Set<Deployable> deployables = Collections.emptySet();
+
+        if (op == StageOperation.FULL_DEPLOYMENT || op == StageOperation.UPLOAD || op == StageOperation.UPLOAD_AND_CLOSE) {
+            deployables = collectDeployables();
+            if (deployables.isEmpty()) {
+                context.getLogger().info(RB.$("artifacts.no.match"));
+                return;
+            }
         }
 
         boolean isSnapshot = context.getModel().getProject().isSnapshot();
@@ -71,55 +105,133 @@ public class Nexus2MavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
         }
         String username = deployer.getUsername();
         String password = deployer.getPassword();
+        String groupId = context.getModel().getProject().getJava().getGroupId();
 
         Nexus2 nexus = new Nexus2(context.getLogger(), baseUrl, username, password,
             deployer.getConnectTimeout(), deployer.getReadTimeout(), context.isDryrun(),
             deployer.getTransitionDelay(), deployer.getTransitionMaxRetries());
 
-        String groupId = context.getModel().getProject().getJava().getGroupId();
-
-        String stagingProfileId = null;
-        String stagingRepositoryId = null;
-
         if (!isSnapshot) {
-            try {
-                context.getLogger().info(RB.$("nexus.lookup.staging.profile", groupId));
-                stagingProfileId = nexus.findStagingProfileId(groupId);
-                context.getAdditionalProperties().put(prefix("stagingProfileId"), stagingProfileId);
-            } catch (Nexus2Exception e) {
-                if (e.getCause() instanceof NexusAPIException) {
-                    NexusAPIException ne = (NexusAPIException) e.getCause();
-                    if (context.isDryrun()) {
-                        if (ne.isUnauthorized() || ne.isForbidden()) {
-                            context.getLogger().warn(RB.$("ERROR_nexus_forbidden"));
-                        } else {
-                            context.getLogger().warn(RB.$("ERROR_nexus_find_staging_profile", groupId), e);
-                        }
-                    } else if (ne.isUnauthorized() || ne.isForbidden()) {
-                        throw new DeployException(RB.$("ERROR_nexus_forbidden"), ne);
-                    }
-                    if (!context.isDryrun()) {
-                        throw new DeployException(RB.$("ERROR_nexus_find_staging_profile", groupId), e);
-                    }
-                } else if (context.isDryrun()) {
-                    context.getLogger().warn(RB.$("ERROR_nexus_find_staging_profile", groupId));
-                } else {
-                    throw new DeployException(RB.$("ERROR_nexus_find_staging_profile", groupId), e);
+            if (op == StageOperation.FULL_DEPLOYMENT || op == StageOperation.UPLOAD || op == StageOperation.UPLOAD_AND_CLOSE) {
+                if (isBlank(stagingProfileId)) {
+                    stagingProfileId = findStagingProfileId(nexus, groupId);
                 }
-            }
 
-            if (!context.isDryrun()) {
-                try {
-                    context.getLogger().info(RB.$("nexus.create.staging.repository", groupId));
-                    stagingRepositoryId = nexus.createStagingRepository(stagingProfileId, groupId);
-                    context.getAdditionalProperties().put(prefix("stagingRepositoryId"), stagingRepositoryId);
-                } catch (Nexus2Exception e) {
-                    context.getLogger().trace(e);
-                    throw new DeployException(RB.$("ERROR_nexus_create_staging_repository", groupId), e);
+                if (!context.isDryrun()) {
+                    stagingRepositoryId = createStagingRepository(nexus, groupId, stagingProfileId);
+                }
+            } else {
+                if (isBlank(stagingProfileId)) {
+                    stagingProfileId = findStagingProfileId(nexus, groupId);
+                }
+                if (isBlank(stagingProfileId) && !context.isDryrun()) {
+                    throw new DeployException(RB.$("ERROR_nexus_find_staging_profile", groupId));
+                }
+
+                if (isBlank(stagingRepositoryId)) {
+                    List<StagingProfileRepository> repositories = findStagingRepositories(nexus, groupId, stagingProfileId);
+
+                    if (op == StageOperation.RELEASE) {
+                        stagingRepositoryId = repositories.stream()
+                            .filter(r -> r.getState() == StagingProfileRepository.State.CLOSED)
+                            .map(StagingProfileRepository::getRepositoryId)
+                            .findFirst()
+                            .orElse(null);
+                    }
+
+                    if (isBlank(stagingRepositoryId)) {
+                        stagingRepositoryId = repositories.stream()
+                            .filter(r -> r.getState() == StagingProfileRepository.State.OPEN)
+                            .map(StagingProfileRepository::getRepositoryId)
+                            .findFirst()
+                            .orElse(null);
+                    }
+                }
+
+                if (isBlank(stagingRepositoryId) && !context.isDryrun()) {
+                    throw new DeployException(RB.$("ERROR_nexus_find_staging_repository", groupId));
                 }
             }
         }
 
+        if (op == StageOperation.FULL_DEPLOYMENT || op == StageOperation.UPLOAD || op == StageOperation.UPLOAD_AND_CLOSE) {
+            uploadArtifacts(nexus, deployables, stagingRepositoryId);
+            if (Stage.UPLOAD == endStage) return;
+        }
+
+        if (op == StageOperation.FULL_DEPLOYMENT || op == StageOperation.CLOSE || op == StageOperation.UPLOAD_AND_CLOSE ||
+            op == StageOperation.CLOSE_AND_RELEASE) {
+            closeRepository(nexus, isSnapshot, groupId, stagingProfileId, stagingRepositoryId);
+            if (Stage.CLOSE == endStage) return;
+        }
+
+        if (op == StageOperation.RELEASE) {
+            try {
+                // attempt to close the repository
+                closeRepository(nexus, isSnapshot, groupId, stagingProfileId, stagingRepositoryId);
+            } catch (DeployException e) {
+                // ignored, repository is already closed
+            }
+        }
+
+        releaseRepository(nexus, isSnapshot, groupId, stagingProfileId, stagingRepositoryId);
+    }
+
+    private String findStagingProfileId(Nexus2 nexus, String groupId) throws DeployException {
+        try {
+            context.getLogger().info(RB.$("nexus.lookup.staging.profile", groupId));
+            String stagingProfileId = nexus.findStagingProfileId(groupId);
+            context.getAdditionalProperties().put(prefix("stagingProfileId"), stagingProfileId);
+            return stagingProfileId;
+        } catch (Nexus2Exception e) {
+            if (e.getCause() instanceof NexusAPIException) {
+                NexusAPIException ne = (NexusAPIException) e.getCause();
+                if (context.isDryrun()) {
+                    if (ne.isUnauthorized() || ne.isForbidden()) {
+                        context.getLogger().warn(RB.$("ERROR_nexus_forbidden"));
+                    } else {
+                        context.getLogger().warn(RB.$("ERROR_nexus_find_staging_profile", groupId), e);
+                    }
+                } else if (ne.isUnauthorized() || ne.isForbidden()) {
+                    throw new DeployException(RB.$("ERROR_nexus_forbidden"), ne);
+                }
+                if (!context.isDryrun()) {
+                    throw new DeployException(RB.$("ERROR_nexus_find_staging_profile", groupId), e);
+                }
+            } else if (context.isDryrun()) {
+                context.getLogger().warn(RB.$("ERROR_nexus_find_staging_profile", groupId));
+            } else {
+                throw new DeployException(RB.$("ERROR_nexus_find_staging_profile", groupId), e);
+            }
+        }
+
+        return null;
+    }
+
+    private String createStagingRepository(Nexus2 nexus, String groupId, String stagingProfileId) throws DeployException {
+        String stagingRepositoryId;
+        try {
+            context.getLogger().info(RB.$("nexus.create.staging.repository", groupId));
+            stagingRepositoryId = nexus.createStagingRepository(stagingProfileId, groupId);
+            context.getAdditionalProperties().put(prefix("stagingRepositoryId"), stagingRepositoryId);
+        } catch (Nexus2Exception e) {
+            context.getLogger().trace(e);
+            throw new DeployException(RB.$("ERROR_nexus_create_staging_repository", groupId), e);
+        }
+        return stagingRepositoryId;
+    }
+
+    private List<StagingProfileRepository> findStagingRepositories(Nexus2 nexus, String groupId, String stagingProfileId) throws DeployException {
+        try {
+            context.getLogger().info(RB.$("nexus.lookup.staging.repositories", groupId));
+            return nexus.findStagingProfileRepositories(stagingProfileId, groupId);
+        } catch (Nexus2Exception e) {
+            context.getLogger().trace(e);
+            throw new DeployException(RB.$("ERROR_nexus_find_staging_repositories", groupId), e);
+        }
+    }
+
+    private void uploadArtifacts(Nexus2 nexus, Set<Deployable> deployables, String stagingRepositoryId) throws DeployException {
         for (Deployable deployable : deployables) {
             context.getLogger().info(" - {}", deployable.getFullDeployPath());
 
@@ -134,7 +246,9 @@ public class Nexus2MavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
                 }
             }
         }
+    }
 
+    private void closeRepository(Nexus2 nexus, boolean isSnapshot, String groupId, String stagingProfileId, String stagingRepositoryId) throws DeployException {
         if (!isSnapshot && !context.isDryrun() && deployer.isCloseRepository()) {
             try {
                 context.getLogger().info(RB.$("nexus.close.repository", stagingRepositoryId));
@@ -145,7 +259,9 @@ public class Nexus2MavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
                 throw new DeployException(RB.$("ERROR_nexus_close_repository", stagingRepositoryId), e);
             }
         }
+    }
 
+    private void releaseRepository(Nexus2 nexus, boolean isSnapshot, String groupId, String stagingProfileId, String stagingRepositoryId) throws DeployException {
         if (!isSnapshot && !context.isDryrun() && deployer.isReleaseRepository()) {
             try {
                 context.getLogger().info(RB.$("nexus.release.repository", stagingRepositoryId));

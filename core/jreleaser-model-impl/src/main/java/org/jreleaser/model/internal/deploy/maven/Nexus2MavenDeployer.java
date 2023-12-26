@@ -36,13 +36,18 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
  * @since 1.3.0
  */
 public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2MavenDeployer, org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer> {
-    private static final long serialVersionUID = 5297196267872863920L;
+    private static final long serialVersionUID = -7773341895745944692L;
 
     private String snapshotUrl;
     private Boolean closeRepository;
     private Boolean releaseRepository;
     private int transitionDelay;
     private int transitionMaxRetries;
+
+    private String stagingProfileId;
+    private String stagingRepositoryId;
+    private org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.Stage startStage;
+    private org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.Stage endStage;
 
     @JsonIgnore
     private final org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer immutable = new org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer() {
@@ -258,6 +263,38 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
         this.transitionMaxRetries = transitionMaxRetries;
     }
 
+    public String getStagingProfileId() {
+        return stagingProfileId;
+    }
+
+    public void setStagingProfileId(String stagingProfileId) {
+        this.stagingProfileId = stagingProfileId;
+    }
+
+    public String getStagingRepositoryId() {
+        return stagingRepositoryId;
+    }
+
+    public void setStagingRepositoryId(String stagingRepositoryId) {
+        this.stagingRepositoryId = stagingRepositoryId;
+    }
+
+    public org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.Stage getStartStage() {
+        return startStage;
+    }
+
+    public void setStartStage(org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.Stage startStage) {
+        this.startStage = startStage;
+    }
+
+    public org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.Stage getEndStage() {
+        return endStage;
+    }
+
+    public void setEndStage(org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.Stage endStage) {
+        this.endStage = endStage;
+    }
+
     @Override
     public boolean isSnapshotSupported() {
         return true;
@@ -277,5 +314,9 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
         props.put("releaseRepository", isReleaseRepository());
         props.put("transitionDelay", transitionDelay);
         props.put("transitionMaxRetries", transitionMaxRetries);
+        props.put("stagingProfileId", stagingProfileId);
+        props.put("stagingRepositoryId", stagingRepositoryId);
+        props.put("startStage", startStage);
+        props.put("endStage", endStage);
     }
 }

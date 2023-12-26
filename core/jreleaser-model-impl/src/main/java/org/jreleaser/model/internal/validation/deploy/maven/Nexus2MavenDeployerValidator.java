@@ -19,15 +19,22 @@ package org.jreleaser.model.internal.validation.deploy.maven;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.api.JReleaserContext.Mode;
+import org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.Stage;
+import org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.StageOperation;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.deploy.maven.Nexus2MavenDeployer;
+import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
 import java.util.Map;
+import java.util.Properties;
 
+import static org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.END_STAGE;
+import static org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.STAGING_PROFILE_ID;
+import static org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.STAGING_REPOSITORY_ID;
+import static org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.START_STAGE;
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
 import static org.jreleaser.model.internal.validation.deploy.maven.MavenDeployersValidator.validateMavenDeployer;
-import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -72,15 +79,23 @@ public final class Nexus2MavenDeployerValidator {
         if (context.getModel().getProject().isSnapshot()) {
             mavenDeployer.setSnapshotUrl(
                 checkProperty(context,
-                    listOf(
-                        "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".snapshot.url",
-                        "deploy.maven." + mavenDeployer.getType() + ".snapshot.url",
-                        mavenDeployer.getType() + "." + mavenDeployer.getName() + ".snapshot.url",
-                        mavenDeployer.getType() + ".snapshot.url"),
+                    mavenDeployer.keysFor("snapshot.url"),
                     "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".snapshotUrl",
                     mavenDeployer.getSnapshotUrl(),
                     errors));
 
+        }
+
+        Properties vars = context.getModel().getEnvironment().getVars();
+        mavenDeployer.setStagingProfileId(Env.resolve(mavenDeployer.keysFor(STAGING_PROFILE_ID), vars));
+        mavenDeployer.setStagingRepositoryId(Env.resolve(mavenDeployer.keysFor(STAGING_REPOSITORY_ID), vars));
+        mavenDeployer.setStartStage(Stage.of(Env.resolve(mavenDeployer.keysFor(START_STAGE), vars)));
+        mavenDeployer.setEndStage(Stage.of(Env.resolve(mavenDeployer.keysFor(END_STAGE), vars)));
+
+        try {
+            StageOperation.of(mavenDeployer.getStartStage(), mavenDeployer.getEndStage());
+        } catch (IllegalArgumentException e) {
+            errors.configuration(e.getMessage());
         }
 
         if (isBlank(context.getModel().getProject().getJava().getGroupId())) {

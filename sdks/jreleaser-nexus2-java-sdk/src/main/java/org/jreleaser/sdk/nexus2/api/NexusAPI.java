@@ -32,6 +32,10 @@ public interface NexusAPI {
     @Headers("Content-Type: application/json")
     Data<List<StagingProfile>> getStagingProfiles();
 
+    @RequestLine("GET /staging/profile_repositories")
+    @Headers("Content-Type: application/json")
+    Data<List<StagingProfileRepository>> getStagingProfileRepositories();
+
     @RequestLine("GET /staging/repository/{repositoryId}")
     @Headers("Content-Type: application/json")
     StagingProfileRepository getStagingRepository(@Param("repositoryId") String repositoryId);
