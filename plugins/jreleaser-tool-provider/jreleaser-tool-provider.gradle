@@ -119,6 +119,10 @@ classes.dependsOn(versionFile)
 
 afterEvaluate {
     def shadowJar = project.tasks.findByName('shadowJar')
-    def publishMainPublicationToMavenLocal = project.tasks.findByName('publishMainPublicationToMavenLocal')
-    if (publishMainPublicationToMavenLocal && shadowJar) publishMainPublicationToMavenLocal.dependsOn(shadowJar)
+    def publishTask = project.tasks.findByName('publishMainPublicationToMavenLocal')
+    if (publishTask && shadowJar) publishTask.dependsOn(shadowJar)
+    publishTask = tasks.findByName('publishMainPublicationToLocalSnapshotRepository')
+    if (publishTask && shadowJar) publishTask.dependsOn(shadowJar)
+    publishTask = tasks.findByName('publishMainPublicationToLocalReleaseRepository')
+    if (publishTask && shadowJar) publishTask.dependsOn(shadowJar)
 }
