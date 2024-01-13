@@ -669,6 +669,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "rtbad",
+      "name": "Arturo Badillo",
+      "avatar_url": "https://avatars.githubusercontent.com/u/89932745?v=4",
+      "profile": "https://github.com/rtbad",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
