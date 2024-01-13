@@ -20,7 +20,7 @@ package org.jreleaser.sdk.bluesky.api;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 
@@ -40,7 +40,7 @@ public class CreateTextRecordRequest {
 
         TextRecord textRecord = new TextRecord();
         textRecord.text = requireNonBlank(text, "'text' must not be blank").trim();
-        textRecord.createdAt = LocalDateTime.now().toString();
+        textRecord.createdAt = Instant.now().toString();
         request.record = textRecord;
 
         return request;
