@@ -116,7 +116,7 @@ jobs:
           ./gradlew cleanupStagedRepository
 
       - name: Upload deploy artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           retention-days: 7
           name: deploy
@@ -154,7 +154,7 @@ jobs:
 
       - name: JReleaser release output
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: jreleaser-release
           path: |
