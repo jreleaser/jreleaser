@@ -33,7 +33,7 @@ jobs:
           access_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3.23.0
+        uses: github/codeql-action/init@v3.23.1
         with:
           languages: java
 
@@ -45,7 +45,7 @@ jobs:
           cache: gradle
 
       - name: Autobuild
-        uses: github/codeql-action/autobuild@v3.23.0
+        uses: github/codeql-action/autobuild@v3.23.1
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3.23.0
+        uses: github/codeql-action/analyze@v3.23.1
