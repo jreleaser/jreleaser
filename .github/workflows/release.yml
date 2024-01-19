@@ -77,31 +77,33 @@ jobs:
           fetch-depth: 0
 
       - name: Download artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: artifacts
           path: plugins
 
       - name: Download jlink
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: jlink
           path: out/jreleaser/assemble/jreleaser-standalone/jlink
 
       - name: Download jpackage
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
-          name: jpackage
+          pattern: jpackage-*
+          merge-multiple: true
           path: out/jreleaser/assemble/jreleaser-installer/jpackage
 
       - name: Download native-image
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
-          name: native-image
+          pattern: native-image-*
+          merge-multiple: true
           path: out/jreleaser/assemble/jreleaser-native/native-image
 
       - name: Setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ vars.JAVA_VERSION }}
           distribution: ${{ vars.JAVA_DISTRO }}
@@ -116,7 +118,7 @@ jobs:
           ./gradlew cleanupStagedRepository
 
       - name: Upload deploy artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           retention-days: 7
           name: deploy
@@ -154,7 +156,7 @@ jobs:
 
       - name: JReleaser release output
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: jreleaser-release
           path: |
@@ -213,7 +215,7 @@ jobs:
           token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
       - name: Setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ vars.JAVA_VERSION }}
           distribution: ${{ vars.JAVA_DISTRO }}

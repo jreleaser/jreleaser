@@ -31,13 +31,13 @@ jobs:
           ref: main
 
       - name: Download artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: artifacts
           path: plugins
 
       - name: Download jlink
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: jlink
           path: out/jreleaser/assemble/jreleaser-standalone/jlink
@@ -50,7 +50,7 @@ jobs:
           unzip -q -d work-${{ matrix.job.platform }} jreleaser-standalone-${{ inputs.project-effective-version }}-${{ matrix.job.platform }}.zip
 
       - name: Setup Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: ${{ vars.JAVA_VERSION }}
           distribution: ${{ vars.JAVA_DISTRO }}
@@ -76,7 +76,7 @@ jobs:
 
       - name: JReleaser output
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: jreleaser-jpackage-${{ runner.os }}
           path: |
@@ -88,10 +88,10 @@ jobs:
         run: ./gradlew -stop
 
       - name: Upload jpackage
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           retention-days: 1
-          name: jpackage
+          name: jpackage-${{ runner.os }}
           path: |
             out/jreleaser/assemble/jreleaser-installer/jpackage/*.pkg
             out/jreleaser/assemble/jreleaser-installer/jpackage/*.msi
