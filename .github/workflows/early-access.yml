@@ -97,7 +97,7 @@ jobs:
 
       - name: JReleaser release output
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.2.0
         with:
           name: jreleaser-release
           path: |

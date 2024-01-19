@@ -172,7 +172,7 @@ jobs:
 
       - name: JReleaser output
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.2.0
         with:
           retention-days: 7
           name: 'jreleaser-cli-${{ runner.os }}'
@@ -184,7 +184,7 @@ jobs:
 
       - name: JaCoCo upload
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.2.0
         with:
           retention-days: 1
           name: jacoco
@@ -351,7 +351,7 @@ jobs:
 
       - name: JReleaser output
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.2.0
         with:
           retention-days: 7
           name: 'jreleaser-tool-${{ runner.os }}'
@@ -363,7 +363,7 @@ jobs:
 
       - name: JaCoCo upload
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.2.0
         with:
           retention-days: 1
           name: jacoco
@@ -528,7 +528,7 @@ jobs:
 
       - name: JReleaser output
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.2.0
         with:
           retention-days: 7
           name: 'jreleaser-full-release-ant-${{ runner.os }}'
@@ -540,7 +540,7 @@ jobs:
 
       - name: JaCoCo upload
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.2.0
         with:
           retention-days: 1
           name: jacoco
@@ -704,7 +704,7 @@ jobs:
 
       - name: JReleaser output
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.2.0
         with:
           retention-days: 7
           name: 'jreleaser-full-release-gradle-${{ runner.os }}'
@@ -716,7 +716,7 @@ jobs:
 
       - name: JaCoCo upload
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.2.0
         with:
           retention-days: 1
           name: jacoco
@@ -895,7 +895,7 @@ jobs:
 
       - name: JReleaser output
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.2.0
         with:
           retention-days: 7
           name: 'jreleaser-full-release-maven-${{ runner.os }}'
@@ -907,7 +907,7 @@ jobs:
 
       - name: JaCoCo upload
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.2.0
         with:
           retention-days: 1
           name: jacoco
@@ -965,7 +965,7 @@ jobs:
 
       - name: JaCoCo upload
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.2.0
         with:
           retention-days: 1
           name: jacoco
