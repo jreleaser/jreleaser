@@ -62,7 +62,7 @@ jobs:
           token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
       - name: Cache Maven packages
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.m2/repository
           key: setup-java-${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -187,7 +187,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           retention-days: 1
-          name: jacoco
+          name: 'jacoco-cli-${{ runner.os }}'
           path: smoketests-jreleaser/*.exec
 
       - name: Cleanup
@@ -241,7 +241,7 @@ jobs:
           token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
       - name: Cache Maven packages
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.m2/repository
           key: setup-java-${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -366,7 +366,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           retention-days: 1
-          name: jacoco
+          name: 'jacoco-tool-${{ runner.os }}'
           path: smoketests-jreleaser/*.exec
 
       - name: Cleanup
@@ -420,7 +420,7 @@ jobs:
           token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
       - name: Cache Maven packages
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.m2/repository
           key: setup-java-${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -531,7 +531,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           retention-days: 7
-          name: 'jreleaser-full-release-ant-${{ runner.os }}'
+          name: 'jreleaser-ant-${{ runner.os }}'
           path: |
             smoketests-jreleaser/build/jreleaser/trace.log
             smoketests-jreleaser/build/jreleaser/output.properties
@@ -543,7 +543,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           retention-days: 1
-          name: jacoco
+          name: 'jacoco-ant-${{ runner.os }}'
           path: smoketests-jreleaser/*.exec
 
       - name: Cleanup
@@ -597,7 +597,7 @@ jobs:
           token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
       - name: Cache Maven packages
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.m2/repository
           key: setup-java-${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -707,7 +707,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           retention-days: 7
-          name: 'jreleaser-full-release-gradle-${{ runner.os }}'
+          name: 'jreleaser-gradle-${{ runner.os }}'
           path: |
             smoketests-jreleaser/build/jreleaser/trace.log
             smoketests-jreleaser/build/jreleaser/output.properties
@@ -719,7 +719,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           retention-days: 1
-          name: jacoco
+          name: 'jacoco-gradle-${{ runner.os }}'
           path: smoketests-jreleaser/*.exec
 
       - name: Clean
@@ -786,7 +786,7 @@ jobs:
           token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
       - name: Cache Maven packages
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.m2/repository
           key: setup-java-${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -898,7 +898,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           retention-days: 7
-          name: 'jreleaser-full-release-maven-${{ runner.os }}'
+          name: 'jreleaser-maven-${{ runner.os }}'
           path: |
             smoketests-jreleaser/target/jreleaser/trace.log
             smoketests-jreleaser/target/jreleaser/output.properties
@@ -910,7 +910,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           retention-days: 1
-          name: jacoco
+          name: 'jacoco-maven-${{ runner.os }}'
           path: smoketests-jreleaser/*.exec
 
       - name: Cleanup
@@ -968,7 +968,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           retention-days: 1
-          name: jacoco
+          name: 'jacoco-${{ runner.os }}'
           path: '*.exec'
 
       - name: Cleanup
@@ -1007,7 +1007,8 @@ jobs:
       - name: Download JaCoCo execution data
         uses: actions/download-artifact@v4
         with:
-          name: jacoco
+          pattern: jacoco-*
+          merge-multiple: true
           path: jacoco
 
       - name: JaCoCo merge
@@ -1057,7 +1058,8 @@ jobs:
       - name: Download JaCoCo execution data
         uses: actions/download-artifact@v4
         with:
-          name: jacoco
+          pattern: jacoco-*
+          merge-multiple: true
           path: jacoco
 
       - name: JaCoCo merge
@@ -1112,7 +1114,8 @@ jobs:
       - name: Download JaCoCo execution data
         uses: actions/download-artifact@v4
         with:
-          name: jacoco
+          pattern: jacoco-*
+          merge-multiple: true
           path: jacoco
 
       - name: JaCoCo merge
