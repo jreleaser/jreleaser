@@ -63,6 +63,7 @@ public class ArchiveAssemblerProcessor extends AbstractAssemblerProcessor<org.jr
         copyArtifacts(context, archiveDirectory, PlatformUtils.getCurrentFull(), assembler.isAttachPlatform());
         copyFiles(context, archiveDirectory);
         copyFileSets(context, archiveDirectory);
+        generateSwidTag(context, archiveDirectory);
 
         // run archive x format
         for (Archive.Format format : assembler.getFormats()) {

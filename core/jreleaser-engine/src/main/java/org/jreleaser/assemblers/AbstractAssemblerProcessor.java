@@ -22,6 +22,7 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Constants;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.Assembler;
+import org.jreleaser.model.internal.catalog.swid.SwidTag;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.FileSet;
 import org.jreleaser.model.internal.common.Glob;
@@ -302,6 +303,18 @@ public abstract class AbstractAssemblerProcessor<A extends org.jreleaser.model.a
             }
         } catch (IOException e) {
             throw new AssemblerProcessingException(RB.$("ERROR_assembler_copying_files"), e);
+        }
+    }
+
+    protected void generateSwidTag(JReleaserContext context, Path archiveDirectory) throws AssemblerProcessingException {
+        SwidTag swidTag = assembler.getSwid();
+        if (!swidTag.isEnabled()) return;
+
+        context.getLogger().info(RB.$("assembler.swid.tag"), swidTag.getName());
+        try {
+            SwidTagGenerator.generateTag(context, archiveDirectory, swidTag);
+        } catch (IOException e) {
+            throw new AssemblerProcessingException(RB.$("ERROR_assemble_swid_tag", swidTag.getName()), e);
         }
     }
 

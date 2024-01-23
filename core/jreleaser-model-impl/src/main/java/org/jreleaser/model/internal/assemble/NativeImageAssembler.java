@@ -55,7 +55,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.2.0
  */
 public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImageAssembler, org.jreleaser.model.api.assemble.NativeImageAssembler> {
-
+    private static final long serialVersionUID = 4820695609246005132L;
 
     private final List<String> args = new ArrayList<>();
     private final Set<String> components = new LinkedHashSet<>();
@@ -73,7 +73,7 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
 
     @JsonIgnore
     private final org.jreleaser.model.api.assemble.NativeImageAssembler immutable = new org.jreleaser.model.api.assemble.NativeImageAssembler() {
-
+        private static final long serialVersionUID = -3773732095608192037L;
 
         private Set<? extends org.jreleaser.model.api.common.Artifact> artifacts;
         private Set<? extends org.jreleaser.model.api.common.Artifact> graalJdks;
@@ -205,6 +205,11 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
         @Override
         public org.jreleaser.model.api.platform.Platform getPlatform() {
             return NativeImageAssembler.this.getPlatform().asImmutable();
+        }
+
+        @Override
+        public org.jreleaser.model.api.catalog.swid.SwidTag getSwid() {
+            return NativeImageAssembler.this.getSwid().asImmutable();
         }
 
         @Override

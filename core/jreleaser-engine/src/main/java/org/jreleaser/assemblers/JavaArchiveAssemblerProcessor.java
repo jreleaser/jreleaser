@@ -81,6 +81,7 @@ public class JavaArchiveAssemblerProcessor extends AbstractAssemblerProcessor<or
         Path jarsDirectory = archiveDirectory.resolve("lib");
         context.getLogger().debug(RB.$("assembler.copy.jars"), context.relativizeToBasedir(jarsDirectory));
         copyJars(context, assembler, jarsDirectory);
+        generateSwidTag(context, archiveDirectory);
 
         // run archive x format
         for (Archive.Format format : assembler.getFormats()) {

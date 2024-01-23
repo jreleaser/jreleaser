@@ -30,6 +30,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.assemble.JpackageAssembler
 import org.jreleaser.gradle.plugin.dsl.common.Artifact
+import org.jreleaser.gradle.plugin.internal.dsl.catalog.swid.SwidTagImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.ArtifactImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.JavaImpl
 import org.jreleaser.gradle.plugin.internal.dsl.platform.PlatformImpl
@@ -53,6 +54,7 @@ class JpackageAssemblerImpl extends AbstractJavaAssembler implements JpackageAss
     final Property<Boolean> verbose
     final JavaImpl java
     final PlatformImpl platform
+    final SwidTagImpl swid
 
     private final ApplicationPackageImpl applicationPackage
     private final LauncherImpl launcher
@@ -70,6 +72,7 @@ class JpackageAssemblerImpl extends AbstractJavaAssembler implements JpackageAss
         verbose = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         java = objects.newInstance(JavaImpl, objects)
         platform = objects.newInstance(PlatformImpl, objects)
+        swid = objects.newInstance(SwidTagImpl, objects)
         applicationPackage = objects.newInstance(ApplicationPackageImpl, objects)
         launcher = objects.newInstance(LauncherImpl, objects)
         linux = objects.newInstance(LinuxImpl, objects)
@@ -192,6 +195,7 @@ class JpackageAssemblerImpl extends AbstractJavaAssembler implements JpackageAss
         for (ArtifactImpl artifact : runtimeImages) {
             assembler.addRuntimeImage(artifact.toModel())
         }
+        assembler.swid = swid.toModel()
 
         assembler
     }

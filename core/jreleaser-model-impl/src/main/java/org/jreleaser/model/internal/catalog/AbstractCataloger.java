@@ -30,6 +30,7 @@ import java.util.Map;
  * @since 1.6.0
  */
 public abstract class AbstractCataloger<S extends AbstractCataloger<S, A>, A extends org.jreleaser.model.api.catalog.Cataloger> extends AbstractActivatable<S> implements Cataloger<A>, ExtraProperties {
+    private static final long serialVersionUID = -6677881013912645741L;
 
     @JsonIgnore
     private final String type;

@@ -24,6 +24,7 @@ import static org.jreleaser.model.internal.validation.announce.AnnouncersValidat
 import static org.jreleaser.model.internal.validation.assemble.AssemblersValidator.postValidateAssemblers;
 import static org.jreleaser.model.internal.validation.assemble.AssemblersValidator.validateAssemblers;
 import static org.jreleaser.model.internal.validation.catalog.CatalogValidator.validateCatalog;
+import static org.jreleaser.model.internal.validation.catalog.swid.SwidTagValidator.validateSwid;
 import static org.jreleaser.model.internal.validation.checksum.ChecksumValidator.validateChecksum;
 import static org.jreleaser.model.internal.validation.deploy.DeployValidator.validateDeploy;
 import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.postValidateDistributions;
@@ -66,6 +67,7 @@ public final class JReleaserModelValidator {
         validateHooks(context, errors);
         validateProject(context, mode, errors);
         validateDownloaders(context, mode, errors);
+        validateSwid(context, mode, errors);
         validateAssemblers(context, mode, errors);
         if (null != context.getModel().getCommit()) {
             validateSigning(context, mode, errors);

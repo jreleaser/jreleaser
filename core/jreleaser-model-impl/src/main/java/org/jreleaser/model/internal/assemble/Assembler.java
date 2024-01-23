@@ -19,6 +19,7 @@ package org.jreleaser.model.internal.assemble;
 
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Stereotype;
+import org.jreleaser.model.internal.catalog.swid.SwidTag;
 import org.jreleaser.model.internal.common.Activatable;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.Domain;
@@ -101,6 +102,10 @@ public interface Assembler<A extends org.jreleaser.model.api.assemble.Assembler>
     void addFiles(List<Glob> files);
 
     void addFile(Glob file);
+
+    void setSwid(SwidTag swid);
+
+    SwidTag getSwid();
 
     A asImmutable();
 }

@@ -31,6 +31,7 @@ import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.assemble.JlinkAssembler
 import org.jreleaser.gradle.plugin.dsl.common.ArchiveOptions
 import org.jreleaser.gradle.plugin.dsl.common.Artifact
+import org.jreleaser.gradle.plugin.internal.dsl.catalog.swid.SwidTagImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.ArchiveOptionsImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.ArtifactImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.JavaImpl
@@ -61,6 +62,7 @@ class JlinkAssemblerImpl extends AbstractJavaAssembler implements JlinkAssembler
     final JavaImpl java
     final PlatformImpl platform
     final ArchiveOptionsImpl options
+    final SwidTagImpl swid
 
     private final JdepsImpl jdeps
     private final JavaArchiveImpl javaArchive
@@ -85,6 +87,7 @@ class JlinkAssemblerImpl extends AbstractJavaAssembler implements JlinkAssembler
         jdk = objects.newInstance(ArtifactImpl, objects)
         jdk.setName('jdk')
         options = objects.newInstance(ArchiveOptionsImpl, objects)
+        swid = objects.newInstance(SwidTagImpl, objects)
 
         targetJdks = objects.domainObjectContainer(ArtifactImpl, new NamedDomainObjectFactory<ArtifactImpl>() {
             @Override
@@ -210,6 +213,7 @@ class JlinkAssemblerImpl extends AbstractJavaAssembler implements JlinkAssembler
             assembler.addTargetJdk(artifact.toModel())
         }
         if (options.isSet()) assembler.options = options.toModel()
+        assembler.swid = swid.toModel()
         assembler
     }
 

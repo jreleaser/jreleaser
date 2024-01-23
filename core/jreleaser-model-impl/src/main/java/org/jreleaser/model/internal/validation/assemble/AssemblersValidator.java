@@ -45,6 +45,7 @@ import static org.jreleaser.model.internal.validation.assemble.JlinkAssemblerVal
 import static org.jreleaser.model.internal.validation.assemble.JpackageAssemblerValidator.postValidateJpackage;
 import static org.jreleaser.model.internal.validation.assemble.JpackageAssemblerValidator.validateJpackage;
 import static org.jreleaser.model.internal.validation.assemble.NativeImageAssemblerValidator.validateNativeImage;
+import static org.jreleaser.model.internal.validation.catalog.swid.SwidTagValidator.validateSwid;
 import static org.jreleaser.model.internal.validation.common.TemplateValidator.validateTemplate;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateFileSet;
@@ -151,6 +152,8 @@ public final class AssemblersValidator {
         if (mode == Mode.ASSEMBLE) {
             validateTemplate(context, assembler, errors);
         }
+
+        validateSwid(context, assembler.getSwid(), "assemble." + assembler.getType() + "." + assembler.getName(), errors);
     }
 
     public static boolean validateJavaAssembler(JReleaserContext context, Mode mode, JavaAssembler<?> assembler, Errors errors, boolean checkMainJar) {

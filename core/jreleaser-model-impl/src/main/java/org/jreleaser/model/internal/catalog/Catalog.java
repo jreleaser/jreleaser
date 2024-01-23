@@ -20,27 +20,35 @@ package org.jreleaser.model.internal.catalog;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.catalog.sbom.Sbom;
+import org.jreleaser.model.internal.catalog.swid.SwidTag;
 import org.jreleaser.model.internal.common.AbstractActivatable;
 import org.jreleaser.model.internal.common.Domain;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.unmodifiableMap;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * @author Andres Almiray
  * @since 1.5.0
  */
 public final class Catalog extends AbstractActivatable<Catalog> implements Domain {
-    private static final long serialVersionUID = -1338155149564894995L;
+    private static final long serialVersionUID = 6587227306534020116L;
 
     private final Sbom sbom = new Sbom();
     private final SlsaCataloger slsa = new SlsaCataloger();
+    private final Map<String, SwidTag> swid = new LinkedHashMap<>();
 
     @JsonIgnore
     private final org.jreleaser.model.api.catalog.Catalog immutable = new org.jreleaser.model.api.catalog.Catalog() {
-        private static final long serialVersionUID = 6865438805449170431L;
+        private static final long serialVersionUID = 3607769207917340335L;
+
+        private Map<String, ? extends org.jreleaser.model.api.catalog.swid.SwidTag> swid;
 
         @Override
         public org.jreleaser.model.api.catalog.sbom.Sbom getSbom() {
@@ -50,6 +58,16 @@ public final class Catalog extends AbstractActivatable<Catalog> implements Domai
         @Override
         public org.jreleaser.model.api.catalog.SlsaCataloger getSlsa() {
             return slsa.asImmutable();
+        }
+
+        @Override
+        public Map<String, ? extends org.jreleaser.model.api.catalog.swid.SwidTag> getSwid() {
+            if (null == swid) {
+                swid = Catalog.this.swid.values().stream()
+                    .map(SwidTag::asImmutable)
+                    .collect(toMap(org.jreleaser.model.api.catalog.swid.SwidTag::getName, identity()));
+            }
+            return swid;
         }
 
         @Override
@@ -81,13 +99,15 @@ public final class Catalog extends AbstractActivatable<Catalog> implements Domai
         super.merge(source);
         setSbom(source.sbom);
         setSlsa(source.slsa);
+        setSwid(mergeModel(this.swid, source.swid));
     }
 
     @Override
     public boolean isSet() {
         return super.isSet() ||
             sbom.isSet() ||
-            slsa.isSet();
+            slsa.isSet() ||
+            !swid.isEmpty();
     }
 
     public Sbom getSbom() {
@@ -106,6 +126,19 @@ public final class Catalog extends AbstractActivatable<Catalog> implements Domai
         this.slsa.merge(slsa);
     }
 
+    public Map<String, SwidTag> getSwid() {
+        return swid;
+    }
+
+    public void setSwid(Map<String, SwidTag> swid) {
+        this.swid.clear();
+        this.swid.putAll(swid);
+    }
+
+    public void addSwid(SwidTag swid) {
+        this.swid.put(swid.getName(), swid);
+    }
+
     @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
@@ -113,6 +146,14 @@ public final class Catalog extends AbstractActivatable<Catalog> implements Domai
         map.put("active", getActive());
         map.put("sbom", sbom.asMap(full));
         map.putAll(slsa.asMap(full));
+
+        List<Map<String, Object>> swid = this.swid.values()
+            .stream()
+            .map(d -> d.asMap(full))
+            .filter(m -> !m.isEmpty())
+            .collect(toList());
+        if (!swid.isEmpty()) map.put("swid", swid);
+
         return map;
     }
 }

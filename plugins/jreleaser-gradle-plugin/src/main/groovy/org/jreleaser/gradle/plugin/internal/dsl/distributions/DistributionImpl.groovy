@@ -196,7 +196,6 @@ class DistributionImpl implements Distribution {
         action.execute(appImage)
     }
 
-
     @Override
     void asdf(Action<? super AsdfPackager> action) {
         action.execute(asdf)

@@ -52,7 +52,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 1.4.0
  */
 public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAssembler, org.jreleaser.model.api.assemble.JavaArchiveAssembler> {
-
+    private static final long serialVersionUID = -839479966828294855L;
 
     private final Set<Archive.Format> formats = new LinkedHashSet<>();
     private final ArchiveOptions options = new ArchiveOptions();
@@ -65,7 +65,7 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
 
     @JsonIgnore
     private final org.jreleaser.model.api.assemble.JavaArchiveAssembler immutable = new org.jreleaser.model.api.assemble.JavaArchiveAssembler() {
-
+        private static final long serialVersionUID = -1343319275079561206L;
 
         private Set<? extends org.jreleaser.model.api.common.Artifact> artifacts;
         private List<? extends org.jreleaser.model.api.common.FileSet> fileSets;
@@ -91,6 +91,11 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
         @Override
         public org.jreleaser.model.api.platform.Platform getPlatform() {
             return JavaArchiveAssembler.this.getPlatform().asImmutable();
+        }
+
+        @Override
+        public org.jreleaser.model.api.catalog.swid.SwidTag getSwid() {
+            return JavaArchiveAssembler.this.getSwid().asImmutable();
         }
 
         @Override

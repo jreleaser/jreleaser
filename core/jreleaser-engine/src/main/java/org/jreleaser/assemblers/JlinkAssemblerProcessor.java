@@ -315,6 +315,7 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
             copyArtifacts(context, imageDirectory, platform, true);
             copyFiles(context, imageDirectory);
             copyFileSets(context, imageDirectory);
+            generateSwidTag(context, imageDirectory);
 
             FileUtils.packArchive(workDirectory, imageArchive, assembler.getOptions().toOptions());
 

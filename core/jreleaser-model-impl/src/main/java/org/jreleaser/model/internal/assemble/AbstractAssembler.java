@@ -19,6 +19,7 @@ package org.jreleaser.model.internal.assemble;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Stereotype;
+import org.jreleaser.model.internal.catalog.swid.SwidTag;
 import org.jreleaser.model.internal.common.AbstractActivatable;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.FileSet;
@@ -44,7 +45,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.2.0
  */
 public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A extends org.jreleaser.model.api.assemble.Assembler> extends AbstractActivatable<S> implements Assembler<A> {
-    private static final long serialVersionUID = 2073602358432833033L;
+    private static final long serialVersionUID = -7134019171123897997L;
 
     @JsonIgnore
     private final Set<Artifact> outputs = new LinkedHashSet<>();
@@ -54,6 +55,7 @@ public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A ext
     private final List<FileSet> fileSets = new ArrayList<>();
     private final Platform platform = new Platform();
     private final Set<String> skipTemplates = new LinkedHashSet<>();
+    private final SwidTag swid = new SwidTag();
     @JsonIgnore
     private final String type;
     @JsonIgnore
@@ -75,6 +77,7 @@ public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A ext
         this.platform.merge(source.getPlatform());
         this.stereotype = merge(this.stereotype, source.getStereotype());
         this.templateDirectory = merge(this.templateDirectory, source.getTemplateDirectory());
+        this.swid.merge(source.getSwid());
         setSkipTemplates(merge(this.skipTemplates, source.getSkipTemplates()));
         setOutputs(merge(this.outputs, source.getOutputs()));
         setArtifacts(merge(this.artifacts, source.getArtifacts()));
@@ -284,6 +287,16 @@ public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A ext
     }
 
     @Override
+    public SwidTag getSwid() {
+        return swid;
+    }
+
+    @Override
+    public void setSwid(SwidTag swid) {
+        this.swid.merge(swid);
+    }
+
+    @Override
     public Map<String, Object> asMap(boolean full) {
         if (!full && !isEnabled()) return Collections.emptyMap();
 
@@ -296,6 +309,7 @@ public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A ext
         asMap(full, props);
         props.put("templateDirectory", templateDirectory);
         props.put("skipTemplates", skipTemplates);
+        props.put("swid", swid.asMap(full));
         Map<String, Map<String, Object>> mappedArtifacts = new LinkedHashMap<>();
         int i = 0;
         for (Artifact artifact : artifacts) {

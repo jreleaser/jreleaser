@@ -47,7 +47,7 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
  * @since 0.8.0
  */
 public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, org.jreleaser.model.api.assemble.ArchiveAssembler> {
-
+    private static final long serialVersionUID = 3638561324059031387L;
 
     private final Set<Archive.Format> formats = new LinkedHashSet<>();
     private final ArchiveOptions options = new ArchiveOptions();
@@ -58,7 +58,7 @@ public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, 
 
     @JsonIgnore
     private final org.jreleaser.model.api.assemble.ArchiveAssembler immutable = new org.jreleaser.model.api.assemble.ArchiveAssembler() {
-
+        private static final long serialVersionUID = 6477859938632197400L;
 
         private Set<? extends org.jreleaser.model.api.common.Artifact> artifacts;
         private List<? extends org.jreleaser.model.api.common.FileSet> fileSets;
@@ -88,6 +88,11 @@ public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, 
         @Override
         public org.jreleaser.model.api.platform.Platform getPlatform() {
             return ArchiveAssembler.this.getPlatform().asImmutable();
+        }
+
+        @Override
+        public org.jreleaser.model.api.catalog.swid.SwidTag getSwid() {
+            return ArchiveAssembler.this.getSwid().asImmutable();
         }
 
         @Override

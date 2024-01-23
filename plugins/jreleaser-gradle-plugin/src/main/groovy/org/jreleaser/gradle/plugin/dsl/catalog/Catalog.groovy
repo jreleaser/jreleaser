@@ -19,7 +19,9 @@ package org.jreleaser.gradle.plugin.dsl.catalog
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
+import org.gradle.api.NamedDomainObjectContainer
 import org.jreleaser.gradle.plugin.dsl.catalog.sbom.Sbom
+import org.jreleaser.gradle.plugin.dsl.catalog.swid.SwidTag
 import org.jreleaser.gradle.plugin.dsl.common.Activatable
 
 /**
@@ -33,11 +35,17 @@ interface Catalog extends Activatable {
 
     SlsaCataloger getSlsa()
 
+    NamedDomainObjectContainer<SwidTag> getSwid()
+
     void sbom(Action<? super Sbom> action)
 
     void slsa(Action<? super SlsaCataloger> action)
 
+    void swid(Action<? super NamedDomainObjectContainer<SwidTag>> action)
+
     void sbom(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Sbom) Closure<Void> action)
 
     void slsa(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SlsaCataloger) Closure<Void> action)
+
+    void swid(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer<SwidTag>) Closure<Void> action)
 }

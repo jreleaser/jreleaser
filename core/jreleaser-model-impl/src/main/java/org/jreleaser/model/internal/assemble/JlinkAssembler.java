@@ -72,7 +72,7 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
 
     @JsonIgnore
     private final org.jreleaser.model.api.assemble.JlinkAssembler immutable = new org.jreleaser.model.api.assemble.JlinkAssembler() {
-        private static final long serialVersionUID = 755465061270292328L;
+        private static final long serialVersionUID = -2185840622092695158L;
 
         private Set<? extends org.jreleaser.model.api.common.Artifact> artifacts;
         private List<? extends org.jreleaser.model.api.common.FileSet> fileSets;
@@ -199,6 +199,11 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
         @Override
         public org.jreleaser.model.api.platform.Platform getPlatform() {
             return JlinkAssembler.this.getPlatform().asImmutable();
+        }
+
+        @Override
+        public org.jreleaser.model.api.catalog.swid.SwidTag getSwid() {
+            return JlinkAssembler.this.getSwid().asImmutable();
         }
 
         @Override

@@ -31,6 +31,7 @@ import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.assemble.NativeImageAssembler
 import org.jreleaser.gradle.plugin.dsl.common.ArchiveOptions
 import org.jreleaser.gradle.plugin.dsl.common.Artifact
+import org.jreleaser.gradle.plugin.internal.dsl.catalog.swid.SwidTagImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.ArchiveOptionsImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.ArtifactImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.JavaImpl
@@ -59,6 +60,7 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
     final JavaImpl java
     final PlatformImpl platform
     final ArchiveOptionsImpl options
+    final SwidTagImpl swid
 
     private final ArtifactImpl graal
     private final UpxImpl upx
@@ -85,6 +87,7 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
         windows = objects.newInstance(WindowsImpl, objects)
         osx = objects.newInstance(OsxImpl, objects)
         options = objects.newInstance(ArchiveOptionsImpl, objects)
+        swid = objects.newInstance(SwidTagImpl, objects)
 
         graalJdks = objects.domainObjectContainer(ArtifactImpl, new NamedDomainObjectFactory<ArtifactImpl>() {
             @Override
@@ -238,6 +241,7 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
             assembler.addGraalJdk(artifact.toModel())
         }
         if (options.isSet()) assembler.options = options.toModel()
+        assembler.swid = swid.toModel()
         assembler
     }
 

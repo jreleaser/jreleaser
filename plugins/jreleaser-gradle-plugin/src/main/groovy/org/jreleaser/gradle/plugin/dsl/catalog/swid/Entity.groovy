@@ -15,23 +15,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.api.catalog;
+package org.jreleaser.gradle.plugin.dsl.catalog.swid
 
-import org.jreleaser.model.api.catalog.sbom.Sbom;
-import org.jreleaser.model.api.catalog.swid.SwidTag;
-import org.jreleaser.model.api.common.Activatable;
-import org.jreleaser.model.api.common.Domain;
-
-import java.util.Map;
+import groovy.transform.CompileStatic
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
+import org.jreleaser.gradle.plugin.dsl.common.ExtraProperties
 
 /**
+ *
  * @author Andres Almiray
- * @since 1.5.0
+ * @since 1.11.0
  */
-public interface Catalog extends Domain, Activatable {
-    Sbom getSbom();
+@CompileStatic
+interface Entity  {
+    Property<String> getName()
 
-    SlsaCataloger getSlsa();
+    Property<String> getRegid()
 
-    Map<String, ? extends SwidTag> getSwid();
+    SetProperty<String> getRoles()
+
+    void role(String role)
 }

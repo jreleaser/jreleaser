@@ -19,6 +19,7 @@ package org.jreleaser.model.api.assemble;
 
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Stereotype;
+import org.jreleaser.model.api.catalog.swid.SwidTag;
 import org.jreleaser.model.api.common.Activatable;
 import org.jreleaser.model.api.common.Artifact;
 import org.jreleaser.model.api.common.Domain;
@@ -58,4 +59,6 @@ public interface Assembler extends Domain, Activatable, ExtraProperties {
     List<? extends FileSet> getFileSets();
 
     Set<? extends Artifact> getOutputs();
+
+    SwidTag getSwid();
 }

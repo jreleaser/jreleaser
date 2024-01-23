@@ -27,6 +27,7 @@ import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.assemble.ArchiveAssembler
 import org.jreleaser.gradle.plugin.dsl.common.ArchiveOptions
+import org.jreleaser.gradle.plugin.internal.dsl.catalog.swid.SwidTagImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.ArchiveOptionsImpl
 import org.jreleaser.gradle.plugin.internal.dsl.platform.PlatformImpl
 import org.jreleaser.model.Archive
@@ -51,6 +52,7 @@ class ArchiveAssemblerImpl extends AbstractAssembler implements ArchiveAssembler
     final SetProperty<Archive.Format> formats
     final PlatformImpl platform
     final ArchiveOptionsImpl options
+    final SwidTagImpl swid
 
     @Inject
     ArchiveAssemblerImpl(ObjectFactory objects) {
@@ -61,6 +63,7 @@ class ArchiveAssemblerImpl extends AbstractAssembler implements ArchiveAssembler
         formats = objects.setProperty(Archive.Format).convention(Providers.<Set<Archive.Format>> notDefined())
         platform = objects.newInstance(PlatformImpl, objects)
         options = objects.newInstance(ArchiveOptionsImpl, objects)
+        swid = objects.newInstance(SwidTagImpl, objects)
     }
 
     @Internal
@@ -103,6 +106,7 @@ class ArchiveAssemblerImpl extends AbstractAssembler implements ArchiveAssembler
         if (archiveName.present) assembler.archiveName = archiveName.get()
         if (attachPlatform.present) assembler.attachPlatform = attachPlatform.get()
         assembler.platform = platform.toModel()
+        assembler.swid = swid.toModel()
         assembler.distributionType = distributionType.get()
         assembler.formats = (Set<Archive.Format>) formats.getOrElse([] as Set<Archive.Format>)
         if (options.isSet()) assembler.options = options.toModel()

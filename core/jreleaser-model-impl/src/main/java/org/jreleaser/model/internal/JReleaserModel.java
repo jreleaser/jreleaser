@@ -93,7 +93,6 @@ public class JReleaserModel {
     @JsonIgnore
     private org.jreleaser.model.api.JReleaserModel.Commit commit;
 
-
     @JsonIgnore
     private final org.jreleaser.model.api.JReleaserModel immutable = new org.jreleaser.model.api.JReleaserModel() {
         private static final long serialVersionUID = -571955827712138358L;
@@ -441,7 +440,7 @@ public class JReleaserModel {
         if (full || assemble.isEnabled()) map.put("assemble", assemble.asMap(full));
         if (full || deploy.isEnabled()) map.put("deploy", deploy.asMap(full));
         if (full || upload.isEnabled()) map.put("upload", upload.asMap(full));
-        if (full || catalog.isEnabled()) map.put("catalog", catalog.asMap(full));
+        map.put("catalog", catalog.asMap(full));
 
         List<Map<String, Object>> distributions = this.distributions.values()
             .stream()

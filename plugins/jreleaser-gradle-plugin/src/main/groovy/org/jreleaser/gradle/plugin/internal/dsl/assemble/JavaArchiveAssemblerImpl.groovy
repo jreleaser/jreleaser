@@ -32,6 +32,7 @@ import org.jreleaser.gradle.plugin.dsl.common.ArchiveOptions
 import org.jreleaser.gradle.plugin.dsl.common.Artifact
 import org.jreleaser.gradle.plugin.dsl.common.Executable
 import org.jreleaser.gradle.plugin.dsl.common.Glob
+import org.jreleaser.gradle.plugin.internal.dsl.catalog.swid.SwidTagImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.ArchiveOptionsImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.ArtifactImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.ExecutableImpl
@@ -59,6 +60,7 @@ class JavaArchiveAssemblerImpl extends AbstractAssembler implements JavaArchiveA
     final ArtifactImpl mainJar
     final PlatformImpl platform
     final ArchiveOptionsImpl options
+    final SwidTagImpl swid
 
     private final NamedDomainObjectContainer<GlobImpl> jars
 
@@ -73,6 +75,7 @@ class JavaArchiveAssemblerImpl extends AbstractAssembler implements JavaArchiveA
         mainJar.setName('mainJar')
         platform = objects.newInstance(PlatformImpl, objects)
         options = objects.newInstance(ArchiveOptionsImpl, objects)
+        swid = objects.newInstance(SwidTagImpl, objects)
 
         jars = objects.domainObjectContainer(GlobImpl, new NamedDomainObjectFactory<GlobImpl>() {
             @Override
@@ -171,6 +174,7 @@ class JavaArchiveAssemblerImpl extends AbstractAssembler implements JavaArchiveA
             assembler.addJar(glob.toModel())
         }
         if (options.isSet()) assembler.options = options.toModel()
+        assembler.swid = swid.toModel()
         assembler
     }
 

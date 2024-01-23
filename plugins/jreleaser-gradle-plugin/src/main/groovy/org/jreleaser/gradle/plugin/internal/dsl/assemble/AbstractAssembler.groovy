@@ -30,6 +30,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.assemble.Assembler
+import org.jreleaser.gradle.plugin.dsl.catalog.swid.SwidTag
 import org.jreleaser.gradle.plugin.dsl.common.Artifact
 import org.jreleaser.gradle.plugin.dsl.common.FileSet
 import org.jreleaser.gradle.plugin.dsl.common.Glob
@@ -158,6 +159,11 @@ abstract class AbstractAssembler implements Assembler {
     }
 
     @Override
+    void swid(Action<? super SwidTag> action) {
+        action.execute(swid)
+    }
+
+    @Override
     @CompileDynamic
     void artifact(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
         ConfigureUtil.configure(action, artifacts.maybeCreate("artifact-${artifacts.size()}".toString()))
@@ -179,6 +185,12 @@ abstract class AbstractAssembler implements Assembler {
     @CompileDynamic
     void platform(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Platform) Closure<Void> action) {
         ConfigureUtil.configure(action, platform)
+    }
+
+    @Override
+    @CompileDynamic
+    void swid(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SwidTag) Closure<Void> action) {
+        ConfigureUtil.configure(action, swid)
     }
 
     protected <A extends org.jreleaser.model.internal.assemble.Assembler> void fillProperties(A assembler) {

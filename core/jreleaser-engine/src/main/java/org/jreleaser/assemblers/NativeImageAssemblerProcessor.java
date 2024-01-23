@@ -220,6 +220,7 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<or
             copyArtifacts(context, distDirectory, platform, true);
             copyFiles(context, distDirectory);
             copyFileSets(context, distDirectory);
+            generateSwidTag(context, distDirectory);
 
             String str = assembler.getGraal().getExtraProperties()
                 .getOrDefault(KEY_ARCHIVE_FORMAT, assembler.getArchiveFormat())
