@@ -156,6 +156,18 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
         context.getLogger().debug(RB.$("assembler.copy.jars"), context.relativizeToBasedir(universalJarsDirectory));
         copyJars(context, assembler, universalJarsDirectory, "");
 
+        Optional<String> compress = assembler.getArgs().stream()
+            .filter(arg -> arg.contains("--compress") || arg.startsWith("-c=") || arg.startsWith("-c "))
+            .findFirst();
+        if (!compress.isPresent()) {
+            if (jdkVersion.getMajor() >= 21) {
+                assembler.getArgs().add("--compress");
+                assembler.getArgs().add("zip-9");
+            } else {
+                assembler.getArgs().add("--compress=2");
+            }
+        }
+
         for (Artifact targetJdk : assembler.getTargetJdks()) {
             if (!targetJdk.isActiveAndSelected()) continue;
 

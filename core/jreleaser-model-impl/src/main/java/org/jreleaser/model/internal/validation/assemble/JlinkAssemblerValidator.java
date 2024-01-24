@@ -158,7 +158,6 @@ public final class JlinkAssemblerValidator {
         if (assembler.getArgs().isEmpty()) {
             assembler.getArgs().add("--no-header-files");
             assembler.getArgs().add("--no-man-pages");
-            assembler.getArgs().add("--compress=2");
             assembler.getArgs().add("--strip-debug");
         }
 
