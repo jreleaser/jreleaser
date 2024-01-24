@@ -27,8 +27,8 @@ import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.util.Env;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -41,6 +41,7 @@ import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.TreeSet;
 
+import static java.nio.file.Files.newInputStream;
 import static java.util.Collections.unmodifiableMap;
 import static org.jreleaser.model.Constants.DEFAULT_GIT_REMOTE;
 import static org.jreleaser.model.Constants.JRELEASER_USER_HOME;
@@ -106,15 +107,15 @@ public final class Environment extends AbstractModelObject<Environment> implemen
         setPropertiesSource(merge(this.propertiesSource, source.propertiesSource));
     }
 
-    public  String resolve(String key) {
+    public String resolve(String key) {
         return env(key, Env.sys(key, ""));
     }
 
-    public  String resolve(String key, String value) {
+    public String resolve(String key, String value) {
         return env(key, Env.sys(key, value));
     }
 
-    public  String resolveOrDefault(String key, String value, String defaultValue) {
+    public String resolveOrDefault(String key, String value, String defaultValue) {
         String result = env(key, Env.sys(key, value));
         return isNotBlank(result) ? result : defaultValue;
     }
@@ -260,7 +261,7 @@ public final class Environment extends AbstractModelObject<Environment> implemen
                 Properties p = new Properties();
                 if (file.getFileName().toString().endsWith(".properties") ||
                     file.getFileName().toString().equals(".env")) {
-                    try (FileInputStream in = new FileInputStream(file.toFile())) {
+                    try (InputStream in = newInputStream(file)) {
                         p.load(in);
                     }
                 } else {

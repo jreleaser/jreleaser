@@ -43,7 +43,6 @@ import org.jreleaser.sdk.tool.ToolException;
 import org.jreleaser.util.Algorithm;
 
 import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -52,6 +51,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
+import static java.nio.file.Files.newInputStream;
 import static java.util.stream.Collectors.toList;
 import static org.jreleaser.model.api.signing.Signing.KEY_SKIP_SIGNING;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -234,7 +234,7 @@ public final class Signer {
 
         try (InputStream sigInputStream = PGPUtil.getDecoderStream(
             new BufferedInputStream(
-                new FileInputStream(filePair.getSignatureFile().toFile())))) {
+                newInputStream(filePair.getSignatureFile())))) {
             PGPObjectFactory pgpObjFactory = new PGPObjectFactory(sigInputStream, keyring.getKeyFingerPrintCalculator());
             Iterable<?> pgpSigList = null;
 
@@ -248,7 +248,7 @@ public final class Signer {
             }
 
             PGPSignature sig = (PGPSignature) pgpSigList.iterator().next();
-            try (InputStream fileInputStream = new BufferedInputStream(new FileInputStream(filePair.getInputFile().toFile()))) {
+            try (InputStream fileInputStream = new BufferedInputStream(newInputStream(filePair.getInputFile()))) {
                 PGPPublicKey pubKey = keyring.readPublicKey();
                 sig.init(new JcaPGPContentVerifierBuilderProvider()
                     .setProvider(BouncyCastleProvider.PROVIDER_NAME), pubKey);

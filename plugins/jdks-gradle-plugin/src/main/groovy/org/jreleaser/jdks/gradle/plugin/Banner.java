@@ -22,8 +22,6 @@ import org.gradle.api.services.BuildService;
 import org.gradle.api.services.BuildServiceParameters;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -36,6 +34,8 @@ import java.util.ResourceBundle;
 import java.util.Scanner;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.file.Files.newInputStream;
+import static java.nio.file.Files.newOutputStream;
 
 /**
  * @author Andres Almiray
@@ -102,7 +102,7 @@ public abstract class Banner implements BuildService<Banner.Params> {
 
     private static void writeQuietly(File file, String text) {
         try {
-            PrintStream out = newPrintStream(new FileOutputStream(file));
+            PrintStream out = newPrintStream(newOutputStream(file.toPath()));
             out.println(text);
             out.close();
         } catch (IOException ignored) {
@@ -111,7 +111,7 @@ public abstract class Banner implements BuildService<Banner.Params> {
     }
 
     private static String readQuietly(File file) {
-        try (Scanner in = newScanner(new FileInputStream(file))) {
+        try (Scanner in = newScanner(newInputStream(file.toPath()))) {
             return in.next();
         } catch (Exception ignored) {
             return "";

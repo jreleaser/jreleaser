@@ -21,7 +21,6 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.JReleaserException;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -36,6 +35,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
+import static java.nio.file.Files.newInputStream;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -133,7 +133,7 @@ public final class TemplateUtils {
     }
 
     public static TemplateResource resolveTemplate(Path file) throws IOException {
-        FileInputStream inputStream = new FileInputStream(file.toFile());
+        InputStream inputStream = newInputStream(file);
         if (file.getFileName().toString().endsWith(TPL)) {
             return new ReaderTemplateResource(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
         }

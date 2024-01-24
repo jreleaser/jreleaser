@@ -20,8 +20,6 @@ package org.jreleaser.cli;
 import org.jreleaser.model.JReleaserOutput;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -29,6 +27,8 @@ import java.text.MessageFormat;
 import java.util.ResourceBundle;
 import java.util.Scanner;
 
+import static java.nio.file.Files.newInputStream;
+import static java.nio.file.Files.newOutputStream;
 import static org.jreleaser.util.IoUtils.newPrintStream;
 import static org.jreleaser.util.IoUtils.newScanner;
 
@@ -78,7 +78,7 @@ final class Banner {
 
     private static void writeQuietly(File file, String text) {
         try {
-            PrintStream out = newPrintStream(new FileOutputStream(file));
+            PrintStream out = newPrintStream(newOutputStream(file.toPath()));
             out.println(text);
             out.close();
         } catch (IOException ignored) {
@@ -87,7 +87,7 @@ final class Banner {
     }
 
     private static String readQuietly(File file) {
-        try (Scanner in = newScanner(new FileInputStream(file))) {
+        try (Scanner in = newScanner(newInputStream(file.toPath()))) {
             return in.next();
         } catch (Exception ignored) {
             return "";

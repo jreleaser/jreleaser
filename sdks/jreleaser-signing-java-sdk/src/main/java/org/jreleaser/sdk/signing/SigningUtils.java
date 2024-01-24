@@ -43,9 +43,6 @@ import org.jreleaser.sdk.command.CommandException;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -55,6 +52,8 @@ import java.security.Provider;
 import java.security.Security;
 import java.util.Optional;
 
+import static java.nio.file.Files.newInputStream;
+import static java.nio.file.Files.newOutputStream;
 import static org.bouncycastle.bcpg.CompressionAlgorithmTags.UNCOMPRESSED;
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -148,7 +147,7 @@ public final class SigningUtils {
 
         try (InputStream sigInputStream = PGPUtil.getDecoderStream(
             new BufferedInputStream(
-                new FileInputStream(filePair.signatureFile.toFile())))) {
+                newInputStream(filePair.signatureFile)))) {
 
             PGPObjectFactory pgpObjFactory = new PGPObjectFactory(sigInputStream, keyring.getKeyFingerPrintCalculator());
             Iterable<?> pgpSigList = null;
@@ -163,7 +162,7 @@ public final class SigningUtils {
             }
 
             PGPSignature sig = (PGPSignature) pgpSigList.iterator().next();
-            try (InputStream fileInputStream = new BufferedInputStream(new FileInputStream(filePair.inputFile.toFile()))) {
+            try (InputStream fileInputStream = new BufferedInputStream(newInputStream(filePair.inputFile))) {
                 PGPPublicKey pubKey = keyring.readPublicKey();
                 sig.init(new JcaPGPContentVerifierBuilderProvider()
                     .setProvider(BouncyCastleProvider.PROVIDER_NAME), pubKey);
@@ -269,7 +268,7 @@ public final class SigningUtils {
         PGPCompressedDataGenerator compressionStreamGenerator = new PGPCompressedDataGenerator(UNCOMPRESSED);
         try (OutputStream out = createOutputStream(context, output);
              BCPGOutputStream bOut = new BCPGOutputStream(compressionStreamGenerator.open(out));
-             FileInputStream in = new FileInputStream(input.toFile())) {
+             InputStream in = newInputStream(input)) {
 
             byte[] buffer = new byte[8192];
             int length = 0;
@@ -284,8 +283,8 @@ public final class SigningUtils {
         }
     }
 
-    private static OutputStream createOutputStream(JReleaserContext context, Path output) throws FileNotFoundException {
-        OutputStream out = new BufferedOutputStream(new FileOutputStream(output.toFile()));
+    private static OutputStream createOutputStream(JReleaserContext context, Path output) throws IOException {
+        OutputStream out = new BufferedOutputStream(newOutputStream(output.toFile().toPath()));
         if (context.getModel().getSigning().isArmored()) {
             out = new ArmoredOutputStream(out);
         }

@@ -17,10 +17,10 @@ package org.jreleaser.dependencies.os;
 
 import java.io.BufferedReader;
 import java.io.Closeable;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -31,6 +31,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static java.nio.file.Files.newInputStream;
 
 public abstract class Detector {
 
@@ -64,7 +66,7 @@ public abstract class Detector {
     }
 
     public Detector(SystemPropertyOperationProvider systemPropertyOperationProvider,
-        FileOperationProvider fileOperationProvider) {
+                    FileOperationProvider fileOperationProvider) {
         this.systemPropertyOperationProvider = systemPropertyOperationProvider;
         this.fileOperationProvider = fileOperationProvider;
     }
@@ -145,6 +147,7 @@ public abstract class Detector {
     }
 
     protected abstract void log(String message);
+
     protected abstract void logProperty(String name, String value);
 
     private static String normalizeOs(String value) {
@@ -295,7 +298,7 @@ public abstract class Detector {
             String version = null;
             final Set<String> likeSet = new LinkedHashSet<String>();
             String line;
-            while((line = reader.readLine()) != null) {
+            while ((line = reader.readLine()) != null) {
                 // Parse the ID line.
                 if (line.startsWith(LINUX_ID_PREFIX)) {
                     // Set the ID for this version.
@@ -318,7 +321,7 @@ public abstract class Detector {
                     line = normalizeOsReleaseValue(line.substring(LINUX_ID_LIKE_PREFIX.length()));
 
                     // Split the line on any whitespace.
-                    final String[] parts =  line.split("\\s+");
+                    final String[] parts = line.split("\\s+");
                     Collections.addAll(likeSet, parts);
                 }
             }
@@ -402,7 +405,7 @@ public abstract class Detector {
         }
 
         // as a last resort, try to determine the bitness from the architecture.
-      return guessBitnessFromArchitecture(architecture);
+        return guessBitnessFromArchitecture(architecture);
     }
 
     public static int guessBitnessFromArchitecture(final String arch) {
@@ -456,7 +459,7 @@ public abstract class Detector {
     private static class SimpleFileOperations implements FileOperationProvider {
         @Override
         public InputStream readFile(String fileName) throws IOException {
-            return new FileInputStream(fileName);
+            return newInputStream(Paths.get(fileName));
         }
     }
 }

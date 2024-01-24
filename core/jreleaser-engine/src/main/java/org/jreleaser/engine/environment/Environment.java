@@ -23,8 +23,8 @@ import org.jreleaser.config.JReleaserConfigParser;
 import org.jreleaser.logging.JReleaserLogger;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -34,6 +34,7 @@ import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.TreeSet;
 
+import static java.nio.file.Files.newInputStream;
 import static org.jreleaser.model.Constants.DEFAULT_GIT_REMOTE;
 import static org.jreleaser.model.Constants.JRELEASER_USER_HOME;
 import static org.jreleaser.model.Constants.XDG_CONFIG_HOME;
@@ -98,7 +99,7 @@ public final class Environment {
             try {
                 if (file.getFileName().toString().endsWith(".properties") ||
                     file.getFileName().toString().equals(".env")) {
-                    try (FileInputStream in = new FileInputStream(file.toFile())) {
+                    try (InputStream in = newInputStream(file)) {
                         p.load(in);
                     }
                 } else {
