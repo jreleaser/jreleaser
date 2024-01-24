@@ -85,65 +85,65 @@ distributions {
 }
 
 jdks {
-    zulu21Linux {
+    zulu17Linux {
         platform = 'linux-x86_64'
-        url = 'https://cdn.azul.com/zulu/bin/zulu21.32.17-ca-jdk21.0.2-linux_x64.zip'
-        checksum = '55361ac2bb173f925ae5b78af1ea339888679ac0e7aee27c0a83a237de95a605'
+        url = 'https://cdn.azul.com/zulu/bin/zulu17.32.13-ca-jdk17.0.2-linux_x64.zip'
+        checksum = '7668ebaecc81041d8d1e79e857552887f56c445ef4c6e8d634007b7b67f5a1d3'
     }
-    zulu21LinuxArm {
+    zulu17LinuxArm {
         platform = 'linux-aarch64'
-        url = 'https://cdn.azul.com/zulu/bin/zulu21.32.17-ca-jdk21.0.2-linux_aarch64.tar.gz'
-        checksum = 'ce7df1af5d44a9f455617c4b8891443fbe3e4b269c777d8b82ed66f77167cfe0'
+        url = 'https://cdn.azul.com/zulu/bin/zulu17.32.13-ca-jdk17.0.2-linux_aarch64.tar.gz'
+        checksum = '2b8066bbdbc5cff422bb6b6db1b8f8d362b576340cce8492f1255502af632b06'
     }
-    zulu21LinuxMusl {
+    zulu17LinuxMusl {
         platform = 'linux_musl-x86_64'
-        url = 'https://cdn.azul.com/zulu/bin/zulu21.32.17-ca-jdk21.0.2-linux_musl_x64.tar.gz'
-        checksum = 'ec8ca330eb65c626f9045414ec1646970a66e9afa8a8d91f8db8d5d5b0e18d51'
+        url = 'https://cdn.azul.com/zulu/bin/zulu17.32.13-ca-jdk17.0.2-linux_musl_x64.tar.gz'
+        checksum = 'bcc5342011bd9f3643372aadbdfa68d47463ff0d8621668a0bdf2910614d95c6'
     }
-    zulu21LinuxMuslArm {
+    zulu17LinuxMuslArm {
         platform = 'linux_musl-aarch64'
-        url = 'https://cdn.azul.com/zulu/bin/zulu21.32.17-ca-jdk21.0.2-linux_musl_aarch64.tar.gz'
-        checksum = '418bef47fea1e55fcd1bee0fbc7eae876b8b160a868857c5e16a082669505144'
+        url = 'https://cdn.azul.com/zulu/bin/zulu17.32.13-ca-jdk17.0.2-linux_musl_aarch64.tar.gz'
+        checksum = '6b920559abafbe9bdef386a20ecf3a2f318bc1f0d8359eb1f95aee26606bbc70'
     }
-    zulu21Windows {
+    zulu17Windows {
         platform = 'windows-x86_64'
-        url = 'https://cdn.azul.com/zulu/bin/zulu21.32.17-ca-jdk21.0.2-win_x64.zip'
-        checksum = 'f7cc15ca17295e69c907402dfe8db240db446e75d3b150da7bf67243cded93de'
+        url = 'https://cdn.azul.com/zulu/bin/zulu17.32.13-ca-jdk17.0.2-win_x64.zip'
+        checksum = 'e965aa0ea7a0661a3446cf8f10ee00684b851f883b803315289f26b4aa907fdb'
     }
-    //zulu21WindowsArm {
-    //    platform = 'windows-aarch64'
-    //    url = 'https://cdn.azul.com/zulu/bin/zulu21.32.17-ca-jdk21.0.2-win_aarch64.zip'
-    //    checksum = '1a9d4ab3b52ce3db7354691163e5a36979af9c37d80c3c490c12af07de21d8f3'
-    //}
-    zulu21Osx {
+    zulu17WindowsArm {
+        platform = 'windows-aarch64'
+        url = 'https://cdn.azul.com/zulu/bin/zulu17.32.13-ca-jdk17.0.2-win_aarch64.zip'
+        checksum = '1a9d4ab3b52ce3db7354691163e5a36979af9c37d80c3c490c12af07de21d8f3'
+    }
+    zulu17Osx {
         platform = 'osx-x86_64'
-        url = 'https://cdn.azul.com/zulu/bin/zulu21.32.17-ca-jdk21.0.2-macosx_x64.zip'
-        checksum = '1fde3ae20ad28f9a1820524d7699f4a349382af1dc7d339f27acc75ca0dd27ab'
+        url = 'https://cdn.azul.com/zulu/bin/zulu17.32.13-ca-jdk17.0.2-macosx_x64.zip'
+        checksum = 'f75fe30aced4fbee8db108fbb123b3af328503a2af46e173cbe43613b995e492'
     }
-    zulu21OsxArm {
+    zulu17OsxArm {
         platform = 'osx-aarch64'
-        url = 'https://cdn.azul.com/zulu/bin/zulu21.32.17-ca-jdk21.0.2-macosx_aarch64.zip'
-        checksum = 'b7131bfe20d258fee795b2a175821fca697aa90a8b34db303bbe364957de6ff7'
+        url = 'https://cdn.azul.com/zulu/bin/zulu17.32.13-ca-jdk17.0.2-macosx_aarch64.zip'
+        checksum = '8c287018d358ec2c43995bf09a0cdaa235f0bdd434673777a564daee2c3872df'
     }
-    graal21Osx {
+    graal17Osx {
         platform = 'osx-x86_64'
-        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-21.0.2/graalvm-community-jdk-21.0.2_macos-x64_bin.tar.gz'
-        checksum = '7a8aa93fa45d1721908477abf4732a32637d420ffcb66ada9fb6456440b0d9e1'
+        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.3.0/graalvm-ce-java17-darwin-amd64-22.3.0.tar.gz'
+        checksum = '422cd6abecfb8b40238460c09c42c5a018cb92fab4165de9691be2e3c3d0e8d1'
     }
-    graal21Linux {
+    graal17Linux {
         platform = 'linux-x86_64'
-        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-21.0.2/graalvm-community-jdk-21.0.2_linux-x64_bin.tar.gz'
-        checksum = 'b048069aaa3a99b84f5b957b162cc181a32a4330cbc35402766363c5be76ae48'
+        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.3.0/graalvm-ce-java17-linux-amd64-22.3.0.tar.gz'
+        checksum = '3473d8b3b1bc682e95adfb3ac1d9a59b51b0f43e2b752f2a5b550e4ebfa2fd17'
     }
     //graal17LinuxArm {
     //    platform = 'linux-aarch64'
     //    url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.0.0.2/graalvm-ce-java17-linux-aarch64-22.0.0.2.tar.gz'
     //    checksum = 'c7d78387d2a144944f26773697c1b61d3478a081a1c5e7fc20f47f1f5f3c82c7'
     //}
-    graal21Windows {
+    graal17Windows {
         platform = 'windows-x86_64'
-        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-21.0.2/graalvm-community-jdk-21.0.2_windows-x64_bin.zip'
-        checksum = 'e17b7bead097bf372a5c75df17815b0a2f30b777a019d25eff7706b21421f7fa'
+        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.3.0/graalvm-ce-java17-windows-amd64-22.3.0.zip'
+        checksum = '5a6f1d640034166a0fefd9d8924c12b040f120cd019b46b40895ccc8e9a9fc9e'
     }
 }
 
