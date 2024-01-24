@@ -83,7 +83,6 @@ jobs:
         with:
           distribution: 'graalvm'
           java-version: ${{ vars.GRAAL_JAVA_VERSION }}
-          components: 'native-image'
           github-token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
       - name: JReleaser
@@ -262,7 +261,6 @@ jobs:
         with:
           distribution: 'graalvm'
           java-version: ${{ vars.GRAAL_JAVA_VERSION }}
-          components: 'native-image'
           github-token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
       - name: JReleaser
@@ -442,7 +440,6 @@ jobs:
         with:
           distribution: 'graalvm'
           java-version: ${{ vars.GRAAL_JAVA_VERSION }}
-          components: 'native-image'
           github-token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
       - name: JReleaser
@@ -617,7 +614,6 @@ jobs:
         with:
           distribution: 'graalvm'
           java-version: ${{ vars.GRAAL_JAVA_VERSION }}
-          components: 'native-image'
           github-token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
       - name: JReleaser
@@ -806,7 +802,6 @@ jobs:
         with:
           distribution: 'graalvm'
           java-version: ${{ vars.GRAAL_JAVA_VERSION }}
-          components: 'native-image'
           github-token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
       - name: JReleaser

@@ -38,7 +38,6 @@ jobs:
         with:
           distribution: 'graalvm'
           java-version: ${{ vars.GRAAL_JAVA_VERSION }}
-          components: 'native-image'
           github-token: ${{ secrets.gh-access-token }}
 
       - name: Setup Java
