@@ -33,6 +33,7 @@ import org.jreleaser.util.FileUtils;
 import org.jreleaser.util.PlatformUtils;
 import org.jreleaser.version.SemanticVersion;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -130,7 +131,7 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
 
         for (String type : packager.getTypes()) {
             context.getLogger().info("- " + RB.$("assembler.jpackage.type"), type);
-            jpackage(context, type, workDirectory, props);
+            jpackage(context, type, workDirectory, props, jdkVersion);
         }
     }
 
@@ -190,7 +191,7 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
         runtimeImageByPlatform.get().setPath(adjustedImage.toAbsolutePath().toString());
     }
 
-    private void jpackage(JReleaserContext context, String type, Path workDirectory, TemplateContext props) throws AssemblerProcessingException {
+    private void jpackage(JReleaserContext context, String type, Path workDirectory, TemplateContext props, SemanticVersion jdkVersion) throws AssemblerProcessingException {
         JpackageAssembler.PlatformPackager packager = assembler.getResolvedPlatformPackager();
         Path jdkPath = packager.getJdk().getEffectivePath(context, assembler);
         String platform = packager.getJdk().getPlatform();
@@ -242,6 +243,11 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
             .arg(maybeQuote(copyright))
             .arg("--description")
             .arg(maybeQuote(context.getModel().getProject().getDescription()));
+
+        if (jdkVersion.getMajor() >= 21) {
+            cmd.arg("--app-image")
+                .arg(maybeQuote(assembleDirectory.toAbsolutePath() + File.pathSeparator + appName));
+        }
 
         if (assembler.isVerbose()) {
             cmd.arg("--verbose");
