@@ -81,7 +81,7 @@ jobs:
       - name: Setup Graal
         uses: graalvm/setup-graalvm@v1
         with:
-          distribution: 'graalvm'
+          version: ${{ vars.GRAAL_VERSION }}
           java-version: ${{ vars.GRAAL_JAVA_VERSION }}
           github-token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
@@ -259,7 +259,7 @@ jobs:
       - name: Setup Graal
         uses: graalvm/setup-graalvm@v1
         with:
-          distribution: 'graalvm'
+          version: ${{ vars.GRAAL_VERSION }}
           java-version: ${{ vars.GRAAL_JAVA_VERSION }}
           github-token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
@@ -438,7 +438,7 @@ jobs:
       - name: Setup Graal
         uses: graalvm/setup-graalvm@v1
         with:
-          distribution: 'graalvm'
+          version: ${{ vars.GRAAL_VERSION }}
           java-version: ${{ vars.GRAAL_JAVA_VERSION }}
           github-token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
@@ -612,7 +612,7 @@ jobs:
       - name: Setup Graal
         uses: graalvm/setup-graalvm@v1
         with:
-          distribution: 'graalvm'
+          version: ${{ vars.GRAAL_VERSION }}
           java-version: ${{ vars.GRAAL_JAVA_VERSION }}
           github-token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
@@ -800,7 +800,7 @@ jobs:
       - name: Setup Graal
         uses: graalvm/setup-graalvm@v1
         with:
-          distribution: 'graalvm'
+          version: ${{ vars.GRAAL_VERSION }}
           java-version: ${{ vars.GRAAL_JAVA_VERSION }}
           github-token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
