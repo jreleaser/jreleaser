@@ -119,6 +119,9 @@ catalog:
       active: ALWAYS
       pack:
         enabled: true
+  swid:
+    swid-tag:
+      active: ALWAYS
 
 deploy:
   maven:
@@ -206,6 +209,8 @@ assemble:
         path: 'plugins/jreleaser/build/libs/jreleaser-{{projectVersion}}.jar'
       jars:
         - pattern: 'plugins/jreleaser/build/dependencies/flat/*.jar'
+      swid:
+        tagRef: swid-tag
 
   jpackage:
     jreleaser-installer:
