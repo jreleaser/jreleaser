@@ -1,8 +1,8 @@
 environment:
   properties:
     jdkPathPrefix: 'plugins/jreleaser/build/jdks'
-    jdkFilePrefix: 'zulu17.32.13-ca-jdk17.0.2'
-    graalFilePrefix: 'graalvm-ce-java17-22.3.0'
+    jdkFilePrefix: 'zulu21.32.17-ca-jdk21.0.2'
+    graalFilePrefix: 'graalvm-community-openjdk-21.0.2+13.1'
     nativeImageDir: out/jreleaser/assemble/jreleaser-native/native-image
     jpackageDir: out/jreleaser/assemble/jreleaser-installer/jpackage
 
@@ -164,7 +164,7 @@ assemble:
     jreleaser-standalone:
       active: ALWAYS
       java:
-        version: 11
+        version: 21
       imageName: '{{distributionName}}-{{projectEffectiveVersion}}'
       executable: jreleaser
       fileSets:
@@ -189,22 +189,22 @@ assemble:
         - 'jdk.security.auth'
         - 'jdk.security.jgss'
       targetJdks:
-        - path: '{{jdkPathPrefix}}/zulu17Osx/{{jdkFilePrefix}}-macosx_x64/zulu-17.jdk/Contents/Home'
+        - path: '{{jdkPathPrefix}}/zulu21Osx/{{jdkFilePrefix}}-macosx_x64/zulu-21.jdk/Contents/Home'
           platform: 'osx-x86_64'
-        - path: '{{jdkPathPrefix}}/zulu17OsxArm/{{jdkFilePrefix}}-macosx_aarch64/zulu-17.jdk/Contents/Home'
+        - path: '{{jdkPathPrefix}}/zulu21OsxArm/{{jdkFilePrefix}}-macosx_aarch64/zulu-21.jdk/Contents/Home'
           platform: 'osx-aarch_64'
-        - path: '{{jdkPathPrefix}}/zulu17Linux/{{jdkFilePrefix}}-linux_x64'
+        - path: '{{jdkPathPrefix}}/zulu21Linux/{{jdkFilePrefix}}-linux_x64'
           platform: 'linux-x86_64'
-        - path: '{{jdkPathPrefix}}/zulu17LinuxArm/{{jdkFilePrefix}}-linux_aarch64'
+        - path: '{{jdkPathPrefix}}/zulu21LinuxArm/{{jdkFilePrefix}}-linux_aarch64'
           platform: 'linux-aarch_64'
-        - path: '{{jdkPathPrefix}}/zulu17LinuxMusl/{{jdkFilePrefix}}-linux_musl_x64'
+        - path: '{{jdkPathPrefix}}/zulu21LinuxMusl/{{jdkFilePrefix}}-linux_musl_x64'
           platform: 'linux_musl-x86_64'
-        - path: '{{jdkPathPrefix}}/zulu17LinuxMuslArm/{{jdkFilePrefix}}-linux_musl_aarch64'
+        - path: '{{jdkPathPrefix}}/zulu21LinuxMuslArm/{{jdkFilePrefix}}-linux_musl_aarch64'
           platform: 'linux_musl-aarch_64'
-        - path: '{{jdkPathPrefix}}/zulu17Windows/{{jdkFilePrefix}}-win_x64'
+        - path: '{{jdkPathPrefix}}/zulu21Windows/{{jdkFilePrefix}}-win_x64'
           platform: 'windows-x86_64'
-        - path: '{{jdkPathPrefix}}/zulu17WindowsArm/{{jdkFilePrefix}}-win_aarch64'
-          platform: 'windows-aarch_64'
+        #- path: '{{jdkPathPrefix}}/zulu21WindowsArm/{{jdkFilePrefix}}-win_aarch64'
+        #  platform: 'windows-aarch_64'
       mainJar:
         path: 'plugins/jreleaser/build/libs/jreleaser-{{projectVersion}}.jar'
       jars:
@@ -244,7 +244,7 @@ assemble:
     jreleaser-native:
       active: ALWAYS
       java:
-        version: 17
+        version: 21
       imageName: '{{distributionName}}-{{projectEffectiveVersion}}'
       executable: jreleaser
       fileSets:
@@ -260,9 +260,9 @@ assemble:
         - pattern: 'plugins/jreleaser/build/dependencies/flat/*.jar'
         - pattern: 'plugins/jreleaser/build/dependencies/graalvm/*.jar'
       graalJdks:
-        - path: '{{jdkPathPrefix}}/graal17Osx/{{graalFilePrefix}}/Contents/Home'
+        - path: '{{jdkPathPrefix}}/graal21Osx/{{graalFilePrefix}}/Contents/Home'
           platform: 'osx-x86_64'
-        - path: '{{jdkPathPrefix}}/graal17Linux/{{graalFilePrefix}}'
+        - path: '{{jdkPathPrefix}}/graal21Linux/{{graalFilePrefix}}'
           platform: 'linux-x86_64'
       upx:
         active: ALWAYS
@@ -272,6 +272,8 @@ assemble:
         - '-H:IncludeLocales=en,ca,de,es,fr,hi,it,ja,nl,pt_BR,zh_TW,ru,ko'
         - '-H:Optimize=2'
         - '-H:+RemoveUnusedSymbols'
+      swid:
+        tagRef: swid-tag
 
 distributions:
   jreleaser:

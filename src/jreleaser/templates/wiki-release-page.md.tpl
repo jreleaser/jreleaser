@@ -32,7 +32,6 @@ These binaries provide their own Java runtime.
 | Linux x86_64 (glibc) | {{#f_release_download_url}}jreleaser-standalone-{{projectEffectiveVersion}}-linux-x86_64.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-standalone-{{projectEffectiveVersion}}-linux-x86_64.zip.asc{{/f_release_download_url}})<br/>sha256:jreleaser-standalone-{{projectEffectiveVersion}}-linux-x86_64.zip |
 | Linux Arm64 (glibc)  | {{#f_release_download_url}}jreleaser-standalone-{{projectEffectiveVersion}}-linux-aarch64.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-standalone-{{projectEffectiveVersion}}-linux-aarch64.zip.asc{{/f_release_download_url}})<br/>sha256:jreleaser-standalone-{{projectEffectiveVersion}}-linux-aarch64.zip |
 | Windows x86_64       | {{#f_release_download_url}}jreleaser-standalone-{{projectEffectiveVersion}}-windows-x86_64.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-standalone-{{projectEffectiveVersion}}-windows-x86_64.zip.asc{{/f_release_download_url}})<br/>sha256:jreleaser-standalone-{{projectEffectiveVersion}}-windows-x86_64.zip |
-| Windows Arm64        | {{#f_release_download_url}}jreleaser-standalone-{{projectEffectiveVersion}}-windows-aarch64.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-standalone-{{projectEffectiveVersion}}-windows-aarch64.zip.asc{{/f_release_download_url}})<br/>sha256:jreleaser-standalone-{{projectEffectiveVersion}}-windows-aarch64.zip |
 
 ### 📦 Installers
 
