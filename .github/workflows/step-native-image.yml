@@ -36,7 +36,7 @@ jobs:
       - name: Setup Graal
         uses: graalvm/setup-graalvm@v1
         with:
-          version: ${{ vars.GRAAL_VERSION }}
+          distribution: 'graalvm'
           java-version: ${{ vars.GRAAL_JAVA_VERSION }}
           components: 'native-image'
           github-token: ${{ secrets.gh-access-token }}
