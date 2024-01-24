@@ -65,6 +65,14 @@ jobs:
         shell: bash
         run: ./gradlew :jreleaser:copyJdksFromCache :jreleaser:setupJdks
 
+      - name: Add msbuild to PATH
+        if: runner.os == 'Windows'
+        uses: microsoft/setup-msbuild@v1
+
+      - name: Install WiX
+        if: runner.os == 'Windows'
+        run: dotnet tool install --global wix
+
       - name: Jpackage
         uses: jreleaser/release-action@v2
         with:
