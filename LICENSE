@@ -225,10 +225,10 @@ com.github.luben:zstd-jni
 Bouncy Castle
 https://www.bouncycastle.org/licence.html
 
-org.bouncycastle:bcpg-jdk15on
-org.bouncycastle:bcpkix-jdk15on
-org.bouncycastle:bcprov-jdk15on
-org.bouncycastle:bcutil-jdk15on
+org.bouncycastle:bcpg-jdk18on
+org.bouncycastle:bcpkix-jdk18on
+org.bouncycastle:bcprov-jdk18on
+org.bouncycastle:bcutil-jdk18on
 
 ------------------------------------------------------------------------------
 CC0 1.0 Universal

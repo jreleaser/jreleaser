@@ -25,8 +25,8 @@ dependencies {
         exclude group: 'org.bouncycastle', module: 'bcpkix-jdk18on'
         exclude group: 'org.bouncycastle', module: 'bcutil-jdk18on'
     }
-    api "org.bouncycastle:bcpg-jdk15to18:$bouncyCastleVersion"
-    api "org.bouncycastle:bcprov-jdk15to18:$bouncyCastleVersion"
-    api "org.bouncycastle:bcpkix-jdk15to18:$bouncyCastleVersion"
-    api "org.bouncycastle:bcutil-jdk15to18:$bouncyCastleVersion"
+    api "org.bouncycastle:bcpg-jdk18on:$bouncyCastleVersion"
+    api "org.bouncycastle:bcprov-jdk18on:$bouncyCastleVersion"
+    api "org.bouncycastle:bcpkix-jdk18on:$bouncyCastleVersion"
+    api "org.bouncycastle:bcutil-jdk18on:$bouncyCastleVersion"
 }

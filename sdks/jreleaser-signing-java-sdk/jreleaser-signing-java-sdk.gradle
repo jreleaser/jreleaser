@@ -19,5 +19,5 @@ dependencies {
     api project(':jreleaser-command-java-sdk')
     api project(':jreleaser-tool-java-sdk')
 
-    api "org.bouncycastle:bcpg-jdk15to18:$bouncyCastleVersion"
+    api "org.bouncycastle:bcpg-jdk18on:$bouncyCastleVersion"
 }
