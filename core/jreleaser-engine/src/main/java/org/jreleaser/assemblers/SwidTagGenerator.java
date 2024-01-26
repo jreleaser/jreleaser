@@ -40,11 +40,13 @@ import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Deque;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
-import java.util.Stack;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
@@ -127,7 +129,7 @@ public final class SwidTagGenerator {
 
     private static class FileTagger implements FileVisitor<Path> {
         private final JReleaserLogger logger;
-        private final Stack<Directory> directories = new Stack<>();
+        private final Deque<Directory> directories = new ArrayDeque<>();
         private Directory root = new Directory();
         private boolean success = true;
 
@@ -178,7 +180,6 @@ public final class SwidTagGenerator {
 
         @Override
         public FileVisitResult visitFileFailed(Path file, IOException e) throws IOException {
-            e.printStackTrace();
             if (e instanceof FileSystemLoopException) {
                 logger.error(RB.$("ERROR_files_cycle"), file);
             } else {
@@ -338,6 +339,19 @@ public final class SwidTagGenerator {
         @Override
         public int compareTo(Entity o) {
             return Comparator.comparing(Entity::getName).compare(this, o);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Entity entity = (Entity) o;
+            return name.equals(entity.name);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name);
         }
     }
 

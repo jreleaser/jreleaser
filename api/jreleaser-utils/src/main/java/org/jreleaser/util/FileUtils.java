@@ -260,7 +260,7 @@ public final class FileUtils {
         for (Path path : paths) {
             String entryName = src.relativize(path).toString();
             File inputFile = path.toFile();
-            TarArchiveEntry archiveEntry = (TarArchiveEntry) out.createArchiveEntry(inputFile, entryName);
+            TarArchiveEntry archiveEntry = out.createArchiveEntry(inputFile, entryName);
             if (null != fileTime) archiveEntry.setModTime(fileTime);
 
             if (inputFile.isFile() && Files.isExecutable(path)) {
@@ -416,7 +416,7 @@ public final class FileUtils {
 
         try (InputStream fi = Files.newInputStream(src);
              InputStream bi = new BufferedInputStream(fi);
-             ArchiveInputStream in = new ArchiveStreamFactory().createArchiveInputStream(bi)) {
+             ArchiveInputStream<?> in = new ArchiveStreamFactory().createArchiveInputStream(bi)) {
 
             unpackArchive(removeRootEntry ? rootEntryName + "/" : "", destinationDir, in);
         } catch (ArchiveException e) {
@@ -446,7 +446,7 @@ public final class FileUtils {
         try (InputStream fi = Files.newInputStream(src);
              InputStream bi = new BufferedInputStream(fi);
              InputStream gzi = resolveCompressorInputStream(fileType, bi);
-             ArchiveInputStream in = new TarArchiveInputStream(gzi)) {
+             ArchiveInputStream<?> in = new TarArchiveInputStream(gzi)) {
             unpackArchive(removeRootEntry ? rootEntryName + "/" : "", destinationDir, in);
         }
     }
@@ -472,7 +472,7 @@ public final class FileUtils {
         return null;
     }
 
-    private static void unpackArchive(String basename, File destinationDir, ArchiveInputStream in) throws IOException {
+    private static void unpackArchive(String basename, File destinationDir, ArchiveInputStream<?> in) throws IOException {
         ArchiveEntry entry = null;
         while (null != (entry = in.getNextEntry())) {
             if (!in.canReadEntryData(entry)) {
@@ -568,7 +568,7 @@ public final class FileUtils {
         return false;
     }
 
-    private static String getLinkName(ArchiveInputStream in, ArchiveEntry entry) throws IOException {
+    private static String getLinkName(ArchiveInputStream<?> in, ArchiveEntry entry) throws IOException {
         if (entry instanceof ZipArchiveEntry) {
             try (ByteArrayOutputStream o = new ByteArrayOutputStream()) {
                 IOUtils.copy(in, o);
@@ -672,7 +672,7 @@ public final class FileUtils {
 
         try (InputStream fi = Files.newInputStream(src);
              InputStream bi = new BufferedInputStream(fi);
-             ArchiveInputStream in = new ArchiveStreamFactory().createArchiveInputStream(bi)) {
+             ArchiveInputStream<?> in = new ArchiveStreamFactory().createArchiveInputStream(bi)) {
             return inspectArchive(in);
         } catch (ArchiveException e) {
             throw new IOException(e.getMessage(), e);
@@ -691,7 +691,7 @@ public final class FileUtils {
             if (filename.endsWith(ZIP.extension()) || filename.endsWith(TAR.extension())) {
                 try (InputStream fi = Files.newInputStream(src);
                      InputStream bi = new BufferedInputStream(fi);
-                     ArchiveInputStream in = new ArchiveStreamFactory().createArchiveInputStream(bi)) {
+                     ArchiveInputStream<?> in = new ArchiveStreamFactory().createArchiveInputStream(bi)) {
                     return resolveRootEntryName(in);
                 } catch (ArchiveException e) {
                     throw new IOException(e.getMessage(), e);
@@ -713,12 +713,12 @@ public final class FileUtils {
         try (InputStream fi = Files.newInputStream(src);
              InputStream bi = new BufferedInputStream(fi);
              InputStream gzi = resolveCompressorInputStream(fileType, bi);
-             ArchiveInputStream in = new TarArchiveInputStream(gzi)) {
+             ArchiveInputStream<?> in = new TarArchiveInputStream(gzi)) {
             return resolveRootEntryName(in);
         }
     }
 
-    private static String resolveRootEntryName(ArchiveInputStream in) throws IOException {
+    private static String resolveRootEntryName(ArchiveInputStream<?> in) throws IOException {
         ArchiveEntry entry = null;
         while (null != (entry = in.getNextEntry())) {
             if (!in.canReadEntryData(entry)) {
@@ -781,12 +781,12 @@ public final class FileUtils {
         try (InputStream fi = Files.newInputStream(src);
              InputStream bi = new BufferedInputStream(fi);
              InputStream gzi = resolveCompressorInputStream(fileType, bi);
-             ArchiveInputStream in = new TarArchiveInputStream(gzi)) {
+             ArchiveInputStream<?> in = new TarArchiveInputStream(gzi)) {
             return inspectArchive(in);
         }
     }
 
-    private static List<String> inspectArchive(ArchiveInputStream in) throws IOException {
+    private static List<String> inspectArchive(ArchiveInputStream<?> in) throws IOException {
         List<String> entries = new ArrayList<>();
 
         ArchiveEntry entry = null;
