@@ -87,17 +87,15 @@ shadowJar {
     exclude 'plugin.xml'
 }
 
-task relocateShadowJar(type: org.jreleaser.gradle.shadow.ConfigureShadowRelocation) {
-    target = tasks.shadowJar
-    exclude('zstd-jni')
-    exclude('jreleaser-logger-api')
-    exclude('jreleaser-model-api')
-    exclude('jreleaser-resource-bundle')
-    exclude('jreleaser-utils')
-    exclude('jreleaser-templates')
-}
-
-tasks.shadowJar.dependsOn tasks.relocateShadowJar
+tasks.shadowJar.dependsOn(tasks.register('relocateShadowJar', org.jreleaser.gradle.shadow.ConfigureShadowRelocation) { t->
+    t.target = tasks.shadowJar
+    t.exclude('zstd-jni')
+    t.exclude('jreleaser-logger-api')
+    t.exclude('jreleaser-model-api')
+    t.exclude('jreleaser-resource-bundle')
+    t.exclude('jreleaser-utils')
+    t.exclude('jreleaser-templates')
+})
 
 jar.finalizedBy shadowJar
 addMainModuleInfo.mustRunAfter(shadowJar)
@@ -107,15 +105,13 @@ tasks.withType(JavaCompile) { JavaCompile c ->
     c.targetCompatibility = JavaVersion.VERSION_11
 }
 
-task versionFile {
-    inputs.property('version', project.version)
-    outputs.file(project.layout.buildDirectory.file('VERSION'))
-    doLast {
+classes.dependsOn(tasks.register('version') {t ->
+    t.inputs.property('version', project.version)
+    t.outputs.file(project.layout.buildDirectory.file('VERSION'))
+    t.doLast {
         project.layout.buildDirectory.file('VERSION').get().asFile.text = project.version
     }
-}
-
-classes.dependsOn(versionFile)
+})
 
 afterEvaluate {
     def shadowJar = project.tasks.findByName('shadowJar')

@@ -153,9 +153,7 @@ copyDependencies {
     configuration = 'runtimeClasspath'
 }
 
-task copyGraalvmJavaSdk(type: Copy) {
-    from configurations.graalvm
-    into 'build/dependencies/graalvm'
-}
-
-assemble.dependsOn copyDependencies, copyGraalvmJavaSdk
+assemble.dependsOn(copyDependencies, tasks.register('copyGraalvmJavaSdk', Copy) { t->
+    t.from configurations.graalvm
+    t.into 'build/dependencies/graalvm'
+})
