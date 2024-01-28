@@ -82,6 +82,12 @@ jobs:
           name: artifacts
           path: plugins
 
+      - name: Download java-archive
+        uses: actions/download-artifact@v4
+        with:
+          name: java-archive
+          path: out/jreleaser/assemble/jreleaser/java-archive
+
       - name: Download jlink
         uses: actions/download-artifact@v4
         with:

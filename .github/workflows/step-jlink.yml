@@ -50,6 +50,15 @@ jobs:
         env:
           JRELEASER_OCI_COMPARTMENTID: ${{ secrets.oci-compartment-id }}
 
+      - name: Java Archive
+        uses: jreleaser/release-action@v2
+        with:
+          version: early-access
+          arguments: assemble --assembler java-archive
+          setup-java: false
+        env:
+          JRELEASER_PROJECT_VERSION: ${{ inputs.project-version }}
+
       - name: Jlink
         uses: jreleaser/release-action@v2
         with:
@@ -88,6 +97,15 @@ jobs:
       - name: Stop Gradle daemon
         shell: bash
         run: ./gradlew -stop
+
+      - name: Upload java-archive
+        uses: actions/upload-artifact@v4
+        with:
+          retention-days: 1
+          name: java-archive
+          path: |
+            out/jreleaser/assemble/jreleaser/java-archive/*.zip
+            out/jreleaser/assemble/jreleaser/java-archive/*.tar
 
       - name: Upload jlink
         uses: actions/upload-artifact@v4

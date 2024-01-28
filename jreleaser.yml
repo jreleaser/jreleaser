@@ -5,6 +5,7 @@ environment:
     graalFilePrefix: 'graalvm-ce-java17-22.3.0'
     nativeImageDir: out/jreleaser/assemble/jreleaser-native/native-image
     jpackageDir: out/jreleaser/assemble/jreleaser-installer/jpackage
+    javaArchiveDir: out/jreleaser/assemble/jreleaser/java-archive
 
 project:
   name: jreleaser
@@ -160,6 +161,26 @@ announce:
         Content-Type: application/json
 
 assemble:
+  javaArchive:
+    jreleaser:
+      active: ALWAYS
+      formats:
+        - ZIP
+        - TAR
+      fileSets:
+        - input: '.'
+          includes:
+            - NOTICE
+            - LICENSE
+        - input: licenses
+          output: licenses
+      mainJar:
+        path: 'plugins/jreleaser/build/libs/jreleaser-{{projectVersion}}.jar'
+      jars:
+        - pattern: 'plugins/jreleaser/build/dependencies/flat/*.jar'
+      swid:
+        tagRef: swid-tag
+
   jlink:
     jreleaser-standalone:
       active: ALWAYS
@@ -356,11 +377,11 @@ distributions:
         active: RELEASE
         name: jreleaser-copr
     artifacts:
-      - path: plugins/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.zip
+      - path: '{{javaArchiveDir}}/{{distributionName}}-{{projectVersion}}.zip'
         transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.zip'
         extraProperties:
           skipSpec: true
-      - path: plugins/{{distributionName}}/build/distributions/{{distributionName}}-{{projectVersion}}.tar
+      - path: '{{javaArchiveDir}}/{{distributionName}}-{{projectVersion}}.tar'
         transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}.tar'
         extraProperties:
           skipFlatpak: true
