@@ -20,7 +20,7 @@ if defined JAVA_HOME goto findJavaFromJavaHome
 
 set JAVA_EXE=java.exe
 %JAVA_EXE% -version >NUL 2>&1
-if "%ERRORLEVEL%" == "0" goto execute
+if %ERRORLEVEL% equ 0 goto execute
 
 echo.
 echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
@@ -58,20 +58,20 @@ set JAVA_OPTS="%JAVA_OPTS% {{distributionJavaOptions}}"
 
 @rem Execute
 {{#distributionJavaMainModule}}
-"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% -p %CLASSPATH% -m {{distributionJavaMainModule}}/{{distributionJavaMainClass}} %*
+"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% -p "%CLASSPATH%" -m {{distributionJavaMainModule}}/{{distributionJavaMainClass}} %*
 {{/distributionJavaMainModule}}
 {{^distributionJavaMainModule}}
 {{#distributionJavaMainClass}}
-"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% -cp %CLASSPATH% {{distributionJavaMainClass}} %*
+"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% -cp "%CLASSPATH%" {{distributionJavaMainClass}} %*
 {{/distributionJavaMainClass}}
 {{^distributionJavaMainClass}}
-"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% -cp %CLASSPATH% -jar "%JARSDIRS%\{{distributionJavaMainJar}}" %*
+"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% -cp "%CLASSPATH%" -jar "%JARSDIRS%\{{distributionJavaMainJar}}" %*
 {{/distributionJavaMainClass}}
 {{/distributionJavaMainModule}}
 
 :end
 @rem End local scope for the variables with windows NT shell
-if "%ERRORLEVEL%"=="0" goto mainEnd
+if %ERRORLEVEL% equ 0 goto mainEnd
 
 :fail
 rem Set variable JRELEASER_EXIT_CONSOLE if you need the _script_ return code instead of

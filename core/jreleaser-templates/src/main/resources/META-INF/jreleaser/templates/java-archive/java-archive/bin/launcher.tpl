@@ -71,10 +71,13 @@ location of your Java installation."
     fi
 else
     JAVACMD=java
-    which java >/dev/null 2>&1 || die "ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
+    if ! command -v java >/dev/null 2>&1
+    then
+        die "ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
 
 Please set the JAVA_HOME variable in your environment to match the
 location of your Java installation."
+    fi
 fi
 
 JARSDIR="$APP_HOME/lib"
@@ -164,6 +167,11 @@ set -- \
         "$@"
 {{/distributionJavaMainClass}}
 {{/distributionJavaMainModule}}
+
+if ! command -v xargs >/dev/null 2>&1
+then
+    die "xargs is not available"
+fi
 
 eval "set -- $(
         printf '%s\n' "$DEFAULT_JAVA_OPTS $JAVA_OPTS" |

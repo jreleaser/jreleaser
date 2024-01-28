@@ -63,14 +63,14 @@ set JAVA_OPTS="%JAVA_OPTS% {{distributionJavaOptions}}"
 :endInit
 
 {{#distributionJavaMainModule}}
-%JAVACMD% %DEFAULT_JAVA_OPTS% %JAVA_OPTS% -p %CLASSPATH% -m {{distributionJavaMainModule}}/{{distributionJavaMainClass}} %CMD_LINE_ARGS%
+%JAVACMD% %DEFAULT_JAVA_OPTS% %JAVA_OPTS% -p "%CLASSPATH%" -m {{distributionJavaMainModule}}/{{distributionJavaMainClass}} %CMD_LINE_ARGS%
 {{/distributionJavaMainModule}}
 {{^distributionJavaMainModule}}
 {{#distributionJavaMainClass}}
-%JAVACMD% %DEFAULT_JAVA_OPTS% %JAVA_OPTS% -cp %CLASSPATH% {{distributionJavaMainClass}} %CMD_LINE_ARGS%
+%JAVACMD% %DEFAULT_JAVA_OPTS% %JAVA_OPTS% -cp "%CLASSPATH%" {{distributionJavaMainClass}} %CMD_LINE_ARGS%
 {{/distributionJavaMainClass}}
 {{^distributionJavaMainClass}}
-%JAVACMD% %DEFAULT_JAVA_OPTS% %JAVA_OPTS% -cp %CLASSPATH% -jar "%JARSDIRS%\{{distributionJavaMainJar}}" %CMD_LINE_ARGS%
+%JAVACMD% %DEFAULT_JAVA_OPTS% %JAVA_OPTS% -cp "%CLASSPATH%" -jar "%JARSDIRS%\{{distributionJavaMainJar}}" %CMD_LINE_ARGS%
 {{/distributionJavaMainClass}}
 {{/distributionJavaMainModule}}
 
