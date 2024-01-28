@@ -10,7 +10,7 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -47,10 +47,13 @@ jobs:
           JRELEASER_TWITTER_ACCESS_TOKEN: ${{=<% %>=}}{{ secrets.TWITTER_ACCESS_TOKEN }}<%={{ }}=%>
           JRELEASER_TWITTER_ACCESS_TOKEN_SECRET: ${{=<% %>=}}{{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}<%={{ }}=%>
           JRELEASER_MASTODON_ACCESS_TOKEN: ${{=<% %>=}}{{ secrets.MASTODON_ACCESS_TOKEN }}<%={{ }}=%>
+          JRELEASER_BLUESKY_HOST: ${{=<% %>=}}{{ secrets.BLUESKY_HOST }}<%={{ }}=%>
+          JRELEASER_BLUESKY_HANDLE: ${{=<% %>=}}{{ secrets.BLUESKY_HANDLE }}<%={{ }}=%>
+          JRELEASER_BLUESKY_PASSWORD: ${{=<% %>=}}{{ secrets.BLUESKY_PASSWORD }}<%={{ }}=%>
 
       - name: JReleaser output
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: jreleaser-logs
           path: |
