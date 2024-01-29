@@ -71,7 +71,7 @@ jobs:
 
       - name: JReleaser output
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.3.0
         with:
           name: jreleaser-native-image-${{ runner.os }}
           path: |
@@ -83,7 +83,7 @@ jobs:
         run: ./gradlew -stop
 
       - name: Upload native-image
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4.3.0
         with:
           retention-days: 1
           name: native-image-${{ runner.os }}
