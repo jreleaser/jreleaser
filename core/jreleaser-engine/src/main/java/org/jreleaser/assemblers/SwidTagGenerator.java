@@ -41,10 +41,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Deque;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
@@ -154,13 +152,13 @@ public final class SwidTagGenerator {
             } else {
                 directories.peek().getDirectories().add(d);
             }
-            directories.add(d);
+            directories.addFirst(d);
             return CONTINUE;
         }
 
         @Override
         public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-            directories.pop();
+            directories.removeFirst();
             return CONTINUE;
         }
 
@@ -358,24 +356,24 @@ public final class SwidTagGenerator {
     public static abstract class ResourceCollection {
         @JacksonXmlElementWrapper(useWrapping = false)
         @JacksonXmlProperty(localName = "Directory")
-        private List<Directory> directories = new ArrayList<>();
+        private Set<Directory> directories = new TreeSet<>();
         @JacksonXmlElementWrapper(useWrapping = false)
         @JacksonXmlProperty(localName = "File")
-        private List<File> files = new ArrayList<>();
+        private Set<File> files = new TreeSet<>();
 
-        public List<Directory> getDirectories() {
+        public Set<Directory> getDirectories() {
             return directories;
         }
 
-        public void setDirectories(List<Directory> directories) {
+        public void setDirectories(Set<Directory> directories) {
             this.directories = directories;
         }
 
-        public List<File> getFiles() {
+        public Set<File> getFiles() {
             return files;
         }
 
-        public void setFiles(List<File> files) {
+        public void setFiles(Set<File> files) {
             this.files = files;
         }
     }
@@ -403,7 +401,7 @@ public final class SwidTagGenerator {
         }
     }
 
-    public static class FileSystemItem {
+    public static class FileSystemItem implements Comparable<FileSystemItem> {
         @JacksonXmlProperty(isAttribute = true)
         private Boolean key;
         @JacksonXmlProperty(isAttribute = true)
@@ -444,29 +442,47 @@ public final class SwidTagGenerator {
         public void setRoot(String root) {
             this.root = root;
         }
+
+        @Override
+        public int compareTo(FileSystemItem o) {
+            return Comparator.comparing(FileSystemItem::getName).compare(this, o);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            FileSystemItem entity = (FileSystemItem) o;
+            return name.equals(entity.name);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(name);
+        }
     }
 
     public static class Directory extends FileSystemItem {
         @JacksonXmlElementWrapper(useWrapping = false)
         @JacksonXmlProperty(localName = "Directory")
-        private List<Directory> directories = new ArrayList<>();
+        private Set<Directory> directories = new TreeSet<>();
         @JacksonXmlElementWrapper(useWrapping = false)
         @JacksonXmlProperty(localName = "File")
-        private List<File> files = new ArrayList<>();
+        private Set<File> files = new TreeSet<>();
 
-        public List<Directory> getDirectories() {
+        public Set<Directory> getDirectories() {
             return directories;
         }
 
-        public void setDirectories(List<Directory> directories) {
+        public void setDirectories(Set<Directory> directories) {
             this.directories = directories;
         }
 
-        public List<File> getFiles() {
+        public Set<File> getFiles() {
             return files;
         }
 
-        public void setFiles(List<File> files) {
+        public void setFiles(Set<File> files) {
             this.files = files;
         }
     }
