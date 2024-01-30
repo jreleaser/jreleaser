@@ -125,25 +125,30 @@ jdks {
         url = 'https://cdn.azul.com/zulu/bin/zulu17.32.13-ca-jdk17.0.2-macosx_aarch64.zip'
         checksum = '8c287018d358ec2c43995bf09a0cdaa235f0bdd434673777a564daee2c3872df'
     }
-    graal17Osx {
+    graal21Osx {
         platform = 'osx-x86_64'
-        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.3.0/graalvm-ce-java17-darwin-amd64-22.3.0.tar.gz'
-        checksum = '422cd6abecfb8b40238460c09c42c5a018cb92fab4165de9691be2e3c3d0e8d1'
+        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-21.0.2/graalvm-community-jdk-21.0.2_macos-x64_bin.tar.gz'
+        checksum = '7a8aa93fa45d1721908477abf4732a32637d420ffcb66ada9fb6456440b0d9e1'
     }
-    graal17Linux {
+    graal21OsxArm {
+        platform = 'osx-aarch64'
+        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-21.0.2/graalvm-community-jdk-21.0.2_macos-aarch64_bin.tar.gz'
+        checksum = '515e3a93acc7e1938daba83eda4272e5495fd302d7cdd99ec7ebf408ed505ab7'
+    }
+    graal21Linux {
         platform = 'linux-x86_64'
-        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.3.0/graalvm-ce-java17-linux-amd64-22.3.0.tar.gz'
-        checksum = '3473d8b3b1bc682e95adfb3ac1d9a59b51b0f43e2b752f2a5b550e4ebfa2fd17'
+        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-21.0.2/graalvm-community-jdk-21.0.2_linux-x64_bin.tar.gz'
+        checksum = 'b048069aaa3a99b84f5b957b162cc181a32a4330cbc35402766363c5be76ae48'
     }
-    //graal17LinuxArm {
+    //graal21LinuxArm {
     //    platform = 'linux-aarch64'
     //    url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.0.0.2/graalvm-ce-java17-linux-aarch64-22.0.0.2.tar.gz'
     //    checksum = 'c7d78387d2a144944f26773697c1b61d3478a081a1c5e7fc20f47f1f5f3c82c7'
     //}
-    graal17Windows {
+    graal21Windows {
         platform = 'windows-x86_64'
-        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.3.0/graalvm-ce-java17-windows-amd64-22.3.0.zip'
-        checksum = '5a6f1d640034166a0fefd9d8924c12b040f120cd019b46b40895ccc8e9a9fc9e'
+        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-21.0.2/graalvm-community-jdk-21.0.2_windows-x64_bin.zip'
+        checksum = 'e17b7bead097bf372a5c75df17815b0a2f30b777a019d25eff7706b21421f7fa'
     }
 }
 

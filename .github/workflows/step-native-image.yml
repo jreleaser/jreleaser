@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macOS-latest]
+        os: [ubuntu-latest, macOS-latest, windows-latest, macos-14]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
@@ -32,13 +32,6 @@ jobs:
         with:
           name: artifacts
           path: plugins
-
-      - name: Setup Graal
-        uses: graalvm/setup-graalvm@v1
-        with:
-          distribution: 'graalvm'
-          java-version: ${{ vars.GRAAL_JAVA_VERSION }}
-          github-token: ${{ secrets.gh-access-token }}
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -56,10 +49,6 @@ jobs:
         shell: bash
         run: ./gradlew :jreleaser:copyJdksFromCache :jreleaser:setupJdks
 
-      - name: Install upx
-        run: brew install upx
-        if: ${{ runner.os == 'macOS' }}
-
       - name: NativeImage
         uses: jreleaser/release-action@v2
         with:
@@ -73,7 +62,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: jreleaser-native-image-${{ runner.os }}
+          name: jreleaser-native-image-${{ runner.os }}-${{ runner.arch }}
           path: |
             out/jreleaser/trace.log
             out/jreleaser/output.properties

@@ -2,7 +2,7 @@ environment:
   properties:
     jdkPathPrefix: 'plugins/jreleaser/build/jdks'
     jdkFilePrefix: 'zulu17.32.13-ca-jdk17.0.2'
-    graalFilePrefix: 'graalvm-ce-java17-22.3.0'
+    graalFilePrefix: 'graalvm-community-openjdk-21.0.2+13.1'
     nativeImageDir: out/jreleaser/assemble/jreleaser-native/native-image
     jpackageDir: out/jreleaser/assemble/jreleaser-installer/jpackage
     javaArchiveDir: out/jreleaser/assemble/jreleaser/java-archive
@@ -265,7 +265,7 @@ assemble:
     jreleaser-native:
       active: ALWAYS
       java:
-        version: 17
+        version: 21
       imageName: '{{distributionName}}-{{projectEffectiveVersion}}'
       executable: jreleaser
       fileSets:
@@ -281,13 +281,14 @@ assemble:
         - pattern: 'plugins/jreleaser/build/dependencies/flat/*.jar'
         - pattern: 'plugins/jreleaser/build/dependencies/graalvm/*.jar'
       graalJdks:
-        - path: '{{jdkPathPrefix}}/graal17Osx/{{graalFilePrefix}}/Contents/Home'
+        - path: '{{jdkPathPrefix}}/graal21Osx/{{graalFilePrefix}}/Contents/Home'
           platform: 'osx-x86_64'
-        - path: '{{jdkPathPrefix}}/graal17Linux/{{graalFilePrefix}}'
+        - path: '{{jdkPathPrefix}}/graal21OsxArm/{{graalFilePrefix}}/Contents/Home'
+          platform: 'osx-aarch_64'
+        - path: '{{jdkPathPrefix}}/graal21Linux/{{graalFilePrefix}}'
           platform: 'linux-x86_64'
-      upx:
-        active: ALWAYS
-        version: '3.96'
+        - path: '{{jdkPathPrefix}}/graal21Windows/{{graalFilePrefix}}'
+          platform: 'windows-x86_64'
       args:
         - '-Duser.language=en'
         - '-H:IncludeLocales=en,ca,de,es,fr,hi,it,ja,nl,pt_BR,zh_TW,ru,ko'
@@ -475,10 +476,14 @@ distributions:
 
   jreleaser-native:
     artifacts:
+      - path: '{{nativeImageDir}}/{{distributionName}}-{{projectEffectiveVersion}}-osx-aarch_64.zip'
+        platform: 'osx-aarch_64'
       - path: '{{nativeImageDir}}/{{distributionName}}-{{projectEffectiveVersion}}-osx-x86_64.zip'
         platform: 'osx-x86_64'
       - path: '{{nativeImageDir}}/{{distributionName}}-{{projectEffectiveVersion}}-linux-x86_64.zip'
         platform: 'linux-x86_64'
+      - path: '{{nativeImageDir}}/{{distributionName}}-{{projectEffectiveVersion}}-windows-x86_64.zip'
+        platform: 'windows-x86_64'
 
 files:
   artifacts:
