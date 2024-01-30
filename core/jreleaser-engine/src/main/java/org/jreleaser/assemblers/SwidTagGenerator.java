@@ -462,6 +462,7 @@ public final class SwidTagGenerator {
         }
     }
 
+    @SuppressWarnings("checkstyle:equalsHashCode")
     public static class Directory extends FileSystemItem {
         @JacksonXmlElementWrapper(useWrapping = false)
         @JacksonXmlProperty(localName = "Directory")
@@ -497,6 +498,7 @@ public final class SwidTagGenerator {
         }
     }
 
+    @SuppressWarnings("checkstyle:EqualsHashCode")
     public static class File extends FileSystemItem {
         @JacksonXmlProperty(isAttribute = true)
         private long size;
