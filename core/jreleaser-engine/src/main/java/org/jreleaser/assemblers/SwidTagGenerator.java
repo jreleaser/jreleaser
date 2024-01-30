@@ -353,7 +353,7 @@ public final class SwidTagGenerator {
         }
     }
 
-    public static abstract class ResourceCollection {
+    public abstract static class ResourceCollection {
         @JacksonXmlElementWrapper(useWrapping = false)
         @JacksonXmlProperty(localName = "Directory")
         private Set<Directory> directories = new TreeSet<>();
@@ -485,6 +485,16 @@ public final class SwidTagGenerator {
         public void setFiles(Set<File> files) {
             this.files = files;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            if (!super.equals(o)) return false;
+            Directory directory = (Directory) o;
+            return directories.equals(directory.directories) &&
+                files.equals(directory.files);
+        }
     }
 
     public static class File extends FileSystemItem {
@@ -527,6 +537,18 @@ public final class SwidTagGenerator {
 
         public void setSha512(String sha512) {
             this.sha512 = sha512;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            if (!super.equals(o)) return false;
+            File file = (File) o;
+            return size == file.size &&
+                version.equals(file.version) &&
+                sha256.equals(file.sha256) &&
+                sha512.equals(file.sha512);
         }
     }
 }
