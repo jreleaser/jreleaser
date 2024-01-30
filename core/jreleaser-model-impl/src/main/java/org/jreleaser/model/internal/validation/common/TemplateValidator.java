@@ -44,6 +44,10 @@ public final class TemplateValidator {
 
     public static void validateTemplate(JReleaserContext context, Distribution distribution,
                                         TemplatePackager<?> packager, TemplatePackager<?> parentPackager, Errors errors) {
+        if (packager.getSkipTemplates().isEmpty()) {
+            packager.setSkipTemplates(parentPackager.getSkipTemplates());
+        }
+
         String defaultTemplateDirectory = "src/jreleaser/distributions/" + distribution.getName() + "/" + packager.getType();
 
         if (isBlank(packager.getTemplateDirectory())) {
