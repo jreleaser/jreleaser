@@ -162,3 +162,13 @@ assemble.dependsOn(copyDependencies, tasks.register('copyGraalvmJavaSdk', Copy) 
     t.from configurations.graalvm
     t.into 'build/dependencies/graalvm'
 })
+
+afterEvaluate {
+    def copyJdksToCache = project.tasks.findByName('copyJdksToCache')
+    ['zulu17Linux', 'zulu17LinuxArm', 'zulu17LinuxMusl', 'zulu17LinuxMuslArm',
+     'zulu17Windows', 'zulu17WindowsArm', 'zulu17Osx', 'zulu17OsxArm',
+     'graal21Osx', 'graal21OsxArm', 'graal21Linux', 'graal21Windows'].each { jdk ->
+        def copyTask = project.tasks.findByName('copyJdkFromCache' + jdk.capitalize())
+        if (copyJdksToCache && copyTask) copyTask.dependsOn(copyJdksToCache)
+    }
+}
