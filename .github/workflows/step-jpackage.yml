@@ -86,7 +86,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: jreleaser-jpackage-${{ runner.os }}
+          name: jreleaser-jpackage-${{ runner.os }}-${{ runner.arch }}
           path: |
             out/jreleaser/trace.log
             out/jreleaser/output.properties
@@ -99,7 +99,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           retention-days: 1
-          name: jpackage-${{ runner.os }}
+          name: jpackage-${{ runner.os }}-${{ runner.arch }}
           path: |
             out/jreleaser/assemble/jreleaser-installer/jpackage/*.pkg
             out/jreleaser/assemble/jreleaser-installer/jpackage/*.msi
