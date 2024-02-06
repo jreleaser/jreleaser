@@ -236,6 +236,8 @@ class JdksPlugin implements Plugin<Project> {
                         t.description = "Copy JDK ${candidateJdk.name} from cache".toString()
                         t.inputFile.set(candidateJdk.archive)
                         t.outputDirectory.set(jdkDirectory)
+                        // Otherwise Gradle 8+ complains about task dependencies
+                        t.dependsOn(copyJdksToCache)
                         // Not ideal but must nuke the directory to avoid copy errors
                         t.doFirst { jdkDirectory.get().asFile.deleteDir() }
                     }
