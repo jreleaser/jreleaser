@@ -93,14 +93,13 @@ public final class AsdfPackagerValidator {
             packager.setToolCheck("{{distributionExecutable}} --version");
         }
 
+        validateCommitAuthor(packager, parentPackager);
+        AsdfPackager.AsdfRepository repository = packager.getRepository();
+        Validator.validateRepository(context, distribution, repository, parentPackager.getRepository(), "asdf.repository");
         if (isBlank(packager.getRepository().getName())) {
             packager.getRepository().setName("asdf-" + distribution.getName());
         }
         packager.getRepository().setTapName("asdf-" + distribution.getName());
-
-        validateCommitAuthor(packager, parentPackager);
-        AsdfPackager.AsdfRepository repository = packager.getRepository();
-        Validator.validateRepository(context, distribution, repository, parentPackager.getRepository(), "asdf.repository");
         validateTemplate(context, distribution, packager, parentPackager, errors);
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);

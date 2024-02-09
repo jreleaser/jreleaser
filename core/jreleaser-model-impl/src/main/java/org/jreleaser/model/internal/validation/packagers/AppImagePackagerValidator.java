@@ -158,11 +158,6 @@ public final class AppImagePackagerValidator {
             errors.configuration(RB.$("validation_no_primary_icon", "distribution." + distribution.getName() + ".appImage.icons"));
         }
 
-        if (isBlank(packager.getRepository().getName())) {
-            packager.getRepository().setName(distribution.getName() + "-appimage");
-        }
-        packager.getRepository().setTapName(distribution.getName() + "-appimage");
-
         if (distribution.getStereotype() != Stereotype.CLI && distribution.getStereotype() != Stereotype.DESKTOP) {
             errors.configuration(RB.$("validation_stereotype_invalid",
                 "distribution." + distribution.getName() + ".stereotype",
@@ -173,6 +168,10 @@ public final class AppImagePackagerValidator {
         validateCommitAuthor(packager, parentPackager);
         AppImagePackager.AppImageRepository repository = packager.getRepository();
         Validator.validateRepository(context, distribution, repository, parentPackager.getRepository(), "appImage.repository");
+        if (isBlank(packager.getRepository().getName())) {
+            packager.getRepository().setName(distribution.getName() + "-appimage");
+        }
+        packager.getRepository().setTapName(distribution.getName() + "-appimage");
         validateTemplate(context, distribution, packager, parentPackager, errors);
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);

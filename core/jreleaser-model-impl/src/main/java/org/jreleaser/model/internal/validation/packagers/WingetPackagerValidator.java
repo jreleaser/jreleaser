@@ -97,14 +97,13 @@ public final class WingetPackagerValidator {
             return;
         }
 
+        validateCommitAuthor(packager, parentPackager);
+        WingetPackager.WingetRepository repository = packager.getRepository();
+        Validator.validateRepository(context, distribution, repository, parentPackager.getRepository(), "winget.repository");
         if (isBlank(packager.getRepository().getName())) {
             packager.getRepository().setName("winget-" + distribution.getName());
         }
         packager.getRepository().setTapName("winget-" + distribution.getName());
-
-        validateCommitAuthor(packager, parentPackager);
-        WingetPackager.WingetRepository repository = packager.getRepository();
-        Validator.validateRepository(context, distribution, repository, parentPackager.getRepository(), "winget.repository");
         validateTemplate(context, distribution, packager, parentPackager, errors);
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);

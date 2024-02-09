@@ -122,10 +122,10 @@ public final class JibPackagerValidator {
         if (!repository.isVersionedSubfoldersSet()) {
             repository.setVersionedSubfolders(parentPackager.getPackagerRepository().isVersionedSubfolders());
         }
+        Validator.validateRepository(context, distribution, repository, parentPackager.getRepositoryTap(), "jib.repository");
         if (isBlank(repository.getName())) {
             repository.setName(project.getName() + "-jib");
         }
-        Validator.validateRepository(context, distribution, repository, parentPackager.getRepositoryTap(), "jib.repository");
 
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);
