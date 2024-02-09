@@ -163,6 +163,7 @@ enforce {
             "org.mockito:mockito-core:$mockitoVersion",
             "org.mockito:mockito-junit-jupiter:$mockitoVersion",
             "org.mockito:mockito-inline:$mockitoInlineVersion",
+            "org.nibor.autolink:autolink:$autolinkVersion",
             "org.slf4j:slf4j-api:$slf4jVersion",
             "org.slf4j:slf4j-simple:$slf4jVersion",
             "org.yaml:snakeyaml:$snakeYamlVersion"
