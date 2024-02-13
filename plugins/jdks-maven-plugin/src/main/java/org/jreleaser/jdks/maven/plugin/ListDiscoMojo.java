@@ -61,13 +61,18 @@ public class ListDiscoMojo extends AbstractDiscoMojo {
             if (isNotBlank(pkg.getLibcType())) getLog().info("libcType:      " + pkg.getLibcType());
             getLog().info("package(s):    " + packages.size());
 
+            int count = 0;
             for (org.jreleaser.sdk.disco.api.Pkg dpkg : packages) {
                 if (!dpkg.isDirectlyDownloadable()) {
                     disco.getLogger().warn(RB.$("disco.package.not.downloadable", dpkg.getFilename()));
                     continue;
                 }
 
-                getLog().info("filename:      " + dpkg.getFilename());
+                if (isNotBlank(pkg.getFilename()) && ++count == 1) {
+                    getLog().info("filename:      " + pkg.getFilename());
+                } else {
+                    getLog().info("filename:      " + dpkg.getFilename());
+                }
             }
 
         } catch (RestAPIException e) {

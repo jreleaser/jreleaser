@@ -96,6 +96,7 @@ public class SetupDiscoMojo extends AbstractDiscoMojo {
         jdk.setUrl(result.get(0).getDirectDownloadUri());
         jdk.setChecksum(result.get(0).getChecksum());
         jdk.setChecksumType(result.get(0).getChecksumType());
+        jdk.setFilename(pkg.getFilename());
         return jdk;
     }
 }

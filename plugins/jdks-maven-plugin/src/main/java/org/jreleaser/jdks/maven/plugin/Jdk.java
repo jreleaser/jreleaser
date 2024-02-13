@@ -29,6 +29,7 @@ public class Jdk {
     private String name;
     private String platform;
     private String url;
+    private String filename;
     private String checksum;
     private String checksumType = "sha256";
 
@@ -54,6 +55,14 @@ public class Jdk {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 
     public String getChecksum() {

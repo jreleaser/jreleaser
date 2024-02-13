@@ -38,6 +38,7 @@ public class Pkg {
     private String releaseStatus;
     private String termOfSupport;
     private String bitness;
+    private String filename;
 
     public void validate(Errors errors) {
         if (isBlank(name)) {
@@ -148,6 +149,14 @@ public class Pkg {
 
     public void setBitness(String bitness) {
         this.bitness = bitness;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 
     @Override

@@ -37,6 +37,7 @@ import java.nio.file.Paths;
 import java.util.Locale;
 
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.configuration;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.element;
 import static org.twdata.maven.mojoexecutor.MojoExecutor.executeMojo;
@@ -96,7 +97,8 @@ public class JdkHelper {
     }
 
     private void downloadJdk(File jdkExtractDirectory, Jdk jdk) throws MojoExecutionException {
-        log.info("Downloading " + jdk.getUrl());
+        String filename = getFilename(jdk);
+        log.info("Downloading " + jdk.getUrl() + " to " + jdkExtractDirectory + File.separator + filename);
 
         Boolean interactiveMode = session.getSettings().getInteractiveMode();
         session.getSettings().setInteractiveMode(false);
@@ -109,13 +111,14 @@ public class JdkHelper {
             executeMojo(
                 plugin("com.googlecode.maven-download-plugin",
                     "download-maven-plugin",
-                    "1.6.8"),
+                    "1.8.0"),
                 goal("wget"),
                 configuration(
                     element("uri", jdk.getUrl()),
                     element("followRedirects", "true"),
                     element("outputDirectory", jdkExtractDirectory.getAbsolutePath()),
-                    element("cacheDirectory", cacheDirectory)
+                    element("cacheDirectory", cacheDirectory),
+                    element("outputFileName", filename)
                 ),
                 executionEnvironment(
                     project,
@@ -160,6 +163,9 @@ public class JdkHelper {
     }
 
     private String getFilename(Jdk jdk) {
+        if (isNotBlank(jdk.getFilename())) {
+            return jdk.getFilename();
+        }
         int p = jdk.getUrl().lastIndexOf("/");
         return jdk.getUrl().substring(p + 1);
     }
