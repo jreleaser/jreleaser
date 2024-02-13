@@ -46,7 +46,13 @@ import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_MODULE;
 import static org.jreleaser.model.Constants.KEY_PROJECT_LONG_DESCRIPTION;
 import static org.jreleaser.model.Constants.KEY_WINGET_AUTHOR;
 import static org.jreleaser.model.Constants.KEY_WINGET_DEFAULT_LOCALE;
+import static org.jreleaser.model.Constants.KEY_WINGET_EXTERNAL_DEPENDENCIES;
+import static org.jreleaser.model.Constants.KEY_WINGET_HAS_DEPENDENCIES;
+import static org.jreleaser.model.Constants.KEY_WINGET_HAS_EXTERNAL_DEPENDENCIES;
+import static org.jreleaser.model.Constants.KEY_WINGET_HAS_PACKAGE_DEPENDENCIES;
 import static org.jreleaser.model.Constants.KEY_WINGET_HAS_TAGS;
+import static org.jreleaser.model.Constants.KEY_WINGET_HAS_WINDOWS_FEATURES;
+import static org.jreleaser.model.Constants.KEY_WINGET_HAS_WINDOWS_LIBRARIES;
 import static org.jreleaser.model.Constants.KEY_WINGET_INSTALLERS;
 import static org.jreleaser.model.Constants.KEY_WINGET_INSTALLER_ARCHITECTURE;
 import static org.jreleaser.model.Constants.KEY_WINGET_INSTALLER_TYPE;
@@ -54,6 +60,7 @@ import static org.jreleaser.model.Constants.KEY_WINGET_INSTALL_MODES;
 import static org.jreleaser.model.Constants.KEY_WINGET_MANIFEST_TYPE;
 import static org.jreleaser.model.Constants.KEY_WINGET_MINIMUM_OS_VERSION;
 import static org.jreleaser.model.Constants.KEY_WINGET_MONIKER;
+import static org.jreleaser.model.Constants.KEY_WINGET_PACKAGE_DEPENDENCIES;
 import static org.jreleaser.model.Constants.KEY_WINGET_PACKAGE_IDENTIFIER;
 import static org.jreleaser.model.Constants.KEY_WINGET_PACKAGE_LOCALE;
 import static org.jreleaser.model.Constants.KEY_WINGET_PACKAGE_NAME;
@@ -67,6 +74,8 @@ import static org.jreleaser.model.Constants.KEY_WINGET_RELEASE_DATE;
 import static org.jreleaser.model.Constants.KEY_WINGET_SCOPE;
 import static org.jreleaser.model.Constants.KEY_WINGET_TAGS;
 import static org.jreleaser.model.Constants.KEY_WINGET_UPGRADE_BEHAVIOR;
+import static org.jreleaser.model.Constants.KEY_WINGET_WINDOWS_FEATURES;
+import static org.jreleaser.model.Constants.KEY_WINGET_WINDOWS_LIBRARIES;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.templates.TemplateUtils.trimTplExtension;
 import static org.jreleaser.util.FileType.ZIP;
@@ -126,6 +135,16 @@ public class WingetPackagerProcessor extends AbstractRepositoryPackagerProcessor
         props.set(KEY_WINGET_RELEASE_DATE, new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
 
         props.set(KEY_WINGET_INSTALLER_ARCHITECTURE, resolveArchitecture(props.get(KEY_DISTRIBUTION_ARTIFACT_PLATFORM)));
+
+        props.set(KEY_WINGET_HAS_DEPENDENCIES, packager.getInstaller().getDependencies().hasDependencies());
+        props.set(KEY_WINGET_HAS_WINDOWS_FEATURES, packager.getInstaller().getDependencies().hasWindowsFeatures());
+        props.set(KEY_WINGET_HAS_WINDOWS_LIBRARIES, packager.getInstaller().getDependencies().hasWindowsLibraries());
+        props.set(KEY_WINGET_HAS_EXTERNAL_DEPENDENCIES, packager.getInstaller().getDependencies().hasExternalDependencies());
+        props.set(KEY_WINGET_HAS_PACKAGE_DEPENDENCIES, packager.getInstaller().getDependencies().hasPackageDependencies());
+        props.set(KEY_WINGET_WINDOWS_FEATURES, packager.getInstaller().getDependencies().getWindowsFeatures());
+        props.set(KEY_WINGET_WINDOWS_LIBRARIES, packager.getInstaller().getDependencies().getWindowsLibraries());
+        props.set(KEY_WINGET_EXTERNAL_DEPENDENCIES, packager.getInstaller().getDependencies().getExternalDependencies());
+        props.set(KEY_WINGET_PACKAGE_DEPENDENCIES, packager.getInstaller().getDependencies().getPackageDependencies());
 
         if (distribution.getType() == org.jreleaser.model.Distribution.DistributionType.JLINK) {
             List<Installer> installers = new ArrayList<>();

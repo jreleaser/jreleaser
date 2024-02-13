@@ -13,5 +13,27 @@ Installers:
     NestedInstallerFiles:
       - RelativeFilePath: {{distributionArtifactRootEntryName}}\bin\{{distributionExecutableWindows}}
         PortableCommandAlias: {{distributionExecutableName}}
+    {{#wingetHasDependencies}}
+    Dependencies:
+      {{#wingetHasWindowsFeatures}}
+      WindowsFeatures:
+        {{#wingetWindowsFeatures}}- {{.}}{{/wingetWindowsFeatures}}
+      {{/wingetHasWindowsFeatures}}
+      {{#wingetHasWindowsLibraries}}
+      WindowsLibraries:
+        {{#wingetWindowsLibraries}}- {{.}}{{/wingetWindowsLibraries}}
+      {{/wingetHasWindowsLibraries}}
+      {{#wingetHasExternalDependencies}}
+      ExternalDependencies:
+        {{#wingetExternalDependencies}}- {{.}}{{/wingetExternalDependencies}}
+      {{/wingetHasExternalDependencies}}
+      {{#wingetHasPackageDependencies}}
+      PackageDependencies:
+        {{#wingetPackageDependencies}}
+        - PackageIdentifier: {{packageIdentifier}}
+          {{#minimumVersion}}MinimumVersion: {{.}}{{/minimumVersion}}
+        {{/wingetPackageDependencies}}
+      {{/wingetHasPackageDependencies}}
+    {{/wingetHasDependencies}}
 ManifestType: installer
 ManifestVersion: 1.4.0

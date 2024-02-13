@@ -102,4 +102,23 @@ public abstract class AbstractModelObject<S extends AbstractModelObject<S>> impl
 
         return m1;
     }
+
+    protected <E extends ModelObject<E>, T extends E> Set<T> mergeModel(Set<T> existing, Set<T> incoming) {
+        Set<T> s1 = new LinkedHashSet<>();
+        if (null != existing) s1.addAll(existing);
+        if (null != incoming && !incoming.isEmpty()) {
+            for (T e : incoming) {
+                if (null != existing && existing.contains(e)) {
+                    existing.stream()
+                        .filter(a -> a.equals(e))
+                        .findFirst()
+                        .ifPresent(v -> v.merge(e));
+                } else {
+                    s1.add(e);
+                }
+            }
+        }
+
+        return s1;
+    }
 }

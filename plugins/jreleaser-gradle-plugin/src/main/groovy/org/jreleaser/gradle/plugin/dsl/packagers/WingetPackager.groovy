@@ -104,5 +104,33 @@ interface WingetPackager extends RepositoryPackager {
         void mode(String str)
 
         void setUpgradeBehavior(String str)
+
+        void dependencies(Action<? super Dependencies> action)
+
+        void dependencies(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Dependencies) Closure<Void> action)
+    }
+
+    interface Dependencies {
+        SetProperty<String> getWindowsFeatures()
+
+        SetProperty<String> getWindowsLibraries()
+
+        SetProperty<String> getExternalDependencies()
+
+        void windowsFeature(String str)
+
+        void windowsLibrary(String str)
+
+        void externalDependency(String str)
+
+        void packageDependency(Action<? super PackageDependency> action)
+
+        void packageDependency(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = PackageDependency) Closure<Void> action)
+    }
+
+    interface PackageDependency {
+        Property<String> getPackageIdentifier()
+
+        Property<String> getMinimumVersion()
     }
 }

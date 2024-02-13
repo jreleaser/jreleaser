@@ -82,6 +82,8 @@ public interface WingetPackager extends RepositoryPackager {
 
         String getCommand();
 
+        Dependencies getDependencies();
+
         enum Type {
             MSIX,
             MSI,
@@ -184,5 +186,21 @@ public interface WingetPackager extends RepositoryPackager {
                 return UpgradeBehavior.valueOf(value);
             }
         }
+    }
+
+    interface Dependencies extends Domain {
+        Set<String> getWindowsFeatures();
+
+        Set<String> getWindowsLibraries();
+
+        Set<String> getExternalDependencies();
+
+        Set<PackageDependency> getPackageDependencies();
+    }
+
+    interface PackageDependency extends Domain {
+        String getPackageIdentifier();
+
+        String getMinimumVersion();
     }
 }

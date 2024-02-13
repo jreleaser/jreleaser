@@ -20,6 +20,8 @@ package org.jreleaser.gradle.plugin.internal.dsl.packagers
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
+import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
@@ -239,6 +241,7 @@ class WingetPackagerImpl extends AbstractRepositoryPackager implements WingetPac
         final SetProperty<org.jreleaser.model.api.packagers.WingetPackager.Installer.Mode> modes
         final Property<org.jreleaser.model.api.packagers.WingetPackager.Installer.UpgradeBehavior> upgradeBehavior
         final Property<String> command
+        final DependenciesImpl dependencies
 
         @Inject
         InstallerImpl(ObjectFactory objects) {
@@ -247,6 +250,7 @@ class WingetPackagerImpl extends AbstractRepositoryPackager implements WingetPac
             upgradeBehavior = objects.property(org.jreleaser.model.api.packagers.WingetPackager.Installer.UpgradeBehavior).convention(Providers.<org.jreleaser.model.api.packagers.WingetPackager.Installer.UpgradeBehavior> notDefined())
             command = objects.property(String).convention(Providers.<String> notDefined())
             modes = objects.setProperty(org.jreleaser.model.api.packagers.WingetPackager.Installer.Mode).convention(Providers.<Set<org.jreleaser.model.api.packagers.WingetPackager.Installer.Mode>> notDefined())
+            dependencies = objects.newInstance(DependenciesImpl, objects)
         }
 
         @Override
@@ -268,6 +272,17 @@ class WingetPackagerImpl extends AbstractRepositoryPackager implements WingetPac
             if (isNotBlank(str)) {
                 upgradeBehavior.set(org.jreleaser.model.api.packagers.WingetPackager.Installer.UpgradeBehavior.of(str.trim()))
             }
+        }
+
+        @Override
+        void dependencies(Action<? super Dependencies> action) {
+            action.execute(dependencies)
+        }
+
+        @Override
+        @CompileDynamic
+        void dependencies(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Dependencies) Closure<Void> action) {
+            ConfigureUtil.configure(action, dependencies)
         }
 
         @Override
@@ -293,6 +308,106 @@ class WingetPackagerImpl extends AbstractRepositoryPackager implements WingetPac
             if (upgradeBehavior.present) p.upgradeBehavior = upgradeBehavior.get()
             if (command.present) p.command = command.get()
             p.modes = (Set<org.jreleaser.model.api.packagers.WingetPackager.Installer.Mode>) modes.getOrElse([] as Set<org.jreleaser.model.api.packagers.WingetPackager.Installer.Mode>)
+            p.dependencies = dependencies.toModel()
+            p
+        }
+    }
+
+    @CompileStatic
+    static class DependenciesImpl implements Dependencies {
+        final SetProperty<String> windowsFeatures
+        final SetProperty<String> windowsLibraries
+        final SetProperty<String> externalDependencies
+
+        private final NamedDomainObjectContainer<PackageDependencyImpl> packageDependencies
+
+        @Inject
+        DependenciesImpl(ObjectFactory objects) {
+            windowsFeatures = objects.setProperty(String).convention(Providers.<Set<String>> notDefined())
+            windowsLibraries = objects.setProperty(String).convention(Providers.<Set<String>> notDefined())
+            externalDependencies = objects.setProperty(String).convention(Providers.<Set<String>> notDefined())
+
+            packageDependencies = objects.domainObjectContainer(PackageDependencyImpl, new NamedDomainObjectFactory<PackageDependencyImpl>() {
+                @Override
+                PackageDependencyImpl create(String name) {
+                    objects.newInstance(PackageDependencyImpl, objects)
+                }
+            })
+        }
+
+        @Internal
+        boolean isSet() {
+            windowsFeatures.present ||
+                windowsLibraries.present ||
+                externalDependencies.present ||
+                packageDependencies.empty
+        }
+
+        @Override
+        void windowsFeature(String str) {
+            if (isNotBlank(str)) {
+                windowsFeatures.add(str.trim())
+            }
+        }
+
+        @Override
+        void windowsLibrary(String str) {
+            if (isNotBlank(str)) {
+                windowsLibraries.add(str.trim())
+            }
+        }
+
+        @Override
+        void externalDependency(String str) {
+            if (isNotBlank(str)) {
+                externalDependencies.add(str.trim())
+            }
+        }
+
+        @Override
+        void packageDependency(Action<? super PackageDependency> action) {
+            action.execute(packageDependencies.maybeCreate("packageDependency-${packageDependencies.size()}".toString()))
+        }
+
+        @Override
+        @CompileDynamic
+        void packageDependency(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = PackageDependency) Closure<Void> action) {
+            ConfigureUtil.configure(action, packageDependencies.maybeCreate("packageDependency-${packageDependencies.size()}".toString()))
+        }
+
+        org.jreleaser.model.internal.packagers.WingetPackager.Dependencies toModel() {
+            org.jreleaser.model.internal.packagers.WingetPackager.Dependencies p = new org.jreleaser.model.internal.packagers.WingetPackager.Dependencies()
+            p.windowsFeatures = (Set<String>) windowsFeatures.getOrElse([] as Set<String>)
+            p.windowsLibraries = (Set<String>) windowsLibraries.getOrElse([] as Set<String>)
+            p.externalDependencies = (Set<String>) externalDependencies.getOrElse([] as Set<String>)
+            for (PackageDependencyImpl dependency : packageDependencies) {
+                p.addPackageDependency(dependency.toModel())
+            }
+            p
+        }
+    }
+
+    @CompileStatic
+    static class PackageDependencyImpl implements PackageDependency {
+        final Property<String> packageIdentifier
+        final Property<String> minimumVersion
+
+        @Inject
+        PackageDependencyImpl(ObjectFactory objects) {
+            packageIdentifier = objects.property(String).convention(Providers.<String> notDefined())
+            minimumVersion = objects.property(String).convention(Providers.<String> notDefined())
+        }
+
+        @Internal
+        boolean isSet() {
+            packageIdentifier.present ||
+                minimumVersion.present
+        }
+
+        org.jreleaser.model.internal.packagers.WingetPackager.PackageDependency toModel() {
+            org.jreleaser.model.internal.packagers.WingetPackager.PackageDependency p = new org.jreleaser.model.internal.packagers.WingetPackager.PackageDependency()
+            if (packageIdentifier.present) p.packageIdentifier = packageIdentifier.get()
+            if (minimumVersion.present) p.minimumVersion = minimumVersion.get()
             p
         }
     }

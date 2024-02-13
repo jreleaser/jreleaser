@@ -419,6 +419,15 @@ public interface Constants {
     String KEY_WINGET_RELEASE_DATE = "wingetReleaseDate";
     String KEY_WINGET_INSTALLER_ARCHITECTURE = "wingetInstallerArchitecture";
     String KEY_WINGET_INSTALLERS = "wingetInstallers";
+    String KEY_WINGET_HAS_DEPENDENCIES = "wingetHasDependencies";
+    String KEY_WINGET_HAS_WINDOWS_FEATURES = "wingetHasWindowsFeatures";
+    String KEY_WINGET_WINDOWS_FEATURES = "wingetWindowsFeatures";
+    String KEY_WINGET_HAS_WINDOWS_LIBRARIES = "wingetHasWindowsLibraries";
+    String KEY_WINGET_WINDOWS_LIBRARIES = "wingetWindowsLibraries";
+    String KEY_WINGET_HAS_EXTERNAL_DEPENDENCIES = "wingetHasExternalDependencies";
+    String KEY_WINGET_EXTERNAL_DEPENDENCIES = "wingetExternalDependencies";
+    String KEY_WINGET_HAS_PACKAGE_DEPENDENCIES = "wingetHasPackageDependencies";
+    String KEY_WINGET_PACKAGE_DEPENDENCIES = "wingetPackageDependencies";
 
     // Linkedin
     String KEY_LINKEDIN_OWNER = "linkedinOwner";

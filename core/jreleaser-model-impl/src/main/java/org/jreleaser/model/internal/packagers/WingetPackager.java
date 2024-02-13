@@ -32,13 +32,16 @@ import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.util.PlatformUtils;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import static java.util.Collections.emptySet;
+import static java.util.Collections.singleton;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
@@ -554,9 +557,10 @@ public final class WingetPackager extends AbstractRepositoryPackager<org.jreleas
     }
 
     public static final class Installer extends AbstractModelObject<Installer> implements Domain {
-        private static final long serialVersionUID = -5585999592531263933L;
+        private static final long serialVersionUID = 4609121090512808243L;
 
         private final Set<Mode> modes = new LinkedHashSet<>();
+        private final Dependencies dependencies = new Dependencies();
         private Type type = Type.WIX;
         private Scope scope = Scope.MACHINE;
         private UpgradeBehavior upgradeBehavior = UpgradeBehavior.INSTALL;
@@ -564,7 +568,7 @@ public final class WingetPackager extends AbstractRepositoryPackager<org.jreleas
 
         @JsonIgnore
         private final org.jreleaser.model.api.packagers.WingetPackager.Installer immutable = new org.jreleaser.model.api.packagers.WingetPackager.Installer() {
-            private static final long serialVersionUID = 1422885238324458482L;
+            private static final long serialVersionUID = 8677697915447641476L;
 
             @Override
             public Type getType() {
@@ -592,6 +596,11 @@ public final class WingetPackager extends AbstractRepositoryPackager<org.jreleas
             }
 
             @Override
+            public org.jreleaser.model.api.packagers.WingetPackager.Dependencies getDependencies() {
+                return Installer.this.getDependencies().asImmutable();
+            }
+
+            @Override
             public Map<String, Object> asMap(boolean full) {
                 return unmodifiableMap(Installer.this.asMap(full));
             }
@@ -608,6 +617,7 @@ public final class WingetPackager extends AbstractRepositoryPackager<org.jreleas
             this.upgradeBehavior = this.merge(this.upgradeBehavior, source.upgradeBehavior);
             this.command = this.merge(this.command, source.command);
             setModes(merge(this.modes, source.modes));
+            setDependencies(source.dependencies);
         }
 
         public Type getType() {
@@ -663,6 +673,14 @@ public final class WingetPackager extends AbstractRepositoryPackager<org.jreleas
             this.command = command;
         }
 
+        public Dependencies getDependencies() {
+            return dependencies;
+        }
+
+        public void setDependencies(Dependencies dependencies) {
+            this.dependencies.merge(dependencies);
+        }
+
         @Override
         public Map<String, Object> asMap(boolean full) {
             Map<String, Object> props = new LinkedHashMap<>();
@@ -671,7 +689,219 @@ public final class WingetPackager extends AbstractRepositoryPackager<org.jreleas
             props.put("upgradeBehavior", upgradeBehavior);
             props.put("modes", modes);
             props.put("command", command);
+            props.put("dependencies", dependencies.asMap(full));
             return props;
+        }
+    }
+
+    public static final class Dependencies extends AbstractModelObject<Dependencies> implements Domain {
+        private static final long serialVersionUID = 8335992485241726722L;
+
+        private final Set<String> windowsFeatures = new LinkedHashSet<>();
+        private final Set<String> windowsLibraries = new LinkedHashSet<>();
+        private final Set<String> externalDependencies = new LinkedHashSet<>();
+        private final Set<PackageDependency> packageDependencies = new LinkedHashSet<>();
+
+        @JsonIgnore
+        private final org.jreleaser.model.api.packagers.WingetPackager.Dependencies immutable = new org.jreleaser.model.api.packagers.WingetPackager.Dependencies() {
+            private static final long serialVersionUID = -2782564782601367602L;
+
+            @Override
+            public Set<String> getWindowsFeatures() {
+                return unmodifiableSet(Dependencies.this.getWindowsFeatures());
+            }
+
+            @Override
+            public Set<String> getWindowsLibraries() {
+                return unmodifiableSet(Dependencies.this.getWindowsLibraries());
+            }
+
+            @Override
+            public Set<String> getExternalDependencies() {
+                return unmodifiableSet(Dependencies.this.getExternalDependencies());
+            }
+
+            @Override
+            public Set<org.jreleaser.model.api.packagers.WingetPackager.PackageDependency> getPackageDependencies() {
+                return unmodifiableSet(asImmutable().getPackageDependencies());
+            }
+
+            @Override
+            public Map<String, Object> asMap(boolean full) {
+                return unmodifiableMap(Dependencies.this.asMap(full));
+            }
+        };
+
+        public org.jreleaser.model.api.packagers.WingetPackager.Dependencies asImmutable() {
+            return immutable;
+        }
+
+        @Override
+        public void merge(Dependencies source) {
+            setWindowsFeatures(merge(this.windowsFeatures, source.windowsFeatures));
+            setWindowsLibraries(merge(this.windowsLibraries, source.windowsLibraries));
+            setExternalDependencies(merge(this.externalDependencies, source.externalDependencies));
+            setPackageDependencies(mergeModel(this.packageDependencies, source.packageDependencies));
+        }
+
+        public boolean hasDependencies() {
+            return !windowsFeatures.isEmpty() ||
+                !windowsLibraries.isEmpty() ||
+                !externalDependencies.isEmpty() ||
+                !packageDependencies.isEmpty();
+        }
+
+        public boolean hasWindowsFeatures() {
+            return !windowsFeatures.isEmpty();
+        }
+
+        public boolean hasWindowsLibraries() {
+            return !windowsLibraries.isEmpty();
+        }
+
+        public boolean hasExternalDependencies() {
+            return !externalDependencies.isEmpty();
+        }
+
+        public boolean hasPackageDependencies() {
+            return !packageDependencies.isEmpty();
+        }
+
+        public Set<String> getWindowsFeatures() {
+            return windowsFeatures;
+        }
+
+        public void setWindowsFeatures(Set<String> windowsFeatures) {
+            this.windowsFeatures.clear();
+            this.windowsFeatures.addAll(windowsFeatures);
+        }
+
+        public Set<String> getWindowsLibraries() {
+            return windowsLibraries;
+        }
+
+        public void setWindowsLibraries(Set<String> windowsLibraries) {
+            this.windowsLibraries.clear();
+            this.windowsLibraries.addAll(windowsLibraries);
+        }
+
+        public Set<String> getExternalDependencies() {
+            return externalDependencies;
+        }
+
+        public void setExternalDependencies(Set<String> externalDependencies) {
+            this.externalDependencies.clear();
+            this.externalDependencies.addAll(externalDependencies);
+        }
+
+        public Set<PackageDependency> getPackageDependencies() {
+            return packageDependencies;
+        }
+
+        public void setPackageDependencies(Set<PackageDependency> packageDependencies) {
+            this.packageDependencies.clear();
+            this.packageDependencies.addAll(packageDependencies);
+        }
+
+        @Override
+        public Map<String, Object> asMap(boolean full) {
+            Map<String, Object> props = new LinkedHashMap<>();
+            props.put("windowsFeatures", windowsFeatures);
+            props.put("windowsLibraries", windowsLibraries);
+            props.put("externalDependencies", externalDependencies);
+
+            Map<String, Map<String, Object>> mappedDependencies = new LinkedHashMap<>();
+            int i = 0;
+            for (PackageDependency dependency : packageDependencies) {
+                mappedDependencies.put("packageDependency " + (i++), dependency.asMap(full));
+            }
+            props.put("packageDependencies", mappedDependencies);
+
+            return props;
+        }
+
+        public void addPackageDependency(PackageDependency packageDependency) {
+            setPackageDependencies(mergeModel(this.packageDependencies, singleton(packageDependency)));
+        }
+    }
+
+    public static final class PackageDependency extends AbstractModelObject<PackageDependency> implements Domain, Comparable<PackageDependency> {
+        private static final long serialVersionUID = -4450142474645845838L;
+
+        private String packageIdentifier;
+        private String minimumVersion;
+
+        @JsonIgnore
+        private final org.jreleaser.model.api.packagers.WingetPackager.PackageDependency immutable = new org.jreleaser.model.api.packagers.WingetPackager.PackageDependency() {
+            private static final long serialVersionUID = -8028336005839082886L;
+
+            @Override
+            public String getPackageIdentifier() {
+                return packageIdentifier;
+            }
+
+            @Override
+            public String getMinimumVersion() {
+                return minimumVersion;
+            }
+
+            @Override
+            public Map<String, Object> asMap(boolean full) {
+                return PackageDependency.this.asMap(full);
+            }
+        };
+
+        public org.jreleaser.model.api.packagers.WingetPackager.PackageDependency asImmutable() {
+            return immutable;
+        }
+
+        @Override
+        public void merge(PackageDependency source) {
+            this.packageIdentifier = this.merge(this.packageIdentifier, source.packageIdentifier);
+            this.minimumVersion = this.merge(this.minimumVersion, source.minimumVersion);
+        }
+
+        public String getPackageIdentifier() {
+            return packageIdentifier;
+        }
+
+        public void setPackageIdentifier(String packageIdentifier) {
+            this.packageIdentifier = packageIdentifier;
+        }
+
+        public String getMinimumVersion() {
+            return minimumVersion;
+        }
+
+        public void setMinimumVersion(String minimumVersion) {
+            this.minimumVersion = minimumVersion;
+        }
+
+        @Override
+        public Map<String, Object> asMap(boolean full) {
+            Map<String, Object> props = new LinkedHashMap<>();
+            props.put("packageIdentifier", packageIdentifier);
+            props.put("minimumVersion", minimumVersion);
+            return props;
+        }
+
+        @Override
+        public int compareTo(PackageDependency o) {
+            return Comparator.comparing(PackageDependency::getPackageIdentifier)
+                .compare(this, o);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            PackageDependency that = (PackageDependency) o;
+            return packageIdentifier.equals(that.packageIdentifier);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(packageIdentifier);
         }
     }
 }

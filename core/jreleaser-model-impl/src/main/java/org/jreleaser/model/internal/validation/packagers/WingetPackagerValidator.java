@@ -254,6 +254,32 @@ public final class WingetPackagerValidator {
             packager.getInstaller().setUpgradeBehavior((UpgradeBehavior) null);
             packager.getInstaller().setScope((Scope) null);
         }
+
+        packager.getInstaller().getDependencies().merge(parentPackager.getInstaller().getDependencies());
+
+        int count = 0;
+        for (WingetPackager.PackageDependency pd : packager.getInstaller().getDependencies().getPackageDependencies()) {
+            int index = count++;
+
+            if (isBlank(pd.getPackageIdentifier())) {
+                errors.configuration(RB.$("validation_must_not_be_blank",
+                    "distribution." + distribution.getName() + ".winget.installer.dependencies.packageDependencies[" + index + "].packageIdentifier"));
+            }
+
+            if (isNotBlank(pd.getPackageIdentifier()) &&
+                !PATTERN_PACKAGE_IDENTIFIER.matcher(pd.getPackageIdentifier()).matches()) {
+                errors.configuration(RB.$("validation_is_invalid",
+                    "distribution." + distribution.getName() + ".winget.installer.dependencies.packageDependencies[" + index + "].packageIdentifier",
+                    pd.getPackageIdentifier()));
+            }
+
+            if (isNotBlank(pd.getMinimumVersion()) &&
+                !PATTERN_PACKAGE_VERSION.matcher(pd.getMinimumVersion()).matches()) {
+                errors.configuration(RB.$("validation_is_invalid",
+                    "distribution." + distribution.getName() + ".winget.installer.dependencies.packageDependencies[" + index + "].minimumVersion",
+                    pd.getMinimumVersion()));
+            }
+        }
     }
 
     public static void postValidateWinget(JReleaserContext context, Distribution distribution, WingetPackager packager, Errors errors) {
