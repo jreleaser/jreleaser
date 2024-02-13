@@ -197,7 +197,7 @@ public class WingetPackagerProcessor extends AbstractRepositoryPackagerProcessor
     }
 
     private Path resolvePackageDirectory(Path outputDirectory, String packageIdentifier) {
-        return outputDirectory.resolve(packageIdentifier.substring(0, 1).toLowerCase(Locale.ENGLISH) + "/" +
+        return outputDirectory.resolve("manifests/" + packageIdentifier.substring(0, 1).toLowerCase(Locale.ENGLISH) + "/" +
             packageIdentifier.replace(".", "/") + "/" +
             context.getModel().getProject().getResolvedVersion());
     }
