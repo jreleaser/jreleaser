@@ -34,7 +34,7 @@ import java.io.File;
  * @author Andres Almiray
  * @since 1.5.0
  */
-@Mojo(name = "template-eval")
+@Mojo(threadSafe = true, name = "template-eval")
 public class JReleaserTemplateEvalMojo extends AbstractPlatformAwareMojo {
     /**
      * Skip execution.

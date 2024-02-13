@@ -55,7 +55,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.3.0
  */
-@Mojo(name = "auto-config-release")
+@Mojo(threadSafe = true, name = "auto-config-release")
 public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
     /**
      * Calculate full changelog since last non-snapshot release.

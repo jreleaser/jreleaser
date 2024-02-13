@@ -30,7 +30,7 @@ import org.jreleaser.workflow.Workflows;
  * @author Andres Almiray
  * @since 0.1.0
  */
-@Mojo(name = "changelog")
+@Mojo(threadSafe = true, name = "changelog")
 public class JReleaserChangelogMojo extends AbstractJReleaserMojo {
     /**
      * Skip execution.

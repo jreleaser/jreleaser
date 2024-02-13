@@ -35,7 +35,7 @@ import java.util.List;
  * @author Andres Almiray
  * @since 0.9.0
  */
-@Mojo(name = "setup-disco")
+@Mojo(threadSafe = true, name = "setup-disco")
 public class SetupDiscoMojo extends AbstractDiscoMojo {
     @Component
     private ArchiverManager archiverManager;

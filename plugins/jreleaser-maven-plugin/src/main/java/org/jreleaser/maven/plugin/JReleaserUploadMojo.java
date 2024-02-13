@@ -30,7 +30,7 @@ import org.jreleaser.workflow.Workflows;
  * @author Andres Almiray
  * @since 0.3.0
  */
-@Mojo(name = "upload")
+@Mojo(threadSafe = true, name = "upload")
 public class JReleaserUploadMojo extends AbstractPlatformAwareMojo {
     /**
      * Include an uploader by type.

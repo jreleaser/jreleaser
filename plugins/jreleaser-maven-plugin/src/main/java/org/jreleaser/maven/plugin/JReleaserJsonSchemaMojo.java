@@ -32,7 +32,7 @@ import org.jreleaser.util.IoUtils;
  * @author Andres Almiray
  * @since 1.4.0
  */
-@Mojo(name = "json-schema")
+@Mojo(threadSafe = true, name = "json-schema")
 public class JReleaserJsonSchemaMojo extends AbstractMojo {
     /**
      * The Maven project.

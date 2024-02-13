@@ -35,7 +35,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.3.0
  */
-@Mojo(name = "setup-jdks")
+@Mojo(threadSafe = true, name = "setup-jdks")
 public class SetupJdksMojo extends AbstractJdksMojo {
     @Parameter(property = "jdks.output.directory", defaultValue = "${project.build.directory}/jdks")
     private File outputDirectory;

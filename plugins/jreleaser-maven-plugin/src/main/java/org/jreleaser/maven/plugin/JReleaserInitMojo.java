@@ -42,7 +42,7 @@ import static org.jreleaser.util.IoUtils.newPrintWriter;
  * @author Andres Almiray
  * @since 1.4.0
  */
-@Mojo(name = "init")
+@Mojo(threadSafe = true, name = "init")
 public class JReleaserInitMojo extends AbstractMojo {
     /**
      * The Maven project.

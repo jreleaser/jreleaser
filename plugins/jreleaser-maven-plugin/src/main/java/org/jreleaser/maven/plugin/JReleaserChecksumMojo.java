@@ -28,7 +28,7 @@ import org.jreleaser.workflow.Workflows;
  * @author Andres Almiray
  * @since 0.1.0
  */
-@Mojo(name = "checksum")
+@Mojo(threadSafe = true, name = "checksum")
 public class JReleaserChecksumMojo extends AbstractDistributionMojo {
     /**
      * Skip execution.

@@ -28,7 +28,7 @@ import org.jreleaser.workflow.Workflows;
  * @author Andres Almiray
  * @since 0.1.0
  */
-@Mojo(name = "prepare")
+@Mojo(threadSafe = true, name = "prepare")
 public class JReleaserPrepareMojo extends AbstractPackagerMojo {
     /**
      * Skip execution.

@@ -26,7 +26,7 @@ import org.apache.maven.plugins.annotations.Mojo;
  * @author Andres Almiray
  * @since 0.3.0
  */
-@Mojo(name = "list-jdks")
+@Mojo(threadSafe = true, name = "list-jdks")
 public class ListJdksMojo extends AbstractJdksMojo {
     @Override
     protected void doExecute() throws MojoExecutionException {

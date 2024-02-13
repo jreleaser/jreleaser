@@ -31,7 +31,7 @@ import org.jreleaser.workflow.Workflows;
  * @author Andres Almiray
  * @since 0.1.0
  */
-@Mojo(name = "announce")
+@Mojo(threadSafe = true, name = "announce")
 public class JReleaserAnnounceMojo extends AbstractJReleaserMojo {
     /**
      * Include an announcer.

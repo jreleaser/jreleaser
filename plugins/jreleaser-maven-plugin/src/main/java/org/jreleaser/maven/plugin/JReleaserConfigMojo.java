@@ -34,7 +34,7 @@ import static org.jreleaser.util.IoUtils.newPrintWriter;
  * @author Andres Almiray
  * @since 0.1.0
  */
-@Mojo(name = "config")
+@Mojo(threadSafe = true, name = "config")
 public class JReleaserConfigMojo extends AbstractPlatformAwareMojo {
     /**
      * Skip execution.

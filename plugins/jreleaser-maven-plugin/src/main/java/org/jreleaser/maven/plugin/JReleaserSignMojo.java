@@ -28,7 +28,7 @@ import org.jreleaser.workflow.Workflows;
  * @author Andres Almiray
  * @since 0.1.0
  */
-@Mojo(name = "sign")
+@Mojo(threadSafe = true, name = "sign")
 public class JReleaserSignMojo extends AbstractDistributionMojo {
     /**
      * Skip execution.

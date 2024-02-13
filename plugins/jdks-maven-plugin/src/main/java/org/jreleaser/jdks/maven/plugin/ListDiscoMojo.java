@@ -33,7 +33,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.9.0
  */
-@Mojo(name = "list-disco")
+@Mojo(threadSafe = true, name = "list-disco")
 public class ListDiscoMojo extends AbstractDiscoMojo {
     @Override
     protected void doExecute(Disco disco) throws MojoExecutionException {

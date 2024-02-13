@@ -28,7 +28,7 @@ import org.jreleaser.workflow.Workflows;
  * @author Andres Almiray
  * @since 1.5.0
  */
-@Mojo(name = "catalog")
+@Mojo(threadSafe = true, name = "catalog")
 public class JReleaserCatalogMojo extends AbstractDistributionMojo {
     /**
      * Include an cataloger.

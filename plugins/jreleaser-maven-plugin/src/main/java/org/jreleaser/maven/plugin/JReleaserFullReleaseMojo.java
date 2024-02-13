@@ -30,7 +30,7 @@ import org.jreleaser.workflow.Workflows;
  * @author Andres Almiray
  * @since 0.1.0
  */
-@Mojo(name = "full-release")
+@Mojo(threadSafe = true, name = "full-release")
 public class JReleaserFullReleaseMojo extends AbstractPlatformAwareMojo {
     /**
      * Include a deployer by type.

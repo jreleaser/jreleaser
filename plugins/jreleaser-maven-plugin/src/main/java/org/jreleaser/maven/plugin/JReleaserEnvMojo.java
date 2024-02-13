@@ -38,7 +38,7 @@ import static org.jreleaser.util.IoUtils.newPrintWriter;
  * @author Andres Almiray
  * @since 1.5.0
  */
-@Mojo(name = "env")
+@Mojo(threadSafe = true, name = "env")
 public class JReleaserEnvMojo extends AbstractMojo {
     /**
      * The Maven project.

@@ -33,7 +33,7 @@ import static org.jreleaser.model.api.JReleaserContext.Mode.DEPLOY;
  * @author Andres Almiray
  * @since 1.3.0
  */
-@Mojo(name = "deploy")
+@Mojo(threadSafe = true, name = "deploy")
 public class JReleaserDeployMojo extends AbstractJReleaserMojo {
     /**
      * Include a deployer by type.

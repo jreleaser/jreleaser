@@ -31,7 +31,7 @@ import org.jreleaser.workflow.Workflows;
  * @author Andres Almiray
  * @since 1.1.0
  */
-@Mojo(name = "download")
+@Mojo(threadSafe = true, name = "download")
 public class JReleaserDownloadMojo extends AbstractJReleaserMojo {
     /**
      * Include a downloader by type.
