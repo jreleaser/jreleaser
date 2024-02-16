@@ -27,6 +27,7 @@ import org.jreleaser.sdk.command.CommandException;
 import org.jreleaser.sdk.tool.Syft;
 import org.jreleaser.sdk.tool.ToolException;
 import org.jreleaser.util.FileUtils;
+import org.jreleaser.version.SemanticVersion;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -38,6 +39,7 @@ import java.util.Set;
 
 import static java.nio.file.StandardCopyOption.COPY_ATTRIBUTES;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
+import static org.jreleaser.util.ComparatorUtils.greaterThanOrEqualTo;
 import static org.jreleaser.util.StringUtils.getFilename;
 
 /**
@@ -152,17 +154,28 @@ public class SyftSbomCatalogerProcessor extends AbstractSbomCatalogerProcessor<S
         Path artifactPath = artifact.getEffectivePath();
         String artifactFile = artifactPath.getFileName().toString();
 
+        SemanticVersion syftVersion = SemanticVersion.of(syft.getVersion());
+        SemanticVersion syft99 = SemanticVersion.of("0.99.0");
+        boolean deprecations = greaterThanOrEqualTo(syftVersion, syft99);
+
         boolean executed = false;
         for (SyftSbomCataloger.Format format : cataloger.getFormats()) {
             Path targetPath = catalogDirectory.resolve(artifactFile + format.extension());
 
             List<String> args = new ArrayList<>();
-            args.add("--output");
-            args.add(format.toString());
-            args.add("--name");
-            args.add(artifactFile);
-            args.add("--file");
-            args.add(targetPath.toAbsolutePath().toString());
+            if (deprecations) {
+                args.add("--source-name");
+                args.add(artifactFile);
+                args.add("--output");
+                args.add(format + "=" + targetPath.toAbsolutePath());
+            } else {
+                args.add("--output");
+                args.add(format.toString());
+                args.add("--name");
+                args.add(artifactFile);
+                args.add("--file");
+                args.add(targetPath.toAbsolutePath().toString());
+            }
             args.add(artifactFile);
 
             if (!Files.exists(targetPath)) {

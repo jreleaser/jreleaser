@@ -52,6 +52,14 @@ public class AbstractTool {
         this.tool = new DownloadableTool(context.getLogger(), name, version, PlatformUtils.getCurrentFull(), true);
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
     public boolean setup() throws ToolException {
         if (!tool.verify()) {
             if (tool.isEnabled()) {
