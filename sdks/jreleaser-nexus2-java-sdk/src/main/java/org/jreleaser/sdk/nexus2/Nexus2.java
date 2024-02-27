@@ -49,6 +49,7 @@ import org.jreleaser.sdk.nexus2.api.NexusAPI;
 import org.jreleaser.sdk.nexus2.api.NexusAPIException;
 import org.jreleaser.sdk.nexus2.api.PromoteRequest;
 import org.jreleaser.sdk.nexus2.api.StagedRepository;
+import org.jreleaser.sdk.nexus2.api.StagingActivity;
 import org.jreleaser.sdk.nexus2.api.StagingProfile;
 import org.jreleaser.sdk.nexus2.api.StagingProfileRepository;
 
@@ -63,13 +64,16 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
+import static java.lang.System.lineSeparator;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
@@ -177,7 +181,7 @@ public class Nexus2 {
             api.dropStagingRepository(
                 new Data<>(PromoteRequest.of(stagingRepositoryId, "Staging repository for " + groupId)),
                 profileId);
-            waitForState(stagingRepositoryId, StagingProfileRepository.State.NOT_FOUND);
+            waitForState(stagingRepositoryId, "drop", StagingProfileRepository.State.NOT_FOUND);
         });
     }
 
@@ -186,7 +190,7 @@ public class Nexus2 {
             api.releaseStagingRepository(
                 new Data<>(PromoteRequest.of(stagingRepositoryId, "Staging repository for " + groupId)),
                 profileId);
-            waitForState(stagingRepositoryId, StagingProfileRepository.State.RELEASED, StagingProfileRepository.State.NOT_FOUND);
+            waitForState(stagingRepositoryId, "release", StagingProfileRepository.State.RELEASED, StagingProfileRepository.State.NOT_FOUND);
         });
     }
 
@@ -195,11 +199,11 @@ public class Nexus2 {
             api.closeStagingRepository(
                 new Data<>(PromoteRequest.of(stagingRepositoryId, "Staging repository for " + groupId)),
                 profileId);
-            waitForState(stagingRepositoryId, StagingProfileRepository.State.CLOSED);
+            waitForState(stagingRepositoryId, "close", StagingProfileRepository.State.CLOSED);
         });
     }
 
-    private void waitForState(String stagingRepositoryId, StagingProfileRepository.State... states) {
+    private void waitForState(String stagingRepositoryId, String activity, StagingProfileRepository.State... states) throws Nexus2Exception {
         logger.debug(RB.$("nexus.wait.repository.state", stagingRepositoryId, Arrays.asList(states)));
 
         StagingProfileRepository repository = retrier.retry(StagingProfileRepository::isTransitioning,
@@ -210,8 +214,39 @@ public class Nexus2 {
         }
 
         if (Arrays.binarySearch(states, repository.getState()) < 0) {
-            throw new IllegalStateException(RB.$("nexus.wait.repository.invalid.state", stagingRepositoryId, Arrays.asList(states), repository.getState()));
+            Set<String> messages = resolveActivityMessages(stagingRepositoryId, activity);
+            String title = RB.$("nexus.wait.repository.invalid.state", stagingRepositoryId, Arrays.asList(states), repository.getState());
+            throw new Nexus2Exception(title + lineSeparator() + String.join(lineSeparator(), messages));
         }
+    }
+
+    private Set<String> resolveActivityMessages(String stagingRepositoryId, String activityName) throws Nexus2Exception {
+        List<StagingActivity> data = api.getActivities(stagingRepositoryId);
+        if (null == data || data.isEmpty()) {
+            throw fail(RB.$("ERROR_nexus_find_staging_activities", stagingRepositoryId));
+        }
+
+        Optional<StagingActivity> activity = data.stream()
+            .filter(a -> activityName.equals(a.getName()))
+            .findFirst();
+
+        if (!activity.isPresent()) {
+            throw fail(RB.$("ERROR_nexus_find_staging_activity", activityName, stagingRepositoryId));
+        }
+
+        Set<String> messages = new LinkedHashSet<>();
+        for (StagingActivity.StagingActivityEvent event : activity.get().getEvents()) {
+            if (event.getName().endsWith("Failed")) {
+                for (StagingActivity.StagingProperty property : event.getProperties()) {
+                    if ("failureMessage".equals(property.getName()) ||
+                        "cause".equals(property.getName())) {
+                        messages.add(property.getValue());
+                    }
+                }
+            }
+        }
+
+        return messages;
     }
 
     private StagingProfileRepository getStagingRepository(String stagingRepositoryId) {
@@ -447,7 +482,7 @@ public class Nexus2 {
                     response.status(),
                     response.reason(),
                     response.request().httpMethod(),
-                    (Date) null,
+                    (Long) null,
                     response.request());
             }
 

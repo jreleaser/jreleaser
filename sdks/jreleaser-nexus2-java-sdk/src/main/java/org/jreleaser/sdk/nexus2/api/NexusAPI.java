@@ -55,4 +55,8 @@ public interface NexusAPI {
     @RequestLine("POST /staging/profiles/{profileId}/drop")
     @Headers("Content-Type: application/json")
     void dropStagingRepository(Data<PromoteRequest> promoteRequest, @Param("profileId") String profileId);
+
+    @RequestLine("GET /staging/repository/{repositoryId}/activity")
+    @Headers("Content-Type: application/json")
+    List<StagingActivity> getActivities(@Param("repositoryId") String repositoryId);
 }
