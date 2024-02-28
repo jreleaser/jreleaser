@@ -105,13 +105,13 @@ public class JdkHelper {
 
         try {
             String cacheDirectory = Paths.get(session.getSettings().getLocalRepository())
-                .resolve(".cache/maven-download-plugin")
+                .resolve(".cache/download-maven-plugin")
                 .toAbsolutePath().toString();
 
             executeMojo(
                 plugin("com.googlecode.maven-download-plugin",
                     "download-maven-plugin",
-                    "1.8.0"),
+                    "1.8.1"),
                 goal("wget"),
                 configuration(
                     element("uri", jdk.getUrl()),
