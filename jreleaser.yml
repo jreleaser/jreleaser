@@ -310,7 +310,7 @@ distributions:
         - --share=network
         - --filesystem=host
       categories:
-        - Developer Tools
+        - Development
       skipReleases:
         - '.*-RC.*'
         - '.*-M.*'
