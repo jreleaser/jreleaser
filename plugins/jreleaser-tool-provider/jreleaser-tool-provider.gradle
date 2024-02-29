@@ -121,6 +121,11 @@ classes.dependsOn(tasks.register('version') {t ->
     }
 })
 
+['startScripts', 'distTar', 'distZip',
+ 'startShadowScripts', 'shadowDistTar', 'shadowDistZip'].each { n ->
+    tasks.named(n) { t -> t.enabled = false }
+}
+
 afterEvaluate {
     def shadowJar = project.tasks.findByName('shadowJar')
     def publishTask = project.tasks.findByName('publishMainPublicationToMavenLocal')
