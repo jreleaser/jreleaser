@@ -63,6 +63,11 @@ categories:
       - 'refactor'
       - 'revert'
       - 'style'
+  - title: '🧪 Tests'
+    key: 'test'
+    order: 35
+    labels:
+      - 'test'
   - title: '🧰 Tasks'
     key: 'tasks'
     order: 40
