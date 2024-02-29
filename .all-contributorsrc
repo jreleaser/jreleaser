@@ -687,6 +687,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "joaompinto",
+      "name": "João Pinto",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1143125?v=4",
+      "profile": "https://www.linkedin.com/in/joaolmpinto/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
