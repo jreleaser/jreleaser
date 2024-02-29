@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-71-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-72-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -103,6 +103,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/rtbad"><img src="https://avatars.githubusercontent.com/u/89932745?v=4?s=100" width="100px;" alt="Arturo Badillo"/><br /><sub><b>Arturo Badillo</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=rtbad" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://binary-sequence.github.io/"><img src="https://avatars.githubusercontent.com/u/2727538?v=4?s=100" width="100px;" alt="Sergio Lindo Mansilla"/><br /><sub><b>Sergio Lindo Mansilla</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=binary-sequence" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
