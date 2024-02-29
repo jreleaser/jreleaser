@@ -100,11 +100,13 @@ tasks.shadowJar.dependsOn(tasks.register('relocateShadowJar', org.jreleaser.grad
 jar.finalizedBy shadowJar
 addMainModuleInfo.mustRunAfter(shadowJar)
 
-assemble.dependsOn(tasks.register('reproducibleTimestamp', org.jreleaser.gradle.archive.ReproducibleTimestamp) {t ->
+def reproducibleTimestamp = tasks.register('reproducibleTimestamp', org.jreleaser.gradle.archive.ReproducibleTimestamp) {t ->
     t.target = tasks.shadowJar
     t.dependsOn(tasks.addMainModuleInfo)
     t.mustRunAfter(tasks.addMainModuleInfo)
-})
+}
+shadowJar.finalizedBy(reproducibleTimestamp)
+assemble.dependsOn(reproducibleTimestamp)
 
 tasks.withType(JavaCompile) { JavaCompile c ->
     c.sourceCompatibility = JavaVersion.VERSION_11
