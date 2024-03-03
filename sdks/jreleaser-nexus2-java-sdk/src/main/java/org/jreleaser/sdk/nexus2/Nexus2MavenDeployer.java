@@ -84,7 +84,7 @@ public class Nexus2MavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
         if (isNotBlank(stagingProfileId)) {
             context.getLogger().debug(RB.$("set.to", "stagingProfileId", stagingProfileId));
         }
-        if (isNotBlank(stagingProfileId)) {
+        if (isNotBlank(stagingRepositoryId)) {
             context.getLogger().debug(RB.$("set.to", "stagingRepositoryId", stagingRepositoryId));
         }
 
