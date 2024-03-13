@@ -31,6 +31,7 @@ import org.jreleaser.gradle.plugin.dsl.deploy.maven.GiteaMavenDeployer
 import org.jreleaser.gradle.plugin.dsl.deploy.maven.GithubMavenDeployer
 import org.jreleaser.gradle.plugin.dsl.deploy.maven.GitlabMavenDeployer
 import org.jreleaser.gradle.plugin.dsl.deploy.maven.Maven
+import org.jreleaser.gradle.plugin.dsl.deploy.maven.MavenCentralMavenDeployer
 import org.jreleaser.gradle.plugin.dsl.deploy.maven.Nexus2MavenDeployer
 import org.jreleaser.model.Active
 import org.kordamp.gradle.util.ConfigureUtil
@@ -53,6 +54,7 @@ class MavenImpl implements Maven {
     final NamedDomainObjectContainer<GithubMavenDeployer> github
     final NamedDomainObjectContainer<GitlabMavenDeployer> gitlab
     final NamedDomainObjectContainer<Nexus2MavenDeployer> nexus2
+    final NamedDomainObjectContainer<MavenCentralMavenDeployer> mavenCentral
 
     final PomcheckerImpl pomchecker
 
@@ -114,6 +116,15 @@ class MavenImpl implements Maven {
                 return h
             }
         })
+
+        mavenCentral = objects.domainObjectContainer(MavenCentralMavenDeployer, new NamedDomainObjectFactory<MavenCentralMavenDeployer>() {
+            @Override
+            MavenCentralMavenDeployer create(String name) {
+                MavenCentralMavenDeployerImpl h = objects.newInstance(MavenCentralMavenDeployerImpl, objects)
+                h.name = name
+                return h
+            }
+        })
     }
 
     @Override
@@ -151,6 +162,11 @@ class MavenImpl implements Maven {
     @Override
     void nexus2(Action<? super NamedDomainObjectContainer<Nexus2MavenDeployer>> action) {
         action.execute(nexus2)
+    }
+
+    @Override
+    void mavenCentral(Action<? super NamedDomainObjectContainer<MavenCentralMavenDeployer>> action) {
+        action.execute(mavenCentral)
     }
 
     @Override
@@ -196,6 +212,12 @@ class MavenImpl implements Maven {
 
     @Override
     @CompileDynamic
+    void mavenCentral(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
+        ConfigureUtil.configure(action, mavenCentral)
+    }
+
+    @Override
+    @CompileDynamic
     void pomchecker(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Pomchecker) Closure<Void> action) {
         ConfigureUtil.configure(action, pomchecker)
     }
@@ -212,6 +234,7 @@ class MavenImpl implements Maven {
         github.each { maven.addGithub(((GithubMavenDeployerImpl) it).toModel()) }
         gitlab.each { maven.addGitlab(((GitlabMavenDeployerImpl) it).toModel()) }
         nexus2.each { maven.addNexus2(((Nexus2MavenDeployerImpl) it).toModel()) }
+        mavenCentral.each { maven.addMavenCentral(((MavenCentralMavenDeployerImpl) it).toModel()) }
 
         maven
     }

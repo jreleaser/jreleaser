@@ -41,9 +41,13 @@ public interface Maven extends Domain, Activatable {
 
     Map<String, ? extends Nexus2MavenDeployer> getNexus2();
 
+    Map<String, ? extends MavenCentralMavenDeployer> getMavenCentral();
+
     interface Pomchecker extends Domain {
         String getVersion();
+
         boolean isFailOnWarning();
+
         boolean isFailOnError();
     }
 }

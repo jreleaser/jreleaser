@@ -42,6 +42,8 @@ interface Maven extends Activatable {
 
     NamedDomainObjectContainer<Nexus2MavenDeployer> getNexus2()
 
+    NamedDomainObjectContainer<MavenCentralMavenDeployer> getMavenCentral()
+
     void artifactory(Action<? super NamedDomainObjectContainer<ArtifactoryMavenDeployer>> action)
 
     void azure(Action<? super NamedDomainObjectContainer<AzureMavenDeployer>> action)
@@ -53,6 +55,8 @@ interface Maven extends Activatable {
     void gitlab(Action<? super NamedDomainObjectContainer<GitlabMavenDeployer>> action)
 
     void nexus2(Action<? super NamedDomainObjectContainer<Nexus2MavenDeployer>> action)
+
+    void mavenCentral(Action<? super NamedDomainObjectContainer<MavenCentralMavenDeployer>> action)
 
     void artifactory(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 
@@ -66,6 +70,8 @@ interface Maven extends Activatable {
 
     void nexus2(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 
+    void mavenCentral(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
+
     void pomchecker(Action<? super Pomchecker> action)
 
     void pomchecker(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Pomchecker) Closure<Void> action)
@@ -73,7 +79,9 @@ interface Maven extends Activatable {
     @CompileStatic
     interface Pomchecker {
         Property<String> getVersion()
+
         Property<Boolean> getFailOnError()
+
         Property<Boolean> getFailOnWarning()
     }
 }

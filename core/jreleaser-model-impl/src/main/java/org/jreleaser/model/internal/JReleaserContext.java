@@ -161,7 +161,7 @@ public class JReleaserContext {
 
     @JsonIgnore
     private final org.jreleaser.model.api.JReleaserContext immutable = new org.jreleaser.model.api.JReleaserContext() {
-        private static final long serialVersionUID = -897799871224857906L;
+        private static final long serialVersionUID = -4198066601336237321L;
 
         @Override
         public Path relativize(Path basedir, Path other) {
@@ -236,6 +236,11 @@ public class JReleaserContext {
         @Override
         public Path getArtifactsDirectory() {
             return JReleaserContext.this.getArtifactsDirectory();
+        }
+
+        @Override
+        public Path getDeployDirectory() {
+            return JReleaserContext.this.getDeployDirectory();
         }
 
         @Override
@@ -441,6 +446,7 @@ public class JReleaserContext {
             logger.debug(RB.$("context.path.set", Constants.KEY_DOWNLOAD_DIRECTORY, getDownloadDirectory()));
             logger.debug(RB.$("context.path.set", Constants.KEY_ASSEMBLE_DIRECTORY, getAssembleDirectory()));
             logger.debug(RB.$("context.path.set", Constants.KEY_ARTIFACTS_DIRECTORY, getArtifactsDirectory()));
+            logger.debug(RB.$("context.path.set", Constants.KEY_DEPLOY_DIRECTORY, getDeployDirectory()));
         } finally {
             logger.decreaseIndent();
         }
@@ -669,6 +675,10 @@ public class JReleaserContext {
 
     public Path getArtifactsDirectory() {
         return outputDirectory.resolve("artifacts");
+    }
+
+    public Path getDeployDirectory() {
+        return outputDirectory.resolve("deploy");
     }
 
     public boolean isDryrun() {
@@ -938,6 +948,7 @@ public class JReleaserContext {
         props.set(Constants.KEY_DOWNLOAD_DIRECTORY, getDownloadDirectory());
         props.set(Constants.KEY_ASSEMBLE_DIRECTORY, getAssembleDirectory());
         props.set(Constants.KEY_ARTIFACTS_DIRECTORY, getArtifactsDirectory());
+        props.set(Constants.KEY_DEPLOY_DIRECTORY, getDeployDirectory());
         if (null != getCommand()) props.set(Constants.KEY_COMMAND, getCommand().toStep());
         return props;
     }

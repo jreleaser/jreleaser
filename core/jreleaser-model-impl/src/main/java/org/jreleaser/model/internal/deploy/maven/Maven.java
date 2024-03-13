@@ -41,7 +41,7 @@ import static java.util.stream.Collectors.toMap;
  * @since 1.3.0
  */
 public final class Maven extends AbstractActivatable<Maven> implements Domain, Activatable {
-    private static final long serialVersionUID = 3407667714827239350L;
+    private static final long serialVersionUID = 1126431134090848347L;
 
     private final Map<String, ArtifactoryMavenDeployer> artifactory = new LinkedHashMap<>();
     private final Map<String, AzureMavenDeployer> azure = new LinkedHashMap<>();
@@ -49,11 +49,12 @@ public final class Maven extends AbstractActivatable<Maven> implements Domain, A
     private final Map<String, GithubMavenDeployer> github = new LinkedHashMap<>();
     private final Map<String, GitlabMavenDeployer> gitlab = new LinkedHashMap<>();
     private final Map<String, Nexus2MavenDeployer> nexus2 = new LinkedHashMap<>();
+    private final Map<String, MavenCentralMavenDeployer> mavenCentral = new LinkedHashMap<>();
     private final Pomchecker pomchecker = new Pomchecker();
 
     @JsonIgnore
     private final org.jreleaser.model.api.deploy.maven.Maven immutable = new org.jreleaser.model.api.deploy.maven.Maven() {
-        private static final long serialVersionUID = -8021098672645717824L;
+        private static final long serialVersionUID = 6345180810995769120L;
 
         private Map<String, ? extends org.jreleaser.model.api.deploy.maven.ArtifactoryMavenDeployer> artifactory;
         private Map<String, ? extends org.jreleaser.model.api.deploy.maven.AzureMavenDeployer> azure;
@@ -61,6 +62,7 @@ public final class Maven extends AbstractActivatable<Maven> implements Domain, A
         private Map<String, ? extends org.jreleaser.model.api.deploy.maven.GithubMavenDeployer> github;
         private Map<String, ? extends org.jreleaser.model.api.deploy.maven.GitlabMavenDeployer> gitlab;
         private Map<String, ? extends org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer> nexus2;
+        private Map<String, ? extends org.jreleaser.model.api.deploy.maven.MavenCentralMavenDeployer> mavenCentral;
 
         @Override
         public Map<String, ? extends org.jreleaser.model.api.deploy.maven.ArtifactoryMavenDeployer> getArtifactory() {
@@ -123,6 +125,16 @@ public final class Maven extends AbstractActivatable<Maven> implements Domain, A
         }
 
         @Override
+        public Map<String, ? extends org.jreleaser.model.api.deploy.maven.MavenCentralMavenDeployer> getMavenCentral() {
+            if (null == mavenCentral) {
+                mavenCentral = Maven.this.mavenCentral.values().stream()
+                    .map(MavenCentralMavenDeployer::asImmutable)
+                    .collect(toMap(org.jreleaser.model.api.deploy.maven.MavenDeployer::getName, identity()));
+            }
+            return mavenCentral;
+        }
+
+        @Override
         public Pomchecker getPomchecker() {
             return pomchecker.asImmutable();
         }
@@ -160,6 +172,7 @@ public final class Maven extends AbstractActivatable<Maven> implements Domain, A
         setGithub(mergeModel(this.github, source.github));
         setGitlab(mergeModel(this.gitlab, source.gitlab));
         setNexus2(mergeModel(this.nexus2, source.nexus2));
+        setMavenCentral(mergeModel(this.mavenCentral, source.mavenCentral));
         setPomchecker(source.pomchecker);
     }
 
@@ -171,7 +184,8 @@ public final class Maven extends AbstractActivatable<Maven> implements Domain, A
             !gitea.isEmpty() ||
             !github.isEmpty() ||
             !gitlab.isEmpty() ||
-            !nexus2.isEmpty();
+            !nexus2.isEmpty() ||
+            !mavenCentral.isEmpty();
     }
 
     public Optional<ArtifactoryMavenDeployer> getActiveArtifactory(String name) {
@@ -216,6 +230,13 @@ public final class Maven extends AbstractActivatable<Maven> implements Domain, A
             .findFirst();
     }
 
+    public Optional<MavenCentralMavenDeployer> getActiveMavenCentral(String name) {
+        return mavenCentral.values().stream()
+            .filter(MavenDeployer::isEnabled)
+            .filter(a -> name.equals(a.getName()))
+            .findFirst();
+    }
+
     public List<ArtifactoryMavenDeployer> getActiveArtifactories() {
         return artifactory.values().stream()
             .filter(ArtifactoryMavenDeployer::isEnabled)
@@ -236,6 +257,7 @@ public final class Maven extends AbstractActivatable<Maven> implements Domain, A
         list.addAll(getActiveGithubs());
         list.addAll(getActiveGitlabs());
         list.addAll(getActiveNexus2s());
+        list.addAll(getActiveMavenCentrals());
         return list;
     }
 
@@ -341,6 +363,25 @@ public final class Maven extends AbstractActivatable<Maven> implements Domain, A
         this.nexus2.put(nexus2.getName(), nexus2);
     }
 
+    public List<MavenCentralMavenDeployer> getActiveMavenCentrals() {
+        return mavenCentral.values().stream()
+            .filter(MavenCentralMavenDeployer::isEnabled)
+            .collect(toList());
+    }
+
+    public Map<String, MavenCentralMavenDeployer> getMavenCentral() {
+        return mavenCentral;
+    }
+
+    public void setMavenCentral(Map<String, MavenCentralMavenDeployer> mavenCentral) {
+        this.mavenCentral.clear();
+        this.mavenCentral.putAll(mavenCentral);
+    }
+
+    public void addMavenCentral(MavenCentralMavenDeployer mavenCentral) {
+        this.mavenCentral.put(mavenCentral.getName(), mavenCentral);
+    }
+
     public Pomchecker getPomchecker() {
         return pomchecker;
     }
@@ -398,6 +439,13 @@ public final class Maven extends AbstractActivatable<Maven> implements Domain, A
             .collect(toList());
         if (!nexus2.isEmpty()) map.put("nexus2", nexus2);
 
+        List<Map<String, Object>> mavenCentral = this.mavenCentral.values()
+            .stream()
+            .filter(d -> full || d.isEnabled())
+            .map(d -> d.asMap(full))
+            .collect(toList());
+        if (!mavenCentral.isEmpty()) map.put("mavenCentral", mavenCentral);
+
         return map;
     }
 
@@ -415,6 +463,8 @@ public final class Maven extends AbstractActivatable<Maven> implements Domain, A
                 return (Map<String, A>) gitlab;
             case org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.TYPE:
                 return (Map<String, A>) nexus2;
+            case org.jreleaser.model.api.deploy.maven.MavenCentralMavenDeployer.TYPE:
+                return (Map<String, A>) mavenCentral;
             default:
                 return Collections.emptyMap();
         }
@@ -428,6 +478,7 @@ public final class Maven extends AbstractActivatable<Maven> implements Domain, A
         deployers.addAll((List<A>) getActiveGithubs());
         deployers.addAll((List<A>) getActiveGitlabs());
         deployers.addAll((List<A>) getActiveNexus2s());
+        deployers.addAll((List<A>) getActiveMavenCentrals());
         return deployers;
     }
 

@@ -34,6 +34,7 @@ import static org.jreleaser.model.internal.validation.deploy.maven.AzureMavenDep
 import static org.jreleaser.model.internal.validation.deploy.maven.GiteaMavenDeployerValidator.validateGiteaMavenDeployer;
 import static org.jreleaser.model.internal.validation.deploy.maven.GithubMavenDeployerValidator.validateGithubMavenDeployer;
 import static org.jreleaser.model.internal.validation.deploy.maven.GitlabMavenDeployerValidator.validateGitlabMavenDeployer;
+import static org.jreleaser.model.internal.validation.deploy.maven.MavenCentralMavenDeployerValidator.validateMavenCentralMavenDeployer;
 import static org.jreleaser.model.internal.validation.deploy.maven.Nexus2MavenDeployerValidator.validateNexus2MavenDeployer;
 import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -59,6 +60,7 @@ public final class MavenDeployersValidator {
         validateGithubMavenDeployer(context, mode, errors);
         validateGitlabMavenDeployer(context, mode, errors);
         validateNexus2MavenDeployer(context, mode, errors);
+        validateMavenCentralMavenDeployer(context, mode, errors);
 
         if (mode.validateDeploy() || mode.validateConfig()) {
             boolean activeSet = maven.isActiveSet();
@@ -71,7 +73,8 @@ public final class MavenDeployersValidator {
                     !maven.getActiveGiteas().isEmpty() ||
                     !maven.getActiveGithubs().isEmpty() ||
                     !maven.getActiveGitlabs().isEmpty() ||
-                    !maven.getActiveNexus2s().isEmpty();
+                    !maven.getActiveNexus2s().isEmpty() ||
+                    !maven.getActiveMavenCentrals().isEmpty();
 
                 if (!activeSet && !enabled) {
                     context.getLogger().debug(RB.$("validation.disabled"));

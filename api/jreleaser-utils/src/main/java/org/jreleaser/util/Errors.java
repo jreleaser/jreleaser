@@ -31,7 +31,7 @@ import java.util.Set;
  * @since 0.2.0
  */
 public class Errors implements Serializable {
-    private static final long serialVersionUID = -8016988438210723225L;
+    private static final long serialVersionUID = -7835875752041439694L;
 
     private final Set<Error> assemblyErrors = new LinkedHashSet<>();
     private final Set<Error> configurationErrors = new LinkedHashSet<>();
@@ -93,6 +93,12 @@ public class Errors implements Serializable {
         StringWriter writer = new StringWriter();
         logWarnings(new PrintWriter(writer));
         return writer.toString();
+    }
+
+    public void addAll(Errors errors) {
+        this.assemblyErrors.addAll(errors.assemblyErrors);
+        this.configurationErrors.addAll(errors.configurationErrors);
+        this.warnings.addAll(errors.warnings);
     }
 
     public enum Kind {

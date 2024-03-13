@@ -83,7 +83,6 @@ public final class Nexus2MavenDeployerValidator {
                     "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".snapshotUrl",
                     mavenDeployer.getSnapshotUrl(),
                     errors));
-
         }
 
         Properties vars = context.getModel().getEnvironment().getVars();

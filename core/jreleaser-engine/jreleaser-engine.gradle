@@ -61,6 +61,7 @@ dependencies {
     api project(':jreleaser-artifactory-java-sdk')
     api project(':jreleaser-azure-java-sdk')
     api project(':jreleaser-nexus2-java-sdk')
+    api project(':jreleaser-mavencentral-java-sdk')
     api project(':jreleaser-ftp-java-sdk')
     api project(':jreleaser-http-java-sdk')
     api project(':jreleaser-ssh-java-sdk')

@@ -75,6 +75,8 @@ public interface JReleaserContext extends Serializable {
 
     Path getArtifactsDirectory();
 
+    Path getDeployDirectory();
+
     boolean isDryrun();
 
     boolean isGitRootSearch();
