@@ -23,6 +23,7 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.release.Release;
 import org.jreleaser.util.Errors;
 
+import static org.jreleaser.model.internal.validation.release.BitbucketcloudReleaserValidator.validateBitbucketcloud;
 import static org.jreleaser.model.internal.validation.release.CodebergReleaserValidator.validateCodeberg;
 import static org.jreleaser.model.internal.validation.release.GenericGitReleaserValidator.validateGeneric;
 import static org.jreleaser.model.internal.validation.release.GiteaReleaserValidator.validateGitea;
@@ -43,6 +44,7 @@ public final class ReleaseValidator {
         Release release = context.getModel().getRelease();
 
         int count = 0;
+        if (validateBitbucketcloud(context, mode, release.getBitbucketcloud(), errors)) count++;
         if (validateGithub(context, mode, release.getGithub(), errors)) count++;
         if (validateGitlab(context, mode, release.getGitlab(), errors)) count++;
         if (validateGitea(context, mode, release.getGitea(), errors)) count++;
