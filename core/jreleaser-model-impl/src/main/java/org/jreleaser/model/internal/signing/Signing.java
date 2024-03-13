@@ -330,7 +330,7 @@ public final class Signing extends AbstractActivatable<Signing> implements Domai
     }
 
     public static class Command extends AbstractModelObject<Command> implements Domain {
-        private static final long serialVersionUID = 6761158529249184059L;
+        private static final long serialVersionUID = -6208172775388448492L;
 
         private final List<String> args = new ArrayList<>();
 
@@ -380,7 +380,7 @@ public final class Signing extends AbstractActivatable<Signing> implements Domai
             }
         };
 
-        private org.jreleaser.model.api.signing.Signing.Command asImmutable() {
+        public org.jreleaser.model.api.signing.Signing.Command asImmutable() {
             return immutable;
         }
 

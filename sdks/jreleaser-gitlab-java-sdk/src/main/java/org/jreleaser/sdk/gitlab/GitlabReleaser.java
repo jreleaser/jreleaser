@@ -62,6 +62,7 @@ import java.util.regex.Pattern;
 import static org.jreleaser.model.Constants.KEY_PLATFORM_REPLACED;
 import static org.jreleaser.model.api.signing.Signing.KEY_SKIP_SIGNING;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
+import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.uncapitalize;
 
@@ -172,7 +173,7 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
     }
 
     @Override
-    public Repository maybeCreateRepository(String owner, String repo, String password) throws IOException {
+    public Repository maybeCreateRepository(String owner, String repo, String password, org.jreleaser.model.api.common.ExtraProperties extraProperties) throws IOException {
         context.getLogger().debug(RB.$("git.repository.lookup"), owner, repo);
 
         Gitlab api = new Gitlab(context.getLogger(),
@@ -183,7 +184,11 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
         GlProject project = null;
 
         try {
-            project = api.findProject(repo, gitlab.getProjectIdentifier());
+            String projectIdentifier = extraProperties.getExtraProperty("projectIdentifier");
+            if (isBlank(projectIdentifier)) {
+                projectIdentifier = gitlab.getProjectIdentifier();
+            }
+            project = api.findProject(repo, projectIdentifier);
         } catch (RestAPIException e) {
             if (!e.isNotFound()) {
                 throw e;

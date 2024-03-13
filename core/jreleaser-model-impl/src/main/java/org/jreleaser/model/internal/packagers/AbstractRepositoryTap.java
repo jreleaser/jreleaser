@@ -34,8 +34,9 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> extends AbstractActivatable<S> implements RepositoryTap {
-    private static final long serialVersionUID = -5502324290729964526L;
+    private static final long serialVersionUID = 8737648708964053648L;
 
+    private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     @JsonIgnore
     private final String basename;
     @JsonIgnore
@@ -78,6 +79,7 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
         this.username = merge(this.username, source.getUsername());
         this.token = merge(this.token, source.getToken());
         this.commitMessage = merge(this.commitMessage, source.getCommitMessage());
+        setExtraProperties(merge(this.extraProperties, source.getExtraProperties()));
     }
 
     @Override
@@ -184,6 +186,22 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
     }
 
     @Override
+    public Map<String, Object> getExtraProperties() {
+        return extraProperties;
+    }
+
+    @Override
+    public void setExtraProperties(Map<String, Object> extraProperties) {
+        this.extraProperties.clear();
+        this.extraProperties.putAll(extraProperties);
+    }
+
+    @Override
+    public void addExtraProperties(Map<String, Object> extraProperties) {
+        this.extraProperties.putAll(extraProperties);
+    }
+
+    @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
@@ -196,6 +214,7 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
         map.put("username", username);
         map.put("token", isNotBlank(token) ? HIDE : UNSET);
         map.put("commitMessage", commitMessage);
+        map.put("extraProperties", getExtraProperties());
         return map;
     }
 }

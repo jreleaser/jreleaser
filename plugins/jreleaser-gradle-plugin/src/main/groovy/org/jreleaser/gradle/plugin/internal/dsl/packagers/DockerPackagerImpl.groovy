@@ -24,6 +24,7 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectFactory
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.common.CommitAuthor
@@ -138,6 +139,7 @@ class DockerPackagerImpl extends AbstractDockerConfiguration implements DockerPa
         final Property<String> token
         final Property<String> commitMessage
         final Property<Boolean> versionedSubfolders
+        final MapProperty<String, Object> extraProperties
 
         @Inject
         DockerRepositoryImpl(ObjectFactory objects) {
@@ -151,6 +153,7 @@ class DockerPackagerImpl extends AbstractDockerConfiguration implements DockerPa
             token = objects.property(String).convention(Providers.<String> notDefined())
             commitMessage = objects.property(String).convention(Providers.<String> notDefined())
             versionedSubfolders = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+            extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
         }
 
         @Override
@@ -171,7 +174,8 @@ class DockerPackagerImpl extends AbstractDockerConfiguration implements DockerPa
                 username.present ||
                 versionedSubfolders.present ||
                 token.present ||
-                commitMessage.present
+                commitMessage.present ||
+                extraProperties.present
         }
 
         org.jreleaser.model.internal.packagers.DockerPackager.DockerRepository toModel() {
@@ -186,6 +190,7 @@ class DockerPackagerImpl extends AbstractDockerConfiguration implements DockerPa
             if (token.present) tap.token = token.get()
             if (commitMessage.present) tap.commitMessage = commitMessage.get()
             if (versionedSubfolders.present) tap.versionedSubfolders = versionedSubfolders.get()
+            if (extraProperties.present) tap.extraProperties.putAll(extraProperties.get())
             tap
         }
     }

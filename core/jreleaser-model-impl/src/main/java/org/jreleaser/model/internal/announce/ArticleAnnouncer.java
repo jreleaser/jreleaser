@@ -206,11 +206,11 @@ public final class ArticleAnnouncer extends AbstractAnnouncer<ArticleAnnouncer, 
     }
 
     public static final class Repository extends AbstractRepositoryTap<Repository> {
-        private static final long serialVersionUID = -1923514428336002946L;
+        private static final long serialVersionUID = -5607361534766759517L;
 
         @JsonIgnore
         private final org.jreleaser.model.api.announce.ArticleAnnouncer.Repository immutable = new org.jreleaser.model.api.announce.ArticleAnnouncer.Repository() {
-            private static final long serialVersionUID = 8958590109555034736L;
+            private static final long serialVersionUID = -5856312198018701678L;
 
             @Override
             public String getBasename() {
@@ -276,14 +276,29 @@ public final class ArticleAnnouncer extends AbstractAnnouncer<ArticleAnnouncer, 
             public String getOwner() {
                 return Repository.this.getOwner();
             }
+
+            @Override
+            public String getPrefix() {
+                return Repository.this.prefix();
+            }
+
+            @Override
+            public Map<String, Object> getExtraProperties() {
+                return unmodifiableMap(Repository.this.getExtraProperties());
+            }
         };
 
         public Repository() {
             super("article", "article");
         }
 
-        private org.jreleaser.model.api.announce.ArticleAnnouncer.Repository asImmutable() {
+        public org.jreleaser.model.api.announce.ArticleAnnouncer.Repository asImmutable() {
             return immutable;
+        }
+
+        @Override
+        public String prefix() {
+            return "repository";
         }
     }
 }

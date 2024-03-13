@@ -19,6 +19,7 @@ package org.jreleaser.model.internal.packagers;
 
 import org.jreleaser.model.internal.common.Activatable;
 import org.jreleaser.model.internal.common.Domain;
+import org.jreleaser.model.internal.common.ExtraProperties;
 import org.jreleaser.model.internal.common.OwnerAware;
 import org.jreleaser.mustache.TemplateContext;
 
@@ -26,7 +27,7 @@ import org.jreleaser.mustache.TemplateContext;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface RepositoryTap extends Domain, OwnerAware, Activatable {
+public interface RepositoryTap extends Domain, OwnerAware, Activatable, ExtraProperties {
     String getBasename();
 
     String getCanonicalRepoName();
@@ -64,4 +65,6 @@ public interface RepositoryTap extends Domain, OwnerAware, Activatable {
     String getResolvedCommitMessage(TemplateContext props);
 
     String getResolvedTagName(TemplateContext props);
+
+    <T extends org.jreleaser.model.api.packagers.PackagerRepository> T asImmutable();
 }

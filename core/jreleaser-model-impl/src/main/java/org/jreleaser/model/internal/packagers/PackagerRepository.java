@@ -29,11 +29,11 @@ import static java.util.Collections.unmodifiableMap;
  * @since 0.1.0
  */
 public class PackagerRepository extends AbstractRepositoryTap<PackagerRepository> {
-    private static final long serialVersionUID = -3486962328445966652L;
+    private static final long serialVersionUID = 2883013964120856725L;
 
     @JsonIgnore
     private final org.jreleaser.model.api.packagers.PackagerRepository immutable = new org.jreleaser.model.api.packagers.PackagerRepository() {
-        private static final long serialVersionUID = 9016477371123655393L;
+        private static final long serialVersionUID = -7091986811979877948L;
 
         @Override
         public String getBasename() {
@@ -99,6 +99,16 @@ public class PackagerRepository extends AbstractRepositoryTap<PackagerRepository
         public String getOwner() {
             return PackagerRepository.this.getOwner();
         }
+
+        @Override
+        public String getPrefix() {
+            return PackagerRepository.this.prefix();
+        }
+
+        @Override
+        public Map<String, Object> getExtraProperties() {
+            return unmodifiableMap(PackagerRepository.this.getExtraProperties());
+        }
     };
 
     public PackagerRepository(String basename, String tapName) {
@@ -107,5 +117,10 @@ public class PackagerRepository extends AbstractRepositoryTap<PackagerRepository
 
     public org.jreleaser.model.api.packagers.PackagerRepository asImmutable() {
         return immutable;
+    }
+
+    @Override
+    public String prefix() {
+        return "repository";
     }
 }

@@ -470,13 +470,13 @@ public final class JibPackager extends AbstractJibConfiguration<JibPackager> imp
     }
 
     public static final class JibRepository extends AbstractRepositoryTap<JibRepository> implements Domain {
-        private static final long serialVersionUID = 897211659819449100L;
+        private static final long serialVersionUID = 695045361878174791L;
 
         private Boolean versionedSubfolders;
 
         @JsonIgnore
         private final org.jreleaser.model.api.packagers.JibPackager.JibRepository immutable = new org.jreleaser.model.api.packagers.JibPackager.JibRepository() {
-            private static final long serialVersionUID = 1437723373911221392L;
+            private static final long serialVersionUID = -8630728744390799997L;
 
             @Override
             public boolean isVersionedSubfolders() {
@@ -547,6 +547,16 @@ public final class JibPackager extends AbstractJibConfiguration<JibPackager> imp
             public String getOwner() {
                 return JibRepository.this.getOwner();
             }
+
+            @Override
+            public String getPrefix() {
+                return JibRepository.this.prefix();
+            }
+
+            @Override
+            public Map<String, Object> getExtraProperties() {
+                return unmodifiableMap(JibRepository.this.getExtraProperties());
+            }
         };
 
         public JibRepository() {
@@ -561,6 +571,11 @@ public final class JibPackager extends AbstractJibConfiguration<JibPackager> imp
         public void merge(JibRepository source) {
             super.merge(source);
             this.versionedSubfolders = this.merge(this.versionedSubfolders, source.versionedSubfolders);
+        }
+
+        @Override
+        public String prefix() {
+            return "repository";
         }
 
         public boolean isVersionedSubfolders() {

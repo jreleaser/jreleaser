@@ -20,6 +20,7 @@ package org.jreleaser.sdk.codeberg;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.UpdateSection;
 import org.jreleaser.model.api.common.Apply;
+import org.jreleaser.model.api.common.ExtraProperties;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.util.VersionUtils;
 import org.jreleaser.model.spi.release.Asset;
@@ -166,7 +167,7 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
     }
 
     @Override
-    public Repository maybeCreateRepository(String owner, String repo, String password) throws IOException {
+    public Repository maybeCreateRepository(String owner, String repo, String password, ExtraProperties extraProperties) throws IOException {
         context.getLogger().debug(RB.$("git.repository.lookup"), owner, repo);
 
         Gitea api = new Gitea(context.getLogger(),

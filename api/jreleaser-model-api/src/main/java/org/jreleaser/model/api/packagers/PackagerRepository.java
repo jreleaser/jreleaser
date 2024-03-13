@@ -19,13 +19,14 @@ package org.jreleaser.model.api.packagers;
 
 import org.jreleaser.model.api.common.Activatable;
 import org.jreleaser.model.api.common.Domain;
+import org.jreleaser.model.api.common.ExtraProperties;
 import org.jreleaser.model.api.common.OwnerAware;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-public interface PackagerRepository extends Domain, OwnerAware, Activatable {
+public interface PackagerRepository extends Domain, OwnerAware, Activatable, ExtraProperties {
     String getBasename();
 
     String getCanonicalRepoName();

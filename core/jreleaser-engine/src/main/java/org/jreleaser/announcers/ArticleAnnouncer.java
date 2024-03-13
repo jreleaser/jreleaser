@@ -143,7 +143,8 @@ public class ArticleAnnouncer implements Announcer<org.jreleaser.model.api.annou
             Repository repository = context.getReleaser().maybeCreateRepository(
                 article.getRepository().getOwner(),
                 article.getRepository().getResolvedName(),
-                resolveGitToken(releaser));
+                resolveGitToken(releaser),
+                article.getRepository().asImmutable());
 
             UsernamePasswordCredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider(
                 resolveGitUsername(releaser),

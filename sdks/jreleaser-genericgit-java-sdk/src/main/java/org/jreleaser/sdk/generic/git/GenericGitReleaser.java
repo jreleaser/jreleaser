@@ -18,6 +18,7 @@
 package org.jreleaser.sdk.generic.git;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.model.api.common.ExtraProperties;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.spi.release.Asset;
 import org.jreleaser.model.spi.release.Release;
@@ -63,7 +64,7 @@ public class GenericGitReleaser extends AbstractReleaser<org.jreleaser.model.api
     }
 
     @Override
-    public Repository maybeCreateRepository(String owner, String repo, String password) throws IOException {
+    public Repository maybeCreateRepository(String owner, String repo, String password, ExtraProperties extraProperties) throws IOException {
         return null;
     }
 

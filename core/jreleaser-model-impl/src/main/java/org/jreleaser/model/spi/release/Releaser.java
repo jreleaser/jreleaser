@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model.spi.release;
 
+import org.jreleaser.model.api.common.ExtraProperties;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
@@ -29,7 +31,7 @@ import java.util.Optional;
 public interface Releaser<A extends org.jreleaser.model.api.release.Releaser> extends Serializable {
     void release() throws ReleaseException;
 
-    Repository maybeCreateRepository(String owner, String repo, String password) throws IOException;
+    Repository maybeCreateRepository(String owner, String repo, String password, ExtraProperties extraProperties) throws IOException;
 
     Optional<User> findUser(String email, String name);
 

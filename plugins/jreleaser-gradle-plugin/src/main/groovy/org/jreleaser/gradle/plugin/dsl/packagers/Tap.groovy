@@ -20,6 +20,7 @@ package org.jreleaser.gradle.plugin.dsl.packagers
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.common.Activatable
+import org.jreleaser.gradle.plugin.dsl.common.ExtraProperties
 
 /**
  *
@@ -27,7 +28,7 @@ import org.jreleaser.gradle.plugin.dsl.common.Activatable
  * @since 0.1.0
  */
 @CompileStatic
-interface Tap extends Activatable {
+interface Tap extends Activatable, ExtraProperties {
     Property<String> getRepoOwner()
 
     Property<String> getName()

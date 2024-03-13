@@ -20,6 +20,7 @@ package org.jreleaser.gradle.plugin.internal.dsl.packagers
 import groovy.transform.CompileStatic
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.packagers.Tap
@@ -59,6 +60,7 @@ class TapImpl implements Tap {
     final Property<String> username
     final Property<String> token
     final Property<String> commitMessage
+    final MapProperty<String, Object> extraProperties
 
     @Inject
     TapImpl(ObjectFactory objects) {
@@ -71,6 +73,7 @@ class TapImpl implements Tap {
         username = objects.property(String).convention(Providers.<String> notDefined())
         token = objects.property(String).convention(Providers.<String> notDefined())
         commitMessage = objects.property(String).convention(Providers.<String> notDefined())
+        extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
     }
 
     @Override
@@ -90,7 +93,8 @@ class TapImpl implements Tap {
             branchPush.present ||
             username.present ||
             token.present ||
-            commitMessage.present
+            commitMessage.present ||
+            extraProperties.present
     }
 
     private <T extends AbstractRepositoryTap> T convert(T into) {
@@ -103,6 +107,7 @@ class TapImpl implements Tap {
         if (username.present) into.username = username.get()
         if (token.present) into.token = token.get()
         if (commitMessage.present) into.commitMessage = commitMessage.get()
+        if (extraProperties.present) into.extraProperties.putAll(extraProperties.get())
         into
     }
 

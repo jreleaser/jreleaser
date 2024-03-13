@@ -66,6 +66,7 @@ public abstract class AbstractRepositoryPackagerProcessor<T extends RepositoryPa
         }
 
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
+        String target = tap.getCanonicalRepoName();
 
         try {
             // get the repository
@@ -73,13 +74,15 @@ public abstract class AbstractRepositoryPackagerProcessor<T extends RepositoryPa
             Repository repository = context.getReleaser().maybeCreateRepository(
                 tap.getOwner(),
                 tap.getResolvedName(),
-                resolveGitToken(releaser));
+                resolveGitToken(releaser),
+                tap.asImmutable());
 
             UsernamePasswordCredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider(
                 resolveGitUsername(releaser),
                 resolveGitToken(releaser));
 
             // clone the repository
+            target = repository.getHttpUrl();
             context.getLogger().debug(RB.$("repository.clone"), repository.getHttpUrl());
             Path directory = Files.createTempDirectory("jreleaser-" + tap.getResolvedName());
 
@@ -159,7 +162,7 @@ public abstract class AbstractRepositoryPackagerProcessor<T extends RepositoryPa
                 .setForceUpdate(true)
                 .call();
 
-            context.getLogger().info(RB.$("repository.push"), tap.getCanonicalRepoName());
+            context.getLogger().info(RB.$("repository.push"), target);
             // push commit
             context.getLogger().debug(RB.$("repository.commit.push"));
             git.push()
@@ -169,7 +172,7 @@ public abstract class AbstractRepositoryPackagerProcessor<T extends RepositoryPa
                 .setPushTags()
                 .call();
         } catch (Exception e) {
-            throw new PackagerProcessingException(RB.$("ERROR_unexpected_repository_update", tap.getCanonicalRepoName()), e);
+            throw new PackagerProcessingException(RB.$("ERROR_unexpected_repository_update", target), e);
         }
     }
 

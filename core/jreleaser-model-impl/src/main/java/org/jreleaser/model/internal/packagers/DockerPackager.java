@@ -444,13 +444,13 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
     }
 
     public static final class DockerRepository extends AbstractRepositoryTap<DockerRepository> implements Domain {
-        private static final long serialVersionUID = -3428854203388975153L;
+        private static final long serialVersionUID = 6677470182457638257L;
 
         private Boolean versionedSubfolders;
 
         @JsonIgnore
         private final org.jreleaser.model.api.packagers.DockerPackager.DockerRepository immutable = new org.jreleaser.model.api.packagers.DockerPackager.DockerRepository() {
-            private static final long serialVersionUID = 7279929782283595739L;
+            private static final long serialVersionUID = 1452104357672519L;
 
             @Override
             public boolean isVersionedSubfolders() {
@@ -521,6 +521,16 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
             public String getOwner() {
                 return DockerRepository.this.getOwner();
             }
+
+            @Override
+            public String getPrefix() {
+                return DockerRepository.this.prefix();
+            }
+
+            @Override
+            public Map<String, Object> getExtraProperties() {
+                return unmodifiableMap(DockerRepository.this.getExtraProperties());
+            }
         };
 
         public DockerRepository() {
@@ -535,6 +545,11 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
         public void merge(DockerRepository source) {
             super.merge(source);
             this.versionedSubfolders = this.merge(this.versionedSubfolders, source.versionedSubfolders);
+        }
+
+        @Override
+        public String prefix() {
+            return "repository";
         }
 
         public boolean isVersionedSubfolders() {
