@@ -45,19 +45,35 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
-import java.net.*;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.*;
+import java.nio.file.attribute.FileTime;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.FileVisitResult.CONTINUE;
-import static org.jreleaser.model.spi.deploy.maven.Deployable.*;
+import static org.jreleaser.model.spi.deploy.maven.Deployable.EXT_ASC;
+import static org.jreleaser.model.spi.deploy.maven.Deployable.EXT_JAR;
+import static org.jreleaser.model.spi.deploy.maven.Deployable.EXT_POM;
+import static org.jreleaser.model.spi.deploy.maven.Deployable.MAVEN_METADATA_XML;
+import static org.jreleaser.model.spi.deploy.maven.Deployable.PACKAGING_JAR;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -283,7 +299,8 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
             if (deployable.isSignature() || deployable.isChecksum() || deployable.isMavenMetadata()) continue;
 
             Deployable signedDeployable = deployable.deriveByFilename(deployable.getFilename() + EXT_ASC);
-            if (deployablesMap.containsKey(signedDeployable.getFullDeployPath())) {
+
+            if (isNewer(signedDeployable, deployable)) {
                 continue;
             }
 
@@ -297,6 +314,32 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
                 context.getLogger().restorePrefix();
             }
         }
+    }
+
+    private boolean isNewer(Deployable source, Deployable target) {
+        Path sourcePath = source.getLocalPath();
+        if (!Files.exists(sourcePath)) {
+            return false;
+        }
+
+        Path targetPath = target.getLocalPath();
+
+        FileTime sourceLastModifiedTime = null;
+        FileTime targetLastModifiedTime = null;
+
+        try {
+            sourceLastModifiedTime = Files.getLastModifiedTime(sourcePath);
+        } catch (IOException e) {
+            throw new JReleaserException(RB.$("ERROR_unexpected_error_timestamp_file", sourcePath.getFileName()), e);
+        }
+
+        try {
+            targetLastModifiedTime = Files.getLastModifiedTime(targetPath);
+        } catch (IOException e) {
+            throw new JReleaserException(RB.$("ERROR_unexpected_error_timestamp_file", targetPath.getFileName()), e);
+        }
+
+        return sourceLastModifiedTime.compareTo(targetLastModifiedTime) > 0;
     }
 
     private void verifyKeyIsPublished() {
@@ -366,7 +409,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
                 for (Algorithm algorithm : ALGORITHMS) {
                     Deployable checksumDeployable = deployable.deriveByFilename(deployable.getFilename() + "." + algorithm.formatted());
 
-                    if (deployablesMap.containsKey(checksumDeployable.getFullDeployPath())) {
+                    if (isNewer(checksumDeployable, deployable)) {
                         continue;
                     }
 
