@@ -62,7 +62,6 @@ import java.util.regex.Pattern;
 import static org.jreleaser.model.Constants.KEY_PLATFORM_REPLACED;
 import static org.jreleaser.model.api.signing.Signing.KEY_SKIP_SIGNING;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
-import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.uncapitalize;
 
@@ -185,10 +184,9 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
 
         try {
             String projectIdentifier = extraProperties.getExtraProperty("projectIdentifier");
-            if (isBlank(projectIdentifier)) {
-                projectIdentifier = gitlab.getProjectIdentifier();
+            if (isNotBlank(projectIdentifier)) {
+                project = api.findProject(repo, projectIdentifier);
             }
-            project = api.findProject(repo, projectIdentifier);
         } catch (RestAPIException e) {
             if (!e.isNotFound()) {
                 throw e;

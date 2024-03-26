@@ -40,6 +40,7 @@ import org.jreleaser.util.Errors;
 import java.util.Collection;
 import java.util.List;
 
+import static org.jreleaser.model.internal.validation.common.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.Env.check;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -198,27 +199,28 @@ public final class Validator {
     }
 
     public static void validateRepository(JReleaserContext context, Distribution distribution,
-                                          RepositoryTap repository, RepositoryTap parentTap, String property, String activeDefaultValue) {
+                                          RepositoryTap repository, RepositoryTap parentRepository, String property, String activeDefaultValue) {
         String distributionName = distribution.getName();
-        if (!repository.isActiveSet() && parentTap.isActiveSet()) {
-            repository.setActive(parentTap.getActive());
+        if (!repository.isActiveSet() && parentRepository.isActiveSet()) {
+            repository.setActive(parentRepository.getActive());
         }
         resolveActivatable(context, repository, "distributions." + distributionName + "." + property, activeDefaultValue);
         repository.resolveEnabled(context.getModel().getProject());
 
-        validateOwner(repository, parentTap);
+        validateOwner(repository, parentRepository);
+        mergeExtraProperties(repository, parentRepository);
 
-        if (isBlank(repository.getCommitMessage()) && isNotBlank(parentTap.getCommitMessage())) {
-            repository.setCommitMessage(parentTap.getCommitMessage());
+        if (isBlank(repository.getCommitMessage()) && isNotBlank(parentRepository.getCommitMessage())) {
+            repository.setCommitMessage(parentRepository.getCommitMessage());
         }
         if (isBlank(repository.getCommitMessage())) {
             repository.setCommitMessage("{{distributionName}} {{tagName}}");
         }
-        if (isBlank(repository.getTagName()) && isNotBlank(parentTap.getTagName())) {
-            repository.setTagName(parentTap.getTagName());
+        if (isBlank(repository.getTagName()) && isNotBlank(parentRepository.getTagName())) {
+            repository.setTagName(parentRepository.getTagName());
         }
-        if (isBlank(repository.getName()) && isNotBlank(parentTap.getName())) {
-            repository.setName(parentTap.getName());
+        if (isBlank(repository.getName()) && isNotBlank(parentRepository.getName())) {
+            repository.setName(parentRepository.getName());
         }
 
         BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
@@ -233,7 +235,7 @@ public final class Validator {
                     tapBasename + "." + serviceName + ".username"),
                 "distributions." + distributionName + "." + property + ".username",
                 repository.getUsername(),
-                parentTap.getUsername()));
+                parentRepository.getUsername()));
 
         repository.setToken(
             checkProperty(context,
@@ -242,7 +244,7 @@ public final class Validator {
                     tapBasename + "." + serviceName + ".token"),
                 "distributions." + distributionName + "." + property + ".token",
                 repository.getToken(),
-                parentTap.getToken()));
+                parentRepository.getToken()));
 
         repository.setBranch(
             checkProperty(context,
@@ -251,7 +253,7 @@ public final class Validator {
                     tapBasename + "." + serviceName + ".branch"),
                 "distributions." + distributionName + "." + property + ".branch",
                 repository.getBranch(),
-                parentTap.getBranch()));
+                parentRepository.getBranch()));
 
         repository.setBranchPush(
             checkProperty(context,
@@ -260,7 +262,7 @@ public final class Validator {
                     tapBasename + "." + serviceName + ".branch.push"),
                 "distributions." + distributionName + "." + property + ".branch.push",
                 repository.getBranchPush(),
-                parentTap.getBranchPush()));
+                parentRepository.getBranchPush()));
     }
 
     public static void validateGlobs(JReleaserContext context, Collection<Glob> globs, String property, Errors errors) {
