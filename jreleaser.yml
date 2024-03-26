@@ -201,6 +201,7 @@ assemble:
         targets:
           - 'plugins/jreleaser/build/libs/jreleaser-{{projectVersion}}.jar'
       additionalModuleNames:
+        - 'java.rmi'
         - 'java.security.sasl'
         - 'java.security.jgss'
         - 'jdk.crypto.cryptoki'
