@@ -89,6 +89,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
         Algorithm.SHA_512
     };
 
+    private static final String BUILD_TAG = "-build";
     private static final Map<String, String> KEY_SERVERS = CollectionUtils.<String, String>map()
         .e("https://keys.openpgp.org", "https://keys.openpgp.org/search?q=%s")
         .e("https://keyserver.ubuntu.com", "https://keyserver.ubuntu.com/pks/lookup?search=%s&fingerprint=on&options=mr&op=index")
@@ -166,24 +167,34 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
             String base = deployable.getFilename();
             base = base.substring(0, base.length() - 4);
 
-            if (deployable.requiresJar()) {
-                Deployable derived = deployable.deriveByFilename(PACKAGING_JAR, base + EXT_JAR);
-                if (!deployablesMap.containsKey(derived.getFullDeployPath())) {
-                    errors.configuration(RB.$("validation_is_missing", derived.getFilename()));
+            boolean buildPom = false;
+            if (base.endsWith(BUILD_TAG)) {
+                Deployable baseDeployable = deployable.deriveByFilename(base.substring(0, base.length() - BUILD_TAG.length()) + EXT_POM);
+                if (deployablesMap.containsKey(baseDeployable.getFullDeployPath())) {
+                    buildPom = true;
                 }
             }
 
-            if (requiresSourcesJar(deployable)) {
-                Deployable derived = deployable.deriveByFilename(PACKAGING_JAR, base + "-sources.jar");
-                if (!deployablesMap.containsKey(derived.getFullDeployPath())) {
-                    errors.configuration(RB.$("validation_is_missing", derived.getFilename()));
+            if (!buildPom) {
+                if (deployable.requiresJar()) {
+                    Deployable derived = deployable.deriveByFilename(PACKAGING_JAR, base + EXT_JAR);
+                    if (!deployablesMap.containsKey(derived.getFullDeployPath())) {
+                        errors.configuration(RB.$("validation_is_missing", derived.getFilename()));
+                    }
                 }
-            }
 
-            if (requiresJavadocJar(deployable)) {
-                Deployable derived = deployable.deriveByFilename(PACKAGING_JAR, base + "-javadoc.jar");
-                if (!deployablesMap.containsKey(derived.getFullDeployPath())) {
-                    errors.configuration(RB.$("validation_is_missing", derived.getFilename()));
+                if (requiresSourcesJar(deployable)) {
+                    Deployable derived = deployable.deriveByFilename(PACKAGING_JAR, base + "-sources.jar");
+                    if (!deployablesMap.containsKey(derived.getFullDeployPath())) {
+                        errors.configuration(RB.$("validation_is_missing", derived.getFilename()));
+                    }
+                }
+
+                if (requiresJavadocJar(deployable)) {
+                    Deployable derived = deployable.deriveByFilename(PACKAGING_JAR, base + "-javadoc.jar");
+                    if (!deployablesMap.containsKey(derived.getFullDeployPath())) {
+                        errors.configuration(RB.$("validation_is_missing", derived.getFilename()));
+                    }
                 }
             }
         }
