@@ -32,7 +32,7 @@ goto fail
 
 :findJavaFromJavaHome
 set JAVA_HOME=%JAVA_HOME:"=%
-set JAVA_EXE=%JAVA_HOME%/bin/java.exe
+set JAVA_EXE=%JAVA_HOME%\bin\java.exe
 
 if exist "%JAVA_EXE%" goto execute
 
@@ -47,14 +47,16 @@ goto fail
 :execute
 @rem Setup the command line
 
-set JARSDIRS="%APP_HOME%\lib"
+set JARSDIRS=%APP_HOME%\lib
 {{#distributionJavaMainModule}}
-set CLASSPATH="%JARSDIRS%"
+set CLASSPATH=%JARSDIRS%
 {{/distributionJavaMainModule}}
 {{^distributionJavaMainModule}}
-set CLASSPATH="%JARSDIRS%\*"
+set CLASSPATH=%JARSDIRS%\*
 {{/distributionJavaMainModule}}
-set JAVA_OPTS="%JAVA_OPTS% {{distributionJavaOptions}}"
+{{#distributionJavaOptions}}
+set JAVA_OPTS=%JAVA_OPTS% {{.}}
+{{/distributionJavaOptions}}
 
 @rem Execute
 {{#distributionJavaMainModule}}
