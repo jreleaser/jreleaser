@@ -75,7 +75,7 @@ public class DiscussionsAnnouncer implements Announcer<org.jreleaser.model.api.a
         if (context.isDryrun()) return;
 
         try {
-            Github api = new Github(context.getLogger(),
+            Github api = new Github(context.asImmutable(),
                 github.getApiEndpoint(),
                 github.getToken(),
                 discussions.getConnectTimeout(),

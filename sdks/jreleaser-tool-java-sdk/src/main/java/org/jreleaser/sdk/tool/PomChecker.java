@@ -48,7 +48,7 @@ public class PomChecker extends AbstractTool {
             .executeCommand(parent, command));
     }
 
-    public boolean isVersionCompatibleWith(String otherVersion){
+    public boolean isVersionCompatibleWith(String otherVersion) {
         return SemanticVersion.of(version).compareTo(SemanticVersion.of(otherVersion)) >= 0;
     }
 }

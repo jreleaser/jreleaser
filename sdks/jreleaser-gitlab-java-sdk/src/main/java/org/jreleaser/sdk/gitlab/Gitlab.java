@@ -29,7 +29,7 @@ import feign.jackson.JacksonEncoder;
 import org.apache.tika.Tika;
 import org.apache.tika.mime.MediaType;
 import org.jreleaser.bundle.RB;
-import org.jreleaser.logging.JReleaserLogger;
+import org.jreleaser.model.api.JReleaserContext;
 import org.jreleaser.model.spi.release.Asset;
 import org.jreleaser.model.spi.release.Release;
 import org.jreleaser.model.spi.release.User;
@@ -91,7 +91,7 @@ class Gitlab {
     private static final Pattern UPLOADS_PATTERN = Pattern.compile("(.*?)/uploads/(.*?)");
 
     private final Tika tika = new Tika();
-    private final JReleaserLogger logger;
+    private final JReleaserContext context;
     private final GitlabAPI api;
     private final String apiHost;
     private final String graphQlEndpoint;
@@ -101,12 +101,12 @@ class Gitlab {
     private GlUser user;
     private GlProject project;
 
-    Gitlab(JReleaserLogger logger,
+    Gitlab(JReleaserContext context,
            String endpoint,
            String token,
            int connectTimeout,
            int readTimeout) {
-        requireNonNull(logger, "'logger' must not be null");
+        requireNonNull(context, "'context' must not be null");
         requireNonBlank(token, "'token' must not be blank");
 
         if (isBlank(endpoint)) {
@@ -131,8 +131,8 @@ class Gitlab {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .configure(SerializationFeature.INDENT_OUTPUT, true);
 
-        this.logger = logger;
-        this.api = ClientUtils.builder(logger, connectTimeout, readTimeout)
+        this.context = context;
+        this.api = ClientUtils.builder(context, connectTimeout, readTimeout)
             .encoder(new FormEncoder(new JacksonEncoder(objectMapper)))
             .decoder(new PaginatingDecoder(new JacksonDecoder(objectMapper)))
             .requestInterceptor(template -> template.header("Authorization", String.format("Bearer %s", token)))
@@ -144,7 +144,7 @@ class Gitlab {
     }
 
     List<Release> listReleases(String owner, String repoName, String projectIdentifier) throws IOException {
-        logger.debug(RB.$("git.list.releases"), owner, repoName);
+        context.getLogger().debug(RB.$("git.list.releases"), owner, repoName);
 
         List<Release> releases = new ArrayList<>();
 
@@ -176,7 +176,7 @@ class Gitlab {
 
     private void collectReleases(Page<List<GlRelease>> page, List<Release> releases) throws URISyntaxException {
         URI next = new URI(page.getLinks().next());
-        logger.debug(next.toString());
+        context.getLogger().debug(next.toString());
 
         page = api.listReleases1(next);
         page.getContent().stream()
@@ -194,7 +194,7 @@ class Gitlab {
     }
 
     List<String> listBranches(String owner, String repoName, String projectIdentifier) throws IOException {
-        logger.debug(RB.$("git.list.branches"), owner, repoName);
+        context.getLogger().debug(RB.$("git.list.branches"), owner, repoName);
 
         List<String> branches = new ArrayList<>();
 
@@ -221,7 +221,7 @@ class Gitlab {
 
     private void collectBranches(Page<List<GlBranch>> page, List<String> branches) throws URISyntaxException {
         URI next = new URI(page.getLinks().next());
-        logger.debug(next.toString());
+        context.getLogger().debug(next.toString());
 
         page = api.listBranches1(next);
         page.getContent().stream()
@@ -234,13 +234,13 @@ class Gitlab {
     }
 
     Optional<GlMilestone> findMilestoneByName(String owner, String repo, Integer projectIdentifier, String milestoneName) {
-        logger.debug(RB.$("git.milestone.lookup"), milestoneName, owner, repo);
+        context.getLogger().debug(RB.$("git.milestone.lookup"), milestoneName, owner, repo);
 
         return findMilestone(projectIdentifier, milestoneName, "active");
     }
 
     Optional<GlMilestone> findClosedMilestoneByName(String owner, String repo, Integer projectIdentifier, String milestoneName) {
-        logger.debug(RB.$("git.milestone.lookup.closed"), milestoneName, owner, repo);
+        context.getLogger().debug(RB.$("git.milestone.lookup.closed"), milestoneName, owner, repo);
 
         return findMilestone(projectIdentifier, milestoneName, "closed");
     }
@@ -266,7 +266,7 @@ class Gitlab {
     }
 
     void closeMilestone(String owner, String repo, Integer projectIdentifier, GlMilestone milestone) {
-        logger.debug(RB.$("git.milestone.close"), milestone.getTitle(), owner, repo);
+        context.getLogger().debug(RB.$("git.milestone.close"), milestone.getTitle(), owner, repo);
 
         api.updateMilestone(CollectionUtils.<String, Object>map()
                 .e("state_event", "close"),
@@ -274,14 +274,14 @@ class Gitlab {
     }
 
     GlProject createProject(String owner, String repo) {
-        logger.debug(RB.$("git.project.create"), owner, repo);
+        context.getLogger().debug(RB.$("git.project.create"), owner, repo);
 
         return api.createProject(repo, "public");
     }
 
     GlUser getCurrentUser() throws RestAPIException {
         if (null == user) {
-            logger.debug(RB.$("git.fetch.current.user"));
+            context.getLogger().debug(RB.$("git.fetch.current.user"));
             user = api.getCurrentUser();
         }
 
@@ -291,12 +291,12 @@ class Gitlab {
     GlProject getProject(String projectName, String projectIdentifier) throws RestAPIException {
         if (null == project) {
             if (StringUtils.isNotBlank(projectIdentifier)) {
-                logger.debug(RB.$("git.fetch.gitlab.project_by_id"), projectIdentifier);
+                context.getLogger().debug(RB.$("git.fetch.gitlab.project_by_id"), projectIdentifier);
                 project = api.getProject(projectIdentifier.trim());
             } else {
                 GlUser u = getCurrentUser();
 
-                logger.debug(RB.$("git.fetch.gitlab.project.by.user"), projectName, u.getUsername(), u.getId());
+                context.getLogger().debug(RB.$("git.fetch.gitlab.project.by.user"), projectName, u.getUsername(), u.getId());
                 List<GlProject> projects = api.getProject(u.getId(), CollectionUtils.<String, Object>map()
                     .e("search", projectName));
 
@@ -307,14 +307,14 @@ class Gitlab {
                 project = projects.get(0);
             }
 
-            logger.debug(RB.$("git.gitlab.project.found"), project.getNameWithNamespace(), project.getId());
+            context.getLogger().debug(RB.$("git.gitlab.project.found"), project.getNameWithNamespace(), project.getId());
         }
 
         return project;
     }
 
     GlRelease findReleaseByTag(String owner, String repoName, String projectIdentifier, String tagName) throws RestAPIException {
-        logger.debug(RB.$("git.fetch.release.by.tag"), owner, repoName, tagName);
+        context.getLogger().debug(RB.$("git.fetch.release.by.tag"), owner, repoName, tagName);
 
         GlProject project = getProject(repoName, projectIdentifier);
 
@@ -330,19 +330,19 @@ class Gitlab {
     }
 
     void deleteTag(String owner, String repoName, Integer projectIdentifier, String tagName) throws RestAPIException {
-        logger.debug(RB.$("git.delete.tag.from"), tagName, owner, repoName);
+        context.getLogger().debug(RB.$("git.delete.tag.from"), tagName, owner, repoName);
 
         api.deleteTag(projectIdentifier, urlEncode(tagName));
     }
 
     void deletePackage(Integer projectIdentifier, Integer packageId) throws RestAPIException {
-        logger.debug(RB.$("gitlab.delete.package"), packageId, projectIdentifier);
+        context.getLogger().debug(RB.$("gitlab.delete.package"), packageId, projectIdentifier);
 
         api.deletePackage(projectIdentifier, packageId);
     }
 
     void deleteRelease(String owner, String repoName, String projectIdentifier, String tagName) throws RestAPIException {
-        logger.debug(RB.$("git.delete.release.from"), tagName, owner, repoName);
+        context.getLogger().debug(RB.$("git.delete.release.from"), tagName, owner, repoName);
 
         GlProject project = getProject(repoName, projectIdentifier);
 
@@ -350,13 +350,13 @@ class Gitlab {
     }
 
     void createRelease(String owner, String repoName, Integer projectIdentifier, GlRelease release) throws RestAPIException {
-        logger.debug(RB.$("git.create.release"), owner, repoName, release.getTagName());
+        context.getLogger().debug(RB.$("git.create.release"), owner, repoName, release.getTagName());
 
         api.createRelease(release, projectIdentifier);
     }
 
     void updateRelease(String owner, String repoName, String projectIdentifier, GlRelease release) throws RestAPIException {
-        logger.debug(RB.$("git.update.release"), owner, repoName, release.getTagName());
+        context.getLogger().debug(RB.$("git.update.release"), owner, repoName, release.getTagName());
 
         GlProject project = getProject(repoName, projectIdentifier);
 
@@ -364,7 +364,7 @@ class Gitlab {
     }
 
     Collection<GlFileUpload> uploadAssets(String owner, String repoName, Integer projectIdentifier, Set<Asset> assets) throws IOException, RestAPIException {
-        logger.debug(RB.$("git.upload.assets"), owner, repoName);
+        context.getLogger().debug(RB.$("git.upload.assets"), owner, repoName);
 
         List<GlFileUpload> uploads = new ArrayList<>();
 
@@ -374,13 +374,13 @@ class Gitlab {
                 continue;
             }
 
-            logger.info(" " + RB.$("git.upload.asset"), asset.getFilename());
+            context.getLogger().info(" " + RB.$("git.upload.asset"), asset.getFilename());
             try {
                 GlFileUpload upload = api.uploadFile(projectIdentifier, toFormData(asset.getPath()));
                 upload.setName(asset.getFilename());
                 uploads.add(upload);
             } catch (IOException | RestAPIException e) {
-                logger.error(" " + RB.$("git.upload.asset.failure"), asset.getFilename());
+                context.getLogger().error(" " + RB.$("git.upload.asset.failure"), asset.getFilename());
                 throw e;
             }
         }
@@ -389,35 +389,35 @@ class Gitlab {
     }
 
     void linkReleaseAssets(String owner, String repoName, GlRelease release, Integer projectIdentifier, Collection<GlFileUpload> uploads) throws RestAPIException {
-        logger.info(RB.$("git.upload.asset.links"), owner, repoName, release.getTagName());
+        context.getLogger().info(RB.$("git.upload.asset.links"), owner, repoName, release.getTagName());
 
         for (GlFileUpload upload : uploads) {
-            logger.info(" " + RB.$("git.upload.asset.link"), upload.getName());
+            context.getLogger().info(" " + RB.$("git.upload.asset.link"), upload.getName());
             try {
                 api.linkAsset(upload.toLinkRequest(apiHost), projectIdentifier, release.getTagName());
             } catch (RestAPIException e) {
-                logger.error(" " + RB.$("git.upload.asset.link.failure"), upload.getName());
+                context.getLogger().error(" " + RB.$("git.upload.asset.link.failure"), upload.getName());
                 throw e;
             }
         }
     }
 
     void linkAssets(String owner, String repoName, GlRelease release, Integer projectIdentifier, Collection<GlLinkRequest> links) throws RestAPIException {
-        logger.info(RB.$("git.upload.asset.links"), owner, repoName, release.getTagName());
+        context.getLogger().info(RB.$("git.upload.asset.links"), owner, repoName, release.getTagName());
 
         for (GlLinkRequest link : links) {
-            logger.info(" " + RB.$("git.upload.asset.link"), link.getName());
+            context.getLogger().info(" " + RB.$("git.upload.asset.link"), link.getName());
             try {
                 api.linkAsset(link, projectIdentifier, release.getTagName());
             } catch (RestAPIException e) {
-                logger.error(" " + RB.$("git.upload.asset.link.failure"), link.getName());
+                context.getLogger().error(" " + RB.$("git.upload.asset.link.failure"), link.getName());
                 throw e;
             }
         }
     }
 
     Optional<User> findUser(String email, String name) throws RestAPIException {
-        logger.debug(RB.$("git.user.lookup"), name, email);
+        context.getLogger().debug(RB.$("git.user.lookup"), name, email);
 
         List<GlUser> users = api.searchUser(CollectionUtils.<String, String>mapOf("scope", "users", "search", email));
         if (null != users && !users.isEmpty()) {
@@ -437,7 +437,7 @@ class Gitlab {
     }
 
     GlLabel getOrCreateLabel(Integer projectIdentifier, String labelName, String labelColor, String description) throws IOException {
-        logger.debug(RB.$("git.label.fetch", labelName));
+        context.getLogger().debug(RB.$("git.label.fetch", labelName));
 
         List<GlLabel> labels = listLabels(projectIdentifier);
         Optional<GlLabel> label = labels.stream()
@@ -448,12 +448,12 @@ class Gitlab {
             return label.get();
         }
 
-        logger.debug(RB.$("git.label.create", labelName));
+        context.getLogger().debug(RB.$("git.label.create", labelName));
         return api.createLabel(projectIdentifier, labelName, labelColor, description);
     }
 
     void addLabelToIssue(Integer projectIdentifier, GlIssue issue, GlLabel label) {
-        logger.debug(RB.$("git.issue.label", label.getName(), issue.getIid()));
+        context.getLogger().debug(RB.$("git.issue.label", label.getName(), issue.getIid()));
 
         Map<String, Object> params = new LinkedHashMap<>();
         List<String> list = (List<String>) params.computeIfAbsent("labels", k -> new ArrayList<>());
@@ -464,7 +464,7 @@ class Gitlab {
     }
 
     void commentOnIssue(Integer projectIdentifier, GlIssue issue, String comment) {
-        logger.debug(RB.$("git.issue.comment", issue.getIid()));
+        context.getLogger().debug(RB.$("git.issue.comment", issue.getIid()));
 
         Map<String, String> params = new LinkedHashMap<>();
         params.put("body", comment);
@@ -480,7 +480,7 @@ class Gitlab {
     }
 
     List<GlLabel> listLabels(Integer projectIdentifier) throws IOException {
-        logger.debug(RB.$("gitlab.list.labels"), projectIdentifier);
+        context.getLogger().debug(RB.$("gitlab.list.labels"), projectIdentifier);
 
         List<GlLabel> labels = new ArrayList<>();
         Page<List<GlLabel>> page = api.listLabels0(projectIdentifier);
@@ -499,7 +499,7 @@ class Gitlab {
 
     private void collectLabels(Page<List<GlLabel>> page, List<GlLabel> labels) throws URISyntaxException {
         URI next = new URI(page.getLinks().next());
-        logger.debug(next.toString());
+        context.getLogger().debug(next.toString());
 
         page = api.listLabels1(next);
         labels.addAll(page.getContent());
@@ -510,7 +510,7 @@ class Gitlab {
     }
 
     List<GlIssue> listIssues(Integer projectIdentifier) throws IOException {
-        logger.debug(RB.$("gitlab.list.issues"), projectIdentifier);
+        context.getLogger().debug(RB.$("gitlab.list.issues"), projectIdentifier);
 
         List<GlIssue> issues = new ArrayList<>();
         Page<List<GlIssue>> page = api.listIssues0(projectIdentifier);
@@ -529,7 +529,7 @@ class Gitlab {
 
     private void collectIssues(Page<List<GlIssue>> page, List<GlIssue> issues) throws URISyntaxException {
         URI next = new URI(page.getLinks().next());
-        logger.debug(next.toString());
+        context.getLogger().debug(next.toString());
 
         page = api.listIssues1(next);
         issues.addAll(page.getContent());
@@ -540,7 +540,7 @@ class Gitlab {
     }
 
     List<GlPackage> listPackages(Integer projectIdentifier, String packageType) throws IOException {
-        logger.debug(RB.$("gitlab.list.packages"), projectIdentifier);
+        context.getLogger().debug(RB.$("gitlab.list.packages"), projectIdentifier);
 
         Map<String, Object> params = new LinkedHashMap<>();
         params.put("package_type", packageType);
@@ -562,7 +562,7 @@ class Gitlab {
 
     private void collectPackages(Page<List<GlPackage>> page, List<GlPackage> packages) throws URISyntaxException {
         URI next = new URI(page.getLinks().next());
-        logger.debug(next.toString());
+        context.getLogger().debug(next.toString());
 
         page = api.listPackages1(next);
         packages.addAll(page.getContent());
@@ -573,7 +573,7 @@ class Gitlab {
     }
 
     Map<String, GlLink> listLinks(Integer projectIdentifier, String tagName) throws IOException {
-        logger.debug(RB.$("gitlab.list.links"), tagName, projectIdentifier);
+        context.getLogger().debug(RB.$("gitlab.list.links"), tagName, projectIdentifier);
 
         List<GlLink> links = new ArrayList<>();
         Page<List<GlLink>> page = api.listLinks0(projectIdentifier, tagName);
@@ -593,7 +593,7 @@ class Gitlab {
 
     private void collectLinks(Page<List<GlLink>> page, List<GlLink> links) throws URISyntaxException {
         URI next = new URI(page.getLinks().next());
-        logger.debug(next.toString());
+        context.getLogger().debug(next.toString());
 
         page = api.listLinks1(next);
         links.addAll(page.getContent());
@@ -604,12 +604,12 @@ class Gitlab {
     }
 
     void deleteLinkedAsset(String token, Integer projectIdentifier, String tagName, GlLink link) throws IOException {
-        logger.info(" " + RB.$("git.delete.asset"), link.getName());
+        context.getLogger().info(" " + RB.$("git.delete.asset"), link.getName());
 
         Map<String, String> headers = new LinkedHashMap<>();
         headers.put("Authorization", "Bearer " + token);
 
-        logger.debug(RB.$("gitlab.delete.file", link.getName()));
+        context.getLogger().debug(RB.$("gitlab.delete.file", link.getName()));
         try {
             TemplateContext props = new TemplateContext();
             props.set("filename", link.getName());
@@ -631,7 +631,7 @@ class Gitlab {
                 headers.computeIfAbsent("Content-Type", k -> "text/plain"),
                 payload);
 
-            ClientUtils.postFile(logger,
+            ClientUtils.postFile(context.getLogger(),
                 graphQlEndpoint,
                 connectTimeout,
                 readTimeout,
@@ -642,7 +642,7 @@ class Gitlab {
             throw new IOException(e);
         }
 
-        logger.debug(RB.$("gitlab.delete.link", link.getId(), link.getName()));
+        context.getLogger().debug(RB.$("gitlab.delete.link", link.getId(), link.getName()));
         api.deleteLink(projectIdentifier, tagName, link.getId());
     }
 

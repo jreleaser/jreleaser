@@ -25,14 +25,11 @@ import dev.failsafe.Failsafe;
 import dev.failsafe.RetryPolicy;
 import dev.failsafe.function.CheckedPredicate;
 import dev.failsafe.function.CheckedSupplier;
-import feign.Feign;
 import feign.FeignException;
-import feign.Request;
 import feign.Response;
 import feign.RetryableException;
 import feign.Util;
 import feign.auth.BasicAuthRequestInterceptor;
-import feign.codec.DecodeException;
 import feign.codec.Decoder;
 import feign.codec.ErrorDecoder;
 import feign.form.FormData;
@@ -41,7 +38,7 @@ import feign.jackson.JacksonEncoder;
 import org.apache.commons.io.IOUtils;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.logging.JReleaserLogger;
-import org.jreleaser.model.JReleaserVersion;
+import org.jreleaser.model.api.JReleaserContext;
 import org.jreleaser.model.spi.upload.UploadException;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.nexus2.api.Data;
@@ -71,7 +68,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
 
 import static java.lang.System.lineSeparator;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -87,7 +83,7 @@ import static org.jreleaser.util.StringUtils.uncapitalize;
  * @since 1.3.0
  */
 public class Nexus2 {
-    private final JReleaserLogger logger;
+    private final JReleaserContext context;
     private final NexusAPI api;
     private final boolean dryrun;
     private final String apiHost;
@@ -97,7 +93,7 @@ public class Nexus2 {
     private final int readTimeout;
     private final Retrier retrier;
 
-    public Nexus2(JReleaserLogger logger,
+    public Nexus2(JReleaserContext context,
                   String apiHost,
                   String username,
                   String password,
@@ -106,26 +102,24 @@ public class Nexus2 {
                   boolean dryrun,
                   int transitionDelay,
                   int transitionMaxRetries) {
-        requireNonNull(logger, "'logger' must not be blank");
+        requireNonNull(context, "'context' must not be blank");
         requireNonBlank(apiHost, "'apiHost' must not be blank");
         requireNonBlank(username, "'username' must not be blank");
         requireNonBlank(password, "'password' must not be blank");
 
-        this.logger = logger;
+        this.context = context;
         this.dryrun = dryrun;
         this.apiHost = apiHost;
         this.username = username;
         this.password = password;
         this.connectTimeout = connectTimeout;
         this.readTimeout = readTimeout;
-        this.retrier = new Retrier(logger, transitionDelay, transitionMaxRetries);
-        this.api = Feign.builder()
+        this.retrier = new Retrier(context.getLogger(), transitionDelay, transitionMaxRetries);
+        this.api = ClientUtils.builder(context, connectTimeout, readTimeout)
             .encoder(new JacksonEncoder())
             .decoder(new ContentNegotiationDecoder())
             .requestInterceptor(new BasicAuthRequestInterceptor(username, password))
-            .requestInterceptor(template -> template.header("User-Agent", "JReleaser/" + JReleaserVersion.getPlainVersion()))
-            .errorDecoder(new NexusErrorDecoder(logger))
-            .options(new Request.Options(connectTimeout, TimeUnit.SECONDS, readTimeout, TimeUnit.SECONDS, true))
+            .errorDecoder(new NexusErrorDecoder(context.getLogger()))
             .target(NexusAPI.class, apiHost);
     }
 
@@ -162,7 +156,7 @@ public class Nexus2 {
     }
 
     public String createStagingRepository(String profileId, String groupId) throws Nexus2Exception {
-        logger.debug(RB.$("nexus.create.staging.repository2", groupId, profileId));
+        context.getLogger().debug(RB.$("nexus.create.staging.repository2", groupId, profileId));
         return wrap(() -> {
             Data<StagedRepository> data = api.startStagingRepository(
                 new Data<>(PromoteRequest.ofDescription("Staging repository for " + groupId)),
@@ -176,7 +170,7 @@ public class Nexus2 {
     }
 
     public void dropStagingRepository(String profileId, String stagingRepositoryId, String groupId) throws Nexus2Exception {
-        logger.debug(uncapitalize(RB.$("nexus.drop.repository", stagingRepositoryId)));
+        context.getLogger().debug(uncapitalize(RB.$("nexus.drop.repository", stagingRepositoryId)));
         wrap(() -> {
             api.dropStagingRepository(
                 new Data<>(PromoteRequest.of(stagingRepositoryId, "Staging repository for " + groupId)),
@@ -204,7 +198,7 @@ public class Nexus2 {
     }
 
     private void waitForState(String stagingRepositoryId, String activity, StagingProfileRepository.State... states) throws Nexus2Exception {
-        logger.debug(RB.$("nexus.wait.repository.state", stagingRepositoryId, Arrays.asList(states)));
+        context.getLogger().debug(RB.$("nexus.wait.repository.state", stagingRepositoryId, Arrays.asList(states)));
 
         StagingProfileRepository repository = retrier.retry(StagingProfileRepository::isTransitioning,
             () -> getStagingRepository(stagingRepositoryId));
@@ -250,7 +244,7 @@ public class Nexus2 {
     }
 
     private StagingProfileRepository getStagingRepository(String stagingRepositoryId) {
-        logger.debug(RB.$("nexus.get.staging.repository", stagingRepositoryId));
+        context.getLogger().debug(RB.$("nexus.get.staging.repository", stagingRepositoryId));
 
         try {
             return api.getStagingRepository(stagingRepositoryId);
@@ -265,7 +259,7 @@ public class Nexus2 {
 
     public void deploy(String stagingRepositoryId, String path, Path file) throws Nexus2Exception {
         String filename = file.getFileName().toString();
-        logger.debug(" - " + RB.$("nexus.deploy.artifact", filename, path, filename));
+        context.getLogger().debug(" - " + RB.$("nexus.deploy.artifact", filename, path, filename));
 
         try {
             FormData data = ClientUtils.toFormData(file);
@@ -291,14 +285,14 @@ public class Nexus2 {
                 .append("/")
                 .append(filename);
 
-            ClientUtils.putFile(logger,
+            ClientUtils.putFile(context.getLogger(),
                 url.toString(),
                 connectTimeout,
                 readTimeout,
                 data,
                 headers);
         } catch (UploadException | IOException e) {
-            logger.error(" x {}", filename, e);
+            context.getLogger().error(" x {}", filename, e);
             throw fail(RB.$("ERROR_nexus_deploy_artifact", filename), e);
         }
     }
@@ -315,10 +309,10 @@ public class Nexus2 {
         try {
             if (!dryrun) operation.execute();
         } catch (Nexus2Exception e) {
-            logger.trace(e);
+            context.getLogger().trace(e);
             throw e;
         } catch (RuntimeException e) {
-            logger.trace(e);
+            context.getLogger().trace(e);
             throw new Nexus2Exception(RB.$("ERROR_unexpected_error"), e);
         }
     }
@@ -330,10 +324,10 @@ public class Nexus2 {
             }
             return null;
         } catch (Nexus2Exception e) {
-            logger.trace(e);
+            context.getLogger().trace(e);
             throw e;
         } catch (Exception e) {
-            logger.trace(e);
+            context.getLogger().trace(e);
             throw new Nexus2Exception(RB.$("ERROR_unexpected_error"), e);
         }
     }
@@ -342,10 +336,10 @@ public class Nexus2 {
         try {
             return callable.call();
         } catch (Nexus2Exception e) {
-            logger.trace(e);
+            context.getLogger().trace(e);
             throw e;
         } catch (Exception e) {
-            logger.trace(e);
+            context.getLogger().trace(e);
             throw new Nexus2Exception(RB.$("ERROR_unexpected_error"), e);
         }
     }
@@ -390,7 +384,7 @@ public class Nexus2 {
             .registerModule(new JavaTimeModule()));
 
         @Override
-        public Object decode(Response response, Type type) throws IOException, DecodeException, FeignException {
+        public Object decode(Response response, Type type) throws IOException, FeignException {
             try {
                 return xml.decode(response, type);
             } catch (NotXml e) {

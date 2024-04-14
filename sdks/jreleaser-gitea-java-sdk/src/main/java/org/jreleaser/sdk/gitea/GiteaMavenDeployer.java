@@ -20,8 +20,8 @@ package org.jreleaser.sdk.gitea;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.spi.deploy.DeployException;
-import org.jreleaser.sdk.commons.AbstractMavenDeployer;
 import org.jreleaser.model.spi.deploy.maven.Deployable;
+import org.jreleaser.sdk.commons.AbstractMavenDeployer;
 
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -88,7 +88,7 @@ public class GiteaMavenDeployer extends AbstractMavenDeployer<org.jreleaser.mode
         }
 
         try {
-            Gitea api = new Gitea(context.getLogger(),
+            Gitea api = new Gitea(context.asImmutable(),
                 theUrl.toString(),
                 token,
                 deployer.getConnectTimeout(),

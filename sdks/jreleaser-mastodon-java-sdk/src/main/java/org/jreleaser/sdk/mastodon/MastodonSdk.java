@@ -26,7 +26,7 @@ import feign.form.FormEncoder;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import org.jreleaser.bundle.RB;
-import org.jreleaser.logging.JReleaserLogger;
+import org.jreleaser.model.api.JReleaserContext;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.mastodon.api.MastodonAPI;
@@ -43,17 +43,17 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  */
 public class MastodonSdk {
     private static final String API_V1 = "/api/v1";
-    private final JReleaserLogger logger;
+    private final JReleaserContext context;
     private final MastodonAPI api;
     private final boolean dryrun;
 
-    private MastodonSdk(JReleaserLogger logger,
+    private MastodonSdk(JReleaserContext context,
                         String host,
                         String accessToken,
                         int connectTimeout,
                         int readTimeout,
                         boolean dryrun) {
-        requireNonNull(logger, "'logger' must not be null");
+        requireNonNull(context, "'context' must not be null");
         requireNonBlank(host, "'host' must not be blank");
         requireNonBlank(accessToken, "'accessToken' must not be blank");
 
@@ -70,15 +70,15 @@ public class MastodonSdk {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .configure(SerializationFeature.INDENT_OUTPUT, true);
 
-        this.logger = logger;
+        this.context = context;
         this.dryrun = dryrun;
-        this.api = ClientUtils.builder(logger, connectTimeout, readTimeout)
+        this.api = ClientUtils.builder(context, connectTimeout, readTimeout)
             .encoder(new FormEncoder(new JacksonEncoder(objectMapper)))
             .decoder(new JacksonDecoder(objectMapper))
             .requestInterceptor(template -> template.header("Authorization", String.format("Bearer %s", accessToken)))
             .target(MastodonAPI.class, host);
 
-        this.logger.debug(RB.$("workflow.dryrun"), dryrun);
+        this.context.getLogger().debug(RB.$("workflow.dryrun"), dryrun);
     }
 
     public void toot(List<String> statuses) throws MastodonException {
@@ -94,25 +94,25 @@ public class MastodonSdk {
         try {
             if (!dryrun) runnable.run();
         } catch (RestAPIException e) {
-            logger.trace(e);
+            context.getLogger().trace(e);
             throw new MastodonException(RB.$("sdk.operation.failed", "Mastodon"), e);
         }
     }
 
-    public static Builder builder(JReleaserLogger logger) {
-        return new Builder(logger);
+    public static Builder builder(JReleaserContext context) {
+        return new Builder(context);
     }
 
     public static class Builder {
-        private final JReleaserLogger logger;
+        private final JReleaserContext context;
         private boolean dryrun;
         private String accessToken;
         private String host;
         private int connectTimeout = 20;
         private int readTimeout = 60;
 
-        private Builder(JReleaserLogger logger) {
-            this.logger = requireNonNull(logger, "'logger' must not be null");
+        private Builder(JReleaserContext context) {
+            this.context = requireNonNull(context, "'context' must not be null");
         }
 
         public Builder dryrun(boolean dryrun) {
@@ -149,7 +149,7 @@ public class MastodonSdk {
             validate();
 
             return new MastodonSdk(
-                logger,
+                context,
                 host,
                 accessToken,
                 connectTimeout,

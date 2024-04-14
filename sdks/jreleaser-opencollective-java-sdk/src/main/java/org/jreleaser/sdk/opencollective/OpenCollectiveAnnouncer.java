@@ -72,7 +72,7 @@ public class OpenCollectiveAnnouncer implements Announcer<org.jreleaser.model.ap
         context.getLogger().info("message: {}", message);
 
         try {
-            OpenCollectiveSdk sdk = OpenCollectiveSdk.builder(context.getLogger())
+            OpenCollectiveSdk sdk = OpenCollectiveSdk.builder(context.asImmutable())
                 .host(openCollective.getHost())
                 .token(openCollective.getToken())
                 .connectTimeout(openCollective.getConnectTimeout())

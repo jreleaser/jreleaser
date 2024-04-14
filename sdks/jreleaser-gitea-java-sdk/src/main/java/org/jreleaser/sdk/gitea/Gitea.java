@@ -30,7 +30,7 @@ import feign.jackson.JacksonEncoder;
 import org.apache.tika.Tika;
 import org.apache.tika.mime.MediaType;
 import org.jreleaser.bundle.RB;
-import org.jreleaser.logging.JReleaserLogger;
+import org.jreleaser.model.api.JReleaserContext;
 import org.jreleaser.model.spi.release.Asset;
 import org.jreleaser.model.spi.release.Release;
 import org.jreleaser.model.spi.release.User;
@@ -73,15 +73,15 @@ public class Gitea {
     private static final String API_V1 = "/api/v1";
     private final Tika tika = new Tika();
 
-    private final JReleaserLogger logger;
+    private final JReleaserContext context;
     private final GiteaAPI api;
 
-    public Gitea(JReleaserLogger logger,
+    public Gitea(JReleaserContext context,
                  String endpoint,
                  String token,
                  int connectTimeout,
                  int readTimeout) {
-        requireNonNull(logger, "'logger' must not be null");
+        requireNonNull(context, "'context' must not be null");
         requireNonBlank(token, "'token' must not be blank");
         requireNonBlank(endpoint, "'endpoint' must not be blank");
 
@@ -98,8 +98,8 @@ public class Gitea {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .configure(SerializationFeature.INDENT_OUTPUT, true);
 
-        this.logger = logger;
-        this.api = ClientUtils.builder(logger, connectTimeout, readTimeout)
+        this.context = context;
+        this.api = ClientUtils.builder(context, connectTimeout, readTimeout)
             .client(new ApacheHttpClient())
             .encoder(new FormEncoder(new JacksonEncoder(objectMapper)))
             .decoder(new PaginatingDecoder(new JacksonDecoder(objectMapper)))
@@ -108,7 +108,7 @@ public class Gitea {
     }
 
     public GtRepository findRepository(String owner, String repo) {
-        logger.debug(RB.$("git.repository.lookup"), owner, repo);
+        context.getLogger().debug(RB.$("git.repository.lookup"), owner, repo);
         try {
             return api.getRepository(owner, repo);
         } catch (RestAPIException e) {
@@ -121,7 +121,7 @@ public class Gitea {
     }
 
     public List<Release> listReleases(String owner, String repoName) {
-        logger.debug(RB.$("git.list.releases"), owner, repoName);
+        context.getLogger().debug(RB.$("git.list.releases"), owner, repoName);
 
         List<Release> releases = new ArrayList<>();
 
@@ -154,7 +154,7 @@ public class Gitea {
     }
 
     public List<String> listBranches(String owner, String repoName) {
-        logger.debug(RB.$("git.list.branches"), owner, repoName);
+        context.getLogger().debug(RB.$("git.list.branches"), owner, repoName);
 
         List<String> branches = new ArrayList<>();
 
@@ -180,7 +180,7 @@ public class Gitea {
     }
 
     public Map<String, GtAsset> listAssets(String owner, String repo, GtRelease release) {
-        logger.debug(RB.$("git.list.assets.github"), owner, repo, release.getId());
+        context.getLogger().debug(RB.$("git.list.assets.github"), owner, repo, release.getId());
 
         Map<String, GtAsset> assets = new LinkedHashMap<>();
         for (GtAsset asset : api.listAssets(owner, repo, release.getId())) {
@@ -191,13 +191,13 @@ public class Gitea {
     }
 
     public Optional<GtMilestone> findMilestoneByName(String owner, String repo, String milestoneName) {
-        logger.debug(RB.$("git.milestone.lookup"), milestoneName, owner, repo);
+        context.getLogger().debug(RB.$("git.milestone.lookup"), milestoneName, owner, repo);
 
         return findMilestone(owner, repo, milestoneName, "open");
     }
 
     public Optional<GtMilestone> findClosedMilestoneByName(String owner, String repo, String milestoneName) {
-        logger.debug(RB.$("git.milestone.lookup.closed"), milestoneName, owner, repo);
+        context.getLogger().debug(RB.$("git.milestone.lookup.closed"), milestoneName, owner, repo);
 
         return findMilestone(owner, repo, milestoneName, "closed");
     }
@@ -221,14 +221,14 @@ public class Gitea {
     }
 
     public void closeMilestone(String owner, String repo, GtMilestone milestone) {
-        logger.debug(RB.$("git.milestone.close"), milestone.getTitle(), owner, repo);
+        context.getLogger().debug(RB.$("git.milestone.close"), milestone.getTitle(), owner, repo);
 
         api.updateMilestone(CollectionUtils.<String, Object>map()
             .e("state", "closed"), owner, repo, milestone.getId());
     }
 
     public GtRepository createRepository(String owner, String repo) {
-        logger.debug(RB.$("git.repository.create"), owner, repo);
+        context.getLogger().debug(RB.$("git.repository.create"), owner, repo);
 
         Map<String, Object> params = CollectionUtils.<String, Object>map()
             .e("name", repo)
@@ -255,7 +255,7 @@ public class Gitea {
     }
 
     public GtRelease findReleaseByTag(String owner, String repo, String tagName) {
-        logger.debug(RB.$("git.fetch.release.by.tag"), owner, repo, tagName);
+        context.getLogger().debug(RB.$("git.fetch.release.by.tag"), owner, repo, tagName);
 
         try {
             return api.getReleaseByTagName(owner, repo, tagName);
@@ -269,7 +269,7 @@ public class Gitea {
     }
 
     public void deleteRelease(String owner, String repo, String tagName, Integer id) throws RestAPIException {
-        logger.debug(RB.$("git.delete.release.from.id"), tagName, owner, repo, id);
+        context.getLogger().debug(RB.$("git.delete.release.from.id"), tagName, owner, repo, id);
 
         try {
             api.deleteRelease(owner, repo, id);
@@ -284,25 +284,25 @@ public class Gitea {
     }
 
     public void deleteTag(String owner, String repo, String tagName) throws RestAPIException {
-        logger.debug(RB.$("git.delete.tag.from"), tagName, owner, repo);
+        context.getLogger().debug(RB.$("git.delete.tag.from"), tagName, owner, repo);
 
         api.deleteTag(owner, repo, tagName);
     }
 
     public void deletePackage(String owner, String type, String name, String version) throws RestAPIException {
-        logger.debug(RB.$("gitea.delete.package"), owner, type, name, version);
+        context.getLogger().debug(RB.$("gitea.delete.package"), owner, type, name, version);
 
         api.deletePackage(owner, type, name, version);
     }
 
     public GtRelease createRelease(String owner, String repo, GtRelease release) throws RestAPIException {
-        logger.debug(RB.$("git.create.release"), owner, repo, release.getTagName());
+        context.getLogger().debug(RB.$("git.create.release"), owner, repo, release.getTagName());
 
         return api.createRelease(release, owner, repo);
     }
 
     public void updateRelease(String owner, String repo, Integer id, GtRelease release) throws RestAPIException {
-        logger.debug(RB.$("git.update.release"), owner, repo, release.getTagName());
+        context.getLogger().debug(RB.$("git.update.release"), owner, repo, release.getTagName());
 
         api.updateRelease(release, owner, repo, id);
     }
@@ -326,11 +326,11 @@ public class Gitea {
                 continue;
             }
 
-            logger.debug(" " + RB.$("git.delete.asset"), asset.getFilename());
+            context.getLogger().debug(" " + RB.$("git.delete.asset"), asset.getFilename());
             try {
                 api.deleteAsset(owner, repo, release.getId(), existingAssets.get(asset.getFilename()).getId());
             } catch (RestAPIException e) {
-                logger.error(" " + RB.$("git.delete.asset.failure"), asset.getFilename());
+                context.getLogger().error(" " + RB.$("git.delete.asset.failure"), asset.getFilename());
                 throw e;
             }
 
@@ -340,17 +340,17 @@ public class Gitea {
     }
 
     private void uploadOrUpdateAsset(Asset asset, String owner, String repo, GtRelease release, String operationMessageKey, String operationErrorMessageKey) throws IOException {
-        logger.info(" " + RB.$(operationMessageKey), asset.getFilename());
+        context.getLogger().info(" " + RB.$(operationMessageKey), asset.getFilename());
         try {
             api.uploadAsset(owner, repo, release.getId(), toFormData(asset.getPath()));
         } catch (RestAPIException e) {
-            logger.error(" " + RB.$(operationErrorMessageKey), asset.getFilename());
+            context.getLogger().error(" " + RB.$(operationErrorMessageKey), asset.getFilename());
             throw e;
         }
     }
 
     public Optional<User> findUser(String email, String name, String host) throws RestAPIException {
-        logger.debug(RB.$("git.user.lookup"), name, email);
+        context.getLogger().debug(RB.$("git.user.lookup"), name, email);
 
         GtSearchUser search = api.searchUser(CollectionUtils.<String, String>mapOf("q", email));
         if (null != search.getData() && !search.getData().isEmpty()) {
@@ -362,7 +362,7 @@ public class Gitea {
     }
 
     public GtLabel getOrCreateLabel(String owner, String name, String labelName, String labelColor, String description) {
-        logger.debug(RB.$("git.label.fetch", labelName));
+        context.getLogger().debug(RB.$("git.label.fetch", labelName));
 
         List<GtLabel> labels = listLabels(owner, name);
         Optional<GtLabel> label = labels.stream()
@@ -373,12 +373,12 @@ public class Gitea {
             return label.get();
         }
 
-        logger.debug(RB.$("git.label.create", labelName));
+        context.getLogger().debug(RB.$("git.label.create", labelName));
         return api.createLabel(owner, name, labelName, labelColor, description);
     }
 
     public Optional<GtIssue> findIssue(String owner, String name, int issueNumber) {
-        logger.debug(RB.$("git.issue.fetch", issueNumber));
+        context.getLogger().debug(RB.$("git.issue.fetch", issueNumber));
         try {
             return Optional.of(api.findIssue(owner, name, issueNumber));
         } catch (RestAPIException e) {
@@ -390,7 +390,7 @@ public class Gitea {
     }
 
     public void addLabelToIssue(String owner, String name, GtIssue issue, GtLabel label) {
-        logger.debug(RB.$("git.issue.label", label.getName(), issue.getNumber()));
+        context.getLogger().debug(RB.$("git.issue.label", label.getName(), issue.getNumber()));
 
         Map<String, List<Integer>> labels = new LinkedHashMap<>();
         List<Integer> list = labels.computeIfAbsent("labels", k -> new ArrayList<>());
@@ -401,7 +401,7 @@ public class Gitea {
     }
 
     public void commentOnIssue(String owner, String name, GtIssue issue, String comment) {
-        logger.debug(RB.$("git.issue.comment", issue.getNumber()));
+        context.getLogger().debug(RB.$("git.issue.comment", issue.getNumber()));
 
         Map<String, String> params = new LinkedHashMap<>();
         params.put("body", comment);
@@ -417,7 +417,7 @@ public class Gitea {
     }
 
     private List<GtLabel> listLabels(String owner, String repoName) {
-        logger.debug(RB.$("git.list.labels"), owner, repoName);
+        context.getLogger().debug(RB.$("git.list.labels"), owner, repoName);
 
         List<GtLabel> labels = new ArrayList<>();
 

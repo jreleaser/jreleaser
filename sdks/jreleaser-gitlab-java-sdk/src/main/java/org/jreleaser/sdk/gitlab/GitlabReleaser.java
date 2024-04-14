@@ -94,7 +94,7 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
         String tagName = gitlab.getEffectiveTagName(context.getModel());
 
         try {
-            Gitlab api = new Gitlab(context.getLogger(),
+            Gitlab api = new Gitlab(context.asImmutable(),
                 gitlab.getApiEndpoint(),
                 gitlab.getToken(),
                 gitlab.getConnectTimeout(),
@@ -175,7 +175,7 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
     public Repository maybeCreateRepository(String owner, String repo, String password, org.jreleaser.model.api.common.ExtraProperties extraProperties) throws IOException {
         context.getLogger().debug(RB.$("git.repository.lookup"), owner, repo);
 
-        Gitlab api = new Gitlab(context.getLogger(),
+        Gitlab api = new Gitlab(context.asImmutable(),
             gitlab.getApiEndpoint(),
             password,
             gitlab.getConnectTimeout(),
@@ -208,7 +208,7 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
     @Override
     public Optional<User> findUser(String email, String name) {
         try {
-            return new Gitlab(context.getLogger(),
+            return new Gitlab(context.asImmutable(),
                 gitlab.getApiEndpoint(),
                 gitlab.getToken(),
                 gitlab.getConnectTimeout(),
@@ -224,7 +224,7 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
 
     @Override
     public List<Release> listReleases(String owner, String repo) throws IOException {
-        Gitlab api = new Gitlab(context.getLogger(),
+        Gitlab api = new Gitlab(context.asImmutable(),
             gitlab.getApiEndpoint(),
             gitlab.getToken(),
             gitlab.getConnectTimeout(),

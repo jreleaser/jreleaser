@@ -101,7 +101,7 @@ public class SdkmanAnnouncer implements Announcer<org.jreleaser.model.api.announ
 
             context.getLogger().info(RB.$("sdkman.release.announce"), command, candidate);
             try {
-                AnnounceSdkmanCommand.builder(context.getLogger())
+                AnnounceSdkmanCommand.builder(context.asImmutable())
                     .connectTimeout(sdkman.getConnectTimeout())
                     .readTimeout(sdkman.getReadTimeout())
                     .consumerKey(context.isDryrun() ? "**UNDEFINED**" : sdkman.getConsumerKey())
@@ -144,7 +144,7 @@ public class SdkmanAnnouncer implements Announcer<org.jreleaser.model.api.announ
 
             if (sdkman.isMajor()) {
                 context.getLogger().info(RB.$("sdkman.release.announce.major"), candidate);
-                MajorReleaseSdkmanCommand.builder(context.getLogger())
+                MajorReleaseSdkmanCommand.builder(context.asImmutable())
                     .connectTimeout(sdkman.getConnectTimeout())
                     .readTimeout(sdkman.getReadTimeout())
                     .consumerKey(context.isDryrun() ? "**UNDEFINED**" : sdkman.getConsumerKey())
@@ -158,7 +158,7 @@ public class SdkmanAnnouncer implements Announcer<org.jreleaser.model.api.announ
                     .execute();
             } else {
                 context.getLogger().info(RB.$("sdkman.release.announce.minor"), candidate);
-                MinorReleaseSdkmanCommand.builder(context.getLogger())
+                MinorReleaseSdkmanCommand.builder(context.asImmutable())
                     .connectTimeout(sdkman.getConnectTimeout())
                     .readTimeout(sdkman.getReadTimeout())
                     .consumerKey(context.isDryrun() ? "**UNDEFINED**" : sdkman.getConsumerKey())

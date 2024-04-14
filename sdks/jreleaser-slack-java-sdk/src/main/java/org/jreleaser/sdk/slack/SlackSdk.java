@@ -18,7 +18,7 @@
 package org.jreleaser.sdk.slack;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.logging.JReleaserLogger;
+import org.jreleaser.model.api.JReleaserContext;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.slack.api.Message;
 import org.jreleaser.sdk.slack.api.SlackAPI;
@@ -36,31 +36,31 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @since 0.1.0
  */
 public class SlackSdk {
-    private final JReleaserLogger logger;
+    private final JReleaserContext context;
     private final SlackAPI api;
     private final boolean dryrun;
 
-    private SlackSdk(JReleaserLogger logger,
+    private SlackSdk(JReleaserContext context,
                      String token,
                      String apiHost,
                      int connectTimeout,
                      int readTimeout,
                      boolean dryrun) {
-        requireNonNull(logger, "'logger' must not be null");
+        requireNonNull(context, "'context' must not be null");
         requireNonBlank(token, "'token' must not be blank");
 
-        this.logger = logger;
+        this.context = context;
         this.dryrun = dryrun;
-        this.api = ClientUtils.builder(logger, connectTimeout, readTimeout)
+        this.api = ClientUtils.builder(context, connectTimeout, readTimeout)
             .requestInterceptor(template -> template.header("Authorization", String.format("Bearer %s", token)))
             .target(SlackAPI.class, apiHost);
 
-        this.logger.debug(RB.$("workflow.dryrun"), dryrun);
+        this.context.getLogger().debug(RB.$("workflow.dryrun"), dryrun);
     }
 
     public void message(String channel, String message) throws SlackException {
         Message payload = Message.of(channel, message);
-        logger.debug("slack.message: " + payload);
+        context.getLogger().debug("slack.message: " + payload);
         decode(wrap(() -> {
             SlackResponse response = api.message(payload);
             return response.getError();
@@ -77,27 +77,27 @@ public class SlackSdk {
         try {
             if (!dryrun) return runnable.call();
         } catch (Exception e) {
-            logger.trace(e);
+            context.getLogger().trace(e);
             throw new SlackException(RB.$("sdk.operation.failed", "Slack"), e);
         }
 
         return null;
     }
 
-    public static Builder builder(JReleaserLogger logger) {
-        return new Builder(logger);
+    public static Builder builder(JReleaserContext context) {
+        return new Builder(context);
     }
 
     public static class Builder {
-        private final JReleaserLogger logger;
+        private final JReleaserContext context;
         private boolean dryrun;
         private String token;
         private String apiHost;
         private int connectTimeout = 20;
         private int readTimeout = 60;
 
-        private Builder(JReleaserLogger logger) {
-            this.logger = requireNonNull(logger, "'logger' must not be null");
+        private Builder(JReleaserContext context) {
+            this.context = requireNonNull(context, "'context' must not be null");
         }
 
         public Builder dryrun(boolean dryrun) {
@@ -138,7 +138,7 @@ public class SlackSdk {
             validate();
 
             return new SlackSdk(
-                logger,
+                context,
                 token,
                 apiHost,
                 connectTimeout,

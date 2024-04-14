@@ -83,7 +83,7 @@ public class GiteaReleaser extends AbstractReleaser<org.jreleaser.model.api.rele
         String tagName = gitea.getEffectiveTagName(context.getModel());
 
         try {
-            Gitea api = new Gitea(context.getLogger(),
+            Gitea api = new Gitea(context.asImmutable(),
                 gitea.getApiEndpoint(),
                 gitea.getToken(),
                 gitea.getConnectTimeout(),
@@ -169,7 +169,7 @@ public class GiteaReleaser extends AbstractReleaser<org.jreleaser.model.api.rele
     public Repository maybeCreateRepository(String owner, String repo, String password, ExtraProperties extraProperties) throws IOException {
         context.getLogger().debug(RB.$("git.repository.lookup"), owner, repo);
 
-        Gitea api = new Gitea(context.getLogger(),
+        Gitea api = new Gitea(context.asImmutable(),
             gitea.getApiEndpoint(),
             password,
             gitea.getConnectTimeout(),
@@ -201,7 +201,7 @@ public class GiteaReleaser extends AbstractReleaser<org.jreleaser.model.api.rele
                 host += "/";
             }
 
-            return new Gitea(context.getLogger(),
+            return new Gitea(context.asImmutable(),
                 gitea.getApiEndpoint(),
                 gitea.getToken(),
                 gitea.getConnectTimeout(),
@@ -217,7 +217,7 @@ public class GiteaReleaser extends AbstractReleaser<org.jreleaser.model.api.rele
 
     @Override
     public List<Release> listReleases(String owner, String repo) throws IOException {
-        Gitea api = new Gitea(context.getLogger(),
+        Gitea api = new Gitea(context.asImmutable(),
             gitea.getApiEndpoint(),
             gitea.getToken(),
             gitea.getConnectTimeout(),

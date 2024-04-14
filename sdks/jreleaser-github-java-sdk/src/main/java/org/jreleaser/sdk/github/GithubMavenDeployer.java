@@ -20,8 +20,8 @@ package org.jreleaser.sdk.github;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.spi.deploy.DeployException;
-import org.jreleaser.sdk.commons.AbstractMavenDeployer;
 import org.jreleaser.model.spi.deploy.maven.Deployable;
+import org.jreleaser.sdk.commons.AbstractMavenDeployer;
 import org.jreleaser.sdk.github.api.GhPackageVersion;
 
 import java.util.List;
@@ -75,7 +75,7 @@ public class GithubMavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
         String packageVersion = deployable.getVersion();
 
         try {
-            Github api = new Github(context.getLogger(),
+            Github api = new Github(context.asImmutable(),
                 context.getModel().getRelease().getGithub().getApiEndpoint(),
                 token,
                 deployer.getConnectTimeout(),

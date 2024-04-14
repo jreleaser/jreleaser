@@ -17,7 +17,7 @@
  */
 package org.jreleaser.sdk.sdkman;
 
-import org.jreleaser.logging.JReleaserLogger;
+import org.jreleaser.model.api.JReleaserContext;
 
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 
@@ -26,7 +26,7 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @since 0.1.0
  */
 public class DefaultSdkmanCommand extends AbstractSdkmanCommand {
-    private DefaultSdkmanCommand(JReleaserLogger logger,
+    private DefaultSdkmanCommand(JReleaserContext context,
                                  String apiHost,
                                  int connectTimeout,
                                  int readTimeout,
@@ -35,7 +35,7 @@ public class DefaultSdkmanCommand extends AbstractSdkmanCommand {
                                  String candidate,
                                  String version,
                                  boolean dryrun) {
-        super(logger, apiHost, connectTimeout, readTimeout, consumerKey, consumerToken, candidate, version, dryrun);
+        super(context, apiHost, connectTimeout, readTimeout, consumerKey, consumerToken, candidate, version, dryrun);
     }
 
     @Override
@@ -43,13 +43,13 @@ public class DefaultSdkmanCommand extends AbstractSdkmanCommand {
         sdkman.setDefault(candidate, version);
     }
 
-    public static Builder builder(JReleaserLogger logger) {
-        return new Builder(logger);
+    public static Builder builder(JReleaserContext context) {
+        return new Builder(context);
     }
 
     public static class Builder extends AbstractSdkmanCommand.Builder<Builder> {
-        protected Builder(JReleaserLogger logger) {
-            super(logger);
+        protected Builder(JReleaserContext context) {
+            super(context);
         }
 
         public DefaultSdkmanCommand build() {
@@ -60,7 +60,7 @@ public class DefaultSdkmanCommand extends AbstractSdkmanCommand {
             requireNonBlank(version, "'version' must not be blank");
 
             return new DefaultSdkmanCommand(
-                logger,
+                context,
                 apiHost,
                 connectTimeout,
                 readTimeout,

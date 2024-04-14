@@ -17,13 +17,11 @@
  */
 package org.jreleaser.sdk.sdkman;
 
-import feign.Feign;
-import feign.Request;
-import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import org.jreleaser.bundle.RB;
-import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.JReleaserVersion;
+import org.jreleaser.model.api.JReleaserContext;
+import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.sdkman.api.Announce;
 import org.jreleaser.sdk.sdkman.api.Candidate;
 import org.jreleaser.sdk.sdkman.api.Release;
@@ -31,7 +29,6 @@ import org.jreleaser.sdk.sdkman.api.SdkmanAPI;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import static java.util.Objects.requireNonNull;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
@@ -43,27 +40,26 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
 public class Sdkman {
     private static final String KEY_UNIVERSAL = "UNIVERSAL";
 
-    private final JReleaserLogger logger;
+    private final JReleaserContext context;
     private final SdkmanAPI api;
     private final boolean dryrun;
 
-    public Sdkman(JReleaserLogger logger,
+    public Sdkman(JReleaserContext context,
                   String apiHost,
                   int connectTimeout,
                   int readTimeout,
                   String consumerKey,
                   String consumerToken,
                   boolean dryrun) {
-        requireNonNull(logger, "'logger' must not be null");
+        requireNonNull(context, "'context' must not be null");
         requireNonBlank(apiHost, "'apiHost' must not be blank");
         requireNonBlank(consumerKey, "'consumerKey' must not be blank");
         requireNonBlank(consumerToken, "'consumerToken' must not be blank");
 
-        this.logger = logger;
+        this.context = context;
         this.dryrun = dryrun;
-        this.api = Feign.builder()
+        this.api = ClientUtils.builder(context, connectTimeout, readTimeout)
             .encoder(new JacksonEncoder())
-            .decoder(new JacksonDecoder())
             .requestInterceptor(template -> {
                 template.header("User-Agent", "JReleaser/" + JReleaserVersion.getPlainVersion());
                 template.header("Consumer-Key", consumerKey);
@@ -72,10 +68,9 @@ public class Sdkman {
                 template.header("Accept", "application/json");
             })
             .errorDecoder((methodKey, response) -> new IllegalStateException("Server returned error " + response.reason()))
-            .options(new Request.Options(connectTimeout, TimeUnit.SECONDS, readTimeout, TimeUnit.SECONDS, true))
             .target(SdkmanAPI.class, apiHost);
 
-        this.logger.debug(RB.$("workflow.dryrun"), dryrun);
+        this.context.getLogger().debug(RB.$("workflow.dryrun"), dryrun);
     }
 
     public void announce(String candidate,
@@ -88,14 +83,14 @@ public class Sdkman {
                          String hashtag,
                          String releaseNotesUrl) throws SdkmanException {
         Announce payload = Announce.of(candidate, version, hashtag, releaseNotesUrl);
-        logger.debug("sdkman.announce: " + payload);
+        context.getLogger().debug("sdkman.announce: " + payload);
         wrap(() -> api.announce(payload));
     }
 
     public void setDefault(String candidate,
                            String version) throws SdkmanException {
         Candidate payload = Candidate.of(candidate, version);
-        logger.debug("sdkman.default: " + payload);
+        context.getLogger().debug("sdkman.default: " + payload);
         wrap(() -> api.setDefault(payload));
     }
 
@@ -121,7 +116,7 @@ public class Sdkman {
                         Map<String, String> platforms) throws SdkmanException {
         for (Map.Entry<String, String> entry : platforms.entrySet()) {
             Release payload = Release.of(candidate, version, entry.getKey(), entry.getValue());
-            logger.debug("sdkman.release: " + payload);
+            context.getLogger().debug("sdkman.release: " + payload);
             wrap(() -> api.release(payload));
         }
     }
@@ -197,7 +192,7 @@ public class Sdkman {
         try {
             if (!dryrun) runnable.run();
         } catch (RuntimeException e) {
-            logger.trace(e);
+            context.getLogger().trace(e);
             throw new SdkmanException(RB.$("sdk.operation.failed", "Sdkman"), e);
         }
     }

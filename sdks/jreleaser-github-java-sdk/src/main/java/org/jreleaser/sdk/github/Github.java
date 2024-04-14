@@ -28,7 +28,7 @@ import feign.httpclient.ApacheHttpClient;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import org.jreleaser.bundle.RB;
-import org.jreleaser.logging.JReleaserLogger;
+import org.jreleaser.model.api.JReleaserContext;
 import org.jreleaser.model.spi.release.Asset;
 import org.jreleaser.model.spi.release.Release;
 import org.jreleaser.model.spi.release.User;
@@ -83,26 +83,26 @@ class Github {
     private static final String GITHUB_API_VERSION = "2022-11-28";
     private static final String GITHUB_MIME_TYPE = "application/vnd.github+json";
 
-    private final JReleaserLogger logger;
+    private final JReleaserContext context;
     private final ObjectMapper objectMapper;
     private final GithubAPI api;
     private final String token;
     private final int connectTimeout;
     private final int readTimeout;
 
-    Github(JReleaserLogger logger,
+    Github(JReleaserContext context,
            String token,
            int connectTimeout,
            int readTimeout) {
-        this(logger, ENDPOINT, token, connectTimeout, readTimeout);
+        this(context, ENDPOINT, token, connectTimeout, readTimeout);
     }
 
-    Github(JReleaserLogger logger,
+    Github(JReleaserContext context,
            String endpoint,
            String token,
            int connectTimeout,
            int readTimeout) {
-        this.logger = requireNonNull(logger, "'logger' must not be null");
+        this.context = requireNonNull(context, "'context' must not be null");
         this.token = requireNonBlank(token, "'token' must not be blank");
         this.connectTimeout = connectTimeout;
         this.readTimeout = readTimeout;
@@ -118,7 +118,7 @@ class Github {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .configure(SerializationFeature.INDENT_OUTPUT, true);
 
-        this.api = ClientUtils.builder(logger, connectTimeout, readTimeout)
+        this.api = ClientUtils.builder(context, connectTimeout, readTimeout)
             .client(new ApacheHttpClient())
             .encoder(new FormEncoder(new JacksonEncoder(objectMapper)))
             .decoder(new PaginatingDecoder(new JacksonDecoder(objectMapper)))
@@ -131,7 +131,7 @@ class Github {
     }
 
     GhRepository findRepository(String owner, String repo) {
-        logger.debug(RB.$("git.repository.lookup"), owner, repo);
+        context.getLogger().debug(RB.$("git.repository.lookup"), owner, repo);
         try {
             return api.getRepository(owner, repo);
         } catch (RestAPIException e) {
@@ -144,7 +144,7 @@ class Github {
     }
 
     List<Release> listReleases(String owner, String repoName) {
-        logger.debug(RB.$("git.list.releases"), owner, repoName);
+        context.getLogger().debug(RB.$("git.list.releases"), owner, repoName);
 
         List<Release> releases = new ArrayList<>();
 
@@ -177,7 +177,7 @@ class Github {
     }
 
     List<String> listBranches(String owner, String repoName) {
-        logger.debug(RB.$("git.list.branches"), owner, repoName);
+        context.getLogger().debug(RB.$("git.list.branches"), owner, repoName);
 
         List<String> branches = new ArrayList<>();
 
@@ -203,7 +203,7 @@ class Github {
     }
 
     Map<String, GhAsset> listAssets(String owner, String repo, GhRelease release) {
-        logger.debug(RB.$("git.list.assets.github"), owner, repo, release.getId());
+        context.getLogger().debug(RB.$("git.list.assets.github"), owner, repo, release.getId());
 
         Map<String, GhAsset> assets = new LinkedHashMap<>();
         for (GhAsset asset : api.listAssets(owner, repo, release.getId())) {
@@ -214,7 +214,7 @@ class Github {
     }
 
     List<GhMilestone> listMilestones(String owner, String repoName, String state) {
-        logger.debug(RB.$("git.list.milestones"), owner, repoName, state);
+        context.getLogger().debug(RB.$("git.list.milestones"), owner, repoName, state);
 
         List<GhMilestone> milestones = new ArrayList<>();
 
@@ -239,13 +239,13 @@ class Github {
     }
 
     Optional<GhMilestone> findMilestoneByName(String owner, String repo, String milestoneName) {
-        logger.debug(RB.$("git.milestone.lookup"), milestoneName, owner, repo);
+        context.getLogger().debug(RB.$("git.milestone.lookup"), milestoneName, owner, repo);
 
         return findMilestone(owner, repo, milestoneName, "open");
     }
 
     Optional<GhMilestone> findClosedMilestoneByName(String owner, String repo, String milestoneName) {
-        logger.debug(RB.$("git.milestone.lookup.closed"), milestoneName, owner, repo);
+        context.getLogger().debug(RB.$("git.milestone.lookup.closed"), milestoneName, owner, repo);
 
         return findMilestone(owner, repo, milestoneName, "closed");
     }
@@ -257,14 +257,14 @@ class Github {
     }
 
     void closeMilestone(String owner, String repo, GhMilestone milestone) {
-        logger.debug(RB.$("git.milestone.close"), milestone.getTitle(), owner, repo);
+        context.getLogger().debug(RB.$("git.milestone.close"), milestone.getTitle(), owner, repo);
 
         api.updateMilestone(CollectionUtils.<String, Object>map()
             .e("state", "closed"), owner, repo, milestone.getNumber());
     }
 
     GhRepository createRepository(String owner, String repo) {
-        logger.debug(RB.$("git.repository.create"), owner, repo);
+        context.getLogger().debug(RB.$("git.repository.create"), owner, repo);
 
         Map<String, Object> params = new LinkedHashMap<>();
         params.put("name", repo);
@@ -279,7 +279,7 @@ class Github {
     }
 
     List<GhTag> listTags(String owner, String repoName) {
-        logger.debug(RB.$("git.list.milestones"), owner, repoName);
+        context.getLogger().debug(RB.$("git.list.milestones"), owner, repoName);
 
         List<GhTag> tags = new ArrayList<>();
 
@@ -303,7 +303,7 @@ class Github {
     }
 
     GhRelease findReleaseByTag(String owner, String repo, String tagName) {
-        logger.debug(RB.$("git.fetch.release.by.tag"), owner, repo, tagName);
+        context.getLogger().debug(RB.$("git.fetch.release.by.tag"), owner, repo, tagName);
 
         try {
             return api.getReleaseByTagName(owner, repo, tagName);
@@ -317,31 +317,31 @@ class Github {
     }
 
     GhRelease findReleaseById(String owner, String repo, Long id) {
-        logger.debug(RB.$("git.fetch.release.by.id"), owner, repo, id);
+        context.getLogger().debug(RB.$("git.fetch.release.by.id"), owner, repo, id);
 
         return api.getRelease(owner, repo, id);
     }
 
     void deleteTag(String owner, String repo, String tagName) throws RestAPIException {
-        logger.debug(RB.$("git.delete.tag.from"), tagName, owner, repo);
+        context.getLogger().debug(RB.$("git.delete.tag.from"), tagName, owner, repo);
 
         api.deleteTag(owner, repo, tagName);
     }
 
     GhRelease createRelease(String owner, String repo, GhRelease release) throws RestAPIException {
-        logger.debug(RB.$("git.create.release"), owner, repo, release.getTagName());
+        context.getLogger().debug(RB.$("git.create.release"), owner, repo, release.getTagName());
 
         return api.createRelease(release, owner, repo);
     }
 
     void updateRelease(String owner, String repo, Long id, GhRelease release) throws RestAPIException {
-        logger.debug(RB.$("git.update.release"), owner, repo, release.getTagName());
+        context.getLogger().debug(RB.$("git.update.release"), owner, repo, release.getTagName());
 
         api.updateRelease(release, owner, repo, id);
     }
 
     void deleteRelease(String owner, String repo, String tagName, Long id) throws RestAPIException {
-        logger.debug(RB.$("git.delete.release.from.id"), tagName, owner, repo, id);
+        context.getLogger().debug(RB.$("git.delete.release.from.id"), tagName, owner, repo, id);
 
         try {
             api.deleteRelease(owner, repo, id);
@@ -373,11 +373,11 @@ class Github {
                 continue;
             }
 
-            logger.debug(" " + RB.$("git.delete.asset"), asset.getFilename());
+            context.getLogger().debug(" " + RB.$("git.delete.asset"), asset.getFilename());
             try {
                 api.deleteAsset(owner, repo, existingAssets.get(asset.getFilename()).getId());
             } catch (RestAPIException e) {
-                logger.error(" " + RB.$("git.delete.asset.failure"), asset.getFilename());
+                context.getLogger().error(" " + RB.$("git.delete.asset.failure"), asset.getFilename());
                 throw e;
             }
 
@@ -386,7 +386,7 @@ class Github {
     }
 
     private void uploadOrUpdateAsset(Asset asset, GhRelease release, String operationMessageKey, String operationErrorMessageKey) throws IOException {
-        logger.info(" " + RB.$(operationMessageKey), asset.getFilename());
+        context.getLogger().info(" " + RB.$(operationMessageKey), asset.getFilename());
 
         try {
             String uploadUrl = release.getUploadUrl();
@@ -397,16 +397,16 @@ class Github {
             URI uri = new URI(uploadUrl + "?name=" + asset.getFilename());
             GhAttachment attachment = uploadAsset(uri, toFormData(asset.getPath()));
             if (!"uploaded".equalsIgnoreCase(attachment.getState())) {
-                logger.warn(" " + RB.$(operationErrorMessageKey), asset.getFilename());
+                context.getLogger().warn(" " + RB.$(operationErrorMessageKey), asset.getFilename());
             }
         } catch (URISyntaxException shouldNeverHappen) {
-            logger.error(" " + RB.$(operationErrorMessageKey), asset.getFilename());
+            context.getLogger().error(" " + RB.$(operationErrorMessageKey), asset.getFilename());
             throw new IllegalStateException(RB.$("ERROR_unexpected_error"), shouldNeverHappen);
         } catch (RestAPIException e) {
-            logger.error(" " + RB.$(operationErrorMessageKey), asset.getFilename());
+            context.getLogger().error(" " + RB.$(operationErrorMessageKey), asset.getFilename());
             throw e;
         } catch (UploadException e) {
-            logger.error(" " + RB.$(operationErrorMessageKey), asset.getFilename());
+            context.getLogger().error(" " + RB.$(operationErrorMessageKey), asset.getFilename());
             if (e.getCause() instanceof IOException) throw (IOException) e.getCause();
             throw new IOException(e);
         }
@@ -418,7 +418,7 @@ class Github {
         headers.put("X-GitHub-Api-Version", GITHUB_API_VERSION);
         headers.put("Authorization", String.format("Bearer %s", token));
 
-        Reader reader = ClientUtils.postFile(logger,
+        Reader reader = ClientUtils.postFile(context.getLogger(),
             uri,
             connectTimeout,
             readTimeout,
@@ -435,7 +435,7 @@ class Github {
     }
 
     List<GhDiscussion> listDiscussions(String organization, String team) {
-        logger.debug(RB.$("git.list.discussions"), organization, team);
+        context.getLogger().debug(RB.$("git.list.discussions"), organization, team);
 
         List<GhDiscussion> discussions = new ArrayList<>();
 
@@ -459,7 +459,7 @@ class Github {
     }
 
     void createDiscussion(String organization, String team, String title, String message) {
-        logger.debug(RB.$("git.releaser.discussion.create"), title);
+        context.getLogger().debug(RB.$("git.releaser.discussion.create"), title);
 
         GhDiscussion discussion = new GhDiscussion();
         discussion.setTitle(title);
@@ -469,7 +469,7 @@ class Github {
     }
 
     GhLabel getOrCreateLabel(String owner, String name, String labelName, String labelColor, String description) {
-        logger.debug(RB.$("git.label.fetch", labelName));
+        context.getLogger().debug(RB.$("git.label.fetch", labelName));
 
         List<GhLabel> labels = listLabels(owner, name);
         Optional<GhLabel> label = labels.stream()
@@ -480,12 +480,12 @@ class Github {
             return label.get();
         }
 
-        logger.debug(RB.$("git.label.create", labelName));
+        context.getLogger().debug(RB.$("git.label.create", labelName));
         return api.createLabel(owner, name, labelName, labelColor, description);
     }
 
     public Optional<GhIssue> findIssue(String owner, String name, int issueNumber) {
-        logger.debug(RB.$("git.issue.fetch", issueNumber));
+        context.getLogger().debug(RB.$("git.issue.fetch", issueNumber));
         try {
             return Optional.of(api.findIssue(owner, name, issueNumber));
         } catch (RestAPIException e) {
@@ -497,7 +497,7 @@ class Github {
     }
 
     void addLabelToIssue(String owner, String name, GhIssue issue, GhLabel label) {
-        logger.debug(RB.$("git.issue.label", label.getName(), issue.getNumber()));
+        context.getLogger().debug(RB.$("git.issue.label", label.getName(), issue.getNumber()));
 
         Map<String, List<String>> labels = new LinkedHashMap<>();
         List<String> list = labels.computeIfAbsent("labels", k -> new ArrayList<>());
@@ -508,7 +508,7 @@ class Github {
     }
 
     void commentOnIssue(String owner, String name, GhIssue issue, String comment) {
-        logger.debug(RB.$("git.issue.comment", issue.getNumber()));
+        context.getLogger().debug(RB.$("git.issue.comment", issue.getNumber()));
 
         Map<String, String> params = new LinkedHashMap<>();
         params.put("body", comment);
@@ -524,7 +524,7 @@ class Github {
     }
 
     private List<GhLabel> listLabels(String owner, String repoName) {
-        logger.debug(RB.$("git.list.labels"), owner, repoName);
+        context.getLogger().debug(RB.$("git.list.labels"), owner, repoName);
 
         List<GhLabel> labels = new ArrayList<>();
 
@@ -560,7 +560,7 @@ class Github {
     }
 
     void updateRelease(String owner, String repo, String tag, Long id, GhRelease release) throws RestAPIException {
-        logger.debug(RB.$("git.update.release"), owner, repo, tag);
+        context.getLogger().debug(RB.$("git.update.release"), owner, repo, tag);
 
         api.updateRelease(release, owner, repo, id);
     }
@@ -575,7 +575,7 @@ class Github {
     }
 
     Optional<User> findUser(String email, String name) throws RestAPIException {
-        logger.debug(RB.$("git.user.lookup"), name, email);
+        context.getLogger().debug(RB.$("git.user.lookup"), name, email);
 
         String username = getPrivateEmailUserId(email);
         if (null != username) {
@@ -595,13 +595,13 @@ class Github {
     }
 
     GhReleaseNotes generateReleaseNotes(String owner, String repo, GhReleaseNotesParams params) throws RestAPIException {
-        logger.info(RB.$("github.generate.release.notes"), owner, repo, params.getPreviousTagName(), params.getTagName());
+        context.getLogger().info(RB.$("github.generate.release.notes"), owner, repo, params.getPreviousTagName(), params.getTagName());
 
         return api.generateReleaseNotes(params, owner, repo);
     }
 
     List<GhPackageVersion> listPackageVersions(String packageType, String packageName) throws IOException {
-        logger.debug(RB.$("github.list.versions"), packageType, packageName);
+        context.getLogger().debug(RB.$("github.list.versions"), packageType, packageName);
 
         List<GhPackageVersion> issues = new ArrayList<>();
         Page<List<GhPackageVersion>> page = api.listPackageVersions0(packageType, packageName);
@@ -620,7 +620,7 @@ class Github {
 
     private void collectPackageVersions(Page<List<GhPackageVersion>> page, List<GhPackageVersion> issues) throws URISyntaxException {
         URI next = new URI(page.getLinks().next());
-        logger.debug(next.toString());
+        context.getLogger().debug(next.toString());
 
         page = api.listPackageVersions1(next);
         issues.addAll(page.getContent());
@@ -631,13 +631,13 @@ class Github {
     }
 
     void deletePackageVersion(String packageType, String packageName, String packageVersion) throws RestAPIException {
-        logger.debug(RB.$("github.delete.package.version"), packageVersion, packageName);
+        context.getLogger().debug(RB.$("github.delete.package.version"), packageVersion, packageName);
 
         api.deletePackageVersion(packageType, packageName, packageVersion);
     }
 
     void deletePackage(String packageType, String packageName) throws RestAPIException {
-        logger.debug(RB.$("github.delete.package"), packageType, packageName);
+        context.getLogger().debug(RB.$("github.delete.package"), packageType, packageName);
 
         api.deletePackage(packageType, packageName);
     }

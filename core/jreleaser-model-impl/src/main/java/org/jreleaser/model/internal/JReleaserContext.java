@@ -23,6 +23,7 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.extensions.api.workflow.WorkflowListener;
 import org.jreleaser.extensions.api.workflow.WorkflowListenerException;
 import org.jreleaser.logging.JReleaserLogger;
+import org.jreleaser.logging.SimpleJReleaserLoggerAdapter;
 import org.jreleaser.model.Constants;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserVersion;
@@ -387,6 +388,21 @@ public class JReleaserContext {
             return unmodifiableMap(JReleaserContext.this.getAdditionalProperties());
         }
     };
+
+    public static JReleaserContext empty() {
+        Path basedir = Paths.get(System.getProperty("user.dir"));
+        return new JReleaserContext(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG),
+            null,
+            org.jreleaser.model.api.JReleaserContext.Mode.FULL,
+            new JReleaserModel(),
+            basedir,
+            basedir.resolve("out/jreleaser"),
+            true,
+            true,
+            false,
+            Collections.emptyList(),
+            Collections.emptyList());
+    }
 
     public JReleaserContext(JReleaserLogger logger,
                             Configurer configurer,

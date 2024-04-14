@@ -22,13 +22,12 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import feign.Feign;
-import feign.Request;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import org.jreleaser.bundle.RB;
-import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.JReleaserVersion;
+import org.jreleaser.model.api.JReleaserContext;
+import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.discourse.api.Category;
 import org.jreleaser.sdk.discourse.api.CategoryList;
@@ -36,7 +35,6 @@ import org.jreleaser.sdk.discourse.api.DiscourseAPI;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import static java.util.Objects.requireNonNull;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
@@ -46,18 +44,18 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @since 1.3.0
  */
 public class DiscourseSdk {
-    private final JReleaserLogger logger;
+    private final JReleaserContext context;
     private final DiscourseAPI api;
     private final boolean dryrun;
 
-    private DiscourseSdk(JReleaserLogger logger,
+    private DiscourseSdk(JReleaserContext context,
                          String host,
                          String userName,
                          String apiKey,
                          int connectTimeout,
                          int readTimeout,
                          boolean dryrun) {
-        requireNonNull(logger, "'logger' must not be null");
+        requireNonNull(context, "'context' must not be null");
         requireNonBlank(host, "'host' must not be blank");
         requireNonBlank(userName, "'userName' must not be blank");
         requireNonBlank(apiKey, "'apiKey' must not be blank");
@@ -68,10 +66,10 @@ public class DiscourseSdk {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .configure(SerializationFeature.INDENT_OUTPUT, true);
 
-        this.logger = logger;
+        this.context = context;
         this.dryrun = dryrun;
 
-        this.api = Feign.builder()
+        this.api = ClientUtils.builder(context, connectTimeout, readTimeout)
             .encoder(new JacksonEncoder(objectMapper))
             .decoder(new JacksonDecoder(objectMapper))
             .requestInterceptor(template -> {
@@ -79,11 +77,9 @@ public class DiscourseSdk {
                 template.header("Api-Key", apiKey);
                 template.header("Api-Username", userName);
             })
-            .errorDecoder((methodKey, response) -> new RestAPIException(response.request(), response.status(), response.reason(), response.headers()))
-            .options(new Request.Options(connectTimeout, TimeUnit.SECONDS, readTimeout, TimeUnit.SECONDS, true))
             .target(DiscourseAPI.class, host);
 
-        this.logger.debug(RB.$("workflow.dryrun"), dryrun);
+        this.context.getLogger().debug(RB.$("workflow.dryrun"), dryrun);
     }
 
     public void createPost(String title, String body, String categoryName) throws DiscourseException {
@@ -110,13 +106,13 @@ public class DiscourseSdk {
         try {
             if (!dryrun) op.run();
         } catch (RestAPIException e) {
-            logger.trace(e);
+            context.getLogger().trace(e);
             throw new DiscourseException(RB.$("sdk.operation.failed", "discourse"), e);
         }
     }
 
-    public static Builder builder(JReleaserLogger logger) {
-        return new Builder(logger);
+    public static Builder builder(JReleaserContext context) {
+        return new Builder(context);
     }
 
     @FunctionalInterface
@@ -125,7 +121,7 @@ public class DiscourseSdk {
     }
 
     public static class Builder {
-        private final JReleaserLogger logger;
+        private final JReleaserContext context;
         private boolean dryrun;
         private String userName;
         private String apiKey;
@@ -133,8 +129,8 @@ public class DiscourseSdk {
         private int connectTimeout = 20;
         private int readTimeout = 60;
 
-        private Builder(JReleaserLogger logger) {
-            this.logger = requireNonNull(logger, "'logger' must not be null");
+        private Builder(JReleaserContext context) {
+            this.context = requireNonNull(context, "'context' must not be null");
         }
 
         public Builder dryrun(boolean dryrun) {
@@ -177,7 +173,7 @@ public class DiscourseSdk {
             validate();
 
             return new DiscourseSdk(
-                logger,
+                context,
                 host,
                 userName,
                 apiKey,

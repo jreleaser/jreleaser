@@ -22,19 +22,16 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import feign.Feign;
-import feign.Request;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import org.jreleaser.bundle.RB;
-import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.JReleaserVersion;
+import org.jreleaser.model.api.JReleaserContext;
+import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.opencollective.api.Envelope;
 import org.jreleaser.sdk.opencollective.api.Mutation;
 import org.jreleaser.sdk.opencollective.api.OpenCollectiveAPI;
-
-import java.util.concurrent.TimeUnit;
 
 import static java.util.Objects.requireNonNull;
 import static org.jreleaser.util.CollectionUtils.map;
@@ -61,17 +58,17 @@ public class OpenCollectiveSdk {
         "  }\n" +
         "}";
 
-    private final JReleaserLogger logger;
+    private final JReleaserContext context;
     private final OpenCollectiveAPI api;
     private final boolean dryrun;
 
-    private OpenCollectiveSdk(JReleaserLogger logger,
+    private OpenCollectiveSdk(JReleaserContext context,
                               String host,
                               String token,
                               int connectTimeout,
                               int readTimeout,
                               boolean dryrun) {
-        requireNonNull(logger, "'logger' must not be null");
+        requireNonNull(context, "'context' must not be null");
         requireNonBlank(host, "'host' must not be blank");
         requireNonBlank(token, "'token' must not be blank");
 
@@ -81,10 +78,10 @@ public class OpenCollectiveSdk {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .configure(SerializationFeature.INDENT_OUTPUT, true);
 
-        this.logger = logger;
+        this.context = context;
         this.dryrun = dryrun;
 
-        this.api = Feign.builder()
+        this.api = ClientUtils.builder(context, connectTimeout, readTimeout)
             .encoder(new JacksonEncoder(objectMapper))
             .decoder(new JacksonDecoder(objectMapper))
             .requestInterceptor(template -> {
@@ -92,10 +89,9 @@ public class OpenCollectiveSdk {
                 template.header("Personal-Token", token);
             })
             .errorDecoder((methodKey, response) -> new RestAPIException(response.request(), response.status(), response.reason(), response.headers()))
-            .options(new Request.Options(connectTimeout, TimeUnit.SECONDS, readTimeout, TimeUnit.SECONDS, true))
             .target(OpenCollectiveAPI.class, host);
 
-        this.logger.debug(RB.$("workflow.dryrun"), dryrun);
+        this.context.getLogger().debug(RB.$("workflow.dryrun"), dryrun);
     }
 
     public void postUpdate(String slug, String title, String body) throws OpenCollectiveException {
@@ -124,13 +120,13 @@ public class OpenCollectiveSdk {
         try {
             if (!dryrun) op.run();
         } catch (RestAPIException e) {
-            logger.trace(e);
+            context.getLogger().trace(e);
             throw new OpenCollectiveException(RB.$("sdk.operation.failed", "openCollective"), e);
         }
     }
 
-    public static Builder builder(JReleaserLogger logger) {
-        return new Builder(logger);
+    public static Builder builder(JReleaserContext context) {
+        return new Builder(context);
     }
 
     @FunctionalInterface
@@ -139,15 +135,15 @@ public class OpenCollectiveSdk {
     }
 
     public static class Builder {
-        private final JReleaserLogger logger;
+        private final JReleaserContext context;
         private boolean dryrun;
         private String token;
         private String host;
         private int connectTimeout = 20;
         private int readTimeout = 60;
 
-        private Builder(JReleaserLogger logger) {
-            this.logger = requireNonNull(logger, "'logger' must not be null");
+        private Builder(JReleaserContext context) {
+            this.context = requireNonNull(context, "'context' must not be null");
         }
 
         public Builder dryrun(boolean dryrun) {
@@ -184,7 +180,7 @@ public class OpenCollectiveSdk {
             validate();
 
             return new OpenCollectiveSdk(
-                logger,
+                context,
                 host,
                 token,
                 connectTimeout,

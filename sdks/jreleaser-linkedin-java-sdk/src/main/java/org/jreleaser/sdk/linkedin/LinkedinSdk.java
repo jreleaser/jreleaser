@@ -18,7 +18,7 @@
 package org.jreleaser.sdk.linkedin;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.logging.JReleaserLogger;
+import org.jreleaser.model.api.JReleaserContext;
 import org.jreleaser.model.spi.announce.AnnounceException;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.commons.RestAPIException;
@@ -41,7 +41,7 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @since 1.5.0
  */
 public class LinkedinSdk {
-    private final JReleaserLogger logger;
+    private final JReleaserContext context;
     private final LinkedinAPI api;
     private final boolean dryrun;
     private final int connectTimeout;
@@ -49,13 +49,13 @@ public class LinkedinSdk {
     private final String apiHost;
     private final String accessToken;
 
-    private LinkedinSdk(JReleaserLogger logger,
+    private LinkedinSdk(JReleaserContext context,
                         String apiHost,
                         String accessToken,
                         int connectTimeout,
                         int readTimeout,
                         boolean dryrun) {
-        this.logger = requireNonNull(logger, "'logger' must not be null");
+        this.context = requireNonNull(context, "'context' must not be null");
         this.apiHost = requireNonBlank(apiHost, "'apiHost' must not be blank");
         this.accessToken = requireNonBlank(accessToken, "'accessToken' must not be blank");
 
@@ -63,15 +63,15 @@ public class LinkedinSdk {
         this.readTimeout = readTimeout;
         this.dryrun = dryrun;
 
-        this.api = ClientUtils.builder(logger, connectTimeout, readTimeout)
+        this.api = ClientUtils.builder(context, connectTimeout, readTimeout)
             .requestInterceptor(template -> template.header("Authorization", String.format("Bearer %s", accessToken)))
             .target(LinkedinAPI.class, apiHost);
 
-        this.logger.debug(RB.$("workflow.dryrun"), dryrun);
+        this.context.getLogger().debug(RB.$("workflow.dryrun"), dryrun);
     }
 
     public void share(String owner, Message payload) throws LinkedinException {
-        logger.debug("linkedin.subject: " + payload.getSubject());
+        context.getLogger().debug("linkedin.subject: " + payload.getSubject());
 
         wrap(() -> {
             if (isNotBlank(owner)) {
@@ -85,7 +85,7 @@ public class LinkedinSdk {
     }
 
     public void share(String owner, String subject, String text) throws AnnounceException, LinkedinException {
-        logger.debug("linkedin.subject: " + subject);
+        context.getLogger().debug("linkedin.subject: " + subject);
 
         if (dryrun) return;
 
@@ -98,7 +98,7 @@ public class LinkedinSdk {
 
         Map<String, String> headers = new LinkedHashMap<>();
         headers.put("Authorization", String.format("Bearer %s", accessToken));
-        ClientUtils.post(logger,
+        ClientUtils.post(context.getLogger(),
             apiHost + "/shares",
             connectTimeout,
             readTimeout,
@@ -110,8 +110,8 @@ public class LinkedinSdk {
         try {
             if (!dryrun) runnable.run();
         } catch (RestAPIException e) {
-            logger.trace(e.getStatus() + ": " + e.getReason());
-            logger.trace(e);
+            context.getLogger().trace(e.getStatus() + ": " + e.getReason());
+            context.getLogger().trace(e);
             throw new LinkedinException(RB.$("sdk.operation.failed", "Linkedin"), e);
         }
     }
@@ -123,26 +123,26 @@ public class LinkedinSdk {
             }
             return null;
         } catch (RestAPIException e) {
-            logger.trace(e.getStatus() + ": " + e.getReason());
-            logger.trace(e);
+            context.getLogger().trace(e.getStatus() + ": " + e.getReason());
+            context.getLogger().trace(e);
             throw new LinkedinException(RB.$("sdk.operation.failed", "Linkedin"), e);
         }
     }
 
-    public static Builder builder(JReleaserLogger logger) {
-        return new Builder(logger);
+    public static Builder builder(JReleaserContext context) {
+        return new Builder(context);
     }
 
     public static class Builder {
-        private final JReleaserLogger logger;
+        private final JReleaserContext context;
         private boolean dryrun;
         private String apiHost;
         private String accessToken;
         private int connectTimeout = 20;
         private int readTimeout = 60;
 
-        private Builder(JReleaserLogger logger) {
-            this.logger = requireNonNull(logger, "'logger' must not be null");
+        private Builder(JReleaserContext context) {
+            this.context = requireNonNull(context, "'context' must not be null");
         }
 
         public Builder dryrun(boolean dryrun) {
@@ -181,7 +181,7 @@ public class LinkedinSdk {
             validate();
 
             return new LinkedinSdk(
-                logger,
+                context,
                 apiHost,
                 accessToken,
                 connectTimeout,

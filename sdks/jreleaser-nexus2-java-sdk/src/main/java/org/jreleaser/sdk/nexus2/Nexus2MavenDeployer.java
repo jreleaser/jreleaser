@@ -107,7 +107,7 @@ public class Nexus2MavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
         String password = deployer.getPassword();
         String groupId = context.getModel().getProject().getJava().getGroupId();
 
-        Nexus2 nexus = new Nexus2(context.getLogger(), baseUrl, username, password,
+        Nexus2 nexus = new Nexus2(context.asImmutable(), baseUrl, username, password,
             deployer.getConnectTimeout(), deployer.getReadTimeout(), context.isDryrun(),
             deployer.getTransitionDelay(), deployer.getTransitionMaxRetries());
 

@@ -17,7 +17,7 @@
  */
 package org.jreleaser.sdk.sdkman;
 
-import org.jreleaser.logging.JReleaserLogger;
+import org.jreleaser.model.api.JReleaserContext;
 
 import static java.util.Objects.requireNonNull;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
@@ -32,7 +32,7 @@ abstract class AbstractSdkmanCommand implements SdkmanCommand {
     protected final String version;
     protected final Sdkman sdkman;
 
-    protected AbstractSdkmanCommand(JReleaserLogger logger,
+    protected AbstractSdkmanCommand(JReleaserContext context,
                                     String apiHost,
                                     int connectTimeout,
                                     int readTimeout,
@@ -41,14 +41,14 @@ abstract class AbstractSdkmanCommand implements SdkmanCommand {
                                     String candidate,
                                     String version,
                                     boolean dryrun) {
-        this.sdkman = new Sdkman(logger, apiHost, connectTimeout, readTimeout, consumerKey, consumerToken, dryrun);
+        this.sdkman = new Sdkman(context, apiHost, connectTimeout, readTimeout, consumerKey, consumerToken, dryrun);
         this.candidate = candidate;
         this.version = version;
         this.dryrun = dryrun;
     }
 
     static class Builder<S extends Builder<S>> {
-        protected final JReleaserLogger logger;
+        protected final JReleaserContext context;
         protected boolean dryrun;
         protected boolean skipAnnounce;
         protected String consumerKey;
@@ -59,8 +59,8 @@ abstract class AbstractSdkmanCommand implements SdkmanCommand {
         protected int connectTimeout = 20;
         protected int readTimeout = 60;
 
-        protected Builder(JReleaserLogger logger) {
-            this.logger = requireNonNull(logger, "'logger' must not be null");
+        protected Builder(JReleaserContext context) {
+            this.context = requireNonNull(context, "'context' must not be null");
         }
 
         @SuppressWarnings("unchecked")

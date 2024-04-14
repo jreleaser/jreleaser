@@ -17,7 +17,7 @@
  */
 package org.jreleaser.sdk.sdkman;
 
-import org.jreleaser.logging.SimpleJReleaserLoggerAdapter;
+import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.test.WireMockExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -43,7 +43,7 @@ class AnnounceSdkmanCommandTest {
             .willReturn(okJson("{\"status\": 202, \"message\":\"success\"}")));
 
         AnnounceSdkmanCommand command = AnnounceSdkmanCommand
-            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
+            .builder(JReleaserContext.empty().asImmutable())
             .apiHost(api.baseUrl())
             .consumerKey("CONSUMER_KEY")
             .consumerToken("CONSUMER_TOKEN")
@@ -71,7 +71,7 @@ class AnnounceSdkmanCommandTest {
             .willReturn(aResponse().withStatus(400)));
 
         AnnounceSdkmanCommand command = AnnounceSdkmanCommand
-            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
+            .builder(JReleaserContext.empty().asImmutable())
             .apiHost(api.baseUrl())
             .consumerKey("CONSUMER_KEY")
             .consumerToken("CONSUMER_TOKEN")

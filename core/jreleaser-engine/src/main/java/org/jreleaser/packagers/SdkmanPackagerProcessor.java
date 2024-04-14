@@ -70,7 +70,7 @@ public class SdkmanPackagerProcessor extends AbstractPackagerProcessor<SdkmanPac
 
             if (sdkman.getCommand() == Sdkman.Command.MAJOR) {
                 context.getLogger().info(RB.$("sdkman.publish.major"), candidate);
-                MajorReleaseSdkmanCommand.builder(context.getLogger())
+                MajorReleaseSdkmanCommand.builder(context.asImmutable())
                     .connectTimeout(sdkman.getConnectTimeout())
                     .readTimeout(sdkman.getReadTimeout())
                     .consumerKey(context.isDryrun() ? "**UNDEFINED**" : sdkman.getConsumerKey())
@@ -85,7 +85,7 @@ public class SdkmanPackagerProcessor extends AbstractPackagerProcessor<SdkmanPac
                     .execute();
             } else if (sdkman.getCommand() == Sdkman.Command.MINOR) {
                 context.getLogger().info(RB.$("sdkman.publish.minor"), candidate);
-                MinorReleaseSdkmanCommand.builder(context.getLogger())
+                MinorReleaseSdkmanCommand.builder(context.asImmutable())
                     .connectTimeout(sdkman.getConnectTimeout())
                     .readTimeout(sdkman.getReadTimeout())
                     .consumerKey(context.isDryrun() ? "**UNDEFINED**" : sdkman.getConsumerKey())

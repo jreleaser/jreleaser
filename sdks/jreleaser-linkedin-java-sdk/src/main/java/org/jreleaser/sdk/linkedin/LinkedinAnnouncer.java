@@ -75,7 +75,7 @@ public class LinkedinAnnouncer implements Announcer<org.jreleaser.model.api.anno
         }
 
         try {
-            LinkedinSdk sdk = LinkedinSdk.builder(context.getLogger())
+            LinkedinSdk sdk = LinkedinSdk.builder(context.asImmutable())
                 .accessToken(linkedin.getAccessToken())
                 .connectTimeout(linkedin.getConnectTimeout())
                 .readTimeout(linkedin.getReadTimeout())

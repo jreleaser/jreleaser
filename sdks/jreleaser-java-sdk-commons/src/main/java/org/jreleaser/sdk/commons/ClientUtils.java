@@ -34,9 +34,11 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.Constants;
 import org.jreleaser.model.JReleaserVersion;
+import org.jreleaser.model.api.JReleaserContext;
 import org.jreleaser.model.internal.JReleaserModelPrinter;
 import org.jreleaser.model.spi.announce.AnnounceException;
 import org.jreleaser.model.spi.upload.UploadException;
+import org.jreleaser.sdk.commons.feign.FeignLogger;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -93,25 +95,27 @@ public final class ClientUtils {
             Files.readAllBytes(asset));
     }
 
-    public static Feign.Builder builder(JReleaserLogger logger,
+    public static Feign.Builder builder(JReleaserContext context,
                                         int connectTimeout,
                                         int readTimeout) {
-        requireNonNull(logger, "'logger' must not be null");
+        requireNonNull(context, "'logger' must not be null");
 
         Feign.Builder builder = Feign.builder();
 
         if (Boolean.getBoolean("jreleaser.disableSslValidation")) {
-            logger.warn(RB.$("warn_ssl_disabled"));
+            context.getLogger().warn(RB.$("warn_ssl_disabled"));
             builder = builder.client(
                 new Client.Default(nonValidatingSSLSocketFactory(),
                     new NonValidatingHostnameVerifier()));
         }
 
         return builder
+            .logger(new FeignLogger(context.getLogger()))
+            .logLevel(FeignLogger.resolveLevel(context))
             .encoder(new FormEncoder(new JacksonEncoder()))
             .decoder(new JacksonDecoder())
             .requestInterceptor(template -> template.header("User-Agent", "JReleaser/" + JReleaserVersion.getPlainVersion()))
-            .errorDecoder((methodKey, response) -> new RestAPIException(response.request(), response.status(), response.reason(), toString(logger, response.body()), response.headers()))
+            .errorDecoder((methodKey, response) -> new RestAPIException(response.request(), response.status(), response.reason(), toString(context.getLogger(), response.body()), response.headers()))
             .options(new Request.Options(connectTimeout, TimeUnit.SECONDS, readTimeout, TimeUnit.SECONDS, true));
     }
 

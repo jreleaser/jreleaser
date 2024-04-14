@@ -19,7 +19,7 @@ package org.jreleaser.sdk.zulip;
 
 import feign.auth.BasicAuthRequestInterceptor;
 import org.jreleaser.bundle.RB;
-import org.jreleaser.logging.JReleaserLogger;
+import org.jreleaser.model.api.JReleaserContext;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.zulip.api.Message;
@@ -33,36 +33,36 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @since 0.1.0
  */
 public class ZulipSdk {
-    private final JReleaserLogger logger;
+    private final JReleaserContext context;
     private final ZulipAPI api;
     private final boolean dryrun;
 
-    private ZulipSdk(JReleaserLogger logger,
+    private ZulipSdk(JReleaserContext context,
                      String apiHost,
                      String account,
                      String apiKey,
                      int connectTimeout,
                      int readTimeout,
                      boolean dryrun) {
-        requireNonNull(logger, "'logger' must not be null");
+        requireNonNull(context, "'context' must not be null");
         requireNonBlank(apiHost, "'apiHost' must not be blank");
         requireNonBlank(account, "'account' must not be blank");
         requireNonBlank(apiKey, "'apiKey' must not be blank");
 
-        this.logger = logger;
+        this.context = context;
         this.dryrun = dryrun;
-        this.api = ClientUtils.builder(logger, connectTimeout, readTimeout)
+        this.api = ClientUtils.builder(context, connectTimeout, readTimeout)
             .requestInterceptor(new BasicAuthRequestInterceptor(account, apiKey))
             .target(ZulipAPI.class, apiHost);
 
-        this.logger.debug(RB.$("workflow.dryrun"), dryrun);
+        this.context.getLogger().debug(RB.$("workflow.dryrun"), dryrun);
     }
 
     public void message(String channel,
                         String subject,
                         String message) throws ZulipException {
         Message payload = Message.of(channel, subject, message);
-        logger.debug("zulip.message: " + payload);
+        context.getLogger().debug("zulip.message: " + payload);
         wrap(() -> api.message(payload));
     }
 
@@ -70,17 +70,17 @@ public class ZulipSdk {
         try {
             if (!dryrun) runnable.run();
         } catch (RestAPIException e) {
-            logger.trace(e);
+            context.getLogger().trace(e);
             throw new ZulipException(RB.$("sdk.operation.failed", "Zulip"), e);
         }
     }
 
-    public static Builder builder(JReleaserLogger logger) {
-        return new Builder(logger);
+    public static Builder builder(JReleaserContext context) {
+        return new Builder(context);
     }
 
     public static class Builder {
-        private final JReleaserLogger logger;
+        private final JReleaserContext context;
         private boolean dryrun;
         private String account;
         private String apiKey;
@@ -88,8 +88,8 @@ public class ZulipSdk {
         private int connectTimeout = 20;
         private int readTimeout = 60;
 
-        private Builder(JReleaserLogger logger) {
-            this.logger = requireNonNull(logger, "'logger' must not be null");
+        private Builder(JReleaserContext context) {
+            this.context = requireNonNull(context, "'context' must not be null");
         }
 
         public Builder dryrun(boolean dryrun) {
@@ -132,7 +132,7 @@ public class ZulipSdk {
             validate();
 
             return new ZulipSdk(
-                logger,
+                context,
                 apiHost,
                 account,
                 apiKey,

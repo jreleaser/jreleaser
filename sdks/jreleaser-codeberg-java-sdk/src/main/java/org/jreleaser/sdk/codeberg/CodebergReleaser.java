@@ -84,7 +84,7 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
         String tagName = codeberg.getEffectiveTagName(context.getModel());
 
         try {
-            Gitea api = new Gitea(context.getLogger(),
+            Gitea api = new Gitea(context.asImmutable(),
                 codeberg.getApiEndpoint(),
                 codeberg.getToken(),
                 codeberg.getConnectTimeout(),
@@ -170,7 +170,7 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
     public Repository maybeCreateRepository(String owner, String repo, String password, ExtraProperties extraProperties) throws IOException {
         context.getLogger().debug(RB.$("git.repository.lookup"), owner, repo);
 
-        Gitea api = new Gitea(context.getLogger(),
+        Gitea api = new Gitea(context.asImmutable(),
             codeberg.getApiEndpoint(),
             password,
             codeberg.getConnectTimeout(),
@@ -202,7 +202,7 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
                 host += "/";
             }
 
-            return new Gitea(context.getLogger(),
+            return new Gitea(context.asImmutable(),
                 codeberg.getApiEndpoint(),
                 codeberg.getToken(),
                 codeberg.getConnectTimeout(),
@@ -218,7 +218,7 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
 
     @Override
     public List<Release> listReleases(String owner, String repo) throws IOException {
-        Gitea api = new Gitea(context.getLogger(),
+        Gitea api = new Gitea(context.asImmutable(),
             codeberg.getApiEndpoint(),
             codeberg.getToken(),
             codeberg.getConnectTimeout(),

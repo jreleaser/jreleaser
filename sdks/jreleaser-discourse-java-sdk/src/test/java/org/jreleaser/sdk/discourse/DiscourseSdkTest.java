@@ -18,7 +18,7 @@
 package org.jreleaser.sdk.discourse;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
-import org.jreleaser.logging.SimpleJReleaserLoggerAdapter;
+import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.test.WireMockExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -48,7 +48,7 @@ class DiscourseSdkTest {
             .willReturn(okJson("{\"category_list\":{\"categories\":[{\"id\":1, \"name\":\"announce\"}]}}")));
 
         DiscourseSdk sdk = DiscourseSdk
-            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
+            .builder(JReleaserContext.empty().asImmutable())
             .userName("API-USERNAME")
             .apiKey("API-KEY")
             .host(api.baseUrl())
@@ -76,7 +76,7 @@ class DiscourseSdkTest {
             .willReturn(okJson("{\"category_list\":{\"categories\":[{\"id\":1, \"name\":\"announce\"}]}}")));
 
         DiscourseSdk sdk = DiscourseSdk
-            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
+            .builder(JReleaserContext.empty().asImmutable())
             .userName("API-USERNAME")
             .apiKey("API-KEY")
             .host(api.baseUrl())
@@ -101,7 +101,7 @@ class DiscourseSdkTest {
             .willReturn(aResponse().withStatus(400)));
 
         DiscourseSdk sdk = DiscourseSdk
-            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
+            .builder(JReleaserContext.empty().asImmutable())
             .userName("API-USERNAME")
             .apiKey("API-KEY")
             .host(api.baseUrl())

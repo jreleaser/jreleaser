@@ -19,7 +19,7 @@ package org.jreleaser.sdk.mastodon;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.matching.RequestPatternBuilder;
-import org.jreleaser.logging.SimpleJReleaserLoggerAdapter;
+import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.test.WireMockExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -49,7 +49,7 @@ class MastodonSdkTest {
         // given:
         stubFor(post(urlEqualTo(API_V_1_STATUSES))
             .willReturn(okJson("{\"status\": 202, \"message\":\"success\"}")));
-        MastodonSdk command = MastodonSdk.builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
+        MastodonSdk command = MastodonSdk.builder(JReleaserContext.empty().asImmutable())
             .accessToken("ACCESS_TOKEN")
             .host(api.baseUrl() + "/")
             .connectTimeout(20)
@@ -70,7 +70,7 @@ class MastodonSdkTest {
         // given:
         stubFor(post(urlEqualTo(API_V_1_STATUSES))
             .willReturn(okJson("{\"status\": 202, \"message\":\"success\"}")));
-        MastodonSdk command = MastodonSdk.builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
+        MastodonSdk command = MastodonSdk.builder(JReleaserContext.empty().asImmutable())
             .accessToken("ACCESS_TOKEN")
             .host(api.baseUrl() + "/")
             .connectTimeout(20)
@@ -91,7 +91,7 @@ class MastodonSdkTest {
         // given:
         stubFor(post(urlEqualTo(API_V_1_STATUSES))
             .willReturn(okJson("{\"id\": \"1234\", \"status\": 202, \"message\":\"success\"}")));
-        MastodonSdk command = MastodonSdk.builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
+        MastodonSdk command = MastodonSdk.builder(JReleaserContext.empty().asImmutable())
             .accessToken("ACCESS_TOKEN")
             .host(api.baseUrl() + "/")
             .connectTimeout(20)

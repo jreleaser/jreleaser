@@ -18,7 +18,7 @@
 package org.jreleaser.sdk.slack;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
-import org.jreleaser.logging.SimpleJReleaserLoggerAdapter;
+import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.test.WireMockExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -45,7 +45,7 @@ class SlackSdkTest {
             .willReturn(okJson("{\"status\": 202, \"ok\":\"true\"}")));
 
         SlackSdk sdk = SlackSdk
-            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
+            .builder(JReleaserContext.empty().asImmutable())
             .token("TOKEN")
             .apiHost(api.baseUrl())
             .connectTimeout(20)
@@ -70,7 +70,7 @@ class SlackSdkTest {
             .willReturn(okJson("{\"status\": 202, \"ok\":\"true\"}")));
 
         SlackSdk sdk = SlackSdk
-            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
+            .builder(JReleaserContext.empty().asImmutable())
             .token("TOKEN")
             .apiHost(api.baseUrl())
             .connectTimeout(20)
@@ -93,7 +93,7 @@ class SlackSdkTest {
             .willReturn(aResponse().withStatus(400)));
 
         SlackSdk sdk = SlackSdk
-            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
+            .builder(JReleaserContext.empty().asImmutable())
             .token("TOKEN")
             .apiHost(api.baseUrl())
             .connectTimeout(20)

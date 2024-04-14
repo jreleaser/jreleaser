@@ -26,7 +26,7 @@ import feign.form.FormEncoder;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
 import org.jreleaser.bundle.RB;
-import org.jreleaser.logging.JReleaserLogger;
+import org.jreleaser.model.api.JReleaserContext;
 import org.jreleaser.sdk.bluesky.api.BlueskyAPI;
 import org.jreleaser.sdk.bluesky.api.CreateRecordResponse;
 import org.jreleaser.sdk.bluesky.api.CreateSessionRequest;
@@ -46,20 +46,20 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @since 1.7.0
  */
 public class BlueskySdk {
-    private final JReleaserLogger logger;
+    private final JReleaserContext context;
     private final BlueskyAPI api;
     private final boolean dryrun;
     private final String handle;
     private final String password;
 
-    private BlueskySdk(JReleaserLogger logger,
+    private BlueskySdk(JReleaserContext context,
                        boolean dryrun,
                        String host,
                        String handle,
                        String password,
                        int connectTimeout,
                        int readTimeout) {
-        this.logger = requireNonNull(logger, "'logger' must not be null");
+        this.context = requireNonNull(context, "'context' must not be null");
         requireNonBlank(host, "'host' must not be blank");
         this.handle = requireNonBlank(handle, "'handle' must not be blank");
         this.password = requireNonBlank(password, "'password' must not be blank");
@@ -71,12 +71,12 @@ public class BlueskySdk {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .configure(SerializationFeature.INDENT_OUTPUT, true);
 
-        api = ClientUtils.builder(logger, connectTimeout, readTimeout)
+        api = ClientUtils.builder(context, connectTimeout, readTimeout)
             .encoder(new FormEncoder(new JacksonEncoder(objectMapper)))
             .decoder(new JacksonDecoder(objectMapper))
             .target(BlueskyAPI.class, host);
 
-        this.logger.debug(RB.$("workflow.dryrun"), dryrun);
+        context.getLogger().debug(RB.$("workflow.dryrun"), dryrun);
     }
 
     public void skeet(List<String> statuses) throws BlueskyException {
@@ -106,17 +106,17 @@ public class BlueskySdk {
         try {
             if (!dryrun) runnable.run();
         } catch (RestAPIException e) {
-            logger.trace(e);
+            context.getLogger().trace(e);
             throw new BlueskyException(RB.$("sdk.operation.failed", "Bluesky"), e);
         }
     }
 
-    public static Builder builder(JReleaserLogger logger) {
-        return new Builder(logger);
+    public static Builder builder(JReleaserContext context) {
+        return new Builder(context);
     }
 
     public static class Builder {
-        private final JReleaserLogger logger;
+        private final JReleaserContext context;
         private boolean dryrun;
         private String host;
         private String handle;
@@ -124,8 +124,8 @@ public class BlueskySdk {
         private int connectTimeout = 20;
         private int readTimeout = 60;
 
-        private Builder(JReleaserLogger logger) {
-            this.logger = requireNonNull(logger, "'logger' must not be null");
+        private Builder(JReleaserContext context) {
+            this.context = requireNonNull(context, "'context' must not be null");
         }
 
         public Builder dryrun(boolean dryrun) {
@@ -168,7 +168,7 @@ public class BlueskySdk {
             validate();
 
             return new BlueskySdk(
-                logger,
+                context,
                 dryrun,
                 host,
                 handle,

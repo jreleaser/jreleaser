@@ -14,7 +14,7 @@
     },
     "response": {
         "status": 200,
-        "body" : "{ \"did\": \"TEST_DID\", \"handle\": \"TEST_HANDLE\", \"accessJwt\": \"TEST_ACCESS_JWT\", \"refreshJwt\": \"TEST_REFRESH_JWT\"}",
+        "body": "{ \"did\": \"TEST_DID\", \"handle\": \"TEST_HANDLE\", \"accessJwt\": \"TEST_ACCESS_JWT\", \"refreshJwt\": \"TEST_REFRESH_JWT\"}",
         "headers": {
             "Content-Type": "application/json"
         }

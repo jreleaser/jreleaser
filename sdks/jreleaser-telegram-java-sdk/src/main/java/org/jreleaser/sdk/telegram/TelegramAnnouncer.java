@@ -68,7 +68,7 @@ public class TelegramAnnouncer implements Announcer<org.jreleaser.model.api.anno
         context.getLogger().info("message: {}", message);
 
         try {
-            TelegramSdk sdk = TelegramSdk.builder(context.getLogger())
+            TelegramSdk sdk = TelegramSdk.builder(context.asImmutable())
                 .token(telegram.getToken())
                 .connectTimeout(telegram.getConnectTimeout())
                 .readTimeout(telegram.getReadTimeout())

@@ -103,7 +103,7 @@ public class BlueskyAnnouncer implements Announcer<org.jreleaser.model.api.annou
         }
 
         try {
-            BlueskySdk sdk = BlueskySdk.builder(context.getLogger())
+            BlueskySdk sdk = BlueskySdk.builder(context.asImmutable())
                 .host(bluesky.getHost())
                 .handle(bluesky.getHandle())
                 .password(bluesky.getPassword())

@@ -17,7 +17,7 @@
  */
 package org.jreleaser.sdk.sdkman;
 
-import org.jreleaser.logging.SimpleJReleaserLoggerAdapter;
+import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.test.WireMockExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -41,7 +41,7 @@ class ReleaseSdkmanCommandTest {
             .willReturn(okJson("{\"status\": 201, \"message\":\"success\"}")));
 
         ReleaseSdkmanCommand command = ReleaseSdkmanCommand
-            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
+            .builder(JReleaserContext.empty().asImmutable())
             .apiHost(api.baseUrl())
             .consumerKey("CONSUMER_KEY")
             .consumerToken("CONSUMER_TOKEN")
@@ -72,7 +72,7 @@ class ReleaseSdkmanCommandTest {
             .willReturn(okJson("{\"status\": 201, \"message\":\"success\"}")));
 
         ReleaseSdkmanCommand command = ReleaseSdkmanCommand
-            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
+            .builder(JReleaserContext.empty().asImmutable())
             .apiHost(api.baseUrl())
             .consumerKey("CONSUMER_KEY")
             .consumerToken("CONSUMER_TOKEN")
@@ -103,7 +103,7 @@ class ReleaseSdkmanCommandTest {
             .willReturn(okJson("{\"status\": 201, \"message\":\"success\"}")));
 
         ReleaseSdkmanCommand command = ReleaseSdkmanCommand
-            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
+            .builder(JReleaserContext.empty().asImmutable())
             .apiHost(api.baseUrl())
             .consumerKey("CONSUMER_KEY")
             .consumerToken("CONSUMER_TOKEN")
@@ -148,7 +148,7 @@ class ReleaseSdkmanCommandTest {
             .willReturn(aResponse().withStatus(500)));
 
         ReleaseSdkmanCommand command = ReleaseSdkmanCommand
-            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
+            .builder(JReleaserContext.empty().asImmutable())
             .apiHost(api.baseUrl())
             .consumerKey("CONSUMER_KEY")
             .consumerToken("CONSUMER_TOKEN")

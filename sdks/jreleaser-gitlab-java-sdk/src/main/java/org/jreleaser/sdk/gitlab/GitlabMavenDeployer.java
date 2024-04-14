@@ -20,8 +20,8 @@ package org.jreleaser.sdk.gitlab;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.spi.deploy.DeployException;
-import org.jreleaser.sdk.commons.AbstractMavenDeployer;
 import org.jreleaser.model.spi.deploy.maven.Deployable;
+import org.jreleaser.sdk.commons.AbstractMavenDeployer;
 import org.jreleaser.sdk.gitlab.api.GlPackage;
 
 import java.io.IOException;
@@ -106,7 +106,7 @@ public class GitlabMavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
         }
 
         try {
-            return new Gitlab(context.getLogger(),
+            return new Gitlab(context.asImmutable(),
                 theUrl.toString(),
                 token,
                 deployer.getConnectTimeout(),

@@ -18,7 +18,7 @@
 package org.jreleaser.sdk.zulip;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
-import org.jreleaser.logging.SimpleJReleaserLoggerAdapter;
+import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.test.WireMockExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -45,7 +45,7 @@ class ZulipSdkTest {
             .willReturn(okJson("{\"status\": 202, \"message\":\"success\"}")));
 
         ZulipSdk sdk = ZulipSdk
-            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
+            .builder(JReleaserContext.empty().asImmutable())
             .apiHost(api.baseUrl())
             .account("ACCOUNT")
             .apiKey("API_KEY")
@@ -75,7 +75,7 @@ class ZulipSdkTest {
             .willReturn(okJson("{\"status\": 202, \"message\":\"success\"}")));
 
         ZulipSdk sdk = ZulipSdk
-            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
+            .builder(JReleaserContext.empty().asImmutable())
             .apiHost(api.baseUrl())
             .account("ACCOUNT")
             .apiKey("API_KEY")
@@ -99,7 +99,7 @@ class ZulipSdkTest {
             .willReturn(aResponse().withStatus(400)));
 
         ZulipSdk sdk = ZulipSdk
-            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
+            .builder(JReleaserContext.empty().asImmutable())
             .apiHost(api.baseUrl())
             .account("ACCOUNT")
             .apiKey("API_KEY")

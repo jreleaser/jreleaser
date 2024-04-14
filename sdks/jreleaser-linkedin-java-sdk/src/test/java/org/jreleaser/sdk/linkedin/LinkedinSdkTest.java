@@ -18,7 +18,7 @@
 package org.jreleaser.sdk.linkedin;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
-import org.jreleaser.logging.SimpleJReleaserLoggerAdapter;
+import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.spi.announce.AnnounceException;
 import org.jreleaser.sdk.linkedin.api.Message;
 import org.jreleaser.test.WireMockExtension;
@@ -57,7 +57,7 @@ class LinkedinSdkTest {
             .willReturn(okJson("{\"id\":\"6275832358189047808\"}")));
 
         LinkedinSdk sdk = LinkedinSdk
-            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
+            .builder(JReleaserContext.empty().asImmutable())
             .apiHost(api.baseUrl())
             .accessToken("TOKEN")
             .connectTimeout(20)
@@ -87,7 +87,7 @@ class LinkedinSdkTest {
             .willReturn(okJson("{\"id\":\"6275832358189047808\"}")));
 
         LinkedinSdk sdk = LinkedinSdk
-            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
+            .builder(JReleaserContext.empty().asImmutable())
             .apiHost(api.baseUrl())
             .accessToken("TOKEN")
             .connectTimeout(20)
@@ -118,7 +118,7 @@ class LinkedinSdkTest {
             .willReturn(okJson("{\"id\":\"6275832358189047808\"}")));
 
         LinkedinSdk sdk = LinkedinSdk
-            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
+            .builder(JReleaserContext.empty().asImmutable())
             .apiHost(api.baseUrl())
             .accessToken("TOKEN")
             .connectTimeout(20)
@@ -190,7 +190,7 @@ class LinkedinSdkTest {
             .willReturn(okJson("{\"id\":\"6275832358189047808\"}")));
 
         LinkedinSdk sdk = LinkedinSdk
-            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
+            .builder(JReleaserContext.empty().asImmutable())
             .apiHost(api.baseUrl())
             .accessToken("TOKEN")
             .connectTimeout(20)
@@ -217,7 +217,7 @@ class LinkedinSdkTest {
             .willReturn(aResponse().withStatus(400)));
 
         LinkedinSdk sdk = LinkedinSdk
-            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
+            .builder(JReleaserContext.empty().asImmutable())
             .apiHost(api.baseUrl())
             .accessToken("TOKEN")
             .connectTimeout(20)

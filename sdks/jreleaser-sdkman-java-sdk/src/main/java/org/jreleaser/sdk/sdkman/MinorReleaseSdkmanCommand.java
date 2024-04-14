@@ -17,7 +17,7 @@
  */
 package org.jreleaser.sdk.sdkman;
 
-import org.jreleaser.logging.JReleaserLogger;
+import org.jreleaser.model.api.JReleaserContext;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -36,7 +36,7 @@ public class MinorReleaseSdkmanCommand extends AbstractSdkmanCommand {
     private final String releaseNotesUrl;
     private final Map<String, String> platforms = new LinkedHashMap<>();
 
-    private MinorReleaseSdkmanCommand(JReleaserLogger logger,
+    private MinorReleaseSdkmanCommand(JReleaserContext context,
                                       String apiHost,
                                       int connectTimeout,
                                       int readTimeout,
@@ -49,7 +49,7 @@ public class MinorReleaseSdkmanCommand extends AbstractSdkmanCommand {
                                       String hashtag,
                                       String releaseNotesUrl,
                                       Map<String, String> platforms) {
-        super(logger, apiHost, connectTimeout, readTimeout, consumerKey, consumerToken, candidate, version, dryrun);
+        super(context, apiHost, connectTimeout, readTimeout, consumerKey, consumerToken, candidate, version, dryrun);
         this.skipAnnounce = skipAnnounce;
         this.hashtag = hashtag;
         this.releaseNotesUrl = releaseNotesUrl;
@@ -61,8 +61,8 @@ public class MinorReleaseSdkmanCommand extends AbstractSdkmanCommand {
         sdkman.minorRelease(candidate, version, platforms, hashtag, releaseNotesUrl, skipAnnounce);
     }
 
-    public static Builder builder(JReleaserLogger logger) {
-        return new Builder(logger);
+    public static Builder builder(JReleaserContext context) {
+        return new Builder(context);
     }
 
     public static class Builder extends AbstractSdkmanCommand.Builder<Builder> {
@@ -71,8 +71,8 @@ public class MinorReleaseSdkmanCommand extends AbstractSdkmanCommand {
         private String releaseNotesUrl;
         private String url;
 
-        protected Builder(JReleaserLogger logger) {
-            super(logger);
+        protected Builder(JReleaserContext context) {
+            super(context);
         }
 
         /**
@@ -143,7 +143,7 @@ public class MinorReleaseSdkmanCommand extends AbstractSdkmanCommand {
             }
 
             return new MinorReleaseSdkmanCommand(
-                logger,
+                context,
                 apiHost,
                 connectTimeout,
                 readTimeout,

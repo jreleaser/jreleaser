@@ -18,7 +18,7 @@
 package org.jreleaser.sdk.telegram;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
-import org.jreleaser.logging.SimpleJReleaserLoggerAdapter;
+import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.test.WireMockExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -46,7 +46,7 @@ class TelegramSdkTest {
             .willReturn(okJson("{\"status\": 202, \"message\":\"success\"}")));
 
         TelegramSdk sdk = TelegramSdk
-            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
+            .builder(JReleaserContext.empty().asImmutable())
             .apiHost(api.baseUrl() + "/bot")
             .token("TOKEN")
             .connectTimeout(20)
@@ -71,7 +71,7 @@ class TelegramSdkTest {
             .willReturn(okJson("{\"status\": 202, \"message\":\"success\"}")));
 
         TelegramSdk sdk = TelegramSdk
-            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
+            .builder(JReleaserContext.empty().asImmutable())
             .apiHost(api.baseUrl() + "/bot")
             .token("TOKEN")
             .connectTimeout(20)
@@ -94,7 +94,7 @@ class TelegramSdkTest {
             .willReturn(aResponse().withStatus(400)));
 
         TelegramSdk sdk = TelegramSdk
-            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
+            .builder(JReleaserContext.empty().asImmutable())
             .apiHost(api.baseUrl() + "/bot")
             .token("TOKEN")
             .connectTimeout(20)

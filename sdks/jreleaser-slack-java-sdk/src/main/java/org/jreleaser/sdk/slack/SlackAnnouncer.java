@@ -75,7 +75,7 @@ public class SlackAnnouncer implements Announcer<org.jreleaser.model.api.announc
         if (isNotBlank(slack.getToken())) {
             context.getLogger().info("channel: {}", slack.getChannel());
             try {
-                SlackSdk sdk = SlackSdk.builder(context.getLogger())
+                SlackSdk sdk = SlackSdk.builder(context.asImmutable())
                     .connectTimeout(slack.getConnectTimeout())
                     .readTimeout(slack.getReadTimeout())
                     .token(context.isDryrun() ? "**UNDEFINED**" : slack.getToken())

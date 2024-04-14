@@ -17,7 +17,7 @@
  */
 package org.jreleaser.sdk.sdkman;
 
-import org.jreleaser.logging.JReleaserLogger;
+import org.jreleaser.model.api.JReleaserContext;
 
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 
@@ -29,7 +29,7 @@ public class AnnounceSdkmanCommand extends AbstractSdkmanCommand {
     private final String hashtag;
     private final String releaseNotesUrl;
 
-    private AnnounceSdkmanCommand(JReleaserLogger logger,
+    private AnnounceSdkmanCommand(JReleaserContext context,
                                   String apiHost,
                                   int connectTimeout,
                                   int readTimeout,
@@ -40,7 +40,7 @@ public class AnnounceSdkmanCommand extends AbstractSdkmanCommand {
                                   boolean dryrun,
                                   String hashtag,
                                   String releaseNotesUrl) {
-        super(logger, apiHost, connectTimeout, readTimeout, consumerKey, consumerToken, candidate, version, dryrun);
+        super(context, apiHost, connectTimeout, readTimeout, consumerKey, consumerToken, candidate, version, dryrun);
         this.hashtag = hashtag;
         this.releaseNotesUrl = releaseNotesUrl;
     }
@@ -50,16 +50,16 @@ public class AnnounceSdkmanCommand extends AbstractSdkmanCommand {
         sdkman.announce(candidate, version, hashtag, releaseNotesUrl);
     }
 
-    public static Builder builder(JReleaserLogger logger) {
-        return new Builder(logger);
+    public static Builder builder(JReleaserContext context) {
+        return new Builder(context);
     }
 
     public static class Builder extends AbstractSdkmanCommand.Builder<Builder> {
         private String hashtag;
         private String releaseNotesUrl;
 
-        protected Builder(JReleaserLogger logger) {
-            super(logger);
+        protected Builder(JReleaserContext context) {
+            super(context);
         }
 
         /**
@@ -86,7 +86,7 @@ public class AnnounceSdkmanCommand extends AbstractSdkmanCommand {
             requireNonBlank(version, "'version' must not be blank");
 
             return new AnnounceSdkmanCommand(
-                logger,
+                context,
                 apiHost,
                 connectTimeout,
                 readTimeout,

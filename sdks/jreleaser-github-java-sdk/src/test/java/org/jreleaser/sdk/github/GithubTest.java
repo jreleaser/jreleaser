@@ -17,7 +17,7 @@
  */
 package org.jreleaser.sdk.github;
 
-import org.jreleaser.logging.SimpleJReleaserLoggerAdapter;
+import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.spi.release.User;
 import org.jreleaser.test.WireMockExtension;
 import org.junit.jupiter.api.DisplayName;
@@ -45,7 +45,7 @@ class GithubTest {
     @ValueSource(strings = {"jreleaserbot", "12345+jreleaserbot"})
     @DisplayName("Github user from private email id")
     void userFromPrivateEmailId(String username) throws IOException {
-        Github github = new Github(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG),
+        Github github = new Github(JReleaserContext.empty().asImmutable(),
             api.baseUrl(),
             "GH_TOKEN",
             10000,
@@ -70,7 +70,7 @@ class GithubTest {
     @Test
     @DisplayName("Github user not found")
     void userNotFound() throws IOException {
-        Github github = new Github(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG),
+        Github github = new Github(JReleaserContext.empty().asImmutable(),
             api.baseUrl(),
             "GH_TOKEN",
             10000,
@@ -86,7 +86,7 @@ class GithubTest {
     @Test
     @DisplayName("Github user found with Email")
     void userFoundByEmail() throws IOException {
-        Github github = new Github(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG),
+        Github github = new Github(JReleaserContext.empty().asImmutable(),
             api.baseUrl(),
             "GH_TOKEN",
             10000,

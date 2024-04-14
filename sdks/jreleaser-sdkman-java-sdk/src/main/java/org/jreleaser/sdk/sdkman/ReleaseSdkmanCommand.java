@@ -17,7 +17,7 @@
  */
 package org.jreleaser.sdk.sdkman;
 
-import org.jreleaser.logging.JReleaserLogger;
+import org.jreleaser.model.api.JReleaserContext;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -33,7 +33,7 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
 public class ReleaseSdkmanCommand extends AbstractSdkmanCommand {
     private final Map<String, String> platforms = new LinkedHashMap<>();
 
-    private ReleaseSdkmanCommand(JReleaserLogger logger,
+    private ReleaseSdkmanCommand(JReleaserContext context,
                                  String apiHost,
                                  int connectTimeout,
                                  int readTimeout,
@@ -43,7 +43,7 @@ public class ReleaseSdkmanCommand extends AbstractSdkmanCommand {
                                  String version,
                                  boolean dryrun,
                                  Map<String, String> platforms) {
-        super(logger, apiHost, connectTimeout, readTimeout, consumerKey, consumerToken, candidate, version, dryrun);
+        super(context, apiHost, connectTimeout, readTimeout, consumerKey, consumerToken, candidate, version, dryrun);
         this.platforms.putAll(platforms);
     }
 
@@ -52,16 +52,16 @@ public class ReleaseSdkmanCommand extends AbstractSdkmanCommand {
         sdkman.release(candidate, version, platforms);
     }
 
-    public static Builder builder(JReleaserLogger logger) {
-        return new Builder(logger);
+    public static Builder builder(JReleaserContext context) {
+        return new Builder(context);
     }
 
     public static class Builder extends AbstractSdkmanCommand.Builder<Builder> {
         private final Map<String, String> platforms = new LinkedHashMap<>();
         private String url;
 
-        protected Builder(JReleaserLogger logger) {
-            super(logger);
+        protected Builder(JReleaserContext context) {
+            super(context);
         }
 
         /**
@@ -116,7 +116,7 @@ public class ReleaseSdkmanCommand extends AbstractSdkmanCommand {
             }
 
             return new ReleaseSdkmanCommand(
-                logger,
+                context,
                 apiHost,
                 connectTimeout,
                 readTimeout,

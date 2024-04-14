@@ -70,7 +70,7 @@ public class ZulipAnnouncer implements Announcer<org.jreleaser.model.api.announc
         context.getLogger().debug("message: {}", message);
 
         try {
-            ZulipSdk sdk = ZulipSdk.builder(context.getLogger())
+            ZulipSdk sdk = ZulipSdk.builder(context.asImmutable())
                 .apiHost(zulip.getApiHost())
                 .account(zulip.getAccount())
                 .apiKey(context.isDryrun() ? "**UNDEFINED**" : zulip.getApiKey())

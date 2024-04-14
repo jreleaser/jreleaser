@@ -18,7 +18,7 @@
 package org.jreleaser.sdk.telegram;
 
 import org.jreleaser.bundle.RB;
-import org.jreleaser.logging.JReleaserLogger;
+import org.jreleaser.model.api.JReleaserContext;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.commons.RestAPIException;
 import org.jreleaser.sdk.telegram.api.Message;
@@ -33,29 +33,29 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @since 0.8.0
  */
 public class TelegramSdk {
-    private final JReleaserLogger logger;
+    private final JReleaserContext context;
     private final TelegramAPI api;
     private final boolean dryrun;
 
-    private TelegramSdk(JReleaserLogger logger,
+    private TelegramSdk(JReleaserContext context,
                         String apiHost,
                         int connectTimeout,
                         int readTimeout,
                         boolean dryrun) {
-        requireNonNull(logger, "'logger' must not be null");
+        requireNonNull(context, "'context' must not be null");
         requireNonBlank(apiHost, "'apiHost' must not be blank");
 
-        this.logger = logger;
+        this.context = context;
         this.dryrun = dryrun;
-        this.api = ClientUtils.builder(logger, connectTimeout, readTimeout)
+        this.api = ClientUtils.builder(context, connectTimeout, readTimeout)
             .target(TelegramAPI.class, apiHost);
 
-        this.logger.debug(RB.$("workflow.dryrun"), dryrun);
+        this.context.getLogger().debug(RB.$("workflow.dryrun"), dryrun);
     }
 
     public void sendMessage(String chatId, String message) throws TelegramException {
         Message payload = Message.of(chatId, message);
-        logger.debug("telegram.message: " + payload);
+        context.getLogger().debug("telegram.message: " + payload);
         wrap(() -> api.sendMessage(payload));
     }
 
@@ -63,26 +63,26 @@ public class TelegramSdk {
         try {
             if (!dryrun) runnable.run();
         } catch (RestAPIException e) {
-            logger.trace(e.getStatus() + ": " + e.getReason());
-            logger.trace(e);
+            context.getLogger().trace(e.getStatus() + ": " + e.getReason());
+            context.getLogger().trace(e);
             throw new TelegramException(RB.$("sdk.operation.failed", "Telegram"), e);
         }
     }
 
-    public static Builder builder(JReleaserLogger logger) {
-        return new Builder(logger);
+    public static Builder builder(JReleaserContext context) {
+        return new Builder(context);
     }
 
     public static class Builder {
-        private final JReleaserLogger logger;
+        private final JReleaserContext context;
         private boolean dryrun;
         private String apiHost;
         private String token;
         private int connectTimeout = 20;
         private int readTimeout = 60;
 
-        private Builder(JReleaserLogger logger) {
-            this.logger = requireNonNull(logger, "'logger' must not be null");
+        private Builder(JReleaserContext context) {
+            this.context = requireNonNull(context, "'context' must not be null");
         }
 
         public Builder dryrun(boolean dryrun) {
@@ -125,7 +125,7 @@ public class TelegramSdk {
             validate();
 
             return new TelegramSdk(
-                logger,
+                context,
                 apiHost,
                 connectTimeout,
                 readTimeout,

@@ -123,7 +123,7 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
                 params.setPreviousTagName(extractTagName(tags.getPrevious().get()));
             }
             params.setTargetCommitish(github.getBranch());
-            GhReleaseNotes releaseNotes = new Github(context.getLogger(),
+            GhReleaseNotes releaseNotes = new Github(context.asImmutable(),
                 github.getApiEndpoint(),
                 github.getToken(),
                 github.getConnectTimeout(),
@@ -138,7 +138,7 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
     protected boolean isTagInRemote(JReleaserContext context, String tagName) {
         org.jreleaser.model.internal.release.GithubReleaser github = context.getModel().getRelease().getGithub();
 
-        Github api = new Github(context.getLogger(),
+        Github api = new Github(context.asImmutable(),
             github.getApiEndpoint(),
             github.getToken(),
             github.getConnectTimeout(),
@@ -163,7 +163,7 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
         String tagName = github.getEffectiveTagName(context.getModel());
 
         try {
-            Github api = new Github(context.getLogger(),
+            Github api = new Github(context.asImmutable(),
                 github.getApiEndpoint(),
                 github.getToken(),
                 github.getConnectTimeout(),
@@ -262,7 +262,7 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
     public Repository maybeCreateRepository(String owner, String repo, String password, ExtraProperties extraProperties) throws IOException {
         context.getLogger().debug(RB.$("git.repository.lookup"), owner, repo);
 
-        Github api = new Github(context.getLogger(),
+        Github api = new Github(context.asImmutable(),
             github.getApiEndpoint(),
             password,
             github.getConnectTimeout(),
@@ -285,7 +285,7 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
         if (NOREPLY_GITHUB_COM_EMAIL.equals(email)) return Optional.empty();
 
         try {
-            return new Github(context.getLogger(),
+            return new Github(context.asImmutable(),
                 github.getApiEndpoint(),
                 github.getToken(),
                 github.getConnectTimeout(),
@@ -301,7 +301,7 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
 
     @Override
     public List<Release> listReleases(String owner, String repo) throws IOException {
-        Github api = new Github(context.getLogger(),
+        Github api = new Github(context.asImmutable(),
             github.getApiEndpoint(),
             github.getToken(),
             github.getConnectTimeout(),

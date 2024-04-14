@@ -72,7 +72,7 @@ public class DiscourseAnnouncer implements Announcer<org.jreleaser.model.api.ann
         context.getLogger().debug("categoryName: {}", categoryName);
 
         try {
-            DiscourseSdk sdk = DiscourseSdk.builder(context.getLogger())
+            DiscourseSdk sdk = DiscourseSdk.builder(context.asImmutable())
                 .host(discourse.getHost())
                 .apiKey(discourse.getApiKey())
                 .userName(discourse.getUsername())

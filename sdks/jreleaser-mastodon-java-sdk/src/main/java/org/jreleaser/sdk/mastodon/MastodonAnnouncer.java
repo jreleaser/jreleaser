@@ -94,7 +94,7 @@ public class MastodonAnnouncer implements Announcer<org.jreleaser.model.api.anno
         }
 
         try {
-            MastodonSdk sdk = MastodonSdk.builder(context.getLogger())
+            MastodonSdk sdk = MastodonSdk.builder(context.asImmutable())
                 .host(mastodon.getHost())
                 .accessToken(mastodon.getAccessToken())
                 .connectTimeout(mastodon.getConnectTimeout())

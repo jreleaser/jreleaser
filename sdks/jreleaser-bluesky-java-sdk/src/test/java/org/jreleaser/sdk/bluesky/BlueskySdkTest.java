@@ -19,7 +19,7 @@ package org.jreleaser.sdk.bluesky;
 
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
-import org.jreleaser.logging.SimpleJReleaserLoggerAdapter;
+import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.test.WireMockExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -92,7 +92,7 @@ class BlueskySdkTest {
 
     private BlueskySdk.Builder baseBuilder() {
         return BlueskySdk
-            .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
+            .builder(JReleaserContext.empty().asImmutable())
             .handle("API-HANDLE")
             .password("API-PASSWORD")
             .host(api.baseUrl())
