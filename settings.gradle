@@ -118,7 +118,7 @@ enforce {
         r.dependencies.addAll "com.fasterxml:classmate:$classmateVersion",
             "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion",
             "com.fasterxml.jackson.core:jackson-core:$jacksonVersion",
-            "com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion",
+            "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion",
             "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:$jacksonVersion",
             "com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:$jacksonVersion",
             "com.fasterxml.jackson:jackson-bom:$jacksonVersion",
