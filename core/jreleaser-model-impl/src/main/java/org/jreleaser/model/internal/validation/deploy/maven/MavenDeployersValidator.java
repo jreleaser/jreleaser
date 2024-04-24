@@ -124,6 +124,20 @@ public final class MavenDeployersValidator {
         }
 
         BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
+        String defaultUsername = null;
+        String defaultPassword = null;
+        if (mavenDeployer.getType().equalsIgnoreCase(service.getServiceName())) {
+            defaultUsername = service.getUsername();
+            defaultPassword = service.getToken();
+        }
+        String setUsername = mavenDeployer.getUsername();
+        String setPassword = mavenDeployer.getPassword();
+        if (isBlank(setUsername)) {
+            setUsername = defaultUsername;
+        }
+        if (isBlank(setPassword)) {
+            setPassword = defaultPassword;
+        }
 
         switch (mavenDeployer.resolveAuthorization()) {
             case BEARER:
@@ -139,16 +153,16 @@ public final class MavenDeployersValidator {
                             mavenDeployer.getType() + ".password",
                             mavenDeployer.getType() + ".token"),
                         "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".password",
-                        mavenDeployer.getPassword(),
-                        service.getToken()));
+                        setPassword,
+                        errors));
                 break;
             case BASIC:
                 mavenDeployer.setUsername(
                     checkProperty(context,
                         mavenDeployer.keysFor("username"),
                         "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".username",
-                        mavenDeployer.getUsername(),
-                        service.getUsername()));
+                        setUsername,
+                        errors));
 
                 mavenDeployer.setPassword(
                     checkProperty(context,
@@ -162,8 +176,8 @@ public final class MavenDeployersValidator {
                             mavenDeployer.getType() + ".password",
                             mavenDeployer.getType() + ".token"),
                         "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".password",
-                        mavenDeployer.getPassword(),
-                        service.getToken()));
+                        setPassword,
+                        errors));
                 break;
             case NONE:
                 errors.configuration(RB.$("validation_value_cannot_be", deployerPrefix + ".authorization", "NONE"));
