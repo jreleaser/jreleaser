@@ -21,7 +21,7 @@ jobs:
       matrix:
         job:
           - { os: ubuntu-latest,  platform: linux-x86_64 }
-          - { os: macOS-latest,   platform: osx-x86_64 }
+          - { os: macos-13,   platform: osx-x86_64 }
           - { os: windows-latest, platform: windows-x86_64 }
     runs-on: ${{ matrix.job.os }}
     steps:
