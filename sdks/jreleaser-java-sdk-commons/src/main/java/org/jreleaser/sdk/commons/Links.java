@@ -112,12 +112,11 @@ public class Links {
 
     @Override
     public String toString() {
-        String sb = "Links[" + "first='" + first + '\'' +
+        return "Links[" + "first='" + first + '\'' +
             ", next='" + next + '\'' +
             ", prev='" + prev + '\'' +
             ", last='" + last + '\'' +
             ']';
-        return sb;
     }
 
     public static Links of(String input) {

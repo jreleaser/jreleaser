@@ -36,7 +36,7 @@ import org.apache.commons.compress.compressors.xz.XZCompressorInputStream;
 import org.apache.commons.compress.compressors.xz.XZCompressorOutputStream;
 import org.apache.commons.compress.compressors.zstandard.ZstdCompressorInputStream;
 import org.apache.commons.compress.compressors.zstandard.ZstdCompressorOutputStream;
-import org.apache.commons.compress.utils.IOUtils;
+import org.apache.commons.io.IOUtils;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.logging.JReleaserLogger;
 
@@ -408,7 +408,7 @@ public final class FileUtils {
 
         String rootEntryName = resolveRootEntryName(src);
         if (filename.endsWith(ZIP.extension())) {
-            try (ZipFile zipFile = new ZipFile(src.toFile())) {
+            try (ZipFile zipFile = ZipFile.builder().setFile(src.toFile()).get()) {
                 unpackArchive(removeRootEntry ? rootEntryName + "/" : "", destinationDir, zipFile);
             }
             return;

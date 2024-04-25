@@ -58,38 +58,38 @@ public class MavenJReleaserModelPrinter extends JReleaserModelPrinter {
     }
 
     private String black(CharSequence s) {
-        return buffer().a(!isColorEnabled() ? s : "\u001B[30m" + s + "\u001b[0m").toString();
+        return buffer().a(!isColorEnabled() ? s : "\u001B[30m" + s + "\u001b[0m").build();
     }
 
     private String red(CharSequence s) {
-        return buffer().a(!isColorEnabled() ? s : "\u001B[31m" + s + "\u001b[0m").toString();
+        return buffer().a(!isColorEnabled() ? s : "\u001B[31m" + s + "\u001b[0m").build();
     }
 
     private String green(CharSequence s) {
-        return buffer().a(!isColorEnabled() ? s : "\u001B[32m" + s + "\u001b[0m").toString();
+        return buffer().a(!isColorEnabled() ? s : "\u001B[32m" + s + "\u001b[0m").build();
     }
 
     private String yellow(CharSequence s) {
-        return buffer().a(!isColorEnabled() ? s : "\u001B[33m" + s + "\u001b[0m").toString();
+        return buffer().a(!isColorEnabled() ? s : "\u001B[33m" + s + "\u001b[0m").build();
     }
 
     private String blue(CharSequence s) {
-        return buffer().a(!isColorEnabled() ? s : "\u001B[34m" + s + "\u001b[0m").toString();
+        return buffer().a(!isColorEnabled() ? s : "\u001B[34m" + s + "\u001b[0m").build();
     }
 
     private String magenta(CharSequence s) {
-        return buffer().a(!isColorEnabled() ? s : "\u001B[35m" + s + "\u001b[0m").toString();
+        return buffer().a(!isColorEnabled() ? s : "\u001B[35m" + s + "\u001b[0m").build();
     }
 
     private String cyan(CharSequence s) {
-        return buffer().a(!isColorEnabled() ? s : "\u001B[36m" + s + "\u001b[0m").toString();
+        return buffer().a(!isColorEnabled() ? s : "\u001B[36m" + s + "\u001b[0m").build();
     }
 
     private String white(CharSequence s) {
-        return buffer().a(!isColorEnabled() ? s : "\u001B[37m" + s + "\u001b[0m").toString();
+        return buffer().a(!isColorEnabled() ? s : "\u001B[37m" + s + "\u001b[0m").build();
     }
 
     private String erase(CharSequence s) {
-        return buffer().a(!isColorEnabled() ? s : "\u001b[2K" + s).toString();
+        return buffer().a(!isColorEnabled() ? s : "\u001b[2K" + s).build();
     }
 }
