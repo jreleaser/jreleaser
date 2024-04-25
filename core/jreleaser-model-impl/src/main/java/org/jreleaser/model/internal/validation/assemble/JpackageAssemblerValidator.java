@@ -92,6 +92,8 @@ public final class JpackageAssemblerValidator {
         JpackageAssembler.ApplicationPackage applicationPackage = assembler.getApplicationPackage();
         packager.enable();
 
+        assembler.setPlatform(assembler.getPlatform().mergeValues(context.getModel().getPlatform()));
+
         boolean hasJavaArchive = false;
         if (isNotBlank(assembler.getJlink())) {
             JlinkAssembler jlink = context.getModel().getAssemble().findJlink(assembler.getJlink());
@@ -108,9 +110,10 @@ public final class JpackageAssemblerValidator {
                 if (!context.isPlatformSelected(targetJdk)) continue;
 
                 String platform = targetJdk.getPlatform();
+                String platformReplaced = assembler.getPlatform().applyReplacements(platform);
                 Path path = baseOutputDirectory
                     .resolve("work-" + platform)
-                    .resolve(imageName + "-" + platform)
+                    .resolve(imageName + "-" + platformReplaced)
                     .toAbsolutePath();
                 candidateRuntimeImages.add(Artifact.of(path, platform));
             }

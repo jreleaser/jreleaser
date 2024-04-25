@@ -172,6 +172,7 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
             if (!targetJdk.isActiveAndSelected()) continue;
 
             String platform = targetJdk.getPlatform();
+            String platformReplaced = assembler.getPlatform().applyReplacements(platform);
             Path platformJarsDirectory = jarsDirectory.resolve(platform);
             context.getLogger().debug(RB.$("assembler.copy.jars"), context.relativizeToBasedir(platformJarsDirectory));
             copyJars(context, assembler, platformJarsDirectory, platform);

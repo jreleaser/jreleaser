@@ -75,9 +75,10 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
         }
 
         String platform = packager.getJdk().getPlatform();
+        String platformReplaced = assembler.getPlatform().applyReplacements(platform);
 
         Path assembleDirectory = props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
-        Path workDirectory = assembleDirectory.resolve(WORK_DIRECTORY + "-" + platform);
+        Path workDirectory = assembleDirectory.resolve(WORK_DIRECTORY + "-" + platformReplaced);
         Path inputsDirectory = workDirectory.resolve(INPUTS_DIRECTORY);
         Path filesDirectory = inputsDirectory.resolve(FILES_DIRECTORY);
 
