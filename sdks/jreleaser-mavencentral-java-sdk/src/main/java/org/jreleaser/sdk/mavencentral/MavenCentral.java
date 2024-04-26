@@ -70,11 +70,6 @@ public class MavenCentral {
     private final JReleaserContext context;
     private final MavenCentralAPI api;
     private final boolean dryrun;
-    private final String apiHost;
-    private final String username;
-    private final String password;
-    private final int connectTimeout;
-    private final int readTimeout;
     private final Retrier retrier;
 
     public MavenCentral(JReleaserContext context,
@@ -93,21 +88,12 @@ public class MavenCentral {
 
         this.context = context;
         this.dryrun = dryrun;
-        this.apiHost = apiHost;
-        this.username = username;
-        this.password = password;
-        this.connectTimeout = connectTimeout;
-        this.readTimeout = readTimeout;
         this.retrier = new Retrier(context.getLogger(), retryDelay, maxRetries);
         this.api = ClientUtils.builder(context, connectTimeout, readTimeout)
             .decoder(new MavenCentralDecoder())
             .requestInterceptor(new TokenAuthRequestInterceptor("Bearer", username, password))
             .errorDecoder(new MavenCentralErrorDecoder(context.getLogger()))
             .target(MavenCentralAPI.class, apiHost);
-    }
-
-    public Optional<Deployment> findDeployment(String groupId, String artifactId, String version) throws MavenCentralException {
-        return wrap(() -> Optional.ofNullable(api.published(groupId, artifactId, version)));
     }
 
     public Optional<Deployment> status(String deploymentId) throws MavenCentralException {
@@ -125,10 +111,6 @@ public class MavenCentral {
         });
     }
 
-    public void delete(String deploymentId) throws MavenCentralException {
-        wrap(() -> api.delete(deploymentId));
-    }
-
     public String upload(Path bundle) throws MavenCentralException {
         return wrap(() -> {
             FormData formData = ClientUtils.toFormData(bundle);
@@ -136,14 +118,6 @@ public class MavenCentral {
             waitForState(deploymentId, State.VALIDATED, State.FAILED);
             return deploymentId;
         });
-    }
-
-    private MavenCentralException fail(String message) {
-        return new MavenCentralException(message);
-    }
-
-    private MavenCentralException fail(String message, Exception e) {
-        return new MavenCentralException(message, e);
     }
 
     private void wrap(MavenCentralOperation operation) throws MavenCentralException {
@@ -164,18 +138,6 @@ public class MavenCentral {
                 return callable.call();
             }
             return null;
-        } catch (MavenCentralException e) {
-            context.getLogger().trace(e);
-            throw e;
-        } catch (Exception e) {
-            context.getLogger().trace(e);
-            throw new MavenCentralException(RB.$("ERROR_unexpected_error"), e);
-        }
-    }
-
-    private <T> T wrapNoDryrun(Callable<T> callable) throws MavenCentralException {
-        try {
-            return callable.call();
         } catch (MavenCentralException e) {
             context.getLogger().trace(e);
             throw e;

@@ -28,7 +28,7 @@ import static feign.Util.checkNotNull;
 
 /**
  * @author Andres Almiray
- * @since 0.12.0
+ * @since 1.12.0
  */
 public class TokenAuthRequestInterceptor implements RequestInterceptor {
     private static final String BASIC = "Basic";
@@ -43,7 +43,7 @@ public class TokenAuthRequestInterceptor implements RequestInterceptor {
     }
 
     public TokenAuthRequestInterceptor(String username, String password, Charset charset) {
-        this(BASIC, username, password, ISO_8859_1);
+        this(BASIC, username, password, charset);
     }
 
     public TokenAuthRequestInterceptor(String token, String username, String password, Charset charset) {

@@ -72,7 +72,6 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<or
         context.getLogger().debug(RB.$("assembler.graal.graal"), graalVersion, graalPath.toAbsolutePath().toString());
 
         String platform = assembler.getGraal().getPlatform();
-        String platformReplaced = assembler.getPlatform().applyReplacements(platform);
         // copy jars to assembly
         Path assembleDirectory = props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
         Path jarsDirectory = assembleDirectory.resolve(JARS_DIRECTORY);
