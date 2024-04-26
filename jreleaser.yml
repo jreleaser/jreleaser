@@ -1,8 +1,8 @@
 environment:
   properties:
     jdkPathPrefix: 'plugins/jreleaser/build/jdks'
-    jdkFilePrefix: 'zulu17.32.13-ca-jdk17.0.2'
-    graalFilePrefix: 'graalvm-community-openjdk-21.0.2+13.1'
+    jdkFilePrefix: 'zulu17.50.19-ca-jdk17.0.11'
+    graalFilePrefix: 'graalvm-community-openjdk-22.0.1+8.1'
     nativeImageDir: out/jreleaser/assemble/jreleaser-native/native-image
     jpackageDir: out/jreleaser/assemble/jreleaser-installer/jpackage
     javaArchiveDir: out/jreleaser/assemble/jreleaser/java-archive
@@ -282,13 +282,13 @@ assemble:
         - pattern: 'plugins/jreleaser/build/dependencies/flat/*.jar'
         - pattern: 'plugins/jreleaser/build/dependencies/graalvm/*.jar'
       graalJdks:
-        - path: '{{jdkPathPrefix}}/graal21Osx/{{graalFilePrefix}}/Contents/Home'
+        - path: '{{jdkPathPrefix}}/graal22Osx/{{graalFilePrefix}}/Contents/Home'
           platform: 'osx-x86_64'
-        - path: '{{jdkPathPrefix}}/graal21OsxArm/{{graalFilePrefix}}/Contents/Home'
+        - path: '{{jdkPathPrefix}}/graal22OsxArm/{{graalFilePrefix}}/Contents/Home'
           platform: 'osx-aarch_64'
-        - path: '{{jdkPathPrefix}}/graal21Linux/{{graalFilePrefix}}'
+        - path: '{{jdkPathPrefix}}/graal22Linux/{{graalFilePrefix}}'
           platform: 'linux-x86_64'
-        - path: '{{jdkPathPrefix}}/graal21Windows/{{graalFilePrefix}}'
+        - path: '{{jdkPathPrefix}}/graal22Windows/{{graalFilePrefix}}'
           platform: 'windows-x86_64'
       args:
         - '-Duser.language=en'

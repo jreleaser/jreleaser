@@ -92,10 +92,6 @@ jobs:
             out/jreleaser/trace.log
             out/jreleaser/output.properties
 
-      - name: Stop Gradle daemon
-        shell: bash
-        run: ./gradlew -stop
-
       - name: Upload jpackage
         uses: actions/upload-artifact@v4
         with:
@@ -107,3 +103,7 @@ jobs:
             out/jreleaser/assemble/jreleaser-installer/jpackage/*.exe
             out/jreleaser/assemble/jreleaser-installer/jpackage/*.deb
             out/jreleaser/assemble/jreleaser-installer/jpackage/*.rpm
+
+      - name: Stop Gradle daemon
+        shell: bash
+        run: ./gradlew -stop

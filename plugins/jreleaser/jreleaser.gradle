@@ -87,68 +87,63 @@ distributions {
 jdks {
     zulu17Linux {
         platform = 'linux-x86_64'
-        url = 'https://cdn.azul.com/zulu/bin/zulu17.32.13-ca-jdk17.0.2-linux_x64.zip'
-        checksum = '7668ebaecc81041d8d1e79e857552887f56c445ef4c6e8d634007b7b67f5a1d3'
+        url = 'https://cdn.azul.com/zulu/bin/zulu17.50.19-ca-jdk17.0.11-linux_x64.zip'
+        checksum = 'c89977771091eb7d53e0f244a722076e88d968966b75aba2a65a1b31105d68bb'
     }
     zulu17LinuxArm {
         platform = 'linux-aarch64'
-        url = 'https://cdn.azul.com/zulu/bin/zulu17.32.13-ca-jdk17.0.2-linux_aarch64.tar.gz'
-        checksum = '2b8066bbdbc5cff422bb6b6db1b8f8d362b576340cce8492f1255502af632b06'
+        url = 'https://cdn.azul.com/zulu/bin/zulu17.50.19-ca-jdk17.0.11-linux_aarch64.tar.gz'
+        checksum = '518cc455c0c7b49c0ae7d809c0bb87ab371bb850d46abb8efad5010c6a06faec'
     }
     zulu17LinuxMusl {
         platform = 'linux_musl-x86_64'
-        url = 'https://cdn.azul.com/zulu/bin/zulu17.32.13-ca-jdk17.0.2-linux_musl_x64.tar.gz'
-        checksum = 'bcc5342011bd9f3643372aadbdfa68d47463ff0d8621668a0bdf2910614d95c6'
+        url = 'https://cdn.azul.com/zulu/bin/zulu17.50.19-ca-jdk17.0.11-linux_musl_x64.tar.gz'
+        checksum = '22bbde6e05ced1238b302e2b44d3f9785c23e4115618eea83786b6b4a1828f9f'
     }
     zulu17LinuxMuslArm {
         platform = 'linux_musl-aarch64'
-        url = 'https://cdn.azul.com/zulu/bin/zulu17.32.13-ca-jdk17.0.2-linux_musl_aarch64.tar.gz'
-        checksum = '6b920559abafbe9bdef386a20ecf3a2f318bc1f0d8359eb1f95aee26606bbc70'
+        url = 'https://cdn.azul.com/zulu/bin/zulu17.50.19-ca-jdk17.0.11-linux_musl_aarch64.tar.gz'
+        checksum = 'fc6645aa46736e6100302c109127ea31a1d1192599b7140dd94f81eaeebfe293'
     }
     zulu17Windows {
         platform = 'windows-x86_64'
-        url = 'https://cdn.azul.com/zulu/bin/zulu17.32.13-ca-jdk17.0.2-win_x64.zip'
-        checksum = 'e965aa0ea7a0661a3446cf8f10ee00684b851f883b803315289f26b4aa907fdb'
+        url = 'https://cdn.azul.com/zulu/bin/zulu17.50.19-ca-jdk17.0.11-win_x64.zip'
+        checksum = '43f0f1bdecf48ba9763d46ee7784554c95b442ffdd39ebd62dc8b297cc82e116'
     }
     zulu17WindowsArm {
         platform = 'windows-aarch64'
-        url = 'https://cdn.azul.com/zulu/bin/zulu17.32.13-ca-jdk17.0.2-win_aarch64.zip'
-        checksum = '1a9d4ab3b52ce3db7354691163e5a36979af9c37d80c3c490c12af07de21d8f3'
+        url = 'https://cdn.azul.com/zulu/bin/zulu17.50.19-ca-jdk17.0.11-win_aarch64.zip'
+        checksum = 'b8833d272eb31f54f8c881139807a28a74de9deae07d2cc37688ff72043e32c9'
     }
     zulu17Osx {
         platform = 'osx-x86_64'
-        url = 'https://cdn.azul.com/zulu/bin/zulu17.32.13-ca-jdk17.0.2-macosx_x64.zip'
-        checksum = 'f75fe30aced4fbee8db108fbb123b3af328503a2af46e173cbe43613b995e492'
+        url = 'https://cdn.azul.com/zulu/bin/zulu17.50.19-ca-jdk17.0.11-macosx_x64.zip'
+        checksum = '3f653ad00a29b3ae2abebcfc598225f674d3289e52497b310441f3fb5d785f8a'
     }
     zulu17OsxArm {
         platform = 'osx-aarch64'
-        url = 'https://cdn.azul.com/zulu/bin/zulu17.32.13-ca-jdk17.0.2-macosx_aarch64.zip'
-        checksum = '8c287018d358ec2c43995bf09a0cdaa235f0bdd434673777a564daee2c3872df'
+        url = 'https://cdn.azul.com/zulu/bin/zulu17.50.19-ca-jdk17.0.11-macosx_aarch64.zip'
+        checksum = '5aec103fc90131dc34cb1be6290dd61c426a74f1bf7e8b4895049cd27fee70a8'
     }
-    graal21Osx {
+    graal22Osx {
         platform = 'osx-x86_64'
-        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-21.0.2/graalvm-community-jdk-21.0.2_macos-x64_bin.tar.gz'
-        checksum = '7a8aa93fa45d1721908477abf4732a32637d420ffcb66ada9fb6456440b0d9e1'
+        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-22.0.1/graalvm-community-jdk-22.0.1_macos-x64_bin.tar.gz'
+        checksum = '553c2dff3febd45f917e45f4dd620c194d8225bc28d13f5545ddffea9eeb30f8'
     }
-    graal21OsxArm {
+    graal22OsxArm {
         platform = 'osx-aarch64'
-        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-21.0.2/graalvm-community-jdk-21.0.2_macos-aarch64_bin.tar.gz'
-        checksum = '515e3a93acc7e1938daba83eda4272e5495fd302d7cdd99ec7ebf408ed505ab7'
+        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-22.0.1/graalvm-community-jdk-22.0.1_macos-aarch64_bin.tar.gz'
+        checksum = 'b96a16359c800374af5fbd3cb685aaa91cfc590ea4be35538c24b37e12c769c0'
     }
-    graal21Linux {
+    graal22Linux {
         platform = 'linux-x86_64'
-        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-21.0.2/graalvm-community-jdk-21.0.2_linux-x64_bin.tar.gz'
-        checksum = 'b048069aaa3a99b84f5b957b162cc181a32a4330cbc35402766363c5be76ae48'
+        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-22.0.1/graalvm-community-jdk-22.0.1_linux-x64_bin.tar.gz'
+        checksum = 'e34ec7e8e8c6a4bb99ab4fa32c3e04d01f2f2bd88920ddda7545fd35a0511f75'
     }
-    //graal21LinuxArm {
-    //    platform = 'linux-aarch64'
-    //    url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-22.0.0.2/graalvm-ce-java17-linux-aarch64-22.0.0.2.tar.gz'
-    //    checksum = 'c7d78387d2a144944f26773697c1b61d3478a081a1c5e7fc20f47f1f5f3c82c7'
-    //}
-    graal21Windows {
+    graal22Windows {
         platform = 'windows-x86_64'
-        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-21.0.2/graalvm-community-jdk-21.0.2_windows-x64_bin.zip'
-        checksum = 'e17b7bead097bf372a5c75df17815b0a2f30b777a019d25eff7706b21421f7fa'
+        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-22.0.1/graalvm-community-jdk-22.0.1_windows-x64_bin.zip'
+        checksum = '623a4c5984f1210e61346e3ff942ec6f83d1928790ef9ae7dd28067e5c8de1aa'
     }
 }
 
@@ -167,7 +162,7 @@ afterEvaluate {
     def copyJdksToCache = project.tasks.findByName('copyJdksToCache')
     ['zulu17Linux', 'zulu17LinuxArm', 'zulu17LinuxMusl', 'zulu17LinuxMuslArm',
      'zulu17Windows', 'zulu17WindowsArm', 'zulu17Osx', 'zulu17OsxArm',
-     'graal21Osx', 'graal21OsxArm', 'graal21Linux', 'graal21Windows'].each { jdk ->
+     'graal22Osx', 'graal22OsxArm', 'graal22Linux', 'graal22Windows'].each { jdk ->
         def copyTask = project.tasks.findByName('copyJdkFromCache' + jdk.capitalize())
         if (copyJdksToCache && copyTask) copyTask.dependsOn(copyJdksToCache)
     }

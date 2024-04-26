@@ -94,10 +94,6 @@ jobs:
             plugins/jreleaser-tool-provider/build/libs/*.jar
             plugins/jreleaser-ant-tasks/build/distributions/*.zip
 
-      - name: Stop Gradle daemon
-        shell: bash
-        run: ./gradlew -stop
-
       - name: Upload java-archive
         uses: actions/upload-artifact@v4
         with:
@@ -114,3 +110,7 @@ jobs:
           name: jlink
           path: |
             out/jreleaser/assemble/jreleaser-standalone/jlink/*.zip
+
+      - name: Stop Gradle daemon
+        shell: bash
+        run: ./gradlew -stop

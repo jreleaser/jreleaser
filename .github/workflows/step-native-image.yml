@@ -33,6 +33,14 @@ jobs:
           name: artifacts
           path: plugins
 
+      - name: Setup Graal
+        uses: graalvm/setup-graalvm@v1
+        with:
+          version: ${{ vars.GRAAL_VERSION }}
+          java-version: ${{ vars.GRAAL_JAVA_VERSION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          distribution: graalvm-community
+
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -67,10 +75,6 @@ jobs:
             out/jreleaser/trace.log
             out/jreleaser/output.properties
 
-      - name: Stop Gradle daemon
-        shell: bash
-        run: ./gradlew -stop
-
       - name: Upload native-image
         uses: actions/upload-artifact@v4
         with:
@@ -78,3 +82,7 @@ jobs:
           name: native-image-${{ runner.os }}-${{ runner.arch }}
           path: |
             out/jreleaser/assemble/jreleaser-native/native-image/*.zip
+
+      - name: Stop Gradle daemon
+        shell: bash
+        run: ./gradlew -stop
