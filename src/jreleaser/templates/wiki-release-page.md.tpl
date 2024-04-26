@@ -40,6 +40,8 @@ These binaries provide their own Java runtime.
 
 * {{#f_release_download_url}}jreleaser-installer-{{projectEffectiveVersion}}-osx-x86_64.pkg{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-installer-{{projectEffectiveVersion}}-osx-x86_64.pkg.asc{{/f_release_download_url}})
   sha256:jreleaser-installer-{{projectEffectiveVersion}}-osx-x86_64.pkg
+* {{#f_release_download_url}}jreleaser-installer-{{projectEffectiveVersion}}-osx-aarch64.pkg{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-installer-{{projectEffectiveVersion}}-osx-aarch64.pkg.asc{{/f_release_download_url}})
+  sha256:jreleaser-installer-{{projectEffectiveVersion}}-osx-aarch64.pkg
 * {{#f_release_download_url}}jreleaser-installer_{{projectEffectiveVersion}}-1_amd64.deb{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-installer_{{projectEffectiveVersion}}-1_amd64.deb.asc{{/f_release_download_url}})
   sha256:jreleaser-installer_{{projectEffectiveVersion}}-1_amd64.deb
 * {{#f_release_download_url}}jreleaser-installer-{{projectEffectiveVersion}}-1.x86_64.rpm{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-installer-{{projectEffectiveVersion}}-1.x86_64.rpm.asc{{/f_release_download_url}})
