@@ -23,7 +23,7 @@ These binaries require an external Java runtime.
 
 These binaries provide their own Java runtime.
 
-|Platform              | Artifact |
+| Platform             | Artifact |
 | -------------------- | -------- |
 | MacOS x86_64         | {{#f_release_download_url}}jreleaser-standalone-{{projectEffectiveVersion}}-osx-x86_64.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-standalone-{{projectEffectiveVersion}}-osx-x86_64.zip.asc{{/f_release_download_url}})<br/>sha256:jreleaser-standalone-{{projectEffectiveVersion}}-osx-x86_64.zip |
 | MacOS Arm64          | {{#f_release_download_url}}jreleaser-standalone-{{projectEffectiveVersion}}-osx-aarch64.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-standalone-{{projectEffectiveVersion}}-osx-aarch64.zip.asc{{/f_release_download_url}})<br/>sha256:jreleaser-standalone-{{projectEffectiveVersion}}-osx-aarch64.zip |
@@ -38,27 +38,22 @@ These binaries provide their own Java runtime.
 
 These binaries provide their own Java runtime.
 
-* {{#f_release_download_url}}jreleaser-installer-{{projectEffectiveVersion}}-osx-x86_64.pkg{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-installer-{{projectEffectiveVersion}}-osx-x86_64.pkg.asc{{/f_release_download_url}})
-  sha256:jreleaser-installer-{{projectEffectiveVersion}}-osx-x86_64.pkg
-* {{#f_release_download_url}}jreleaser-installer-{{projectEffectiveVersion}}-osx-aarch64.pkg{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-installer-{{projectEffectiveVersion}}-osx-aarch64.pkg.asc{{/f_release_download_url}})
-  sha256:jreleaser-installer-{{projectEffectiveVersion}}-osx-aarch64.pkg
-* {{#f_release_download_url}}jreleaser-installer_{{projectEffectiveVersion}}-1_amd64.deb{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-installer_{{projectEffectiveVersion}}-1_amd64.deb.asc{{/f_release_download_url}})
-  sha256:jreleaser-installer_{{projectEffectiveVersion}}-1_amd64.deb
-* {{#f_release_download_url}}jreleaser-installer-{{projectEffectiveVersion}}-1.x86_64.rpm{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-installer-{{projectEffectiveVersion}}-1.x86_64.rpm.asc{{/f_release_download_url}})
-  sha256:jreleaser-installer-{{projectEffectiveVersion}}-1.x86_64.rpm
-* {{#f_release_download_url}}jreleaser-installer-{{projectEffectiveVersion}}-windows-x86_64.msi{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-installer-{{projectEffectiveVersion}}-windows-x86_64.msi.asc{{/f_release_download_url}})
-  sha256:jreleaser-installer-{{projectEffectiveVersion}}-windows-x86_64.msi
+| Platform             | Artifact |
+| -------------------- | -------- |
+| MacOS x86_64         | {{#f_release_download_url}}jreleaser-installer-{{projectEffectiveVersion}}-osx-x86_64.pkg{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-installer-{{projectEffectiveVersion}}-osx-x86_64.pkg.asc{{/f_release_download_url}})<br/>sha256:jreleaser-installer-{{projectEffectiveVersion}}-osx-x86_64.pkg |
+| MacOS Arm64          | {{#f_release_download_url}}jreleaser-installer-{{projectEffectiveVersion}}-osx-aarch64.pkg{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-installer-{{projectEffectiveVersion}}-osx-aarch64.pkg.asc{{/f_release_download_url}})<br/>sha256:jreleaser-installer-{{projectEffectiveVersion}}-osx-aarch64.pkg |
+| Linux x86_64 (glibc) | {{#f_release_download_url}}jreleaser-installer_{{projectEffectiveVersion}}-1_amd64.deb{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-installer_{{projectEffectiveVersion}}-1_amd64.deb.asc{{/f_release_download_url}})<br/>sha256:jreleaser-installer_{{projectEffectiveVersion}}-1_amd64.deb |
+| Linux x86_64 (glibc) | {{#f_release_download_url}}jreleaser-installer-{{projectEffectiveVersion}}-1.x86_64.rpm{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-installer-{{projectEffectiveVersion}}-1.x86_64.rpm.asc{{/f_release_download_url}})<br/>sha256:jreleaser-installer-{{projectEffectiveVersion}}-1.x86_64.rpm |
+| Windows x86_64       | {{#f_release_download_url}}jreleaser-installer-{{projectEffectiveVersion}}-windows-x86_64.msi{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-installer-{{projectEffectiveVersion}}-windows-x86_64.msi.asc{{/f_release_download_url}})<br/>sha256:jreleaser-installer-{{projectEffectiveVersion}}-windows-x86_64.msi |
 
 ### 💻 Native Executables
 
-* {{#f_release_download_url}}jreleaser-native-{{projectEffectiveVersion}}-osx-aarch64.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-native-{{projectEffectiveVersion}}-osx-x86_64.zip.asc{{/f_release_download_url}})
-  sha256:jreleaser-native-{{projectEffectiveVersion}}-osx-aarch64.zip
-* {{#f_release_download_url}}jreleaser-native-{{projectEffectiveVersion}}-osx-x86_64.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-native-{{projectEffectiveVersion}}-osx-x86_64.zip.asc{{/f_release_download_url}})
-  sha256:jreleaser-native-{{projectEffectiveVersion}}-osx-x86_64.zip
-* {{#f_release_download_url}}jreleaser-native-{{projectEffectiveVersion}}-linux-x86_64.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-native-{{projectEffectiveVersion}}-linux-x86_64.zip.asc{{/f_release_download_url}})
-  sha256:jreleaser-native-{{projectEffectiveVersion}}-linux-x86_64.zip
-* {{#f_release_download_url}}jreleaser-native-{{projectEffectiveVersion}}-windows-x86_64.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-native-{{projectEffectiveVersion}}-linux-x86_64.zip.asc{{/f_release_download_url}})
-  sha256:jreleaser-native-{{projectEffectiveVersion}}-windows-x86_64.zip
+| Platform             | Artifact |
+| -------------------- | -------- |
+| MacOS x86_64         | {{#f_release_download_url}}jreleaser-native-{{projectEffectiveVersion}}-osx-aarch64.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-native-{{projectEffectiveVersion}}-osx-x86_64.zip.asc{{/f_release_download_url}})<br/>sha256:jreleaser-native-{{projectEffectiveVersion}}-osx-aarch64.zip |
+| MacOS Arm64          | {{#f_release_download_url}}jreleaser-native-{{projectEffectiveVersion}}-osx-x86_64.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-native-{{projectEffectiveVersion}}-osx-x86_64.zip.asc{{/f_release_download_url}})<br/>sha256:jreleaser-native-{{projectEffectiveVersion}}-osx-x86_64.zip |
+| Linux x86_64 (glibc) | {{#f_release_download_url}}jreleaser-native-{{projectEffectiveVersion}}-linux-x86_64.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-native-{{projectEffectiveVersion}}-linux-x86_64.zip.asc{{/f_release_download_url}})<br/>sha256:jreleaser-native-{{projectEffectiveVersion}}-linux-x86_64.zip |
+| Windows x86_64       | {{#f_release_download_url}}jreleaser-native-{{projectEffectiveVersion}}-windows-x86_64.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-native-{{projectEffectiveVersion}}-linux-x86_64.zip.asc{{/f_release_download_url}})<br/>sha256:jreleaser-native-{{projectEffectiveVersion}}-windows-x86_64.zip |
 
 ## Verify Provenance
 {{#includeSboms}}
