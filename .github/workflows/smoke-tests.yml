@@ -84,6 +84,7 @@ jobs:
           version: ${{ vars.GRAAL_VERSION }}
           java-version: ${{ vars.GRAAL_JAVA_VERSION }}
           github-token: ${{ secrets.GIT_ACCESS_TOKEN }}
+          distribution: graalvm-community
 
       - name: JReleaser
         shell: bash
@@ -262,6 +263,7 @@ jobs:
           version: ${{ vars.GRAAL_VERSION }}
           java-version: ${{ vars.GRAAL_JAVA_VERSION }}
           github-token: ${{ secrets.GIT_ACCESS_TOKEN }}
+          distribution: graalvm-community
 
       - name: JReleaser
         shell: bash
@@ -441,6 +443,7 @@ jobs:
           version: ${{ vars.GRAAL_VERSION }}
           java-version: ${{ vars.GRAAL_JAVA_VERSION }}
           github-token: ${{ secrets.GIT_ACCESS_TOKEN }}
+          distribution: graalvm-community
 
       - name: JReleaser
         shell: bash
@@ -615,6 +618,7 @@ jobs:
           version: ${{ vars.GRAAL_VERSION }}
           java-version: ${{ vars.GRAAL_JAVA_VERSION }}
           github-token: ${{ secrets.GIT_ACCESS_TOKEN }}
+          distribution: graalvm-community
 
       - name: JReleaser
         shell: bash
@@ -803,6 +807,7 @@ jobs:
           version: ${{ vars.GRAAL_VERSION }}
           java-version: ${{ vars.GRAAL_JAVA_VERSION }}
           github-token: ${{ secrets.GIT_ACCESS_TOKEN }}
+          distribution: graalvm-community
 
       - name: JReleaser
         shell: bash
