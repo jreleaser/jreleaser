@@ -2,12 +2,11 @@ JReleaser {{projectVersion}} is now available! This release brings the following
 
 This is mostly a fix release with a handful of enhancements. We'd like to thank our most recent [contributors](https://github.com/jreleaser/jreleaser/blob/main/CONTRIBUTORS.md)
 
-**Deploy:** Nexus2 enables staged deployments, useful for splitting deployments in UPLOAD, CLOSE, and RELEASE stages. {{projectLinkDocumentation}}/reference/deploy/maven/nexus2.html#_staged_deployments
+**Deploy:** Support Sonatype's improved Portal Publisher API {{projectLinkDocumentation}}/reference/deploy/maven/maven-central.html
+Handle Maven 4's build & consumer POM files, transparently.
 
-**Assemble:** Assemblers can generate SWID tags. {{projectLinkDocumentation}}/reference/catalog/swid.html
+**Package:** Support projectIdentifier on GitLab repositories related to packagers.
 
-**Package:** Winget packager now supports defining dependencies.
+**Core:** Log network calls made via Feign with a new magic property named "jreleaser.feign.logger.level".
 
-**Changelog:** Added missing Test category in conventional-commits changelog preset.
-
-[🚀 Changelog](https://github.com/jreleaser/jreleaser/releases/tag/{{tagName}}) [📝 Milestone]({{projectLinkVcsBrowser}}/milestone/26?closed=1)
+[🚀 Changelog](https://github.com/jreleaser/jreleaser/releases/tag/{{tagName}}) [📝 Milestone]({{projectLinkVcsBrowser}}/milestone/31?closed=1)
