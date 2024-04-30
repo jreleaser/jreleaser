@@ -51,6 +51,7 @@ public class BlueskySdk {
     private final boolean dryrun;
     private final String handle;
     private final String password;
+    private final BlueskyRecordFactory factory;
 
     private BlueskySdk(JReleaserContext context,
                        boolean dryrun,
@@ -76,6 +77,8 @@ public class BlueskySdk {
             .decoder(new JacksonDecoder(objectMapper))
             .target(BlueskyAPI.class, host);
 
+        factory = new BlueskyRecordFactory(api);
+
         context.getLogger().debug(RB.$("workflow.dryrun"), dryrun);
     }
 
@@ -85,13 +88,13 @@ public class BlueskySdk {
             String identifier = session.getDid();
 
             // To skeet a thread, the first and previous statuses must be added to a new status.
-            CreateTextRecordRequest firstStatusRequest = CreateTextRecordRequest.of(identifier, statuses.get(0));
+            CreateTextRecordRequest firstStatusRequest = factory.textRecord(identifier, statuses.get(0));
             CreateRecordResponse firstStatus = api.createRecord(firstStatusRequest, session.getAccessJwt());
             CreateRecordResponse previousStatus = firstStatus;
 
             for (int i = 1; i < statuses.size(); i++) {
                 String status = statuses.get(i);
-                CreateTextRecordRequest nextStatusRequest = CreateTextRecordRequest.of(identifier, status, firstStatus, previousStatus);
+                CreateTextRecordRequest nextStatusRequest = factory.textRecord(identifier, status, firstStatus, previousStatus);
                 previousStatus = api.createRecord(nextStatusRequest, session.getAccessJwt());
             }
         });

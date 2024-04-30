@@ -37,4 +37,8 @@ public interface BlueskyAPI {
     @RequestLine("POST /xrpc/com.atproto.repo.createRecord")
     @Headers({"Content-Type: application/json", "Authorization: Bearer {accessToken}"})
     CreateRecordResponse createRecord(CreateTextRecordRequest request, @Param("accessToken") String accessToken);
+
+    @RequestLine("GET /xrpc/com.atproto.identity.resolveHandle?handle={handle}")
+    @Headers("Accept: application/json")
+    ResolveHandleResponse resolveHandle(@Param("handle") String handle);
 }

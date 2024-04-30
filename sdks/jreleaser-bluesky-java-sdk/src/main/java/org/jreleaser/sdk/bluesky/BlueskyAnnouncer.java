@@ -17,8 +17,6 @@
  */
 package org.jreleaser.sdk.bluesky;
 
-import org.commonmark.parser.Parser;
-import org.commonmark.renderer.text.TextContentRenderer;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.spi.announce.AnnounceException;
@@ -34,8 +32,6 @@ import static org.jreleaser.model.Constants.KEY_PREVIOUS_TAG_NAME;
 import static org.jreleaser.model.Constants.KEY_TAG_NAME;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
-import static org.jreleaser.util.MarkdownUtils.createMarkdownParser;
-import static org.jreleaser.util.MarkdownUtils.createTextContentRenderer;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -91,12 +87,8 @@ public class BlueskyAnnouncer implements Announcer<org.jreleaser.model.api.annou
             statuses.add(bluesky.getStatus());
         }
 
-        Parser markdownParser = createMarkdownParser();
-        TextContentRenderer markdownRenderer = createTextContentRenderer();
-
         for (int i = 0; i < statuses.size(); i++) {
             String status = getResolvedMessage(context, statuses.get(i));
-            status = markdownRenderer.render(markdownParser.parse(status));
             context.getLogger().info(RB.$("bluesky.skeet"), status);
             context.getLogger().debug(RB.$("bluesky.skeet.size"), status.length());
             statuses.set(i, status);

@@ -55,6 +55,28 @@ class BlueskySdkTest {
     }
 
     @Test
+    void testUpdateStatusWithFeatures() throws BlueskyException {
+        BlueskySdk sdk = baseBuilder().build();
+
+        String testString = "🚀 test: https://github.com/test/CONTRIBUTORS.md #contribute. @jreleaser.bsky.social";
+
+        sdk.skeet(Collections.singletonList(testString));
+
+        api.verify(postRequestedFor(urlEqualTo(RECORD_ENDPOINT))
+            .withRequestBody(matchingJsonPath("$.record.text", equalTo(testString))
+                .and(matchingJsonPath("$.record.facets[0].features[0].uri", equalTo("https://github.com/test/CONTRIBUTORS.md")))
+                .and(matchingJsonPath("$.record.facets[0].index.byteStart", equalTo("11")))
+                .and(matchingJsonPath("$.record.facets[0].index.byteEnd", equalTo("50")))
+                .and(matchingJsonPath("$.record.facets[1].features[0].tag", equalTo("contribute")))
+                .and(matchingJsonPath("$.record.facets[1].index.byteStart", equalTo("51")))
+                .and(matchingJsonPath("$.record.facets[1].index.byteEnd", equalTo("62")))
+                .and(matchingJsonPath("$.record.facets[2].features[0].did", equalTo("TEST_DID")))
+                .and(matchingJsonPath("$.record.facets[2].index.byteStart", equalTo("63")))
+                .and(matchingJsonPath("$.record.facets[2].index.byteEnd", equalTo("86")))
+            ));
+    }
+
+    @Test
     void givenDryRun_whenExecutingSkeet_shouldNotMatchAnyEndpoint() throws BlueskyException {
         BlueskySdk sdk = baseBuilder()
             .dryrun(true)

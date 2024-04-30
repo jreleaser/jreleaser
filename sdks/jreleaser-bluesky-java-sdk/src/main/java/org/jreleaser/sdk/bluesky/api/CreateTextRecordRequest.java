@@ -20,9 +20,8 @@ package org.jreleaser.sdk.bluesky.api;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.time.Instant;
+import java.util.List;
 
-import static org.jreleaser.util.StringUtils.requireNonBlank;
 
 /**
  * @author Simon Verhoeven
@@ -31,36 +30,10 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CreateTextRecordRequest {
-    private static final String BLUESKY_POST_COLLECTION = "app.bsky.feed.post";
-
-    public static CreateTextRecordRequest of(String repo, String text) {
-        CreateTextRecordRequest request = new CreateTextRecordRequest();
-        request.repo = requireNonBlank(repo, "'repo' must not be blank").trim();
-        request.collection = BLUESKY_POST_COLLECTION;
-
-        TextRecord textRecord = new TextRecord();
-        textRecord.text = requireNonBlank(text, "'text' must not be blank").trim();
-        textRecord.createdAt = Instant.now().toString();
-        request.record = textRecord;
-
-        return request;
-    }
-
-    public static CreateTextRecordRequest of(String repo, String text, CreateRecordResponse root, CreateRecordResponse parent) {
-        CreateTextRecordRequest request = CreateTextRecordRequest.of(repo, text);
-
-        ReplyReference reply = new ReplyReference();
-        reply.root = root;
-        reply.parent = parent;
-
-        request.record.setReply(reply);
-
-        return request;
-    }
 
     private String repo;
 
-    private String collection;
+    private String collection = "app.bsky.feed.post";
 
     /**
      * The record to create.
@@ -102,6 +75,8 @@ public class CreateTextRecordRequest {
         @JsonProperty("$type")
         private String type;
 
+        private List<Facet> facets;
+
         public String getText() {
             return text;
         }
@@ -132,6 +107,14 @@ public class CreateTextRecordRequest {
 
         public void setType(String type) {
             this.type = type;
+        }
+
+        public List<Facet> getFacets() {
+            return facets;
+        }
+
+        public void setFacets(List<Facet> facets) {
+            this.facets = facets;
         }
     }
 
