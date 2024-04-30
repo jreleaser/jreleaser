@@ -1,0 +1,17 @@
+{
+    "id": "6a7d059f-0afe-4111-92f1-916eb38c89c3",
+    "request": {
+        "urlPath": "/xrpc/com.atproto.identity.resolveHandle",
+        "method": "GET"
+    },
+    "response": {
+        "status": 200,
+        "body": "{\"did\":\"TEST_DID\"}",
+        "headers": {
+            "Content-Type": "application/json"
+        }
+    },
+    "uuid": "6a7d059f-0afe-4111-92f1-916eb38c89c4",
+    "persistent": true,
+    "insertionIndex": 0
+}
