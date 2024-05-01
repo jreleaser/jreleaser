@@ -71,6 +71,7 @@ import static org.jreleaser.sdk.git.ChangelogProvider.extractIssues;
 import static org.jreleaser.sdk.git.ChangelogProvider.storeIssues;
 import static org.jreleaser.sdk.git.GitSdk.extractTagName;
 import static org.jreleaser.util.ComparatorUtils.lessThan;
+import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.isTrue;
 import static org.jreleaser.util.StringUtils.normalizeRegexPattern;
@@ -679,10 +680,10 @@ public class ChangelogGenerator {
         protected Commit(RevCommit rc) {
             fullHash = rc.getId().name();
             shortHash = rc.getId().abbreviate(7).name();
-            body = rc.getFullMessage();
+            body = rc.getFullMessage().trim();
             String[] lines = split(body);
             if (lines.length > 0) {
-                title = lines[0];
+                title = lines[0].trim();
             } else {
                 title = "";
             }
@@ -759,7 +760,7 @@ public class ChangelogGenerator {
         private ConventionalCommit(RevCommit rc) {
             super(rc);
             List<String> lines = new ArrayList<>(Arrays.asList(split(body)));
-            Matcher matcherFirstLine = FIRST_LINE_PATTERN.matcher(lines.get(0));
+            Matcher matcherFirstLine = FIRST_LINE_PATTERN.matcher(lines.get(0).trim());
             if (matcherFirstLine.matches()) {
                 lines.remove(0); // consumed first line
                 if (null != matcherFirstLine.group("bang") && !matcherFirstLine.group("bang").isEmpty()) {
@@ -774,13 +775,13 @@ public class ChangelogGenerator {
             }
 
             // drop any empty lines at the beginning
-            while (!lines.isEmpty() && "".equals(lines.get(0))) {
+            while (!lines.isEmpty() && isBlank(lines.get(0))) {
                 lines.remove(0);
             }
 
             // try to match trailers from the end
             while (!lines.isEmpty()) {
-                Matcher matcherTrailer = TRAILER_PATTERN.matcher(lines.get(lines.size() - 1));
+                Matcher matcherTrailer = TRAILER_PATTERN.matcher(lines.get(lines.size() - 1).trim());
                 if (matcherTrailer.matches()) {
                     String token = matcherTrailer.group("token");
                     if ("BREAKING-CHANGE".equals(token)) break;
@@ -792,7 +793,7 @@ public class ChangelogGenerator {
             }
 
             // drop any empty lines at the end
-            while (!lines.isEmpty() && "".equals(lines.get(lines.size() - 1))) {
+            while (!lines.isEmpty() && isBlank(lines.get(lines.size() - 1))) {
                 lines.remove(lines.size() - 1);
             }
 
@@ -802,7 +803,7 @@ public class ChangelogGenerator {
                 ccBreakingChangeContent = matcherBC.group("content");
                 // consume the breaking change
                 OptionalInt match = IntStream.range(0, lines.size())
-                    .filter(i -> BREAKING_CHANGE_PATTERN.matcher(lines.get(i)).find())
+                    .filter(i -> BREAKING_CHANGE_PATTERN.matcher(lines.get(i).trim()).find())
                     .findFirst();
                 if (match.isPresent() && lines.size() > match.getAsInt()) {
                     lines.subList(match.getAsInt(), lines.size()).clear();
