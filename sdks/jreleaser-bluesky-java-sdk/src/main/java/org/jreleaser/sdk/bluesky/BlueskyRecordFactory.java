@@ -47,19 +47,19 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @author Tom Cools
  * @since 1.12.0
  */
-class BlueskyRecordFactory {
+public class BlueskyRecordFactory {
 
     private static final Pattern URL_PATTERN = Pattern.compile(
         "(?:^|[\\W])((ht|f)tp(s?):\\/\\/|www\\.)"
             + "(([\\w\\-]+\\.){1,}?([\\w\\-.~]+\\/?)*"
             + "[\\p{Alnum}.,%_=?&#\\-+()\\[\\]\\*$~@!:/{};']*)",
         Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
-    private static final Pattern TAG_PATTERN = Pattern.compile("(#[a-zA-z]{2,})");
+    private static final Pattern TAG_PATTERN = Pattern.compile("(#[a-zA-Z]{2,})");
     private static final Pattern MENTION_PATTERN = Pattern.compile("(^|\\s|\\()(@)([a-zA-Z0-9.-]+)(\\b)");
 
-    private BlueskyAPI api;
+    private final BlueskyAPI api;
 
-    BlueskyRecordFactory(BlueskyAPI api) {
+    public BlueskyRecordFactory(BlueskyAPI api) {
         this.api = api;
     }
 
