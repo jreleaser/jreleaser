@@ -60,7 +60,6 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -123,34 +122,34 @@ public class Nexus2 {
             .target(NexusAPI.class, apiHost);
     }
 
-    public String findStagingProfileId(String groupId) throws Nexus2Exception {
-        return wrapNoDryrun(() -> {
-            Data<List<StagingProfile>> data = api.getStagingProfiles();
-            if (null == data || null == data.getData() || data.getData().isEmpty()) {
-                throw fail(RB.$("ERROR_nexus_find_staging_profile", groupId));
+    public List<StagingProfileRepository> findStagingProfileRepositories(String profileId, String groupId) throws Nexus2Exception {
+        return wrap(() -> {
+            Data<List<StagingProfileRepository>> data = api.getStagingProfileRepositories(profileId);
+            if (null == data || null == data.getData()) {
+                throw fail(RB.$("ERROR_nexus_find_staging_repository", groupId));
             }
 
             return data.getData().stream()
-                .filter(profile -> groupId.startsWith(profile.getName()) &&
-                    (groupId.length() == profile.getName().length() ||
-                        groupId.charAt(profile.getName().length()) == '.'))
-                .max(Comparator.comparingInt(profile -> profile.getName().length()))
-                .map(StagingProfile::getId)
-                .orElseThrow(() -> fail(RB.$("ERROR_nexus_find_staging_profile", groupId)));
+                .filter(r -> r.getProfileName().equals(groupId))
+                .sorted(comparing(StagingProfileRepository::getUpdated).reversed())
+                .collect(toList());
         });
     }
 
-    public List<StagingProfileRepository> findStagingProfileRepositories(String profileId, String groupId) throws Nexus2Exception {
+    public List<StagingProfile> findStagingProfiles(String groupId) throws Nexus2Exception {
         return wrap(() -> {
-            Data<List<StagingProfileRepository>> data = api.getStagingProfileRepositories();
+            Map<String, Object> params = new LinkedHashMap<>();
+            params.put("t", "maven2");
+            params.put("g", groupId);
+            params.put("a", "whatever");
+            params.put("v", "whatever");
+            Data<List<StagingProfile>> data = api.evalStagingProfile(params);
             if (null == data || null == data.getData()) {
-                throw fail(RB.$("ERROR_nexus_create_staging_repository", groupId));
+                throw fail(RB.$("ERROR_nexus_find_staging_repository", groupId));
             }
 
             return data.getData().stream()
-                .filter(r -> r.getProfileId().equals(profileId))
-                .filter(r -> r.getProfileName().equals(groupId))
-                .sorted(comparing(StagingProfileRepository::getUpdated).reversed())
+                .sorted(comparing(StagingProfile::getName).reversed())
                 .collect(toList());
         });
     }

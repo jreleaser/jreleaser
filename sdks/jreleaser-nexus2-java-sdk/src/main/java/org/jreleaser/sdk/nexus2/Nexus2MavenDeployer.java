@@ -25,10 +25,12 @@ import org.jreleaser.model.spi.deploy.DeployException;
 import org.jreleaser.model.spi.deploy.maven.Deployable;
 import org.jreleaser.sdk.commons.AbstractMavenDeployer;
 import org.jreleaser.sdk.nexus2.api.NexusAPIException;
+import org.jreleaser.sdk.nexus2.api.StagingProfile;
 import org.jreleaser.sdk.nexus2.api.StagingProfileRepository;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.jreleaser.util.StringUtils.capitalize;
@@ -180,9 +182,16 @@ public class Nexus2MavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
     private String findStagingProfileId(Nexus2 nexus, String groupId) throws DeployException {
         try {
             context.getLogger().info(RB.$("nexus.lookup.staging.profile", groupId));
-            String stagingProfileId = nexus.findStagingProfileId(groupId);
-            context.getAdditionalProperties().put(prefix("stagingProfileId"), stagingProfileId);
-            return stagingProfileId;
+            Optional<StagingProfile> stagingProfile = nexus.findStagingProfiles(groupId).stream().findFirst();
+            if (stagingProfile.isPresent()) {
+                String stagingProfileId = stagingProfile.get().getId();
+                context.getAdditionalProperties().put(prefix("stagingProfileId"), stagingProfileId);
+                return stagingProfileId;
+            } else if (context.isDryrun()) {
+                context.getLogger().warn(RB.$("ERROR_nexus_find_staging_profile", groupId));
+            } else {
+                throw new DeployException(RB.$("ERROR_nexus_find_staging_profile", groupId));
+            }
         } catch (Nexus2Exception e) {
             if (e.getCause() instanceof NexusAPIException) {
                 NexusAPIException ne = (NexusAPIException) e.getCause();

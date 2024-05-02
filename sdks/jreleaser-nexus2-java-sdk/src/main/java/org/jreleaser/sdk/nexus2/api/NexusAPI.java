@@ -19,22 +19,24 @@ package org.jreleaser.sdk.nexus2.api;
 
 import feign.Headers;
 import feign.Param;
+import feign.QueryMap;
 import feign.RequestLine;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Andres Almiray
  * @since 1.3.0
  */
 public interface NexusAPI {
-    @RequestLine("GET /staging/profiles")
+    @RequestLine("GET /staging/profile_repositories/{profileId}")
     @Headers("Content-Type: application/json")
-    Data<List<StagingProfile>> getStagingProfiles();
+    Data<List<StagingProfileRepository>> getStagingProfileRepositories(@Param("profileId") String profileId);
 
-    @RequestLine("GET /staging/profile_repositories")
+    @RequestLine("GET /staging/profile_evaluate")
     @Headers("Content-Type: application/json")
-    Data<List<StagingProfileRepository>> getStagingProfileRepositories();
+    Data<List<StagingProfile>> evalStagingProfile(@QueryMap Map<String, Object> params);
 
     @RequestLine("GET /staging/repository/{repositoryId}")
     @Headers("Content-Type: application/json")
