@@ -117,7 +117,7 @@ public class Nexus2MavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
                     stagingProfileId = findStagingProfileId(nexus, groupId);
                 }
 
-                if (!context.isDryrun()) {
+                if (isBlank(stagingRepositoryId) && !context.isDryrun()) {
                     stagingRepositoryId = createStagingRepository(nexus, groupId, stagingProfileId);
                 }
             } else {

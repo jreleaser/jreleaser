@@ -36,4 +36,16 @@ interface Nexus2MavenDeployer extends MavenDeployer {
     Property<Integer> getTransitionDelay()
 
     Property<Integer> getTransitionMaxRetries()
+
+    Property<String> getStagingProfileId()
+
+    Property<String> getStagingRepositoryId()
+
+    Property<org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.Stage> getStartStage()
+
+    Property<org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.Stage> getEndStage()
+
+    void setStartStage(String stage)
+
+    void setEndStage(String stage)
 }

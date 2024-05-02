@@ -23,16 +23,10 @@ import org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.Stage;
 import org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.StageOperation;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.deploy.maven.Nexus2MavenDeployer;
-import org.jreleaser.util.Env;
 import org.jreleaser.util.Errors;
 
 import java.util.Map;
-import java.util.Properties;
 
-import static org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.END_STAGE;
-import static org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.STAGING_PROFILE_ID;
-import static org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.STAGING_REPOSITORY_ID;
-import static org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.START_STAGE;
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
 import static org.jreleaser.model.internal.validation.deploy.maven.MavenDeployersValidator.validateMavenDeployer;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -85,11 +79,29 @@ public final class Nexus2MavenDeployerValidator {
                     errors));
         }
 
-        Properties vars = context.getModel().getEnvironment().getVars();
-        mavenDeployer.setStagingProfileId(Env.resolve(mavenDeployer.keysFor(STAGING_PROFILE_ID), vars));
-        mavenDeployer.setStagingRepositoryId(Env.resolve(mavenDeployer.keysFor(STAGING_REPOSITORY_ID), vars));
-        mavenDeployer.setStartStage(Stage.of(Env.resolve(mavenDeployer.keysFor(START_STAGE), vars)));
-        mavenDeployer.setEndStage(Stage.of(Env.resolve(mavenDeployer.keysFor(END_STAGE), vars)));
+        mavenDeployer.setStagingProfileId(
+            checkProperty(context,
+                mavenDeployer.keysFor("staging.profile.id"),
+                "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".stagingProfileId",
+                mavenDeployer.getStagingProfileId(), ""));
+
+        mavenDeployer.setStagingRepositoryId(
+            checkProperty(context,
+                mavenDeployer.keysFor("staging.repository.id"),
+                "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".stagingRepositoryId",
+                mavenDeployer.getStagingRepositoryId(), ""));
+
+        mavenDeployer.setStartStage(
+            Stage.of(checkProperty(context,
+                mavenDeployer.keysFor("start.stage"),
+                "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".startStage",
+                mavenDeployer.getStartStage(), null)));
+
+        mavenDeployer.setEndStage(
+            Stage.of(checkProperty(context,
+                mavenDeployer.keysFor("end.stage"),
+                "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".endStage",
+                mavenDeployer.getEndStage(), null)));
 
         try {
             StageOperation.of(mavenDeployer.getStartStage(), mavenDeployer.getEndStage());

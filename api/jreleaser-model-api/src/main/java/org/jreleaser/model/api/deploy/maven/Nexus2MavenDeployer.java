@@ -29,10 +29,6 @@ import static org.jreleaser.util.StringUtils.isBlank;
  */
 public interface Nexus2MavenDeployer extends MavenDeployer {
     String TYPE = "nexus2";
-    String START_STAGE = "start.stage";
-    String END_STAGE = "end.stage";
-    String STAGING_PROFILE_ID = "staging.profile.id";
-    String STAGING_REPOSITORY_ID = "staging.repository.id";
 
     String getSnapshotUrl();
 
@@ -43,6 +39,14 @@ public interface Nexus2MavenDeployer extends MavenDeployer {
     Integer getTransitionDelay();
 
     Integer getTransitionMaxRetries();
+
+    String getStagingProfileId();
+
+    String getStagingRepositoryId();
+
+    Stage getStartStage();
+
+    Stage getEndStage();
 
     enum Stage {
         UPLOAD,

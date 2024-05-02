@@ -120,7 +120,9 @@ abstract class AbstractMavenDeployer implements MavenDeployer {
 
     @Override
     void setAuthorization(String authorization) {
-        this.authorization.set(Http.Authorization.of(authorization))
+        if (isNotBlank(authorization)) {
+            this.authorization.set(Http.Authorization.of(authorization))
+        }
     }
 
     @Override

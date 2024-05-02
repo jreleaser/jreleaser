@@ -26,6 +26,8 @@ import org.jreleaser.gradle.plugin.dsl.deploy.maven.Nexus2MavenDeployer
 
 import javax.inject.Inject
 
+import static org.jreleaser.util.StringUtils.isNotBlank
+
 /**
  *
  * @author Andres Almiray
@@ -38,6 +40,10 @@ class Nexus2MavenDeployerImpl extends AbstractMavenDeployer implements Nexus2Mav
     final Property<Boolean> releaseRepository
     final Property<Integer> transitionDelay
     final Property<Integer> transitionMaxRetries
+    final Property<String> stagingProfileId
+    final Property<String> stagingRepositoryId
+    final Property<org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.Stage> startStage
+    final Property<org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.Stage> endStage
 
     @Inject
     Nexus2MavenDeployerImpl(ObjectFactory objects) {
@@ -47,6 +53,24 @@ class Nexus2MavenDeployerImpl extends AbstractMavenDeployer implements Nexus2Mav
         releaseRepository = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         transitionDelay = objects.property(Integer).convention(Providers.<Integer> notDefined())
         transitionMaxRetries = objects.property(Integer).convention(Providers.<Integer> notDefined())
+        stagingProfileId = objects.property(String).convention(Providers.<String> notDefined())
+        stagingRepositoryId = objects.property(String).convention(Providers.<String> notDefined())
+        startStage = objects.property(org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.Stage).convention(Providers.<org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.Stage> notDefined())
+        endStage = objects.property(org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.Stage).convention(Providers.<org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.Stage> notDefined())
+    }
+
+    @Override
+    void setStartStage(String stage) {
+        if (isNotBlank(stage)) {
+            startStage.set(org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.Stage.of(stage.trim()))
+        }
+    }
+
+    @Override
+    void setEndStage(String stage) {
+        if (isNotBlank(stage)) {
+            endStage.set(org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.Stage.of(stage.trim()))
+        }
     }
 
     @Internal
@@ -56,7 +80,11 @@ class Nexus2MavenDeployerImpl extends AbstractMavenDeployer implements Nexus2Mav
             closeRepository.present ||
             releaseRepository.present ||
             transitionDelay.present ||
-            transitionMaxRetries.present
+            transitionMaxRetries.present ||
+            stagingProfileId.present ||
+            stagingRepositoryId.present ||
+            startStage.present ||
+            endStage.present
     }
 
     org.jreleaser.model.internal.deploy.maven.Nexus2MavenDeployer toModel() {
@@ -67,6 +95,10 @@ class Nexus2MavenDeployerImpl extends AbstractMavenDeployer implements Nexus2Mav
         if (releaseRepository.present) deployer.releaseRepository = releaseRepository.get()
         if (transitionDelay.present) deployer.transitionDelay = transitionDelay.get()
         if (transitionMaxRetries.present) deployer.transitionMaxRetries = transitionMaxRetries.get()
+        if (stagingProfileId.present) deployer.stagingProfileId = stagingProfileId.get()
+        if (stagingRepositoryId.present) deployer.stagingRepositoryId = stagingRepositoryId.get()
+        if (startStage.present) deployer.startStage = startStage.get()
+        if (endStage.present) deployer.endStage = endStage.get()
         deployer
     }
 }
