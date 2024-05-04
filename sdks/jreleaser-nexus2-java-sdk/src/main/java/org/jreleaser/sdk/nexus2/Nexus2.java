@@ -70,6 +70,7 @@ import java.util.concurrent.Callable;
 
 import static java.lang.System.lineSeparator;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
@@ -133,7 +134,7 @@ public class Nexus2 {
                 .filter(r -> r.getProfileName().equals(groupId))
                 .sorted(comparing(StagingProfileRepository::getUpdated).reversed())
                 .collect(toList());
-        });
+        }, emptyList());
     }
 
     public List<StagingProfile> findStagingProfiles(String groupId) throws Nexus2Exception {
@@ -151,7 +152,7 @@ public class Nexus2 {
             return data.getData().stream()
                 .sorted(comparing(StagingProfile::getName).reversed())
                 .collect(toList());
-        });
+        }, emptyList());
     }
 
     public String createStagingRepository(String profileId, String groupId) throws Nexus2Exception {
@@ -165,7 +166,7 @@ public class Nexus2 {
             }
 
             return data.getData().getStagedRepositoryId();
-        });
+        }, null);
     }
 
     public void dropStagingRepository(String profileId, String stagingRepositoryId, String groupId) throws Nexus2Exception {
@@ -316,12 +317,12 @@ public class Nexus2 {
         }
     }
 
-    private <T> T wrap(Callable<T> callable) throws Nexus2Exception {
+    private <T> T wrap(Callable<T> callable, T defaultValue) throws Nexus2Exception {
         try {
             if (!dryrun) {
                 return callable.call();
             }
-            return null;
+            return defaultValue;
         } catch (Nexus2Exception e) {
             context.getLogger().trace(e);
             throw e;
