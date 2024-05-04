@@ -158,6 +158,8 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
 
         context.getLogger().info(RB.$("deployers.maven.prerequesites"));
 
+        Map<String, Deployable> buildPoms = new LinkedHashMap<>();
+
         // 1st check jar, sources, javadoc if applicable
         for (Deployable deployable : deployablesMap.values()) {
             if (!deployable.getFilename().endsWith(EXT_POM)) {
@@ -172,6 +174,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
                 Deployable baseDeployable = deployable.deriveByFilename(base.substring(0, base.length() - BUILD_TAG.length()) + EXT_POM);
                 if (deployablesMap.containsKey(baseDeployable.getFullDeployPath())) {
                     buildPom = true;
+                    buildPoms.put(deployable.getFullDeployPath(), deployable);
                 }
             }
 
@@ -220,7 +223,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
 
         // 2nd check pom
         for (Deployable deployable : deployablesMap.values()) {
-            if (!deployable.getFilename().endsWith(EXT_POM)) {
+            if (!deployable.getFilename().endsWith(EXT_POM) || buildPoms.containsKey(deployable.getFullDeployPath())) {
                 continue;
             }
 
