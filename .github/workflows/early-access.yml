@@ -137,12 +137,12 @@ jobs:
     secrets:
       gh-access-token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
-  update-bach-info:
-    name: Update Bach Info
-    needs: [precheck, release]
-    uses: jreleaser/jreleaser/.github/workflows/step-update-bach-info.yml@main
-    with:
-      project-version: ${{ needs.precheck.outputs.version }}
-      project-tag: ${{ needs.release.outputs.tagname }}
-    secrets:
-      gh-access-token: ${{ secrets.GIT_ACCESS_TOKEN }}
+#  update-bach-info:
+#    name: Update Bach Info
+#    needs: [precheck, release]
+#    uses: jreleaser/jreleaser/.github/workflows/step-update-bach-info.yml@main
+#    with:
+#      project-version: ${{ needs.precheck.outputs.version }}
+#      project-tag: ${{ needs.release.outputs.tagname }}
+#    secrets:
+#      gh-access-token: ${{ secrets.GIT_ACCESS_TOKEN }}
