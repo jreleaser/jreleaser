@@ -256,11 +256,6 @@ public final class MavenCentralMavenDeployer extends AbstractMavenDeployer<Maven
     }
 
     @Override
-    public boolean isSnapshotSupported() {
-        return false;
-    }
-
-    @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("stage", stage);
         props.put("namespace", namespace);

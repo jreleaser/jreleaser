@@ -57,7 +57,7 @@ abstract class AbstractMavenDeployer implements MavenDeployer {
     final Property<String> url
     final Property<String> username
     final Property<String> password
-    final Property<Boolean> mayDeploySnapshots
+    final Property<Boolean> snapshotSupported
     final Property<Http.Authorization> authorization
     final ListProperty<String> stagingRepositories
     final MapProperty<String, Object> extraProperties
@@ -81,7 +81,7 @@ abstract class AbstractMavenDeployer implements MavenDeployer {
         authorization = objects.property(Http.Authorization).convention(Providers.<Http.Authorization> notDefined())
         stagingRepositories = objects.listProperty(String).convention(Providers.<List<String>> notDefined())
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
-        mayDeploySnapshots = objects.property(Boolean).convention(false)
+        snapshotSupported = objects.property(Boolean).convention(false)
         artifactOverrides = objects.domainObjectContainer(ArtifactOverrideImpl, new NamedDomainObjectFactory<ArtifactOverrideImpl>() {
             @Override
             ArtifactOverrideImpl create(String name) {
@@ -156,6 +156,7 @@ abstract class AbstractMavenDeployer implements MavenDeployer {
         if (sourceJar.present) deployer.sourceJar = sourceJar.get()
         if (javadocJar.present) deployer.javadocJar = javadocJar.get()
         if (verifyPom.present) deployer.verifyPom = verifyPom.get()
+        if (snapshotSupported.present) deployer.snapshotSupported = snapshotSupported.get()
         if (applyMavenCentralRules.present) deployer.applyMavenCentralRules = applyMavenCentralRules.get()
         if (url.present) deployer.url = url.get()
         if (username.present) deployer.username = username.get()

@@ -59,14 +59,19 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
     protected Boolean javadocJar;
     protected Boolean verifyPom;
     protected Boolean applyMavenCentralRules;
-    protected Boolean mayDeploySnapshots;
+    protected Boolean snapshotSupported;
     private String url;
     private String username;
     private String password;
     private Http.Authorization authorization;
 
     protected AbstractMavenDeployer(String type) {
+        this(type, false);
+    }
+
+    protected AbstractMavenDeployer(String type, Boolean snapshotSupported) {
         this.type = type;
+        this.snapshotSupported = snapshotSupported;
     }
 
     @Override
@@ -85,7 +90,7 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
         this.username = merge(this.username, source.getUsername());
         this.password = merge(this.password, source.getPassword());
         this.authorization = merge(this.authorization, source.getAuthorization());
-        this.mayDeploySnapshots = merge(this.mayDeploySnapshots, source.getMayDeploySnapshots());
+        this.snapshotSupported = merge(this.snapshotSupported, source.isSnapshotSupported());
         setExtraProperties(merge(this.extraProperties, source.getExtraProperties()));
         setStagingRepositories(merge(this.stagingRepositories, source.getStagingRepositories()));
         setArtifactOverrides(merge(this.artifactOverrides, source.getArtifactOverrides()));
@@ -94,11 +99,6 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
     @Override
     public String prefix() {
         return getType();
-    }
-
-    @Override
-    public boolean isSnapshotSupported() {
-        return false;
     }
 
     @Override
@@ -317,13 +317,13 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
     }
 
     @Override
-    public boolean getMayDeploySnapshots() {
-        return mayDeploySnapshots;
+    public boolean isSnapshotSupported() {
+        return snapshotSupported;
     }
 
     @Override
-    public void setMayDeploySnapshots(Boolean mayDeploySnapshots) {
-        this.mayDeploySnapshots = mayDeploySnapshots;
+    public void setSnapshotSupported(Boolean snapshotSupported) {
+        this.snapshotSupported = snapshotSupported;
     }
 
     @Override
@@ -345,6 +345,7 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
         props.put("javadocJar", isJavadocJar());
         props.put("verifyPom", isVerifyPom());
         props.put("applyMavenCentralRules", isApplyMavenCentralRules());
+        props.put("snapshotSupported", isSnapshotSupported());
         props.put("stagingRepositories", stagingRepositories);
         Map<String, Map<String, Object>> mappedArtifacts = new LinkedHashMap<>();
         int i = 0;
