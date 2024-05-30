@@ -57,6 +57,7 @@ abstract class AbstractMavenDeployer implements MavenDeployer {
     final Property<String> url
     final Property<String> username
     final Property<String> password
+    final Property<Boolean> mayDeploySnapshots
     final Property<Http.Authorization> authorization
     final ListProperty<String> stagingRepositories
     final MapProperty<String, Object> extraProperties
@@ -80,7 +81,7 @@ abstract class AbstractMavenDeployer implements MavenDeployer {
         authorization = objects.property(Http.Authorization).convention(Providers.<Http.Authorization> notDefined())
         stagingRepositories = objects.listProperty(String).convention(Providers.<List<String>> notDefined())
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
-
+        mayDeploySnapshots = objects.property(Boolean).convention(false)
         artifactOverrides = objects.domainObjectContainer(ArtifactOverrideImpl, new NamedDomainObjectFactory<ArtifactOverrideImpl>() {
             @Override
             ArtifactOverrideImpl create(String name) {

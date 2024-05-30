@@ -61,6 +61,8 @@ interface MavenDeployer extends Deployer {
 
     ListProperty<String> getStagingRepositories()
 
+    Property<Boolean> getMayDeploySnapshots()
+
     void artifactOverride(Action<? super ArtifactOverride> action)
 
     void artifactOverride(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArtifactOverride) Closure<Void> action)

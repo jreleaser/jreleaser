@@ -59,6 +59,7 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
     protected Boolean javadocJar;
     protected Boolean verifyPom;
     protected Boolean applyMavenCentralRules;
+    protected Boolean mayDeploySnapshots;
     private String url;
     private String username;
     private String password;
@@ -84,6 +85,7 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
         this.username = merge(this.username, source.getUsername());
         this.password = merge(this.password, source.getPassword());
         this.authorization = merge(this.authorization, source.getAuthorization());
+        this.mayDeploySnapshots = merge(this.mayDeploySnapshots, source.getMayDeploySnapshots());
         setExtraProperties(merge(this.extraProperties, source.getExtraProperties()));
         setStagingRepositories(merge(this.stagingRepositories, source.getStagingRepositories()));
         setArtifactOverrides(merge(this.artifactOverrides, source.getArtifactOverrides()));
@@ -312,6 +314,16 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
     @Override
     public void setAuthorization(String authorization) {
         this.authorization = Http.Authorization.of(authorization);
+    }
+
+    @Override
+    public boolean getMayDeploySnapshots() {
+        return mayDeploySnapshots;
+    }
+
+    @Override
+    public void setMayDeploySnapshots(Boolean mayDeploySnapshots) {
+        this.mayDeploySnapshots = mayDeploySnapshots;
     }
 
     @Override
