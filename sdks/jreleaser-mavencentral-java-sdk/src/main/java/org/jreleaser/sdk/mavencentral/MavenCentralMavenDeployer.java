@@ -173,7 +173,10 @@ public class MavenCentralMavenDeployer extends AbstractMavenDeployer<org.jreleas
     private Path createDeploymentBundle() throws DeployException {
         Path bundleZip = context.getDeployDirectory().resolve(deployer.getType())
             .resolve(deployer.getName())
-            .resolve(deployer.getNamespace() + "-" + context.getModel().getProject().getResolvedVersion() + "-bundle.zip");
+            .resolve(deployer.getNamespace() +
+                "-" + context.getModel().getProject().getResolvedName() +
+                "-" + context.getModel().getProject().getResolvedVersion() +
+                "-bundle.zip");
 
         try {
             Path bundleDir = Files.createTempDirectory("maven-central");
