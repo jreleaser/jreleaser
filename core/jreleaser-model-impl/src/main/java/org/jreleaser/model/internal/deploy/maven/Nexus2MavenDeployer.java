@@ -217,7 +217,7 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
     };
 
     public Nexus2MavenDeployer() {
-        super(org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.TYPE);
+        super(org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.TYPE, true);
     }
 
     @Override
@@ -313,11 +313,6 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
 
     public void setEndStage(org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.Stage endStage) {
         this.endStage = endStage;
-    }
-
-    @Override
-    public boolean isSnapshotSupported() {
-        return true;
     }
 
     public String getResolvedSnapshotUrl(TemplateContext props) {

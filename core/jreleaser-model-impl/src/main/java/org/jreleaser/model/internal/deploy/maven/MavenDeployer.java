@@ -107,6 +107,8 @@ public interface MavenDeployer<A extends org.jreleaser.model.api.deploy.maven.Ma
 
     List<String> keysFor(String property);
 
+    void setSnapshotSupported(Boolean snapshotSupported);
+
     final class ArtifactOverride extends AbstractModelObject<ArtifactOverride> implements Domain {
         private static final long serialVersionUID = 2308197517238220999L;
 
