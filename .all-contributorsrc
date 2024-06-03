@@ -714,6 +714,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "lagergren",
+      "name": "Marcus Lagergren",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1062473?v=4",
+      "profile": "https://twitter.com/lagergren",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
