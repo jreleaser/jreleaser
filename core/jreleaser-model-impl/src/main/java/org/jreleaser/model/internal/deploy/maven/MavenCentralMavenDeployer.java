@@ -35,7 +35,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 1.12.0
  */
 public final class MavenCentralMavenDeployer extends AbstractMavenDeployer<MavenCentralMavenDeployer, org.jreleaser.model.api.deploy.maven.MavenCentralMavenDeployer> {
-    private static final long serialVersionUID = 2849388918161774325L;
+    private static final long serialVersionUID = -748053558983180716L;
 
     private org.jreleaser.model.api.deploy.maven.MavenCentralMavenDeployer.Stage stage;
     private String namespace;

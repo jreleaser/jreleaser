@@ -36,7 +36,7 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
  * @since 1.3.0
  */
 public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2MavenDeployer, org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer> {
-    private static final long serialVersionUID = -7773341895745944692L;
+    private static final long serialVersionUID = 8368103855506635548L;
 
     private String snapshotUrl;
     private Boolean closeRepository;
