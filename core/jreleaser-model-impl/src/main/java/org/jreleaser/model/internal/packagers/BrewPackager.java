@@ -426,7 +426,7 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
 
         if (cask.isEnabled()) {
             return candidateArtifacts.stream()
-                .filter(artifact -> PlatformUtils.isMac(artifact.getPlatform()))
+                .filter(artifact -> isBlank(artifact.getPlatform()) || PlatformUtils.isMac(artifact.getPlatform()))
                 .collect(toList());
         }
 
@@ -636,10 +636,8 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
         public String getResolvedCaskName(TemplateContext props) {
             if (isBlank(cachedCaskName)) {
                 cachedCaskName = resolveTemplate(name, props);
-                cachedCaskName = getClassNameForLowerCaseHyphenSeparatedName(cachedCaskName);
             } else if (cachedCaskName.contains("{{")) {
                 cachedCaskName = resolveTemplate(cachedCaskName, props);
-                cachedCaskName = getClassNameForLowerCaseHyphenSeparatedName(cachedCaskName);
             }
             return cachedCaskName;
         }

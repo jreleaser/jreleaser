@@ -100,7 +100,7 @@ public final class BrewPackagerValidator {
 
         if (distribution.getType() == org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR ||
             distribution.getType() == org.jreleaser.model.Distribution.DistributionType.FLAT_BINARY &&
-            isBlank(packager.getDownloadStrategy())) {
+                isBlank(packager.getDownloadStrategy())) {
             packager.setDownloadStrategy(":nounzip");
         }
 
@@ -173,13 +173,16 @@ public final class BrewPackagerValidator {
         int zipFound = 0;
         String pkgName = "";
         for (Artifact artifact : distribution.getArtifacts()) {
-            if (!artifact.isActiveAndSelected() || !PlatformUtils.isMac(artifact.getPlatform())) continue;
-            if (artifact.getPath().endsWith(".dmg") && !isTrue(artifact.getExtraProperties().get(SKIP_BREW))) {
+            if (!artifact.isActiveAndSelected()) continue;
+            if (artifact.getPath().endsWith(".dmg") && !isTrue(artifact.getExtraProperties().get(SKIP_BREW)) &&
+                PlatformUtils.isMac(artifact.getPlatform())) {
                 dmgFound++;
-            } else if (artifact.getPath().endsWith(".pkg") && !isTrue(artifact.getExtraProperties().get(SKIP_BREW))) {
+            } else if (artifact.getPath().endsWith(".pkg") && !isTrue(artifact.getExtraProperties().get(SKIP_BREW)) &&
+                PlatformUtils.isMac(artifact.getPlatform())) {
                 pkgFound++;
                 pkgName = artifact.getEffectivePath(context).getFileName().toString();
-            } else if (artifact.getPath().endsWith(".zip") && !isTrue(artifact.getExtraProperties().get(SKIP_BREW))) {
+            } else if (artifact.getPath().endsWith(".zip") && !isTrue(artifact.getExtraProperties().get(SKIP_BREW)) &&
+                (PlatformUtils.isMac(artifact.getPlatform()) || isBlank(artifact.getPlatform()))) {
                 zipFound++;
             }
         }
