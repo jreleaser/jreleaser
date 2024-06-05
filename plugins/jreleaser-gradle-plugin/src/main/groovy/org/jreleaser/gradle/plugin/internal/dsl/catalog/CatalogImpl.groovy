@@ -26,6 +26,7 @@ import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.catalog.Catalog
+import org.jreleaser.gradle.plugin.dsl.catalog.GithubCataloger
 import org.jreleaser.gradle.plugin.dsl.catalog.SlsaCataloger
 import org.jreleaser.gradle.plugin.dsl.catalog.sbom.Sbom
 import org.jreleaser.gradle.plugin.dsl.catalog.swid.SwidTag
@@ -47,6 +48,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 class CatalogImpl implements Catalog {
     final Property<Active> active
     final SbomImpl sbom
+    final GithubCatalogerImpl github
     final SlsaCatalogerImpl slsa
     final NamedDomainObjectContainer<SwidTag> swid
 
@@ -54,6 +56,7 @@ class CatalogImpl implements Catalog {
     CatalogImpl(ObjectFactory objects) {
         active = objects.property(Active).convention(Providers.<Active> notDefined())
         sbom = objects.newInstance(SbomImpl, objects)
+        github = objects.newInstance(GithubCatalogerImpl, objects)
         slsa = objects.newInstance(SlsaCatalogerImpl, objects)
 
         swid = objects.domainObjectContainer(SwidTag, new NamedDomainObjectFactory<SwidTag>() {
@@ -79,6 +82,11 @@ class CatalogImpl implements Catalog {
     }
 
     @Override
+    void github(Action<? super GithubCataloger> action) {
+        action.execute(github)
+    }
+
+    @Override
     void slsa(Action<? super SlsaCataloger> action) {
         action.execute(slsa)
     }
@@ -92,6 +100,12 @@ class CatalogImpl implements Catalog {
     @CompileDynamic
     void sbom(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Sbom) Closure<Void> action) {
         ConfigureUtil.configure(action, sbom)
+    }
+
+    @Override
+    @CompileDynamic
+    void github(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = GithubCataloger) Closure<Void> action) {
+        ConfigureUtil.configure(action, github)
     }
 
     @Override
@@ -110,6 +124,7 @@ class CatalogImpl implements Catalog {
         org.jreleaser.model.internal.catalog.Catalog catalog = new org.jreleaser.model.internal.catalog.Catalog()
         if (active.present) catalog.active = active.get()
         catalog.sbom = sbom.toModel()
+        catalog.github = github.toModel()
         catalog.slsa = slsa.toModel()
         swid.each { catalog.addSwid(((SwidTagImpl) it).toModel()) }
         catalog

@@ -41,6 +41,7 @@ public final class Catalogers {
         }
 
         SbomCatalogers.catalog(context);
+        Github.catalog(context);
         Slsa.catalog(context);
     }
 }

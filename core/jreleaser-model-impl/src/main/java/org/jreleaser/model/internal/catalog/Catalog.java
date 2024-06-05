@@ -38,21 +38,27 @@ import static java.util.stream.Collectors.toMap;
  * @since 1.5.0
  */
 public final class Catalog extends AbstractActivatable<Catalog> implements Domain {
-    private static final long serialVersionUID = 6587227306534020116L;
+    private static final long serialVersionUID = 4460775681741986722L;
 
     private final Sbom sbom = new Sbom();
+    private final GithubCataloger github = new GithubCataloger();
     private final SlsaCataloger slsa = new SlsaCataloger();
     private final Map<String, SwidTag> swid = new LinkedHashMap<>();
 
     @JsonIgnore
     private final org.jreleaser.model.api.catalog.Catalog immutable = new org.jreleaser.model.api.catalog.Catalog() {
-        private static final long serialVersionUID = 3607769207917340335L;
+        private static final long serialVersionUID = -4843558796194675065L;
 
         private Map<String, ? extends org.jreleaser.model.api.catalog.swid.SwidTag> swid;
 
         @Override
         public org.jreleaser.model.api.catalog.sbom.Sbom getSbom() {
             return sbom.asImmutable();
+        }
+
+        @Override
+        public org.jreleaser.model.api.catalog.GithubCataloger getGithub() {
+            return github.asImmutable();
         }
 
         @Override
@@ -98,6 +104,7 @@ public final class Catalog extends AbstractActivatable<Catalog> implements Domai
     public void merge(Catalog source) {
         super.merge(source);
         setSbom(source.sbom);
+        setGithub(source.github);
         setSlsa(source.slsa);
         setSwid(mergeModel(this.swid, source.swid));
     }
@@ -106,6 +113,7 @@ public final class Catalog extends AbstractActivatable<Catalog> implements Domai
     public boolean isSet() {
         return super.isSet() ||
             sbom.isSet() ||
+            github.isSet() ||
             slsa.isSet() ||
             !swid.isEmpty();
     }
@@ -116,6 +124,14 @@ public final class Catalog extends AbstractActivatable<Catalog> implements Domai
 
     public void setSbom(Sbom sbom) {
         this.sbom.merge(sbom);
+    }
+
+    public GithubCataloger getGithub() {
+        return github;
+    }
+
+    public void setGithub(GithubCataloger github) {
+        this.github.merge(github);
     }
 
     public SlsaCataloger getSlsa() {
@@ -144,6 +160,7 @@ public final class Catalog extends AbstractActivatable<Catalog> implements Domai
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
         map.put("active", getActive());
+        map.putAll(github.asMap(full));
         map.put("sbom", sbom.asMap(full));
         map.putAll(slsa.asMap(full));
 

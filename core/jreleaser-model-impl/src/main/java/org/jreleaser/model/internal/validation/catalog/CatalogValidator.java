@@ -23,6 +23,7 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.catalog.Catalog;
 import org.jreleaser.util.Errors;
 
+import static org.jreleaser.model.internal.validation.catalog.GithubCatalogerValidator.validateGithubCataloger;
 import static org.jreleaser.model.internal.validation.catalog.SlsaCatalogerValidator.validateSlsaCataloger;
 import static org.jreleaser.model.internal.validation.catalog.sbom.SbomCatalogersValidator.validateSbomCatalogers;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
@@ -41,6 +42,7 @@ public final class CatalogValidator {
 
         Catalog catalog = context.getModel().getCatalog();
         validateSbomCatalogers(context, mode, errors);
+        validateGithubCataloger(context, mode, errors);
         validateSlsaCataloger(context, mode, errors);
 
         if (mode.validateConfig()) {
@@ -50,6 +52,7 @@ public final class CatalogValidator {
 
             if (catalog.isEnabled()) {
                 boolean enabled = catalog.getSbom().isEnabled() ||
+                    catalog.getGithub().isEnabled() ||
                     catalog.getSlsa().isEnabled();
 
                 if (!activeSet && !enabled) {

@@ -33,17 +33,23 @@ import org.jreleaser.gradle.plugin.dsl.common.Activatable
 interface Catalog extends Activatable {
     Sbom getSbom()
 
+    GithubCataloger getGithub()
+
     SlsaCataloger getSlsa()
 
     NamedDomainObjectContainer<SwidTag> getSwid()
 
     void sbom(Action<? super Sbom> action)
 
+    void github(Action<? super GithubCataloger> action)
+
     void slsa(Action<? super SlsaCataloger> action)
 
     void swid(Action<? super NamedDomainObjectContainer<SwidTag>> action)
 
     void sbom(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Sbom) Closure<Void> action)
+
+    void github(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = GithubCataloger) Closure<Void> action)
 
     void slsa(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SlsaCataloger) Closure<Void> action)
 

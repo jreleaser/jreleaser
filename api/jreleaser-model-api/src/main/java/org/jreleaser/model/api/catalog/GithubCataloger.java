@@ -17,23 +17,18 @@
  */
 package org.jreleaser.model.api.catalog;
 
-import org.jreleaser.model.api.catalog.sbom.Sbom;
-import org.jreleaser.model.api.catalog.swid.SwidTag;
-import org.jreleaser.model.api.common.Activatable;
-import org.jreleaser.model.api.common.Domain;
-
-import java.util.Map;
-
 /**
  * @author Andres Almiray
- * @since 1.5.0
+ * @since 1.13.0
  */
-public interface Catalog extends Domain, Activatable {
-    Sbom getSbom();
+public interface GithubCataloger extends Cataloger {
+    String KEY_SKIP_GITHUB = "skipGithub";
+    
+    String getAttestationName();
 
-    GithubCataloger getGithub();
+    boolean isArtifacts();
 
-    SlsaCataloger getSlsa();
+    boolean isFiles();
 
-    Map<String, ? extends SwidTag> getSwid();
+    boolean isDeployables();
 }
