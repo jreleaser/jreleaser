@@ -34,6 +34,7 @@ public class Deployable implements Comparable<Deployable> {
     public static final String PACKAGING_JAR = "jar";
     public static final String PACKAGING_POM = "pom";
     public static final String PACKAGING_NBM = "nbm";
+    public static final String PACKAGING_ZIP = "zip";
     public static final String PACKAGING_MAVEN_ARCHETYPE = "maven-archetype";
     public static final String MAVEN_METADATA_XML = "maven-metadata.xml";
     public static final String EXT_JAR = ".jar";
@@ -47,7 +48,8 @@ public class Deployable implements Comparable<Deployable> {
 
     private static final Set<String> JAR_EXCLUSIONS = setOf(
         PACKAGING_POM,
-        PACKAGING_AAR
+        PACKAGING_AAR,
+        PACKAGING_ZIP
     );
 
     private static final Set<String> SOURCE_EXCLUSIONS = setOf(
