@@ -50,6 +50,10 @@ jobs:
     outputs:
       hashes: ${{ steps.slsa.outputs.HASHES }}
       tagname: ${{ steps.slsa.outputs.TAGNAME }}
+    permissions:
+      id-token: write
+      contents: read
+      attestations: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -109,6 +113,14 @@ jobs:
           path: |
             out/jreleaser/trace.log
             out/jreleaser/output.properties
+
+      - name: Attestations
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: |
+            out/jreleaser/assemble/jreleaser-standalone/jlink/*.zip
+            out/jreleaser/assemble/jreleaser-native/native-image/*.zip
+            out/jreleaser/artifacts/**/*
 
       - name: SLSA
         shell: bash
