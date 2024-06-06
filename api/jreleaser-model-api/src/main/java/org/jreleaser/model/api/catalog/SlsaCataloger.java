@@ -17,13 +17,15 @@
  */
 package org.jreleaser.model.api.catalog;
 
+import java.util.Set;
+
 /**
  * @author Andres Almiray
  * @since 1.7.0
  */
 public interface SlsaCataloger extends Cataloger {
     String KEY_SKIP_SLSA = "skipSlsa";
-    
+
     String getAttestationName();
 
     boolean isArtifacts();
@@ -31,4 +33,8 @@ public interface SlsaCataloger extends Cataloger {
     boolean isFiles();
 
     boolean isDeployables();
+
+    Set<String> getIncludes();
+
+    Set<String> getExcludes();
 }

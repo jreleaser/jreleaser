@@ -33,9 +33,13 @@ import org.jreleaser.model.spi.catalog.CatalogProcessingException;
 import org.jreleaser.model.spi.deploy.maven.Deployable;
 
 import java.io.IOException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -52,6 +56,9 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 1.13.0
  */
 public final class Github {
+    private static final String GLOB_PREFIX = "glob:";
+    private static final String REGEX_PREFIX = "regex:";
+
     private Github() {
         // noop
     }
@@ -82,6 +89,21 @@ public final class Github {
     }
 
     private static void attestation(JReleaserContext context, GithubCataloger github) throws CatalogProcessingException {
+        Set<PathMatcher> includes = new LinkedHashSet<>();
+        Set<PathMatcher> excludes = new LinkedHashSet<>();
+
+        FileSystem fileSystem = FileSystems.getDefault();
+        for (String s : github.getIncludes()) {
+            includes.add(fileSystem.getPathMatcher(normalize(s)));
+        }
+        for (String s : github.getExcludes()) {
+            excludes.add(fileSystem.getPathMatcher(normalize(s)));
+        }
+
+        if (includes.isEmpty()) {
+            includes.add(fileSystem.getPathMatcher(GLOB_PREFIX + "**/*"));
+        }
+
         List<String> subjects = new ArrayList<>();
         String attestationName = github.getResolvedAttestationName(context);
 
@@ -91,7 +113,7 @@ public final class Github {
             for (Artifact artifact : Artifacts.resolveFiles(context)) {
                 if (!artifact.isActiveAndSelected() || artifact.extraPropertyIsTrue(KEY_SKIP_GITHUB) ||
                     artifact.isOptional(context) && !artifact.resolvedPathExists()) continue;
-                addSubject(context, subjects, artifact);
+                addSubject(context, subjects, artifact, includes, excludes);
             }
         }
 
@@ -101,7 +123,7 @@ public final class Github {
                     if (!artifact.isActiveAndSelected()) continue;
                     artifact.getEffectivePath(context, distribution);
                     if (artifact.isOptional(context) && !artifact.resolvedPathExists()) continue;
-                    addSubject(context, subjects, artifact);
+                    addSubject(context, subjects, artifact, includes, excludes);
                 }
             }
         }
@@ -110,7 +132,7 @@ public final class Github {
             for (Deployable deployable : collectDeployables(context)) {
                 if (!deployable.isPom() && !deployable.isArtifact()) continue;
                 Artifact artifact = Artifact.of(deployable.getLocalPath());
-                addSubject(context, subjects, artifact);
+                addSubject(context, subjects, artifact, includes, excludes);
             }
         }
 
@@ -153,10 +175,20 @@ public final class Github {
         }
     }
 
-    private static void addSubject(JReleaserContext context, List<String> subjects, Artifact artifact) {
-        String artifactFileName = artifact.getEffectivePath(context).toString();
-        subjects.add(artifactFileName);
-        context.getLogger().debug("- " + artifact.getEffectivePath(context).getFileName());
+    private static String normalize(String pattern) {
+        if (pattern.startsWith(GLOB_PREFIX) || pattern.startsWith(REGEX_PREFIX)) return pattern;
+        return GLOB_PREFIX + pattern;
+    }
+
+    private static void addSubject(JReleaserContext context, List<String> subjects, Artifact artifact, Set<PathMatcher> includes, Set<PathMatcher> excludes) {
+        Path path = artifact.getEffectivePath(context);
+        String artifactFileName = path.toString();
+
+        if (includes.stream().anyMatch(matcher -> matcher.matches(path)) &&
+            excludes.stream().noneMatch(matcher -> matcher.matches(path))) {
+            subjects.add(artifactFileName);
+            context.getLogger().debug("- " + artifact.getEffectivePath(context).getFileName());
+        }
     }
 
     private static Set<Deployable> collectDeployables(JReleaserContext context) {

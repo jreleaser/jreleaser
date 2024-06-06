@@ -34,8 +34,11 @@ import org.jreleaser.model.spi.catalog.CatalogProcessingException;
 import org.jreleaser.model.spi.deploy.maven.Deployable;
 
 import java.io.IOException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.PathMatcher;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
@@ -55,6 +58,9 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 1.7.0
  */
 public final class Slsa {
+    private static final String GLOB_PREFIX = "glob:";
+    private static final String REGEX_PREFIX = "regex:";
+
     private Slsa() {
         // noop
     }
@@ -85,6 +91,21 @@ public final class Slsa {
     }
 
     private static void attestation(JReleaserContext context, SlsaCataloger slsa) throws CatalogProcessingException {
+        Set<PathMatcher> includes = new LinkedHashSet<>();
+        Set<PathMatcher> excludes = new LinkedHashSet<>();
+
+        FileSystem fileSystem = FileSystems.getDefault();
+        for (String s : slsa.getIncludes()) {
+            includes.add(fileSystem.getPathMatcher(normalize(s)));
+        }
+        for (String s : slsa.getExcludes()) {
+            excludes.add(fileSystem.getPathMatcher(normalize(s)));
+        }
+
+        if (includes.isEmpty()) {
+            includes.add(fileSystem.getPathMatcher(GLOB_PREFIX + "**/*"));
+        }
+
         Attestation attestation = new Attestation(slsa.getResolvedAttestationName(context));
 
         context.getLogger().info(attestation.getName());
@@ -92,7 +113,8 @@ public final class Slsa {
         if (slsa.isFiles()) {
             for (Artifact artifact : Artifacts.resolveFiles(context)) {
                 if (!artifact.isActiveAndSelected() || artifact.extraPropertyIsTrue(KEY_SKIP_SLSA) ||
-                    artifact.isOptional(context) && !artifact.resolvedPathExists()) continue;
+                    artifact.isOptional(context) && !artifact.resolvedPathExists() &&
+                        !isIncluded(context, artifact, includes, excludes)) continue;
                 readHash(context, SHA_256, artifact);
                 addSubject(context, attestation, artifact);
             }
@@ -103,7 +125,8 @@ public final class Slsa {
                 for (Artifact artifact : distribution.getArtifacts()) {
                     if (!artifact.isActiveAndSelected()) continue;
                     artifact.getEffectivePath(context, distribution);
-                    if (artifact.isOptional(context) && !artifact.resolvedPathExists()) continue;
+                    if (artifact.isOptional(context) && !artifact.resolvedPathExists() &&
+                        !isIncluded(context, artifact, includes, excludes)) continue;
                     readHash(context, distribution, SHA_256, artifact);
                     addSubject(context, attestation, artifact);
                 }
@@ -114,6 +137,7 @@ public final class Slsa {
             for (Deployable deployable : collectDeployables(context)) {
                 if (!deployable.isPom() && !deployable.isArtifact()) continue;
                 Artifact artifact = Artifact.of(deployable.getLocalPath());
+                if (!isIncluded(context, artifact, includes, excludes)) continue;
                 readHash(context, SHA_256, artifact);
                 addSubject(context, attestation, artifact);
             }
@@ -167,6 +191,18 @@ public final class Slsa {
         } catch (IOException e) {
             throw new JReleaserException(RB.$("ERROR_unexpected_error_writing_file", attestationFile.toAbsolutePath()), e);
         }
+    }
+
+    private static String normalize(String pattern) {
+        if (pattern.startsWith(GLOB_PREFIX) || pattern.startsWith(REGEX_PREFIX)) return pattern;
+        return GLOB_PREFIX + pattern;
+    }
+
+    private static boolean isIncluded(JReleaserContext context, Artifact artifact, Set<PathMatcher> includes, Set<PathMatcher> excludes) {
+        Path path = artifact.getEffectivePath(context);
+
+        return includes.stream().anyMatch(matcher -> matcher.matches(path)) &&
+            excludes.stream().noneMatch(matcher -> matcher.matches(path));
     }
 
     private static void addSubject(JReleaserContext context, Attestation attestation, Artifact artifact) {

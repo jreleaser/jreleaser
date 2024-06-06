@@ -22,9 +22,12 @@ import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.mustache.TemplateContext;
 
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static java.util.Collections.unmodifiableMap;
+import static java.util.Collections.unmodifiableSet;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -34,7 +37,10 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 1.13.0
  */
 public final class GithubCataloger extends AbstractCataloger<GithubCataloger, org.jreleaser.model.api.catalog.GithubCataloger> {
-    private static final long serialVersionUID = -6076630909501306118L;
+    private static final long serialVersionUID = 7313775984136209203L;
+
+    private final Set<String> includes = new LinkedHashSet<>();
+    private final Set<String> excludes = new LinkedHashSet<>();
 
     private String attestationName;
     private Boolean artifacts;
@@ -43,7 +49,7 @@ public final class GithubCataloger extends AbstractCataloger<GithubCataloger, or
 
     @JsonIgnore
     private final org.jreleaser.model.api.catalog.GithubCataloger immutable = new org.jreleaser.model.api.catalog.GithubCataloger() {
-        private static final long serialVersionUID = -7625725406250907890L;
+        private static final long serialVersionUID = -63084180410612042L;
 
         @Override
         public String getAttestationName() {
@@ -63,6 +69,16 @@ public final class GithubCataloger extends AbstractCataloger<GithubCataloger, or
         @Override
         public boolean isDeployables() {
             return GithubCataloger.this.isDeployables();
+        }
+
+        @Override
+        public Set<String> getIncludes() {
+            return unmodifiableSet(includes);
+        }
+
+        @Override
+        public Set<String> getExcludes() {
+            return unmodifiableSet(excludes);
         }
 
         @Override
@@ -116,6 +132,8 @@ public final class GithubCataloger extends AbstractCataloger<GithubCataloger, or
         this.artifacts = merge(this.artifacts, source.artifacts);
         this.files = merge(this.files, source.files);
         this.deployables = merge(this.deployables, source.deployables);
+        setIncludes(merge(this.includes, source.includes));
+        setExcludes(merge(this.excludes, source.excludes));
     }
 
     @Override
@@ -124,7 +142,9 @@ public final class GithubCataloger extends AbstractCataloger<GithubCataloger, or
             isNotBlank(attestationName) ||
             isArtifactsSet() ||
             isFilesSet() ||
-            isDeployablesSet();
+            isDeployablesSet() ||
+            !includes.isEmpty() ||
+            !excludes.isEmpty();
     }
 
     public String getResolvedAttestationName(JReleaserContext context) {
@@ -178,11 +198,31 @@ public final class GithubCataloger extends AbstractCataloger<GithubCataloger, or
         this.deployables = deployables;
     }
 
+    public Set<String> getIncludes() {
+        return includes;
+    }
+
+    public void setIncludes(Set<String> includes) {
+        this.includes.clear();
+        this.includes.addAll(includes);
+    }
+
+    public Set<String> getExcludes() {
+        return excludes;
+    }
+
+    public void setExcludes(Set<String> excludes) {
+        this.excludes.clear();
+        this.excludes.addAll(excludes);
+    }
+
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("attestationName", attestationName);
         props.put("artifacts", isArtifacts());
         props.put("files", isFiles());
         props.put("deployables", isDeployables());
+        props.put("includes", includes);
+        props.put("excludes", excludes);
     }
 }

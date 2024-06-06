@@ -21,10 +21,13 @@ import groovy.transform.CompileStatic
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.catalog.GithubCataloger
 
 import javax.inject.Inject
+
+import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
  *
@@ -37,6 +40,8 @@ class GithubCatalogerImpl extends AbstractCataloger implements GithubCataloger {
     final Property<Boolean> artifacts
     final Property<Boolean> files
     final Property<Boolean> deployables
+    final SetProperty<String> includes
+    final SetProperty<String> excludes
 
     @Inject
     GithubCatalogerImpl(ObjectFactory objects) {
@@ -45,6 +50,8 @@ class GithubCatalogerImpl extends AbstractCataloger implements GithubCataloger {
         artifacts = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         files = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         deployables = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+        includes = objects.setProperty(String).convention(Providers.<Set<String>> notDefined())
+        excludes = objects.setProperty(String).convention(Providers.<Set<String>> notDefined())
     }
 
     @Internal
@@ -53,7 +60,21 @@ class GithubCatalogerImpl extends AbstractCataloger implements GithubCataloger {
             attestationName.present ||
             artifacts.present ||
             files.present ||
-            deployables.present
+            deployables.present ||
+            includes.present ||
+            excludes.present
+    }
+
+    void include(String str) {
+        if (isNotBlank(str)) {
+            includes.add(str.trim())
+        }
+    }
+
+    void exclude(String str) {
+        if (isNotBlank(str)) {
+            excludes.add(str.trim())
+        }
     }
 
     org.jreleaser.model.internal.catalog.GithubCataloger toModel() {
@@ -63,6 +84,8 @@ class GithubCatalogerImpl extends AbstractCataloger implements GithubCataloger {
         if (artifacts.present) cataloger.artifacts = artifacts.get()
         if (files.present) cataloger.files = files.get()
         if (deployables.present) cataloger.deployables = deployables.get()
+        cataloger.includes = (Set<String>) includes.getOrElse([] as Set<String>)
+        cataloger.includes = (Set<String>) includes.getOrElse([] as Set<String>)
         cataloger
     }
 }

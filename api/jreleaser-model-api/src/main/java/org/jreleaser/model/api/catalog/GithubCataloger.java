@@ -17,13 +17,15 @@
  */
 package org.jreleaser.model.api.catalog;
 
+import java.util.Set;
+
 /**
  * @author Andres Almiray
  * @since 1.13.0
  */
 public interface GithubCataloger extends Cataloger {
     String KEY_SKIP_GITHUB = "skipGithub";
-    
+
     String getAttestationName();
 
     boolean isArtifacts();
@@ -31,4 +33,8 @@ public interface GithubCataloger extends Cataloger {
     boolean isFiles();
 
     boolean isDeployables();
+
+    Set<String> getIncludes();
+
+    Set<String> getExcludes();
 }

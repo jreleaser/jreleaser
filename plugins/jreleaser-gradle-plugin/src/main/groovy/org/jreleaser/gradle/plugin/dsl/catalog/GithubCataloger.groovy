@@ -19,6 +19,7 @@ package org.jreleaser.gradle.plugin.dsl.catalog
 
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.SetProperty
 
 /**
  *
@@ -34,4 +35,12 @@ interface GithubCataloger extends Cataloger {
     Property<Boolean> getFiles()
 
     Property<Boolean> getDeployables()
+
+    SetProperty<String> getIncludes()
+
+    SetProperty<String> getExcludes()
+
+    void include(String str)
+
+    void exclude(String str)
 }
