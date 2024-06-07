@@ -34,8 +34,9 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public final class Java extends AbstractModelObject<Java> implements Domain, ExtraProperties, EnabledAware {
-    private static final long serialVersionUID = 1081407969607813088L;
+    private static final long serialVersionUID = 7051162638176670136L;
 
+    private final EnvironmentVariables environmentVariables = new EnvironmentVariables();
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private final Set<String> options = new LinkedHashSet<>();
 
@@ -49,7 +50,7 @@ public final class Java extends AbstractModelObject<Java> implements Domain, Ext
 
     @JsonIgnore
     private final org.jreleaser.model.api.common.Java immutable = new org.jreleaser.model.api.common.Java() {
-        private static final long serialVersionUID = 2703756550892777093L;
+        private static final long serialVersionUID = 8874935952448682107L;
 
         @Override
         public String getVersion() {
@@ -84,6 +85,11 @@ public final class Java extends AbstractModelObject<Java> implements Domain, Ext
         @Override
         public Set<String> getOptions() {
             return unmodifiableSet(options);
+        }
+
+        @Override
+        public org.jreleaser.model.api.common.EnvironmentVariables getEnvironmentVariables() {
+            return environmentVariables.asImmutable();
         }
 
         @Override
@@ -122,6 +128,7 @@ public final class Java extends AbstractModelObject<Java> implements Domain, Ext
         this.multiProject = merge(this.multiProject, source.multiProject);
         setOptions(merge(this.options, source.options));
         setExtraProperties(merge(this.extraProperties, source.extraProperties));
+        setEnvironmentVariables(source.environmentVariables);
     }
 
     @Override
@@ -229,6 +236,14 @@ public final class Java extends AbstractModelObject<Java> implements Domain, Ext
         this.extraProperties.putAll(extraProperties);
     }
 
+    public EnvironmentVariables getEnvironmentVariables() {
+        return environmentVariables;
+    }
+
+    public void setEnvironmentVariables(EnvironmentVariables environmentVariables) {
+        this.environmentVariables.merge(environmentVariables);
+    }
+
     public boolean isSet() {
         return isEnabledSet() ||
             isNotBlank(version) ||
@@ -238,7 +253,8 @@ public final class Java extends AbstractModelObject<Java> implements Domain, Ext
             isNotBlank(mainClass) ||
             !options.isEmpty() ||
             isMultiProjectSet() ||
-            !extraProperties.isEmpty();
+            !extraProperties.isEmpty() ||
+            environmentVariables.isSet();
     }
 
     @Override
@@ -253,6 +269,7 @@ public final class Java extends AbstractModelObject<Java> implements Domain, Ext
         map.put("mainModule", mainModule);
         map.put("mainClass", mainClass);
         if (!options.isEmpty()) map.put("options", options);
+        map.put("environmentVariables", environmentVariables);
         map.put("multiProject", isMultiProject());
         map.put("extraProperties", getExtraProperties());
         return map;

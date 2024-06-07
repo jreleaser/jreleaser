@@ -18,7 +18,7 @@
 package org.jreleaser.gradle.plugin.dsl.common
 
 import groovy.transform.CompileStatic
-import org.gradle.api.provider.ListProperty
+import org.gradle.api.Action
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 
@@ -42,4 +42,10 @@ interface Java extends ExtraProperties {
     Property<Boolean> getMultiProject()
 
     SetProperty<String> getOptions()
+
+    EnvironmentVariables getEnvironmentVariables()
+
+    void environmentVariables(Action<? super EnvironmentVariables> action)
+
+    void environmentVariables(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = EnvironmentVariables) Closure<Void> action)
 }

@@ -49,6 +49,11 @@ import static org.jreleaser.assemblers.AssemblerUtils.readJavaVersion;
 import static org.jreleaser.model.Constants.KEY_ARCHIVE_FORMAT;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_EXECUTABLE;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_ENVIRONMENT_VARIABLES_LINUX;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_ENVIRONMENT_VARIABLES_OSX;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_ENVIRONMENT_VARIABLES_UNIVERSAL;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_ENVIRONMENT_VARIABLES_UNIX;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_ENVIRONMENT_VARIABLES_WINDOWS;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_CLASS;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_JAR;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_MODULE;
@@ -85,6 +90,16 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
         Set<String> javaOptions = assembler.getJava().getOptions();
         props.set(KEY_DISTRIBUTION_JAVA_OPTIONS, !javaOptions.isEmpty() ? passThrough(join(" ", javaOptions)) : "");
         props.set(KEY_DISTRIBUTION_EXECUTABLE, assembler.getExecutable());
+        props.set(KEY_DISTRIBUTION_JAVA_ENVIRONMENT_VARIABLES_UNIVERSAL,
+            assembler.getJava().getEnvironmentVariables().getResolvedUniversal(context).entrySet());
+        props.set(KEY_DISTRIBUTION_JAVA_ENVIRONMENT_VARIABLES_UNIX,
+            assembler.getJava().getEnvironmentVariables().getResolvedUnix(context).entrySet());
+        props.set(KEY_DISTRIBUTION_JAVA_ENVIRONMENT_VARIABLES_LINUX,
+            assembler.getJava().getEnvironmentVariables().getResolvedLinux(context).entrySet());
+        props.set(KEY_DISTRIBUTION_JAVA_ENVIRONMENT_VARIABLES_OSX,
+            assembler.getJava().getEnvironmentVariables().getResolvedOsx(context).entrySet());
+        props.set(KEY_DISTRIBUTION_JAVA_ENVIRONMENT_VARIABLES_WINDOWS,
+            assembler.getJava().getEnvironmentVariables().getResolvedWindows(context).entrySet());
     }
 
     @Override

@@ -23,6 +23,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.jreleaser.gradle.plugin.dsl.common.ArchiveOptions
 import org.jreleaser.gradle.plugin.dsl.common.Artifact
+import org.jreleaser.gradle.plugin.dsl.common.EnvironmentVariables
 import org.jreleaser.gradle.plugin.dsl.common.Executable
 import org.jreleaser.gradle.plugin.dsl.common.Glob
 import org.jreleaser.model.Archive.Format
@@ -70,5 +71,11 @@ interface JavaArchiveAssembler extends Assembler {
         Property<String> getMainClass()
 
         SetProperty<String> getOptions()
+
+        EnvironmentVariables getEnvironmentVariables()
+
+        void environmentVariables(Action<? super EnvironmentVariables> action)
+
+        void environmentVariables(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = EnvironmentVariables) Closure<Void> action)
     }
 }

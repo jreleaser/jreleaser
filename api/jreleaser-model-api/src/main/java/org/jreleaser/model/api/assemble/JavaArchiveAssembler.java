@@ -21,6 +21,7 @@ import org.jreleaser.model.Archive;
 import org.jreleaser.model.api.common.ArchiveOptions;
 import org.jreleaser.model.api.common.Artifact;
 import org.jreleaser.model.api.common.Domain;
+import org.jreleaser.model.api.common.EnvironmentVariables;
 import org.jreleaser.model.api.common.Executable;
 import org.jreleaser.model.api.common.Glob;
 
@@ -54,5 +55,7 @@ public interface JavaArchiveAssembler extends Assembler {
         String getMainModule();
 
         Set<String> getOptions();
+
+        EnvironmentVariables getEnvironmentVariables();
     }
 }

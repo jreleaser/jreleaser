@@ -22,7 +22,7 @@ import org.jreleaser.model.Archive;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.JavaArchiveAssembler;
-import org.jreleaser.model.internal.project.Project;
+import org.jreleaser.model.internal.common.Java;
 import org.jreleaser.util.Errors;
 
 import java.util.Map;
@@ -106,19 +106,7 @@ public final class JavaArchiveAssemblerValidator {
 
         context.getLogger().debug("assemble.java-archive.{}.java", assembler.getName());
 
-        Project project = context.getModel().getProject();
-
-        if (isBlank(assembler.getJava().getMainModule())) {
-            assembler.getJava().setMainModule(project.getJava().getMainModule());
-        }
-        if (isBlank(assembler.getJava().getMainClass())) {
-            assembler.getJava().setMainClass(project.getJava().getMainClass());
-        }
-        if (assembler.getJava().getOptions().isEmpty()) {
-            assembler.getJava().setOptions(project.getJava().getOptions());
-        } else {
-            assembler.getJava().addOptions(project.getJava().getOptions());
-        }
+        validateJava(context, mode, assembler, errors);
 
         assembler.getMainJar().resolveActiveAndSelected(context);
         boolean mainJarIsSet = isNotBlank(assembler.getMainJar().getPath());
@@ -127,5 +115,24 @@ public final class JavaArchiveAssemblerValidator {
         if (!mainJarIsSet && !mainClassIsSet) {
             errors.configuration(RB.$("validation_java_archive_main_jar_or_class_missing", assembler.getName(), assembler.getName()));
         }
+    }
+
+    private static void validateJava(JReleaserContext context, Mode mode, JavaArchiveAssembler assembler, Errors errors) {
+        JavaArchiveAssembler.Java java = assembler.getJava();
+        Java projectJava = context.getModel().getProject().getJava();
+
+        if (isBlank(java.getMainModule())) {
+            java.setMainModule(projectJava.getMainModule());
+        }
+        if (isBlank(java.getMainClass())) {
+            java.setMainClass(projectJava.getMainClass());
+        }
+        if (java.getOptions().isEmpty()) {
+            java.setOptions(projectJava.getOptions());
+        } else {
+            java.addOptions(projectJava.getOptions());
+        }
+
+        java.getEnvironmentVariables().merge(projectJava.getEnvironmentVariables());
     }
 }

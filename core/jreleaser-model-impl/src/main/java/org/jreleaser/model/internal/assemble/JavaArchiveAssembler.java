@@ -27,6 +27,7 @@ import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.common.ArchiveOptions;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.Domain;
+import org.jreleaser.model.internal.common.EnvironmentVariables;
 import org.jreleaser.model.internal.common.Executable;
 import org.jreleaser.model.internal.common.FileSet;
 import org.jreleaser.model.internal.common.Glob;
@@ -349,15 +350,16 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
     }
 
     public static final class Java extends AbstractModelObject<org.jreleaser.model.internal.assemble.JavaArchiveAssembler.Java> implements Domain {
-        private static final long serialVersionUID = -5383920072074242097L;
+        private static final long serialVersionUID = 1929919029370959487L;
 
+        private final EnvironmentVariables environmentVariables = new EnvironmentVariables();
         private final Set<String> options = new LinkedHashSet<>();
         private String mainModule;
         private String mainClass;
 
         @JsonIgnore
         private final org.jreleaser.model.api.assemble.JavaArchiveAssembler.Java immutable = new org.jreleaser.model.api.assemble.JavaArchiveAssembler.Java() {
-            private static final long serialVersionUID = -2130856687512099219L;
+            private static final long serialVersionUID = 41087751148311519L;
 
             @Override
             public String getMainClass() {
@@ -375,6 +377,11 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
             }
 
             @Override
+            public org.jreleaser.model.api.common.EnvironmentVariables getEnvironmentVariables() {
+                return environmentVariables.asImmutable();
+            }
+
+            @Override
             public Map<String, Object> asMap(boolean full) {
                 return unmodifiableMap(org.jreleaser.model.internal.assemble.JavaArchiveAssembler.Java.this.asMap(full));
             }
@@ -389,6 +396,7 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
             this.mainModule = merge(this.mainModule, source.mainModule);
             this.mainClass = merge(this.mainClass, source.mainClass);
             setOptions(merge(this.options, source.options));
+            setEnvironmentVariables(source.environmentVariables);
         }
 
         public String getMainClass() {
@@ -420,10 +428,19 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
             this.options.addAll(options);
         }
 
+        public EnvironmentVariables getEnvironmentVariables() {
+            return environmentVariables;
+        }
+
+        public void setEnvironmentVariables(EnvironmentVariables environmentVariables) {
+            this.environmentVariables.merge(environmentVariables);
+        }
+
         public boolean isSet() {
             return isNotBlank(mainModule) ||
                 isNotBlank(mainClass) ||
-                !options.isEmpty();
+                !options.isEmpty() ||
+                environmentVariables.isSet();
         }
 
         @Override
@@ -431,6 +448,7 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
             Map<String, Object> map = new LinkedHashMap<>();
             if (isNotBlank(mainModule)) map.put("mainModule", mainModule);
             if (isNotBlank(mainClass)) map.put("mainClass", mainClass);
+            map.put("environmentVariables", environmentVariables);
             if (!options.isEmpty()) map.put("options", options);
             return map;
         }

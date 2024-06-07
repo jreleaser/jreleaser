@@ -17,26 +17,20 @@
  */
 package org.jreleaser.model.api.common;
 
-import java.util.Set;
+import java.util.Map;
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.13.0
  */
-public interface Java extends Domain, ExtraProperties, EnabledAware {
-    String getVersion();
+public interface EnvironmentVariables extends Domain {
+    Map<String, String> getUniversal();
 
-    String getGroupId();
+    Map<String, String> getUnix();
 
-    String getArtifactId();
+    Map<String, String> getLinux();
 
-    boolean isMultiProject();
+    Map<String, String> getOsx();
 
-    String getMainClass();
-
-    String getMainModule();
-
-    Set<String> getOptions();
-
-    EnvironmentVariables getEnvironmentVariables();
+    Map<String, String> getWindows();
 }

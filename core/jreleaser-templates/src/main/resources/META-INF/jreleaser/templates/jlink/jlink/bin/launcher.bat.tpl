@@ -61,6 +61,15 @@ set CLASSPATH=%JARSDIRS%\*
 set JAVA_OPTS=%JAVA_OPTS% {{.}}
 {{/distributionJavaOptions}}
 
+# universal environment variables
+{{#distributionJavaEnvironmentVariablesUniversal}}
+set {{key}}="{{value}}"
+{{/distributionJavaEnvironmentVariablesUniversal}}
+# windows environment variables
+{{#distributionJavaEnvironmentVariablesWindows}}
+set {{key}}="{{value}}"
+{{/distributionJavaEnvironmentVariablesWindows}}
+
 @REM Reaching here means variables are defined and arguments have been captured
 :endInit
 

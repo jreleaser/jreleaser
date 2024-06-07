@@ -58,6 +58,15 @@ set CLASSPATH=%JARSDIRS%\*
 set JAVA_OPTS=%JAVA_OPTS% {{.}}
 {{/distributionJavaOptions}}
 
+# universal environment variables
+{{#distributionJavaEnvironmentVariablesUniversal}}
+set {{key}}="{{value}}"
+{{/distributionJavaEnvironmentVariablesUniversal}}
+# windows environment variables
+{{#distributionJavaEnvironmentVariablesWindows}}
+set {{key}}="{{value}}"
+{{/distributionJavaEnvironmentVariablesWindows}}
+
 @rem Execute
 {{#distributionJavaMainModule}}
 "%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% -p "%CLASSPATH%" -m {{distributionJavaMainModule}}/{{distributionJavaMainClass}} %*

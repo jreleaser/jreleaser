@@ -37,6 +37,11 @@ import static java.lang.String.join;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_EXECUTABLE;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_ENVIRONMENT_VARIABLES_LINUX;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_ENVIRONMENT_VARIABLES_OSX;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_ENVIRONMENT_VARIABLES_UNIVERSAL;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_ENVIRONMENT_VARIABLES_UNIX;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_ENVIRONMENT_VARIABLES_WINDOWS;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_CLASS;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_JAR;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_MODULE;
@@ -104,6 +109,16 @@ public class JavaArchiveAssemblerProcessor extends AbstractAssemblerProcessor<or
         Set<String> javaOptions = assembler.getJava().getOptions();
         props.set(KEY_DISTRIBUTION_JAVA_OPTIONS, !javaOptions.isEmpty() ? passThrough(join(" ", javaOptions)) : "");
         props.set(KEY_DISTRIBUTION_EXECUTABLE, assembler.getExecutable().getName());
+        props.set(KEY_DISTRIBUTION_JAVA_ENVIRONMENT_VARIABLES_UNIVERSAL,
+            assembler.getJava().getEnvironmentVariables().getResolvedUniversal(context).entrySet());
+        props.set(KEY_DISTRIBUTION_JAVA_ENVIRONMENT_VARIABLES_UNIX,
+            assembler.getJava().getEnvironmentVariables().getResolvedUnix(context).entrySet());
+        props.set(KEY_DISTRIBUTION_JAVA_ENVIRONMENT_VARIABLES_LINUX,
+            assembler.getJava().getEnvironmentVariables().getResolvedLinux(context).entrySet());
+        props.set(KEY_DISTRIBUTION_JAVA_ENVIRONMENT_VARIABLES_OSX,
+            assembler.getJava().getEnvironmentVariables().getResolvedOsx(context).entrySet());
+        props.set(KEY_DISTRIBUTION_JAVA_ENVIRONMENT_VARIABLES_WINDOWS,
+            assembler.getJava().getEnvironmentVariables().getResolvedWindows(context).entrySet());
     }
 
     private void archive(Path workDirectory, Path assembleDirectory, String archiveName, Archive.Format format) throws AssemblerProcessingException {

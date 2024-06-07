@@ -171,6 +171,11 @@ public interface Constants {
     String KEY_DISTRIBUTION_JAVA_MAIN_CLASS = "distributionJavaMainClass";
     String KEY_DISTRIBUTION_JAVA_MAIN_MODULE = "distributionJavaMainModule";
     String KEY_DISTRIBUTION_JAVA_OPTIONS = "distributionJavaOptions";
+    String KEY_DISTRIBUTION_JAVA_ENVIRONMENT_VARIABLES_UNIVERSAL = "distributionJavaEnvironmentVariablesUniversal";
+    String KEY_DISTRIBUTION_JAVA_ENVIRONMENT_VARIABLES_UNIX = "distributionJavaEnvironmentVariablesUnix";
+    String KEY_DISTRIBUTION_JAVA_ENVIRONMENT_VARIABLES_LINUX = "distributionJavaEnvironmentVariablesLinux";
+    String KEY_DISTRIBUTION_JAVA_ENVIRONMENT_VARIABLES_OSX = "distributionJavaEnvironmentVariablesOsx";
+    String KEY_DISTRIBUTION_JAVA_ENVIRONMENT_VARIABLES_WINDOWS = "distributionJavaEnvironmentVariablesWindows";
 
     // Artifact
     String KEY_ARTIFACT_PLATFORM = "artifactPlatform";

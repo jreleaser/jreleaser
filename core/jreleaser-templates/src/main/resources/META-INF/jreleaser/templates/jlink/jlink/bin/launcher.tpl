@@ -81,9 +81,27 @@ if ! "$cygwin" && ! "$darwin" && ! "$nonstop" ; then
     esac
 fi
 
+# universal environment variables
+{{#distributionJavaEnvironmentVariablesUniversal}}
+export {{key}}="{{value}}"
+{{/distributionJavaEnvironmentVariablesUniversal}}
+# unix environment variables
+{{#distributionJavaEnvironmentVariablesUnix}}
+export {{key}}="{{value}}"
+{{/distributionJavaEnvironmentVariablesUnix}}
+
 # For Darwin, add options to specify how the application appears in the dock
 if $darwin; then
     JAVA_OPTS="$JAVA_OPTS -Xdock:name=$APP_NAME"
+    # osx environment variables
+    {{#distributionJavaEnvironmentVariablesOsx}}
+    export {{key}}="{{value}}"
+    {{/distributionJavaEnvironmentVariablesOsx}}
+else
+    # linux environment variables
+    {{#distributionJavaEnvironmentVariablesLinux}}
+    export {{key}}="{{value}}"
+    {{/distributionJavaEnvironmentVariablesLinux}}
 fi
 
 # Collect all arguments for the java command, stacking in reverse order:
