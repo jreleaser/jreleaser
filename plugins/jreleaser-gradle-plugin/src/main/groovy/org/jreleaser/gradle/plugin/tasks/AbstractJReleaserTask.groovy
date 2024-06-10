@@ -124,10 +124,10 @@ abstract class AbstractJReleaserTask extends DefaultTask {
             collectRejectedPlatforms())
     }
 
-    protected boolean resolveBoolean(String key, Boolean value) {
+    protected boolean resolveBoolean(String key, Boolean value, Boolean defaultValue) {
         if (null != value) return value
         String resolvedValue = Env.resolve(key, '')
-        return isNotBlank(resolvedValue) && Boolean.parseBoolean(resolvedValue)
+        return isNotBlank(resolvedValue) ? Boolean.parseBoolean(resolvedValue) : defaultValue
     }
 
     protected List<String> resolveCollection(String key, List<String> values) {

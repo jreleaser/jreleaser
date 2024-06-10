@@ -36,6 +36,7 @@ import javax.inject.Inject
 @CompileStatic
 abstract class AbstractPlatformAwareJReleaserTask extends AbstractJReleaserTask {
     @Input
+    @Optional
     final Property<Boolean> selectCurrentPlatform
     @Input
     @Optional
@@ -47,7 +48,7 @@ abstract class AbstractPlatformAwareJReleaserTask extends AbstractJReleaserTask 
     @Inject
     AbstractPlatformAwareJReleaserTask(ObjectFactory objects) {
         super(objects)
-        selectCurrentPlatform = objects.property(Boolean).convention(false)
+        selectCurrentPlatform = objects.property(Boolean)
         selectPlatforms = objects.listProperty(String).convention([])
         rejectPlatforms = objects.listProperty(String).convention([])
     }
@@ -69,7 +70,8 @@ abstract class AbstractPlatformAwareJReleaserTask extends AbstractJReleaserTask 
 
     @Override
     protected List<String> collectSelectedPlatforms() {
-        boolean resolvedSelectCurrentPlatform = resolveBoolean(org.jreleaser.model.api.JReleaserContext.SELECT_CURRENT_PLATFORM, selectCurrentPlatform.getOrElse(false))
+        boolean resolvedSelectCurrentPlatform = resolveBoolean(org.jreleaser.model.api.JReleaserContext.SELECT_CURRENT_PLATFORM,
+            selectCurrentPlatform.present? selectCurrentPlatform.get() : null, false)
         if (resolvedSelectCurrentPlatform) return Collections.singletonList(PlatformUtils.getCurrentFull())
         return resolveCollection(org.jreleaser.model.api.JReleaserContext.SELECT_PLATFORMS, selectPlatforms.get() as List<String>)
     }
