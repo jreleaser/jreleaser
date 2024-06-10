@@ -17,29 +17,20 @@
  */
 package org.jreleaser.model.api.common;
 
-import java.util.Set;
+import java.util.List;
 
 /**
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.13.0
  */
-public interface Java extends Domain, ExtraProperties, EnabledAware {
-    String getVersion();
+public interface JvmOptions extends Domain {
+    List<String> getUniversal();
 
-    String getGroupId();
+    List<String> getUnix();
 
-    String getArtifactId();
+    List<String> getLinux();
 
-    boolean isMultiProject();
+    List<String> getOsx();
 
-    String getMainClass();
-
-    String getMainModule();
-
-    @Deprecated
-    Set<String> getOptions();
-
-    JvmOptions getJvmOptions();
-
-    EnvironmentVariables getEnvironmentVariables();
+    List<String> getWindows();
 }

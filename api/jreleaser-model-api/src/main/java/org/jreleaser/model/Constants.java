@@ -170,7 +170,13 @@ public interface Constants {
     String KEY_DISTRIBUTION_JAVA_MAIN_JAR = "distributionJavaMainJar";
     String KEY_DISTRIBUTION_JAVA_MAIN_CLASS = "distributionJavaMainClass";
     String KEY_DISTRIBUTION_JAVA_MAIN_MODULE = "distributionJavaMainModule";
+    @Deprecated
     String KEY_DISTRIBUTION_JAVA_OPTIONS = "distributionJavaOptions";
+    String KEY_DISTRIBUTION_JAVA_JVM_OPTIONS_UNIVERSAL = "distributionJavaJvmOptionsUniversal";
+    String KEY_DISTRIBUTION_JAVA_JVM_OPTIONS_UNIX = "distributionJavaJvmOptionsUnix";
+    String KEY_DISTRIBUTION_JAVA_JVM_OPTIONS_LINUX = "distributionJavaJvmOptionsLinux";
+    String KEY_DISTRIBUTION_JAVA_JVM_OPTIONS_OSX = "distributionJavaJvmOptionsOsx";
+    String KEY_DISTRIBUTION_JAVA_JVM_OPTIONS_WINDOWS = "distributionJavaJvmOptionsWindows";
     String KEY_DISTRIBUTION_JAVA_ENVIRONMENT_VARIABLES_UNIVERSAL = "distributionJavaEnvironmentVariablesUniversal";
     String KEY_DISTRIBUTION_JAVA_ENVIRONMENT_VARIABLES_UNIX = "distributionJavaEnvironmentVariablesUnix";
     String KEY_DISTRIBUTION_JAVA_ENVIRONMENT_VARIABLES_LINUX = "distributionJavaEnvironmentVariablesLinux";

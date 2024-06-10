@@ -133,6 +133,8 @@ public final class JavaArchiveAssemblerValidator {
             java.addOptions(projectJava.getOptions());
         }
 
+        java.getJvmOptions().merge(projectJava.getOptions());
+        java.getJvmOptions().merge(projectJava.getJvmOptions());
         java.getEnvironmentVariables().merge(projectJava.getEnvironmentVariables());
     }
 }

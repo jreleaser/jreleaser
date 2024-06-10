@@ -18,6 +18,7 @@
 package org.jreleaser.model.internal.assemble;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Archive;
 import org.jreleaser.model.Distribution;
@@ -31,6 +32,7 @@ import org.jreleaser.model.internal.common.EnvironmentVariables;
 import org.jreleaser.model.internal.common.Executable;
 import org.jreleaser.model.internal.common.FileSet;
 import org.jreleaser.model.internal.common.Glob;
+import org.jreleaser.model.internal.common.JvmOptions;
 import org.jreleaser.mustache.TemplateContext;
 
 import java.util.ArrayList;
@@ -44,6 +46,7 @@ import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
+import static org.jreleaser.model.JReleaserOutput.nag;
 import static org.jreleaser.model.api.assemble.JavaArchiveAssembler.TYPE;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -350,8 +353,9 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
     }
 
     public static final class Java extends AbstractModelObject<org.jreleaser.model.internal.assemble.JavaArchiveAssembler.Java> implements Domain {
-        private static final long serialVersionUID = 1929919029370959487L;
+        private static final long serialVersionUID = -4021694164319773392L;
 
+        private final JvmOptions jvmOptions = new JvmOptions();
         private final EnvironmentVariables environmentVariables = new EnvironmentVariables();
         private final Set<String> options = new LinkedHashSet<>();
         private String mainModule;
@@ -359,7 +363,7 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
 
         @JsonIgnore
         private final org.jreleaser.model.api.assemble.JavaArchiveAssembler.Java immutable = new org.jreleaser.model.api.assemble.JavaArchiveAssembler.Java() {
-            private static final long serialVersionUID = 41087751148311519L;
+            private static final long serialVersionUID = 1449677856982211221L;
 
             @Override
             public String getMainClass() {
@@ -374,6 +378,11 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
             @Override
             public Set<String> getOptions() {
                 return unmodifiableSet(options);
+            }
+
+            @Override
+            public org.jreleaser.model.api.common.JvmOptions getJvmOptions() {
+                return jvmOptions.asImmutable();
             }
 
             @Override
@@ -396,6 +405,7 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
             this.mainModule = merge(this.mainModule, source.mainModule);
             this.mainClass = merge(this.mainClass, source.mainClass);
             setOptions(merge(this.options, source.options));
+            setJvmOptions(source.jvmOptions);
             setEnvironmentVariables(source.environmentVariables);
         }
 
@@ -419,13 +429,24 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
             return options;
         }
 
+        @JsonPropertyDescription("java.options is deprecated since 1.13.0 and will be removed in 2.0.0")
         public void setOptions(Set<String> options) {
+            if (options.isEmpty()) return;
+            nag("java.options is deprecated since 1.13.0 and will be removed in 2.0.0");
             this.options.clear();
             this.options.addAll(options);
         }
 
         public void addOptions(Set<String> options) {
             this.options.addAll(options);
+        }
+
+        public JvmOptions getJvmOptions() {
+            return jvmOptions;
+        }
+
+        public void setJvmOptions(JvmOptions jvmOptions) {
+            this.jvmOptions.merge(jvmOptions);
         }
 
         public EnvironmentVariables getEnvironmentVariables() {
@@ -440,6 +461,7 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
             return isNotBlank(mainModule) ||
                 isNotBlank(mainClass) ||
                 !options.isEmpty() ||
+                jvmOptions.isSet() ||
                 environmentVariables.isSet();
         }
 
@@ -448,8 +470,8 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
             Map<String, Object> map = new LinkedHashMap<>();
             if (isNotBlank(mainModule)) map.put("mainModule", mainModule);
             if (isNotBlank(mainClass)) map.put("mainClass", mainClass);
-            map.put("environmentVariables", environmentVariables);
-            if (!options.isEmpty()) map.put("options", options);
+            map.put("jvmOptions", jvmOptions.asMap(full));
+            map.put("environmentVariables", environmentVariables.asMap(full));
             return map;
         }
     }

@@ -18,6 +18,7 @@
 package org.jreleaser.model.internal.common;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -27,6 +28,7 @@ import java.util.Set;
 
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
+import static org.jreleaser.model.JReleaserOutput.nag;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -34,8 +36,9 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public final class Java extends AbstractModelObject<Java> implements Domain, ExtraProperties, EnabledAware {
-    private static final long serialVersionUID = 7051162638176670136L;
+    private static final long serialVersionUID = -5827985701929918047L;
 
+    private final JvmOptions jvmOptions = new JvmOptions();
     private final EnvironmentVariables environmentVariables = new EnvironmentVariables();
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private final Set<String> options = new LinkedHashSet<>();
@@ -50,7 +53,7 @@ public final class Java extends AbstractModelObject<Java> implements Domain, Ext
 
     @JsonIgnore
     private final org.jreleaser.model.api.common.Java immutable = new org.jreleaser.model.api.common.Java() {
-        private static final long serialVersionUID = 8874935952448682107L;
+        private static final long serialVersionUID = -7692314885223774639L;
 
         @Override
         public String getVersion() {
@@ -85,6 +88,11 @@ public final class Java extends AbstractModelObject<Java> implements Domain, Ext
         @Override
         public Set<String> getOptions() {
             return unmodifiableSet(options);
+        }
+
+        @Override
+        public org.jreleaser.model.api.common.JvmOptions getJvmOptions() {
+            return jvmOptions.asImmutable();
         }
 
         @Override
@@ -128,6 +136,7 @@ public final class Java extends AbstractModelObject<Java> implements Domain, Ext
         this.multiProject = merge(this.multiProject, source.multiProject);
         setOptions(merge(this.options, source.options));
         setExtraProperties(merge(this.extraProperties, source.extraProperties));
+        setJvmOptions(source.jvmOptions);
         setEnvironmentVariables(source.environmentVariables);
     }
 
@@ -207,7 +216,10 @@ public final class Java extends AbstractModelObject<Java> implements Domain, Ext
         return options;
     }
 
+    @JsonPropertyDescription("java.options is deprecated since 1.13.0 and will be removed in 2.0.0")
     public void setOptions(Set<String> options) {
+        if (options.isEmpty()) return;
+        nag("java.options is deprecated since 1.13.0 and will be removed in 2.0.0");
         this.options.clear();
         this.options.addAll(options);
     }
@@ -236,6 +248,14 @@ public final class Java extends AbstractModelObject<Java> implements Domain, Ext
         this.extraProperties.putAll(extraProperties);
     }
 
+    public JvmOptions getJvmOptions() {
+        return jvmOptions;
+    }
+
+    public void setJvmOptions(JvmOptions jvmOptions) {
+        this.jvmOptions.merge(jvmOptions);
+    }
+
     public EnvironmentVariables getEnvironmentVariables() {
         return environmentVariables;
     }
@@ -254,6 +274,7 @@ public final class Java extends AbstractModelObject<Java> implements Domain, Ext
             !options.isEmpty() ||
             isMultiProjectSet() ||
             !extraProperties.isEmpty() ||
+            jvmOptions.isSet() ||
             environmentVariables.isSet();
     }
 
@@ -268,8 +289,8 @@ public final class Java extends AbstractModelObject<Java> implements Domain, Ext
         map.put("artifactId", artifactId);
         map.put("mainModule", mainModule);
         map.put("mainClass", mainClass);
-        if (!options.isEmpty()) map.put("options", options);
-        map.put("environmentVariables", environmentVariables);
+        map.put("jvmOptions", jvmOptions.asMap(full));
+        map.put("environmentVariables", environmentVariables.asMap(full));
         map.put("multiProject", isMultiProject());
         map.put("extraProperties", getExtraProperties());
         return map;

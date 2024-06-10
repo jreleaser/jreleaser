@@ -33,12 +33,14 @@ import org.jreleaser.gradle.plugin.dsl.common.Artifact
 import org.jreleaser.gradle.plugin.dsl.common.EnvironmentVariables
 import org.jreleaser.gradle.plugin.dsl.common.Executable
 import org.jreleaser.gradle.plugin.dsl.common.Glob
+import org.jreleaser.gradle.plugin.dsl.common.JvmOptions
 import org.jreleaser.gradle.plugin.internal.dsl.catalog.swid.SwidTagImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.ArchiveOptionsImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.ArtifactImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.EnvironmentVariablesImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.ExecutableImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.GlobImpl
+import org.jreleaser.gradle.plugin.internal.dsl.common.JvmOptionsImpl
 import org.jreleaser.gradle.plugin.internal.dsl.platform.PlatformImpl
 import org.jreleaser.model.Archive
 import org.kordamp.gradle.util.ConfigureUtil
@@ -185,6 +187,7 @@ class JavaArchiveAssemblerImpl extends AbstractAssembler implements JavaArchiveA
         final Property<String> mainModule
         final Property<String> mainClass
         final SetProperty<String> options
+        final JvmOptionsImpl jvmOptions
         final EnvironmentVariablesImpl environmentVariables
 
         @Inject
@@ -192,6 +195,7 @@ class JavaArchiveAssemblerImpl extends AbstractAssembler implements JavaArchiveA
             mainModule = objects.property(String).convention(Providers.<String> notDefined())
             mainClass = objects.property(String).convention(Providers.<String> notDefined())
             options = objects.setProperty(String).convention(Providers.<Set<String>> notDefined())
+            jvmOptions = objects.newInstance(JvmOptionsImpl, objects)
             environmentVariables = objects.newInstance(EnvironmentVariablesImpl, objects)
         }
 
@@ -200,7 +204,13 @@ class JavaArchiveAssemblerImpl extends AbstractAssembler implements JavaArchiveA
             mainModule.present ||
                 mainClass.present ||
                 options.present ||
+                jvmOptions.isSet() ||
                 environmentVariables.isSet()
+        }
+
+        @Override
+        void jvmOptions(Action<? super JvmOptions> action) {
+            action.execute(jvmOptions)
         }
 
         @Override
@@ -210,7 +220,13 @@ class JavaArchiveAssemblerImpl extends AbstractAssembler implements JavaArchiveA
 
         @Override
         @CompileDynamic
-        void environmentVariables(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = org.jreleaser.gradle.plugin.dsl.common.Java) Closure<Void> action) {
+        void jvmOptions(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JvmOptions) Closure<Void> action) {
+            ConfigureUtil.configure(action, jvmOptions)
+        }
+
+        @Override
+        @CompileDynamic
+        void environmentVariables(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = EnvironmentVariables) Closure<Void> action) {
             ConfigureUtil.configure(action, environmentVariables)
         }
 
@@ -218,7 +234,8 @@ class JavaArchiveAssemblerImpl extends AbstractAssembler implements JavaArchiveA
             org.jreleaser.model.internal.assemble.JavaArchiveAssembler.Java java = new org.jreleaser.model.internal.assemble.JavaArchiveAssembler.Java()
             if (mainModule.present) java.mainModule = mainModule.get()
             if (mainClass.present) java.mainClass = mainClass.get()
-            java.options = (Set<String>) options.getOrElse([] as Set<String>)
+            options.getOrElse([] as Set<String>).forEach { option -> jvmOptions.universal(option) }
+            java.jvmOptions = jvmOptions.toModel()
             java.environmentVariables = environmentVariables.toModel()
             java
         }

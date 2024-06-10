@@ -28,6 +28,7 @@ import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.common.EnvironmentVariables
 import org.jreleaser.gradle.plugin.dsl.common.Java
+import org.jreleaser.gradle.plugin.dsl.common.JvmOptions
 import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
@@ -47,6 +48,7 @@ class JavaImpl implements Java {
     final Property<Boolean> multiProject
     final SetProperty<String> options
     final MapProperty<String, Object> extraProperties
+    final JvmOptionsImpl jvmOptions
     final EnvironmentVariablesImpl environmentVariables
 
     @Inject
@@ -59,6 +61,7 @@ class JavaImpl implements Java {
         multiProject = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         options = objects.setProperty(String).convention(Providers.<Set<String>> notDefined())
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
+        jvmOptions = objects.newInstance(JvmOptionsImpl, objects)
         environmentVariables = objects.newInstance(EnvironmentVariablesImpl, objects)
     }
 
@@ -72,7 +75,13 @@ class JavaImpl implements Java {
             multiProject.present ||
             options.present ||
             extraProperties.present ||
+            jvmOptions.isSet() ||
             environmentVariables.isSet()
+    }
+
+    @Override
+    void jvmOptions(Action<? super JvmOptions> action) {
+        action.execute(jvmOptions)
     }
 
     @Override
@@ -82,7 +91,13 @@ class JavaImpl implements Java {
 
     @Override
     @CompileDynamic
-    void environmentVariables(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Java) Closure<Void> action) {
+    void jvmOptions(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JvmOptions) Closure<Void> action) {
+        ConfigureUtil.configure(action, jvmOptions)
+    }
+
+    @Override
+    @CompileDynamic
+    void environmentVariables(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = EnvironmentVariables) Closure<Void> action) {
         ConfigureUtil.configure(action, environmentVariables)
     }
 
@@ -95,8 +110,9 @@ class JavaImpl implements Java {
         if (mainModule.present) java.mainModule = mainModule.get()
         if (mainClass.present) java.mainClass = mainClass.get()
         if (multiProject.present) java.multiProject = multiProject.get()
-        java.options = (Set<String>) options.getOrElse([] as Set<String>)
         if (extraProperties.present) java.extraProperties.putAll(extraProperties.get())
+        options.getOrElse([] as Set<String>).forEach { option -> jvmOptions.universal(option) }
+        java.jvmOptions = jvmOptions.toModel()
         java.environmentVariables = environmentVariables.toModel()
         java
     }

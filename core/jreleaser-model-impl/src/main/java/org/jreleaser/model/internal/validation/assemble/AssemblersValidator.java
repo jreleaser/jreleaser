@@ -214,6 +214,8 @@ public final class AssemblersValidator {
             assemblerJava.addOptions(projectJava.getOptions());
         }
 
+        assemblerJava.getJvmOptions().merge(assemblerJava.getOptions());
+        assemblerJava.getJvmOptions().merge(projectJava.getJvmOptions());
         assemblerJava.getEnvironmentVariables().merge(projectJava.getEnvironmentVariables());
 
         return true;

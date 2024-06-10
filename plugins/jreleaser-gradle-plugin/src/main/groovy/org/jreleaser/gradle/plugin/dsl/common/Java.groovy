@@ -41,11 +41,18 @@ interface Java extends ExtraProperties {
 
     Property<Boolean> getMultiProject()
 
+    @Deprecated
     SetProperty<String> getOptions()
+
+    JvmOptions getJvmOptions()
 
     EnvironmentVariables getEnvironmentVariables()
 
+    void jvmOptions(Action<? super JvmOptions> action)
+
     void environmentVariables(Action<? super EnvironmentVariables> action)
+
+    void jvmOptions(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JvmOptions) Closure<Void> action)
 
     void environmentVariables(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = EnvironmentVariables) Closure<Void> action)
 }

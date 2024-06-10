@@ -87,7 +87,6 @@ CLASSPATH="$JARSDIR"
 {{^distributionJavaMainModule}}
 CLASSPATH="$JARSDIR/*"
 {{/distributionJavaMainModule}}
-JAVA_OPTS="$JAVA_OPTS {{distributionJavaOptions}}"
 
 # Increase the maximum file descriptors if we can.
 if ! "$cygwin" && ! "$darwin" && ! "$nonstop" ; then
@@ -104,6 +103,15 @@ if ! "$cygwin" && ! "$darwin" && ! "$nonstop" ; then
     esac
 fi
 
+# universal JVM options
+{{#distributionJavaJvmOptionsUniversal}}
+JAVA_OPTS="$JAVA_OPTS {{.}}"
+{{/distributionJavaJvmOptionsUniversal}}
+# unix JVM options
+{{#distributionJavaJvmOptionsUnix}}
+JAVA_OPTS="$JAVA_OPTS {{.}}"
+{{/distributionJavaJvmOptionsUnix}}
+
 # universal environment variables
 {{#distributionJavaEnvironmentVariablesUniversal}}
 export {{key}}="{{value}}"
@@ -116,11 +124,19 @@ export {{key}}="{{value}}"
 # For Darwin, add options to specify how the application appears in the dock
 if $darwin; then
     JAVA_OPTS="$JAVA_OPTS -Xdock:name=$APP_NAME"
+    # osx JVM options
+    {{#distributionJavaJvmOptionsOsx}}
+    JAVA_OPTS="$JAVA_OPTS {{.}}"
+    {{/distributionJavaJvmOptionsOsx}}
     # osx environment variables
     {{#distributionJavaEnvironmentVariablesOsx}}
     export {{key}}="{{value}}"
     {{/distributionJavaEnvironmentVariablesOsx}}
 else
+    # linux JVM options
+    {{#distributionJavaJvmOptionsLinux}}
+    JAVA_OPTS="$JAVA_OPTS {{.}}"
+    {{/distributionJavaJvmOptionsLinux}}
     # linux environment variables
     {{#distributionJavaEnvironmentVariablesLinux}}
     export {{key}}="{{value}}"

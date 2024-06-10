@@ -54,9 +54,15 @@ set CLASSPATH=%JARSDIRS%
 {{^distributionJavaMainModule}}
 set CLASSPATH=%JARSDIRS%\*
 {{/distributionJavaMainModule}}
-{{#distributionJavaOptions}}
+
+# universal JVM options
+{{#distributionJavaJvmOptionsUniversal}}
 set JAVA_OPTS=%JAVA_OPTS% {{.}}
-{{/distributionJavaOptions}}
+{{/distributionJavaJvmOptionsUniversal}}
+# windows JVM options
+{{#distributionJavaJvmOptionsWindows}}
+set JAVA_OPTS=%JAVA_OPTS% {{.}}
+{{/distributionJavaJvmOptionsWindows}}
 
 # universal environment variables
 {{#distributionJavaEnvironmentVariablesUniversal}}

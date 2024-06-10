@@ -570,6 +570,8 @@ public class JReleaserContext {
                 distribution.getExecutable().setWindowsExtension(javaArchiveAssembler.getExecutable().getWindowsExtension());
                 distribution.getJava().setMainClass(javaArchiveAssembler.getJava().getMainClass());
                 distribution.getJava().setMainModule(javaArchiveAssembler.getJava().getMainModule());
+                distribution.getJava().setJvmOptions(javaArchiveAssembler.getJava().getJvmOptions());
+                distribution.getJava().setEnvironmentVariables(javaArchiveAssembler.getJava().getEnvironmentVariables());
             }
             mergeArtifacts(assembler, distribution);
 

@@ -22,6 +22,7 @@ import org.jreleaser.model.Archive;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.JavaArchiveAssembler;
 import org.jreleaser.model.internal.common.Glob;
+import org.jreleaser.model.internal.common.JvmOptions;
 import org.jreleaser.model.spi.assemble.AssemblerProcessingException;
 import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.util.FileUtils;
@@ -42,10 +43,14 @@ import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_ENVIRONMENT_VA
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_ENVIRONMENT_VARIABLES_UNIVERSAL;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_ENVIRONMENT_VARIABLES_UNIX;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_ENVIRONMENT_VARIABLES_WINDOWS;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_JVM_OPTIONS_LINUX;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_JVM_OPTIONS_OSX;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_JVM_OPTIONS_UNIVERSAL;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_JVM_OPTIONS_UNIX;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_JVM_OPTIONS_WINDOWS;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_CLASS;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_JAR;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_MODULE;
-import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_OPTIONS;
 import static org.jreleaser.mustache.MustacheUtils.passThrough;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -106,9 +111,18 @@ public class JavaArchiveAssemblerProcessor extends AbstractAssemblerProcessor<or
         }
         props.set(KEY_DISTRIBUTION_JAVA_MAIN_CLASS, assembler.getJava().getMainClass());
         props.set(KEY_DISTRIBUTION_JAVA_MAIN_MODULE, assembler.getJava().getMainModule());
-        Set<String> javaOptions = assembler.getJava().getOptions();
-        props.set(KEY_DISTRIBUTION_JAVA_OPTIONS, !javaOptions.isEmpty() ? passThrough(join(" ", javaOptions)) : "");
+        JvmOptions jvmOptions = assembler.getJava().getJvmOptions();
         props.set(KEY_DISTRIBUTION_EXECUTABLE, assembler.getExecutable().getName());
+        props.set(KEY_DISTRIBUTION_JAVA_JVM_OPTIONS_UNIVERSAL,
+            !jvmOptions.getUniversal().isEmpty() ? passThrough(join(" ", jvmOptions.getResolvedUniversal(context))) : "");
+        props.set(KEY_DISTRIBUTION_JAVA_JVM_OPTIONS_UNIX,
+            !jvmOptions.getUnix().isEmpty() ? passThrough(join(" ", jvmOptions.getResolvedUnix(context))) : "");
+        props.set(KEY_DISTRIBUTION_JAVA_JVM_OPTIONS_LINUX,
+            !jvmOptions.getLinux().isEmpty() ? passThrough(join(" ", jvmOptions.getResolvedLinux(context))) : "");
+        props.set(KEY_DISTRIBUTION_JAVA_JVM_OPTIONS_OSX,
+            !jvmOptions.getOsx().isEmpty() ? passThrough(join(" ", jvmOptions.getResolvedOsx(context))) : "");
+        props.set(KEY_DISTRIBUTION_JAVA_JVM_OPTIONS_WINDOWS,
+            !jvmOptions.getWindows().isEmpty() ? passThrough(join(" ", jvmOptions.getResolvedWindows(context))) : "");
         props.set(KEY_DISTRIBUTION_JAVA_ENVIRONMENT_VARIABLES_UNIVERSAL,
             assembler.getJava().getEnvironmentVariables().getResolvedUniversal(context).entrySet());
         props.set(KEY_DISTRIBUTION_JAVA_ENVIRONMENT_VARIABLES_UNIX,

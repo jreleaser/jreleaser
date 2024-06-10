@@ -26,6 +26,7 @@ import org.jreleaser.gradle.plugin.dsl.common.Artifact
 import org.jreleaser.gradle.plugin.dsl.common.EnvironmentVariables
 import org.jreleaser.gradle.plugin.dsl.common.Executable
 import org.jreleaser.gradle.plugin.dsl.common.Glob
+import org.jreleaser.gradle.plugin.dsl.common.JvmOptions
 import org.jreleaser.model.Archive.Format
 
 /**
@@ -70,11 +71,18 @@ interface JavaArchiveAssembler extends Assembler {
 
         Property<String> getMainClass()
 
+        @Deprecated
         SetProperty<String> getOptions()
+
+        JvmOptions getJvmOptions()
 
         EnvironmentVariables getEnvironmentVariables()
 
+        void jvmOptions(Action<? super JvmOptions> action)
+
         void environmentVariables(Action<? super EnvironmentVariables> action)
+
+        void jvmOptions(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JvmOptions) Closure<Void> action)
 
         void environmentVariables(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = EnvironmentVariables) Closure<Void> action)
     }

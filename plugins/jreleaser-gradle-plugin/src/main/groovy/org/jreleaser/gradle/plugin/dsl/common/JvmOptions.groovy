@@ -15,31 +15,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.api.common;
+package org.jreleaser.gradle.plugin.dsl.common
 
-import java.util.Set;
+import groovy.transform.CompileStatic
+import org.gradle.api.provider.ListProperty
 
 /**
+ *
  * @author Andres Almiray
- * @since 0.1.0
+ * @since 0.13.0
  */
-public interface Java extends Domain, ExtraProperties, EnabledAware {
-    String getVersion();
+@CompileStatic
+interface JvmOptions {
+    ListProperty<String> getUniversal()
 
-    String getGroupId();
+    ListProperty<String> getUnix()
 
-    String getArtifactId();
+    ListProperty<String> getLinux()
 
-    boolean isMultiProject();
+    ListProperty<String> getOsx()
 
-    String getMainClass();
+    ListProperty<String> getWindows()
 
-    String getMainModule();
+    void universal(String option)
 
-    @Deprecated
-    Set<String> getOptions();
+    void unix(String option)
 
-    JvmOptions getJvmOptions();
+    void linux(String option)
 
-    EnvironmentVariables getEnvironmentVariables();
+    void osx(String option)
+
+    void windows(String option)
 }

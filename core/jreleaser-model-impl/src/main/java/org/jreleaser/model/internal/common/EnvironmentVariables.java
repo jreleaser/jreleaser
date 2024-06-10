@@ -21,7 +21,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.mustache.TemplateContext;
 
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -181,8 +180,6 @@ public final class EnvironmentVariables extends AbstractModelObject<EnvironmentV
 
     @Override
     public Map<String, Object> asMap(boolean full) {
-        if (!full) return Collections.emptyMap();
-
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("universal", universal);
         map.put("unix", unix);

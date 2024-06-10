@@ -24,6 +24,7 @@ import org.jreleaser.model.api.common.Domain;
 import org.jreleaser.model.api.common.EnvironmentVariables;
 import org.jreleaser.model.api.common.Executable;
 import org.jreleaser.model.api.common.Glob;
+import org.jreleaser.model.api.common.JvmOptions;
 
 import java.util.List;
 import java.util.Set;
@@ -54,7 +55,10 @@ public interface JavaArchiveAssembler extends Assembler {
 
         String getMainModule();
 
+        @Deprecated
         Set<String> getOptions();
+
+        JvmOptions getJvmOptions();
 
         EnvironmentVariables getEnvironmentVariables();
     }

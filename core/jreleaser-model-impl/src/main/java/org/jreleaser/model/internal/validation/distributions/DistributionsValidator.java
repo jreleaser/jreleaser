@@ -22,6 +22,7 @@ import org.jreleaser.model.Active;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Artifact;
+import org.jreleaser.model.internal.common.Java;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.Packager;
 import org.jreleaser.model.internal.project.Project;
@@ -236,38 +237,50 @@ public final class DistributionsValidator {
     private static boolean validateJava(JReleaserContext context, Distribution distribution, Errors errors) {
         Project project = context.getModel().getProject();
 
-        if (!distribution.getJava().isEnabledSet() && project.getJava().isSet()) {
-            distribution.getJava().setEnabled(project.getJava().isSet());
+        Java projectJava = project.getJava();
+        Java distributionJava = distribution.getJava();
+        if (!distributionJava.isEnabledSet() && projectJava.isSet()) {
+            distributionJava.setEnabled(projectJava.isSet());
         }
-        if (!distribution.getJava().isEnabledSet()) {
-            distribution.getJava().setEnabled(distribution.getJava().isSet());
+        if (!distributionJava.isEnabledSet()) {
+            distributionJava.setEnabled(distributionJava.isSet());
         }
 
         if (distribution.getType() == org.jreleaser.model.Distribution.DistributionType.NATIVE_PACKAGE) {
-            distribution.getJava().setEnabled(false);
+            distributionJava.setEnabled(false);
         }
 
-        if (!distribution.getJava().isEnabled()) return true;
+        if (!distributionJava.isEnabled()) return true;
 
-        if (isBlank(distribution.getJava().getArtifactId())) {
-            distribution.getJava().setArtifactId(distribution.getName());
+        if (isBlank(distributionJava.getArtifactId())) {
+            distributionJava.setArtifactId(distribution.getName());
         }
-        if (isBlank(distribution.getJava().getGroupId())) {
-            distribution.getJava().setGroupId(project.getJava().getGroupId());
+        if (isBlank(distributionJava.getGroupId())) {
+            distributionJava.setGroupId(projectJava.getGroupId());
         }
-        if (isBlank(distribution.getJava().getVersion())) {
-            distribution.getJava().setVersion(project.getJava().getVersion());
+        if (isBlank(distributionJava.getVersion())) {
+            distributionJava.setVersion(projectJava.getVersion());
         }
-        if (isBlank(distribution.getJava().getMainModule())) {
-            distribution.getJava().setMainModule(project.getJava().getMainModule());
+        if (isBlank(distributionJava.getMainModule())) {
+            distributionJava.setMainModule(projectJava.getMainModule());
         }
-        if (isBlank(distribution.getJava().getMainClass())) {
-            distribution.getJava().setMainClass(project.getJava().getMainClass());
+        if (isBlank(distributionJava.getMainClass())) {
+            distributionJava.setMainClass(projectJava.getMainClass());
         }
 
         if (distribution.getType() == org.jreleaser.model.Distribution.DistributionType.BINARY) {
             return true;
         }
+
+        if (distributionJava.getOptions().isEmpty()) {
+            distributionJava.setOptions(projectJava.getOptions());
+        } else {
+            distributionJava.addOptions(projectJava.getOptions());
+        }
+
+        distributionJava.getJvmOptions().merge(distributionJava.getOptions());
+        distributionJava.getJvmOptions().merge(projectJava.getJvmOptions());
+        distributionJava.getEnvironmentVariables().merge(projectJava.getEnvironmentVariables());
 
         boolean valid = true;
         // TODO: activate in 2.0.0
@@ -275,12 +288,12 @@ public final class DistributionsValidator {
         //     errors.warning(RB.$("validation_is_missing", "distribution." + distribution.getName() + ".java.version"));
         //     valid = false;
         // }
-        if (isBlank(distribution.getJava().getGroupId())) {
+        if (isBlank(distributionJava.getGroupId())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "distribution." + distribution.getName() + ".java.groupId"));
             valid = false;
         }
-        if (!distribution.getJava().isMultiProjectSet()) {
-            distribution.getJava().setMultiProject(project.getJava().isMultiProject());
+        if (!distributionJava.isMultiProjectSet()) {
+            distributionJava.setMultiProject(projectJava.isMultiProject());
         }
 
         // validate distribution type
