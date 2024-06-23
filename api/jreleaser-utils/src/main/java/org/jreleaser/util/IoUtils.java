@@ -27,7 +27,10 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.Scanner;
 import java.util.function.Consumer;
 
@@ -87,5 +90,21 @@ public final class IoUtils {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(input, UTF_8))) {
             reader.lines().forEach(consumer);
         }
+    }
+
+    public static Reader newInputStreamReader(InputStream in) {
+        return newInputStreamReader(in, UTF_8);
+    }
+
+    public static Reader newInputStreamReader(InputStream in, Charset cs) {
+        if (null != in) {
+            if (cs == null) {
+                cs = UTF_8;
+            }
+
+            return new InputStreamReader(in, cs);
+        }
+
+        return new StringReader("");
     }
 }

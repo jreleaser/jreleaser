@@ -52,7 +52,6 @@ import org.jreleaser.sdk.nexus2.api.StagingProfileRepository;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.nio.file.Path;
@@ -74,6 +73,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
+import static org.jreleaser.util.IoUtils.newInputStreamReader;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 import static org.jreleaser.util.StringUtils.uncapitalize;
@@ -465,7 +465,7 @@ public class Nexus2 {
                 logger.trace(response.request().httpMethod() + " " + response.request().url());
                 logger.trace(response.status() + " " + response.reason());
                 if (null != response.body() && response.body().length() > 0) {
-                    try (Reader reader = new InputStreamReader(response.body().asInputStream(), UTF_8)) {
+                    try (Reader reader = newInputStreamReader(response.body().asInputStream())) {
                         logger.trace(IOUtils.toString(reader));
                     } catch (IOException e) {
                         logger.trace(e);

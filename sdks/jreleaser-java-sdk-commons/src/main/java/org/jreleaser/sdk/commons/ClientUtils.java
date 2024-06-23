@@ -47,7 +47,6 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.net.HttpURLConnection;
@@ -63,6 +62,7 @@ import java.util.concurrent.TimeUnit;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyMap;
 import static java.util.Objects.requireNonNull;
+import static org.jreleaser.util.IoUtils.newInputStreamReader;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -199,7 +199,7 @@ public final class ClientUtils {
                     b.append(" reason: ")
                         .append(reason);
                 }
-                try (Reader reader = new InputStreamReader(connection.getErrorStream(), UTF_8)) {
+                try (Reader reader = newInputStreamReader(connection.getErrorStream())) {
                     message = IOUtils.toString(reader);
                     if (isNotBlank(message)) {
                         b.append(",")
@@ -315,7 +315,7 @@ public final class ClientUtils {
                 }
                 logger.trace(RB.$("webhook.server.reply", status, reason));
 
-                try (Reader reader = new InputStreamReader(connection.getErrorStream(), UTF_8)) {
+                try (Reader reader = newInputStreamReader(connection.getErrorStream())) {
                     String message = IOUtils.toString(reader);
                     if (isNotBlank(message)) {
                         b.append(", ")
@@ -325,7 +325,7 @@ public final class ClientUtils {
                 throw new UploadException(b.toString());
             }
 
-            return new InputStreamReader(connection.getInputStream(), UTF_8);
+            return newInputStreamReader(connection.getInputStream());
         } catch (IOException e) {
             logger.trace(e);
             throw new UploadException(e);

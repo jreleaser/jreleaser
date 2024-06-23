@@ -43,7 +43,6 @@ import org.jreleaser.sdk.mavencentral.api.MavenCentralAPIException;
 import org.jreleaser.sdk.mavencentral.api.State;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.nio.file.Path;
@@ -58,8 +57,8 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 
 import static java.lang.System.lineSeparator;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.requireNonNull;
+import static org.jreleaser.util.IoUtils.newInputStreamReader;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 
 /**
@@ -234,7 +233,7 @@ public class MavenCentral {
                 logger.trace(response.request().httpMethod() + " " + response.request().url());
                 logger.trace(response.status() + " " + response.reason());
                 if (null != response.body() && null != response.body().length() && response.body().length() > 0) {
-                    try (Reader reader = new InputStreamReader(response.body().asInputStream(), UTF_8)) {
+                    try (Reader reader = newInputStreamReader(response.body().asInputStream())) {
                         logger.trace(IOUtils.toString(reader));
                     } catch (IOException e) {
                         logger.trace(e);
@@ -260,8 +259,9 @@ public class MavenCentral {
         @Override
         public Object decode(Response response, Type type) throws IOException, DecodeException, FeignException {
             if (response.request().url().endsWith("/upload")) {
-                InputStreamReader reader = new InputStreamReader(response.body().asInputStream(), UTF_8);
-                return IOUtils.toString(reader);
+                try (Reader reader = newInputStreamReader(response.body().asInputStream())) {
+                    return IOUtils.toString(reader);
+                }
             }
             return json.decode(response, type);
         }
