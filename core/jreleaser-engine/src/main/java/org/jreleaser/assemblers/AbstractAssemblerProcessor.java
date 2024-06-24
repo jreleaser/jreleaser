@@ -26,6 +26,7 @@ import org.jreleaser.model.internal.catalog.swid.SwidTag;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.FileSet;
 import org.jreleaser.model.internal.common.Glob;
+import org.jreleaser.model.internal.release.BaseReleaser;
 import org.jreleaser.model.internal.util.Artifacts;
 import org.jreleaser.model.spi.assemble.AssemblerProcessingException;
 import org.jreleaser.model.spi.assemble.AssemblerProcessor;
@@ -131,7 +132,10 @@ public abstract class AbstractAssemblerProcessor<A extends org.jreleaser.model.a
     protected TemplateContext fillProps(TemplateContext props) {
         TemplateContext newProps = new TemplateContext(props);
         context.getLogger().debug(RB.$("packager.fill.git.properties"));
-        context.getModel().getRelease().getReleaser().fillProps(newProps, context.getModel());
+        BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
+        if (null != releaser) {
+            releaser.fillProps(newProps, context.getModel());
+        }
         context.getLogger().debug(RB.$("assembler.fill.assembler.properties"));
         fillAssemblerProperties(newProps);
         applyTemplates(props, props);

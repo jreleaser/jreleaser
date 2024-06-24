@@ -110,6 +110,12 @@ public final class CollectionUtils {
         }
     }
 
+    public static void safePut(String key, Object value, Properties dest) {
+        if (null != value) {
+            dest.put(key, value);
+        }
+    }
+
     public static <T> boolean intersects(Set<T> s1, Set<T> s2) {
         Set<T> intersection = new LinkedHashSet<>(s1);
         intersection.removeAll(s2);

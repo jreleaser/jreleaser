@@ -147,21 +147,22 @@ public final class ProjectValidator {
         }
 
         // FIXME: extension
-        if (isBlank(project.getLinks().getLicense()) && null != context.getModel().getCommit()) {
+        BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
+        if (isBlank(project.getLinks().getLicense()) && null != context.getModel().getCommit() &&
+            null != releaser) {
             findLicenseFile(context.getBasedir())
                 .ifPresent(path -> {
-                    BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
-                    String srcUrl = service.getResolvedSrcUrl(context.getModel());
+                    String srcUrl = releaser.getResolvedSrcUrl(context.getModel());
                     if (!srcUrl.endsWith("/")) srcUrl += "/";
                     srcUrl += path.getFileName().toString();
                     project.getLinks().setLicense(srcUrl);
                 });
         }
-        if (isBlank(project.getLinks().getVcsBrowser())) {
-            project.getLinks().setVcsBrowser(context.getModel().getRelease().getReleaser().getRepoUrl());
+        if (isBlank(project.getLinks().getVcsBrowser()) && null != releaser) {
+            project.getLinks().setVcsBrowser(releaser.getRepoUrl());
         }
-        if (isBlank(project.getLinks().getBugTracker())) {
-            project.getLinks().setBugTracker(context.getModel().getRelease().getReleaser().getIssueTrackerUrl());
+        if (isBlank(project.getLinks().getBugTracker()) && null != releaser) {
+            project.getLinks().setBugTracker(releaser.getIssueTrackerUrl());
         }
         if (isBlank(project.getLinks().getDocumentation())) {
             project.getLinks().setDocumentation(project.getLinks().getHomepage());

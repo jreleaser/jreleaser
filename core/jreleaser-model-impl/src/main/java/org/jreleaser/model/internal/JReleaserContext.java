@@ -109,7 +109,6 @@ import static org.jreleaser.model.Constants.KEY_VERSION_YEAR;
 import static org.jreleaser.util.CollectionUtils.safePut;
 import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.isBlank;
-import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -993,13 +992,15 @@ public class JReleaserContext {
         props.put(KEY_PROJECT_SNAPSHOT, String.valueOf(project.isSnapshot()));
         if (null != model.getCommit()) {
             BaseReleaser<?, ?> releaser = model.getRelease().getReleaser();
-            props.put(KEY_TAG_NAME, releaser.getEffectiveTagName(model));
-            String previousTagName = releaser.getResolvedPreviousTagName(model);
-            if (isNotBlank(previousTagName)) props.put(KEY_PREVIOUS_TAG_NAME, previousTagName);
-            props.put("releaseBranch", releaser.getBranch());
-            if (releaser.isReleaseSupported()) {
-                props.put(KEY_RELEASE_NAME, releaser.getEffectiveReleaseName());
-                props.put(KEY_MILESTONE_NAME, releaser.getMilestone().getEffectiveName());
+            if (null != releaser) {
+                safePut(KEY_TAG_NAME, releaser.getEffectiveTagName(model), props);
+                String previousTagName = releaser.getResolvedPreviousTagName(model);
+                safePut(KEY_PREVIOUS_TAG_NAME, previousTagName, props);
+                safePut("releaseBranch", releaser.getBranch(), props);
+                if (releaser.isReleaseSupported()) {
+                    safePut(KEY_RELEASE_NAME, releaser.getEffectiveReleaseName(), props);
+                    safePut(KEY_MILESTONE_NAME, releaser.getMilestone().getEffectiveName(), props);
+                }
             }
         }
         props.put("javaVersion", System.getProperty("java.version"));

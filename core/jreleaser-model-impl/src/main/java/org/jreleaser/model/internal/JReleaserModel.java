@@ -539,6 +539,7 @@ public class JReleaserModel {
 
     private void fillReleaserProperties(TemplateContext props, Release release) {
         BaseReleaser<?, ?> service = release.getReleaser();
+        if (null == service) return;
         props.set(Constants.KEY_REPO_HOST, service.getHost());
         props.set(Constants.KEY_REPO_OWNER, service.getOwner());
         props.set(Constants.KEY_REPO_NAME, service.getName());
