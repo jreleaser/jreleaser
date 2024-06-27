@@ -71,7 +71,7 @@ abstract class AbstractPlatformAwareJReleaserTask extends AbstractJReleaserTask 
     @Override
     protected List<String> collectSelectedPlatforms() {
         boolean resolvedSelectCurrentPlatform = resolveBoolean(org.jreleaser.model.api.JReleaserContext.SELECT_CURRENT_PLATFORM,
-            selectCurrentPlatform.present? selectCurrentPlatform.get() : null, false)
+            selectCurrentPlatform.present ? selectCurrentPlatform.get() : null, false)
         if (resolvedSelectCurrentPlatform) return Collections.singletonList(PlatformUtils.getCurrentFull())
         return resolveCollection(org.jreleaser.model.api.JReleaserContext.SELECT_PLATFORMS, selectPlatforms.get() as List<String>)
     }

@@ -31,6 +31,8 @@ public interface Uploader extends Domain, Activatable, TimeoutAware, ExtraProper
 
     String getName();
 
+    String getServerRef();
+
     boolean isSnapshotSupported();
 
     boolean isArtifacts();

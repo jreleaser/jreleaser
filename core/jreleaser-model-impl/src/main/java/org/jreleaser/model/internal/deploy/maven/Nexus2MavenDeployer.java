@@ -52,7 +52,7 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
 
     @JsonIgnore
     private final org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer immutable = new org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer() {
-        private static final long serialVersionUID = -2516726037520331601L;
+        private static final long serialVersionUID = -148019210291391816L;
 
         private Set<? extends org.jreleaser.model.api.deploy.maven.MavenDeployer.ArtifactOverride> artifactOverrides;
 
@@ -174,6 +174,11 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
         @Override
         public String getName() {
             return Nexus2MavenDeployer.this.getName();
+        }
+
+        @Override
+        public String getServerRef() {
+            return Nexus2MavenDeployer.this.getServerRef();
         }
 
         @Override

@@ -24,14 +24,15 @@ import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.announce.HttpAnnouncer;
 import org.jreleaser.model.internal.announce.HttpAnnouncers;
+import org.jreleaser.model.internal.servers.HttpServer;
 import org.jreleaser.model.internal.validation.common.HttpValidator;
 import org.jreleaser.util.Errors;
 
 import java.nio.file.Files;
 import java.util.Map;
 
+import static org.jreleaser.model.internal.validation.common.ServerValidator.validateTimeout;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
-import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
 import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -94,7 +95,10 @@ public final class HttpAnnouncerValidator {
             announcer.setMethod(Http.Method.PUT);
         }
 
-        HttpValidator.validateHttp(context, announcer, "announce", announcer.getName(), errors);
+        String serverName = announcer.getServerRef();
+        HttpServer server = context.getModel().getServers().httpFor(serverName);
+        HttpValidator.validateHttp(context, announcer, server, "announce", announcer.getName(), errors);
+        validateTimeout(context, announcer, server, "announce", "http", announcer.getName(), errors, true);
 
         String defaultPayloadTemplate = DEFAULT_TPL + "/http/" + announcer.getName() + ".tpl";
         if (isBlank(announcer.getPayload()) && isBlank(announcer.getPayloadTemplate())) {
@@ -111,8 +115,6 @@ public final class HttpAnnouncerValidator {
             errors.configuration(RB.$("validation_directory_not_exist",
                 "http." + announcer.getName() + ".payloadTemplate", announcer.getPayloadTemplate()));
         }
-
-        validateTimeout(announcer);
 
         return true;
     }

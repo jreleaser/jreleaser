@@ -40,7 +40,7 @@ public final class Nexus3MavenDeployer extends AbstractMavenDeployer<Nexus3Maven
 
     @JsonIgnore
     private final org.jreleaser.model.api.deploy.maven.Nexus3MavenDeployer immutable = new org.jreleaser.model.api.deploy.maven.Nexus3MavenDeployer() {
-        private static final long serialVersionUID = 3810565665210923419L;
+        private static final long serialVersionUID = 4388421534842190207L;
 
         private Set<? extends ArtifactOverride> artifactOverrides;
 
@@ -122,6 +122,11 @@ public final class Nexus3MavenDeployer extends AbstractMavenDeployer<Nexus3Maven
         @Override
         public String getName() {
             return Nexus3MavenDeployer.this.getName();
+        }
+
+        @Override
+        public String getServerRef() {
+            return Nexus3MavenDeployer.this.getServerRef();
         }
 
         @Override

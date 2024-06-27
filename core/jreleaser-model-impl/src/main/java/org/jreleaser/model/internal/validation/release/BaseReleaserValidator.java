@@ -68,6 +68,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public final class BaseReleaserValidator {
     private static final String DEFAULT_CHANGELOG_TPL = "src/jreleaser/templates/changelog.tpl";
     private static final String DEFAULT_APPEND_CHANGELOG_TPL = "src/jreleaser/templates/append-changelog.tpl";
+
     private BaseReleaserValidator() {
         // noop
     }
