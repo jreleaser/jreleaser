@@ -46,6 +46,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 @CompileStatic
 abstract class AbstractMavenDeployer implements MavenDeployer {
     String name
+    final Property<String> serverRef
     final Property<Active> active
     final Property<Integer> connectTimeout
     final Property<Integer> readTimeout
@@ -69,6 +70,7 @@ abstract class AbstractMavenDeployer implements MavenDeployer {
 
     @Inject
     AbstractMavenDeployer(ObjectFactory objects) {
+        serverRef = objects.property(String).convention(Providers.<String> notDefined())
         active = objects.property(Active).convention(Providers.<Active> notDefined())
         connectTimeout = objects.property(Integer).convention(Providers.<Integer> notDefined())
         readTimeout = objects.property(Integer).convention(Providers.<Integer> notDefined())
@@ -99,7 +101,8 @@ abstract class AbstractMavenDeployer implements MavenDeployer {
 
     @Internal
     boolean isSet() {
-        active.present ||
+        serverRef.present ||
+            active.present ||
             connectTimeout.present ||
             readTimeout.present ||
             extraProperties.present ||
@@ -164,6 +167,7 @@ abstract class AbstractMavenDeployer implements MavenDeployer {
 
     protected <D extends org.jreleaser.model.internal.deploy.maven.MavenDeployer> void fillProperties(D deployer) {
         deployer.name = name
+        if (serverRef.present) deployer.serverRef = serverRef.get()
         if (active.present) deployer.active = active.get()
         if (connectTimeout.present) deployer.connectTimeout = connectTimeout.get()
         if (readTimeout.present) deployer.readTimeout = readTimeout.get()

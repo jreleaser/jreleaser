@@ -63,6 +63,7 @@ import static org.jreleaser.model.internal.validation.common.Validator.validateS
 import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.isGraalVMDistribution;
 import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.util.CollectionUtils.listOf;
+import static org.jreleaser.util.CollectionUtils.setOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -487,16 +488,16 @@ public final class DockerPackagerValidator {
         }
     }
 
-    private static List<String> resolveKeys(String element, String serverName, String property) {
+    private static Set<String> resolveKeys(String element, String serverName, String property) {
         if (DOCKER_IO.equals(serverName)) {
-            return listOf(
+            return setOf(
                 element + "." + serverName + property,
                 element + "." + DEFAULT_NAME + property,
                 "docker." + serverName + property,
                 "docker." + DEFAULT_NAME + property);
         }
 
-        return listOf(
+        return setOf(
             element + "." + serverName + property,
             "docker." + serverName + property);
     }

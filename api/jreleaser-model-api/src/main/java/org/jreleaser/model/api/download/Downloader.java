@@ -34,6 +34,8 @@ public interface Downloader extends Domain, Activatable, TimeoutAware, ExtraProp
 
     String getName();
 
+    String getServerRef();
+
     List<? extends Asset> getAssets();
 
     interface Asset extends Domain {

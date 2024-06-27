@@ -40,6 +40,7 @@ import org.jreleaser.model.internal.platform.Platform;
 import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.internal.release.BaseReleaser;
 import org.jreleaser.model.internal.release.Release;
+import org.jreleaser.model.internal.servers.Servers;
 import org.jreleaser.model.internal.signing.Signing;
 import org.jreleaser.model.internal.upload.Upload;
 import org.jreleaser.mustache.MustacheUtils;
@@ -76,6 +77,7 @@ public class JReleaserModel {
     private final Release release = new Release();
     private final Packagers packagers = new Packagers();
     private final Announce announce = new Announce();
+    private final Servers servers = new Servers();
     private final Download download = new Download();
     private final Assemble assemble = new Assemble();
     private final Deploy deploy = new Deploy();
@@ -159,6 +161,11 @@ public class JReleaserModel {
         @Override
         public org.jreleaser.model.api.assemble.Assemble getAssemble() {
             return assemble.asImmutable();
+        }
+
+        @Override
+        public org.jreleaser.model.api.servers.Servers getServers() {
+            return servers.asImmutable();
         }
 
         @Override
@@ -319,6 +326,14 @@ public class JReleaserModel {
         this.assemble.merge(assemble);
     }
 
+    public Servers getServers() {
+        return servers;
+    }
+
+    public void setServers(Servers servers) {
+        this.servers.merge(servers);
+    }
+
     public Download getDownload() {
         return download;
     }
@@ -445,6 +460,7 @@ public class JReleaserModel {
         if (full || hooks.isSet()) map.put("hooks", hooks.asMap(full));
         map.put("project", project.asMap(full));
         if (full || platform.isSet()) map.put("platform", platform.asMap(full));
+        if (full || servers.isEnabled()) map.put("servers", servers.asMap(full));
         map.put("release", release.asMap(full));
         map.put("checksum", checksum.asMap(full));
         if (full || signing.isEnabled()) map.put("signing", signing.asMap(full));

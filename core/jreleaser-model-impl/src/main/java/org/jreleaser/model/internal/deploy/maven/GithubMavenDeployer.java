@@ -43,7 +43,7 @@ public final class GithubMavenDeployer extends AbstractMavenDeployer<GithubMaven
 
     @JsonIgnore
     private final org.jreleaser.model.api.deploy.maven.GithubMavenDeployer immutable = new org.jreleaser.model.api.deploy.maven.GithubMavenDeployer() {
-        private static final long serialVersionUID = -7375325967023331116L;
+        private static final long serialVersionUID = 8780420142609508691L;
 
         private Set<? extends org.jreleaser.model.api.deploy.maven.MavenDeployer.ArtifactOverride> artifactOverrides;
 
@@ -130,6 +130,11 @@ public final class GithubMavenDeployer extends AbstractMavenDeployer<GithubMaven
         @Override
         public String getName() {
             return GithubMavenDeployer.this.getName();
+        }
+
+        @Override
+        public String getServerRef() {
+            return GithubMavenDeployer.this.getServerRef();
         }
 
         @Override

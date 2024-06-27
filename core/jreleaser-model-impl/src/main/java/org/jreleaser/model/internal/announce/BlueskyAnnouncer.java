@@ -22,6 +22,7 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.common.HostAware;
 import org.jreleaser.mustache.TemplateContext;
 
 import java.io.IOException;
@@ -47,8 +48,9 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Tom Cools
  * @since 1.7.0
  */
-public final class BlueskyAnnouncer extends AbstractAnnouncer<BlueskyAnnouncer, org.jreleaser.model.api.announce.BlueskyAnnouncer> {
-    private static final long serialVersionUID = 9152609285615015647L;
+public final class BlueskyAnnouncer extends AbstractAnnouncer<BlueskyAnnouncer, org.jreleaser.model.api.announce.BlueskyAnnouncer>
+    implements HostAware {
+    private static final long serialVersionUID = -1252742137907792744L;
 
     private final List<String> statuses = new ArrayList<>();
     private String host;
@@ -180,10 +182,12 @@ public final class BlueskyAnnouncer extends AbstractAnnouncer<BlueskyAnnouncer, 
         }
     }
 
+    @Override
     public String getHost() {
         return host;
     }
 
+    @Override
     public void setHost(String host) {
         this.host = host;
     }

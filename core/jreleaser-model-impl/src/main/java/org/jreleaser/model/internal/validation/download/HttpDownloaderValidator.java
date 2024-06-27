@@ -22,14 +22,15 @@ import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.download.Downloader;
 import org.jreleaser.model.internal.download.HttpDownloader;
+import org.jreleaser.model.internal.servers.HttpServer;
 import org.jreleaser.model.internal.validation.common.HttpValidator;
 import org.jreleaser.util.Errors;
 
 import java.util.Map;
 
+import static org.jreleaser.model.internal.validation.common.ServerValidator.validateTimeout;
 import static org.jreleaser.model.internal.validation.common.Validator.mergeErrors;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
-import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
 import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -67,8 +68,10 @@ public final class HttpDownloaderValidator {
             return;
         }
 
-        HttpValidator.validateHttp(context, downloader, "download", downloader.getName(), errors);
-        validateTimeout(downloader);
+        String serverName = downloader.getServerRef();
+        HttpServer server = context.getModel().getServers().httpFor(serverName);
+        HttpValidator.validateHttp(context, downloader, server, "download", downloader.getName(), errors);
+        validateTimeout(context, downloader, server, "download", downloader.getType(), downloader.getName(), errors, true);
 
         if (downloader.getAssets().isEmpty()) {
             errors.configuration(RB.$("validation_must_not_be_empty", "download.http." + downloader.getName() + ".assets"));

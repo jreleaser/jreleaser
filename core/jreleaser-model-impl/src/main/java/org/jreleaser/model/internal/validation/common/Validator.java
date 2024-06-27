@@ -133,19 +133,27 @@ public final class Validator {
     }
 
     public static String checkProperty(JReleaserContext context, Collection<String> keys, String property, String value, Errors errors, boolean dryrun) {
+        return checkProperty(context, keys, property, value, null, errors, dryrun);
+    }
+
+    public static String checkProperty(JReleaserContext context, Collection<String> keys, String property, String value, String altValue, Errors errors, boolean dryrun) {
         if (isNotBlank(value)) return value;
         Environment environment = context.getModel().getEnvironment();
         String dsl = context.getConfigurer().toString();
         String configFilePath = environment.getPropertiesFile().toAbsolutePath().normalize().toString();
-        return check(keys, environment.getVars(), property, dsl, configFilePath, dryrun ? new Errors() : errors);
+        return check(keys, environment.getVars(), property, dsl, configFilePath, altValue, dryrun ? new Errors() : errors);
     }
 
     public static Integer checkProperty(JReleaserContext context, Collection<String> keys, String property, Integer value, Errors errors, boolean dryrun) {
+        return checkProperty(context, keys, property, value, null, errors, dryrun);
+    }
+
+    public static Integer checkProperty(JReleaserContext context, Collection<String> keys, String property, Integer value, Integer altValue, Errors errors, boolean dryrun) {
         if (null != value) return value;
         Environment environment = context.getModel().getEnvironment();
         String dsl = context.getConfigurer().toString();
         String configFilePath = environment.getPropertiesFile().toAbsolutePath().normalize().toString();
-        String val = check(keys, environment.getVars(), property, dsl, configFilePath, dryrun ? new Errors() : errors);
+        String val = check(keys, environment.getVars(), property, dsl, configFilePath, null != altValue ? altValue.toString() : null, dryrun ? new Errors() : errors);
         return isNotBlank(val) ? Integer.parseInt(val) : null;
     }
 

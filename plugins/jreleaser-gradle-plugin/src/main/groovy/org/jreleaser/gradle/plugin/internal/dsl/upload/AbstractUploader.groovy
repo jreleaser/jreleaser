@@ -37,6 +37,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
  */
 @CompileStatic
 abstract class AbstractUploader implements Uploader {
+    final Property<String> serverRef
     final Property<Active> active
     final Property<Integer> connectTimeout
     final Property<Integer> readTimeout
@@ -49,6 +50,7 @@ abstract class AbstractUploader implements Uploader {
 
     @Inject
     AbstractUploader(ObjectFactory objects) {
+        serverRef = objects.property(String).convention(Providers.<String> notDefined())
         active = objects.property(Active).convention(Providers.<Active> notDefined())
         connectTimeout = objects.property(Integer).convention(Providers.<Integer> notDefined())
         readTimeout = objects.property(Integer).convention(Providers.<Integer> notDefined())
@@ -62,7 +64,8 @@ abstract class AbstractUploader implements Uploader {
 
     @Internal
     boolean isSet() {
-        active.present ||
+        serverRef.present ||
+            active.present ||
             connectTimeout.present ||
             readTimeout.present ||
             extraProperties.present ||
@@ -81,6 +84,7 @@ abstract class AbstractUploader implements Uploader {
     }
 
     protected <U extends org.jreleaser.model.internal.upload.Uploader> void fillProperties(U uploader) {
+        if (serverRef.present) uploader.serverRef = serverRef.get()
         if (active.present) uploader.active = active.get()
         if (connectTimeout.present) uploader.connectTimeout = connectTimeout.get()
         if (readTimeout.present) uploader.readTimeout = readTimeout.get()

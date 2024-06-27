@@ -38,7 +38,7 @@ public final class GiteaMavenDeployer extends AbstractMavenDeployer<GiteaMavenDe
 
     @JsonIgnore
     private final org.jreleaser.model.api.deploy.maven.GiteaMavenDeployer immutable = new org.jreleaser.model.api.deploy.maven.GiteaMavenDeployer() {
-        private static final long serialVersionUID = -5072992326711451976L;
+        private static final long serialVersionUID = 2514328189053289245L;
 
         private Set<? extends org.jreleaser.model.api.deploy.maven.MavenDeployer.ArtifactOverride> artifactOverrides;
 
@@ -120,6 +120,11 @@ public final class GiteaMavenDeployer extends AbstractMavenDeployer<GiteaMavenDe
         @Override
         public String getName() {
             return GiteaMavenDeployer.this.getName();
+        }
+
+        @Override
+        public String getServerRef() {
+            return GiteaMavenDeployer.this.getServerRef();
         }
 
         @Override

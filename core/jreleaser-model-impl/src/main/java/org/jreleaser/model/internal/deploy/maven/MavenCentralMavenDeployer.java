@@ -47,7 +47,7 @@ public final class MavenCentralMavenDeployer extends AbstractMavenDeployer<Maven
 
     @JsonIgnore
     private final org.jreleaser.model.api.deploy.maven.MavenCentralMavenDeployer immutable = new org.jreleaser.model.api.deploy.maven.MavenCentralMavenDeployer() {
-        private static final long serialVersionUID = -5348879392691714059L;
+        private static final long serialVersionUID = -5115652124256668189L;
 
         private Set<? extends ArtifactOverride> artifactOverrides;
 
@@ -164,6 +164,11 @@ public final class MavenCentralMavenDeployer extends AbstractMavenDeployer<Maven
         @Override
         public String getName() {
             return MavenCentralMavenDeployer.this.getName();
+        }
+
+        @Override
+        public String getServerRef() {
+            return MavenCentralMavenDeployer.this.getServerRef();
         }
 
         @Override

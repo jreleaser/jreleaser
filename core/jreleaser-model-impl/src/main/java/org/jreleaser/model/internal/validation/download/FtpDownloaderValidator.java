@@ -22,6 +22,7 @@ import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.download.Downloader;
 import org.jreleaser.model.internal.download.FtpDownloader;
+import org.jreleaser.model.internal.servers.FtpServer;
 import org.jreleaser.model.internal.validation.common.FtpValidator;
 import org.jreleaser.util.Errors;
 
@@ -29,7 +30,6 @@ import java.util.Map;
 
 import static org.jreleaser.model.internal.validation.common.Validator.mergeErrors;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
-import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
 import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -67,9 +67,10 @@ public final class FtpDownloaderValidator {
             return;
         }
 
+        String serverName = downloader.getServerRef();
+        FtpServer server = context.getModel().getServers().ftpFor(serverName);
         // allow anonymous access
-        FtpValidator.validateFtp(context, downloader, "upload", downloader.getName(), errors, true);
-        validateTimeout(downloader);
+        FtpValidator.validateFtp(context, downloader, server, "upload", downloader.getName(), errors, true);
 
         if (downloader.getAssets().isEmpty()) {
             errors.configuration(RB.$("validation_must_not_be_empty", "download.ftp." + downloader.getName() + ".assets"));

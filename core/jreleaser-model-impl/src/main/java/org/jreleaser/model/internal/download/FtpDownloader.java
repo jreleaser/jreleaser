@@ -34,13 +34,13 @@ import static org.jreleaser.model.api.download.FtpDownloader.TYPE;
  * @since 1.1.0
  */
 public final class FtpDownloader extends AbstractDownloader<org.jreleaser.model.api.download.FtpDownloader, FtpDownloader> implements Ftp {
-    private static final long serialVersionUID = 8625938906357137469L;
+    private static final long serialVersionUID = -728763684163619748L;
 
     private final FtpDelegate delegate = new FtpDelegate();
 
     @JsonIgnore
     private final org.jreleaser.model.api.download.FtpDownloader immutable = new org.jreleaser.model.api.download.FtpDownloader() {
-        private static final long serialVersionUID = -3069423247317140050L;
+        private static final long serialVersionUID = 2550178578687919466L;
 
         private List<? extends org.jreleaser.model.api.download.Downloader.Asset> assets;
 
@@ -52,6 +52,11 @@ public final class FtpDownloader extends AbstractDownloader<org.jreleaser.model.
         @Override
         public String getName() {
             return FtpDownloader.this.getName();
+        }
+
+        @Override
+        public String getServerRef() {
+            return FtpDownloader.this.getServerRef();
         }
 
         @Override
@@ -174,6 +179,26 @@ public final class FtpDownloader extends AbstractDownloader<org.jreleaser.model.
     @Override
     public void setPort(Integer port) {
         delegate.setPort(port);
+    }
+
+    @Override
+    public Integer getConnectTimeout() {
+        return delegate.getConnectTimeout();
+    }
+
+    @Override
+    public void setConnectTimeout(Integer connectTimeout) {
+        delegate.setConnectTimeout(connectTimeout);
+    }
+
+    @Override
+    public Integer getReadTimeout() {
+        return delegate.getReadTimeout();
+    }
+
+    @Override
+    public void setReadTimeout(Integer readTimeout) {
+        delegate.setReadTimeout(readTimeout);
     }
 
     @Override
