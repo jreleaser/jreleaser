@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -168,7 +167,7 @@ public final class CollectionUtils {
             return Collections.emptySet();
         }
 
-        return new HashSet<>(Arrays.asList(values));
+        return new LinkedHashSet<>(Arrays.asList(values));
     }
 
     @Deprecated
@@ -203,7 +202,7 @@ public final class CollectionUtils {
     }
 
     public static <E> SetBuilder<E> set() {
-        return set(new HashSet<>());
+        return set(new LinkedHashSet<>());
     }
 
     public static <E> SetBuilder<E> set(Set<E> delegate) {

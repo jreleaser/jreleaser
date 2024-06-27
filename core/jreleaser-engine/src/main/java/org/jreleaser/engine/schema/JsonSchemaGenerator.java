@@ -105,6 +105,14 @@ public final class JsonSchemaGenerator {
         mappings.put("Map<String, Nexus3MavenDeployer>", "Nexus3MavenDeployerMap");
         mappings.put("Map<String, MavenCentralMavenDeployer>", "MavenCentralMavenDeployerMap");
         mappings.put("Map<String, SwidTag>", "SwidTagMap");
+        mappings.put("Map<String, FtpServer>", "FtpServerMap");
+        mappings.put("Map<String, ForgejoServer>", "ForgejoServerMap");
+        mappings.put("Map<String, GenericServer>", "GenericServerMap");
+        mappings.put("Map<String, GiteaServer>", "GiteaServerMap");
+        mappings.put("Map<String, GithubServer>", "GithubServerMap");
+        mappings.put("Map<String, GitlabServer>", "GitlabServerMap");
+        mappings.put("Map<String, HttpServer>", "HttpServer");
+        mappings.put("Map<String, SshServer>", "SshServer");
         mappings.put("Map<String, NamedCommandHooks>", "NamedCommandHooksMap");
         mappings.put("Map<String, NamedScriptHooks>", "NamedScriptHooksMap");
         mappings.put("Map<String, NamedJbangHooks>", "NamedJbangHooksMap");

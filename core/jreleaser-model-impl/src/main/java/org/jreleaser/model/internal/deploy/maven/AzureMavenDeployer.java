@@ -38,7 +38,7 @@ public final class AzureMavenDeployer extends AbstractMavenDeployer<AzureMavenDe
 
     @JsonIgnore
     private final org.jreleaser.model.api.deploy.maven.AzureMavenDeployer immutable = new org.jreleaser.model.api.deploy.maven.AzureMavenDeployer() {
-        private static final long serialVersionUID = -2548518547684068299L;
+        private static final long serialVersionUID = 6547611812213314051L;
 
         private Set<? extends org.jreleaser.model.api.deploy.maven.MavenDeployer.ArtifactOverride> artifactOverrides;
 
@@ -120,6 +120,11 @@ public final class AzureMavenDeployer extends AbstractMavenDeployer<AzureMavenDe
         @Override
         public String getName() {
             return AzureMavenDeployer.this.getName();
+        }
+
+        @Override
+        public String getServerRef() {
+            return AzureMavenDeployer.this.getServerRef();
         }
 
         @Override

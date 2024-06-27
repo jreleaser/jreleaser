@@ -45,6 +45,7 @@ import org.jreleaser.gradle.plugin.dsl.packagers.Packagers
 import org.jreleaser.gradle.plugin.dsl.platform.Platform
 import org.jreleaser.gradle.plugin.dsl.project.Project
 import org.jreleaser.gradle.plugin.dsl.release.Release
+import org.jreleaser.gradle.plugin.dsl.servers.Servers
 import org.jreleaser.gradle.plugin.dsl.signing.Signing
 import org.jreleaser.gradle.plugin.dsl.upload.Upload
 import org.jreleaser.gradle.plugin.internal.dsl.announce.AnnounceImpl
@@ -63,6 +64,7 @@ import org.jreleaser.gradle.plugin.internal.dsl.packagers.PackagersImpl
 import org.jreleaser.gradle.plugin.internal.dsl.platform.PlatformImpl
 import org.jreleaser.gradle.plugin.internal.dsl.project.ProjectImpl
 import org.jreleaser.gradle.plugin.internal.dsl.release.ReleaseImpl
+import org.jreleaser.gradle.plugin.internal.dsl.servers.ServersImpl
 import org.jreleaser.gradle.plugin.internal.dsl.signing.SigningImpl
 import org.jreleaser.gradle.plugin.internal.dsl.upload.UploadImpl
 import org.jreleaser.logging.JReleaserLogger
@@ -103,6 +105,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     final AnnounceImpl announce
     final AssembleImpl assemble
     final ChecksumImpl checksum
+    final ServersImpl servers
     final SigningImpl signing
     final FilesImpl files
     final NamedDomainObjectContainer<Distribution> distributions
@@ -139,6 +142,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         announce = objects.newInstance(AnnounceImpl, objects)
         assemble = objects.newInstance(AssembleImpl, objects)
         checksum = objects.newInstance(ChecksumImpl, objects)
+        servers = objects.newInstance(ServersImpl, objects)
         signing = objects.newInstance(SigningImpl, objects)
         files = objects.newInstance(FilesImpl, objects)
 
@@ -254,6 +258,11 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     }
 
     @Override
+    void servers(Action<? super Servers> action) {
+        action.execute(servers)
+    }
+
+    @Override
     void distributions(Action<? super NamedDomainObjectContainer<Distribution>> action) {
         action.execute(distributions)
     }
@@ -291,6 +300,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         jreleaser.assemble = assemble.toModel()
         jreleaser.signing = signing.toModel()
         jreleaser.checksum = checksum.toModel()
+        jreleaser.servers = servers.toModel()
         jreleaser.files = files.toModel()
         distributions.each { jreleaser.addDistribution(((DistributionImpl) it).toModel()) }
         extensions.each { jreleaser.addExtension(((ExtensionImpl) it).toModel()) }

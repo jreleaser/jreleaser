@@ -41,8 +41,9 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 1.3.0
  */
-public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A>, A extends org.jreleaser.model.api.deploy.maven.MavenDeployer> extends AbstractActivatable<S> implements MavenDeployer<A>, ExtraProperties {
-    private static final long serialVersionUID = -5754230006047623161L;
+public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A>, A extends org.jreleaser.model.api.deploy.maven.MavenDeployer> extends AbstractActivatable<S>
+    implements MavenDeployer<A>, ExtraProperties {
+    private static final long serialVersionUID = 4759185439977322247L;
 
     @JsonIgnore
     private final String type;
@@ -51,6 +52,7 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
     private final Set<ArtifactOverride> artifactOverrides = new LinkedHashSet<>();
     @JsonIgnore
     private String name;
+    private String serverRef;
     private int connectTimeout;
     private int readTimeout;
     protected Boolean sign;
@@ -78,6 +80,7 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
     public void merge(S source) {
         super.merge(source);
         this.name = merge(this.name, source.getName());
+        this.serverRef = merge(this.serverRef, source.getServerRef());
         this.connectTimeout = merge(this.getConnectTimeout(), source.getConnectTimeout());
         this.readTimeout = merge(this.getReadTimeout(), source.getReadTimeout());
         this.sign = merge(this.sign, source.sign);
@@ -109,6 +112,16 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
     @Override
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String getServerRef() {
+        return serverRef;
+    }
+
+    @Override
+    public void setServerRef(String serverRef) {
+        this.serverRef = serverRef;
     }
 
     @Override
@@ -333,6 +346,7 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
         Map<String, Object> props = new LinkedHashMap<>();
         props.put("enabled", isEnabled());
         props.put("active", getActive());
+        props.put("serverRef", serverRef);
         props.put("connectTimeout", connectTimeout);
         props.put("readTimeout", readTimeout);
         props.put("authorization", authorization);

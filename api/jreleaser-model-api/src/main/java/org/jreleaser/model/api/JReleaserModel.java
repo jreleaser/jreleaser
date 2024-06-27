@@ -34,6 +34,7 @@ import org.jreleaser.model.api.packagers.Packagers;
 import org.jreleaser.model.api.platform.Platform;
 import org.jreleaser.model.api.project.Project;
 import org.jreleaser.model.api.release.Release;
+import org.jreleaser.model.api.servers.Servers;
 import org.jreleaser.model.api.signing.Signing;
 import org.jreleaser.model.api.upload.Upload;
 
@@ -68,6 +69,8 @@ public interface JReleaserModel extends Domain {
     Announce getAnnounce();
 
     Assemble getAssemble();
+
+    Servers getServers();
 
     Download getDownload();
 

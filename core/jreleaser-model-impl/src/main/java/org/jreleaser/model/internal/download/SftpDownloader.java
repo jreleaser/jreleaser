@@ -36,7 +36,7 @@ public final class SftpDownloader extends AbstractSshDownloader<org.jreleaser.mo
 
     @JsonIgnore
     private final org.jreleaser.model.api.download.SftpDownloader immutable = new org.jreleaser.model.api.download.SftpDownloader() {
-        private static final long serialVersionUID = 8300210807291243549L;
+        private static final long serialVersionUID = 4688115927513747919L;
 
         private List<? extends org.jreleaser.model.api.download.Downloader.Asset> assets;
 
@@ -48,6 +48,11 @@ public final class SftpDownloader extends AbstractSshDownloader<org.jreleaser.mo
         @Override
         public String getName() {
             return SftpDownloader.this.getName();
+        }
+
+        @Override
+        public String getServerRef() {
+            return SftpDownloader.this.getServerRef();
         }
 
         @Override

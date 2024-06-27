@@ -30,6 +30,8 @@ import org.jreleaser.model.Http
  */
 @CompileStatic
 interface HttpAnnouncer extends Announcer {
+    Property<String> getServerRef()
+
     Property<String> getUrl()
 
     Property<String> getUsername()

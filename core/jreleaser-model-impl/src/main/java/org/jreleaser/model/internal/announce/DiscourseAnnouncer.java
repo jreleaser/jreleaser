@@ -20,6 +20,7 @@ package org.jreleaser.model.internal.announce;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.common.HostAware;
 import org.jreleaser.mustache.TemplateContext;
 
 import java.util.Map;
@@ -36,8 +37,9 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author shblue21
  * @since 1.3.0
  */
-public final class DiscourseAnnouncer extends AbstractMessageAnnouncer<DiscourseAnnouncer, org.jreleaser.model.api.announce.DiscourseAnnouncer> {
-    private static final long serialVersionUID = 1521072015436279873L;
+public final class DiscourseAnnouncer extends AbstractMessageAnnouncer<DiscourseAnnouncer, org.jreleaser.model.api.announce.DiscourseAnnouncer>
+    implements HostAware {
+    private static final long serialVersionUID = 9065154978681380404L;
 
     private String host;
     private String apiKey;
@@ -160,10 +162,12 @@ public final class DiscourseAnnouncer extends AbstractMessageAnnouncer<Discourse
         return resolveTemplate(title, props);
     }
 
+    @Override
     public String getHost() {
         return host;
     }
 
+    @Override
     public void setHost(String host) {
         this.host = host;
     }

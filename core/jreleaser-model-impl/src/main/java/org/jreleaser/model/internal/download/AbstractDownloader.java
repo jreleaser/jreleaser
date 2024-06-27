@@ -31,7 +31,7 @@ import java.util.Map;
  * @since 1.1.0
  */
 public abstract class AbstractDownloader<A extends org.jreleaser.model.api.download.Downloader, S extends AbstractDownloader<A, S>> extends AbstractActivatable<S> implements Downloader<A> {
-    private static final long serialVersionUID = -4493344175741414422L;
+    private static final long serialVersionUID = -6381014714212761565L;
 
     @JsonIgnore
     private final String type;
@@ -39,6 +39,7 @@ public abstract class AbstractDownloader<A extends org.jreleaser.model.api.downl
     private final List<Asset> assets = new ArrayList<>();
     @JsonIgnore
     private String name;
+    private String serverRef;
     private Integer connectTimeout;
     private Integer readTimeout;
 
@@ -50,6 +51,7 @@ public abstract class AbstractDownloader<A extends org.jreleaser.model.api.downl
     public void merge(S source) {
         super.merge(source);
         this.name = merge(this.name, source.getName());
+        this.serverRef = merge(this.serverRef, source.getServerRef());
         this.connectTimeout = merge(this.connectTimeout, source.getConnectTimeout());
         this.readTimeout = merge(this.readTimeout, source.getReadTimeout());
         setExtraProperties(merge(this.extraProperties, source.getExtraProperties()));
@@ -69,6 +71,16 @@ public abstract class AbstractDownloader<A extends org.jreleaser.model.api.downl
     @Override
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String getServerRef() {
+        return serverRef;
+    }
+
+    @Override
+    public void setServerRef(String serverRef) {
+        this.serverRef = serverRef;
     }
 
     @Override
@@ -137,8 +149,9 @@ public abstract class AbstractDownloader<A extends org.jreleaser.model.api.downl
         Map<String, Object> props = new LinkedHashMap<>();
         props.put("enabled", isEnabled());
         props.put("active", getActive());
-        props.put("connectTimeout", connectTimeout);
-        props.put("readTimeout", readTimeout);
+        props.put("serverRef", serverRef);
+        props.put("connectTimeout", getConnectTimeout());
+        props.put("readTimeout", getReadTimeout());
         asMap(full, props);
         Map<String, Map<String, Object>> mappedAssets = new LinkedHashMap<>();
         int i = 0;
