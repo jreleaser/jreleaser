@@ -20,6 +20,7 @@ package org.jreleaser.model.internal.deploy.maven;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Http;
 import org.jreleaser.model.internal.common.AbstractModelObject;
+import org.jreleaser.model.internal.common.Authenticatable;
 import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.common.TimeoutAware;
 import org.jreleaser.model.internal.deploy.Deployer;
@@ -36,18 +37,14 @@ import static java.util.Collections.unmodifiableMap;
  * @author Andres Almiray
  * @since 1.3.0
  */
-public interface MavenDeployer<A extends org.jreleaser.model.api.deploy.maven.MavenDeployer> extends Deployer<A>, TimeoutAware {
+public interface MavenDeployer<A extends org.jreleaser.model.api.deploy.maven.MavenDeployer> extends Deployer<A>, TimeoutAware, Authenticatable {
+    String getServerRef();
+
+    void setServerRef(String serverRef);
+
     String getUrl();
 
     void setUrl(String url);
-
-    String getUsername();
-
-    void setUsername(String username);
-
-    String getPassword();
-
-    void setPassword(String password);
 
     Http.Authorization getAuthorization();
 
@@ -122,6 +119,7 @@ public interface MavenDeployer<A extends org.jreleaser.model.api.deploy.maven.Ma
         @JsonIgnore
         private final org.jreleaser.model.api.deploy.maven.MavenDeployer.ArtifactOverride immutable = new org.jreleaser.model.api.deploy.maven.MavenDeployer.ArtifactOverride() {
             private static final long serialVersionUID = -7937881029176143227L;
+
             @Override
             public String getGroupId() {
                 return groupId;

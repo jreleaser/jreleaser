@@ -27,7 +27,7 @@ import org.gradle.api.provider.SetProperty
  * @since 1.11.0
  */
 @CompileStatic
-interface Entity  {
+interface Entity {
     Property<String> getName()
 
     Property<String> getRegid()

@@ -40,7 +40,7 @@ public final class HttpDownloader extends AbstractDownloader<org.jreleaser.model
 
     @JsonIgnore
     private final org.jreleaser.model.api.download.HttpDownloader immutable = new org.jreleaser.model.api.download.HttpDownloader() {
-        private static final long serialVersionUID = -1955685895966905403L;
+        private static final long serialVersionUID = 1439135826058380191L;
 
         private List<? extends Asset> assets;
 
@@ -72,6 +72,11 @@ public final class HttpDownloader extends AbstractDownloader<org.jreleaser.model
         @Override
         public String getName() {
             return HttpDownloader.this.getName();
+        }
+
+        @Override
+        public String getServerRef() {
+            return HttpDownloader.this.getServerRef();
         }
 
         @Override

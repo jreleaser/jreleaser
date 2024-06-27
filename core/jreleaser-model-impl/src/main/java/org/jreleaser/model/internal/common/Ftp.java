@@ -21,20 +21,6 @@ package org.jreleaser.model.internal.common;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public interface Ftp {
-    String getUsername();
+public interface Ftp extends Authenticatable, HostAware, PortAware, TimeoutAware {
 
-    void setUsername(String username);
-
-    String getPassword();
-
-    void setPassword(String password);
-
-    String getHost();
-
-    void setHost(String host);
-
-    Integer getPort();
-
-    void setPort(Integer port);
 }

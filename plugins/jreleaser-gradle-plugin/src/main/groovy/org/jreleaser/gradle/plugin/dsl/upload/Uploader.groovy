@@ -29,6 +29,8 @@ import org.jreleaser.gradle.plugin.dsl.common.ExtraProperties
  */
 @CompileStatic
 interface Uploader extends Activatable, ExtraProperties {
+    Property<String> getServerRef()
+
     Property<Integer> getConnectTimeout()
 
     Property<Integer> getReadTimeout()

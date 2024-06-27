@@ -38,6 +38,7 @@ import static org.jreleaser.model.internal.validation.packagers.PackagersValidat
 import static org.jreleaser.model.internal.validation.project.ProjectValidator.postValidateProject;
 import static org.jreleaser.model.internal.validation.project.ProjectValidator.validateProject;
 import static org.jreleaser.model.internal.validation.release.ReleaseValidator.validateRelease;
+import static org.jreleaser.model.internal.validation.servers.ServersValidator.validateServers;
 import static org.jreleaser.model.internal.validation.signing.SigningValidator.postValidateSigning;
 import static org.jreleaser.model.internal.validation.signing.SigningValidator.validateSigning;
 import static org.jreleaser.model.internal.validation.upload.UploadersValidator.validateUploaders;
@@ -68,6 +69,7 @@ public final class JReleaserModelValidator {
         validateMatrix(context, context.getModel().getMatrix(), "matrix", errors);
         validateHooks(context, errors);
         validateProject(context, mode, errors);
+        validateServers(context, mode, errors);
         validateDownloaders(context, mode, errors);
         validateSwid(context, mode, errors);
         validateAssemblers(context, mode, errors);

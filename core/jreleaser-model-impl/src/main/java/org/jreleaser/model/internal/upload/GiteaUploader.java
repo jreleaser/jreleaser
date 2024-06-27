@@ -20,6 +20,8 @@ package org.jreleaser.model.internal.upload;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.common.Artifact;
+import org.jreleaser.model.internal.common.Authenticatable;
+import org.jreleaser.model.internal.common.HostAware;
 import org.jreleaser.mustache.TemplateContext;
 
 import java.util.Map;
@@ -32,15 +34,16 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
  * @author Andres Almiray
  * @since 1.2.0
  */
-public final class GiteaUploader extends AbstractGitPackageUploader<org.jreleaser.model.api.upload.GiteaUploader, GiteaUploader> {
+public final class GiteaUploader extends AbstractGitPackageUploader<org.jreleaser.model.api.upload.GiteaUploader, GiteaUploader>
+    implements Authenticatable, HostAware {
     private static final String DOWNLOAD_URL = "https://{{host}}/api/packages/{{owner}}/generic/{{packageName}}/{{packageVersion}}/{{artifactFile}}";
-    private static final long serialVersionUID = 8284794407254124499L;
+    private static final long serialVersionUID = 577420951475243471L;
 
     private String owner;
 
     @JsonIgnore
     private final org.jreleaser.model.api.upload.GiteaUploader immutable = new org.jreleaser.model.api.upload.GiteaUploader() {
-        private static final long serialVersionUID = -7859608360457491380L;
+        private static final long serialVersionUID = -7436841554117846326L;
 
         @Override
         public String getHost() {
@@ -75,6 +78,11 @@ public final class GiteaUploader extends AbstractGitPackageUploader<org.jrelease
         @Override
         public String getName() {
             return GiteaUploader.this.getName();
+        }
+
+        @Override
+        public String getServerRef() {
+            return GiteaUploader.this.getServerRef();
         }
 
         @Override
@@ -181,5 +189,26 @@ public final class GiteaUploader extends AbstractGitPackageUploader<org.jrelease
         p.set("packageName", getPackageName());
         p.set("packageVersion", getPackageVersion());
         return resolveTemplate(DOWNLOAD_URL, p);
+    }
+
+    @Override
+    public String getUsername() {
+        // noop
+        return null;
+    }
+
+    @Override
+    public void setUsername(String username) {
+        // noop
+    }
+
+    @Override
+    public String getPassword() {
+        return getToken();
+    }
+
+    @Override
+    public void setPassword(String password) {
+        setToken(password);
     }
 }

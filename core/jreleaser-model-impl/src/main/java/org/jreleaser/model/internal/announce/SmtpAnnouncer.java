@@ -21,6 +21,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Mail;
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.common.Authenticatable;
+import org.jreleaser.model.internal.common.HostAware;
+import org.jreleaser.model.internal.common.PortAware;
 import org.jreleaser.mustache.TemplateContext;
 
 import java.util.LinkedHashMap;
@@ -41,8 +44,9 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public final class SmtpAnnouncer extends AbstractMessageAnnouncer<SmtpAnnouncer, org.jreleaser.model.api.announce.SmtpAnnouncer> {
-    private static final long serialVersionUID = 8158533914621631647L;
+public final class SmtpAnnouncer extends AbstractMessageAnnouncer<SmtpAnnouncer, org.jreleaser.model.api.announce.SmtpAnnouncer>
+    implements Authenticatable, HostAware, PortAware {
+    private static final long serialVersionUID = -558073868742659393L;
 
     private final Map<String, String> properties = new LinkedHashMap<>();
 
@@ -238,18 +242,22 @@ public final class SmtpAnnouncer extends AbstractMessageAnnouncer<SmtpAnnouncer,
         this.transport = transport;
     }
 
+    @Override
     public String getHost() {
         return host;
     }
 
+    @Override
     public void setHost(String host) {
         this.host = host;
     }
 
+    @Override
     public Integer getPort() {
         return port;
     }
 
+    @Override
     public void setPort(Integer port) {
         this.port = port;
     }
@@ -266,18 +274,22 @@ public final class SmtpAnnouncer extends AbstractMessageAnnouncer<SmtpAnnouncer,
         return null != auth;
     }
 
+    @Override
     public String getUsername() {
         return username;
     }
 
+    @Override
     public void setUsername(String username) {
         this.username = username;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
 
+    @Override
     public void setPassword(String password) {
         this.password = password;
     }

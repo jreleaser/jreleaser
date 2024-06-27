@@ -20,6 +20,8 @@ package org.jreleaser.model.internal.upload;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.common.Artifact;
+import org.jreleaser.model.internal.common.Gitlab;
+import org.jreleaser.model.internal.common.HostAware;
 import org.jreleaser.mustache.TemplateContext;
 
 import java.util.Map;
@@ -32,15 +34,16 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
  * @author Andres Almiray
  * @since 1.2.0
  */
-public final class GitlabUploader extends AbstractGitPackageUploader<org.jreleaser.model.api.upload.GitlabUploader, GitlabUploader> {
+public final class GitlabUploader extends AbstractGitPackageUploader<org.jreleaser.model.api.upload.GitlabUploader, GitlabUploader>
+    implements Gitlab, HostAware {
     private static final String DOWNLOAD_URL = "https://{{host}}/api/v4/projects/{{projectIdentifier}}/packages/generic/{{packageName}}/{{packageVersion}}/{{artifactFile}}";
-    private static final long serialVersionUID = 5043963981384840431L;
+    private static final long serialVersionUID = -8788115961230077463L;
 
     private String projectIdentifier;
 
     @JsonIgnore
     private final org.jreleaser.model.api.upload.GitlabUploader immutable = new org.jreleaser.model.api.upload.GitlabUploader() {
-        private static final long serialVersionUID = -7870246763484590832L;
+        private static final long serialVersionUID = 3830388773127841029L;
 
         @Override
         public String getHost() {
@@ -75,6 +78,11 @@ public final class GitlabUploader extends AbstractGitPackageUploader<org.jreleas
         @Override
         public String getName() {
             return GitlabUploader.this.getName();
+        }
+
+        @Override
+        public String getServerRef() {
+            return GitlabUploader.this.getServerRef();
         }
 
         @Override
@@ -159,10 +167,12 @@ public final class GitlabUploader extends AbstractGitPackageUploader<org.jreleas
         this.projectIdentifier = merge(this.projectIdentifier, source.projectIdentifier);
     }
 
+    @Override
     public String getProjectIdentifier() {
         return projectIdentifier;
     }
 
+    @Override
     public void setProjectIdentifier(String projectIdentifier) {
         this.projectIdentifier = projectIdentifier;
     }
@@ -182,5 +192,26 @@ public final class GitlabUploader extends AbstractGitPackageUploader<org.jreleas
         p.set("packageVersion", getPackageVersion());
         p.set("projectIdentifier", getProjectIdentifier());
         return resolveTemplate(DOWNLOAD_URL, p);
+    }
+
+    @Override
+    public String getUsername() {
+        // noop
+        return null;
+    }
+
+    @Override
+    public void setUsername(String username) {
+        // noop
+    }
+
+    @Override
+    public String getPassword() {
+        return getToken();
+    }
+
+    @Override
+    public void setPassword(String password) {
+        setToken(password);
     }
 }

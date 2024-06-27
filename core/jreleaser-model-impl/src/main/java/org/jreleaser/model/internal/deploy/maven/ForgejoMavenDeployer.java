@@ -38,7 +38,7 @@ public final class ForgejoMavenDeployer extends AbstractMavenDeployer<ForgejoMav
 
     @JsonIgnore
     private final org.jreleaser.model.api.deploy.maven.ForgejoMavenDeployer immutable = new org.jreleaser.model.api.deploy.maven.ForgejoMavenDeployer() {
-        private static final long serialVersionUID = 7414185702893678393L;
+        private static final long serialVersionUID = -4836321171503796439L;
 
         private Set<? extends ArtifactOverride> artifactOverrides;
 
@@ -120,6 +120,11 @@ public final class ForgejoMavenDeployer extends AbstractMavenDeployer<ForgejoMav
         @Override
         public String getName() {
             return ForgejoMavenDeployer.this.getName();
+        }
+
+        @Override
+        public String getServerRef() {
+            return ForgejoMavenDeployer.this.getServerRef();
         }
 
         @Override

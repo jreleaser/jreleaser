@@ -32,6 +32,8 @@ import java.util.Set;
 public interface MavenDeployer extends Deployer, TimeoutAware {
     String GROUP = "maven";
 
+    String getServerRef();
+
     String getUrl();
 
     String getUsername();
