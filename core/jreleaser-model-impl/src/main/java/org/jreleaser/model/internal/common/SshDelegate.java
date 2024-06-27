@@ -41,7 +41,7 @@ public final class SshDelegate extends AbstractModelObject<SshDelegate> implemen
     private String passphrase;
     private String fingerprint;
 
-   @Override
+    @Override
     public void merge(SshDelegate source) {
         this.username = merge(this.username, source.getUsername());
         this.password = merge(this.password, source.getPassword());

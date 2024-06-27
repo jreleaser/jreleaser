@@ -35,14 +35,15 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
  * @author Andres Almiray
  * @since 1.3.0
  */
-public final class GitlabMavenDeployer extends AbstractMavenDeployer<GitlabMavenDeployer, org.jreleaser.model.api.deploy.maven.GitlabMavenDeployer> {
-    private static final long serialVersionUID = 924140634644168936L;
+public final class GitlabMavenDeployer extends AbstractMavenDeployer<GitlabMavenDeployer, org.jreleaser.model.api.deploy.maven.GitlabMavenDeployer>
+    implements org.jreleaser.model.internal.common.Gitlab {
+    private static final long serialVersionUID = -2269372023598918152L;
 
     private String projectIdentifier;
 
     @JsonIgnore
     private final org.jreleaser.model.api.deploy.maven.GitlabMavenDeployer immutable = new org.jreleaser.model.api.deploy.maven.GitlabMavenDeployer() {
-        private static final long serialVersionUID = 1856197755643058769L;
+        private static final long serialVersionUID = -728305568226643829L;
 
         private Set<? extends org.jreleaser.model.api.deploy.maven.MavenDeployer.ArtifactOverride> artifactOverrides;
 
@@ -132,6 +133,11 @@ public final class GitlabMavenDeployer extends AbstractMavenDeployer<GitlabMaven
         }
 
         @Override
+        public String getServerRef() {
+            return GitlabMavenDeployer.this.getServerRef();
+        }
+
+        @Override
         public Active getActive() {
             return GitlabMavenDeployer.this.getActive();
         }
@@ -182,10 +188,12 @@ public final class GitlabMavenDeployer extends AbstractMavenDeployer<GitlabMaven
         this.projectIdentifier = merge(this.projectIdentifier, source.projectIdentifier);
     }
 
+    @Override
     public String getProjectIdentifier() {
         return projectIdentifier;
     }
 
+    @Override
     public void setProjectIdentifier(String projectIdentifier) {
         this.projectIdentifier = projectIdentifier;
     }

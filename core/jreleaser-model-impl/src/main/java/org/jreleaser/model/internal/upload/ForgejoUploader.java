@@ -20,6 +20,8 @@ package org.jreleaser.model.internal.upload;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.common.Artifact;
+import org.jreleaser.model.internal.common.Authenticatable;
+import org.jreleaser.model.internal.common.HostAware;
 import org.jreleaser.mustache.TemplateContext;
 
 import java.util.Map;
@@ -32,15 +34,16 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
  * @author Andres Almiray
  * @since 1.18.0
  */
-public final class ForgejoUploader extends AbstractGitPackageUploader<org.jreleaser.model.api.upload.ForgejoUploader, ForgejoUploader> {
+public final class ForgejoUploader extends AbstractGitPackageUploader<org.jreleaser.model.api.upload.ForgejoUploader, ForgejoUploader>
+    implements Authenticatable, HostAware {
     private static final String DOWNLOAD_URL = "https://{{host}}/api/packages/{{owner}}/generic/{{packageName}}/{{packageVersion}}/{{artifactFile}}";
-    private static final long serialVersionUID = 8395262149348335087L;
+    private static final long serialVersionUID = 4636674888790577506L;
 
     private String owner;
 
     @JsonIgnore
     private final org.jreleaser.model.api.upload.ForgejoUploader immutable = new org.jreleaser.model.api.upload.ForgejoUploader() {
-        private static final long serialVersionUID = -8536634515271486037L;
+        private static final long serialVersionUID = 1814575818743064283L;
 
         @Override
         public String getHost() {
@@ -75,6 +78,11 @@ public final class ForgejoUploader extends AbstractGitPackageUploader<org.jrelea
         @Override
         public String getName() {
             return ForgejoUploader.this.getName();
+        }
+
+        @Override
+        public String getServerRef() {
+            return ForgejoUploader.this.getServerRef();
         }
 
         @Override
@@ -181,5 +189,26 @@ public final class ForgejoUploader extends AbstractGitPackageUploader<org.jrelea
         p.set("packageName", getPackageName());
         p.set("packageVersion", getPackageVersion());
         return resolveTemplate(DOWNLOAD_URL, p);
+    }
+
+    @Override
+    public String getUsername() {
+        // noop
+        return null;
+    }
+
+    @Override
+    public void setUsername(String username) {
+        // noop
+    }
+
+    @Override
+    public String getPassword() {
+        return getToken();
+    }
+
+    @Override
+    public void setPassword(String password) {
+        setToken(password);
     }
 }

@@ -32,6 +32,8 @@ import org.jreleaser.model.Http
  */
 @CompileStatic
 interface MavenDeployer extends Deployer {
+    Property<String> getServerRef()
+
     Property<Integer> getConnectTimeout()
 
     Property<Integer> getReadTimeout()

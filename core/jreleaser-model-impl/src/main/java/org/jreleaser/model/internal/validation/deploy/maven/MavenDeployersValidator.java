@@ -23,12 +23,15 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.deploy.maven.Maven;
 import org.jreleaser.model.internal.deploy.maven.MavenDeployer;
 import org.jreleaser.model.internal.release.BaseReleaser;
+import org.jreleaser.model.internal.servers.HttpServer;
 import org.jreleaser.util.DefaultVersions;
 import org.jreleaser.util.Errors;
 
+import static org.jreleaser.model.internal.validation.common.AuthenticatableValidator.validatePassword;
+import static org.jreleaser.model.internal.validation.common.AuthenticatableValidator.validateUsername;
+import static org.jreleaser.model.internal.validation.common.ServerValidator.validateTimeout;
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
-import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
 import static org.jreleaser.model.internal.validation.deploy.maven.ArtifactoryMavenDeployerValidator.validateArtifactoryMavenDeployer;
 import static org.jreleaser.model.internal.validation.deploy.maven.AzureMavenDeployerValidator.validateAzureMavenDeployer;
 import static org.jreleaser.model.internal.validation.deploy.maven.ForgejoMavenDeployerValidator.validateForgejoMavenDeployer;
@@ -140,70 +143,27 @@ public final class MavenDeployersValidator {
             mavenDeployer.setUrl(mavenDeployer.getUrl().substring(0, mavenDeployer.getUrl().length() - 1));
         }
 
-        String defaultUsername = null;
-        String defaultPassword = null;
         BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
-        if (null != service && mavenDeployer.getType().equalsIgnoreCase(service.getServiceName())) {
-            defaultUsername = service.getUsername();
-            defaultPassword = service.getToken();
+        String serverName = mavenDeployer.getServerRef();
+        HttpServer server = context.getModel().getServers().httpFor(serverName);
+        if (null != server && isBlank(server.getUsername())) {
+            server.setUsername(service.getUsername());
         }
-        String setUsername = mavenDeployer.getUsername();
-        String setPassword = mavenDeployer.getPassword();
-        if (isBlank(setUsername)) {
-            setUsername = defaultUsername;
+        if (null != server && isBlank(server.getPassword())) {
+            server.setPassword(service.getToken());
         }
-        if (isBlank(setPassword)) {
-            setPassword = defaultPassword;
-        }
-
         switch (mavenDeployer.resolveAuthorization()) {
             case BEARER:
-                mavenDeployer.setPassword(
-                    checkProperty(context,
-                        listOf(
-                            "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".password",
-                            "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".token",
-                            "deploy.maven." + mavenDeployer.getType() + ".password",
-                            "deploy.maven." + mavenDeployer.getType() + ".token",
-                            mavenDeployer.getType() + "." + mavenDeployer.getName() + ".password",
-                            mavenDeployer.getType() + "." + mavenDeployer.getName() + ".token",
-                            mavenDeployer.getType() + ".password",
-                            mavenDeployer.getType() + ".token"),
-                        "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".password",
-                        setPassword,
-                        errors));
+                validatePassword(context, mavenDeployer, server, "deploy.maven", mavenDeployer.getType(), mavenDeployer.getName(), errors, context.isDryrun());
                 break;
             case BASIC:
-                mavenDeployer.setUsername(
-                    checkProperty(context,
-                        mavenDeployer.keysFor("username"),
-                        "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".username",
-                        setUsername,
-                        errors));
-
-                mavenDeployer.setPassword(
-                    checkProperty(context,
-                        listOf(
-                            "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".password",
-                            "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".token",
-                            "deploy.maven." + mavenDeployer.getType() + ".password",
-                            "deploy.maven." + mavenDeployer.getType() + ".token",
-                            mavenDeployer.getType() + "." + mavenDeployer.getName() + ".password",
-                            mavenDeployer.getType() + "." + mavenDeployer.getName() + ".token",
-                            mavenDeployer.getType() + ".password",
-                            mavenDeployer.getType() + ".token"),
-                        "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".password",
-                        setPassword,
-                        errors));
+                validateUsername(context, mavenDeployer, server, "deploy.maven", mavenDeployer.getType(), mavenDeployer.getName(), errors, context.isDryrun());
+                validatePassword(context, mavenDeployer, server, "deploy.maven", mavenDeployer.getType(), mavenDeployer.getName(), errors, context.isDryrun());
                 break;
             case NONE:
-                errors.configuration(RB.$("validation_value_cannot_be", deployerPrefix + ".authorization", "NONE"));
-                context.getLogger().debug(RB.$("validation.disabled.error"));
-                mavenDeployer.disable();
                 break;
         }
-
-        validateTimeout(mavenDeployer);
+        validateTimeout(context, mavenDeployer, server, "deploy.maven", mavenDeployer.getType(), mavenDeployer.getName(), errors, true);
 
         if (mavenDeployer.getStagingRepositories().isEmpty()) {
             errors.configuration(RB.$("validation_must_not_be_empty", deployerPrefix + ".stagingDirectories"));

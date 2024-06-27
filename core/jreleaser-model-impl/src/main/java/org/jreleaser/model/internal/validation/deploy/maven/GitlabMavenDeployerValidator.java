@@ -17,15 +17,16 @@
  */
 package org.jreleaser.model.internal.validation.deploy.maven;
 
-import org.jreleaser.bundle.RB;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.deploy.maven.GitlabMavenDeployer;
 import org.jreleaser.model.internal.release.BaseReleaser;
+import org.jreleaser.model.internal.servers.GitlabServer;
 import org.jreleaser.util.Errors;
 
 import java.util.Map;
 
+import static org.jreleaser.model.internal.validation.common.GitlabValidator.validateProjectIdentifier;
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
 import static org.jreleaser.model.internal.validation.common.Validator.mergeErrors;
 import static org.jreleaser.model.internal.validation.deploy.maven.MavenDeployersValidator.validateMavenDeployer;
@@ -91,8 +92,8 @@ public final class GitlabMavenDeployerValidator {
             mavenDeployer.setUsername(context.getModel().getRelease().getReleaser().getUsername());
         }
 
-        if (isBlank(mavenDeployer.getProjectIdentifier())) {
-            errors.configuration(RB.$("validation_must_not_be_blank", "deploy.maven.gitea." + mavenDeployer.getName() + ".projectIdentifier"));
-        }
+        String serverName = mavenDeployer.getServerRef();
+        GitlabServer server = context.getModel().getServers().gitlabFor(serverName);
+        validateProjectIdentifier(context, mavenDeployer, server, "deploy.maven", mavenDeployer.getName(), errors, false);
     }
 }

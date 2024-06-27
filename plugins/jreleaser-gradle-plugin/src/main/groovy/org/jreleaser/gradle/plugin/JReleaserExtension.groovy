@@ -38,6 +38,7 @@ import org.jreleaser.gradle.plugin.dsl.packagers.Packagers
 import org.jreleaser.gradle.plugin.dsl.platform.Platform
 import org.jreleaser.gradle.plugin.dsl.project.Project
 import org.jreleaser.gradle.plugin.dsl.release.Release
+import org.jreleaser.gradle.plugin.dsl.servers.Servers
 import org.jreleaser.gradle.plugin.dsl.signing.Signing
 import org.jreleaser.gradle.plugin.dsl.upload.Upload
 
@@ -98,6 +99,8 @@ interface JReleaserExtension {
 
     Checksum getChecksum()
 
+    Servers getServers()
+
     // NamedDomainObjectContainer<Extension> getExtensions()
 
     NamedDomainObjectContainer<Distribution> getDistributions()
@@ -134,6 +137,8 @@ interface JReleaserExtension {
 
     void checksum(Action<? super Checksum> action)
 
+    void servers(Action<? super Servers> action)
+
     void distributions(Action<? super NamedDomainObjectContainer<Distribution>> action)
 
     void extensions(Action<? super NamedDomainObjectContainer<Extension>> action)
@@ -169,6 +174,8 @@ interface JReleaserExtension {
     void signing(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Signing) Closure<Void> action)
 
     void checksum(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Checksum) Closure<Void> action)
+
+    void servers(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Servers) Closure<Void> action)
 
     void distributions(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 

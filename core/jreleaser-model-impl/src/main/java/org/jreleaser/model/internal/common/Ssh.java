@@ -21,23 +21,7 @@ package org.jreleaser.model.internal.common;
  * @author Andres Almiray
  * @since 1.1.0
  */
-public interface Ssh {
-    String getUsername();
-
-    void setUsername(String username);
-
-    String getPassword();
-
-    void setPassword(String password);
-
-    String getHost();
-
-    void setHost(String host);
-
-    Integer getPort();
-
-    void setPort(Integer port);
-
+public interface Ssh extends Authenticatable, HostAware, PortAware {
     String getKnownHostsFile();
 
     void setKnownHostsFile(String knownHostsFile);

@@ -38,7 +38,7 @@ public final class HttpUploader extends AbstractWebUploader<org.jreleaser.model.
 
     @JsonIgnore
     private final org.jreleaser.model.api.upload.HttpUploader immutable = new org.jreleaser.model.api.upload.HttpUploader() {
-        private static final long serialVersionUID = -2422450427549788470L;
+        private static final long serialVersionUID = -6746726894188756199L;
 
         @Override
         public Method getMethod() {
@@ -83,6 +83,11 @@ public final class HttpUploader extends AbstractWebUploader<org.jreleaser.model.
         @Override
         public String getName() {
             return HttpUploader.this.getName();
+        }
+
+        @Override
+        public String getServerRef() {
+            return HttpUploader.this.getServerRef();
         }
 
         @Override

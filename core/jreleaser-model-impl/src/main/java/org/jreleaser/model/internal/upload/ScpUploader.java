@@ -34,7 +34,7 @@ public final class ScpUploader extends AbstractSshUploader<org.jreleaser.model.a
 
     @JsonIgnore
     private final org.jreleaser.model.api.upload.ScpUploader immutable = new org.jreleaser.model.api.upload.ScpUploader() {
-        private static final long serialVersionUID = 3793298601082284442L;
+        private static final long serialVersionUID = 8054181814313431745L;
 
         @Override
         public String getPath() {
@@ -99,6 +99,11 @@ public final class ScpUploader extends AbstractSshUploader<org.jreleaser.model.a
         @Override
         public String getName() {
             return ScpUploader.this.getName();
+        }
+
+        @Override
+        public String getServerRef() {
+            return ScpUploader.this.getServerRef();
         }
 
         @Override

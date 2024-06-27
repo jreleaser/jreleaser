@@ -55,7 +55,7 @@ public final class S3Uploader extends AbstractUploader<org.jreleaser.model.api.u
 
     @JsonIgnore
     private final org.jreleaser.model.api.upload.S3Uploader immutable = new org.jreleaser.model.api.upload.S3Uploader() {
-        private static final long serialVersionUID = -3263159021072324345L;
+        private static final long serialVersionUID = -5617276204181758537L;
 
         @Override
         public String getRegion() {
@@ -110,6 +110,11 @@ public final class S3Uploader extends AbstractUploader<org.jreleaser.model.api.u
         @Override
         public String getName() {
             return S3Uploader.this.getName();
+        }
+
+        @Override
+        public String getServerRef() {
+            return S3Uploader.this.getServerRef();
         }
 
         @Override
