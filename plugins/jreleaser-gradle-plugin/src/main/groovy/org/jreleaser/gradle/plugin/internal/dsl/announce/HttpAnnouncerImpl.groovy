@@ -39,6 +39,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 @CompileStatic
 class HttpAnnouncerImpl extends AbstractAnnouncer implements HttpAnnouncer {
     String name
+    final Property<String> serverRef
     final Property<String> url
     final Property<String> username
     final Property<String> password
@@ -52,6 +53,7 @@ class HttpAnnouncerImpl extends AbstractAnnouncer implements HttpAnnouncer {
     @Inject
     HttpAnnouncerImpl(ObjectFactory objects) {
         super(objects)
+        serverRef = objects.property(String).convention(Providers.<String> notDefined())
         url = objects.property(String).convention(Providers.<String> notDefined())
         username = objects.property(String).convention(Providers.<String> notDefined())
         password = objects.property(String).convention(Providers.<String> notDefined())
@@ -67,6 +69,7 @@ class HttpAnnouncerImpl extends AbstractAnnouncer implements HttpAnnouncer {
     @Internal
     boolean isSet() {
         super.isSet() ||
+            serverRef.present ||
             url.present ||
             username.present ||
             password.present ||
@@ -104,6 +107,7 @@ class HttpAnnouncerImpl extends AbstractAnnouncer implements HttpAnnouncer {
         org.jreleaser.model.internal.announce.HttpAnnouncer announcer = new org.jreleaser.model.internal.announce.HttpAnnouncer()
         announcer.name = name
         fillProperties(announcer)
+        if (serverRef.present) announcer.serverRef = serverRef.get()
         if (url.present) announcer.url = url.get()
         if (username.present) announcer.username = username.get()
         if (password.present) announcer.password = password.get()

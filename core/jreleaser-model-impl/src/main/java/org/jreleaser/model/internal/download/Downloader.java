@@ -49,6 +49,10 @@ public interface Downloader<A extends org.jreleaser.model.api.download.Downloade
 
     void setName(String name);
 
+    String getServerRef();
+
+    void setServerRef(String serverRef);
+
     List<Asset> getAssets();
 
     void setAssets(List<Asset> assets);

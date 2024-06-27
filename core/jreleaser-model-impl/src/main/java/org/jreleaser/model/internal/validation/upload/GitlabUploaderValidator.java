@@ -20,15 +20,18 @@ package org.jreleaser.model.internal.validation.upload;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.servers.GitlabServer;
 import org.jreleaser.model.internal.upload.GitlabUploader;
 import org.jreleaser.util.Errors;
 
 import java.util.Map;
 
-import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.AuthenticatableValidator.validatePassword;
+import static org.jreleaser.model.internal.validation.common.GitlabValidator.validateProjectIdentifier;
+import static org.jreleaser.model.internal.validation.common.ServerValidator.validateHost;
+import static org.jreleaser.model.internal.validation.common.ServerValidator.validateTimeout;
 import static org.jreleaser.model.internal.validation.common.Validator.mergeErrors;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
-import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
 import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -73,34 +76,12 @@ public final class GitlabUploaderValidator {
             return;
         }
 
-        String baseKey1 = "upload.gitlab." + uploader.getName();
-        String baseKey2 = "upload.gitlab";
-        String baseKey3 = "gitlab." + uploader.getName();
-        String baseKey4 = "gitlab";
-
-        uploader.setToken(
-            checkProperty(context,
-                listOf(
-                    baseKey1 + ".token",
-                    baseKey2 + ".token",
-                    baseKey3 + ".token",
-                    baseKey4 + ".token"),
-                baseKey1 + ".token",
-                uploader.getToken(),
-                errors,
-                context.isDryrun()));
-
-        uploader.setHost(
-            checkProperty(context,
-                listOf(
-                    baseKey1 + ".host",
-                    baseKey2 + ".host",
-                    baseKey3 + ".host",
-                    baseKey4 + ".host"),
-                baseKey1 + ".host",
-                uploader.getHost(),
-                errors,
-                context.isDryrun()));
+        String serverName = uploader.getServerRef();
+        GitlabServer server = context.getModel().getServers().gitlabFor(serverName);
+        validatePassword(context, uploader, server, "upload", "gitlab", uploader.getName(), errors, context.isDryrun());
+        validateHost(context, uploader, server, "upload", "gitlab", uploader.getName(), errors, context.isDryrun());
+        validateTimeout(context, uploader, server, "upload", "gitlab", uploader.getName(), errors, true);
+        validateProjectIdentifier(context, uploader, server, "upload", uploader.getName(), errors, false);
 
         if (isBlank(uploader.getPackageName())) {
             uploader.setPackageName(uploader.getName());
@@ -108,11 +89,5 @@ public final class GitlabUploaderValidator {
         if (isBlank(uploader.getPackageVersion())) {
             uploader.setPackageVersion("{{projectVersion}}");
         }
-
-        if (isBlank(uploader.getProjectIdentifier())) {
-            errors.configuration(RB.$("validation_must_not_be_blank", baseKey1 + ".projectIdentifier"));
-        }
-
-        validateTimeout(uploader);
     }
 }

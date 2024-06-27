@@ -24,6 +24,7 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.AbstractActivatable;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.Domain;
+import org.jreleaser.model.internal.common.HostAware;
 import org.jreleaser.model.internal.common.HttpDelegate;
 import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.mustache.Templates;
@@ -47,8 +48,8 @@ import static org.jreleaser.util.StringUtils.getFilename;
  * @since 0.3.0
  */
 public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.model.api.upload.ArtifactoryUploader, ArtifactoryUploader>
-    implements org.jreleaser.model.internal.common.Http {
-    private static final long serialVersionUID = 3514827122618864142L;
+    implements org.jreleaser.model.internal.common.Http, HostAware {
+    private static final long serialVersionUID = 5382782110056208289L;
 
     private final HttpDelegate delegate = new HttpDelegate();
     private final List<ArtifactoryRepository> repositories = new ArrayList<>();
@@ -56,7 +57,7 @@ public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.mo
 
     @JsonIgnore
     private final org.jreleaser.model.api.upload.ArtifactoryUploader immutable = new org.jreleaser.model.api.upload.ArtifactoryUploader() {
-        private static final long serialVersionUID = -2363532627193458751L;
+        private static final long serialVersionUID = 1592058304630642333L;
 
         private List<? extends org.jreleaser.model.api.upload.ArtifactoryUploader.ArtifactoryRepository> repositories;
 
@@ -98,6 +99,11 @@ public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.mo
         @Override
         public String getName() {
             return ArtifactoryUploader.this.getName();
+        }
+
+        @Override
+        public String getServerRef() {
+            return ArtifactoryUploader.this.getServerRef();
         }
 
         @Override
@@ -188,10 +194,12 @@ public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.mo
         return delegate.getHeaders();
     }
 
+    @Override
     public String getHost() {
         return host;
     }
 
+    @Override
     public void setHost(String host) {
         this.host = host;
     }

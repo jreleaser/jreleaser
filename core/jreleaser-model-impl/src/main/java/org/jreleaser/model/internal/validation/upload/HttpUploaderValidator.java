@@ -21,15 +21,16 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Http;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.servers.HttpServer;
 import org.jreleaser.model.internal.upload.HttpUploader;
 import org.jreleaser.model.internal.validation.common.HttpValidator;
 import org.jreleaser.util.Errors;
 
 import java.util.Map;
 
+import static org.jreleaser.model.internal.validation.common.ServerValidator.validateTimeout;
 import static org.jreleaser.model.internal.validation.common.Validator.mergeErrors;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
-import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
 import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -85,7 +86,9 @@ public final class HttpUploaderValidator {
             uploader.setMethod(Http.Method.PUT);
         }
 
-        HttpValidator.validateHttp(context, uploader, "upload", uploader.getName(), errors);
-        validateTimeout(uploader);
+        String serverName = uploader.getServerRef();
+        HttpServer server = context.getModel().getServers().httpFor(serverName);
+        HttpValidator.validateHttp(context, uploader, server, "upload", uploader.getName(), errors);
+        validateTimeout(context, uploader, server, "upload", "http", uploader.getName(), errors, true);
     }
 }

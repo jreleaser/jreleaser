@@ -36,7 +36,7 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
  * @since 1.1.0
  */
 public final class FtpUploader extends AbstractUploader<org.jreleaser.model.api.upload.FtpUploader, FtpUploader> implements Ftp {
-    private static final long serialVersionUID = -7427075974576853678L;
+    private static final long serialVersionUID = -8222295123248082435L;
 
     private final FtpDelegate delegate = new FtpDelegate();
     private String path;
@@ -44,7 +44,7 @@ public final class FtpUploader extends AbstractUploader<org.jreleaser.model.api.
 
     @JsonIgnore
     private final org.jreleaser.model.api.upload.FtpUploader immutable = new org.jreleaser.model.api.upload.FtpUploader() {
-        private static final long serialVersionUID = -1377876046305087409L;
+        private static final long serialVersionUID = 873708863374698287L;
 
         @Override
         public String getPath() {
@@ -84,6 +84,11 @@ public final class FtpUploader extends AbstractUploader<org.jreleaser.model.api.
         @Override
         public String getName() {
             return FtpUploader.this.getName();
+        }
+
+        @Override
+        public String getServerRef() {
+            return FtpUploader.this.getServerRef();
         }
 
         @Override
@@ -207,6 +212,26 @@ public final class FtpUploader extends AbstractUploader<org.jreleaser.model.api.
     @Override
     public void setPort(Integer port) {
         delegate.setPort(port);
+    }
+
+    @Override
+    public Integer getConnectTimeout() {
+        return delegate.getConnectTimeout();
+    }
+
+    @Override
+    public void setConnectTimeout(Integer connectTimeout) {
+        delegate.setConnectTimeout(connectTimeout);
+    }
+
+    @Override
+    public Integer getReadTimeout() {
+        return delegate.getReadTimeout();
+    }
+
+    @Override
+    public void setReadTimeout(Integer readTimeout) {
+        delegate.setReadTimeout(readTimeout);
     }
 
     public String getPath() {

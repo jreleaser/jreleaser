@@ -19,70 +19,52 @@ package org.jreleaser.model.internal.validation.common;
 
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Http;
+import org.jreleaser.model.internal.servers.HttpServer;
 import org.jreleaser.util.Errors;
 
-import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
-import static org.jreleaser.util.CollectionUtils.listOf;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import static org.jreleaser.model.internal.validation.common.AuthenticatableValidator.validatePassword;
+import static org.jreleaser.model.internal.validation.common.AuthenticatableValidator.validateUsername;
 
 /**
  * @author Andres Almiray
  * @since 1.5.0
  */
 public final class HttpValidator {
-    private static final String PASSWORD = ".password";
-    private static final String USERNAME = ".username";
+    private static final String HTTP = "http";
 
     private HttpValidator() {
         // noop
     }
 
-    public static void validateHttp(JReleaserContext context, Http http, String prefix, String name, Errors errors) {
-        String baseKey1 = prefix + ".http." + name;
-        String baseKey2 = prefix + ".http";
-        String baseKey3 = "http." + name;
-        String baseKey4 = "http";
+    public static void validateHttp(JReleaserContext context, Http http, HttpServer server, String prefix, String name, Errors errors) {
+        validateHttp(context, http, server, prefix, HTTP, name, errors);
+    }
+
+    public static void validateHttp(JReleaserContext context, Http http, HttpServer server, String prefix, String type, String name, Errors errors) {
+        org.jreleaser.model.Http.Authorization pauth = null != server ? server.getAuthorization() : null;
+        org.jreleaser.model.Http.Authorization sauth = http.getAuthorization();
+
+        if (null == sauth) http.setAuthorization(pauth);
 
         switch (http.resolveAuthorization()) {
             case BEARER:
-                http.setPassword(
-                    checkProperty(context,
-                        listOf(
-                            baseKey1 + PASSWORD,
-                            baseKey2 + PASSWORD,
-                            baseKey3 + PASSWORD,
-                            baseKey4 + PASSWORD),
-                        baseKey1 + PASSWORD,
-                        http.getPassword(),
-                        errors,
-                        context.isDryrun()));
+                validatePassword(context, http, server, prefix, type, name, errors, context.isDryrun());
                 break;
             case BASIC:
-                http.setUsername(
-                    checkProperty(context,
-                        listOf(
-                            baseKey1 + USERNAME,
-                            baseKey2 + USERNAME,
-                            baseKey3 + USERNAME,
-                            baseKey4 + USERNAME),
-                        baseKey1 + USERNAME,
-                        http.getUsername(),
-                        errors,
-                        context.isDryrun()));
-
-                http.setPassword(
-                    checkProperty(context,
-                        listOf(
-                            baseKey1 + PASSWORD,
-                            baseKey2 + PASSWORD,
-                            baseKey3 + PASSWORD,
-                            baseKey4 + PASSWORD),
-                        baseKey1 + PASSWORD,
-                        http.getPassword(),
-                        errors,
-                        context.isDryrun()));
+                validateUsername(context, http, server, prefix, type, name, errors, context.isDryrun());
+                validatePassword(context, http, server, prefix, type, name, errors, context.isDryrun());
                 break;
             case NONE:
                 break;
+        }
+
+        if (null != server) {
+            Map<String, String> headers = new LinkedHashMap<>(server.getHeaders());
+            headers.putAll(http.getHeaders());
+            http.getHeaders().putAll(headers);
         }
     }
 }

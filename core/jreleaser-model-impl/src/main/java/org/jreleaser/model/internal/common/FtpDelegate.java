@@ -29,12 +29,14 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 1.5.0
  */
 public final class FtpDelegate extends AbstractModelObject<FtpDelegate> implements Ftp, Serializable {
-    private static final long serialVersionUID = 3164526166269939263L;
+    private static final long serialVersionUID = 5452171034385691348L;
 
     private String username;
     private String password;
     private String host;
     private Integer port;
+    private Integer connectTimeout;
+    private Integer readTimeout;
 
     @Override
     public void merge(FtpDelegate source) {
@@ -42,6 +44,8 @@ public final class FtpDelegate extends AbstractModelObject<FtpDelegate> implemen
         this.password = merge(this.password, source.password);
         this.host = merge(this.host, source.host);
         this.port = merge(this.port, source.port);
+        this.connectTimeout = merge(this.connectTimeout, source.getConnectTimeout());
+        this.readTimeout = merge(this.readTimeout, source.getReadTimeout());
     }
 
     @Override
@@ -84,10 +88,32 @@ public final class FtpDelegate extends AbstractModelObject<FtpDelegate> implemen
         this.port = port;
     }
 
+    @Override
+    public Integer getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    @Override
+    public void setConnectTimeout(Integer connectTimeout) {
+        this.connectTimeout = connectTimeout;
+    }
+
+    @Override
+    public Integer getReadTimeout() {
+        return readTimeout;
+    }
+
+    @Override
+    public void setReadTimeout(Integer readTimeout) {
+        this.readTimeout = readTimeout;
+    }
+
     public void asMap(Map<String, Object> props) {
         props.put("host", host);
         props.put("port", getPort());
         props.put("username", isNotBlank(username) ? HIDE : UNSET);
         props.put("password", isNotBlank(password) ? HIDE : UNSET);
+        props.put("connectTimeout", connectTimeout);
+        props.put("readTimeout", readTimeout);
     }
 }

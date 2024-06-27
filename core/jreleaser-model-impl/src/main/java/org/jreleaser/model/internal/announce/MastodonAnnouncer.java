@@ -22,6 +22,7 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.common.HostAware;
 import org.jreleaser.mustache.TemplateContext;
 
 import java.io.IOException;
@@ -45,8 +46,9 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.4.0
  */
-public final class MastodonAnnouncer extends AbstractAnnouncer<MastodonAnnouncer, org.jreleaser.model.api.announce.MastodonAnnouncer> {
-    private static final long serialVersionUID = 9152609285615015647L;
+public final class MastodonAnnouncer extends AbstractAnnouncer<MastodonAnnouncer, org.jreleaser.model.api.announce.MastodonAnnouncer>
+    implements HostAware {
+    private static final long serialVersionUID = 4935639459321126825L;
 
     private final List<String> statuses = new ArrayList<>();
     private String host;
@@ -171,10 +173,12 @@ public final class MastodonAnnouncer extends AbstractAnnouncer<MastodonAnnouncer
         }
     }
 
+    @Override
     public String getHost() {
         return host;
     }
 
+    @Override
     public void setHost(String host) {
         this.host = host;
     }

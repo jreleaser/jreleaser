@@ -42,9 +42,10 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
  * @since 1.3.0
  */
 public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer, org.jreleaser.model.api.announce.HttpAnnouncer> implements org.jreleaser.model.internal.common.Http {
-    private static final long serialVersionUID = -8348542653717001938L;
+    private static final long serialVersionUID = -3080205544652746569L;
 
     private final HttpDelegate delegate = new HttpDelegate();
+    private String serverRef;
     private String url;
     private String payload;
     private String payloadTemplate;
@@ -52,7 +53,7 @@ public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer, org.jr
 
     @JsonIgnore
     private final org.jreleaser.model.api.announce.HttpAnnouncer immutable = new org.jreleaser.model.api.announce.HttpAnnouncer() {
-        private static final long serialVersionUID = -2918111244399624143L;
+        private static final long serialVersionUID = 5017125004746563020L;
 
         @Override
         public String getType() {
@@ -110,6 +111,11 @@ public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer, org.jr
         }
 
         @Override
+        public String getServerRef() {
+            return HttpAnnouncer.this.getServerRef();
+        }
+
+        @Override
         public boolean isSnapshotSupported() {
             return HttpAnnouncer.this.isSnapshotSupported();
         }
@@ -163,6 +169,7 @@ public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer, org.jr
     public void merge(HttpAnnouncer source) {
         super.merge(source);
         this.delegate.merge(this.delegate);
+        this.serverRef = merge(this.serverRef, source.serverRef);
         this.url = merge(this.url, source.url);
         this.bearerKeyword = merge(this.bearerKeyword, source.bearerKeyword);
         this.payload = merge(this.payload, source.payload);
@@ -206,6 +213,14 @@ public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer, org.jr
             throw new JReleaserException(RB.$("ERROR_unexpected_error_reading_template",
                 context.relativizeToBasedir(templatePath)));
         }
+    }
+
+    public String getServerRef() {
+        return serverRef;
+    }
+
+    public void setServerRef(String serverRef) {
+        this.serverRef = serverRef;
     }
 
     @Override
@@ -302,6 +317,7 @@ public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer, org.jr
 
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
+        props.put("serverRef", serverRef);
         props.put("url", url);
         delegate.asMap(props);
         props.put("bearerKeyword", bearerKeyword);

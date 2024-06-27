@@ -18,17 +18,20 @@
 package org.jreleaser.model.internal.validation.upload;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.model.Http;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.servers.HttpServer;
 import org.jreleaser.model.internal.upload.ArtifactoryUploader;
 import org.jreleaser.util.Errors;
 
 import java.util.Map;
 
-import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.HttpValidator.validateHttp;
+import static org.jreleaser.model.internal.validation.common.ServerValidator.validateHost;
+import static org.jreleaser.model.internal.validation.common.ServerValidator.validateTimeout;
 import static org.jreleaser.model.internal.validation.common.Validator.mergeErrors;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
-import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
 import static org.jreleaser.util.CollectionUtils.listOf;
 
 /**
@@ -79,69 +82,19 @@ public final class ArtifactoryUploaderValidator {
             return;
         }
 
+        String serverName = uploader.getServerRef();
+        HttpServer server = context.getModel().getServers().httpFor(serverName);
+        validateHttp(context, uploader, server, "upload", "artifactory", uploader.getName(), errors);
+        validateTimeout(context, uploader, server, "upload", "artifactory", uploader.getName(), errors, true);
+        validateHost(context, uploader, server, "upload", "artifactory", uploader.getName(), errors, false);
+
         String baseKey1 = "upload.artifactory." + uploader.getName();
-        String baseKey2 = "upload.artifactory";
-        String baseKey3 = "artifactory." + uploader.getName();
-        String baseKey4 = "artifactory";
 
-        uploader.setHost(
-            checkProperty(context,
-                listOf(
-                    baseKey1 + ".host",
-                    baseKey2 + ".host",
-                    baseKey3 + ".host",
-                    baseKey4 + ".host"),
-                baseKey1 + ".host",
-                uploader.getHost(),
-                errors));
-
-        switch (uploader.resolveAuthorization()) {
-            case BEARER:
-                uploader.setPassword(
-                    checkProperty(context,
-                        listOf(
-                            baseKey1 + ".password",
-                            baseKey2 + ".password",
-                            baseKey3 + ".password",
-                            baseKey4 + ".password"),
-                        baseKey1 + ".password",
-                        uploader.getPassword(),
-                        errors,
-                        context.isDryrun()));
-                break;
-            case BASIC:
-                uploader.setUsername(
-                    checkProperty(context,
-                        listOf(
-                            baseKey1 + ".username",
-                            baseKey2 + ".username",
-                            baseKey3 + ".username",
-                            baseKey4 + ".username"),
-                        baseKey1 + ".username",
-                        uploader.getUsername(),
-                        errors,
-                        context.isDryrun()));
-
-                uploader.setPassword(
-                    checkProperty(context,
-                        listOf(
-                            baseKey1 + ".password",
-                            baseKey2 + ".password",
-                            baseKey3 + ".password",
-                            baseKey4 + ".password"),
-                        baseKey1 + ".password",
-                        uploader.getPassword(),
-                        errors,
-                        context.isDryrun()));
-                break;
-            case NONE:
-                errors.configuration(RB.$("validation_value_cannot_be", baseKey1 + ".authorization", "NONE"));
-                context.getLogger().debug(RB.$("validation.disabled.error"));
-                uploader.disable();
-                break;
+        if (uploader.resolveAuthorization() == Http.Authorization.NONE) {
+            errors.configuration(RB.$("validation_value_cannot_be", baseKey1 + ".authorization", "NONE"));
+            context.getLogger().debug(RB.$("validation.disabled.error"));
+            uploader.disable();
         }
-
-        validateTimeout(uploader);
 
         for (ArtifactoryUploader.ArtifactoryRepository repository : uploader.getRepositories()) {
             resolveActivatable(context, repository, baseKey1 + ".repository", "");

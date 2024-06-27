@@ -20,6 +20,7 @@ package org.jreleaser.model.internal.validation.upload;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.servers.FtpServer;
 import org.jreleaser.model.internal.upload.FtpUploader;
 import org.jreleaser.model.internal.validation.common.FtpValidator;
 import org.jreleaser.util.Errors;
@@ -28,7 +29,6 @@ import java.util.Map;
 
 import static org.jreleaser.model.internal.validation.common.Validator.mergeErrors;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
-import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
 import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -73,11 +73,12 @@ public final class FtpUploaderValidator {
             return;
         }
 
-        FtpValidator.validateFtp(context, uploader, "upload", uploader.getName(), errors, context.isDryrun());
+        String serverName = uploader.getServerRef();
+        FtpServer server = context.getModel().getServers().ftpFor(serverName);
+        FtpValidator.validateFtp(context, uploader, server, "upload", uploader.getName(), errors, context.isDryrun());
 
         if (isBlank(uploader.getPath())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "upload.ftp." + uploader.getName() + ".path"));
         }
-        validateTimeout(uploader);
     }
 }

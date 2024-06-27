@@ -19,77 +19,33 @@ package org.jreleaser.model.internal.validation.common;
 
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Ftp;
+import org.jreleaser.model.internal.servers.FtpServer;
 import org.jreleaser.util.Errors;
 
-import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
-import static org.jreleaser.util.CollectionUtils.listOf;
+import static org.jreleaser.model.internal.validation.common.AuthenticatableValidator.validateAuthenticatable;
+import static org.jreleaser.model.internal.validation.common.ServerValidator.validateHost;
+import static org.jreleaser.model.internal.validation.common.ServerValidator.validatePort;
+import static org.jreleaser.model.internal.validation.common.ServerValidator.validateTimeout;
 
 /**
  * @author Andres Almiray
  * @since 1.1.0
  */
 public final class FtpValidator {
-    private static final String USERNAME = ".username";
-    private static final String PASSWORD = ".password";
-    private static final String HOST = ".host";
-    private static final String PORT = ".port";
+    private static final String FTP = "ftp";
 
     private FtpValidator() {
         // noop
     }
 
     public static void validateFtp(JReleaserContext context, Ftp ftp, String prefix, String name, Errors errors, boolean anonymousAccess) {
-        String baseKey1 = prefix + ".ftp." + name;
-        String baseKey2 = prefix + ".ftp";
-        String baseKey3 = "ftp." + name;
-        String baseKey4 = "ftp";
+        validateFtp(context, ftp, null, prefix, name, errors, anonymousAccess);
+    }
 
-        ftp.setUsername(
-            checkProperty(context,
-                listOf(
-                    baseKey1 + USERNAME,
-                    baseKey2 + USERNAME,
-                    baseKey3 + USERNAME,
-                    baseKey4 + USERNAME),
-                baseKey1 + USERNAME,
-                ftp.getUsername(),
-                errors,
-                anonymousAccess));
-
-        ftp.setPassword(
-            checkProperty(context,
-                listOf(
-                    baseKey1 + PASSWORD,
-                    baseKey2 + PASSWORD,
-                    baseKey3 + PASSWORD,
-                    baseKey4 + PASSWORD),
-                baseKey1 + PASSWORD,
-                ftp.getPassword(),
-                errors,
-                anonymousAccess));
-
-        ftp.setHost(
-            checkProperty(context,
-                listOf(
-                    baseKey1 + HOST,
-                    baseKey2 + HOST,
-                    baseKey3 + HOST,
-                    baseKey4 + HOST),
-                baseKey1 + HOST,
-                ftp.getHost(),
-                errors,
-                context.isDryrun()));
-
-        ftp.setPort(
-            checkProperty(context,
-                listOf(
-                    baseKey1 + PORT,
-                    baseKey2 + PORT,
-                    baseKey3 + PORT,
-                    baseKey4 + PORT),
-                baseKey1 + PORT,
-                ftp.getPort(),
-                errors,
-                context.isDryrun()));
+    public static void validateFtp(JReleaserContext context, Ftp ftp, FtpServer server, String prefix, String name, Errors errors, boolean anonymousAccess) {
+        validateAuthenticatable(context, ftp, server, prefix, FTP, name, errors, anonymousAccess);
+        validateHost(context, ftp, server, prefix, FTP, name, errors, context.isDryrun());
+        validatePort(context, ftp, server, prefix, FTP, name, errors, context.isDryrun());
+        validateTimeout(context, ftp, server, prefix, FTP, name, errors, true);
     }
 }

@@ -36,7 +36,7 @@ public final class ScpDownloader extends AbstractSshDownloader<org.jreleaser.mod
 
     @JsonIgnore
     private final org.jreleaser.model.api.download.ScpDownloader immutable = new org.jreleaser.model.api.download.ScpDownloader() {
-        private static final long serialVersionUID = 322325976684206094L;
+        private static final long serialVersionUID = -8447559020792223090L;
 
         private List<? extends org.jreleaser.model.api.download.Downloader.Asset> assets;
 
@@ -48,6 +48,11 @@ public final class ScpDownloader extends AbstractSshDownloader<org.jreleaser.mod
         @Override
         public String getName() {
             return ScpDownloader.this.getName();
+        }
+
+        @Override
+        public String getServerRef() {
+            return ScpDownloader.this.getServerRef();
         }
 
         @Override

@@ -126,6 +126,10 @@ public final class Env {
     }
 
     public static String check(Collection<String> keys, Properties values, String property, String dsl, String configFilePath, Errors errors) {
+        return check(keys, values, property, dsl, configFilePath, null, errors);
+    }
+
+    public static String check(Collection<String> keys, Properties values, String property, String dsl, String configFilePath, String altValue, Errors errors) {
         List<String> sysKeys = keys.stream()
             .map(Env::sysKey)
             .collect(toList());
@@ -146,6 +150,10 @@ public final class Env {
                 .map(values::getProperty)
                 .findFirst()
                 .orElse(null);
+        }
+
+        if (isBlank(value)) {
+            value = altValue;
         }
 
         if (isBlank(value)) {

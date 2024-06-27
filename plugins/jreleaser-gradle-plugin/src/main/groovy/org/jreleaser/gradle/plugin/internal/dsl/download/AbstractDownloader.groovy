@@ -40,6 +40,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
  */
 @CompileStatic
 abstract class AbstractDownloader implements Downloader {
+    final Property<String> serverRef
     final Property<Active> active
     final Property<Integer> connectTimeout
     final Property<Integer> readTimeout
@@ -49,6 +50,7 @@ abstract class AbstractDownloader implements Downloader {
 
     @Inject
     AbstractDownloader(ObjectFactory objects) {
+        serverRef = objects.property(String).convention(Providers.<String> notDefined())
         active = objects.property(Active).convention(Providers.<Active> notDefined())
         connectTimeout = objects.property(Integer).convention(Providers.<Integer> notDefined())
         readTimeout = objects.property(Integer).convention(Providers.<Integer> notDefined())
@@ -71,7 +73,8 @@ abstract class AbstractDownloader implements Downloader {
 
     @Internal
     boolean isSet() {
-        active.present ||
+        serverRef.present ||
+            active.present ||
             connectTimeout.present ||
             readTimeout.present ||
             extraProperties.present
@@ -85,6 +88,7 @@ abstract class AbstractDownloader implements Downloader {
     }
 
     protected <D extends org.jreleaser.model.internal.download.Downloader> void fillProperties(D downloader) {
+        if (serverRef.present) downloader.serverRef = serverRef.get()
         if (active.present) downloader.active = active.get()
         if (connectTimeout.present) downloader.connectTimeout = connectTimeout.get()
         if (readTimeout.present) downloader.readTimeout = readTimeout.get()

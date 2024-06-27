@@ -24,7 +24,6 @@ import org.apache.commons.net.ftp.FTPReply;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Ftp;
-import org.jreleaser.model.internal.common.TimeoutAware;
 import org.jreleaser.model.internal.download.FtpDownloader;
 import org.jreleaser.model.internal.upload.FtpUploader;
 import org.jreleaser.model.spi.download.DownloadException;
@@ -63,7 +62,7 @@ public class FtpUtils {
         }
     }
 
-    private static <T extends Ftp & TimeoutAware> FTPClient ftpClient(JReleaserContext context, T ftp) throws IOException {
+    private static <T extends Ftp> FTPClient ftpClient(JReleaserContext context, T ftp) throws IOException {
         FTPClient client = new FTPClient();
         client.setConnectTimeout(ftp.getConnectTimeout() * 1000);
         client.setSoTimeout(ftp.getReadTimeout() * 1000);

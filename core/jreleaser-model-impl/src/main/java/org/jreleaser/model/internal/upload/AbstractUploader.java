@@ -42,13 +42,14 @@ import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSepar
  * @since 0.3.0
  */
 public abstract class AbstractUploader<A extends org.jreleaser.model.api.upload.Uploader, S extends AbstractUploader<A, S>> extends AbstractActivatable<S> implements Uploader<A>, ExtraProperties {
-    private static final long serialVersionUID = 2011958303607038304L;
+    private static final long serialVersionUID = -7871385798991016891L;
 
     @JsonIgnore
     private final String type;
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     @JsonIgnore
     private String name;
+    private String serverRef;
     private int connectTimeout;
     private int readTimeout;
     protected Boolean artifacts;
@@ -65,6 +66,7 @@ public abstract class AbstractUploader<A extends org.jreleaser.model.api.upload.
     public void merge(S source) {
         super.merge(source);
         this.name = merge(this.name, source.getName());
+        this.serverRef = merge(this.serverRef, source.getServerRef());
         this.connectTimeout = merge(this.getConnectTimeout(), source.getConnectTimeout());
         this.readTimeout = merge(this.getReadTimeout(), source.getReadTimeout());
         this.artifacts = merge(this.artifacts, source.artifacts);
@@ -88,6 +90,16 @@ public abstract class AbstractUploader<A extends org.jreleaser.model.api.upload.
     @Override
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String getServerRef() {
+        return serverRef;
+    }
+
+    @Override
+    public void setServerRef(String serverRef) {
+        this.serverRef = serverRef;
     }
 
     @Override
@@ -218,8 +230,9 @@ public abstract class AbstractUploader<A extends org.jreleaser.model.api.upload.
         Map<String, Object> props = new LinkedHashMap<>();
         props.put("enabled", isEnabled());
         props.put("active", getActive());
-        props.put("connectTimeout", connectTimeout);
-        props.put("readTimeout", readTimeout);
+        props.put("serverRef", serverRef);
+        props.put("connectTimeout", getConnectTimeout());
+        props.put("readTimeout", getReadTimeout());
         props.put("artifacts", isArtifacts());
         props.put("files", isFiles());
         props.put("signatures", isSignatures());

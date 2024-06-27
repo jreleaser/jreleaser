@@ -24,6 +24,8 @@ import org.jreleaser.model.Http;
  * @since 1.3.0
  */
 public interface HttpAnnouncer extends Announcer, Http {
+    String getServerRef();
+
     Method getMethod();
 
     String getUrl();

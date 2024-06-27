@@ -38,6 +38,10 @@ public interface Uploader<A extends org.jreleaser.model.api.upload.Uploader> ext
 
     void setName(String name);
 
+    String getServerRef();
+
+    void setServerRef(String serverRef);
+
     boolean isSnapshotSupported();
 
     boolean isArtifacts();

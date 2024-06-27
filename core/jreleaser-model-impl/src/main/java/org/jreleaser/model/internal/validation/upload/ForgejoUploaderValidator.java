@@ -20,12 +20,15 @@ package org.jreleaser.model.internal.validation.upload;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.servers.ForgejoServer;
 import org.jreleaser.model.internal.upload.ForgejoUploader;
+import org.jreleaser.model.internal.validation.common.ServerValidator;
 import org.jreleaser.util.Errors;
 
 import java.util.Map;
 
-import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.AuthenticatableValidator.validatePassword;
+import static org.jreleaser.model.internal.validation.common.ServerValidator.validateHost;
 import static org.jreleaser.model.internal.validation.common.Validator.mergeErrors;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
@@ -73,34 +76,11 @@ public final class ForgejoUploaderValidator {
             return;
         }
 
-        String baseKey1 = "upload.forgejo." + uploader.getName();
-        String baseKey2 = "upload.forgejo";
-        String baseKey3 = "forgejo." + uploader.getName();
-        String baseKey4 = "forgejo";
-
-        uploader.setToken(
-            checkProperty(context,
-                listOf(
-                    baseKey1 + ".token",
-                    baseKey2 + ".token",
-                    baseKey3 + ".token",
-                    baseKey4 + ".token"),
-                baseKey1 + ".token",
-                uploader.getToken(),
-                errors,
-                context.isDryrun()));
-
-        uploader.setHost(
-            checkProperty(context,
-                listOf(
-                    baseKey1 + ".host",
-                    baseKey2 + ".host",
-                    baseKey3 + ".host",
-                    baseKey4 + ".host"),
-                baseKey1 + ".host",
-                uploader.getHost(),
-                errors,
-                context.isDryrun()));
+        String serverName = uploader.getServerRef();
+        ForgejoServer server = context.getModel().getServers().forgejoFor(serverName);
+        validatePassword(context, uploader, server, "upload", "forgejo", uploader.getName(), errors, context.isDryrun());
+        validateHost(context, uploader, server, "upload", "forgejo", uploader.getName(), errors, false);
+        ServerValidator.validateTimeout(context, uploader, server, "upload", "forgejo", uploader.getName(), errors, true);
 
         if (isBlank(uploader.getPackageName())) {
             uploader.setPackageName(uploader.getName());
@@ -110,7 +90,7 @@ public final class ForgejoUploaderValidator {
         }
 
         if (isBlank(uploader.getOwner())) {
-            errors.configuration(RB.$("validation_must_not_be_blank", baseKey1 + ".owner"));
+            errors.configuration(RB.$("validation_must_not_be_blank", "upload.fprgejo." + uploader.getName() + ".owner"));
         }
 
         validateTimeout(uploader);

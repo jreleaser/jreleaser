@@ -18,6 +18,7 @@
 package org.jreleaser.gradle.plugin.dsl.deploy.maven
 
 import groovy.transform.CompileStatic
+
 /**
  *
  * @author Andres Almiray

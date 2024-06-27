@@ -38,7 +38,7 @@ public final class ArtifactoryMavenDeployer extends AbstractMavenDeployer<Artifa
 
     @JsonIgnore
     private final org.jreleaser.model.api.deploy.maven.ArtifactoryMavenDeployer immutable = new org.jreleaser.model.api.deploy.maven.ArtifactoryMavenDeployer() {
-        private static final long serialVersionUID = 2401988830267833191L;
+        private static final long serialVersionUID = -6792274799561061207L;
 
         private Set<? extends org.jreleaser.model.api.deploy.maven.MavenDeployer.ArtifactOverride> artifactOverrides;
 
@@ -120,6 +120,11 @@ public final class ArtifactoryMavenDeployer extends AbstractMavenDeployer<Artifa
         @Override
         public String getName() {
             return ArtifactoryMavenDeployer.this.getName();
+        }
+
+        @Override
+        public String getServerRef() {
+            return ArtifactoryMavenDeployer.this.getServerRef();
         }
 
         @Override

@@ -19,147 +19,178 @@ package org.jreleaser.model.internal.validation.common;
 
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Ssh;
+import org.jreleaser.model.internal.servers.SshServer;
 import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
-import static org.jreleaser.util.CollectionUtils.listOf;
+import static org.jreleaser.util.CollectionUtils.setOf;
 
 /**
  * @author Andres Almiray
  * @since 1.1.0
  */
 public final class SshValidator {
+    private static final String SSH = "ssh";
+    private static final String USERNAME = "username";
+    private static final String PASSWORD = "password";
+    private static final String HOST = "host";
+    private static final String PORT = "port";
+    private static final String PUBLIC_KEY = "public.key";
+    private static final String PRIVATE_KEY = "private.key";
+    private static final String PASSPHRASE = "passphrase";
+    private static final String FINGERPRINT = "fingerprint";
+    private static final String DOT = ".";
+
     private SshValidator() {
         // noop
     }
 
-    public static void validateSsh(JReleaserContext context, Ssh ssh, String type,
-                                   String name, String prefix, Errors errors) {
+    public static void validateSsh(JReleaserContext context, Ssh ssh, String prefix, String type, String name, Errors errors) {
+        validateSsh(context, ssh, null, prefix, type, name, errors, context.isDryrun());
+    }
+
+    public static void validateSsh(JReleaserContext context, Ssh ssh, String prefix, String type, String name, Errors errors, boolean continueOnError) {
+        validateSsh(context, ssh, null, prefix, type, name, errors, continueOnError);
+    }
+
+    public static void validateSsh(JReleaserContext context, Ssh ssh, SshServer server, String prefix, String type, String name, Errors errors) {
+        validateSsh(context, ssh, server, prefix, type, name, errors, context.isDryrun());
+    }
+
+    public static void validateSsh(JReleaserContext context, Ssh ssh, SshServer server, String prefix, String type, String name, Errors errors, boolean continueOnError) {
         ssh.setUsername(
             checkProperty(context,
-                listOf(
-                    prefix + type + "." + name + ".username",
-                    prefix + "ssh." + name + ".username",
-                    prefix + type + ".username",
-                    prefix + "ssh" + ".username",
-                    type + "." + name + ".username",
-                    "ssh." + name + ".username",
-                    type + ".username",
-                    "ssh.username"),
-                prefix + type + "." + name + ".username",
+                setOf(
+                    prefix + DOT + type + DOT + name + DOT + USERNAME,
+                    prefix + DOT + SSH + DOT + name + DOT + USERNAME,
+                    prefix + DOT + type + DOT + USERNAME,
+                    prefix + DOT + SSH + DOT + USERNAME,
+                    type + DOT + name + DOT + USERNAME,
+                    SSH + DOT + name + DOT + USERNAME,
+                    type + DOT + USERNAME,
+                    SSH + DOT + USERNAME),
+                prefix + DOT + type + DOT + name + DOT + USERNAME,
                 ssh.getUsername(),
+                null != server ? server.getUsername() : null,
                 errors,
-                context.isDryrun()));
+                continueOnError));
 
         ssh.setPassword(
             checkProperty(context,
-                listOf(
-                    prefix + type + "." + name + ".password",
-                    prefix + "ssh." + name + ".password",
-                    prefix + type + ".password",
-                    prefix + "ssh" + ".password",
-                    type + "." + name + ".password",
-                    "ssh." + name + ".password",
-                    type + ".password",
-                    "ssh.password"),
-                prefix + type + "." + name + ".password",
+                setOf(
+                    prefix + DOT + type + DOT + name + DOT + PASSWORD,
+                    prefix + DOT + SSH + DOT + name + DOT + PASSWORD,
+                    prefix + DOT + type + DOT + PASSWORD,
+                    prefix + DOT + SSH + DOT + PASSWORD,
+                    type + DOT + name + DOT + PASSWORD,
+                    SSH + DOT + name + DOT + PASSWORD,
+                    type + DOT + PASSWORD,
+                    SSH + DOT + PASSWORD),
+                prefix + DOT + type + DOT + name + DOT + PASSWORD,
                 ssh.getPassword(),
+                null != server ? server.getPassword() : null,
                 errors,
-                context.isDryrun()));
+                continueOnError));
 
         ssh.setHost(
             checkProperty(context,
-                listOf(
-                    prefix + type + "." + name + ".host",
-                    prefix + "ssh." + name + ".host",
-                    prefix + type + ".host",
-                    prefix + "ssh" + ".host",
-                    type + "." + name + ".host",
-                    "ssh." + name + ".host",
-                    type + ".host",
-                    "ssh.host"),
-                prefix + type + "." + name + ".host",
+                setOf(
+                    prefix + DOT + type + DOT + name + DOT + HOST,
+                    prefix + DOT + SSH + DOT + name + DOT + HOST,
+                    prefix + DOT + type + DOT + HOST,
+                    prefix + DOT + SSH + DOT + HOST,
+                    type + DOT + name + DOT + HOST,
+                    SSH + DOT + name + DOT + HOST,
+                    type + DOT + HOST,
+                    SSH + DOT + HOST),
+                prefix + DOT + type + DOT + name + DOT + HOST,
                 ssh.getHost(),
+                null != server ? server.getHost() : null,
                 errors,
-                context.isDryrun()));
+                continueOnError));
 
         ssh.setPort(
             checkProperty(context,
-                listOf(
-                    prefix + type + "." + name + ".port",
-                    prefix + "ssh." + name + ".port",
-                    prefix + type + ".port",
-                    prefix + "ssh" + ".port",
-                    type + "." + name + ".port",
-                    "ssh." + name + ".port",
-                    type + ".port",
-                    "ssh.port"),
-                prefix + type + "." + name + ".port",
+                setOf(
+                    prefix + DOT + type + DOT + name + DOT + PORT,
+                    prefix + DOT + SSH + DOT + name + DOT + PORT,
+                    prefix + DOT + type + DOT + PORT,
+                    prefix + DOT + SSH + DOT + PORT,
+                    type + DOT + name + DOT + PORT,
+                    SSH + DOT + name + DOT + PORT,
+                    type + DOT + PORT,
+                    SSH + DOT + PORT),
+                prefix + DOT + type + DOT + name + DOT + PORT,
                 ssh.getPort(),
+                null != server ? server.getPort() : null,
                 errors,
-                context.isDryrun()));
+                continueOnError));
 
         ssh.setPublicKey(
             checkProperty(context,
-                listOf(
-                    prefix + type + "." + name + ".public.key",
-                    prefix + "ssh." + name + ".public.key",
-                    prefix + type + ".public.key",
-                    prefix + "ssh" + ".public.key",
-                    type + "." + name + ".public.key",
-                    "ssh." + name + ".public.key",
-                    type + ".public.key",
-                    "ssh.public.key"),
-                prefix + type + "." + name + ".publicKey",
+                setOf(
+                    prefix + DOT + type + DOT + name + DOT + PUBLIC_KEY,
+                    prefix + DOT + SSH + DOT + name + DOT + PUBLIC_KEY,
+                    prefix + DOT + type + DOT + PUBLIC_KEY,
+                    prefix + DOT + SSH + DOT + PUBLIC_KEY,
+                    type + DOT + name + DOT + PUBLIC_KEY,
+                    SSH + DOT + name + DOT + PUBLIC_KEY,
+                    type + DOT + PUBLIC_KEY,
+                    SSH + DOT + PUBLIC_KEY),
+                prefix + DOT + type + DOT + name + ".publicKey",
                 ssh.getPublicKey(),
+                null != server ? server.getPublicKey() : null,
                 errors,
                 true));
 
         ssh.setPrivateKey(
             checkProperty(context,
-                listOf(
-                    prefix + type + "." + name + ".private.key",
-                    prefix + "ssh." + name + ".private.key",
-                    prefix + type + ".private.key",
-                    prefix + "ssh" + ".private.key",
-                    type + "." + name + ".private.key",
-                    "ssh." + name + ".private.key",
-                    type + ".private.key",
-                    "ssh.private.key"),
-                prefix + type + "." + name + ".privateKey",
+                setOf(
+                    prefix + DOT + type + DOT + name + DOT + PRIVATE_KEY,
+                    prefix + DOT + SSH + DOT + name + DOT + PRIVATE_KEY,
+                    prefix + DOT + type + DOT + PRIVATE_KEY,
+                    prefix + DOT + SSH + DOT + PRIVATE_KEY,
+                    type + DOT + name + DOT + PRIVATE_KEY,
+                    SSH + DOT + name + DOT + PRIVATE_KEY,
+                    type + DOT + PRIVATE_KEY,
+                    SSH + DOT + PRIVATE_KEY),
+                prefix + DOT + type + DOT + name + ".privateKey",
                 ssh.getPrivateKey(),
+                null != server ? server.getPrivateKey() : null,
                 errors,
                 true));
 
         ssh.setPassphrase(
             checkProperty(context,
-                listOf(
-                    prefix + type + "." + name + ".passphrase",
-                    prefix + "ssh." + name + ".passphrase",
-                    prefix + type + ".passphrase",
-                    prefix + "ssh" + ".passphrase",
-                    type + "." + name + ".passphrase",
-                    "ssh." + name + ".passphrase",
-                    type + ".passphrase",
-                    "ssh.passphrase"),
-                prefix + type + "." + name + ".passphrase",
+                setOf(
+                    prefix + DOT + type + DOT + name + DOT + PASSPHRASE,
+                    prefix + DOT + SSH + DOT + name + DOT + PASSPHRASE,
+                    prefix + DOT + type + DOT + PASSPHRASE,
+                    prefix + DOT + SSH + DOT + PASSPHRASE,
+                    type + DOT + name + DOT + PASSPHRASE,
+                    SSH + DOT + name + DOT + PASSPHRASE,
+                    type + DOT + PASSPHRASE,
+                    SSH + DOT + PASSPHRASE),
+                prefix + DOT + type + DOT + name + DOT + PASSPHRASE,
                 ssh.getPassphrase(),
+                null != server ? server.getPassphrase() : null,
                 errors,
                 true));
 
         ssh.setFingerprint(
             checkProperty(context,
-                listOf(
-                    prefix + type + "." + name + ".fingerprint",
-                    prefix + "ssh." + name + ".fingerprint",
-                    prefix + type + ".fingerprint",
-                    prefix + "ssh" + ".fingerprint",
-                    type + "." + name + ".fingerprint",
-                    "ssh." + name + ".fingerprint",
-                    type + ".fingerprint",
-                    "ssh.fingerprint"),
-                prefix + type + "." + name + ".fingerprint",
+                setOf(
+                    prefix + DOT + type + DOT + name + DOT + FINGERPRINT,
+                    prefix + DOT + SSH + DOT + name + DOT + FINGERPRINT,
+                    prefix + DOT + type + DOT + FINGERPRINT,
+                    prefix + DOT + SSH + DOT + FINGERPRINT,
+                    type + DOT + name + DOT + FINGERPRINT,
+                    SSH + DOT + name + DOT + FINGERPRINT,
+                    type + DOT + FINGERPRINT,
+                    SSH + DOT + FINGERPRINT),
+                prefix + DOT + type + DOT + name + DOT + FINGERPRINT,
                 ssh.getFingerprint(),
+                null != server ? server.getFingerprint() : null,
                 errors,
                 true));
     }

@@ -23,11 +23,7 @@ import java.io.Serializable;
  * @author Andres Almiray
  * @since 1.5.0
  */
-public interface Http extends org.jreleaser.model.Http, Serializable {
-    void setUsername(String username);
-
-    void setPassword(String password);
-
+public interface Http extends org.jreleaser.model.Http, Serializable, Authenticatable {
     void setAuthorization(org.jreleaser.model.Http.Authorization authorization);
 
     void setAuthorization(String authorization);
