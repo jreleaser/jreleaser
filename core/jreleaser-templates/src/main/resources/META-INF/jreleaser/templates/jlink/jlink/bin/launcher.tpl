@@ -110,6 +110,7 @@ if $darwin; then
     export {{key}}="{{value}}"
     {{/distributionJavaEnvironmentVariablesOsx}}
 else
+    NOOP=""
     # linux JVM options
     {{#distributionJavaJvmOptionsLinux}}
     JAVA_OPTS="$JAVA_OPTS {{.}}"
