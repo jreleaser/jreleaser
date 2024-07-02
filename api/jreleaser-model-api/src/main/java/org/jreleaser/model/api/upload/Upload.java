@@ -29,6 +29,8 @@ import java.util.Map;
 public interface Upload extends Domain, Activatable {
     Map<String, ? extends ArtifactoryUploader> getArtifactory();
 
+    Map<String, ? extends BitbucketcloudUploader> getBitbucketcloud();
+
     Map<String, ? extends FtpUploader> getFtp();
 
     Map<String, ? extends GiteaUploader> getGitea();

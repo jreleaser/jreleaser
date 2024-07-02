@@ -22,6 +22,7 @@ import org.jreleaser.extensions.api.workflow.WorkflowListenerException;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.api.JReleaserCommand;
 import org.jreleaser.model.api.hooks.ExecutionEvent;
+import org.jreleaser.model.api.release.BitbucketcloudReleaser;
 import org.jreleaser.model.api.release.CodebergReleaser;
 import org.jreleaser.model.api.release.GenericGitReleaser;
 import org.jreleaser.model.api.release.GiteaReleaser;
@@ -75,6 +76,9 @@ public final class Releasers {
                 Releasers.class.getClassLoader()).spliterator(), false)
             .collect(Collectors.toMap(ReleaserBuilderFactory::getName, ReleaserBuilderFactory::getBuilder));
 
+        if (null != context.getModel().getRelease().getBitbucketcloud()) {
+            return (T) builders.get(BitbucketcloudReleaser.TYPE);
+        }
         if (null != context.getModel().getRelease().getGithub()) {
             return (T) builders.get(GithubReleaser.TYPE);
         }
