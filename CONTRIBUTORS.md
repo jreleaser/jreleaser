@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-76-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-77-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -108,6 +108,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="http://178.is"><img src="https://avatars.githubusercontent.com/u/134942?v=4?s=100" width="100px;" alt="Max Albrecht"/><br /><sub><b>Max Albrecht</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=eins78" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/AndriiEagle"><img src="https://avatars.githubusercontent.com/u/135613064?v=4?s=100" width="100px;" alt="AndriiEagle"/><br /><sub><b>AndriiEagle</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=AndriiEagle" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://twitter.com/lagergren"><img src="https://avatars.githubusercontent.com/u/1062473?v=4?s=100" width="100px;" alt="Marcus Lagergren"/><br /><sub><b>Marcus Lagergren</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=lagergren" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://felipezorzo.com.br"><img src="https://avatars.githubusercontent.com/u/13829?v=4?s=100" width="100px;" alt="Felipe Zorzo"/><br /><sub><b>Felipe Zorzo</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=felipebz" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
