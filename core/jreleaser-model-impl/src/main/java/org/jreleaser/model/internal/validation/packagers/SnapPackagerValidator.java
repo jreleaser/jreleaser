@@ -112,19 +112,19 @@ public final class SnapPackagerValidator {
         if (isBlank(packager.getBase())) {
             packager.setBase(parentPackager.getBase());
             if (isBlank(packager.getBase())) {
-                errors.configuration(RB.$("validation_must_not_be_blank", "distribution." + distribution.getName() + ".snap.base"));
+                packager.setBase("core20");
             }
         }
         if (isBlank(packager.getGrade())) {
             packager.setGrade(parentPackager.getGrade());
             if (isBlank(packager.getGrade())) {
-                errors.configuration(RB.$("validation_must_not_be_blank", "distribution." + distribution.getName() + ".snap.grade"));
+                packager.setGrade("stable");
             }
         }
         if (isBlank(packager.getConfinement())) {
             packager.setConfinement(parentPackager.getConfinement());
             if (isBlank(packager.getConfinement())) {
-                errors.configuration(RB.$("validation_must_not_be_blank", "distribution." + distribution.getName() + ".snap.confinement"));
+                packager.setConfinement("strict");
             }
         }
         if (!packager.isRemoteBuildSet() && parentPackager.isRemoteBuildSet()) {

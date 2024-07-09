@@ -98,9 +98,9 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
     private final SnapRepository repository = new SnapRepository();
 
     private String packageName;
-    private String base = "core20";
-    private String grade = "stable";
-    private String confinement = "strict";
+    private String base;
+    private String grade;
+    private String confinement;
     private String exportedLogin;
     private Boolean remoteBuild;
 
@@ -620,7 +620,7 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
     }
 
     public static final class Plug extends AbstractModelObject<Plug> implements Domain {
-        private static final long serialVersionUID = -2210365052943258689L;
+        private static final long serialVersionUID = 8041902336260999261L;
 
         private final Map<String, String> attributes = new LinkedHashMap<>();
         private final List<String> reads = new ArrayList<>();
@@ -710,11 +710,11 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
             this.writes.addAll(writes);
         }
 
-        public boolean getHasRead() {
+        public boolean getHasReads() {
             return !reads.isEmpty();
         }
 
-        public boolean getHasWrite() {
+        public boolean getHasWrites() {
             return !writes.isEmpty();
         }
 
