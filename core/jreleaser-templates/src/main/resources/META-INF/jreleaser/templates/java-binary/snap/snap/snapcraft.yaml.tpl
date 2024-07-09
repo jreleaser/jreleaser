@@ -76,7 +76,7 @@ slots:
       - {{.}}
       {{/writes}}
     {{/hasWrites}}
-  {{/snapSlots }}
+  {{/snapSlots}}
 {{/snapHasSlots}}
 parts:
   {{distributionExecutableName}}:
