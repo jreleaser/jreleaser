@@ -52,6 +52,7 @@ dependencies {
     api project(':jreleaser-webhooks-java-sdk')
     api project(':jreleaser-zulip-java-sdk')
     // release
+    api project(':jreleaser-bitbucketcloud-java-sdk')
     api project(':jreleaser-github-java-sdk')
     api project(':jreleaser-gitlab-java-sdk')
     api project(':jreleaser-gitea-java-sdk')
