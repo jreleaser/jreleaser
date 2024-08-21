@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static java.lang.System.lineSeparator;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.stream.Collectors.toList;
@@ -156,6 +157,7 @@ public final class JvmOptions extends AbstractModelObject<JvmOptions> implements
 
         return universal.stream()
             .map(option -> resolveTemplate(option, props))
+            .map(option -> option.replace(lineSeparator(), ""))
             .collect(toList());
     }
 
