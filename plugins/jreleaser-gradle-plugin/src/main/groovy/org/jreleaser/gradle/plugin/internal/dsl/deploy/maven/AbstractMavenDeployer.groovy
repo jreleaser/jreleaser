@@ -168,7 +168,7 @@ abstract class AbstractMavenDeployer implements MavenDeployer {
         }
     }
 
-    class ArtifactOverrideImpl implements ArtifactOverride {
+    static class ArtifactOverrideImpl implements ArtifactOverride {
         String name
         final Property<String> groupId
         final Property<String> artifactId
