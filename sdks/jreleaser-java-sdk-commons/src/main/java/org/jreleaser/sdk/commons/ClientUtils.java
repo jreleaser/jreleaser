@@ -21,6 +21,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Client;
 import feign.Feign;
+import feign.RedirectionInterceptor;
 import feign.Request;
 import feign.Response;
 import feign.form.FormData;
@@ -114,6 +115,7 @@ public final class ClientUtils {
             .logLevel(FeignLogger.resolveLevel(context))
             .encoder(new FormEncoder(new JacksonEncoder()))
             .decoder(new JacksonDecoder())
+            .responseInterceptor(new RedirectionInterceptor())
             .requestInterceptor(template -> template.header("User-Agent", "JReleaser/" + JReleaserVersion.getPlainVersion()))
             .errorDecoder((methodKey, response) -> new RestAPIException(response.request(), response.status(), response.reason(), toString(context.getLogger(), response.body()), response.headers()))
             .options(new Request.Options(connectTimeout, TimeUnit.SECONDS, readTimeout, TimeUnit.SECONDS, true));
