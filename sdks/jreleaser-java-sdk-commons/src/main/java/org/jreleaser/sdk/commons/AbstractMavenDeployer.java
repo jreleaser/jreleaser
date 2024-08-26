@@ -223,7 +223,8 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
 
         // 2nd check pom
         for (Deployable deployable : deployablesMap.values()) {
-            if (!deployable.getFilename().endsWith(EXT_POM) || buildPoms.containsKey(deployable.getFullDeployPath())) {
+            if (!deployable.getFilename().endsWith(EXT_POM) || buildPoms.containsKey(deployable.getFullDeployPath()) ||
+                !requiresPomVerification(deployable)) {
                 continue;
             }
 
@@ -300,6 +301,16 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
         if (override.isPresent() && (override.get().isJavadocJarSet())) return override.get().isJavadocJar();
 
         return getDeployer().isJavadocJar();
+    }
+
+    private boolean requiresPomVerification(Deployable deployable) {
+        Optional<org.jreleaser.model.internal.deploy.maven.MavenDeployer.ArtifactOverride> override = getDeployer().getArtifactOverrides().stream()
+            .filter(a -> a.getGroupId().equals(deployable.getGroupId()) && a.getArtifactId().equals(deployable.getArtifactId()))
+            .findFirst();
+
+        if (override.isPresent() && (override.get().isVerifyPomSet())) return override.get().isVerifyPom();
+
+        return getDeployer().isVerifyPom();
     }
 
     private void signDeployables(Map<String, Deployable> deployablesMap, Set<Deployable> deployables) {

@@ -75,5 +75,7 @@ interface MavenDeployer extends Deployer {
         Property<Boolean> getSourceJar()
 
         Property<Boolean> getJavadocJar()
+
+        Property<Boolean> getVerifyPom()
     }
 }

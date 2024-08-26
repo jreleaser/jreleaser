@@ -64,5 +64,7 @@ public interface MavenDeployer extends Deployer, TimeoutAware {
         boolean isSourceJar();
 
         boolean isJavadocJar();
+
+        boolean isVerifyPom();
     }
 }

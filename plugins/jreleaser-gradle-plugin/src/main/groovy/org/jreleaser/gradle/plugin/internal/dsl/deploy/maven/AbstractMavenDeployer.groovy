@@ -174,6 +174,7 @@ abstract class AbstractMavenDeployer implements MavenDeployer {
         final Property<String> artifactId
         final Property<Boolean> sourceJar
         final Property<Boolean> javadocJar
+        final Property<Boolean> verifyPom
 
         @Inject
         ArtifactOverrideImpl(ObjectFactory objects) {
@@ -181,6 +182,7 @@ abstract class AbstractMavenDeployer implements MavenDeployer {
             artifactId = objects.property(String).convention(Providers.<String> notDefined())
             sourceJar = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
             javadocJar = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+            verifyPom = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         }
 
         org.jreleaser.model.internal.deploy.maven.MavenDeployer.ArtifactOverride toModel() {
@@ -189,6 +191,7 @@ abstract class AbstractMavenDeployer implements MavenDeployer {
             if (artifactId.present) artifact.artifactId = artifactId.get()
             if (sourceJar.present) artifact.sourceJar = sourceJar.get()
             if (javadocJar.present) artifact.javadocJar = javadocJar.get()
+            if (verifyPom.present) artifact.verifyPom = verifyPom.get()
             artifact
         }
     }

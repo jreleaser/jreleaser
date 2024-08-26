@@ -110,16 +110,17 @@ public interface MavenDeployer<A extends org.jreleaser.model.api.deploy.maven.Ma
     void setSnapshotSupported(Boolean snapshotSupported);
 
     final class ArtifactOverride extends AbstractModelObject<ArtifactOverride> implements Domain {
-        private static final long serialVersionUID = 2308197517238220999L;
+        private static final long serialVersionUID = 2446147952202720303L;
 
         private String groupId;
         private String artifactId;
         private Boolean sourceJar;
         private Boolean javadocJar;
+        private Boolean verifyPom;
 
         @JsonIgnore
         private final org.jreleaser.model.api.deploy.maven.MavenDeployer.ArtifactOverride immutable = new org.jreleaser.model.api.deploy.maven.MavenDeployer.ArtifactOverride() {
-            private static final long serialVersionUID = -2668444880125206282L;
+            private static final long serialVersionUID = 1993638834551986668L;
 
             @Override
             public String getGroupId() {
@@ -142,6 +143,11 @@ public interface MavenDeployer<A extends org.jreleaser.model.api.deploy.maven.Ma
             }
 
             @Override
+            public boolean isVerifyPom() {
+                return verifyPom;
+            }
+
+            @Override
             public Map<String, Object> asMap(boolean full) {
                 return unmodifiableMap(ArtifactOverride.this.asMap(full));
             }
@@ -157,6 +163,7 @@ public interface MavenDeployer<A extends org.jreleaser.model.api.deploy.maven.Ma
             this.artifactId = this.merge(this.artifactId, source.artifactId);
             this.sourceJar = this.merge(this.sourceJar, source.sourceJar);
             this.javadocJar = this.merge(this.javadocJar, source.javadocJar);
+            this.verifyPom = this.merge(this.verifyPom, source.verifyPom);
         }
 
         public String getGroupId() {
@@ -199,6 +206,18 @@ public interface MavenDeployer<A extends org.jreleaser.model.api.deploy.maven.Ma
             return null != javadocJar;
         }
 
+        public boolean isVerifyPom() {
+            return null != verifyPom && verifyPom;
+        }
+
+        public void setVerifyPom(Boolean verifyPom) {
+            this.verifyPom = verifyPom;
+        }
+
+        public boolean isVerifyPomSet() {
+            return null != verifyPom;
+        }
+
         @Override
         public Map<String, Object> asMap(boolean full) {
             Map<String, Object> props = new LinkedHashMap<>();
@@ -206,6 +225,7 @@ public interface MavenDeployer<A extends org.jreleaser.model.api.deploy.maven.Ma
             props.put("artifactId", artifactId);
             props.put("sourceJar", isSourceJar());
             props.put("javadocJar", isJavadocJar());
+            props.put("verifyPom", isVerifyPom());
             return props;
         }
     }
