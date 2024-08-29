@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-77-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-78-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -109,6 +109,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/AndriiEagle"><img src="https://avatars.githubusercontent.com/u/135613064?v=4?s=100" width="100px;" alt="AndriiEagle"/><br /><sub><b>AndriiEagle</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=AndriiEagle" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://twitter.com/lagergren"><img src="https://avatars.githubusercontent.com/u/1062473?v=4?s=100" width="100px;" alt="Marcus Lagergren"/><br /><sub><b>Marcus Lagergren</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=lagergren" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://felipezorzo.com.br"><img src="https://avatars.githubusercontent.com/u/13829?v=4?s=100" width="100px;" alt="Felipe Zorzo"/><br /><sub><b>Felipe Zorzo</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=felipebz" title="Code">💻</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/superaga"><img src="https://avatars.githubusercontent.com/u/9434717?v=4?s=100" width="100px;" alt="superaga"/><br /><sub><b>superaga</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=superaga" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
