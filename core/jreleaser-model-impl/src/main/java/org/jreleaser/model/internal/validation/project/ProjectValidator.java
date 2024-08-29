@@ -23,6 +23,7 @@ import org.jreleaser.model.LicenseId;
 import org.jreleaser.model.VersionPattern;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.common.Java;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.internal.release.BaseReleaser;
@@ -226,21 +227,30 @@ public final class ProjectValidator {
 
     private static void validateJava(JReleaserContext context, Project project, Errors errors) {
         context.getLogger().debug("project.java");
-        if (!project.getJava().isSet()) return;
+        Java java = project.getJava();
+        if (!java.isSet()) return;
 
-        project.getJava().setEnabled(true);
+        java.setEnabled(true);
 
-        if (isBlank(project.getJava().getArtifactId())) {
-            project.getJava().setArtifactId(project.getName());
-        }
-        if (isBlank(project.getJava().getGroupId())) {
-            errors.configuration(RB.$("validation_must_not_be_blank", "project.java.groupId"));
-        }
-        if (isBlank(project.getJava().getArtifactId())) {
-            errors.configuration(RB.$("validation_must_not_be_blank", "project.java.artifactId"));
-        }
-        if (!project.getJava().isMultiProjectSet()) {
-            project.getJava().setMultiProject(false);
-        }
+        java.setArtifactId(
+            checkProperty(context,
+                "PROJECT_JAVA_ARTIFACT_ID",
+                "project.java.artifact.id",
+                java.getArtifactId(),
+                project.getName()));
+
+        java.setGroupId(
+            checkProperty(context,
+                "PROJECT_JAVA_GROUP_ID",
+                "project.java.group.id",
+                java.getGroupId(),
+                errors));
+
+        java.setMultiProject(
+            checkProperty(context,
+                "PROJECT_JAVA_MULTI_PROJECT",
+                "project.java.multi.project",
+                java.isMultiProject(),
+                false));
     }
 }
