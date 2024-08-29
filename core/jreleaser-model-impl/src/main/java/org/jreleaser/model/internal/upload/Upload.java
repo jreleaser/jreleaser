@@ -47,9 +47,10 @@ import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSepar
  * @since 0.3.0
  */
 public final class Upload extends AbstractActivatable<Upload> implements Domain {
-    private static final long serialVersionUID = -8267239230459971399L;
+    private static final long serialVersionUID = 730724382161737952L;
 
     private final Map<String, ArtifactoryUploader> artifactory = new LinkedHashMap<>();
+    private final Map<String, BitbucketcloudUploader> bitbucketcloud = new LinkedHashMap<>();
     private final Map<String, FtpUploader> ftp = new LinkedHashMap<>();
     private final Map<String, GiteaUploader> gitea = new LinkedHashMap<>();
     private final Map<String, GitlabUploader> gitlab = new LinkedHashMap<>();
@@ -60,9 +61,10 @@ public final class Upload extends AbstractActivatable<Upload> implements Domain 
 
     @JsonIgnore
     private final org.jreleaser.model.api.upload.Upload immutable = new org.jreleaser.model.api.upload.Upload() {
-        private static final long serialVersionUID = -1954880769141203693L;
+        private static final long serialVersionUID = -6398642194943451438L;
 
         private Map<String, ? extends org.jreleaser.model.api.upload.ArtifactoryUploader> artifactory;
+        private Map<String, ? extends org.jreleaser.model.api.upload.BitbucketcloudUploader> bitbucketcloud;
         private Map<String, ? extends org.jreleaser.model.api.upload.FtpUploader> ftp;
         private Map<String, ? extends org.jreleaser.model.api.upload.GiteaUploader> gitea;
         private Map<String, ? extends org.jreleaser.model.api.upload.GitlabUploader> gitlab;
@@ -79,6 +81,16 @@ public final class Upload extends AbstractActivatable<Upload> implements Domain 
                     .collect(toMap(org.jreleaser.model.api.upload.Uploader::getName, identity()));
             }
             return artifactory;
+        }
+
+        @Override
+        public Map<String, ? extends org.jreleaser.model.api.upload.BitbucketcloudUploader> getBitbucketcloud() {
+            if (null == bitbucketcloud) {
+                bitbucketcloud = Upload.this.bitbucketcloud.values().stream()
+                    .map(BitbucketcloudUploader::asImmutable)
+                    .collect(toMap(org.jreleaser.model.api.upload.Uploader::getName, identity()));
+            }
+            return bitbucketcloud;
         }
 
         @Override
@@ -179,6 +191,7 @@ public final class Upload extends AbstractActivatable<Upload> implements Domain 
     public void merge(Upload source) {
         super.merge(source);
         setArtifactory(mergeModel(this.artifactory, source.artifactory));
+        setBitbucketcloud(mergeModel(this.bitbucketcloud, source.bitbucketcloud));
         setFtp(mergeModel(this.ftp, source.ftp));
         setGitea(mergeModel(this.gitea, source.gitea));
         setGitlab(mergeModel(this.gitlab, source.gitlab));
@@ -201,6 +214,8 @@ public final class Upload extends AbstractActivatable<Upload> implements Domain 
         switch (type) {
             case org.jreleaser.model.api.upload.ArtifactoryUploader.TYPE:
                 return Optional.ofNullable(artifactory.get(name));
+            case org.jreleaser.model.api.upload.BitbucketcloudUploader.TYPE:
+                return Optional.ofNullable(bitbucketcloud.get(name));
             case org.jreleaser.model.api.upload.FtpUploader.TYPE:
                 return Optional.ofNullable(ftp.get(name));
             case org.jreleaser.model.api.upload.GiteaUploader.TYPE:
@@ -224,6 +239,8 @@ public final class Upload extends AbstractActivatable<Upload> implements Domain 
         switch (type) {
             case org.jreleaser.model.api.upload.ArtifactoryUploader.TYPE:
                 return getActiveArtifactory(name);
+            case org.jreleaser.model.api.upload.BitbucketcloudUploader.TYPE:
+                return getActiveBitbucketcloud(name);
             case org.jreleaser.model.api.upload.FtpUploader.TYPE:
                 return getActiveFtp(name);
             case org.jreleaser.model.api.upload.GiteaUploader.TYPE:
@@ -245,6 +262,13 @@ public final class Upload extends AbstractActivatable<Upload> implements Domain 
 
     public Optional<ArtifactoryUploader> getActiveArtifactory(String name) {
         return artifactory.values().stream()
+            .filter(Uploader::isEnabled)
+            .filter(a -> name.equals(a.getName()))
+            .findFirst();
+    }
+
+    public Optional<BitbucketcloudUploader> getActiveBitbucketcloud(String name) {
+        return bitbucketcloud.values().stream()
             .filter(Uploader::isEnabled)
             .filter(a -> name.equals(a.getName()))
             .findFirst();
@@ -305,6 +329,12 @@ public final class Upload extends AbstractActivatable<Upload> implements Domain 
             .collect(toList());
     }
 
+    public List<BitbucketcloudUploader> getActiveBitbucketclouds() {
+        return bitbucketcloud.values().stream()
+            .filter(BitbucketcloudUploader::isEnabled)
+            .collect(toList());
+    }
+
     public Map<String, ArtifactoryUploader> getArtifactory() {
         return artifactory;
     }
@@ -316,6 +346,19 @@ public final class Upload extends AbstractActivatable<Upload> implements Domain 
 
     public void addArtifactory(ArtifactoryUploader artifactory) {
         this.artifactory.put(artifactory.getName(), artifactory);
+    }
+
+    public Map<String, BitbucketcloudUploader> getBitbucketcloud() {
+        return bitbucketcloud;
+    }
+
+    public void setBitbucketcloud(Map<String, BitbucketcloudUploader> bitbucketcloud) {
+        this.bitbucketcloud.clear();
+        this.bitbucketcloud.putAll(bitbucketcloud);
+    }
+
+    public void addBitbucketcloud(BitbucketcloudUploader bitbucketcloud) {
+        this.bitbucketcloud.put(bitbucketcloud.getName(), bitbucketcloud);
     }
 
     public List<FtpUploader> getActiveFtps() {
@@ -464,6 +507,13 @@ public final class Upload extends AbstractActivatable<Upload> implements Domain 
             .collect(toList());
         if (!artifactory.isEmpty()) map.put("artifactory", artifactory);
 
+        List<Map<String, Object>> bitbucketcloud = this.bitbucketcloud.values()
+            .stream()
+            .filter(d -> full || d.isEnabled())
+            .map(d -> d.asMap(full))
+            .collect(toList());
+        if (!bitbucketcloud.isEmpty()) map.put("bitbucketcloud", bitbucketcloud);
+
         List<Map<String, Object>> ftp = this.ftp.values()
             .stream()
             .filter(d -> full || d.isEnabled())
@@ -520,6 +570,8 @@ public final class Upload extends AbstractActivatable<Upload> implements Domain 
         switch (uploaderType) {
             case org.jreleaser.model.api.upload.ArtifactoryUploader.TYPE:
                 return (Map<String, A>) artifactory;
+            case org.jreleaser.model.api.upload.BitbucketcloudUploader.TYPE:
+                return (Map<String, A>) bitbucketcloud;
             case org.jreleaser.model.api.upload.FtpUploader.TYPE:
                 return (Map<String, A>) ftp;
             case org.jreleaser.model.api.upload.GiteaUploader.TYPE:
@@ -542,6 +594,7 @@ public final class Upload extends AbstractActivatable<Upload> implements Domain 
     public <A extends Uploader<?>> List<A> findAllActiveUploaders() {
         List<A> uploaders = new ArrayList<>();
         uploaders.addAll((List<A>) getActiveArtifactories());
+        uploaders.addAll((List<A>) getActiveBitbucketclouds());
         uploaders.addAll((List<A>) getActiveFtps());
         uploaders.addAll((List<A>) getActiveGiteas());
         uploaders.addAll((List<A>) getActiveGitlabs());

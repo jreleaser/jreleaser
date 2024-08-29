@@ -86,6 +86,7 @@ public class Repository {
     }
 
     public enum Kind {
+        BITBUCKETCLOUD,
         GITHUB,
         GITLAB,
         CODEBERG,

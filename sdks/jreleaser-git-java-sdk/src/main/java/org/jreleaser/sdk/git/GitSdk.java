@@ -112,6 +112,9 @@ public class GitSdk {
 
             Repository.Kind kind = Repository.Kind.OTHER;
             switch (uri.getHost()) {
+                case "bitbucket.org":
+                    kind = Repository.Kind.BITBUCKETCLOUD;
+                    break;
                 case "github.com":
                     kind = Repository.Kind.GITHUB;
                     break;

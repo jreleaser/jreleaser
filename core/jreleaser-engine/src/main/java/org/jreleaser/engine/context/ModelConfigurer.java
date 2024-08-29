@@ -24,6 +24,7 @@ import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.api.JReleaserModel;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.release.BaseReleaser;
+import org.jreleaser.model.internal.release.BitbucketcloudReleaser;
 import org.jreleaser.model.internal.release.CodebergReleaser;
 import org.jreleaser.model.internal.release.GithubReleaser;
 import org.jreleaser.model.internal.release.GitlabReleaser;
@@ -76,6 +77,9 @@ public final class ModelConfigurer {
         }
 
         switch (repository.getKind()) {
+            case BITBUCKETCLOUD:
+                autoConfigureBitbucket(context, repository);
+                break;
             case GITHUB:
                 autoConfigureGithub(context, repository);
                 break;
@@ -88,6 +92,23 @@ public final class ModelConfigurer {
             default:
                 autoConfigureOther(context, repository);
         }
+    }
+
+    private static void autoConfigureBitbucket(JReleaserContext context, Repository repository) {
+        BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
+
+        if (null != service) {
+            if (!(service instanceof BitbucketcloudReleaser)) {
+                context.getModel().getRelease().getReleaser().setMatch(false);
+                context.getModel().getRelease().getReleaser().setSkipTag(true);
+                context.getLogger().warn(RB.$("ERROR_context_configurer_detected_git"), "bitbucketcloud", service.getServiceName());
+            }
+        } else {
+            context.getModel().getRelease().setBitbucketcloud(new BitbucketcloudReleaser());
+        }
+
+        fillGitProperties(context.getLogger(), context.getModel().getRelease().getReleaser(),
+            repository, context.getModel().getCommit());
     }
 
     private static void autoConfigureGithub(JReleaserContext context, Repository repository) {

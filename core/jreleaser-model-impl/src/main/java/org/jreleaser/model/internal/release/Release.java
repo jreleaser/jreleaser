@@ -32,8 +32,9 @@ import static org.jreleaser.model.JReleaserOutput.nag;
  * @since 0.1.0
  */
 public final class Release extends AbstractModelObject<Release> implements Domain {
-    private static final long serialVersionUID = -7382956682399917298L;
+    private static final long serialVersionUID = -5298669498248848715L;
 
+    private BitbucketcloudReleaser bitbucketcloud;
     private GithubReleaser github;
     private GitlabReleaser gitlab;
     private GiteaReleaser gitea;
@@ -42,7 +43,12 @@ public final class Release extends AbstractModelObject<Release> implements Domai
 
     @JsonIgnore
     private final org.jreleaser.model.api.release.Release immutable = new org.jreleaser.model.api.release.Release() {
-        private static final long serialVersionUID = 8607297611597648860L;
+        private static final long serialVersionUID = 3509724730197389700L;
+
+        @Override
+        public org.jreleaser.model.api.release.BitbucketcloudReleaser getBitbucketcloud() {
+            return null != bitbucketcloud ? bitbucketcloud.asImmutable() : null;
+        }
 
         @Override
         public org.jreleaser.model.api.release.GithubReleaser getGithub() {
@@ -86,11 +92,20 @@ public final class Release extends AbstractModelObject<Release> implements Domai
 
     @Override
     public void merge(Release source) {
+        this.bitbucketcloud = merge(this.bitbucketcloud, source.bitbucketcloud);
         this.github = merge(this.github, source.github);
         this.gitlab = merge(this.gitlab, source.gitlab);
         this.gitea = merge(this.gitea, source.gitea);
         this.codeberg = merge(this.codeberg, source.codeberg);
         this.generic = merge(this.generic, source.generic);
+    }
+
+    public BitbucketcloudReleaser getBitbucketcloud() {
+        return bitbucketcloud;
+    }
+
+    public void setBitbucketcloud(BitbucketcloudReleaser bitbucketcloud) {
+        this.bitbucketcloud = bitbucketcloud;
     }
 
     public GithubReleaser getGithub() {
@@ -135,6 +150,7 @@ public final class Release extends AbstractModelObject<Release> implements Domai
     }
 
     public BaseReleaser<?, ?> getReleaser() {
+        if (null != bitbucketcloud) return bitbucketcloud;
         if (null != github) return github;
         if (null != gitlab) return gitlab;
         if (null != gitea) return gitea;
@@ -143,6 +159,7 @@ public final class Release extends AbstractModelObject<Release> implements Domai
     }
 
     public org.jreleaser.model.api.release.Releaser releaser() {
+        if (null != bitbucketcloud) return bitbucketcloud.asImmutable();
         if (null != github) return github.asImmutable();
         if (null != gitlab) return gitlab.asImmutable();
         if (null != gitea) return gitea.asImmutable();
@@ -154,6 +171,7 @@ public final class Release extends AbstractModelObject<Release> implements Domai
     @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
+        if (null != bitbucketcloud) map.put(org.jreleaser.model.api.release.BitbucketcloudReleaser.TYPE, bitbucketcloud.asMap(full));
         if (null != github) map.put(org.jreleaser.model.api.release.GithubReleaser.TYPE, github.asMap(full));
         if (null != gitlab) map.put(org.jreleaser.model.api.release.GitlabReleaser.TYPE, gitlab.asMap(full));
         if (null != gitea) map.put(org.jreleaser.model.api.release.GiteaReleaser.TYPE, gitea.asMap(full));

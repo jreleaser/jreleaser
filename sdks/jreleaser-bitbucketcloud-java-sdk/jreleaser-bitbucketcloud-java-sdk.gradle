@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2020-2024 The JReleaser authors.
+ * Copyright 2020-2023 The JReleaser authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,25 +15,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.api.release;
+dependencies {
+    compileOnly "org.kordamp.jipsy:jipsy-annotations:${jipsyVersion}"
+    annotationProcessor "org.kordamp.jipsy:jipsy-processor:${jipsyVersion}"
 
-import org.jreleaser.model.api.common.Domain;
+    api project(':jreleaser-java-sdk-commons')
 
-/**
- * @author Andres Almiray
- * @since 0.1.0
- */
-public interface Release extends Domain {
-    BitbucketcloudReleaser getBitbucketcloud();
-    GithubReleaser getGithub();
-
-    GitlabReleaser getGitlab();
-
-    GiteaReleaser getGitea();
-
-    CodebergReleaser getCodeberg();
-
-    GenericGitReleaser getGeneric();
-
-    Releaser getReleaser();
+    testImplementation project(':jreleaser-test-support')
 }

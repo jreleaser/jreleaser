@@ -1,7 +1,7 @@
 /*
  * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright 2020-2024 The JReleaser authors.
+ * Copyright 2020-2023 The JReleaser authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,23 +17,10 @@
  */
 package org.jreleaser.model.api.release;
 
-import org.jreleaser.model.api.common.Domain;
-
 /**
- * @author Andres Almiray
- * @since 0.1.0
+ * @author Hasnae Rehioui
+ * @since 1.7.0
  */
-public interface Release extends Domain {
-    BitbucketcloudReleaser getBitbucketcloud();
-    GithubReleaser getGithub();
-
-    GitlabReleaser getGitlab();
-
-    GiteaReleaser getGitea();
-
-    CodebergReleaser getCodeberg();
-
-    GenericGitReleaser getGeneric();
-
-    Releaser getReleaser();
+public interface BitbucketcloudReleaser extends Releaser {
+    String TYPE = "bitbucketcloud";
 }
