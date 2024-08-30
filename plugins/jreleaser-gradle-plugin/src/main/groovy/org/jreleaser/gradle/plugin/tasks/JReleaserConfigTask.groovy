@@ -25,6 +25,7 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.jreleaser.engine.context.ModelValidator
 import org.jreleaser.gradle.plugin.internal.GradleJReleaserModelPrinter
+import org.jreleaser.model.api.JReleaserCommand
 import org.jreleaser.model.internal.JReleaserContext
 
 import javax.inject.Inject
@@ -67,6 +68,7 @@ abstract class JReleaserConfigTask extends AbstractPlatformAwareJReleaserTask {
         announce = objects.property(Boolean).convention(false)
         changelog = objects.property(Boolean).convention(false)
         download = objects.property(Boolean).convention(false)
+        command = JReleaserCommand.CONFIG
     }
 
     @Option(option = 'full', description = 'Display full configuration (OPTIONAL).')

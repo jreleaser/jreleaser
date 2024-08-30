@@ -19,6 +19,7 @@ package org.jreleaser.cli;
 
 import org.jreleaser.engine.context.ModelAutoConfigurer;
 import org.jreleaser.model.UpdateSection;
+import org.jreleaser.model.api.JReleaserCommand;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.workflow.Workflows;
 import picocli.CommandLine;
@@ -394,5 +395,10 @@ public class Release extends AbstractPlatformAwareModelCommand<Main> {
             .println(spec.commandLine().getColorScheme().errorText(message));
         spec.commandLine().usage(parent().getOut());
         throw new HaltExecutionException();
+    }
+
+    @Override
+    protected JReleaserCommand getCommand() {
+        return JReleaserCommand.RELEASE;
     }
 }

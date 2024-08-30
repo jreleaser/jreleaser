@@ -23,6 +23,7 @@ import org.jreleaser.model.Active;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.model.UpdateSection;
+import org.jreleaser.model.api.JReleaserCommand;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.JReleaserModel;
@@ -395,6 +396,7 @@ public final class ModelAutoConfigurer {
             logger,
             JReleaserContext.Configurer.CLI,
             Mode.FULL,
+            JReleaserCommand.RELEASE,
             autoConfiguredModel(basedir),
             basedir,
             outputDirectory,

@@ -31,6 +31,7 @@ import org.jreleaser.gradle.plugin.JReleaserExtension
 import org.jreleaser.gradle.plugin.internal.JReleaserLoggerService
 import org.jreleaser.logging.JReleaserLogger
 import org.jreleaser.model.JReleaserVersion
+import org.jreleaser.model.api.JReleaserCommand
 import org.jreleaser.model.internal.JReleaserContext
 import org.jreleaser.model.internal.JReleaserModel
 import org.jreleaser.util.Env
@@ -73,6 +74,9 @@ abstract class AbstractJReleaserTask extends DefaultTask {
     @Internal
     org.jreleaser.model.api.JReleaserContext.Mode mode
 
+    @Internal
+    JReleaserCommand command
+
     @Inject
     AbstractJReleaserTask(ObjectFactory objects) {
         model = objects.property(JReleaserModel)
@@ -114,6 +118,7 @@ abstract class AbstractJReleaserTask extends DefaultTask {
             logger,
             resolveConfigurer(project.extensions.findByType(JReleaserExtension)),
             mode,
+            command,
             model.get(),
             project.projectDir.toPath(),
             outputDirectory.get().asFile.toPath(),

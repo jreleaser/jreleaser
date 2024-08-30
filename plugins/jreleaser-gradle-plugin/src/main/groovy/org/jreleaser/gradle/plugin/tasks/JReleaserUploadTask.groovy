@@ -24,6 +24,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
+import org.jreleaser.model.api.JReleaserCommand
 import org.jreleaser.model.internal.JReleaserContext
 import org.jreleaser.workflow.Workflows
 
@@ -71,6 +72,7 @@ abstract class JReleaserUploadTask extends AbstractJReleaserDistributionTask {
         excludedUploaderNames = objects.listProperty(String).convention([])
         catalogers = objects.listProperty(String).convention([])
         excludedCatalogers = objects.listProperty(String).convention([])
+        command = JReleaserCommand.UPLOAD
     }
 
     @Option(option = 'uploader', description = 'Include an uploader by type (OPTIONAL).')

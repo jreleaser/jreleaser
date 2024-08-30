@@ -24,6 +24,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
+import org.jreleaser.model.api.JReleaserCommand
 import org.jreleaser.model.internal.JReleaserContext
 import org.jreleaser.workflow.Workflows
 
@@ -91,6 +92,7 @@ abstract class JReleaserReleaseTask extends AbstractJReleaserDistributionTask {
         excludedUploaderNames = objects.listProperty(String).convention([])
         catalogers = objects.listProperty(String).convention([])
         excludedCatalogers = objects.listProperty(String).convention([])
+        command = JReleaserCommand.RELEASE
     }
 
     @Option(option = 'deployer', description = 'Include a deployer by type (OPTIONAL).')

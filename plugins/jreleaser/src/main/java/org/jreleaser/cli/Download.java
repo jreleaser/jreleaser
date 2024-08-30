@@ -17,6 +17,7 @@
  */
 package org.jreleaser.cli;
 
+import org.jreleaser.model.api.JReleaserCommand;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.workflow.Workflows;
@@ -110,5 +111,10 @@ public class Download extends AbstractModelCommand<Main> {
     @Override
     protected Mode getMode() {
         return Mode.DOWNLOAD;
+    }
+
+    @Override
+    protected JReleaserCommand getCommand() {
+        return JReleaserCommand.DOWNLOAD;
     }
 }

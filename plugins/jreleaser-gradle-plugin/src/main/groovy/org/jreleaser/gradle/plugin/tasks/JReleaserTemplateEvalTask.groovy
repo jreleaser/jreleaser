@@ -31,6 +31,7 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.jreleaser.engine.context.ModelValidator
 import org.jreleaser.engine.templates.TemplateEvaluator
+import org.jreleaser.model.api.JReleaserCommand
 import org.jreleaser.model.internal.JReleaserContext
 
 import javax.inject.Inject
@@ -88,6 +89,8 @@ abstract class JReleaserTemplateEvalTask extends AbstractPlatformAwareJReleaserT
         inputFile = objects.fileProperty()
         inputDirectory = objects.directoryProperty()
         targetDirectory = objects.directoryProperty()
+
+        command = JReleaserCommand.CONFIG
     }
 
     @Option(option = 'announce', description = 'Eval model in announce configuration (OPTIONAL).')

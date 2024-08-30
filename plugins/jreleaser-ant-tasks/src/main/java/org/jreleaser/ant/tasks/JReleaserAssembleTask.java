@@ -17,6 +17,7 @@
  */
 package org.jreleaser.ant.tasks;
 
+import org.jreleaser.model.api.JReleaserCommand;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.workflow.Workflows;
@@ -62,5 +63,10 @@ public class JReleaserAssembleTask extends AbstractDistributionAwareJReleaserTas
     @Override
     protected Mode getMode() {
         return Mode.ASSEMBLE;
+    }
+
+    @Override
+    protected JReleaserCommand getCommand() {
+        return JReleaserCommand.ASSEMBLE;
     }
 }

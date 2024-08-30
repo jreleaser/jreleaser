@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
  * @since 0.1.0
  */
 @CommandLine.Command
-abstract class AbstractCommand<C extends IO> extends BaseCommand implements Callable<Integer> {
+public abstract class AbstractCommand<C extends IO> extends BaseCommand implements Callable<Integer> {
     @CommandLine.ParentCommand
     private C parent;
 

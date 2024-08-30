@@ -20,6 +20,7 @@ package org.jreleaser.cli;
 import org.jreleaser.config.JReleaserConfigParser;
 import org.jreleaser.engine.context.ContextCreator;
 import org.jreleaser.model.JReleaserVersion;
+import org.jreleaser.model.api.JReleaserCommand;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.JReleaserModel;
@@ -150,6 +151,7 @@ public abstract class AbstractModelCommand<C extends IO> extends AbstractLogging
             logger,
             resolveConfigurer(actualConfigFile),
             getMode(),
+            getCommand(),
             model,
             actualBasedir,
             getOutputDirectory(),
@@ -224,6 +226,8 @@ public abstract class AbstractModelCommand<C extends IO> extends AbstractLogging
     protected Mode getMode() {
         return Mode.FULL;
     }
+
+    protected abstract JReleaserCommand getCommand();
 
     protected List<String> collectSelectedPlatforms() {
         return Collections.emptyList();

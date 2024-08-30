@@ -21,6 +21,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.jreleaser.model.api.JReleaserCommand;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.workflow.Workflows;
@@ -83,5 +84,10 @@ public class JReleaserDeployMojo extends AbstractJReleaserMojo {
     @Override
     protected boolean isSkip() {
         return skip;
+    }
+
+    @Override
+    protected JReleaserCommand getCommand() {
+        return JReleaserCommand.DEPLOY;
     }
 }

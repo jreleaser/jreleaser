@@ -17,6 +17,7 @@
  */
 package org.jreleaser.ant.tasks;
 
+import org.jreleaser.model.api.JReleaserCommand;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.workflow.Workflows;
 
@@ -28,5 +29,10 @@ public class JReleaserPackageTask extends AbstractPackagerAwareJReleaserTask {
     @Override
     protected void doExecute(JReleaserContext context) {
         Workflows.packageRelease(setupContext(context)).execute();
+    }
+
+    @Override
+    protected JReleaserCommand getCommand() {
+        return JReleaserCommand.PACKAGE;
     }
 }

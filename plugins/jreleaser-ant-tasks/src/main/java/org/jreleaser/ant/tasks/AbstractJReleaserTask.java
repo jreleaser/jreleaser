@@ -24,6 +24,7 @@ import org.jreleaser.config.JReleaserConfigParser;
 import org.jreleaser.engine.context.ContextCreator;
 import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.JReleaserVersion;
+import org.jreleaser.model.api.JReleaserCommand;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.util.Env;
@@ -172,6 +173,7 @@ abstract class AbstractJReleaserTask extends Task {
             logger,
             resolveConfigurer(actualConfigFile),
             getMode(),
+            getCommand(),
             actualConfigFile,
             actualBasedir,
             getOutputDirectory(),
@@ -229,6 +231,8 @@ abstract class AbstractJReleaserTask extends Task {
     protected Mode getMode() {
         return Mode.FULL;
     }
+
+    protected abstract JReleaserCommand getCommand();
 
     protected List<String> collectSelectedPlatforms() {
         return Collections.emptyList();

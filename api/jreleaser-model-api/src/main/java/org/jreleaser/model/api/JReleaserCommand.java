@@ -24,20 +24,31 @@ import java.util.Locale;
  * @since 0.6.0
  */
 public enum JReleaserCommand {
-    DOWNLOAD,
-    ASSEMBLE,
-    CHANGELOG,
-    CHECKSUM,
-    CATALOG,
-    SIGN,
-    DEPLOY,
-    UPLOAD,
-    RELEASE,
-    PREPARE,
-    PACKAGE,
-    PUBLISH,
-    ANNOUNCE,
-    FULL_RELEASE;
+    CONFIG(true),
+    DOWNLOAD(false),
+    ASSEMBLE(false),
+    CHANGELOG(true),
+    CHECKSUM(false),
+    CATALOG(false),
+    SIGN(false),
+    DEPLOY(false),
+    UPLOAD(false),
+    RELEASE(true),
+    PREPARE(false),
+    PACKAGE(false),
+    PUBLISH(false),
+    ANNOUNCE(true),
+    FULL_RELEASE(true);
+
+    private final boolean git;
+
+    JReleaserCommand(boolean git) {
+        this.git = git;
+    }
+
+    public boolean requiresGit() {
+        return git;
+    }
 
     public String toStep() {
         return name().toLowerCase(Locale.ENGLISH)

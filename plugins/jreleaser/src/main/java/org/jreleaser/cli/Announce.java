@@ -17,6 +17,7 @@
  */
 package org.jreleaser.cli;
 
+import org.jreleaser.model.api.JReleaserCommand;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.workflow.Workflows;
@@ -90,5 +91,10 @@ public class Announce extends AbstractModelCommand<Main> {
     @Override
     protected Mode getMode() {
         return Mode.ANNOUNCE;
+    }
+
+    @Override
+    protected JReleaserCommand getCommand() {
+        return JReleaserCommand.ANNOUNCE;
     }
 }

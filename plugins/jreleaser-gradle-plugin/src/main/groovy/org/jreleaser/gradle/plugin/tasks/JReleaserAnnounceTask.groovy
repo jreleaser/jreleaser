@@ -24,6 +24,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
+import org.jreleaser.model.api.JReleaserCommand
 import org.jreleaser.model.internal.JReleaserContext
 import org.jreleaser.workflow.Workflows
 
@@ -54,6 +55,7 @@ abstract class JReleaserAnnounceTask extends AbstractJReleaserTask {
         announcers = objects.listProperty(String).convention([])
         excludedAnnouncers = objects.listProperty(String).convention([])
         mode = ANNOUNCE
+        command = JReleaserCommand.ANNOUNCE
     }
 
     @Option(option = 'announcer', description = 'Include an announcer (OPTIONAL).')

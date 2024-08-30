@@ -19,6 +19,7 @@ package org.jreleaser.cli;
 
 import org.jreleaser.cli.internal.CliJReleaserModelPrinter;
 import org.jreleaser.engine.context.ModelValidator;
+import org.jreleaser.model.api.JReleaserCommand;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import picocli.CommandLine;
@@ -88,5 +89,10 @@ public class Config extends AbstractPlatformAwareModelCommand<Main> {
 
     private boolean announce() {
         return null != exclusive && exclusive.announce;
+    }
+
+    @Override
+    protected JReleaserCommand getCommand() {
+        return JReleaserCommand.CONFIG;
     }
 }

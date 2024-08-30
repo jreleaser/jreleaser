@@ -19,6 +19,7 @@ package org.jreleaser.ant.tasks;
 
 import org.jreleaser.engine.context.ModelValidator;
 import org.jreleaser.engine.templates.TemplateEvaluator;
+import org.jreleaser.model.api.JReleaserCommand;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 
@@ -92,5 +93,10 @@ public class JReleaserTemplateEvalTask extends AbstractPlatformAwareJReleaserTas
         if (changelog) return Mode.CHANGELOG;
         if (announce) return Mode.ANNOUNCE;
         return Mode.CONFIG;
+    }
+
+    @Override
+    protected JReleaserCommand getCommand() {
+        return JReleaserCommand.CONFIG;
     }
 }

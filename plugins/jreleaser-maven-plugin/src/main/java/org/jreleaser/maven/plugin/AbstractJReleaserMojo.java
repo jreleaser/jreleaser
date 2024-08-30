@@ -29,6 +29,7 @@ import org.jreleaser.maven.plugin.internal.JReleaserLoggerAdapter;
 import org.jreleaser.maven.plugin.internal.JReleaserModelConfigurer;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserVersion;
+import org.jreleaser.model.api.JReleaserCommand;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.JReleaserModel;
@@ -168,6 +169,7 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
                 logger,
                 resolveConfigurer(configFile),
                 getMode(),
+                getCommand(),
                 null == configFile ? convertModel() : readModel(logger),
                 basedir,
                 outputDirectory.toPath(),
@@ -217,6 +219,8 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
     protected Mode getMode() {
         return Mode.FULL;
     }
+
+    protected abstract JReleaserCommand getCommand();
 
     private Path resolveBasedir() {
         String resolvedBasedir = Env.resolve(org.jreleaser.model.api.JReleaserContext.BASEDIR, "");

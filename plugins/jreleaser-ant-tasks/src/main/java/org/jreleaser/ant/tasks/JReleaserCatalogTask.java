@@ -17,6 +17,7 @@
  */
 package org.jreleaser.ant.tasks;
 
+import org.jreleaser.model.api.JReleaserCommand;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.workflow.Workflows;
 
@@ -110,5 +111,10 @@ public class JReleaserCatalogTask extends AbstractDistributionAwareJReleaserTask
     @Override
     protected void doExecute(JReleaserContext context) {
         Workflows.catalog(setupContext(context)).execute();
+    }
+
+    @Override
+    protected JReleaserCommand getCommand() {
+        return JReleaserCommand.CATALOG;
     }
 }

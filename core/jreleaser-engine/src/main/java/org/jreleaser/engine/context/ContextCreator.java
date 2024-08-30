@@ -21,6 +21,7 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.config.JReleaserConfigLoader;
 import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.JReleaserException;
+import org.jreleaser.model.api.JReleaserCommand;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.JReleaserModel;
@@ -42,6 +43,7 @@ public final class ContextCreator {
     public static JReleaserContext create(JReleaserLogger logger,
                                           JReleaserContext.Configurer configurer,
                                           Mode mode,
+                                          JReleaserCommand command,
                                           Path configFile,
                                           Path basedir,
                                           Path outputDirectory,
@@ -53,6 +55,7 @@ public final class ContextCreator {
         return create(logger,
             configurer,
             mode,
+            command,
             resolveModel(logger, configFile),
             basedir,
             outputDirectory,
@@ -66,6 +69,7 @@ public final class ContextCreator {
     public static JReleaserContext create(JReleaserLogger logger,
                                           JReleaserContext.Configurer configurer,
                                           Mode mode,
+                                          JReleaserCommand command,
                                           JReleaserModel model,
                                           Path basedir,
                                           Path outputDirectory,
@@ -78,6 +82,7 @@ public final class ContextCreator {
             logger,
             configurer,
             mode,
+            command,
             model,
             basedir,
             outputDirectory,

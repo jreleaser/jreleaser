@@ -123,6 +123,7 @@ public class JReleaserContext {
     private final boolean strict;
     private final boolean gitRootSearch;
     private final org.jreleaser.model.api.JReleaserContext.Mode mode;
+    private final JReleaserCommand command;
     private final Configurer configurer;
     private final Errors errors = new Errors();
     private final Changelog changelog = new Changelog();
@@ -155,7 +156,6 @@ public class JReleaserContext {
     private final List<WorkflowListener> workflowListeners = new ArrayList<>();
 
     private org.jreleaser.model.spi.release.Releaser<?> releaser;
-    private JReleaserCommand command;
     private final JReleaserScriptEvaluator scriptEvaluator = new JReleaserScriptEvaluator();
 
     @JsonIgnore
@@ -398,6 +398,7 @@ public class JReleaserContext {
         return new JReleaserContext(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG),
             null,
             org.jreleaser.model.api.JReleaserContext.Mode.FULL,
+            JReleaserCommand.FULL_RELEASE,
             new JReleaserModel(),
             basedir,
             basedir.resolve("out/jreleaser"),
@@ -411,6 +412,7 @@ public class JReleaserContext {
     public JReleaserContext(JReleaserLogger logger,
                             Configurer configurer,
                             org.jreleaser.model.api.JReleaserContext.Mode mode,
+                            JReleaserCommand command,
                             JReleaserModel model,
                             Path basedir,
                             Path outputDirectory,
@@ -422,6 +424,7 @@ public class JReleaserContext {
         this.logger = logger;
         this.configurer = configurer;
         this.mode = mode;
+        this.command = command;
         this.model = model;
         this.basedir = basedir;
         this.outputDirectory = outputDirectory;
@@ -930,10 +933,6 @@ public class JReleaserContext {
 
     public JReleaserCommand getCommand() {
         return command;
-    }
-
-    public void setCommand(JReleaserCommand command) {
-        this.command = command;
     }
 
     public TemplateContext props() {

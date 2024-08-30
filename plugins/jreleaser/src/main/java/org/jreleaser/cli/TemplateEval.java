@@ -19,6 +19,7 @@ package org.jreleaser.cli;
 
 import org.jreleaser.engine.context.ModelValidator;
 import org.jreleaser.engine.templates.TemplateEvaluator;
+import org.jreleaser.model.api.JReleaserCommand;
 import org.jreleaser.model.api.JReleaserContext;
 import picocli.CommandLine;
 
@@ -102,5 +103,10 @@ public class TemplateEval extends AbstractPlatformAwareModelCommand<Template> {
 
     private boolean announce() {
         return null != exclusive && exclusive.announce;
+    }
+
+    @Override
+    protected JReleaserCommand getCommand() {
+        return JReleaserCommand.CONFIG;
     }
 }

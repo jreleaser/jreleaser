@@ -20,6 +20,7 @@ package org.jreleaser.gradle.plugin.tasks
 import groovy.transform.CompileStatic
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.TaskAction
+import org.jreleaser.model.api.JReleaserCommand
 import org.jreleaser.workflow.Workflows
 
 import javax.inject.Inject
@@ -36,6 +37,7 @@ abstract class JReleaserPackageTask extends AbstractJReleaserPackagerTask {
     @Inject
     JReleaserPackageTask(ObjectFactory objects) {
         super(objects)
+        command = JReleaserCommand.PACKAGE
     }
 
     @TaskAction

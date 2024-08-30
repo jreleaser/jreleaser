@@ -27,7 +27,7 @@ import java.util.Set;
  * @since 1.5.0
  */
 @CommandLine.Command
-public class AbstractDistributionModelCommand<C extends IO> extends AbstractPlatformAwareModelCommand<C> {
+public abstract class AbstractDistributionModelCommand<C extends IO> extends AbstractPlatformAwareModelCommand<C> {
     @CommandLine.ArgGroup
     Composite composite;
 

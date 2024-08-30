@@ -17,6 +17,7 @@
  */
 package org.jreleaser.cli;
 
+import org.jreleaser.model.api.JReleaserCommand;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.workflow.Workflows;
 import picocli.CommandLine;
@@ -31,5 +32,10 @@ public class Sign extends AbstractDistributionModelCommand<Main> {
     protected void doExecute(JReleaserContext context) {
         super.doExecute(context);
         Workflows.sign(context).execute();
+    }
+
+    @Override
+    protected JReleaserCommand getCommand() {
+        return JReleaserCommand.SIGN;
     }
 }

@@ -20,7 +20,7 @@ package org.jreleaser.engine.context;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.JReleaserException;
-import org.jreleaser.model.api.JReleaserContext.Mode;
+import org.jreleaser.model.api.JReleaserCommand;
 import org.jreleaser.model.api.JReleaserModel;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.release.BaseReleaser;
@@ -53,9 +53,7 @@ public final class ModelConfigurer {
                 head.getCommitTime(),
                 head.getTimestamp()));
         } catch (Exception e) {
-            if (context.getMode() == Mode.ASSEMBLE ||
-                context.getMode() == Mode.DEPLOY ||
-                context.getMode() == Mode.DOWNLOAD) return;
+            if (!requiresGit(context)) return;
             context.getLogger().trace(e);
             throw new JReleaserException(RB.$("ERROR_context_configurer_fail_git_head"), e);
         }
@@ -64,9 +62,7 @@ public final class ModelConfigurer {
         try {
             repository = GitSdk.of(context).getRemote();
         } catch (Exception e) {
-            if (context.getMode() == Mode.ASSEMBLE ||
-                context.getMode() == Mode.DEPLOY ||
-                context.getMode() == Mode.DOWNLOAD) return;
+            if (!requiresGit(context)) return;
             context.getLogger().trace(e);
             throw new JReleaserException(RB.$("ERROR_context_configurer_fail_git_remote"), e);
         }
@@ -88,6 +84,21 @@ public final class ModelConfigurer {
             default:
                 autoConfigureOther(context, repository);
         }
+    }
+
+    private static boolean requiresGit(JReleaserContext context) {
+        if (context.getCommand() == JReleaserCommand.CONFIG) {
+            switch (context.getMode()) {
+                case DOWNLOAD:
+                case ASSEMBLE:
+                case CHANGELOG:
+                case ANNOUNCE:
+                    return false;
+                default:
+                    return true;
+            }
+        }
+        return context.getCommand().requiresGit();
     }
 
     private static void autoConfigureGithub(JReleaserContext context, Repository repository) {

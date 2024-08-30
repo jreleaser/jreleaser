@@ -17,6 +17,7 @@
  */
 package org.jreleaser.cli;
 
+import org.jreleaser.model.api.JReleaserCommand;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.workflow.Workflows;
@@ -112,5 +113,10 @@ public class Deploy extends AbstractModelCommand<Main> {
     @Override
     protected Mode getMode() {
         return DEPLOY;
+    }
+
+    @Override
+    protected JReleaserCommand getCommand() {
+        return JReleaserCommand.DEPLOY;
     }
 }

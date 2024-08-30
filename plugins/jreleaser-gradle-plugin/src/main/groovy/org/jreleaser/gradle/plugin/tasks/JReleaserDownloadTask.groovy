@@ -24,6 +24,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
+import org.jreleaser.model.api.JReleaserCommand
 import org.jreleaser.model.internal.JReleaserContext
 import org.jreleaser.workflow.Workflows
 
@@ -63,6 +64,8 @@ abstract class JReleaserDownloadTask extends AbstractJReleaserTask {
         excludedDownloaderTypes = objects.listProperty(String).convention([])
         downloaderNames = objects.listProperty(String).convention([])
         excludedDownloaderNames = objects.listProperty(String).convention([])
+        mode = DOWNLOAD
+        command = JReleaserCommand.DOWNLOAD
     }
 
     @Option(option = 'downloader', description = 'Include a downloader by type (OPTIONAL).')
@@ -87,7 +90,6 @@ abstract class JReleaserDownloadTask extends AbstractJReleaserTask {
 
     @TaskAction
     void performAction() {
-        mode = DOWNLOAD
         JReleaserContext ctx = createContext()
         ctx.includedDownloaderTypes = downloaderTypes.orNull
         ctx.excludedDownloaderTypes = excludedDownloaderTypes.orNull

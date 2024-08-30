@@ -17,7 +17,6 @@
  */
 package org.jreleaser.workflow;
 
-import org.jreleaser.model.api.JReleaserCommand;
 import org.jreleaser.model.internal.JReleaserContext;
 
 import static java.util.Arrays.asList;
@@ -33,35 +32,30 @@ public final class Workflows {
     }
 
     public static Workflow download(JReleaserContext context) {
-        context.setCommand(JReleaserCommand.DOWNLOAD);
         return new WorkflowImpl(context, singletonList(
             new DownloadWorkflowItem()
         ));
     }
 
     public static Workflow assemble(JReleaserContext context) {
-        context.setCommand(JReleaserCommand.ASSEMBLE);
         return new WorkflowImpl(context, singletonList(
             new AssembleWorkflowItem()
         ));
     }
 
     public static Workflow changelog(JReleaserContext context) {
-        context.setCommand(JReleaserCommand.CHANGELOG);
         return new WorkflowImpl(context, singletonList(
             new ChangelogWorkflowItem()
         ));
     }
 
     public static Workflow checksum(JReleaserContext context) {
-        context.setCommand(JReleaserCommand.CHECKSUM);
         return new WorkflowImpl(context, singletonList(
             new ChecksumWorkflowItem()
         ));
     }
 
     public static Workflow catalog(JReleaserContext context) {
-        context.setCommand(JReleaserCommand.CATALOG);
         return new WorkflowImpl(context, asList(
             new ChecksumWorkflowItem(),
             new CatalogWorkflowItem()
@@ -69,7 +63,6 @@ public final class Workflows {
     }
 
     public static Workflow sign(JReleaserContext context) {
-        context.setCommand(JReleaserCommand.SIGN);
         return new WorkflowImpl(context, asList(
             new ChecksumWorkflowItem(),
             new CatalogWorkflowItem(),
@@ -78,14 +71,12 @@ public final class Workflows {
     }
 
     public static Workflow deploy(JReleaserContext context) {
-        context.setCommand(JReleaserCommand.DEPLOY);
         return new WorkflowImpl(context, singletonList(
             new DeployWorkflowItem()
         ));
     }
 
     public static Workflow upload(JReleaserContext context) {
-        context.setCommand(JReleaserCommand.UPLOAD);
         return new WorkflowImpl(context, asList(
             new ChecksumWorkflowItem(),
             new CatalogWorkflowItem(),
@@ -95,7 +86,6 @@ public final class Workflows {
     }
 
     public static Workflow release(JReleaserContext context) {
-        context.setCommand(JReleaserCommand.RELEASE);
         return new WorkflowImpl(context, asList(
             new ChangelogWorkflowItem(),
             new ChecksumWorkflowItem(),
@@ -108,7 +98,6 @@ public final class Workflows {
     }
 
     public static Workflow prepare(JReleaserContext context) {
-        context.setCommand(JReleaserCommand.PREPARE);
         return new WorkflowImpl(context, asList(
             new ChecksumWorkflowItem(),
             new PrepareWorkflowItem()
@@ -116,7 +105,6 @@ public final class Workflows {
     }
 
     public static Workflow packageRelease(JReleaserContext context) {
-        context.setCommand(JReleaserCommand.PACKAGE);
         return new WorkflowImpl(context, asList(
             new ChecksumWorkflowItem(),
             new PrepareWorkflowItem(),
@@ -125,7 +113,6 @@ public final class Workflows {
     }
 
     public static Workflow publish(JReleaserContext context) {
-        context.setCommand(JReleaserCommand.PUBLISH);
         return new WorkflowImpl(context, asList(
             new ChecksumWorkflowItem(),
             new PrepareWorkflowItem(),
@@ -135,7 +122,6 @@ public final class Workflows {
     }
 
     public static Workflow announce(JReleaserContext context) {
-        context.setCommand(JReleaserCommand.ANNOUNCE);
         return new WorkflowImpl(context, asList(
             new ChangelogWorkflowItem(),
             new AnnounceWorkflowItem()
@@ -143,7 +129,6 @@ public final class Workflows {
     }
 
     public static Workflow fullRelease(JReleaserContext context) {
-        context.setCommand(JReleaserCommand.FULL_RELEASE);
         return new WorkflowImpl(context, asList(
             new ChangelogWorkflowItem(),
             new ChecksumWorkflowItem(),

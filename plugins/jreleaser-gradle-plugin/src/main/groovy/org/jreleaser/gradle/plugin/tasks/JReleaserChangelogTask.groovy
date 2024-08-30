@@ -20,6 +20,7 @@ package org.jreleaser.gradle.plugin.tasks
 import groovy.transform.CompileStatic
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.tasks.TaskAction
+import org.jreleaser.model.api.JReleaserCommand
 import org.jreleaser.workflow.Workflows
 
 import javax.inject.Inject
@@ -39,6 +40,7 @@ abstract class JReleaserChangelogTask extends AbstractJReleaserTask {
     JReleaserChangelogTask(ObjectFactory objects) {
         super(objects)
         mode = CHANGELOG
+        command = JReleaserCommand.CHANGELOG
     }
 
     @TaskAction

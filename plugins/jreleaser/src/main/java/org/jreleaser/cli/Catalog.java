@@ -17,6 +17,7 @@
  */
 package org.jreleaser.cli;
 
+import org.jreleaser.model.api.JReleaserCommand;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.workflow.Workflows;
 import picocli.CommandLine;
@@ -132,5 +133,10 @@ public class Catalog extends AbstractPlatformAwareModelCommand<Main> {
             context.setExcludedDeployerNames(collectEntries(composite.excludedDeployerNames()));
         }
         Workflows.catalog(context).execute();
+    }
+
+    @Override
+    protected JReleaserCommand getCommand() {
+        return JReleaserCommand.CATALOG;
     }
 }

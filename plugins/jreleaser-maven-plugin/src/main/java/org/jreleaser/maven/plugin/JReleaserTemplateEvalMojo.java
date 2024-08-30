@@ -23,6 +23,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.jreleaser.engine.context.ModelValidator;
 import org.jreleaser.engine.templates.TemplateEvaluator;
+import org.jreleaser.model.api.JReleaserCommand;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 
@@ -115,5 +116,10 @@ public class JReleaserTemplateEvalMojo extends AbstractPlatformAwareMojo {
     @Override
     protected boolean isSkip() {
         return skip;
+    }
+
+    @Override
+    protected JReleaserCommand getCommand() {
+        return JReleaserCommand.CONFIG;
     }
 }
