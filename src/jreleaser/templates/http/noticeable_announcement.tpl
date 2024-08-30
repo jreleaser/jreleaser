@@ -1,7 +1,10 @@
 JReleaser {{projectVersion}} is now available! This release brings the following features:
 
-This is a quick fix release 😅
+**Package:** Fix resolution of plugs in Snap packages. No changes required for custom templates.
 
-**Assemble:** Fix launcher scripts for Java Archive and Jlink assemblers due to empty elif block.
+**Deploy:** Allow artifact overrides to skip verifying individual poms during deployment. Gives you finer control to skip
+verification pf a given pom.xml
 
-[🚀 Changelog](https://github.com/jreleaser/jreleaser/releases/tag/{{tagName}}) [📝 Milestone]({{projectLinkVcsBrowser}}/milestone/34?closed=1)
+**Core:** Enable externalization of `project.java.*` properties such as `artifactId`, `groupId`, and `multiProject`.
+
+[🚀 Changelog](https://github.com/jreleaser/jreleaser/releases/tag/{{tagName}}) [📝 Milestone]({{projectLinkVcsBrowser}}/milestone/33?closed=1)
