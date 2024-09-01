@@ -102,16 +102,12 @@ public class Nexus2 {
                   boolean dryrun,
                   int transitionDelay,
                   int transitionMaxRetries) {
-        requireNonNull(context, "'context' must not be blank");
-        requireNonBlank(apiHost, "'apiHost' must not be blank");
-        requireNonBlank(username, "'username' must not be blank");
-        requireNonBlank(password, "'password' must not be blank");
+        this.context = requireNonNull(context, "'context' must not be blank");
+        this.apiHost = requireNonBlank(apiHost, "'apiHost' must not be blank").trim();
+        this.username = requireNonBlank(username, "'username' must not be blank").trim();
+        this.password = requireNonBlank(password, "'password' must not be blank").trim();
 
-        this.context = context;
         this.dryrun = dryrun;
-        this.apiHost = apiHost;
-        this.username = username;
-        this.password = password;
         this.connectTimeout = connectTimeout;
         this.readTimeout = readTimeout;
         this.retrier = new Retrier(context.getLogger(), transitionDelay, transitionMaxRetries);
@@ -272,18 +268,27 @@ public class Nexus2 {
             headers.put("Authorization", "Basic " + auth);
 
             StringBuilder url = new StringBuilder(apiHost);
-            if (isNotBlank(stagingRepositoryId)) {
-                url.append("staging/deployByRepositoryId/")
-                    .append(stagingRepositoryId);
-            }
-
-            if (!path.startsWith("/")) {
+            if (!apiHost.endsWith("/")) {
                 url.append("/");
             }
 
-            url.append(path)
-                .append("/")
-                .append(filename);
+            if (isNotBlank(stagingRepositoryId)) {
+                url.append("staging/deployByRepositoryId/")
+                    .append(stagingRepositoryId)
+                    .append("/");
+            }
+
+            String p = path.trim();
+            if (p.startsWith("/")) {
+                p = path.substring(1);
+            }
+
+            url.append(p);
+
+            if (!p.endsWith("/")) {
+                url.append("/");
+            }
+            url.append(filename);
 
             ClientUtils.putFile(context.getLogger(),
                 url.toString(),
