@@ -58,6 +58,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -221,6 +222,14 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
             return errors;
         }
 
+        Set<String> paths = new LinkedHashSet<>();
+        for (String stagingRepository : getDeployer().getStagingRepositories()) {
+            paths.add(context.getBasedir().resolve(stagingRepository)
+                .toAbsolutePath()
+                .normalize()
+                .toString());
+        }
+
         // 2nd check pom
         for (Deployable deployable : deployablesMap.values()) {
             if (!deployable.getFilename().endsWith(EXT_POM) || buildPoms.containsKey(deployable.getFullDeployPath()) ||
@@ -243,6 +252,14 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
                     args.add("--no-fail-on-error");
                 }
             }
+
+            if (pomChecker.isVersionCompatibleWith("1.13.0")) {
+                for (String path : paths) {
+                    args.add("--repository");
+                    args.add(path);
+                }
+            }
+
             args.add("--file");
             args.add(deployable.getLocalPath().toAbsolutePath().toString());
 
