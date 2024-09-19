@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model.spi.deploy.maven;
 
+import org.jreleaser.mustache.TemplateContext;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
@@ -99,6 +101,17 @@ public class Deployable implements Comparable<Deployable> {
         }
     }
 
+
+    public TemplateContext props() {
+        TemplateContext props = new TemplateContext();
+        props.set("groupId", groupId);
+        props.set("artifactId", artifactId);
+        props.set("version", version);
+        props.set("filename", filename);
+        props.set("path", getDeployPath());
+        return props;
+    }
+
     public boolean requiresJar() {
         return isNotBlank(packaging) && !JAR_EXCLUSIONS.contains(packaging);
     }
@@ -124,11 +137,11 @@ public class Deployable implements Comparable<Deployable> {
     }
 
     public String getFullDeployPath() {
-        return getDeployPath().substring(1) + "/" + getFilename();
+        return getDeployPath() + "/" + getFilename();
     }
 
     public String getDeployPath() {
-        return path.replace("\\", "/");
+        return path.replace("\\", "/").substring(1);
     }
 
     public String getFilename() {

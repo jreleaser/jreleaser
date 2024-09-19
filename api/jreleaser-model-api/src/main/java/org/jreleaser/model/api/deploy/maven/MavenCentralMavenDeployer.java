@@ -39,6 +39,8 @@ public interface MavenCentralMavenDeployer extends MavenDeployer {
 
     Integer getMaxRetries();
 
+    String getVerifyUrl();
+
     enum Stage {
         UPLOAD,
         PUBLISH,

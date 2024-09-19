@@ -32,6 +32,8 @@ public interface Nexus2MavenDeployer extends MavenDeployer {
 
     String getSnapshotUrl();
 
+    String getVerifyUrl();
+
     boolean isCloseRepository();
 
     boolean isReleaseRepository();

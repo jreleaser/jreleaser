@@ -30,13 +30,21 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.2.0
  */
 public class RestAPIException extends RuntimeException {
-    private static final long serialVersionUID = -3807652106740042028L;
+    private static final long serialVersionUID = 1046140359716555856L;
 
     private final Request request;
     private final int status;
     private final String reason;
     private final String body;
     private final Map<String, Collection<String>> headers;
+
+    public RestAPIException(int status, Throwable cause) {
+        this(null, status, "", null, Collections.emptyMap(), cause);
+    }
+
+    public RestAPIException(int status, String reason, Throwable cause) {
+        this(null, status, reason, null, Collections.emptyMap(), cause);
+    }
 
     public RestAPIException(int status, String reason) {
         this(null, status, reason, Collections.emptyMap());
@@ -51,7 +59,11 @@ public class RestAPIException extends RuntimeException {
     }
 
     public RestAPIException(Request request, int status, String reason, String body, Map<String, Collection<String>> headers) {
-        super(status + ": " + reason + (isNotBlank(body) ? System.lineSeparator() + body : ""));
+        this(request, status, reason, "", headers, null);
+    }
+
+    public RestAPIException(Request request, int status, String reason, String body, Map<String, Collection<String>> headers, Throwable cause) {
+        super(status + ": " + reason + (isNotBlank(body) ? System.lineSeparator() + body : ""), cause);
         this.request = request;
         this.status = status;
         this.reason = reason;

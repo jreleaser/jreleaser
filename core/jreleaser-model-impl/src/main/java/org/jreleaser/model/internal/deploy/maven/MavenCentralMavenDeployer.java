@@ -35,17 +35,18 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 1.12.0
  */
 public final class MavenCentralMavenDeployer extends AbstractMavenDeployer<MavenCentralMavenDeployer, org.jreleaser.model.api.deploy.maven.MavenCentralMavenDeployer> {
-    private static final long serialVersionUID = -748053558983180716L;
+    private static final long serialVersionUID = -7077345304257049811L;
 
     private org.jreleaser.model.api.deploy.maven.MavenCentralMavenDeployer.Stage stage;
     private String namespace;
     private String deploymentId;
     private int retryDelay;
     private int maxRetries;
+    private String verifyUrl;
 
     @JsonIgnore
     private final org.jreleaser.model.api.deploy.maven.MavenCentralMavenDeployer immutable = new org.jreleaser.model.api.deploy.maven.MavenCentralMavenDeployer() {
-        private static final long serialVersionUID = -4906418796042698090L;
+        private static final long serialVersionUID = 2746737103966334955L;
 
         private Set<? extends ArtifactOverride> artifactOverrides;
 
@@ -72,6 +73,11 @@ public final class MavenCentralMavenDeployer extends AbstractMavenDeployer<Maven
         @Override
         public Integer getMaxRetries() {
             return MavenCentralMavenDeployer.this.getMaxRetries();
+        }
+
+        @Override
+        public String getVerifyUrl() {
+            return verifyUrl;
         }
 
         @Override
@@ -207,6 +213,15 @@ public final class MavenCentralMavenDeployer extends AbstractMavenDeployer<Maven
         this.deploymentId = merge(this.deploymentId, source.deploymentId);
         this.retryDelay = merge(this.retryDelay, source.retryDelay);
         this.maxRetries = merge(this.maxRetries, source.maxRetries);
+        this.verifyUrl = merge(this.verifyUrl, source.verifyUrl);
+    }
+
+    public String getVerifyUrl() {
+        return verifyUrl;
+    }
+
+    public void setVerifyUrl(String verifyUrl) {
+        this.verifyUrl = verifyUrl;
     }
 
     public org.jreleaser.model.api.deploy.maven.MavenCentralMavenDeployer.Stage getStage() {
@@ -260,6 +275,7 @@ public final class MavenCentralMavenDeployer extends AbstractMavenDeployer<Maven
         props.put("stage", stage);
         props.put("namespace", namespace);
         props.put("deploymentId", deploymentId);
+        props.put("verifyUrl", verifyUrl);
         props.put("retryDelay", retryDelay);
         props.put("maxRetries", maxRetries);
     }

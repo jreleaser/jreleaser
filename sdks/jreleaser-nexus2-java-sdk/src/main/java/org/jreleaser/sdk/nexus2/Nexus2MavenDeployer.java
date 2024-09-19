@@ -241,8 +241,13 @@ public class Nexus2MavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
     }
 
     private void uploadArtifacts(Nexus2 nexus, Set<Deployable> deployables, String stagingRepositoryId) throws DeployException {
+        boolean success = true;
         for (Deployable deployable : deployables) {
             context.getLogger().info(" - {}", deployable.getFullDeployPath());
+
+            if (nexus.artifactExists(deployable, context.getModel().getProject().isSnapshot() ? null : getDeployer().getVerifyUrl())) {
+                success = false;
+            }
 
             if (!context.isDryrun()) {
                 try {
@@ -254,6 +259,10 @@ public class Nexus2MavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
                         context.getBasedir().relativize(deployable.getLocalPath()), e.getMessage()), e);
                 }
             }
+        }
+
+        if (!success) {
+            throw new DeployException(RB.$("ERROR_nexus_deploy_artifacts"));
         }
     }
 

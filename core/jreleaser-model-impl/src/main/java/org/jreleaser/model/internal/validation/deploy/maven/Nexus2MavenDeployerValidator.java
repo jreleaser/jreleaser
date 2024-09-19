@@ -60,6 +60,12 @@ public final class Nexus2MavenDeployerValidator {
             mavenDeployer.setApplyMavenCentralRules(true);
         }
 
+        if (isBlank(mavenDeployer.getVerifyUrl()) &&
+            mavenDeployer.isApplyMavenCentralRules() &&
+            mavenDeployer.getUrl().contains("oss.sonatype.org")) {
+            mavenDeployer.setVerifyUrl("https://repo1.maven.org/maven2/{{path}}/{{filename}}");
+        }
+
         if (mavenDeployer.getTransitionDelay() <= 0) {
             mavenDeployer.setTransitionDelay(10);
         }

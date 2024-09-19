@@ -36,9 +36,10 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
  * @since 1.3.0
  */
 public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2MavenDeployer, org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer> {
-    private static final long serialVersionUID = 8368103855506635548L;
+    private static final long serialVersionUID = 9077911047137402294L;
 
     private String snapshotUrl;
+    private String verifyUrl;
     private Boolean closeRepository;
     private Boolean releaseRepository;
     private int transitionDelay;
@@ -51,7 +52,7 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
 
     @JsonIgnore
     private final org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer immutable = new org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer() {
-        private static final long serialVersionUID = 1100861631162220304L;
+        private static final long serialVersionUID = -2516726037520331601L;
 
         private Set<? extends org.jreleaser.model.api.deploy.maven.MavenDeployer.ArtifactOverride> artifactOverrides;
 
@@ -63,6 +64,11 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
         @Override
         public String getSnapshotUrl() {
             return snapshotUrl;
+        }
+
+        @Override
+        public String getVerifyUrl() {
+            return verifyUrl;
         }
 
         @Override
@@ -228,11 +234,20 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
     @Override
     public void merge(Nexus2MavenDeployer source) {
         super.merge(source);
+        this.verifyUrl = merge(this.verifyUrl, source.verifyUrl);
         this.snapshotUrl = merge(this.snapshotUrl, source.snapshotUrl);
         this.closeRepository = merge(this.closeRepository, source.closeRepository);
         this.releaseRepository = merge(this.releaseRepository, source.releaseRepository);
         this.transitionDelay = merge(this.transitionDelay, source.transitionDelay);
         this.transitionMaxRetries = merge(this.transitionMaxRetries, source.transitionMaxRetries);
+    }
+
+    public String getVerifyUrl() {
+        return verifyUrl;
+    }
+
+    public void setVerifyUrl(String verifyUrl) {
+        this.verifyUrl = verifyUrl;
     }
 
     public String getSnapshotUrl() {
@@ -324,6 +339,7 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
 
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
+        props.put("verifyUrl", verifyUrl);
         props.put("snapshotUrl", snapshotUrl);
         props.put("closeRepository", isCloseRepository());
         props.put("releaseRepository", isReleaseRepository());

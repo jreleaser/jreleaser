@@ -334,6 +334,46 @@ public final class ClientUtils {
         }
     }
 
+    public static boolean head(JReleaserLogger logger,
+                               String theUrl,
+                               int connectTimeout,
+                               int readTimeout) throws RestAPIException {
+        try {
+            // create URL
+            URL url = new URI(theUrl).toURL();
+            // open connection
+            logger.debug(RB.$("webhook.connection.open"));
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            // set options
+            logger.debug(RB.$("webhook.connection.configure"));
+            connection.setConnectTimeout(connectTimeout * 1000);
+            connection.setReadTimeout(readTimeout * 1000);
+            connection.setAllowUserInteraction(false);
+            connection.setInstanceFollowRedirects(true);
+
+            connection.setRequestMethod("HEAD");
+            connection.addRequestProperty("User-Agent", "JReleaser/" + JReleaserVersion.getPlainVersion());
+
+            // handle response
+            logger.debug(RB.$("webhook.response.handle"));
+            int status = connection.getResponseCode();
+            if (status == 200) return true;
+            if (status == 404) return false;
+
+            String reason = connection.getResponseMessage();
+            StringBuilder b = new StringBuilder("Request replied with: ")
+                .append(status);
+            if (isNotBlank(reason)) {
+                b.append(" reason: ")
+                    .append(reason);
+            }
+            throw new RestAPIException(status, b.toString());
+        } catch (URISyntaxException | IOException e) {
+            logger.trace(e);
+            throw new RestAPIException(500, e);
+        }
+    }
+
     private static SSLSocketFactory nonValidatingSSLSocketFactory() {
         try {
             SSLContext sslContext = SSLContext.getInstance("SSL");

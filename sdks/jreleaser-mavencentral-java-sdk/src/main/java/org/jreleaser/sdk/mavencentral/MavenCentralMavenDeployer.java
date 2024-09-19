@@ -198,6 +198,17 @@ public class MavenCentralMavenDeployer extends AbstractMavenDeployer<org.jreleas
     private Optional<String> uploadArtifacts(MavenCentral mavenCentral, Path bundleZip) throws DeployException {
         context.getLogger().info(" - {}", bundleZip.getFileName());
 
+        boolean success = true;
+        for (Deployable deployable : collectDeployables()) {
+            if (mavenCentral.artifactExists(deployable, context.getModel().getProject().isSnapshot() ? null : getDeployer().getVerifyUrl())) {
+                success = false;
+            }
+        }
+
+        if (!success) {
+            throw new DeployException(RB.$("ERROR_nexus_deploy_artifacts"));
+        }
+
         if (!context.isDryrun()) {
             try {
                 return Optional.of(mavenCentral.upload(bundleZip.toAbsolutePath()));

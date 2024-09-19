@@ -38,6 +38,7 @@ class MavenCentralMavenDeployerImpl extends AbstractMavenDeployer implements Mav
     final Property<org.jreleaser.model.api.deploy.maven.MavenCentralMavenDeployer.Stage> stage
     final Property<String> namespace
     final Property<String> deploymentId
+    final Property<String> verifyUrl
     final Property<Integer> retryDelay
     final Property<Integer> maxRetries
 
@@ -47,6 +48,7 @@ class MavenCentralMavenDeployerImpl extends AbstractMavenDeployer implements Mav
         stage = objects.property(org.jreleaser.model.api.deploy.maven.MavenCentralMavenDeployer.Stage).convention(Providers.<org.jreleaser.model.api.deploy.maven.MavenCentralMavenDeployer.Stage> notDefined())
         namespace = objects.property(String).convention(Providers.<String> notDefined())
         deploymentId = objects.property(String).convention(Providers.<String> notDefined())
+        verifyUrl = objects.property(String).convention(Providers.<String> notDefined())
         retryDelay = objects.property(Integer).convention(Providers.<Integer> notDefined())
         maxRetries = objects.property(Integer).convention(Providers.<Integer> notDefined())
     }
@@ -57,6 +59,7 @@ class MavenCentralMavenDeployerImpl extends AbstractMavenDeployer implements Mav
             stage.present ||
             namespace.present ||
             deploymentId.present ||
+            verifyUrl.present ||
             retryDelay.present ||
             maxRetries.present
     }
@@ -74,6 +77,7 @@ class MavenCentralMavenDeployerImpl extends AbstractMavenDeployer implements Mav
         if (stage.present) deployer.stage = stage.get()
         if (namespace.present) deployer.namespace = namespace.get()
         if (deploymentId.present) deployer.deploymentId = deploymentId.get()
+        if (verifyUrl.present) deployer.verifyUrl = verifyUrl.get()
         if (retryDelay.present) deployer.retryDelay = retryDelay.get()
         if (maxRetries.present) deployer.maxRetries = maxRetries.get()
         deployer

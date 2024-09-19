@@ -476,6 +476,10 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
         String baseUrl = deployer.getResolvedUrl(context.fullProps());
         String token = deployer.getPassword();
 
+        if (!baseUrl.endsWith("/")) {
+            baseUrl += " ";
+        }
+
         // delete existing packages (if any)
         deleteExistingPackages(baseUrl, token, deployables);
 

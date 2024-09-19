@@ -36,6 +36,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 @CompileStatic
 class Nexus2MavenDeployerImpl extends AbstractMavenDeployer implements Nexus2MavenDeployer {
     final Property<String> snapshotUrl
+    final Property<String> verifyUrl
     final Property<Boolean> closeRepository
     final Property<Boolean> releaseRepository
     final Property<Integer> transitionDelay
@@ -49,6 +50,7 @@ class Nexus2MavenDeployerImpl extends AbstractMavenDeployer implements Nexus2Mav
     Nexus2MavenDeployerImpl(ObjectFactory objects) {
         super(objects)
         snapshotUrl = objects.property(String).convention(Providers.<String> notDefined())
+        verifyUrl = objects.property(String).convention(Providers.<String> notDefined())
         closeRepository = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         releaseRepository = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         transitionDelay = objects.property(Integer).convention(Providers.<Integer> notDefined())
@@ -77,6 +79,7 @@ class Nexus2MavenDeployerImpl extends AbstractMavenDeployer implements Nexus2Mav
     boolean isSet() {
         super.isSet() ||
             snapshotUrl.present ||
+            verifyUrl.present ||
             closeRepository.present ||
             releaseRepository.present ||
             transitionDelay.present ||
@@ -91,6 +94,7 @@ class Nexus2MavenDeployerImpl extends AbstractMavenDeployer implements Nexus2Mav
         org.jreleaser.model.internal.deploy.maven.Nexus2MavenDeployer deployer = new org.jreleaser.model.internal.deploy.maven.Nexus2MavenDeployer()
         fillProperties(deployer)
         if (snapshotUrl.present) deployer.snapshotUrl = snapshotUrl.get()
+        if (verifyUrl.present) deployer.verifyUrl = verifyUrl.get()
         if (closeRepository.present) deployer.closeRepository = closeRepository.get()
         if (releaseRepository.present) deployer.releaseRepository = releaseRepository.get()
         if (transitionDelay.present) deployer.transitionDelay = transitionDelay.get()

@@ -35,6 +35,8 @@ import org.apache.commons.io.IOUtils;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.api.JReleaserContext;
+import org.jreleaser.model.spi.deploy.maven.Deployable;
+import org.jreleaser.mustache.Templates;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.commons.feign.TokenAuthRequestInterceptor;
 import org.jreleaser.sdk.mavencentral.api.Deployment;
@@ -59,6 +61,7 @@ import java.util.concurrent.Callable;
 import static java.lang.System.lineSeparator;
 import static java.util.Objects.requireNonNull;
 import static org.jreleaser.util.IoUtils.newInputStreamReader;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 
 /**
@@ -69,6 +72,8 @@ public class MavenCentral {
     private final JReleaserContext context;
     private final MavenCentralAPI api;
     private final boolean dryrun;
+    private final int connectTimeout;
+    private final int readTimeout;
     private final Retrier retrier;
 
     public MavenCentral(JReleaserContext context,
@@ -87,12 +92,28 @@ public class MavenCentral {
 
         this.context = context;
         this.dryrun = dryrun;
+        this.connectTimeout = connectTimeout;
+        this.readTimeout = readTimeout;
         this.retrier = new Retrier(context.getLogger(), retryDelay, maxRetries);
         this.api = ClientUtils.builder(context, connectTimeout, readTimeout)
             .decoder(new MavenCentralDecoder())
             .requestInterceptor(new TokenAuthRequestInterceptor("Bearer", username, password))
             .errorDecoder(new MavenCentralErrorDecoder(context.getLogger()))
             .target(MavenCentralAPI.class, apiHost);
+    }
+
+    public boolean artifactExists(Deployable deployable, String verifyUrl) {
+        if (isNotBlank(verifyUrl)) {
+            verifyUrl = Templates.resolveTemplate(verifyUrl, deployable.props());
+            if (ClientUtils.head(context.getLogger(), verifyUrl, connectTimeout, readTimeout)) {
+                context.getLogger().warn(" ! " + RB.$("nexus.deploy.artifact.exists",
+                    deployable.getDeployPath(),
+                    deployable.getLocalPath().getFileName().toString()));
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public Optional<Deployment> status(String deploymentId) throws MavenCentralException {

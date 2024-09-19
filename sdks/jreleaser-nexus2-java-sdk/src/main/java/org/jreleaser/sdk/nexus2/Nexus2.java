@@ -39,7 +39,9 @@ import org.apache.commons.io.IOUtils;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.api.JReleaserContext;
+import org.jreleaser.model.spi.deploy.maven.Deployable;
 import org.jreleaser.model.spi.upload.UploadException;
+import org.jreleaser.mustache.Templates;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.nexus2.api.Data;
 import org.jreleaser.sdk.nexus2.api.NexusAPI;
@@ -253,6 +255,20 @@ public class Nexus2 {
         }
     }
 
+    public boolean artifactExists(Deployable deployable, String verifyUrl) {
+        if (isNotBlank(verifyUrl)) {
+            verifyUrl = Templates.resolveTemplate(verifyUrl, deployable.props());
+            if (ClientUtils.head(context.getLogger(), verifyUrl, connectTimeout, readTimeout)) {
+                context.getLogger().warn(" ! " + RB.$("nexus.deploy.artifact.exists",
+                    deployable.getDeployPath(),
+                    deployable.getLocalPath().getFileName().toString()));
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public void deploy(String stagingRepositoryId, String path, Path file) throws Nexus2Exception {
         String filename = file.getFileName().toString();
         context.getLogger().debug(" - " + RB.$("nexus.deploy.artifact", filename, path, filename));
@@ -278,14 +294,9 @@ public class Nexus2 {
                     .append("/");
             }
 
-            String p = path.trim();
-            if (p.startsWith("/")) {
-                p = path.substring(1);
-            }
+            url.append(path);
 
-            url.append(p);
-
-            if (!p.endsWith("/")) {
+            if (!path.endsWith("/")) {
                 url.append("/");
             }
             url.append(filename);

@@ -60,6 +60,11 @@ public final class MavenCentralMavenDeployerValidator {
             mavenDeployer.setApplyMavenCentralRules(true);
         }
 
+        if (isBlank(mavenDeployer.getVerifyUrl()) &&
+            mavenDeployer.isApplyMavenCentralRules()) {
+            mavenDeployer.setVerifyUrl("https://repo1.maven.org/maven2/{{path}}/{{filename}}");
+        }
+
         validateMavenDeployer(context, mavenDeployer, errors);
         if (!mavenDeployer.isEnabled()) return;
 
@@ -77,7 +82,6 @@ public final class MavenCentralMavenDeployerValidator {
         if (mavenDeployer.getMaxRetries() <= 0) {
             mavenDeployer.setMaxRetries(60);
         }
-
 
         if (mavenDeployer.getStage() == PUBLISH) {
             mavenDeployer.setDeploymentId(

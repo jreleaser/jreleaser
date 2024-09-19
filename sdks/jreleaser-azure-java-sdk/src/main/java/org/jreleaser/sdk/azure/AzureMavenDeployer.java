@@ -73,6 +73,10 @@ public class AzureMavenDeployer extends AbstractMavenDeployer<org.jreleaser.mode
         String username = deployer.getUsername();
         String password = deployer.getPassword();
 
+        if (!baseUrl.endsWith("/")) {
+            baseUrl += " ";
+        }
+
         for (Deployable deployable : deployables) {
             Path localPath = Paths.get(deployable.getStagingRepository(), deployable.getPath(), deployable.getFilename());
             context.getLogger().info(" - {}", deployable.getFilename());

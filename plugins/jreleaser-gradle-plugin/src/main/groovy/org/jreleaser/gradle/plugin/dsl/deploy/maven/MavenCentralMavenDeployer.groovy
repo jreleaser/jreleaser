@@ -35,6 +35,8 @@ interface MavenCentralMavenDeployer extends MavenDeployer {
 
     Property<String> getDeploymentId()
 
+    Property<String> getVerifyUrl()
+
     Property<Integer> getRetryDelay()
 
     Property<Integer> getMaxRetries()
