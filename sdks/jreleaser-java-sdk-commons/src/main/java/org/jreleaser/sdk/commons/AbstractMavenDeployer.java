@@ -157,7 +157,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
     private Errors checkMavenCentralRules(Map<String, Deployable> deployablesMap) {
         Errors errors = new Errors();
 
-        context.getLogger().info(RB.$("deployers.maven.prerequesites"));
+        context.getLogger().info(RB.$("deployers.maven.prerequisites"));
 
         Map<String, Deployable> buildPoms = new LinkedHashMap<>();
 
