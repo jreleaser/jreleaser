@@ -750,6 +750,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "p-marcin",
+      "name": "Marcin P.",
+      "avatar_url": "https://avatars.githubusercontent.com/u/114195537?v=4",
+      "profile": "https://www.linkedin.com/in/p-marcin/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
