@@ -70,8 +70,8 @@ public class CalVer implements Version<CalVer> {
 
     static {
         PATTERNS.put(T_YEAR_LONG, "([2-9][0-9]{3})");
-        PATTERNS.put(T_YEAR_SHORT, "([1-9]|[1-9][0-9]|[1-9][0-9]{2})");
-        PATTERNS.put(T_YEAR_ZERO, "(0[1-9]|[1-9][0-9]|[1-9][0-9]{2})");
+        PATTERNS.put(T_YEAR_SHORT, "([0-9]|[1-9][0-9]|[1-9][0-9]{2})");
+        PATTERNS.put(T_YEAR_ZERO, "(0[0-9]|[1-9][0-9]|[1-9][0-9]{2})");
         PATTERNS.put(T_MONTH_SHORT, "([1-9]|1[0-2])");
         PATTERNS.put(T_MONTH_ZERO, "(0[1-9]|1[0-2])");
         PATTERNS.put(T_WEEK_SHORT, "([1-9]|[1-4][0-9]|5[0-2])");
@@ -465,7 +465,7 @@ public class CalVer implements Version<CalVer> {
 
         return of(format, format.replace(T_YEAR_LONG, "2000")
             .replace(T_YEAR_SHORT, "0")
-            .replace(T_YEAR_ZERO, "0")
+            .replace(T_YEAR_ZERO, "00")
             .replace(T_MONTH_SHORT, "1")
             .replace(T_MONTH_ZERO, "01")
             .replace(T_WEEK_SHORT, "1")

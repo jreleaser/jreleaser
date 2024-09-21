@@ -53,6 +53,23 @@ class CalVerTest {
     }
 
     @ParameterizedTest
+    @MethodSource("default_version_parsing")
+    void testDefaultVersionParsing(String format, String year, String month, String day,
+                                   String week, String minor, String micro, String modifier) {
+        // given:
+        CalVer v = CalVer.defaultOf(format);
+
+        // then:
+        assertThat(v.getYear(), equalTo(year));
+        assertThat(v.getMonth(), equalTo(month));
+        assertThat(v.getDay(), equalTo(day));
+        assertThat(v.getWeek(), equalTo(week));
+        assertThat(v.getMinor(), equalTo(minor));
+        assertThat(v.getMicro(), equalTo(micro));
+        assertThat(v.getModifier(), equalTo(modifier));
+    }
+
+    @ParameterizedTest
     @MethodSource("version_invalid")
     void testVersionInvalid(String format, String input) {
         // expect:
@@ -97,7 +114,42 @@ class CalVerTest {
             Arguments.of("YYYY.MINOR.MICRO[-MODIFIER]", "2022.1.1", "2022", null, null, null, "1", "1", null),
             Arguments.of("YYYY.MINOR.MICRO[_MODIFIER]", "2022.1.1_beta2", "2022", null, null, null, "1", "1", "beta2"),
             Arguments.of("YYYY.MINOR.MICRO[_MODIFIER]", "2022.1.1", "2022", null, null, null, "1", "1", null),
-            Arguments.of("YYYY.MODIFIER", "2021.FOO-BAR", "2021", null, null, null, null, null, "FOO-BAR")
+            Arguments.of("YYYY.MODIFIER", "2021.FOO-BAR", "2021", null, null, null, null, null, "FOO-BAR"),
+            Arguments.of("0Y.0M.MICRO", "24.09.1", "24", "09", null, null, null, "1", null),
+            Arguments.of("0Y.0M.MICRO", "01.01.0", "01", "01", null, null, null, "0", null),
+            Arguments.of("0Y.MM.MICRO", "24.9.1", "24", "9", null, null, null, "1", null),
+            Arguments.of("0Y.MM.MICRO", "01.1.0", "01", "1", null, null, null, "0", null),
+            Arguments.of("YY.0M.MICRO", "24.09.1", "24", "09", null, null, null, "1", null),
+            Arguments.of("YY.0M.MICRO", "1.01.0", "1", "01", null, null, null, "0", null),
+            Arguments.of("YY.MM.MICRO", "24.9.1", "24", "9", null, null, null, "1", null),
+            Arguments.of("YY.MM.MICRO", "1.1.0", "1", "1", null, null, null, "0", null)
+        );
+    }
+
+    private static Stream<Arguments> default_version_parsing() {
+        return Stream.of(
+            Arguments.of("YYYY", "2000", null, null, null, null, null, null),
+            Arguments.of("YY", "0", null, null, null, null, null, null),
+            Arguments.of("0Y", "00", null, null, null, null, null, null),
+            Arguments.of("YYYY.MM", "2000", "1", null, null, null, null, null),
+            Arguments.of("YYYY.0M", "2000", "01", null, null, null, null, null),
+            Arguments.of("YYYY.MM.DD", "2000", "1", "1", null, null, null, null),
+            Arguments.of("YYYY.MM.0D", "2000", "1", "01", null, null, null, null),
+            Arguments.of("YYYY.WW", "2000", null, null, "1", null, null, null),
+            Arguments.of("YYYY.0W", "2000", null, null, "01", null, null, null),
+            Arguments.of("YYYY.MINOR.MICRO", "2000", null, null, null, "0", "0", null),
+            Arguments.of("YYYY.MM.DD_MICRO", "2000", "1", "1", null, null, "0", null),
+            Arguments.of("YYYY.MODIFIER", "2000", null, null, null, null, null, "A"),
+            Arguments.of("YYYY.MINOR.MICRO.MODIFIER", "2000", null, null, null, "0", "0", "A"),
+            Arguments.of("YYYY.MINOR.MICRO-MODIFIER", "2000", null, null, null, "0", "0", "A"),
+            Arguments.of("YYYY.MINOR.MICRO_MODIFIER", "2000", null, null, null, "0", "0", "A"),
+            Arguments.of("YYYY.MINOR.MICRO[.MODIFIER]", "2000", null, null, null, "0", "0", "A"),
+            Arguments.of("YYYY.MINOR.MICRO[-MODIFIER]", "2000", null, null, null, "0", "0", "A"),
+            Arguments.of("YYYY.MINOR.MICRO[_MODIFIER]", "2000", null, null, null, "0", "0", "A"),
+            Arguments.of("0Y.0M.MICRO", "00", "01", null, null, null, "0", null),
+            Arguments.of("0Y.MM.MICRO", "00", "1", null, null, null, "0", null),
+            Arguments.of("YY.0M.MICRO", "0", "01", null, null, null, "0", null),
+            Arguments.of("YY.MM.MICRO", "0", "1", null, null, null, "0", null)
         );
     }
 
@@ -120,7 +172,9 @@ class CalVerTest {
             Arguments.of("YY.MODIFIER", "21/A"),
             Arguments.of("YYYY.0M.DD", "2001.02.29"),
             Arguments.of("YYYY.0M.DD", "2001.09.31"),
-            Arguments.of("YYYY.0M.DD", "2001.01.32")
+            Arguments.of("YYYY.0M.DD", "2001.01.32"),
+            Arguments.of("YY.0M.MICRO", "00.01.0"),
+            Arguments.of("YY.MM.MICRO", "00.1.0")
         );
     }
 
@@ -133,7 +187,11 @@ class CalVerTest {
             Arguments.of("YYYY.MINOR.MICRO", "2021.1.2", "2021.1.3"),
             Arguments.of("YYYY.MODIFIER", "2021.ALPHA", "2021.BETA"),
             Arguments.of("YYYY.MINOR.MICRO[.MODIFIER]", "2000.0.0.ALPHA", "2000.0.0.BETA"),
-            Arguments.of("YYYY.MINOR.MICRO[.MODIFIER]", CalVer.defaultOf("YYYY.MINOR.MICRO[.MODIFIER]").toString(), "2000.0.0.B")
-        );
+            Arguments.of("YYYY.MINOR.MICRO[.MODIFIER]", CalVer.defaultOf("YYYY.MINOR.MICRO[.MODIFIER]").toString(), "2000.0.0.B"),
+            Arguments.of("0Y.0M.MICRO", "00.01.0", "01.01.0"),
+            Arguments.of("0Y.MM.MICRO", "00.1.0", "01.1.0"),
+            Arguments.of("YY.0M.MICRO", "0.01.0", "1.01.0"),
+            Arguments.of("YY.MM.MICRO", "0.1.0", "1.1.0")
+            );
     }
 }
