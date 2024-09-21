@@ -91,6 +91,7 @@ public final class DefaultMustacheExtensionPoint implements MustacheExtensionPoi
         context.set("f_escape_xml11", new DelegatingFunction(StringEscapeUtils::escapeXml11));
         context.set("f_escape_xsi", new DelegatingFunction(StringEscapeUtils::escapeXSI));
         context.set("f_chop", new DelegatingFunction(org.apache.commons.lang3.StringUtils::chop));
+        context.set("f_chomp", new DelegatingFunction(org.apache.commons.lang3.StringUtils::chomp));
         context.set("f_delete_whitespace", new DelegatingFunction(org.apache.commons.lang3.StringUtils::deleteWhitespace));
         context.set("f_normalize_whitespace", new DelegatingFunction(org.apache.commons.lang3.StringUtils::normalizeSpace));
         context.set("f_reverse", new DelegatingFunction(org.apache.commons.lang3.StringUtils::reverse));
