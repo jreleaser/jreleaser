@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-79-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-80-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -113,6 +113,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/superaga"><img src="https://avatars.githubusercontent.com/u/9434717?v=4?s=100" width="100px;" alt="superaga"/><br /><sub><b>superaga</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=superaga" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/AlexeyGy"><img src="https://avatars.githubusercontent.com/u/13885630?v=4?s=100" width="100px;" alt="Alexey Stern"/><br /><sub><b>Alexey Stern</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=alexeygy" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://www.linkedin.com/in/p-marcin/"><img src="https://avatars.githubusercontent.com/u/114195537?v=4?s=100" width="100px;" alt="Marcin P."/><br /><sub><b>Marcin P.</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=p-marcin" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
