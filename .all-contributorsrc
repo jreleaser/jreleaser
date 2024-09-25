@@ -759,6 +759,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "mattjohnson",
+      "name": "Matt Johnson",
+      "avatar_url": "https://avatars.githubusercontent.com/u/501041?v=4",
+      "profile": "https://github.com/mattjohnson",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
