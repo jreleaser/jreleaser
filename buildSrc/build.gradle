@@ -27,6 +27,6 @@ repositories {
 
 dependencies {
     compileOnly gradleApi()
-    implementation 'com.github.jengelman.gradle.plugins:shadow:6.1.0'
+    implementation 'com.gradleup.shadow:shadow-gradle-plugin:8.3.2'
     implementation 'org.kordamp.gradle:buildinfo-gradle-plugin:0.46.10'
 }
