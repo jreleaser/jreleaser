@@ -50,6 +50,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.Provider;
 import java.security.Security;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 import static java.nio.file.Files.newInputStream;
@@ -79,6 +81,19 @@ public final class SigningUtils {
             context.getModel().getSigning().getMode() != org.jreleaser.model.Signing.Mode.COSIGN) {
             Keyring keyring = context.createKeyring();
             return Optional.of(Long.toHexString(keyring.readPublicKey().getKeyID()));
+        }
+
+        return Optional.empty();
+    }
+
+    public static Optional<Instant> getExpirationDateOfPublicKey(JReleaserContext context) throws SigningException {
+        if (context.getModel().getSigning().getMode() != org.jreleaser.model.Signing.Mode.COMMAND &&
+            context.getModel().getSigning().getMode() != org.jreleaser.model.Signing.Mode.COSIGN) {
+            PGPPublicKey publicKey = context.createKeyring().readPublicKey();
+            if (publicKey.getValidSeconds() <= 0) {
+                return Optional.of(Instant.EPOCH);
+            }
+            return Optional.of(Instant.ofEpochMilli(publicKey.getCreationTime().getTime()).plus(publicKey.getValidDays(), ChronoUnit.DAYS));
         }
 
         return Optional.empty();
