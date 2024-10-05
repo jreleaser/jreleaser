@@ -199,7 +199,7 @@ public class MavenCentralMavenDeployer extends AbstractMavenDeployer<org.jreleas
         context.getLogger().info(" - {}", bundleZip.getFileName());
 
         boolean success = true;
-        for (Deployable deployable : collectDeployables()) {
+        for (Deployable deployable : collectDeployableArtifacts()) {
             if (mavenCentral.artifactExists(deployable, context.getModel().getProject().isSnapshot() ? null : getDeployer().getVerifyUrl())) {
                 success = false;
             }

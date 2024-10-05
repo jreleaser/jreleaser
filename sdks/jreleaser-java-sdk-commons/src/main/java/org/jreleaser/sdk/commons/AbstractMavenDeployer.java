@@ -104,11 +104,17 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
         this.context = context;
     }
 
-    protected Set<Deployable> collectDeployables() {
+    protected Set<Deployable> collectDeployableArtifacts() {
         Set<Deployable> deployables = new TreeSet<>();
         for (String stagingRepository : getDeployer().getStagingRepositories()) {
             collectDeployables(deployables, stagingRepository);
         }
+
+        return deployables;
+    }
+
+    protected Set<Deployable> collectDeployables() {
+        Set<Deployable> deployables = collectDeployableArtifacts();
 
         Map<String, Deployable> deployablesMap = deployables.stream()
             .collect(Collectors.toMap(Deployable::getFullDeployPath, Function.identity()));
