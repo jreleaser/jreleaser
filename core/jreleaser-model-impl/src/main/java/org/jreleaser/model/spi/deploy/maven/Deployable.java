@@ -34,12 +34,14 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public class Deployable implements Comparable<Deployable> {
     public static final String PACKAGING_AAR = "aar";
     public static final String PACKAGING_JAR = "jar";
+    public static final String PACKAGING_WAR = "war";
     public static final String PACKAGING_POM = "pom";
     public static final String PACKAGING_NBM = "nbm";
     public static final String PACKAGING_ZIP = "zip";
     public static final String PACKAGING_MAVEN_ARCHETYPE = "maven-archetype";
     public static final String MAVEN_METADATA_XML = "maven-metadata.xml";
     public static final String EXT_JAR = ".jar";
+    public static final String EXT_WAR = ".war";
     public static final String EXT_POM = ".pom";
     public static final String EXT_ASC = ".asc";
     public static final String EXT_MODULE = ".module";
@@ -51,6 +53,7 @@ public class Deployable implements Comparable<Deployable> {
     private static final Set<String> JAR_EXCLUSIONS = setOf(
         PACKAGING_POM,
         PACKAGING_AAR,
+        PACKAGING_WAR,
         PACKAGING_ZIP
     );
 
@@ -114,6 +117,10 @@ public class Deployable implements Comparable<Deployable> {
 
     public boolean requiresJar() {
         return isNotBlank(packaging) && !JAR_EXCLUSIONS.contains(packaging);
+    }
+
+    public boolean requiresWar() {
+        return isNotBlank(packaging) && PACKAGING_WAR.equalsIgnoreCase(packaging);
     }
 
     public boolean requiresSourcesJar() {

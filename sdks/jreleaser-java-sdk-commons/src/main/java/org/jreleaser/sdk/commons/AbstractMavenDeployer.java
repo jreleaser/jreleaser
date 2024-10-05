@@ -73,8 +73,10 @@ import static java.nio.file.FileVisitResult.CONTINUE;
 import static org.jreleaser.model.spi.deploy.maven.Deployable.EXT_ASC;
 import static org.jreleaser.model.spi.deploy.maven.Deployable.EXT_JAR;
 import static org.jreleaser.model.spi.deploy.maven.Deployable.EXT_POM;
+import static org.jreleaser.model.spi.deploy.maven.Deployable.EXT_WAR;
 import static org.jreleaser.model.spi.deploy.maven.Deployable.MAVEN_METADATA_XML;
 import static org.jreleaser.model.spi.deploy.maven.Deployable.PACKAGING_JAR;
+import static org.jreleaser.model.spi.deploy.maven.Deployable.PACKAGING_WAR;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -182,6 +184,13 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
             if (!buildPom) {
                 if (deployable.requiresJar()) {
                     Deployable derived = deployable.deriveByFilename(PACKAGING_JAR, base + EXT_JAR);
+                    if (!deployablesMap.containsKey(derived.getFullDeployPath())) {
+                        errors.configuration(RB.$("validation_is_missing", derived.getFilename()));
+                    }
+                }
+
+                if (deployable.requiresWar()) {
+                    Deployable derived = deployable.deriveByFilename(PACKAGING_WAR, base + EXT_WAR);
                     if (!deployablesMap.containsKey(derived.getFullDeployPath())) {
                         errors.configuration(RB.$("validation_is_missing", derived.getFilename()));
                     }
