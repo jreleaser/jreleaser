@@ -325,7 +325,13 @@ class Github {
     void deleteTag(String owner, String repo, String tagName) throws RestAPIException {
         context.getLogger().debug(RB.$("git.delete.tag.from"), tagName, owner, repo);
 
-        api.deleteTag(owner, repo, tagName);
+        try {
+            api.deleteTag(owner, repo, tagName);
+        } catch (RestAPIException e) {
+            if (e.isNotFound()) {
+                context.getLogger().debug(RB.$("git.tag.not.exist"), tagName);
+            }
+        }
     }
 
     GhRelease createRelease(String owner, String repo, GhRelease release) throws RestAPIException {
