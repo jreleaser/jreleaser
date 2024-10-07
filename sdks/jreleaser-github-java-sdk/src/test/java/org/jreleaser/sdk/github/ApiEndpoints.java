@@ -20,4 +20,5 @@ package org.jreleaser.sdk.github;
 public class ApiEndpoints {
     public static final String SEARCH_USERS = "/search/users";
     public static final String GET_USER_JRELEASER = "/users/jreleaserbot";
+    public static final String DELETE_TAG = "/repos/jreleaserbot/tests/git/refs/tags/test-tag";
 }
