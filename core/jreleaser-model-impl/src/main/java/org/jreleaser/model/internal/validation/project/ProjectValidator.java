@@ -229,8 +229,6 @@ public final class ProjectValidator {
     private static void validateJava(JReleaserContext context, Project project, Errors errors) {
         context.getLogger().debug("project.java");
         Java java = project.getJava();
-        if (!java.isSet()) return;
-
         java.setEnabled(true);
 
         java.setArtifactId(
