@@ -122,8 +122,9 @@ public final class ProjectValidator {
             !context.getModel().getAssemble().getNativeImage().isEmpty();
 
         boolean nexusDeployers = !context.getModel().getDeploy().getMaven().getNexus2().isEmpty();
+        boolean mcDeployers = !context.getModel().getDeploy().getMaven().getMavenCentral().isEmpty();
 
-        if (javaAssemblers || nexusDeployers || mode.validateConfig() && javaDistributions) {
+        if (javaAssemblers || nexusDeployers || mcDeployers || mode.validateConfig() && javaDistributions) {
             validateJava(context, project, errors);
         }
 
