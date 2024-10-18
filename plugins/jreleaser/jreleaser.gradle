@@ -87,63 +87,63 @@ distributions {
 jdks {
     zulu17Linux {
         platform = 'linux-x86_64'
-        url = 'https://cdn.azul.com/zulu/bin/zulu17.50.19-ca-jdk17.0.11-linux_x64.zip'
-        checksum = 'c89977771091eb7d53e0f244a722076e88d968966b75aba2a65a1b31105d68bb'
+        url = 'https://cdn.azul.com/zulu/bin/zulu17.52.17-ca-jdk17.0.12-linux_x64.zip'
+        checksum = '0c197e99ecf2a282cb695947761ab2eee2b1293c8a101a5ca86366fedfc1730d'
     }
     zulu17LinuxArm {
         platform = 'linux-aarch64'
-        url = 'https://cdn.azul.com/zulu/bin/zulu17.50.19-ca-jdk17.0.11-linux_aarch64.tar.gz'
-        checksum = '518cc455c0c7b49c0ae7d809c0bb87ab371bb850d46abb8efad5010c6a06faec'
+        url = 'https://cdn.azul.com/zulu/bin/zulu17.52.17-ca-jdk17.0.12-linux_aarch64.tar.gz'
+        checksum = 'b88cf60f95a3ab24b2e65a1bbaf5a9de41531ac04a857cd3e7a420086c97c126'
     }
     zulu17LinuxMusl {
         platform = 'linux_musl-x86_64'
-        url = 'https://cdn.azul.com/zulu/bin/zulu17.50.19-ca-jdk17.0.11-linux_musl_x64.tar.gz'
-        checksum = '22bbde6e05ced1238b302e2b44d3f9785c23e4115618eea83786b6b4a1828f9f'
+        url = 'https://cdn.azul.com/zulu/bin/zulu17.52.17-ca-jdk17.0.12-linux_musl_x64.tar.gz'
+        checksum = '1bb9bedde3095d88fd216b9be112b59a8400f0e4d991243ce70be3b0518bcc7a'
     }
     zulu17LinuxMuslArm {
         platform = 'linux_musl-aarch64'
-        url = 'https://cdn.azul.com/zulu/bin/zulu17.50.19-ca-jdk17.0.11-linux_musl_aarch64.tar.gz'
-        checksum = 'fc6645aa46736e6100302c109127ea31a1d1192599b7140dd94f81eaeebfe293'
+        url = 'https://cdn.azul.com/zulu/bin/zulu17.52.17-ca-jdk17.0.12-linux_musl_aarch64.tar.gz'
+        checksum = '43efd90828038f6dcd941240d7e16719ef091146d137721e66ceefdb6c70ad66'
     }
     zulu17Windows {
         platform = 'windows-x86_64'
-        url = 'https://cdn.azul.com/zulu/bin/zulu17.50.19-ca-jdk17.0.11-win_x64.zip'
-        checksum = '43f0f1bdecf48ba9763d46ee7784554c95b442ffdd39ebd62dc8b297cc82e116'
+        url = 'https://cdn.azul.com/zulu/bin/zulu17.52.17-ca-jdk17.0.12-win_x64.zip'
+        checksum = 'c0d9b0e02a92e4d919e0998970186983c745bdf2b0fe0b35b7d913acec9e502d'
     }
     zulu17WindowsArm {
         platform = 'windows-aarch64'
-        url = 'https://cdn.azul.com/zulu/bin/zulu17.50.19-ca-jdk17.0.11-win_aarch64.zip'
-        checksum = 'b8833d272eb31f54f8c881139807a28a74de9deae07d2cc37688ff72043e32c9'
+        url = 'https://cdn.azul.com/zulu/bin/zulu17.52.17-ca-jdk17.0.12-win_aarch64.zip'
+        checksum = '907512ede5182993b3353608a89d4b0a78bf99fe60df7a76e1ad559c93c622b1'
     }
     zulu17Osx {
         platform = 'osx-x86_64'
-        url = 'https://cdn.azul.com/zulu/bin/zulu17.50.19-ca-jdk17.0.11-macosx_x64.zip'
-        checksum = '3f653ad00a29b3ae2abebcfc598225f674d3289e52497b310441f3fb5d785f8a'
+        url = 'https://cdn.azul.com/zulu/bin/zulu17.52.17-ca-jdk17.0.12-macosx_x64.zip'
+        checksum = 'f85ad0adc818d9071028c0c2bfa6c288894512d86764169f5f208027589a8665'
     }
     zulu17OsxArm {
         platform = 'osx-aarch64'
-        url = 'https://cdn.azul.com/zulu/bin/zulu17.50.19-ca-jdk17.0.11-macosx_aarch64.zip'
-        checksum = '5aec103fc90131dc34cb1be6290dd61c426a74f1bf7e8b4895049cd27fee70a8'
+        url = 'https://cdn.azul.com/zulu/bin/zulu17.52.17-ca-jdk17.0.12-macosx_aarch64.zip'
+        checksum = '863cb9e0d1ff696a9a2354d2b208a70d8a854df52460d6eb88279368e1cc36f9'
     }
     graal22Osx {
         platform = 'osx-x86_64'
-        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-22.0.1/graalvm-community-jdk-22.0.1_macos-x64_bin.tar.gz'
-        checksum = '553c2dff3febd45f917e45f4dd620c194d8225bc28d13f5545ddffea9eeb30f8'
+        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-23.0.0/graalvm-community-jdk-23.0.0_macos-x64_bin.tar.gz'
+        checksum = '1338b838e5c845688643ed9e91bf2a0236e4d53bf1dc9cb4f693bde0409d4daa'
     }
     graal22OsxArm {
         platform = 'osx-aarch64'
-        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-22.0.1/graalvm-community-jdk-22.0.1_macos-aarch64_bin.tar.gz'
-        checksum = 'b96a16359c800374af5fbd3cb685aaa91cfc590ea4be35538c24b37e12c769c0'
+        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-23.0.0/graalvm-community-jdk-23.0.0_macos-aarch64_bin.tar.gz'
+        checksum = 'cda587f6d15134dc237fbb1111c7e339c8a0b2f4c1a4817a436c7c15d8ba2a9b'
     }
     graal22Linux {
         platform = 'linux-x86_64'
-        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-22.0.1/graalvm-community-jdk-22.0.1_linux-x64_bin.tar.gz'
-        checksum = 'e34ec7e8e8c6a4bb99ab4fa32c3e04d01f2f2bd88920ddda7545fd35a0511f75'
+        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-23.0.0/graalvm-community-jdk-23.0.0_linux-x64_bin.tar.gz'
+        checksum = '440eb64bf548f37086f97d236a028d0a6ccf5cee9ed9caed2f70ded5a68312a0'
     }
     graal22Windows {
         platform = 'windows-x86_64'
-        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-22.0.1/graalvm-community-jdk-22.0.1_windows-x64_bin.zip'
-        checksum = '623a4c5984f1210e61346e3ff942ec6f83d1928790ef9ae7dd28067e5c8de1aa'
+        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-23.0.0/graalvm-community-jdk-23.0.0_windows-x64_bin.zip'
+        checksum = 'ef0e28d9ccdf68e31c911ec2069e010f35f1b484e6f70a4a6cce098f8bf8247e'
     }
 }
 
