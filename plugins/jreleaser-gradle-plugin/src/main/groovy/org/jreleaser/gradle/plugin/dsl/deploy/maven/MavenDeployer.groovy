@@ -72,6 +72,8 @@ interface MavenDeployer extends Deployer {
 
         Property<String> getArtifactId()
 
+        Property<Boolean> getJar()
+
         Property<Boolean> getSourceJar()
 
         Property<Boolean> getJavadocJar()

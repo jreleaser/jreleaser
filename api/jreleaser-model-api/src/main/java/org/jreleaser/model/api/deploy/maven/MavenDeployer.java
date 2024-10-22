@@ -61,6 +61,8 @@ public interface MavenDeployer extends Deployer, TimeoutAware {
 
         String getArtifactId();
 
+        boolean isJar();
+
         boolean isSourceJar();
 
         boolean isJavadocJar();
