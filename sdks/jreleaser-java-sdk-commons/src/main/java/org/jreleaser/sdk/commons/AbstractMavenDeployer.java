@@ -191,7 +191,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
             }
 
             if (!buildPom) {
-                if (deployable.requiresJar()) {
+                if (requiresJar(deployable)) {
                     Deployable derived = deployable.deriveByFilename(PACKAGING_JAR, base + EXT_JAR);
                     if (!deployablesMap.containsKey(derived.getFullDeployPath())) {
                         errors.configuration(RB.$("validation_is_missing", derived.getFilename()));
@@ -312,6 +312,18 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
             // command failed and we've got no clue!
             errors.configuration(e.getMessage());
         }
+    }
+
+    private boolean requiresJar(Deployable deployable) {
+        if (!deployable.requiresJar()) return false;
+
+        Optional<org.jreleaser.model.internal.deploy.maven.MavenDeployer.ArtifactOverride> override = getDeployer().getArtifactOverrides().stream()
+            .filter(a -> a.getGroupId().equals(deployable.getGroupId()) && a.getArtifactId().equals(deployable.getArtifactId()))
+            .findFirst();
+
+        if (override.isPresent() && (override.get().isJarSet())) return override.get().isJar();
+
+        return true;
     }
 
     private boolean requiresSourcesJar(Deployable deployable) {

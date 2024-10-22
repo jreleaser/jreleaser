@@ -172,6 +172,7 @@ abstract class AbstractMavenDeployer implements MavenDeployer {
         String name
         final Property<String> groupId
         final Property<String> artifactId
+        final Property<Boolean> jar
         final Property<Boolean> sourceJar
         final Property<Boolean> javadocJar
         final Property<Boolean> verifyPom
@@ -180,6 +181,7 @@ abstract class AbstractMavenDeployer implements MavenDeployer {
         ArtifactOverrideImpl(ObjectFactory objects) {
             groupId = objects.property(String).convention(Providers.<String> notDefined())
             artifactId = objects.property(String).convention(Providers.<String> notDefined())
+            jar = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
             sourceJar = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
             javadocJar = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
             verifyPom = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
@@ -189,6 +191,7 @@ abstract class AbstractMavenDeployer implements MavenDeployer {
             org.jreleaser.model.internal.deploy.maven.MavenDeployer.ArtifactOverride artifact = new org.jreleaser.model.internal.deploy.maven.MavenDeployer.ArtifactOverride()
             if (groupId.present) artifact.groupId = groupId.get()
             if (artifactId.present) artifact.artifactId = artifactId.get()
+            if (jar.present) artifact.jar = jar.get()
             if (sourceJar.present) artifact.sourceJar = sourceJar.get()
             if (javadocJar.present) artifact.javadocJar = javadocJar.get()
             if (verifyPom.present) artifact.verifyPom = verifyPom.get()

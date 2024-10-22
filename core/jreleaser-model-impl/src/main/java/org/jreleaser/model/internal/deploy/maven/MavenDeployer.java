@@ -109,19 +109,19 @@ public interface MavenDeployer<A extends org.jreleaser.model.api.deploy.maven.Ma
 
     void setSnapshotSupported(Boolean snapshotSupported);
 
-    final class ArtifactOverride extends AbstractModelObject<ArtifactOverride> implements Domain {
-        private static final long serialVersionUID = 2446147952202720303L;
+    public final class ArtifactOverride extends AbstractModelObject<ArtifactOverride> implements Domain {
+        private static final long serialVersionUID = 8057060716591206147L;
 
         private String groupId;
         private String artifactId;
+        private Boolean jar;
         private Boolean sourceJar;
         private Boolean javadocJar;
         private Boolean verifyPom;
 
         @JsonIgnore
         private final org.jreleaser.model.api.deploy.maven.MavenDeployer.ArtifactOverride immutable = new org.jreleaser.model.api.deploy.maven.MavenDeployer.ArtifactOverride() {
-            private static final long serialVersionUID = 1993638834551986668L;
-
+            private static final long serialVersionUID = -7937881029176143227L;
             @Override
             public String getGroupId() {
                 return groupId;
@@ -130,6 +130,11 @@ public interface MavenDeployer<A extends org.jreleaser.model.api.deploy.maven.Ma
             @Override
             public String getArtifactId() {
                 return artifactId;
+            }
+
+            @Override
+            public boolean isJar() {
+                return jar;
             }
 
             @Override
@@ -161,6 +166,7 @@ public interface MavenDeployer<A extends org.jreleaser.model.api.deploy.maven.Ma
         public void merge(ArtifactOverride source) {
             this.groupId = this.merge(this.groupId, source.groupId);
             this.artifactId = this.merge(this.artifactId, source.artifactId);
+            this.jar = this.merge(this.jar, source.jar);
             this.sourceJar = this.merge(this.sourceJar, source.sourceJar);
             this.javadocJar = this.merge(this.javadocJar, source.javadocJar);
             this.verifyPom = this.merge(this.verifyPom, source.verifyPom);
@@ -180,6 +186,18 @@ public interface MavenDeployer<A extends org.jreleaser.model.api.deploy.maven.Ma
 
         public void setArtifactId(String artifactId) {
             this.artifactId = artifactId;
+        }
+
+        public boolean isJar() {
+            return null != jar && jar;
+        }
+
+        public void setJar(Boolean jar) {
+            this.jar = jar;
+        }
+
+        public boolean isJarSet() {
+            return null != jar;
         }
 
         public boolean isSourceJar() {
@@ -223,6 +241,7 @@ public interface MavenDeployer<A extends org.jreleaser.model.api.deploy.maven.Ma
             Map<String, Object> props = new LinkedHashMap<>();
             props.put("groupId", groupId);
             props.put("artifactId", artifactId);
+            props.put("jar", isJar());
             props.put("sourceJar", isSourceJar());
             props.put("javadocJar", isJavadocJar());
             props.put("verifyPom", isVerifyPom());
