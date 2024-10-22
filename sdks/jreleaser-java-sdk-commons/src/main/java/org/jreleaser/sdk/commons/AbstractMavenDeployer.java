@@ -198,21 +198,21 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
                     }
                 }
 
-                if (deployable.requiresWar()) {
+                if (!deployable.isRelocated() && deployable.requiresWar()) {
                     Deployable derived = deployable.deriveByFilename(PACKAGING_WAR, base + EXT_WAR);
                     if (!deployablesMap.containsKey(derived.getFullDeployPath())) {
                         errors.configuration(RB.$("validation_is_missing", derived.getFilename()));
                     }
                 }
 
-                if (requiresSourcesJar(deployable)) {
+                if (!deployable.isRelocated() && requiresSourcesJar(deployable)) {
                     Deployable derived = deployable.deriveByFilename(PACKAGING_JAR, base + "-sources.jar");
                     if (!deployablesMap.containsKey(derived.getFullDeployPath())) {
                         errors.configuration(RB.$("validation_is_missing", derived.getFilename()));
                     }
                 }
 
-                if (requiresJavadocJar(deployable)) {
+                if (!deployable.isRelocated() && requiresJavadocJar(deployable)) {
                     Deployable derived = deployable.deriveByFilename(PACKAGING_JAR, base + "-javadoc.jar");
                     if (!deployablesMap.containsKey(derived.getFullDeployPath())) {
                         errors.configuration(RB.$("validation_is_missing", derived.getFilename()));
@@ -323,7 +323,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
 
         if (override.isPresent() && (override.get().isJarSet())) return override.get().isJar();
 
-        return true;
+        return !deployable.isRelocated();
     }
 
     private boolean requiresSourcesJar(Deployable deployable) {
@@ -591,18 +591,20 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
         private void addDeployable(Path path) {
             String stagingRepository = root.toAbsolutePath().toString();
             String stagingPath = path.getParent().toAbsolutePath().toString();
+            PomResult pomResult = parsePom(path);
             deployables.add(new Deployable(
                 stagingRepository,
                 stagingPath.substring(stagingRepository.length()),
-                resolvePackaging(path),
-                path.getFileName().toString()
+                pomResult.packaging,
+                path.getFileName().toString(),
+                pomResult.relocated
             ));
         }
 
-        private String resolvePackaging(Path artifactPath) {
+        private PomResult parsePom(Path artifactPath) {
             // only inspect if artifactPath ends with .pom
-            if (artifactPath.getFileName().toString().endsWith(EXT_JAR)) return PACKAGING_JAR;
-            if (!artifactPath.getFileName().toString().endsWith(EXT_POM)) return "";
+            if (artifactPath.getFileName().toString().endsWith(EXT_JAR)) return new PomResult(PACKAGING_JAR);
+            if (!artifactPath.getFileName().toString().endsWith(EXT_POM)) return new PomResult("");
 
             try {
                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -615,7 +617,15 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
                     .newXPath()
                     .compile(query)
                     .evaluate(document, XPathConstants.STRING);
-                return isNotBlank(packaging) ? packaging.trim() : PACKAGING_JAR;
+
+                query = "/project/distributionManagement/relocation";
+                Object relocation = XPathFactory.newInstance()
+                    .newXPath()
+                    .compile(query)
+                    .evaluate(document, XPathConstants.NODE);
+
+                return new PomResult(isNotBlank(packaging) ? packaging.trim() : PACKAGING_JAR,
+                    relocation != null);
             } catch (ParserConfigurationException | IOException | SAXException | XPathExpressionException e) {
                 throw new IllegalStateException(e);
             }
@@ -634,6 +644,20 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
             context.getLogger().error(RB.$("ERROR_artifacts_unexpected_error_path"),
                 root.toAbsolutePath().relativize(file.toAbsolutePath()), e);
             return CONTINUE;
+        }
+
+        private final class PomResult {
+            private String packaging;
+            private boolean relocated;
+
+            private PomResult(String packaging) {
+                this.packaging = packaging;
+            }
+
+            private PomResult(String packaging, boolean relocated) {
+                this.packaging = packaging;
+                this.relocated = relocated;
+            }
         }
     }
 }

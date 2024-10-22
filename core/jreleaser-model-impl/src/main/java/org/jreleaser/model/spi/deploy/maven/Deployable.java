@@ -77,12 +77,14 @@ public class Deployable implements Comparable<Deployable> {
     private final String artifactId;
     private final String version;
     private final String packaging;
+    private final boolean relocated;
 
-    public Deployable(String stagingRepository, String path, String packaging, String filename) {
+    public Deployable(String stagingRepository, String path, String packaging, String filename, boolean relocated) {
         this.stagingRepository = stagingRepository;
         this.path = path;
         this.filename = filename;
         this.packaging = packaging;
+        this.relocated = relocated;
 
         if (!MAVEN_METADATA_XML.equals(filename)) {
             Path p = Paths.get(path);
@@ -171,12 +173,16 @@ public class Deployable implements Comparable<Deployable> {
         return Paths.get(stagingRepository, path, filename);
     }
 
+    public boolean isRelocated() {
+        return relocated;
+    }
+
     public Deployable deriveByFilename(String filename) {
-        return new Deployable(stagingRepository, path, packaging, filename);
+        return new Deployable(stagingRepository, path, packaging, filename, false);
     }
 
     public Deployable deriveByFilename(String packaging, String filename) {
-        return new Deployable(stagingRepository, path, packaging, filename);
+        return new Deployable(stagingRepository, path, packaging, filename, false);
     }
 
     @Override
