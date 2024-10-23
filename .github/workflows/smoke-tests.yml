@@ -42,6 +42,13 @@ jobs:
         shell: bash
         run: sh .github/scripts/decrypt-secrets.sh
 
+      - name: Setup Graal
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: ${{ vars.GRAAL_JAVA_VERSION }}
+          github-token: ${{ secrets.GIT_ACCESS_TOKEN }}
+          distribution: graalvm-community
+
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -77,13 +84,6 @@ jobs:
           sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.version }}/g" build.xml
           sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.version }}/g" gradle.properties
           sh ../.github/scripts/jacoco-instrument.sh
-
-      - name: Setup Graal
-        uses: graalvm/setup-graalvm@v1
-        with:
-          java-version: ${{ vars.GRAAL_JAVA_VERSION }}
-          github-token: ${{ secrets.GIT_ACCESS_TOKEN }}
-          distribution: graalvm-community
 
       - name: JReleaser
         shell: bash
@@ -220,6 +220,13 @@ jobs:
         shell: bash
         run: sh .github/scripts/decrypt-secrets.sh
 
+      - name: Setup Graal
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: ${{ vars.GRAAL_JAVA_VERSION }}
+          github-token: ${{ secrets.GIT_ACCESS_TOKEN }}
+          distribution: graalvm-community
+
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -255,13 +262,6 @@ jobs:
           sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.version }}/g" build.xml
           sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.version }}/g" gradle.properties
           sh ../.github/scripts/jacoco-instrument.sh
-
-      - name: Setup Graal
-        uses: graalvm/setup-graalvm@v1
-        with:
-          java-version: ${{ vars.GRAAL_JAVA_VERSION }}
-          github-token: ${{ secrets.GIT_ACCESS_TOKEN }}
-          distribution: graalvm-community
 
       - name: JReleaser
         shell: bash
@@ -398,6 +398,13 @@ jobs:
         shell: bash
         run: sh .github/scripts/decrypt-secrets.sh
 
+      - name: Setup Graal
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: ${{ vars.GRAAL_JAVA_VERSION }}
+          github-token: ${{ secrets.GIT_ACCESS_TOKEN }}
+          distribution: graalvm-community
+
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -434,13 +441,6 @@ jobs:
           sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.version }}/g" build.xml
           sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.version }}/g" gradle.properties
           sh ../.github/scripts/jacoco-instrument.sh
-
-      - name: Setup Graal
-        uses: graalvm/setup-graalvm@v1
-        with:
-          java-version: ${{ vars.GRAAL_JAVA_VERSION }}
-          github-token: ${{ secrets.GIT_ACCESS_TOKEN }}
-          distribution: graalvm-community
 
       - name: JReleaser
         shell: bash
@@ -574,6 +574,13 @@ jobs:
         shell: bash
         run: sh .github/scripts/decrypt-secrets.sh
 
+      - name: Setup Graal
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: ${{ vars.GRAAL_JAVA_VERSION }}
+          github-token: ${{ secrets.GIT_ACCESS_TOKEN }}
+          distribution: graalvm-community
+
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -608,13 +615,6 @@ jobs:
           sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.version }}/g" build.xml
           sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.version }}/g" gradle.properties
           sh ../.github/scripts/jacoco-instrument.sh
-
-      - name: Setup Graal
-        uses: graalvm/setup-graalvm@v1
-        with:
-          java-version: ${{ vars.GRAAL_JAVA_VERSION }}
-          github-token: ${{ secrets.GIT_ACCESS_TOKEN }}
-          distribution: graalvm-community
 
       - name: JReleaser
         shell: bash
@@ -762,6 +762,13 @@ jobs:
         shell: bash
         run: sh .github/scripts/decrypt-secrets.sh
 
+      - name: Setup Graal
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: ${{ vars.GRAAL_JAVA_VERSION }}
+          github-token: ${{ secrets.GIT_ACCESS_TOKEN }}
+          distribution: graalvm-community
+
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
@@ -796,13 +803,6 @@ jobs:
           sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.version }}/g" build.xml
           sed -i -e "s/0.0.0-SNAPSHOT/${{ needs.precheck.outputs.version }}/g" gradle.properties
           sh ../.github/scripts/jacoco-instrument.sh
-
-      - name: Setup Graal
-        uses: graalvm/setup-graalvm@v1
-        with:
-          java-version: ${{ vars.GRAAL_JAVA_VERSION }}
-          github-token: ${{ secrets.GIT_ACCESS_TOKEN }}
-          distribution: graalvm-community
 
       - name: JReleaser
         shell: bash
