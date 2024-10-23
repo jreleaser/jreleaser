@@ -256,7 +256,7 @@ public class GiteaReleaser extends AbstractReleaser<org.jreleaser.model.api.rele
 
         // local tag
         if (deleteTags || !gitea.isSkipTag()) {
-            context.getLogger().debug(RB.$("git.releaser.repository.tag"), tagName);
+            context.getLogger().debug(RB.$("git.releaser.repository.tag"), tagName, context.getModel().getCommit().getShortHash());
             GitSdk.of(context).tag(tagName, true, context);
         }
 

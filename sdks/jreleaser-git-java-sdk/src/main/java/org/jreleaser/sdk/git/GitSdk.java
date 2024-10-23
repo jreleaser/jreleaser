@@ -19,6 +19,7 @@ package org.jreleaser.sdk.git;
 
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.ListBranchCommand;
+import org.eclipse.jgit.api.TagCommand;
 import org.eclipse.jgit.api.errors.EmptyCommitException;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.errors.RepositoryNotFoundException;
@@ -27,6 +28,7 @@ import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Ref;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevObject;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.transport.RemoteConfig;
 import org.eclipse.jgit.transport.URIish;
@@ -91,11 +93,8 @@ public class GitSdk {
     }
 
     public Repository getRemote() throws IOException {
-        Git git = open();
-
-        String remote = resolveDefaultGitRemoteName();
-
-        try {
+        try (Git git = open()) {
+            String remote = resolveDefaultGitRemoteName();
             RemoteConfig remoteConfig = git.remoteList().call().stream()
                 .filter(rc -> remote.equals(rc.getName()))
                 .findFirst()
@@ -145,9 +144,7 @@ public class GitSdk {
     }
 
     public List<String> getLocalBranchNames() throws IOException {
-        Git git = open();
-
-        try {
+        try (Git git = open()) {
             return git.branchList()
                 .call().stream()
                 .map(GitSdk::extractHeadName)
@@ -159,9 +156,7 @@ public class GitSdk {
     }
 
     public List<String> getRemoteBranches() throws IOException {
-        Git git = open();
-
-        try {
+        try (Git git = open()) {
             return git.branchList()
                 .setListMode(ListBranchCommand.ListMode.REMOTE)
                 .call().stream()
@@ -174,33 +169,37 @@ public class GitSdk {
     }
 
     public Commit head() throws IOException {
-        Git git = open();
+        return commit(Constants.HEAD);
+    }
 
-        RevWalk walk = new RevWalk(git.getRepository());
-        ObjectId head = git.getRepository().resolve(Constants.HEAD);
-        RevCommit commit = null;
+    public Commit commit(String input) throws IOException {
+        try (Git git = open()) {
+            RevWalk walk = new RevWalk(git.getRepository());
+            ObjectId objectId = git.getRepository().resolve(input);
+            RevCommit commit = null;
 
-        try {
-            commit = walk.parseCommit(head);
-        } catch (NullPointerException e) {
-            throw new IllegalStateException(RB.$("ERROR_head_commit_not_found"));
+            try {
+                commit = walk.parseCommit(objectId);
+            } catch (NullPointerException e) {
+                throw new IllegalStateException(RB.$("ERROR_commit_not_found", input));
+            }
+
+            Ref ref = git.getRepository().findRef(input);
+            PersonIdent authorIdent = commit.getAuthorIdent();
+            Date authorDate = authorIdent.getWhen();
+            TimeZone authorTimeZone = authorIdent.getTimeZone();
+
+            ZoneId zoneId = ZoneId.of(authorTimeZone.getID());
+            LocalDateTime local = LocalDateTime.ofInstant(authorDate.toInstant(), zoneId);
+            ZonedDateTime zoned = ZonedDateTime.of(local, zoneId);
+
+            return new Commit(
+                commit.getId().abbreviate(7).name(),
+                commit.getId().name(),
+                extractHeadName(ref),
+                commit.getCommitTime(),
+                zoned);
         }
-
-        Ref ref = git.getRepository().findRef(Constants.HEAD);
-        PersonIdent authorIdent = commit.getAuthorIdent();
-        Date authorDate = authorIdent.getWhen();
-        TimeZone authorTimeZone = authorIdent.getTimeZone();
-
-        ZoneId zoneId = ZoneId.of(authorTimeZone.getID());
-        LocalDateTime local = LocalDateTime.ofInstant(authorDate.toInstant(), zoneId);
-        ZonedDateTime zoned = ZonedDateTime.of(local, zoneId);
-
-        return new Commit(
-            commit.getId().abbreviate(7).name(),
-            commit.getId().name(),
-            extractHeadName(ref),
-            commit.getCommitTime(),
-            zoned);
     }
 
     public RevCommit resolveSingleCommit(Git git, Ref tag) throws GitAPIException {
@@ -227,9 +226,7 @@ public class GitSdk {
     }
 
     public void deleteTag(String tagName) throws IOException {
-        Git git = open();
-
-        try {
+        try (Git git = open()) {
             git.tagDelete()
                 .setTags(tagName)
                 .call();
@@ -239,9 +236,7 @@ public class GitSdk {
     }
 
     public boolean findTag(String tagName) throws IOException {
-        Git git = open();
-
-        try {
+        try (Git git = open()) {
             return git.tagList().call().stream()
                 .map(GitSdk::extractTagName)
                 .anyMatch(tagName::matches);
@@ -287,17 +282,19 @@ public class GitSdk {
     }
 
     public void tag(String tagName, boolean force, JReleaserContext context) throws IOException {
-        Git git = open();
-
-        try {
+        try (Git git = open()) {
+            ObjectId objectId = git.getRepository().resolve(context.getModel().getCommit().getFullHash());
             boolean signEnabled = context.getModel().getRelease().getReleaser().isSign();
-            git.tag()
+            TagCommand tagCommand = git.tag()
                 .setSigned(signEnabled)
                 .setSigningKey("**********")
                 .setGpgSigner(new JReleaserGpgSigner(context, signEnabled))
                 .setName(tagName)
-                .setForceUpdate(force)
-                .call();
+                .setForceUpdate(force);
+            if (objectId instanceof RevObject) {
+                tagCommand = tagCommand.setObjectId((RevObject) objectId);
+            }
+            tagCommand.call();
         } catch (GitAPIException e) {
             throw new IOException(RB.$("ERROR_git_create_tag", tagName), e);
         }
