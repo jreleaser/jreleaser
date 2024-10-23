@@ -257,7 +257,7 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
 
         // local tag
         if (deleteTags || !codeberg.isSkipTag()) {
-            context.getLogger().debug(RB.$("git.releaser.repository.tag"), tagName);
+            context.getLogger().debug(RB.$("git.releaser.repository.tag"), tagName, context.getModel().getCommit().getShortHash());
             GitSdk.of(context).tag(tagName, true, context);
         }
 

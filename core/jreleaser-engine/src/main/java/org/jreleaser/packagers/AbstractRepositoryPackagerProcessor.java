@@ -153,7 +153,7 @@ public abstract class AbstractRepositoryPackagerProcessor<T extends RepositoryPa
             }
 
             String tagName = tap.getResolvedTagName(props);
-            context.getLogger().debug(RB.$("git.releaser.repository.tag"), tagName);
+            context.getLogger().debug(RB.$("git.releaser.repository.tag"), tagName, tagName);
             git.tag()
                 .setSigned(signingEnabled)
                 .setSigningKey(signingKey)
