@@ -253,7 +253,7 @@ public final class BaseReleaserValidator {
                 if (!g.isDraftSet()) g.setDraft(false);
             }
 
-            if (!generate) {
+            if (!generate && !service.getChangelog().isEnabledSet()) {
                 service.getChangelog().setEnabled(true);
                 service.getChangelog().setSort(org.jreleaser.model.Changelog.Sort.DESC);
             }
