@@ -265,7 +265,7 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
         GtRelease release = new GtRelease();
         release.setName(codeberg.getEffectiveReleaseName());
         release.setTagName(tagName);
-        release.setTargetCommitish(codeberg.getResolvedBranchPush(context.getModel()));
+        release.setTargetCommitish(context.getModel().getCommit().getFullHash());
         release.setBody(changelog);
         if (codeberg.getPrerelease().isEnabledSet()) {
             release.setPrerelease(codeberg.getPrerelease().isEnabled());
