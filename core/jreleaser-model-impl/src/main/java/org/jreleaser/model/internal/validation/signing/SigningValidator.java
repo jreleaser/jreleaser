@@ -50,7 +50,7 @@ public final class SigningValidator {
     }
 
     public static void validateSigning(JReleaserContext context, Mode mode, Errors errors) {
-        if (!mode.validateConfig()) {
+        if (!mode.validateConfig() && !mode.validateDeploy()) {
             errors = new Errors();
         }
 
