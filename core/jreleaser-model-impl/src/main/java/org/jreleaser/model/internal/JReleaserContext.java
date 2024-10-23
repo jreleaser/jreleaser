@@ -1044,6 +1044,10 @@ public class JReleaserContext {
         try {
             org.jreleaser.model.internal.signing.Signing signing = model.getSigning();
 
+            if (!signing.isEnabled()) {
+                throw new SigningException(RB.$("ERROR_signing_disabled"));
+            }
+
             if (signing.getMode() == Signing.Mode.FILE) {
                 return new FilesKeyring(
                     signing.isVerify() ? basedir.resolve(signing.getPublicKey()) : null,
