@@ -207,7 +207,7 @@ public interface JReleaserContext extends Serializable {
         }
 
         public boolean validateStandalone() {
-            return validateAssembly() || validateDownload();
+            return validateAssembly() || validateDownload() || validateDeploy();
         }
 
         public boolean validateConfig() {

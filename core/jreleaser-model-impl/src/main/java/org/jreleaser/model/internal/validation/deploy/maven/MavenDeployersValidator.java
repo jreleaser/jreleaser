@@ -124,10 +124,10 @@ public final class MavenDeployersValidator {
             mavenDeployer.setUrl(mavenDeployer.getUrl().substring(0, mavenDeployer.getUrl().length() - 1));
         }
 
-        BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
         String defaultUsername = null;
         String defaultPassword = null;
-        if (mavenDeployer.getType().equalsIgnoreCase(service.getServiceName())) {
+        BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
+        if (null != service && mavenDeployer.getType().equalsIgnoreCase(service.getServiceName())) {
             defaultUsername = service.getUsername();
             defaultPassword = service.getToken();
         }
