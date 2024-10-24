@@ -282,7 +282,7 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
         GlRelease release = new GlRelease();
         release.setName(gitlab.getEffectiveReleaseName());
         release.setTagName(tagName);
-        release.setRef(context.getModel().getCommit().getFullHash());
+        release.setRef(gitlab.getResolvedBranchPush(context.getModel()));
         release.setDescription(changelog);
 
         // remote tag/release
