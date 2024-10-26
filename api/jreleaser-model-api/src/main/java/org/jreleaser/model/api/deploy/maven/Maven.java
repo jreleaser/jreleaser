@@ -49,5 +49,7 @@ public interface Maven extends Domain, Activatable {
         boolean isFailOnWarning();
 
         boolean isFailOnError();
+
+        boolean isStrict();
     }
 }

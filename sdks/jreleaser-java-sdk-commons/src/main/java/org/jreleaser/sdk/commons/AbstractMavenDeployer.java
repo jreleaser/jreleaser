@@ -278,6 +278,12 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
                 }
             }
 
+            if (pomcheckerModel.isStrict()) {
+                args.add("--strict");
+            } else {
+                args.add("--no-strict");
+            }
+
             args.add("--file");
             args.add(deployable.getLocalPath().toAbsolutePath().toString());
 

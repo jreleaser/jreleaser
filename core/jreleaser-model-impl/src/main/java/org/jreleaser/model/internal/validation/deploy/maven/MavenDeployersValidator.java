@@ -85,16 +85,26 @@ public final class MavenDeployersValidator {
     }
 
     private static void validatePomchecker(JReleaserContext context) {
-        Maven maven = context.getModel().getDeploy().getMaven();
+        Maven.Pomchecker pomchecker = context.getModel().getDeploy().getMaven().getPomchecker();
 
-        if (isBlank(maven.getPomchecker().getVersion())) {
-            maven.getPomchecker().setVersion(DefaultVersions.getInstance().getPomcheckerVersion());
+        if (isBlank(pomchecker.getVersion())) {
+            pomchecker.setVersion(DefaultVersions.getInstance().getPomcheckerVersion());
         }
-        if (!maven.getPomchecker().isFailOnWarningSet()) {
-            maven.getPomchecker().setFailOnWarning(true);
+
+        if (!pomchecker.isStrictSet()) {
+            pomchecker.setStrict(true);
         }
-        if (!maven.getPomchecker().isFailOnErrorSet()) {
-            maven.getPomchecker().setFailOnError(true);
+
+        if (!pomchecker.isStrict() && !pomchecker.isFailOnWarningSet()) {
+            pomchecker.setFailOnWarning(false);
+        }
+
+        if (!pomchecker.isFailOnWarningSet()) {
+            pomchecker.setFailOnWarning(true);
+        }
+
+        if (!pomchecker.isFailOnErrorSet()) {
+            pomchecker.setFailOnError(true);
         }
     }
 

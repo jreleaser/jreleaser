@@ -483,15 +483,15 @@ public final class Maven extends AbstractActivatable<Maven> implements Domain, A
     }
 
     public static final class Pomchecker extends AbstractModelObject<Pomchecker> implements Domain {
-        private static final long serialVersionUID = -3338690712854794960L;
+        private static final long serialVersionUID = 5118388507019755650L;
         private String version;
         private Boolean failOnWarning;
         private Boolean failOnError;
-
+        private Boolean strict;
 
         @JsonIgnore
         private final org.jreleaser.model.api.deploy.maven.Maven.Pomchecker immutable = new org.jreleaser.model.api.deploy.maven.Maven.Pomchecker() {
-            private static final long serialVersionUID = 3245901294277040203L;
+            private static final long serialVersionUID = 4509080707508578373L;
 
             @Override
             public String getVersion() {
@@ -509,6 +509,11 @@ public final class Maven extends AbstractActivatable<Maven> implements Domain, A
             }
 
             @Override
+            public boolean isStrict() {
+                return strict;
+            }
+
+            @Override
             public Map<String, Object> asMap(boolean full) {
                 return unmodifiableMap(Pomchecker.this.asMap(full));
             }
@@ -523,6 +528,7 @@ public final class Maven extends AbstractActivatable<Maven> implements Domain, A
             this.version = merge(this.version, source.version);
             this.failOnWarning = merge(this.failOnWarning, source.failOnWarning);
             this.failOnError = merge(this.failOnError, source.failOnError);
+            this.strict = merge(this.strict, source.strict);
         }
 
         public String getVersion() {
@@ -557,12 +563,25 @@ public final class Maven extends AbstractActivatable<Maven> implements Domain, A
             this.failOnError = failOnError;
         }
 
+        public boolean isStrict() {
+            return strict != null && strict;
+        }
+
+        public boolean isStrictSet() {
+            return strict != null;
+        }
+
+        public void setStrict(Boolean strict) {
+            this.strict = strict;
+        }
+
         @Override
         public Map<String, Object> asMap(boolean full) {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("version", version);
             map.put("failOnWarning", isFailOnWarning());
             map.put("failOnError", isFailOnError());
+            map.put("strict", isStrict());
             return map;
         }
     }
