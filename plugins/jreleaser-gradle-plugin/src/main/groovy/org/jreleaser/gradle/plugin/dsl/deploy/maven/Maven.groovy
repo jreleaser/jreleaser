@@ -83,5 +83,7 @@ interface Maven extends Activatable {
         Property<Boolean> getFailOnError()
 
         Property<Boolean> getFailOnWarning()
+
+        Property<Boolean> getStrict()
     }
 }
