@@ -116,6 +116,7 @@ public class MavenCentralMavenDeployer extends AbstractMavenDeployer<org.jreleas
         if (deployer.getStage() != Stage.UPLOAD && null != deployment) {
             checkDeploymentIsValid(deploymentId, deployment);
             try {
+                context.getLogger().info("maven.central.publish.deployment", deploymentId);
                 mavenCentral.publish(deploymentId);
             } catch (MavenCentralException e) {
                 throw new DeployException(RB.$("ERROR_maven_central_publish_deployment", deploymentId), e);
@@ -211,6 +212,7 @@ public class MavenCentralMavenDeployer extends AbstractMavenDeployer<org.jreleas
 
         if (!context.isDryrun()) {
             try {
+                context.getLogger().info("maven.central.upload.bundle", bundleZip.getFileName());
                 return Optional.of(mavenCentral.upload(bundleZip.toAbsolutePath()));
             } catch (MavenCentralException e) {
                 context.getLogger().trace(e);
