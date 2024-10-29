@@ -108,6 +108,7 @@ enforce {
         r.exclude("com.google.errorprone:error_prone_core:$errorproneVersion")
         r.exclude("com.google.errorprone:error_prone_annotation:$errorproneVersion")
         r.exclude("com.google.errorprone:error_prone_check_api:$errorproneVersion")
+        r.exclude("com.google.googlejavaformat:google-java-format:$gJavaFormatVersion")
         r.exclude("org.mockito:mockito-core:$mockitoVersion")
         r.exclude("org.mockito:mockito-junit-jupiter:$mockitoVersion")
         r.exclude("org.mockito:mockito-inline:$mockitoInlineVersion")
@@ -129,6 +130,7 @@ enforce {
             "com.google.errorprone:error_prone_core:$errorproneVersion",
             "com.google.errorprone:error_prone_annotations:$errorproneVersion",
             "com.google.errorprone:error_prone_check_api:$errorproneVersion",
+            "com.google.googlejavaformat:google-java-format:$gJavaFormatVersion",
             "com.google.guava:guava:$guavaVersion",
             "com.googlecode.javaewah:JavaEWAH:$javaEWAHVersion",
             "com.sun.mail:jakarta.mail:$mailApiVersion",
