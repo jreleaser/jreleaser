@@ -28,7 +28,9 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.options.Option
 import org.jreleaser.engine.context.ContextCreator
 import org.jreleaser.gradle.plugin.JReleaserExtension
+import org.jreleaser.gradle.plugin.internal.JReleaserExtensionImpl
 import org.jreleaser.gradle.plugin.internal.JReleaserLoggerService
+import org.jreleaser.gradle.plugin.internal.JReleaserProjectConfigurer
 import org.jreleaser.logging.JReleaserLogger
 import org.jreleaser.model.JReleaserVersion
 import org.jreleaser.model.api.JReleaserCommand
@@ -66,9 +68,6 @@ abstract class AbstractJReleaserTask extends DefaultTask {
     final DirectoryProperty outputDirectory
 
     @Internal
-    final Property<JReleaserModel> model
-
-    @Internal
     final Property<JReleaserLoggerService> jlogger
 
     @Internal
@@ -79,7 +78,6 @@ abstract class AbstractJReleaserTask extends DefaultTask {
 
     @Inject
     AbstractJReleaserTask(ObjectFactory objects) {
-        model = objects.property(JReleaserModel)
         jlogger = objects.property(JReleaserLoggerService)
         mode = FULL
         dryrun = objects.property(Boolean)
@@ -103,6 +101,13 @@ abstract class AbstractJReleaserTask extends DefaultTask {
         this.strict.set(strict)
     }
 
+    protected JReleaserModel createModel() {
+        JReleaserExtensionImpl extension = (JReleaserExtensionImpl) project.extensions.findByType(JReleaserExtension)
+        JReleaserModel model = extension.toModel(project, jlogger.get().logger)
+        JReleaserProjectConfigurer.configureModel(project, model)
+        model
+    }
+
     protected JReleaserContext createContext() {
         JReleaserLogger logger = jlogger.get().logger
         PlatformUtils.resolveCurrentPlatform(logger)
@@ -119,7 +124,7 @@ abstract class AbstractJReleaserTask extends DefaultTask {
             resolveConfigurer(project.extensions.findByType(JReleaserExtension)),
             mode,
             command,
-            model.get(),
+            createModel(),
             project.projectDir.toPath(),
             outputDirectory.get().asFile.toPath(),
             dryrun.getOrElse(false),

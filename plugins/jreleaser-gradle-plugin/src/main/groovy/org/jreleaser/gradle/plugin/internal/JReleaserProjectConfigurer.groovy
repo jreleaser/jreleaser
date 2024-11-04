@@ -87,9 +87,6 @@ class JReleaserProjectConfigurer {
             }
         })
 
-        JReleaserModel model = extension.toModel(project, loggerProvider.get().logger)
-        configureModel(project, model)
-
         project.tasks.named(JReleaserConfigTask.NAME, JReleaserConfigTask,
             new Action<JReleaserConfigTask>() {
                 @Override
@@ -98,7 +95,6 @@ class JReleaserProjectConfigurer {
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
-                    t.model.set(model)
                     t.jlogger.set(loggerProvider)
                     t.usesService(loggerProvider)
                     if (hasDistributionPlugin) {
@@ -134,7 +130,6 @@ class JReleaserProjectConfigurer {
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
-                    t.model.set(model)
                     t.jlogger.set(loggerProvider)
                     t.usesService(loggerProvider)
                 }
@@ -148,7 +143,6 @@ class JReleaserProjectConfigurer {
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
-                    t.model.set(model)
                     t.jlogger.set(loggerProvider)
                     t.usesService(loggerProvider)
                 }
@@ -162,7 +156,6 @@ class JReleaserProjectConfigurer {
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
-                    t.model.set(model)
                     t.jlogger.set(loggerProvider)
                     t.usesService(loggerProvider)
                 }
@@ -176,7 +169,6 @@ class JReleaserProjectConfigurer {
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
-                    t.model.set(model)
                     t.jlogger.set(loggerProvider)
                     t.usesService(loggerProvider)
                     if (hasDistributionPlugin) {
@@ -193,7 +185,6 @@ class JReleaserProjectConfigurer {
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
-                    t.model.set(model)
                     t.jlogger.set(loggerProvider)
                     t.usesService(loggerProvider)
                     if (hasDistributionPlugin) {
@@ -210,7 +201,6 @@ class JReleaserProjectConfigurer {
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
-                    t.model.set(model)
                     t.jlogger.set(loggerProvider)
                     t.usesService(loggerProvider)
                 }
@@ -224,7 +214,6 @@ class JReleaserProjectConfigurer {
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
-                    t.model.set(model)
                     t.jlogger.set(loggerProvider)
                     t.usesService(loggerProvider)
                 }
@@ -238,7 +227,6 @@ class JReleaserProjectConfigurer {
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
-                    t.model.set(model)
                     t.jlogger.set(loggerProvider)
                     t.usesService(loggerProvider)
                     if (hasDistributionPlugin) {
@@ -255,7 +243,6 @@ class JReleaserProjectConfigurer {
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
-                    t.model.set(model)
                     t.jlogger.set(loggerProvider)
                     t.usesService(loggerProvider)
                     if (hasDistributionPlugin) {
@@ -285,7 +272,6 @@ class JReleaserProjectConfigurer {
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
-                    t.model.set(model)
                     t.jlogger.set(loggerProvider)
                     t.usesService(loggerProvider)
                     if (hasDistributionPlugin) {
@@ -302,7 +288,6 @@ class JReleaserProjectConfigurer {
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
-                    t.model.set(model)
                     t.jlogger.set(loggerProvider)
                     t.usesService(loggerProvider)
                     if (hasDistributionPlugin) {
@@ -319,7 +304,6 @@ class JReleaserProjectConfigurer {
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
-                    t.model.set(model)
                     t.jlogger.set(loggerProvider)
                     t.usesService(loggerProvider)
                     if (hasDistributionPlugin) {
@@ -336,7 +320,6 @@ class JReleaserProjectConfigurer {
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
-                    t.model.set(model)
                     t.jlogger.set(loggerProvider)
                     t.usesService(loggerProvider)
                     if (hasDistributionPlugin) {
@@ -353,7 +336,6 @@ class JReleaserProjectConfigurer {
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
-                    t.model.set(model)
                     t.jlogger.set(loggerProvider)
                     t.usesService(loggerProvider)
                     if (hasDistributionPlugin) {
@@ -376,7 +358,7 @@ class JReleaserProjectConfigurer {
         return project.plugins.findPlugin('distribution')
     }
 
-    private static void configureModel(Project project, JReleaserModel model) {
+    static void configureModel(Project project, JReleaserModel model) {
         String javaVersion = ''
         if (project.hasProperty('targetCompatibility')) {
             javaVersion = String.valueOf(project.findProperty('targetCompatibility'))
