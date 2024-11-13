@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-81-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-82-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -115,6 +115,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/AlexeyGy"><img src="https://avatars.githubusercontent.com/u/13885630?v=4?s=100" width="100px;" alt="Alexey Stern"/><br /><sub><b>Alexey Stern</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=alexeygy" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://www.linkedin.com/in/p-marcin/"><img src="https://avatars.githubusercontent.com/u/114195537?v=4?s=100" width="100px;" alt="Marcin P."/><br /><sub><b>Marcin P.</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=p-marcin" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/mattjohnson"><img src="https://avatars.githubusercontent.com/u/501041?v=4?s=100" width="100px;" alt="Matt Johnson"/><br /><sub><b>Matt Johnson</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=mattjohnson" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://filip-prochazka.com"><img src="https://avatars.githubusercontent.com/u/158625?v=4?s=100" width="100px;" alt="Filip Procházka"/><br /><sub><b>Filip Procházka</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=fprochazka" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

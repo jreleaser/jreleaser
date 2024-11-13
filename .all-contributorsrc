@@ -768,6 +768,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "fprochazka",
+      "name": "Filip Procházka",
+      "avatar_url": "https://avatars.githubusercontent.com/u/158625?v=4",
+      "profile": "https://filip-prochazka.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
