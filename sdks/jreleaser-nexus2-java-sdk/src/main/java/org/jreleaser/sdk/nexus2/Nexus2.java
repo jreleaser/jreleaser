@@ -385,7 +385,7 @@ public class Nexus2 {
                 .withMaxRetries(maxRetries)
                 .onFailedAttempt(event -> {
                     logger.info(RB.$("nexus.retry.attempt"), event.getAttemptCount(), maxAttempts);
-                    logger.debug(RB.$("nexus.retry.failed.attempt"), event.getAttemptCount(), maxAttempts, event.getLastResult());
+                    logger.debug(RB.$("nexus.retry.failed.attempt", event.getAttemptCount(), maxAttempts, event.getLastResult()), event.getLastException());
                 }).build();
 
             return Failsafe.with(policy).get(retriableOperation);

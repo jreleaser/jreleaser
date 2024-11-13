@@ -207,12 +207,12 @@ public class MavenCentral {
     }
 
     public static class Retrier {
-        private final JReleaserLogger context;
+        private final JReleaserLogger logger;
         private final int delay;
         private final int maxRetries;
 
-        public Retrier(JReleaserLogger context, int delay, int maxRetries) {
-            this.context = context;
+        public Retrier(JReleaserLogger logger, int delay, int maxRetries) {
+            this.logger = logger;
             this.delay = delay;
             this.maxRetries = maxRetries;
         }
@@ -234,8 +234,8 @@ public class MavenCentral {
                 .withDelay(Duration.ofSeconds(delay))
                 .withMaxRetries(maxRetries)
                 .onFailedAttempt(event -> {
-                    context.info(RB.$("nexus.retry.attempt"), event.getAttemptCount(), maxAttempts);
-                    context.debug(RB.$("nexus.retry.failed.attempt", event.getAttemptCount(), maxAttempts, event.getLastResult()), event.getLastException());
+                    logger.info(RB.$("nexus.retry.attempt"), event.getAttemptCount(), maxAttempts);
+                    logger.debug(RB.$("nexus.retry.failed.attempt", event.getAttemptCount(), maxAttempts, event.getLastResult()), event.getLastException());
                 }).build();
 
             return Failsafe.with(policy).get(retriableOperation);
