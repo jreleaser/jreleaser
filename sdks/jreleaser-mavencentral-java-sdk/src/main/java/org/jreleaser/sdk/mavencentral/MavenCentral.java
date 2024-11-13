@@ -221,13 +221,21 @@ public class MavenCentral {
             final int maxAttempts = maxRetries + 1;
 
             RetryPolicy<R> policy = RetryPolicy.<R>builder()
-                .handle(IllegalStateException.class, MavenCentralAPIException.class)
+                .handle(IllegalStateException.class)
+                .handleIf(exception -> {
+                    if (exception instanceof MavenCentralAPIException) {
+                        MavenCentralAPIException mavenCentralException = (MavenCentralAPIException) exception;
+                        return !mavenCentralException.isUnauthorized();
+                    }
+
+                    return false;
+                })
                 .handleResultIf(stopFunction)
                 .withDelay(Duration.ofSeconds(delay))
                 .withMaxRetries(maxRetries)
                 .onFailedAttempt(event -> {
                     context.info(RB.$("nexus.retry.attempt"), event.getAttemptCount(), maxAttempts);
-                    context.debug(RB.$("nexus.retry.failed.attempt"), event.getAttemptCount(), maxAttempts, event.getLastResult());
+                    context.debug(RB.$("nexus.retry.failed.attempt", event.getAttemptCount(), maxAttempts, event.getLastResult()), event.getLastException());
                 }).build();
 
             return Failsafe.with(policy).get(retriableOperation);
