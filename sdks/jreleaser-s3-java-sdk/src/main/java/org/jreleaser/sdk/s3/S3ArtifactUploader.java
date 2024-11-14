@@ -43,6 +43,7 @@ import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
+import software.amazon.awssdk.services.s3.model.Owner;
 import software.amazon.awssdk.services.s3.model.Permission;
 import software.amazon.awssdk.services.s3.model.PutObjectAclRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -105,9 +106,12 @@ public class S3ArtifactUploader extends AbstractArtifactUploader<org.jreleaser.m
                     createBucket(s3, bucketName);
                 }
 
-                ownerId = s3.getBucketAcl(GetBucketAclRequest.builder()
+                Owner owner = s3.getBucketAcl(GetBucketAclRequest.builder()
                     .bucket(bucketName)
-                    .build()).owner().id();
+                    .build()).owner();
+                if (owner != null) {
+                    ownerId = owner.id();
+                }
             } catch (SdkException e) {
                 context.getLogger().trace(e);
                 throw new UploadException(RB.$("ERROR_unexpected_upload2"), e);
@@ -226,32 +230,34 @@ public class S3ArtifactUploader extends AbstractArtifactUploader<org.jreleaser.m
             .key(bucketPath)
             .build(), path);
 
-        List<Grant> grantList = new ArrayList<>();
-        grantList.add(Grant.builder()
-            .grantee(builder -> builder.id(ownerId)
-                .type(Type.CANONICAL_USER))
-            .permission(Permission.FULL_CONTROL)
-            .build());
-        grantList.add(Grant.builder()
-            .grantee(builder -> builder
-                .uri("http://acs.amazonaws.com/groups/global/AllUsers")
-                .type(Type.GROUP))
-            .permission(Permission.READ)
-            .build());
+        if (ownerId != null) {
+            List<Grant> grantList = new ArrayList<>();
+            grantList.add(Grant.builder()
+                .grantee(builder -> builder.id(ownerId)
+                    .type(Type.CANONICAL_USER))
+                .permission(Permission.FULL_CONTROL)
+                .build());
+            grantList.add(Grant.builder()
+                .grantee(builder -> builder
+                    .uri("http://acs.amazonaws.com/groups/global/AllUsers")
+                    .type(Type.GROUP))
+                .permission(Permission.READ)
+                .build());
 
-        AccessControlPolicy acl = AccessControlPolicy.builder()
-            .owner(builder -> builder.id(ownerId))
-            .grants(grantList)
-            .build();
+            AccessControlPolicy acl = AccessControlPolicy.builder()
+                .owner(builder -> builder.id(ownerId))
+                .grants(grantList)
+                .build();
 
-        PutObjectAclRequest putAclReq = PutObjectAclRequest.builder()
-            .bucket(bucketName)
-            .key(bucketPath)
-            .accessControlPolicy(acl)
-            .build();
+            PutObjectAclRequest putAclReq = PutObjectAclRequest.builder()
+                .bucket(bucketName)
+                .key(bucketPath)
+                .accessControlPolicy(acl)
+                .build();
 
-        context.getLogger().debug(RB.$("s3.object.acl"), bucketName, bucketPath);
-        s3.putObjectAcl(putAclReq);
+            context.getLogger().debug(RB.$("s3.object.acl"), bucketName, bucketPath);
+            s3.putObjectAcl(putAclReq);
+        }
     }
 
     public static class MyS3EndpointProvider implements S3EndpointProvider {
