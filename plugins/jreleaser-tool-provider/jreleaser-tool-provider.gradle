@@ -104,6 +104,8 @@ def reproducibleTimestamp = tasks.register('reproducibleTimestamp', org.jrelease
     t.target = tasks.shadowJar
     t.dependsOn(tasks.addMainModuleInfo)
     t.mustRunAfter(tasks.addMainModuleInfo)
+    // FIXME: Disable this task on Windows
+    t.onlyIf { !(System.getProperty('os.name').toLowerCase(Locale.ENGLISH).contains('windows')) }
 }
 shadowJar.finalizedBy(reproducibleTimestamp)
 assemble.dependsOn(reproducibleTimestamp)
