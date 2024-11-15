@@ -45,7 +45,7 @@ image:https://img.shields.io/gradle-plugin-portal/v/{plugin-id}?logo=gradle["Gra
  * Ask questions on our link:https://github.com/{project-owner}/{project-name}/discussions[Discussions] page.
  * image:https://img.shields.io/twitter/follow/{project-name}?style=social[Twitter Follow]
  * image:https://img.shields.io/mastodon/follow/109318759441003625?domain=https%3A%2F%2Ffosstodon.org&style=social[Mastodon Follow]
- * image:https://img.shields.io/badge/%20-white?label=Follow%20%40{project-name}.bsky.social&labelColor=white&logo=bluesky&style=flat[Bluesky Follow, link="https://bsky.app/profile/{project-name}.bsky.social"]
+ * image:https://img.shields.io/badge/%20-white?label=Follow%20%40{project-name}.org&labelColor=white&logo=bluesky&style=flat[Bluesky Follow, link="https://bsky.app/profile/{project-name}.org"]
  * image:https://img.shields.io/github/all-contributors/{project-owner}/{project-name}?label=contributors&logo=github[Contributors, link="CONTRIBUTORS.md"]
  Join our link:CONTRIBUTORS.md[contributors] by reporting bugs, proposing features, sending patches, promoting the project, helping others.
 
