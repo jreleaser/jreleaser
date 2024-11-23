@@ -456,6 +456,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
 
     private void verifyKeyIsValid() {
         Optional<String> publicKeyID = Optional.empty();
+        Optional<String> fingerprint = Optional.empty();
 
         try {
             publicKeyID = SigningUtils.getPublicKeyID(context.asImmutable());
@@ -469,8 +470,20 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
             return;
         }
 
+        try {
+            fingerprint = SigningUtils.getFingerprint(context.asImmutable());
+        } catch (SigningException e) {
+            context.getLogger().warn(RB.$("ERROR_public_key_not_found"));
+            return;
+        }
+
+        if (!fingerprint.isPresent()) {
+            context.getLogger().warn(RB.$("ERROR_public_key_not_found"));
+            return;
+        }
 
         String keyID = publicKeyID.get().toUpperCase(Locale.ENGLISH);
+        String fp = fingerprint.get().toUpperCase(Locale.ENGLISH);
 
         try {
             Optional<Instant> expirationDate = SigningUtils.getExpirationDateOfPublicKey(context.asImmutable());
@@ -496,7 +509,9 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
         context.getLogger().info(RB.$("signing.check.published.key", keyID));
         for (Map.Entry<String, String> e : KEY_SERVERS.entrySet()) {
             try {
-                URL url = new URI(String.format(e.getValue(), keyID)).toURL();
+                boolean notfound = false;
+                // 1st try with keyId
+                URL url = new URI(String.format(e.getValue(), fp)).toURL();
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setConnectTimeout(20_000);
                 connection.setReadTimeout(40_000);
@@ -504,6 +519,23 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
                     context.getLogger().debug(" + " + e.getKey());
                     published = true;
                 } else {
+                    notfound = true;
+                }
+
+                if (!notfound) {
+                    // 2nd try with fingerprint
+                    url = new URI(String.format(e.getValue(), keyID)).toURL();
+                    connection = (HttpURLConnection) url.openConnection();
+                    connection.setConnectTimeout(20_000);
+                    connection.setReadTimeout(40_000);
+                    if (connection.getResponseCode() < 400) {
+                        context.getLogger().debug(" + " + e.getKey());
+                        published = true;
+                        notfound = false;
+                    }
+                }
+
+                if (!notfound) {
                     context.getLogger().debug(" x " + e.getKey());
                 }
             } catch (MalformedURLException | URISyntaxException ignored) {

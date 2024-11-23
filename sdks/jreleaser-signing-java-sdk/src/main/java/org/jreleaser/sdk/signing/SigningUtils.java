@@ -34,6 +34,7 @@ import org.bouncycastle.openpgp.PGPUtil;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentSignerBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentVerifierBuilderProvider;
 import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyDecryptorBuilder;
+import org.bouncycastle.util.encoders.Hex;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.api.JReleaserContext;
 import org.jreleaser.model.api.signing.Keyring;
@@ -81,6 +82,16 @@ public final class SigningUtils {
             context.getModel().getSigning().getMode() != org.jreleaser.model.Signing.Mode.COSIGN) {
             Keyring keyring = context.createKeyring();
             return Optional.of(Long.toHexString(keyring.readPublicKey().getKeyID()));
+        }
+
+        return Optional.empty();
+    }
+
+    public static Optional<String> getFingerprint(JReleaserContext context) throws SigningException {
+        if (context.getModel().getSigning().getMode() != org.jreleaser.model.Signing.Mode.COMMAND &&
+            context.getModel().getSigning().getMode() != org.jreleaser.model.Signing.Mode.COSIGN) {
+            Keyring keyring = context.createKeyring();
+            return Optional.of(Hex.toHexString(keyring.readPublicKey().getFingerprint()));
         }
 
         return Optional.empty();
