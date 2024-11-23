@@ -246,15 +246,17 @@ public class GitSdk {
     }
 
     public void checkoutBranch(String branch) throws IOException {
-        checkoutBranch(null, branch, false);
+        checkoutBranch(null, branch, true, false);
     }
 
-    public void checkoutBranch(BaseReleaser<?, ?> releaser, String branch, boolean create) throws IOException {
+    public void checkoutBranch(BaseReleaser<?, ?> releaser, String branch, boolean checkout, boolean create) throws IOException {
         try (Git git = open()) {
-            git.checkout()
-                .setName(branch)
-                .setCreateBranch(create)
-                .call();
+            if (checkout) {
+                git.checkout()
+                    .setName(branch)
+                    .setCreateBranch(create)
+                    .call();
+            }
 
             if (create) {
                 UsernamePasswordCredentialsProvider credentialsProvider = new UsernamePasswordCredentialsProvider(

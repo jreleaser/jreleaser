@@ -102,9 +102,7 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
 
             if (!context.isDryrun()) {
                 List<String> branchNames = api.listBranches(gitlab.getOwner(), gitlab.getName(), gitlab.getProjectIdentifier());
-                if (mustCheckoutBranch) {
-                    GitSdk.of(context).checkoutBranch(gitlab, pushBranch, !branchNames.contains(pushBranch));
-                }
+                GitSdk.of(context).checkoutBranch(gitlab, pushBranch, mustCheckoutBranch, !branchNames.contains(pushBranch));
             }
 
             String changelog = context.getChangelog().getResolvedChangelog();

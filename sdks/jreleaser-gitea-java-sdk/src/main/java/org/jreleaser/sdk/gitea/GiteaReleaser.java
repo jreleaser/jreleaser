@@ -91,9 +91,7 @@ public class GiteaReleaser extends AbstractReleaser<org.jreleaser.model.api.rele
 
             if (!context.isDryrun()) {
                 List<String> branchNames = api.listBranches(gitea.getOwner(), gitea.getName());
-                if (mustCheckoutBranch) {
-                    GitSdk.of(context).checkoutBranch(gitea, pushBranch, !branchNames.contains(pushBranch));
-                }
+                GitSdk.of(context).checkoutBranch(gitea, pushBranch, mustCheckoutBranch, !branchNames.contains(pushBranch));
             }
 
             String changelog = context.getChangelog().getResolvedChangelog();

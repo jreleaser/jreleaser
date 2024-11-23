@@ -171,9 +171,7 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
 
             if (!context.isDryrun()) {
                 List<String> branchNames = api.listBranches(github.getOwner(), github.getName());
-                if (mustCheckoutBranch) {
-                    GitSdk.of(context).checkoutBranch(github, pushBranch, !branchNames.contains(pushBranch));
-                }
+                GitSdk.of(context).checkoutBranch(github, pushBranch, mustCheckoutBranch, !branchNames.contains(pushBranch));
             }
 
             String changelog = normalizeChangelog(context.getChangelog().getResolvedChangelog());
