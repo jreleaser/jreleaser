@@ -211,14 +211,6 @@ public final class MavenDeployersValidator {
             mavenDeployer.setChecksums(true);
         }
 
-        if (mavenDeployer.isApplyMavenCentralRules() && !mavenDeployer.isSourceJarSet()) {
-            mavenDeployer.setSourceJar(true);
-        }
-
-        if (mavenDeployer.isApplyMavenCentralRules() && !mavenDeployer.isJavadocJarSet()) {
-            mavenDeployer.setJavadocJar(true);
-        }
-
         if (mavenDeployer.isApplyMavenCentralRules() && !mavenDeployer.isVerifyPomSet()) {
             mavenDeployer.setVerifyPom(true);
         }

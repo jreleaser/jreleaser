@@ -18,6 +18,7 @@
 package org.jreleaser.sdk.commons;
 
 import feign.form.FormData;
+import org.apache.commons.io.IOUtils;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.api.signing.SigningException;
@@ -60,6 +61,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -69,6 +71,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -205,14 +209,14 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
                     }
                 }
 
-                if (!deployable.isRelocated() && requiresSourcesJar(deployable)) {
+                if (!deployable.isRelocated() && requiresSourcesJar(deployable, base)) {
                     Deployable derived = deployable.deriveByFilename(PACKAGING_JAR, base + "-sources.jar");
                     if (!deployablesMap.containsKey(derived.getFullDeployPath())) {
                         errors.configuration(RB.$("validation_is_missing", derived.getFilename()));
                     }
                 }
 
-                if (!deployable.isRelocated() && requiresJavadocJar(deployable)) {
+                if (!deployable.isRelocated() && requiresJavadocJar(deployable, base)) {
                     Deployable derived = deployable.deriveByFilename(PACKAGING_JAR, base + "-javadoc.jar");
                     if (!deployablesMap.containsKey(derived.getFullDeployPath())) {
                         errors.configuration(RB.$("validation_is_missing", derived.getFilename()));
@@ -332,7 +336,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
         return !deployable.isRelocated();
     }
 
-    private boolean requiresSourcesJar(Deployable deployable) {
+    private boolean requiresSourcesJar(Deployable deployable, String baseFilename) {
         if (!deployable.requiresSourcesJar()) return false;
 
         Optional<org.jreleaser.model.internal.deploy.maven.MavenDeployer.ArtifactOverride> override = getDeployer().getArtifactOverrides().stream()
@@ -341,10 +345,14 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
 
         if (override.isPresent() && (override.get().isSourceJarSet())) return override.get().isSourceJar();
 
+        if (!getDeployer().isSourceJarSet()) {
+            return hasJavaClass(deployable, baseFilename);
+        }
+
         return getDeployer().isSourceJar();
     }
 
-    private boolean requiresJavadocJar(Deployable deployable) {
+    private boolean requiresJavadocJar(Deployable deployable, String baseFilename) {
         if (!deployable.requiresJavadocJar()) return false;
 
         Optional<org.jreleaser.model.internal.deploy.maven.MavenDeployer.ArtifactOverride> override = getDeployer().getArtifactOverrides().stream()
@@ -353,7 +361,33 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
 
         if (override.isPresent() && (override.get().isJavadocJarSet())) return override.get().isJavadocJar();
 
+        if (!getDeployer().isJavadocJarSet()) {
+            return hasJavaClass(deployable, baseFilename);
+        }
+
         return getDeployer().isJavadocJar();
+    }
+
+    private boolean hasJavaClass(Deployable deployable, String baseFilename) {
+        Deployable jar = deployable.deriveByFilename(PACKAGING_JAR, baseFilename + EXT_JAR);
+        JarFile jarFile = null;
+
+        try {
+            jarFile = new JarFile(jar.getLocalPath().toFile());
+            Enumeration<JarEntry> entries = jarFile.entries();
+            while (entries.hasMoreElements()) {
+                JarEntry entry = entries.nextElement();
+                if (entry.getName().endsWith(".class")) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (IOException e) {
+            context.getLogger().warn(RB.$("ERROR_deployer_read_local_file"), e);
+            return false;
+        } finally {
+            IOUtils.closeQuietly(jarFile);
+        }
     }
 
     private boolean requiresPomVerification(Deployable deployable) {

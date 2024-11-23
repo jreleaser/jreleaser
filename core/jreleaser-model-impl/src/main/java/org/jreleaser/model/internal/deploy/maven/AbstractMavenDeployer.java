@@ -184,7 +184,7 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
 
     @Override
     public boolean isSourceJar() {
-        return null != sourceJar && sourceJar;
+        return null == sourceJar || sourceJar;
     }
 
     @Override
@@ -199,7 +199,7 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
 
     @Override
     public boolean isJavadocJar() {
-        return null != javadocJar && javadocJar;
+        return null == javadocJar || javadocJar;
     }
 
     @Override
