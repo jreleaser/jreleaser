@@ -36,4 +36,4 @@ Installers:
       {{/wingetHasPackageDependencies}}
     {{/wingetHasDependencies}}
 ManifestType: installer
-ManifestVersion: 1.4.0
+ManifestVersion: 1.6.0

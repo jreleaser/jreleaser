@@ -198,7 +198,7 @@ public class WingetPackagerProcessor extends AbstractRepositoryPackagerProcessor
         String packageIdentifier = getPackager().getPackage().getIdentifier();
 
         if ("version.yaml".equals(fileName)) {
-            fileName = packageIdentifier + ".version.yaml";
+            fileName = packageIdentifier + ".yaml";
             outputDirectory = resolvePackageDirectory(outputDirectory, packageIdentifier);
         } else if ("installer.yaml".equals(fileName)) {
             fileName = packageIdentifier + ".installer.yaml";

@@ -24,4 +24,4 @@ Tags:
 {{/wingetHasTags}}
 ReleaseNotesUrl: {{releaseNotesUrl}}
 ManifestType: {{wingetManifestType}}
-ManifestVersion: 1.4.0
+ManifestVersion: 1.6.0

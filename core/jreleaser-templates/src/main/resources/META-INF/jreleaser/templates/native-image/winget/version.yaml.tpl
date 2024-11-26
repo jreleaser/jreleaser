@@ -5,4 +5,4 @@ PackageIdentifier: {{wingetPackageIdentifier}}
 PackageVersion: {{wingetPackageVersion}}
 DefaultLocale: {{wingetDefaultLocale}}
 ManifestType: version
-ManifestVersion: 1.4.0
+ManifestVersion: 1.6.0
