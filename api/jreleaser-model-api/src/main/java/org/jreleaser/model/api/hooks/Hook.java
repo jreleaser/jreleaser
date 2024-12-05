@@ -19,6 +19,7 @@ package org.jreleaser.model.api.hooks;
 
 import org.jreleaser.model.api.common.Activatable;
 import org.jreleaser.model.api.common.Domain;
+import org.jreleaser.model.api.common.Matrix;
 
 import java.util.Map;
 import java.util.Set;
@@ -39,6 +40,10 @@ public interface Hook extends Domain, Activatable {
     String getCondition();
 
     Map<String, String> getEnvironment();
+
+    boolean isApplyDefaultMatrix();
+
+    Matrix getMatrix();
 
     interface Filter extends Domain {
         Set<String> getIncludes();

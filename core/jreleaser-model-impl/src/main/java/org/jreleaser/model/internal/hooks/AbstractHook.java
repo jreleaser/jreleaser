@@ -18,6 +18,7 @@
 package org.jreleaser.model.internal.hooks;
 
 import org.jreleaser.model.internal.common.AbstractActivatable;
+import org.jreleaser.model.internal.common.Matrix;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -29,14 +30,17 @@ import java.util.Set;
  * @since 1.2.0
  */
 public abstract class AbstractHook<S extends AbstractHook<S>> extends AbstractActivatable<S> implements Hook {
-    private static final long serialVersionUID = -4116420563092875433L;
+    private static final long serialVersionUID = 6507186145048072581L;
 
     private final Map<String, String> environment = new LinkedHashMap<>();
     private final Set<String> platforms = new LinkedHashSet<>();
     private final Filter filter = new Filter();
+    protected final Matrix matrix = new Matrix();
+
     protected Boolean continueOnError;
     protected Boolean verbose;
     protected String condition;
+    protected Boolean applyDefaultMatrix;
 
     @Override
     public void merge(S source) {
@@ -47,6 +51,7 @@ public abstract class AbstractHook<S extends AbstractHook<S>> extends AbstractAc
         setFilter(source.getFilter());
         setPlatforms(merge(this.platforms, source.getPlatforms()));
         setEnvironment(merge(this.environment, source.getEnvironment()));
+        setMatrix(source.matrix);
     }
 
     @Override
@@ -127,6 +132,31 @@ public abstract class AbstractHook<S extends AbstractHook<S>> extends AbstractAc
     }
 
     @Override
+    public boolean isApplyDefaultMatrixSet() {
+        return null != applyDefaultMatrix;
+    }
+
+    @Override
+    public boolean isApplyDefaultMatrix() {
+        return null != applyDefaultMatrix && applyDefaultMatrix;
+    }
+
+    @Override
+    public void setApplyDefaultMatrix(Boolean applyDefaultMatrix) {
+        this.applyDefaultMatrix = applyDefaultMatrix;
+    }
+
+    @Override
+    public Matrix getMatrix() {
+        return matrix;
+    }
+
+    @Override
+    public void setMatrix(Matrix matrix) {
+        this.matrix.merge(matrix);
+    }
+
+    @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
@@ -140,6 +170,7 @@ public abstract class AbstractHook<S extends AbstractHook<S>> extends AbstractAc
             map.put("filter", filterAsMap);
         }
         map.put("environment", environment);
+        matrix.asMap(map);
         asMap(full, map);
 
         return map;

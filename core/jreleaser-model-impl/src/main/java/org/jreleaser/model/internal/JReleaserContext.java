@@ -46,6 +46,7 @@ import org.jreleaser.model.internal.assemble.JavaArchiveAssembler;
 import org.jreleaser.model.internal.assemble.JavaAssembler;
 import org.jreleaser.model.internal.assemble.NativeImageAssembler;
 import org.jreleaser.model.internal.common.Artifact;
+import org.jreleaser.model.internal.platform.Platform;
 import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.internal.release.BaseReleaser;
 import org.jreleaser.mustache.TemplateContext;
@@ -606,20 +607,28 @@ public class JReleaserContext {
     }
 
     public boolean isPlatformSelected(Artifact artifact) {
-        return isPlatformSelected(artifact.getPlatform());
+        return isPlatformSelected(artifact.getPlatform(), new Platform());
+    }
+
+    public boolean isPlatformSelected(Artifact artifact, Platform platform) {
+        return isPlatformSelected(artifact.getPlatform(), platform);
     }
 
     public boolean isPlatformSelected(String platform) {
+        return isPlatformSelected(platform, new Platform());
+    }
+
+    public boolean isPlatformSelected(String platform, Platform replacements) {
         if (isBlank(platform)) return true;
 
         if (!selectedPlatforms.isEmpty()) {
             return selectedPlatforms.stream()
-                .anyMatch(selected -> PlatformUtils.isCompatible(selected, platform));
+                .anyMatch(selected -> PlatformUtils.isCompatible(replacements.applyReplacements(selected), platform));
         }
 
         if (!rejectedPlatforms.isEmpty()) {
             return rejectedPlatforms.stream()
-                .noneMatch(selected -> PlatformUtils.isCompatible(selected, platform));
+                .noneMatch(selected -> PlatformUtils.isCompatible(replacements.applyReplacements(selected), platform));
         }
 
         return true;

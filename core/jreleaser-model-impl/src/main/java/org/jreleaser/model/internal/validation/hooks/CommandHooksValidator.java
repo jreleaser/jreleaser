@@ -23,6 +23,7 @@ import org.jreleaser.model.internal.hooks.CommandHook;
 import org.jreleaser.model.internal.hooks.CommandHooks;
 import org.jreleaser.util.Errors;
 
+import static org.jreleaser.model.internal.validation.common.MatrixValidator.validateMatrix;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -42,6 +43,15 @@ public final class CommandHooksValidator {
         boolean activeSet = hooks.isActiveSet();
         resolveActivatable(context, hooks, "hooks.command", "ALWAYS");
         hooks.resolveEnabled(context.getModel().getProject());
+
+        if (hooks.getMatrix().isEmpty()) {
+            hooks.setMatrix(context.getModel().getHooks().getMatrix());
+        }
+        if (hooks.isApplyDefaultMatrix()) {
+            hooks.setMatrix(context.getModel().getMatrix());
+        }
+
+        validateMatrix(context, hooks.getMatrix(), "hooks.command.matrix", errors);
 
         for (int i = 0; i < hooks.getBefore().size(); i++) {
             validateCommandHook(context, hooks.getBefore().get(i), "before", i, errors);
@@ -73,6 +83,15 @@ public final class CommandHooksValidator {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
+
+        if (hook.getMatrix().isEmpty()) {
+            hook.setMatrix(context.getModel().getHooks().getCommand().getMatrix());
+        }
+        if (hook.isApplyDefaultMatrix()) {
+            hook.setMatrix(context.getModel().getMatrix());
+        }
+
+        validateMatrix(context, hook.getMatrix(), "hooks.command." + type + "[" + index + "].matrix", errors);
 
         if (isBlank(hook.getCmd())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "hook.cmd"));

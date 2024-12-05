@@ -19,6 +19,7 @@ package org.jreleaser.model.api.assemble;
 
 import org.jreleaser.model.Archive;
 import org.jreleaser.model.api.common.ArchiveOptions;
+import org.jreleaser.model.api.common.Matrix;
 
 import java.util.Set;
 
@@ -31,9 +32,13 @@ public interface ArchiveAssembler extends Assembler {
 
     String getArchiveName();
 
+    boolean isApplyDefaultMatrix();
+
     boolean isAttachPlatform();
 
     Set<Archive.Format> getFormats();
 
     ArchiveOptions getOptions();
+
+    Matrix getMatrix();
 }

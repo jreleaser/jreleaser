@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.common.AbstractActivatable;
 import org.jreleaser.model.internal.common.Domain;
+import org.jreleaser.model.internal.common.Matrix;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -32,17 +33,19 @@ import static java.util.Collections.unmodifiableMap;
  * @since 1.2.0
  */
 public final class Hooks extends AbstractActivatable<Hooks> implements Domain {
-    private static final long serialVersionUID = 4377142072279197602L;
+    private static final long serialVersionUID = 1623942143835992825L;
 
     private final Map<String, String> environment = new LinkedHashMap<>();
     private final CommandHooks command = new CommandHooks();
     private final ScriptHooks script = new ScriptHooks();
+    private final Matrix matrix = new Matrix();
 
     private String condition;
+    private Boolean applyDefaultMatrix;
 
     @JsonIgnore
     private final org.jreleaser.model.api.hooks.Hooks immutable = new org.jreleaser.model.api.hooks.Hooks() {
-        private static final long serialVersionUID = 2022724962028193279L;
+        private static final long serialVersionUID = -4757423955700050484L;
 
         @Override
         public org.jreleaser.model.api.hooks.CommandHooks getCommand() {
@@ -62,6 +65,16 @@ public final class Hooks extends AbstractActivatable<Hooks> implements Domain {
         @Override
         public Map<String, String> getEnvironment() {
             return unmodifiableMap(Hooks.this.getEnvironment());
+        }
+
+        @Override
+        public boolean isApplyDefaultMatrix() {
+            return Hooks.this.isApplyDefaultMatrix();
+        }
+
+        @Override
+        public org.jreleaser.model.api.common.Matrix getMatrix() {
+            return matrix.asImmutable();
         }
 
         @Override
@@ -95,6 +108,7 @@ public final class Hooks extends AbstractActivatable<Hooks> implements Domain {
         setCommand(source.command);
         setScript(source.script);
         setEnvironment(merge(this.environment, source.getEnvironment()));
+        setMatrix(source.matrix);
     }
 
     @Override
@@ -137,8 +151,24 @@ public final class Hooks extends AbstractActivatable<Hooks> implements Domain {
         this.environment.putAll(environment);
     }
 
-    public void addEnvironment(Map<String, String> environment) {
-        this.environment.putAll(environment);
+    public boolean isApplyDefaultMatrixSet() {
+        return null != applyDefaultMatrix;
+    }
+
+    public boolean isApplyDefaultMatrix() {
+        return null != applyDefaultMatrix && applyDefaultMatrix;
+    }
+
+    public void setApplyDefaultMatrix(Boolean applyDefaultMatrix) {
+        this.applyDefaultMatrix = applyDefaultMatrix;
+    }
+
+    public Matrix getMatrix() {
+        return matrix;
+    }
+
+    public void setMatrix(Matrix matrix) {
+        this.matrix.merge(matrix);
     }
 
     @Override
@@ -148,6 +178,7 @@ public final class Hooks extends AbstractActivatable<Hooks> implements Domain {
         map.put("active", getActive());
         map.put("condition", condition);
         map.put("environment", environment);
+        matrix.asMap(map);
         map.put("command", command.asMap(full));
         map.put("script", script.asMap(full));
         return map;

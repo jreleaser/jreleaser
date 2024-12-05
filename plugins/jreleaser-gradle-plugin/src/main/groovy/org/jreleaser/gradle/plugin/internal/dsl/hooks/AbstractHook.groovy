@@ -26,7 +26,9 @@ import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
+import org.jreleaser.gradle.plugin.dsl.common.Matrix
 import org.jreleaser.gradle.plugin.dsl.hooks.Hook
+import org.jreleaser.gradle.plugin.internal.dsl.common.MatrixImpl
 import org.jreleaser.model.Active
 import org.kordamp.gradle.util.ConfigureUtil
 
@@ -47,6 +49,8 @@ abstract class AbstractHook implements Hook {
     final Property<String> condition
     final SetProperty<String> platforms
     final MapProperty<String, String> environment
+    final Property<Boolean> applyDefaultMatrix
+    final MatrixImpl matrix
 
     @Inject
     AbstractHook(ObjectFactory objects) {
@@ -56,6 +60,8 @@ abstract class AbstractHook implements Hook {
         condition = objects.property(String).convention(Providers.<String> notDefined())
         platforms = objects.setProperty(String).convention(Providers.<List<String>> notDefined())
         environment = objects.mapProperty(String, String).convention(Providers.notDefined())
+        applyDefaultMatrix = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+        matrix = objects.newInstance(MatrixImpl, objects)
     }
 
     @Internal
@@ -81,9 +87,21 @@ abstract class AbstractHook implements Hook {
     }
 
     @Override
+    void matrix(Action<? super Matrix> action) {
+        action.execute(matrix)
+    }
+
+
+    @Override
     @CompileDynamic
     void filter(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Filter) Closure<Void> action) {
         ConfigureUtil.configure(action, filter)
+    }
+
+    @Override
+    @CompileDynamic
+    void matrix(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Matrix) Closure<Void> action) {
+        ConfigureUtil.configure(action, matrix)
     }
 
     @Override
@@ -106,6 +124,8 @@ abstract class AbstractHook implements Hook {
         if (verbose.present) hook.verbose = verbose.get()
         if (condition.present) hook.condition = condition.get()
         if (environment.present) hook.environment.putAll(environment.get())
+        if (applyDefaultMatrix.present) hook.applyDefaultMatrix = applyDefaultMatrix.get()
+        if (matrix.isSet()) hook.setMatrix(matrix.toModel())
         hook.platforms = (Set<String>) platforms.getOrElse([] as Set<String>)
     }
 

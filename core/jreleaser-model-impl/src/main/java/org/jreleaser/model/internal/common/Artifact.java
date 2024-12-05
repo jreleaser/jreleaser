@@ -25,6 +25,7 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.Assembler;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.util.Artifacts;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.util.Algorithm;
 
 import java.nio.file.Path;
@@ -262,35 +263,51 @@ public final class Artifact extends AbstractArtifact<Artifact> implements Domain
     }
 
     public Path getEffectivePath(JReleaserContext context) {
+        return getEffectivePath(context, (TemplateContext) null);
+    }
+
+    public Path getEffectivePath(JReleaserContext context, TemplateContext additionalContext) {
         if (null == effectivePath) {
-            Path rp = getResolvedPath(context);
-            Path tp = getResolvedTransform(context);
+            Path rp = getResolvedPath(context, additionalContext);
+            Path tp = getResolvedTransform(context, additionalContext);
             effectivePath = checkAndCopyFile(context, rp, tp, isOptional(context));
         }
         return effectivePath;
     }
 
     public Path getEffectivePath(JReleaserContext context, Distribution distribution) {
+        return getEffectivePath(context, null, distribution);
+    }
+
+    public Path getEffectivePath(JReleaserContext context, TemplateContext additionalContext, Distribution distribution) {
         if (null == effectivePath) {
-            Path rp = getResolvedPath(context, distribution);
-            Path tp = getResolvedTransform(context, distribution);
+            Path rp = getResolvedPath(context, additionalContext, distribution);
+            Path tp = getResolvedTransform(context, additionalContext, distribution);
             effectivePath = checkAndCopyFile(context, rp, tp, isOptional(context));
         }
         return effectivePath;
     }
 
     public Path getEffectivePath(JReleaserContext context, Assembler<?> assembler) {
+        return getEffectivePath(context, null, assembler);
+    }
+
+    public Path getEffectivePath(JReleaserContext context, TemplateContext additionalContext, Assembler<?> assembler) {
         if (null == effectivePath) {
-            Path rp = getResolvedPath(context, assembler);
-            Path tp = getResolvedTransform(context, assembler);
+            Path rp = getResolvedPath(context, additionalContext, assembler);
+            Path tp = getResolvedTransform(context, additionalContext, assembler);
             effectivePath = checkAndCopyFile(context, rp, tp, isOptional(context));
         }
         return effectivePath;
     }
 
     public Path getResolvedPath(JReleaserContext context, Path basedir, boolean checkIfExists) {
+        return getResolvedPath(context, null, basedir, checkIfExists);
+    }
+
+    public Path getResolvedPath(JReleaserContext context, TemplateContext additionalContext, Path basedir, boolean checkIfExists) {
         if (null == resolvedPath) {
-            path = resolveForArtifact(path, context, this);
+            path = resolveForArtifact(path, context, additionalContext, this);
             resolvedPath = basedir.resolve(Paths.get(path)).normalize();
             if (checkIfExists && !isOptional(context) && !exists(resolvedPath)) {
                 throw new JReleaserException(RB.$("ERROR_path_does_not_exist", context.relativizeToBasedir(resolvedPath)));
@@ -300,12 +317,20 @@ public final class Artifact extends AbstractArtifact<Artifact> implements Domain
     }
 
     public Path getResolvedPath(JReleaserContext context) {
-        return getResolvedPath(context, context.getBasedir(), context.getMode().validatePaths());
+        return getResolvedPath(context, (TemplateContext) null);
+    }
+
+    public Path getResolvedPath(JReleaserContext context, TemplateContext additionalContext) {
+        return getResolvedPath(context, additionalContext, context.getBasedir(), context.getMode().validatePaths());
     }
 
     public Path getResolvedPath(JReleaserContext context, Distribution distribution) {
+        return getResolvedPath(context, null, distribution);
+    }
+
+    public Path getResolvedPath(JReleaserContext context, TemplateContext additionalContext, Distribution distribution) {
         if (null == resolvedPath) {
-            path = Artifacts.resolveForArtifact(path, context, this, distribution);
+            path = Artifacts.resolveForArtifact(path, context, additionalContext, this, distribution);
             resolvedPath = context.getBasedir().resolve(Paths.get(path)).normalize();
             if (context.getMode().validatePaths() && !isOptional(context) && !exists(resolvedPath)) {
                 throw new JReleaserException(RB.$("ERROR_path_does_not_exist", context.relativizeToBasedir(resolvedPath)));
@@ -315,8 +340,12 @@ public final class Artifact extends AbstractArtifact<Artifact> implements Domain
     }
 
     public Path getResolvedPath(JReleaserContext context, Assembler<?> assembler) {
+        return getResolvedPath(context, null, assembler);
+    }
+
+    public Path getResolvedPath(JReleaserContext context, TemplateContext additionalContext, Assembler<?> assembler) {
         if (null == resolvedPath) {
-            path = Artifacts.resolveForArtifact(path, context, this, assembler);
+            path = Artifacts.resolveForArtifact(path, context, additionalContext, this, assembler);
             resolvedPath = context.getBasedir().resolve(Paths.get(path)).normalize();
             if (context.getMode().validatePaths() && !isOptional(context) && !exists(resolvedPath)) {
                 throw new JReleaserException(RB.$("ERROR_path_does_not_exist", context.relativizeToBasedir(resolvedPath)));
@@ -330,28 +359,44 @@ public final class Artifact extends AbstractArtifact<Artifact> implements Domain
     }
 
     public Path getResolvedTransform(JReleaserContext context, Path basedir) {
+        return getResolvedTransform(context, null, basedir);
+    }
+
+    public Path getResolvedTransform(JReleaserContext context, TemplateContext additionalContext, Path basedir) {
         if (null == resolvedTransform && isNotBlank(transform)) {
-            transform = resolveForArtifact(transform, context, this);
+            transform = resolveForArtifact(transform, context, additionalContext, this);
             resolvedTransform = basedir.resolve(Paths.get(transform)).normalize();
         }
         return resolvedTransform;
     }
 
     public Path getResolvedTransform(JReleaserContext context) {
-        return getResolvedTransform(context, context.getArtifactsDirectory());
+        return getResolvedTransform(context, (TemplateContext) null);
+    }
+
+    public Path getResolvedTransform(JReleaserContext context, TemplateContext additionalContext) {
+        return getResolvedTransform(context, additionalContext, context.getArtifactsDirectory());
     }
 
     public Path getResolvedTransform(JReleaserContext context, Distribution distribution) {
+        return getResolvedTransform(context, null, distribution);
+    }
+
+    public Path getResolvedTransform(JReleaserContext context, TemplateContext additionalContext, Distribution distribution) {
         if (null == resolvedTransform && isNotBlank(transform)) {
-            transform = Artifacts.resolveForArtifact(transform, context, this, distribution);
+            transform = Artifacts.resolveForArtifact(transform, context, additionalContext, this, distribution);
             resolvedTransform = context.getArtifactsDirectory().resolve(Paths.get(transform)).normalize();
         }
         return resolvedTransform;
     }
 
     public Path getResolvedTransform(JReleaserContext context, Assembler<?> assembler) {
+        return getResolvedTransform(context, null, assembler);
+    }
+
+    public Path getResolvedTransform(JReleaserContext context, TemplateContext additionalContext, Assembler<?> assembler) {
         if (null == resolvedTransform && isNotBlank(transform)) {
-            transform = Artifacts.resolveForArtifact(transform, context, this, assembler);
+            transform = Artifacts.resolveForArtifact(transform, context, additionalContext, this, assembler);
             resolvedTransform = context.getArtifactsDirectory().resolve(Paths.get(transform)).normalize();
         }
         return resolvedTransform;

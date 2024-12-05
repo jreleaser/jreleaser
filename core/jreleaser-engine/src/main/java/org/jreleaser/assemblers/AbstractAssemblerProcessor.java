@@ -237,12 +237,16 @@ public abstract class AbstractAssemblerProcessor<A extends org.jreleaser.model.a
     }
 
     protected void copyArtifacts(JReleaserContext context, Path destination, String platformConstraint, boolean filterByPlatform) throws AssemblerProcessingException {
+        copyArtifacts(context, null, destination, platformConstraint, filterByPlatform);
+    }
+
+    protected void copyArtifacts(JReleaserContext context, TemplateContext additionalContext, Path destination, String platformConstraint, boolean filterByPlatform) throws AssemblerProcessingException {
         try {
             Files.createDirectories(destination);
 
             for (Artifact artifact : assembler.getArtifacts()) {
                 if (!artifact.resolveEnabled(context.getModel().getProject())) continue;
-                Path incoming = artifact.getResolvedPath(context, assembler);
+                Path incoming = artifact.getResolvedPath(context, additionalContext, assembler);
                 if (artifact.isOptional(context) && !artifact.resolvedPathExists()) continue;
                 String platform = artifact.getPlatform();
                 if (filterByPlatform && isNotBlank(platformConstraint) && isNotBlank(platform) && !PlatformUtils.isCompatible(platformConstraint, platform)) {
@@ -254,7 +258,7 @@ public abstract class AbstractAssemblerProcessor<A extends org.jreleaser.model.a
                 String transform = artifact.getTransform();
                 if (isNotBlank(transform)) {
                     if (transform.startsWith("/")) transform = transform.substring(1);
-                    outgoing = Paths.get(Artifacts.resolveForArtifact(transform, context, artifact, assembler));
+                    outgoing = Paths.get(Artifacts.resolveForArtifact(transform, context, additionalContext, artifact, assembler));
                 }
                 outgoing = destination.resolve(outgoing);
                 Files.createDirectories(outgoing.getParent());
@@ -268,13 +272,17 @@ public abstract class AbstractAssemblerProcessor<A extends org.jreleaser.model.a
     }
 
     protected void copyFiles(JReleaserContext context, Path destination) throws AssemblerProcessingException {
+        copyFiles(context, null, destination);
+    }
+
+    protected void copyFiles(JReleaserContext context, TemplateContext additionalContext, Path destination) throws AssemblerProcessingException {
         Set<Path> paths = new LinkedHashSet<>();
 
         // resolve all first
         for (Glob glob : assembler.getFiles()) {
             if (!glob.resolveActiveAndSelected(context)) continue;
-            glob.getResolvedArtifacts(context).stream()
-                .map(artifact -> artifact.getResolvedPath(context, assembler))
+            glob.getResolvedArtifacts(context, additionalContext).stream()
+                .map(artifact -> artifact.getResolvedPath(context, additionalContext, assembler))
                 .forEach(paths::add);
         }
 
@@ -291,18 +299,22 @@ public abstract class AbstractAssemblerProcessor<A extends org.jreleaser.model.a
     }
 
     protected void copyFileSets(JReleaserContext context, Path destination) throws AssemblerProcessingException {
+        copyFileSets(context, null, destination);
+    }
+
+    protected void copyFileSets(JReleaserContext context, TemplateContext additionalContext, Path destination) throws AssemblerProcessingException {
         try {
             for (FileSet fileSet : assembler.getFileSets()) {
                 if (!fileSet.resolveActiveAndSelected(context)) continue;
-                Path src = context.getBasedir().resolve(fileSet.getResolvedInput(context));
+                Path src = context.getBasedir().resolve(fileSet.getResolvedInput(context, additionalContext));
                 Path dest = destination;
 
-                String output = fileSet.getResolvedOutput(context);
+                String output = fileSet.getResolvedOutput(context, additionalContext);
                 if (isNotBlank(output)) {
                     dest = destination.resolve(output);
                 }
 
-                Set<Path> paths = fileSet.getResolvedPaths(context);
+                Set<Path> paths = fileSet.getResolvedPaths(context, additionalContext);
                 FileUtils.copyFiles(context.getLogger(), src, dest, paths);
             }
         } catch (IOException e) {

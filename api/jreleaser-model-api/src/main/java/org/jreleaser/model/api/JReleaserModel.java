@@ -22,6 +22,7 @@ import org.jreleaser.model.api.assemble.Assemble;
 import org.jreleaser.model.api.catalog.Catalog;
 import org.jreleaser.model.api.checksum.Checksum;
 import org.jreleaser.model.api.common.Domain;
+import org.jreleaser.model.api.common.Matrix;
 import org.jreleaser.model.api.deploy.Deploy;
 import org.jreleaser.model.api.distributions.Distribution;
 import org.jreleaser.model.api.download.Download;
@@ -51,6 +52,8 @@ public interface JReleaserModel extends Domain {
     Commit getCommit();
 
     Environment getEnvironment();
+
+    Matrix getMatrix();
 
     Hooks getHooks();
 

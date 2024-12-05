@@ -33,6 +33,7 @@ import org.jreleaser.gradle.plugin.dsl.announce.Announce
 import org.jreleaser.gradle.plugin.dsl.assemble.Assemble
 import org.jreleaser.gradle.plugin.dsl.catalog.Catalog
 import org.jreleaser.gradle.plugin.dsl.checksum.Checksum
+import org.jreleaser.gradle.plugin.dsl.common.Matrix
 import org.jreleaser.gradle.plugin.dsl.deploy.Deploy
 import org.jreleaser.gradle.plugin.dsl.distributions.Distribution
 import org.jreleaser.gradle.plugin.dsl.download.Download
@@ -50,6 +51,7 @@ import org.jreleaser.gradle.plugin.internal.dsl.announce.AnnounceImpl
 import org.jreleaser.gradle.plugin.internal.dsl.assemble.AssembleImpl
 import org.jreleaser.gradle.plugin.internal.dsl.catalog.CatalogImpl
 import org.jreleaser.gradle.plugin.internal.dsl.checksum.ChecksumImpl
+import org.jreleaser.gradle.plugin.internal.dsl.common.MatrixImpl
 import org.jreleaser.gradle.plugin.internal.dsl.deploy.DeployImpl
 import org.jreleaser.gradle.plugin.internal.dsl.distributions.DistributionImpl
 import org.jreleaser.gradle.plugin.internal.dsl.download.DownloadImpl
@@ -87,6 +89,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     final Property<Boolean> strict
     final Property<Boolean> dependsOnAssemble
     final EnvironmentImpl environment
+    final MatrixImpl matrix
     final HooksImpl hooks
     final ProjectImpl project
     final PlatformImpl platform
@@ -120,6 +123,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         gitRootSearch = objects.property(Boolean).convention(resolveBoolean(org.jreleaser.model.api.JReleaserContext.GIT_ROOT_SEARCH))
         dependsOnAssemble = objects.property(Boolean).convention(true)
         environment = objects.newInstance(EnvironmentImpl, objects)
+        matrix = objects.newInstance(MatrixImpl, objects)
         hooks = objects.newInstance(HooksImpl, objects)
         project = objects.newInstance(ProjectImpl, objects, nameProvider, descriptionProvider, versionProvider)
         platform = objects.newInstance(PlatformImpl, objects)
@@ -163,6 +167,11 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     @Override
     void environment(Action<? super Environment> action) {
         action.execute(environment)
+    }
+
+    @Override
+    void matrix(Action<? super Matrix> action) {
+        action.execute(matrix)
     }
 
     @Override
@@ -249,6 +258,13 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     @CompileDynamic
     void environment(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Environment) Closure<Void> action) {
         ConfigureUtil.configure(action, environment)
+    }
+
+
+    @Override
+    @CompileDynamic
+    void matrix(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Matrix) Closure<Void> action) {
+        ConfigureUtil.configure(action, matrix)
     }
 
     @Override
@@ -361,6 +377,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
 
         JReleaserModel jreleaser = new JReleaserModel()
         jreleaser.environment = environment.toModel(gradleProject)
+        jreleaser.setMatrix(matrix.toModel())
         jreleaser.hooks = hooks.toModel()
         jreleaser.project = project.toModel()
         jreleaser.platform = platform.toModel()

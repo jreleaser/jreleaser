@@ -15,31 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.api.hooks;
+package org.jreleaser.gradle.plugin.dsl.common
 
-import org.jreleaser.model.api.common.Activatable;
-import org.jreleaser.model.api.common.Domain;
-import org.jreleaser.model.api.common.Matrix;
 
-import java.util.List;
-import java.util.Map;
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
 
 /**
  * @author Andres Almiray
- * @since 1.6.0
+ * @since 1.16.0
  */
-public interface ScriptHooks extends Domain, Activatable {
-    List<? extends ScriptHook> getBefore();
+interface Matrix {
+    MapProperty<String, List<String>> getVars()
 
-    List<? extends ScriptHook> getSuccess();
+    ListProperty<Map<String, String>> getRows()
 
-    List<? extends ScriptHook> getFailure();
+    void variable(String key, List<String> values)
 
-    Map<String, String> getEnvironment();
-
-    String getCondition();
-
-    boolean isApplyDefaultMatrix();
-
-    Matrix getMatrix();
+    void row(Map<String, String> values)
 }

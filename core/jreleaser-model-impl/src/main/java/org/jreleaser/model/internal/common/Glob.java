@@ -23,6 +23,7 @@ import org.jreleaser.model.Active;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.util.Artifacts;
+import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.util.PlatformUtils;
 
 import java.io.File;
@@ -141,16 +142,20 @@ public final class Glob extends AbstractArtifact<Glob> implements Domain, ExtraP
     }
 
     public Set<Artifact> getResolvedArtifacts(JReleaserContext context) {
-        return getResolvedArtifactsPattern(context);
+        return getResolvedArtifacts(context, null);
     }
 
-    public Set<Artifact> getResolvedArtifactsPattern(JReleaserContext context) {
+    public Set<Artifact> getResolvedArtifacts(JReleaserContext context, TemplateContext additionalContext) {
+        return getResolvedArtifactsPattern(context, additionalContext);
+    }
+
+    public Set<Artifact> getResolvedArtifactsPattern(JReleaserContext context, TemplateContext additionalContext) {
         if (!isActiveAndSelected()) return emptySet();
 
         if (null == artifacts) {
-            setPattern(Artifacts.resolveForGlob(getPattern(), context, this));
+            setPattern(Artifacts.resolveForGlob(getPattern(), context, additionalContext, this));
             normalizePattern();
-            artifacts = Artifacts.resolveFiles(context, resolveDirectory(context), singletonList(pattern));
+            artifacts = Artifacts.resolveFiles(context, additionalContext, resolveDirectory(context, additionalContext), singletonList(pattern));
             artifacts.forEach(artifact -> {
                 artifact.setPlatform(getPlatform());
                 artifact.setActive(getActive());
@@ -163,11 +168,11 @@ public final class Glob extends AbstractArtifact<Glob> implements Domain, ExtraP
         return artifacts;
     }
 
-    private Path resolveDirectory(JReleaserContext context) {
+    private Path resolveDirectory(JReleaserContext context, TemplateContext additionalContext) {
         // resolve directory
         Path path = context.getBasedir();
         if (isNotBlank(directory)) {
-            directory = normalizeForWindows(Artifacts.resolveForGlob(directory, context, this));
+            directory = normalizeForWindows(Artifacts.resolveForGlob(directory, context, additionalContext, this));
             path = context.getBasedir().resolve(Paths.get(directory)).normalize();
             if (context.getMode().validatePaths() && !exists(path)) {
                 throw new JReleaserException(RB.$("ERROR_path_does_not_exist", context.relativizeToBasedir(path)));

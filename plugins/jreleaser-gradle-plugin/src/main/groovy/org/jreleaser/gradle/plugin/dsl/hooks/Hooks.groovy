@@ -22,6 +22,7 @@ import org.gradle.api.Action
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.common.Activatable
+import org.jreleaser.gradle.plugin.dsl.common.Matrix
 
 /**
  *
@@ -38,13 +39,19 @@ interface Hooks extends Activatable {
 
     MapProperty<String, String> getEnvironment()
 
+    Property<Boolean> getApplyDefaultMatrix()
+
     void environment(String key, String value)
 
     void command(Action<? super CommandHooks> action)
 
     void script(Action<? super ScriptHooks> action)
 
+    void matrix(Action<? super Matrix> action)
+
     void command(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommandHooks) Closure<Void> action)
 
     void script(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ScriptHooks) Closure<Void> action)
+
+    void matrix(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Matrix) Closure<Void> action)
 }

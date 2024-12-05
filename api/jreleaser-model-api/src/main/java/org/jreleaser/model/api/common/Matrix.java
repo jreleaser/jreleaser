@@ -15,31 +15,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.api.hooks;
-
-import org.jreleaser.model.api.common.Activatable;
-import org.jreleaser.model.api.common.Domain;
-import org.jreleaser.model.api.common.Matrix;
+package org.jreleaser.model.api.common;
 
 import java.util.List;
 import java.util.Map;
 
 /**
  * @author Andres Almiray
- * @since 1.6.0
+ * @since 1.16.0
  */
-public interface ScriptHooks extends Domain, Activatable {
-    List<? extends ScriptHook> getBefore();
+public interface Matrix extends Domain {
+    Map<String, List<String>> getVars();
 
-    List<? extends ScriptHook> getSuccess();
+    List<Map<String, String>> getRows();
 
-    List<? extends ScriptHook> getFailure();
-
-    Map<String, String> getEnvironment();
-
-    String getCondition();
-
-    boolean isApplyDefaultMatrix();
-
-    Matrix getMatrix();
+    List<Map<String, String>> resolved();
 }

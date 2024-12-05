@@ -95,31 +95,57 @@ public final class Artifacts {
     }
 
     public static String resolveForArtifact(String input, JReleaserContext context) {
-        return resolveTemplate(input, context.fullProps());
+        return resolveForArtifact(input, context, (TemplateContext) null);
+    }
+
+    public static String resolveForArtifact(String input, JReleaserContext context, TemplateContext additionalContext) {
+        return resolveTemplate(input, context.fullProps().setAll(additionalContext));
     }
 
     public static String resolveForArtifact(String input, JReleaserContext context, Artifact artifact) {
-        return resolveTemplate(input, artifactProps(artifact, context.fullProps()));
+        return resolveForArtifact(input, context, null, artifact);
+    }
+
+    public static String resolveForArtifact(String input, JReleaserContext context, TemplateContext additionalContext, Artifact artifact) {
+        return resolveTemplate(input, artifactProps(artifact, context.fullProps().setAll(additionalContext)));
     }
 
     public static String resolveForGlob(String input, JReleaserContext context, Glob glob) {
-        return resolveTemplate(input, globProps(glob, context.fullProps()));
+        return resolveForGlob(input, context, null, glob);
+    }
+
+    public static String resolveForGlob(String input, JReleaserContext context, TemplateContext additionalContext, Glob glob) {
+        return resolveTemplate(input, globProps(glob, context.fullProps().setAll(additionalContext)));
     }
 
     public static String resolveForFileSet(String input, JReleaserContext context, FileSet fileSet) {
-        return resolveTemplate(input, fileSetProps(fileSet, context.fullProps()));
+        return resolveForFileSet(input, context, null, fileSet);
+    }
+
+    public static String resolveForFileSet(String input, JReleaserContext context, TemplateContext additionalContext, FileSet fileSet) {
+        return resolveTemplate(input, fileSetProps(fileSet, context.fullProps().setAll(additionalContext)));
     }
 
     public static String resolveForArtifact(String input, JReleaserContext context, Artifact artifact, Distribution distribution) {
-        TemplateContext props = context.fullProps();
-        props.setAll(distribution.props());
+        return resolveForArtifact(input, context, null, artifact, distribution);
+    }
+
+    public static String resolveForArtifact(String input, JReleaserContext context, TemplateContext additionalContext, Artifact artifact, Distribution distribution) {
+        TemplateContext props = context.fullProps()
+            .setAll(additionalContext)
+            .setAll(distribution.props());
         artifactProps(artifact, props);
         return resolveTemplate(input, props);
     }
 
     public static String resolveForArtifact(String input, JReleaserContext context, Artifact artifact, Assembler<?> assembler) {
-        TemplateContext props = context.fullProps();
-        props.setAll(assembler.props());
+        return resolveForArtifact(input, context, null, artifact, assembler);
+    }
+
+    public static String resolveForArtifact(String input, JReleaserContext context, TemplateContext additionalContext, Artifact artifact, Assembler<?> assembler) {
+        TemplateContext props = context.fullProps()
+            .setAll(additionalContext)
+            .setAll(assembler.props());
         artifactProps(artifact, props);
         return resolveTemplate(input, props);
     }
@@ -490,7 +516,11 @@ public final class Artifacts {
     }
 
     public static Set<Artifact> resolveFiles(JReleaserContext context, Path directory, Collection<String> globs) throws JReleaserException {
-        return resolveFiles(context.getLogger(), context.fullProps(), directory, globs);
+        return resolveFiles(context, null, directory, globs);
+    }
+
+    public static Set<Artifact> resolveFiles(JReleaserContext context, TemplateContext additionalContext, Path directory, Collection<String> globs) throws JReleaserException {
+        return resolveFiles(context.getLogger(), context.fullProps().setAll(additionalContext), directory, globs);
     }
 
     private static class GlobResolver extends SimpleFileVisitor<Path> {

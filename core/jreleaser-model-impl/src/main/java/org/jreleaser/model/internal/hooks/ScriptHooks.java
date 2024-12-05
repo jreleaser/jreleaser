@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.common.AbstractActivatable;
 import org.jreleaser.model.internal.common.Domain;
+import org.jreleaser.model.internal.common.Matrix;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,18 +37,20 @@ import static java.util.stream.Collectors.toList;
  * @since 1.6.0
  */
 public final class ScriptHooks extends AbstractActivatable<ScriptHooks> implements Domain {
-    private static final long serialVersionUID = -8421249812402488941L;
+    private static final long serialVersionUID = -4297448990828592276L;
 
     private final List<ScriptHook> before = new ArrayList<>();
     private final List<ScriptHook> success = new ArrayList<>();
     private final List<ScriptHook> failure = new ArrayList<>();
     private final Map<String, String> environment = new LinkedHashMap<>();
+    private final Matrix matrix = new Matrix();
 
     private String condition;
+    private Boolean applyDefaultMatrix;
 
     @JsonIgnore
     private final org.jreleaser.model.api.hooks.ScriptHooks immutable = new org.jreleaser.model.api.hooks.ScriptHooks() {
-        private static final long serialVersionUID = 6010707122339136759L;
+        private static final long serialVersionUID = 5161877226451497599L;
 
         private List<? extends org.jreleaser.model.api.hooks.ScriptHook> before;
         private List<? extends org.jreleaser.model.api.hooks.ScriptHook> success;
@@ -94,6 +97,16 @@ public final class ScriptHooks extends AbstractActivatable<ScriptHooks> implemen
         }
 
         @Override
+        public boolean isApplyDefaultMatrix() {
+            return ScriptHooks.this.isApplyDefaultMatrix();
+        }
+
+        @Override
+        public org.jreleaser.model.api.common.Matrix getMatrix() {
+            return matrix.asImmutable();
+        }
+
+        @Override
         public Active getActive() {
             return ScriptHooks.this.getActive();
         }
@@ -125,6 +138,7 @@ public final class ScriptHooks extends AbstractActivatable<ScriptHooks> implemen
         setSuccess(merge(this.success, source.success));
         setFailure(merge(this.failure, source.failure));
         setEnvironment(merge(this.environment, source.getEnvironment()));
+        setMatrix(source.matrix);
     }
 
     @Override
@@ -197,8 +211,24 @@ public final class ScriptHooks extends AbstractActivatable<ScriptHooks> implemen
         this.environment.putAll(environment);
     }
 
-    public void addEnvironment(Map<String, String> environment) {
-        this.environment.putAll(environment);
+    public boolean isApplyDefaultMatrixSet() {
+        return null != applyDefaultMatrix;
+    }
+
+    public boolean isApplyDefaultMatrix() {
+        return null != applyDefaultMatrix && applyDefaultMatrix;
+    }
+
+    public void setApplyDefaultMatrix(Boolean applyDefaultMatrix) {
+        this.applyDefaultMatrix = applyDefaultMatrix;
+    }
+
+    public Matrix getMatrix() {
+        return matrix;
+    }
+
+    public void setMatrix(Matrix matrix) {
+        this.matrix.merge(matrix);
     }
 
     @Override
@@ -208,6 +238,7 @@ public final class ScriptHooks extends AbstractActivatable<ScriptHooks> implemen
         map.put("active", getActive());
         map.put("condition", condition);
         map.put("environment", environment);
+        matrix.asMap(map);
 
         Map<String, Map<String, Object>> m = new LinkedHashMap<>();
         int i = 0;

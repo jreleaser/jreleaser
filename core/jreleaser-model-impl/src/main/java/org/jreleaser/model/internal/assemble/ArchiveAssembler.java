@@ -27,6 +27,7 @@ import org.jreleaser.model.internal.common.ArchiveOptions;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.FileSet;
 import org.jreleaser.model.internal.common.Glob;
+import org.jreleaser.model.internal.common.Matrix;
 import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.util.PlatformUtils;
 
@@ -41,24 +42,27 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.jreleaser.model.api.assemble.ArchiveAssembler.TYPE;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
+import static org.jreleaser.util.CollectionUtils.mapOf;
 
 /**
  * @author Andres Almiray
  * @since 0.8.0
  */
 public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, org.jreleaser.model.api.assemble.ArchiveAssembler> {
-    private static final long serialVersionUID = 3638561324059031387L;
+    private static final long serialVersionUID = 3715412996519073941L;
 
     private final Set<Archive.Format> formats = new LinkedHashSet<>();
     private final ArchiveOptions options = new ArchiveOptions();
+    private final Matrix matrix = new Matrix();
 
     private String archiveName;
+    private Boolean applyDefaultMatrix;
     private Boolean attachPlatform;
     private Distribution.DistributionType distributionType;
 
     @JsonIgnore
     private final org.jreleaser.model.api.assemble.ArchiveAssembler immutable = new org.jreleaser.model.api.assemble.ArchiveAssembler() {
-        private static final long serialVersionUID = 6477859938632197400L;
+        private static final long serialVersionUID = 3508112065751072495L;
 
         private Set<? extends org.jreleaser.model.api.common.Artifact> artifacts;
         private List<? extends org.jreleaser.model.api.common.FileSet> fileSets;
@@ -68,6 +72,11 @@ public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, 
         @Override
         public String getArchiveName() {
             return archiveName;
+        }
+
+        @Override
+        public boolean isApplyDefaultMatrix() {
+            return ArchiveAssembler.this.isApplyDefaultMatrix();
         }
 
         @Override
@@ -83,6 +92,11 @@ public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, 
         @Override
         public org.jreleaser.model.api.common.ArchiveOptions getOptions() {
             return options.asImmutable();
+        }
+
+        @Override
+        public org.jreleaser.model.api.common.Matrix getMatrix() {
+            return matrix.asImmutable();
         }
 
         @Override
@@ -223,14 +237,19 @@ public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, 
         super.merge(source);
         this.archiveName = merge(this.archiveName, source.archiveName);
         this.distributionType = merge(this.distributionType, source.distributionType);
+        this.applyDefaultMatrix = merge(this.applyDefaultMatrix, source.applyDefaultMatrix);
         this.attachPlatform = merge(this.attachPlatform, source.attachPlatform);
         setFormats(merge(this.formats, source.formats));
         setOptions(source.options);
+        setMatrix(source.matrix);
     }
 
-    public String getResolvedArchiveName(JReleaserContext context) {
+    public String getResolvedArchiveName(JReleaserContext context, Map<String, String> matrix) {
         TemplateContext props = context.fullProps();
         props.setAll(props());
+        if (null != matrix) {
+            props.setAll(mapOf("matrix", matrix));
+        }
         String result = resolveTemplate(archiveName, props);
         if (isAttachPlatform()) {
             result += "-" + getPlatform().applyReplacements(PlatformUtils.getCurrentFull());
@@ -244,6 +263,18 @@ public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, 
 
     public void setArchiveName(String archiveName) {
         this.archiveName = archiveName;
+    }
+
+    public boolean isApplyDefaultMatrixSet() {
+        return null != applyDefaultMatrix;
+    }
+
+    public boolean isApplyDefaultMatrix() {
+        return null != applyDefaultMatrix && applyDefaultMatrix;
+    }
+
+    public void setApplyDefaultMatrix(Boolean applyDefaultMatrix) {
+        this.applyDefaultMatrix = applyDefaultMatrix;
     }
 
     public boolean isAttachPlatformSet() {
@@ -283,12 +314,22 @@ public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, 
         this.options.merge(options);
     }
 
+    public Matrix getMatrix() {
+        return matrix;
+    }
+
+    public void setMatrix(Matrix matrix) {
+        this.matrix.merge(matrix);
+    }
+
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("archiveName", archiveName);
         props.put("distributionType", distributionType);
+        props.put("applyDefaultMatrix", isApplyDefaultMatrix());
         props.put("attachPlatform", isAttachPlatform());
         props.put("formats", formats);
         props.put("options", options.asMap(full));
+        matrix.asMap(props);
     }
 }

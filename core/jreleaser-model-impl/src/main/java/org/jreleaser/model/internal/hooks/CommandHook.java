@@ -41,7 +41,7 @@ public final class CommandHook extends AbstractHook<CommandHook> {
 
     @JsonIgnore
     private final org.jreleaser.model.api.hooks.CommandHook immutable = new org.jreleaser.model.api.hooks.CommandHook() {
-        private static final long serialVersionUID = -5508866361578364076L;
+        private static final long serialVersionUID = 3604503981521691484L;
 
         @Override
         public String getCmd() {
@@ -51,6 +51,16 @@ public final class CommandHook extends AbstractHook<CommandHook> {
         @Override
         public Map<String, String> getEnvironment() {
             return unmodifiableMap(CommandHook.this.getEnvironment());
+        }
+
+        @Override
+        public boolean isApplyDefaultMatrix() {
+            return CommandHook.this.isApplyDefaultMatrix();
+        }
+
+        @Override
+        public org.jreleaser.model.api.common.Matrix getMatrix() {
+            return matrix.asImmutable();
         }
 
         @Override
@@ -104,8 +114,8 @@ public final class CommandHook extends AbstractHook<CommandHook> {
         this.cmd = merge(this.cmd, source.cmd);
     }
 
-    public String getResolvedCmd(JReleaserContext context, ExecutionEvent event) {
-        TemplateContext props = context.fullProps();
+    public String getResolvedCmd(JReleaserContext context, TemplateContext additionalContext, ExecutionEvent event) {
+        TemplateContext props = context.fullProps().setAll(additionalContext);
         props.set("event", event);
         return resolveTemplate(cmd, props);
     }

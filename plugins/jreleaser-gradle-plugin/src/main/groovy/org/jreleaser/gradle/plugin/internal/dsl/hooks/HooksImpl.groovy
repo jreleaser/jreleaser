@@ -24,9 +24,11 @@ import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
+import org.jreleaser.gradle.plugin.dsl.common.Matrix
 import org.jreleaser.gradle.plugin.dsl.hooks.CommandHooks
 import org.jreleaser.gradle.plugin.dsl.hooks.Hooks
 import org.jreleaser.gradle.plugin.dsl.hooks.ScriptHooks
+import org.jreleaser.gradle.plugin.internal.dsl.common.MatrixImpl
 import org.jreleaser.model.Active
 import org.kordamp.gradle.util.ConfigureUtil
 
@@ -46,6 +48,8 @@ class HooksImpl implements Hooks {
     final ScriptHooksImpl script
     final Property<String> condition
     final MapProperty<String, String> environment
+    final Property<Boolean> applyDefaultMatrix
+    final MatrixImpl matrix
 
     @Inject
     HooksImpl(ObjectFactory objects) {
@@ -54,6 +58,8 @@ class HooksImpl implements Hooks {
         script = objects.newInstance(ScriptHooksImpl, objects)
         condition = objects.property(String).convention(Providers.<String> notDefined())
         environment = objects.mapProperty(String, String).convention(Providers.notDefined())
+        applyDefaultMatrix = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+        matrix = objects.newInstance(MatrixImpl, objects)
     }
 
     @Override
@@ -81,6 +87,11 @@ class HooksImpl implements Hooks {
     }
 
     @Override
+    void matrix(Action<? super Matrix> action) {
+        action.execute(matrix)
+    }
+
+    @Override
     @CompileDynamic
     void command(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommandHooks) Closure<Void> action) {
         ConfigureUtil.configure(action, command)
@@ -92,11 +103,19 @@ class HooksImpl implements Hooks {
         ConfigureUtil.configure(action, script)
     }
 
+    @Override
+    @CompileDynamic
+    void matrix(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Matrix) Closure<Void> action) {
+        ConfigureUtil.configure(action, matrix)
+    }
+
     org.jreleaser.model.internal.hooks.Hooks toModel() {
         org.jreleaser.model.internal.hooks.Hooks hooks = new org.jreleaser.model.internal.hooks.Hooks()
         if (active.present) hooks.active = active.get()
         if (condition.present) hooks.condition = condition.get()
         if (environment.present) hooks.environment.putAll(environment.get())
+        if (applyDefaultMatrix.present) hooks.applyDefaultMatrix = applyDefaultMatrix.get()
+        if (matrix.isSet()) hooks.setMatrix(matrix.toModel())
         hooks.command = command.toModel()
         hooks.script = script.toModel()
         hooks

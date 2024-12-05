@@ -22,6 +22,7 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.mustache.TemplateContext;
 
 import java.io.IOException;
 import java.nio.file.FileSystem;
@@ -200,31 +201,51 @@ public final class FileSet extends AbstractArtifact<FileSet> implements Domain, 
     }
 
     public String getResolvedInput(JReleaserContext context) {
-        return resolveForFileSet(input, context, this);
+        return getResolvedInput(context, null);
+    }
+
+    public String getResolvedInput(JReleaserContext context, TemplateContext additionalContext) {
+        return resolveForFileSet(input, context, additionalContext, this);
     }
 
     public String getResolvedOutput(JReleaserContext context) {
-        return resolveForFileSet(output, context, this);
+        return getResolvedOutput(context, null);
+    }
+
+    public String getResolvedOutput(JReleaserContext context, TemplateContext additionalContext) {
+        return resolveForFileSet(output, context, additionalContext, this);
     }
 
     public Set<String> getResolvedIncludes(JReleaserContext context) {
+        return getResolvedIncludes(context, null);
+    }
+
+    public Set<String> getResolvedIncludes(JReleaserContext context, TemplateContext additionalContext) {
         return includes.stream()
-            .map(s -> resolveForFileSet(s, context, this))
+            .map(s -> resolveForFileSet(s, context, additionalContext, this))
             .collect(toSet());
     }
 
     public Set<String> getResolvedExcludes(JReleaserContext context) {
+        return getResolvedExcludes(context, null);
+    }
+
+    public Set<String> getResolvedExcludes(JReleaserContext context, TemplateContext additionalContext) {
         return excludes.stream()
-            .map(s -> resolveForFileSet(s, context, this))
+            .map(s -> resolveForFileSet(s, context, additionalContext, this))
             .collect(toSet());
     }
 
     public Set<Path> getResolvedPaths(JReleaserContext context) throws IOException {
+        return getResolvedPaths(context, null);
+    }
+
+    public Set<Path> getResolvedPaths(JReleaserContext context, TemplateContext additionalContext) throws IOException {
         if (!isActiveAndSelected()) return emptySet();
 
-        Path basedir = context.getBasedir().resolve(getResolvedInput(context)).normalize().toAbsolutePath();
+        Path basedir = context.getBasedir().resolve(getResolvedInput(context, additionalContext)).normalize().toAbsolutePath();
 
-        Set<String> resolvedIncludes = getResolvedIncludes(context);
+        Set<String> resolvedIncludes = getResolvedIncludes(context, additionalContext);
         if (resolvedIncludes.isEmpty()) {
             resolvedIncludes = setOf("**/*");
         }
@@ -232,7 +253,7 @@ public final class FileSet extends AbstractArtifact<FileSet> implements Domain, 
             .map(s -> GLOB_PREFIX + s)
             .collect(toSet());
 
-        Set<String> resolvedExcludes = getResolvedExcludes(context);
+        Set<String> resolvedExcludes = getResolvedExcludes(context, additionalContext);
         resolvedExcludes = resolvedExcludes.stream()
             .map(s -> GLOB_PREFIX + s)
             .collect(toSet());

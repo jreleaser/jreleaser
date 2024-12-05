@@ -22,6 +22,7 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.hooks.Hooks;
 import org.jreleaser.util.Errors;
 
+import static org.jreleaser.model.internal.validation.common.MatrixValidator.validateMatrix;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.hooks.CommandHooksValidator.validateCommandHooks;
 import static org.jreleaser.model.internal.validation.hooks.ScriptHooksValidator.validateScriptHooks;
@@ -39,6 +40,11 @@ public final class HooksValidator {
         context.getLogger().debug("hooks");
 
         Hooks hooks = context.getModel().getHooks();
+        if (hooks.isApplyDefaultMatrix()) {
+            hooks.setMatrix(context.getModel().getMatrix());
+        }
+
+        validateMatrix(context, hooks.getMatrix(), "hooks.matrix", errors);
         validateCommandHooks(context, errors);
         validateScriptHooks(context, errors);
 

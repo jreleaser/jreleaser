@@ -26,6 +26,7 @@ import org.jreleaser.gradle.plugin.dsl.announce.Announce
 import org.jreleaser.gradle.plugin.dsl.assemble.Assemble
 import org.jreleaser.gradle.plugin.dsl.catalog.Catalog
 import org.jreleaser.gradle.plugin.dsl.checksum.Checksum
+import org.jreleaser.gradle.plugin.dsl.common.Matrix
 import org.jreleaser.gradle.plugin.dsl.deploy.Deploy
 import org.jreleaser.gradle.plugin.dsl.distributions.Distribution
 import org.jreleaser.gradle.plugin.dsl.download.Download
@@ -63,6 +64,8 @@ interface JReleaserExtension {
 
     Environment getEnvironment()
 
+    Matrix getMatrix()
+
     Hooks getHooks()
 
     Project getProject()
@@ -94,6 +97,8 @@ interface JReleaserExtension {
     NamedDomainObjectContainer<Distribution> getDistributions()
 
     void environment(Action<? super Environment> action)
+
+    void matrix(Action<? super Matrix> action)
 
     void hooks(Action<? super Hooks> action)
 
@@ -128,6 +133,8 @@ interface JReleaserExtension {
     void extensions(Action<? super NamedDomainObjectContainer<Extension>> action)
 
     void environment(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Environment) Closure<Void> action)
+
+    void matrix(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Matrix) Closure<Void> action)
 
     void hooks(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Hooks) Closure<Void> action)
 

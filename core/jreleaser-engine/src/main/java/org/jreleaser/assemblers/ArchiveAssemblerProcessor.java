@@ -30,6 +30,11 @@ import org.jreleaser.util.PlatformUtils;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.Map;
+
+import static org.jreleaser.model.Constants.KEY_PLATFORM;
+import static org.jreleaser.util.CollectionUtils.mapOf;
 
 /**
  * @author Andres Almiray
@@ -42,11 +47,37 @@ public class ArchiveAssemblerProcessor extends AbstractAssemblerProcessor<org.jr
 
     @Override
     protected void doAssemble(TemplateContext props) throws AssemblerProcessingException {
+        if (!assembler.getMatrix().isEmpty()) {
+            List<Map<String, String>> matrix = assembler.getMatrix().resolve();
+            for (int i = 0; i < matrix.size(); i++) {
+                Map<String, String> matrixRow = matrix.get(i);
+                if (matrixRow.containsKey(KEY_PLATFORM)) {
+                    String srcPlatform = matrixRow.get(KEY_PLATFORM);
+                    if (context.isPlatformSelected(srcPlatform, assembler.getPlatform())) {
+                        doAssemble(props, i, matrixRow);
+                    }
+                } else {
+                    doAssemble(props, i, matrixRow);
+                }
+            }
+        } else {
+            doAssemble(props, 0, null);
+        }
+    }
+
+    private void doAssemble(TemplateContext props, int itemIndex, Map<String, String> matrix) throws AssemblerProcessingException {
+        boolean hasMatrix = null != matrix;
+
         Path assembleDirectory = props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
-        String archiveName = assembler.getResolvedArchiveName(context);
+        String archiveName = assembler.getResolvedArchiveName(context, matrix);
 
         Path workDirectory = assembleDirectory.resolve(WORK_DIRECTORY);
+        Path matrixDirectory = workDirectory.resolve("matrix-" + itemIndex);
         Path archiveDirectory = workDirectory.resolve(archiveName);
+        if (hasMatrix) {
+            workDirectory = matrixDirectory;
+            archiveDirectory = matrixDirectory.resolve(archiveName);
+        }
 
         try {
             FileUtils.deleteFiles(workDirectory);
@@ -60,9 +91,9 @@ public class ArchiveAssemblerProcessor extends AbstractAssemblerProcessor<org.jr
 
         // copy fileSets
         context.getLogger().debug(RB.$("assembler.copy.files"), context.relativizeToBasedir(archiveDirectory));
-        copyArtifacts(context, archiveDirectory, PlatformUtils.getCurrentFull(), assembler.isAttachPlatform());
-        copyFiles(context, archiveDirectory);
-        copyFileSets(context, archiveDirectory);
+        copyArtifacts(context, asTemplateContext(matrix), archiveDirectory, PlatformUtils.getCurrentFull(), assembler.isAttachPlatform());
+        copyFiles(context, asTemplateContext(matrix), archiveDirectory);
+        copyFileSets(context, asTemplateContext(matrix), archiveDirectory);
         generateSwidTag(context, archiveDirectory);
 
         // run archive x format
@@ -71,12 +102,19 @@ public class ArchiveAssemblerProcessor extends AbstractAssemblerProcessor<org.jr
         }
     }
 
+    private TemplateContext asTemplateContext(Map<String, String> matrix) {
+        TemplateContext props = new TemplateContext();
+        props.setAll(mapOf("matrix", matrix));
+        return props;
+    }
+
     private void archive(Path workDirectory, Path assembleDirectory, String archiveName, Archive.Format format) throws AssemblerProcessingException {
         String finalArchiveName = archiveName + "." + format.extension();
         context.getLogger().info("- {}", finalArchiveName);
 
         try {
             Path archiveFile = assembleDirectory.resolve(finalArchiveName);
+            FileUtils.deleteFiles(archiveFile);
             FileUtils.packArchive(workDirectory, archiveFile, assembler.getOptions().toOptions());
         } catch (IOException e) {
             throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);

@@ -27,6 +27,7 @@ import org.jreleaser.model.internal.announce.Announce;
 import org.jreleaser.model.internal.assemble.Assemble;
 import org.jreleaser.model.internal.catalog.Catalog;
 import org.jreleaser.model.internal.checksum.Checksum;
+import org.jreleaser.model.internal.common.Matrix;
 import org.jreleaser.model.internal.deploy.Deploy;
 import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.download.Download;
@@ -68,6 +69,7 @@ import static org.jreleaser.util.TimeUtils.TIMESTAMP_FORMATTER;
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class JReleaserModel {
     private final Environment environment = new Environment();
+    private final Matrix matrix = new Matrix();
     private final Hooks hooks = new Hooks();
     private final Project project = new Project();
     private final Platform platform = new Platform();
@@ -94,7 +96,7 @@ public class JReleaserModel {
 
     @JsonIgnore
     private final org.jreleaser.model.api.JReleaserModel immutable = new org.jreleaser.model.api.JReleaserModel() {
-        private static final long serialVersionUID = -571955827712138358L;
+        private static final long serialVersionUID = 7516005666920509247L;
 
         private Map<String, ? extends org.jreleaser.model.api.distributions.Distribution> distributions;
         private Map<String, ? extends org.jreleaser.model.api.extensions.Extension> extensions;
@@ -117,6 +119,11 @@ public class JReleaserModel {
         @Override
         public org.jreleaser.model.api.environment.Environment getEnvironment() {
             return environment.asImmutable();
+        }
+
+        @Override
+        public org.jreleaser.model.api.common.Matrix getMatrix() {
+            return matrix.asImmutable();
         }
 
         @Override
@@ -246,6 +253,14 @@ public class JReleaserModel {
 
     public void setEnvironment(Environment environment) {
         this.environment.merge(environment);
+    }
+
+    public Matrix getMatrix() {
+        return matrix;
+    }
+
+    public void setMatrix(Matrix matrix) {
+        this.matrix.merge(matrix);
     }
 
     public Hooks getHooks() {
@@ -426,6 +441,7 @@ public class JReleaserModel {
         if (!extensions.isEmpty()) map.put("extensions", extensions);
 
         if (full || environment.isSet()) map.put("environment", environment.asMap(full));
+        matrix.asMap(map);
         if (full || hooks.isSet()) map.put("hooks", hooks.asMap(full));
         map.put("project", project.asMap(full));
         if (full || platform.isSet()) map.put("platform", platform.asMap(full));

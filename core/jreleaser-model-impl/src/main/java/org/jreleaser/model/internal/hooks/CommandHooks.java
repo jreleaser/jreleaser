@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.common.AbstractActivatable;
 import org.jreleaser.model.internal.common.Domain;
+import org.jreleaser.model.internal.common.Matrix;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,18 +37,20 @@ import static java.util.stream.Collectors.toList;
  * @since 1.2.0
  */
 public final class CommandHooks extends AbstractActivatable<CommandHooks> implements Domain {
-    private static final long serialVersionUID = 8839490415968211931L;
+    private static final long serialVersionUID = -6516693304472782386L;
 
     private final List<CommandHook> before = new ArrayList<>();
     private final List<CommandHook> success = new ArrayList<>();
     private final List<CommandHook> failure = new ArrayList<>();
     private final Map<String, String> environment = new LinkedHashMap<>();
+    private final Matrix matrix = new Matrix();
 
     private String condition;
+    private Boolean applyDefaultMatrix;
 
     @JsonIgnore
     private final org.jreleaser.model.api.hooks.CommandHooks immutable = new org.jreleaser.model.api.hooks.CommandHooks() {
-        private static final long serialVersionUID = -7458290511859894710L;
+        private static final long serialVersionUID = -4206212928267800920L;
 
         private List<? extends org.jreleaser.model.api.hooks.CommandHook> before;
         private List<? extends org.jreleaser.model.api.hooks.CommandHook> success;
@@ -94,6 +97,16 @@ public final class CommandHooks extends AbstractActivatable<CommandHooks> implem
         }
 
         @Override
+        public boolean isApplyDefaultMatrix() {
+            return CommandHooks.this.isApplyDefaultMatrix();
+        }
+
+        @Override
+        public org.jreleaser.model.api.common.Matrix getMatrix() {
+            return matrix.asImmutable();
+        }
+
+        @Override
         public Active getActive() {
             return CommandHooks.this.getActive();
         }
@@ -125,6 +138,7 @@ public final class CommandHooks extends AbstractActivatable<CommandHooks> implem
         setSuccess(merge(this.success, source.success));
         setFailure(merge(this.failure, source.failure));
         setEnvironment(merge(this.environment, source.getEnvironment()));
+        setMatrix(source.matrix);
     }
 
     @Override
@@ -197,8 +211,24 @@ public final class CommandHooks extends AbstractActivatable<CommandHooks> implem
         this.environment.putAll(environment);
     }
 
-    public void addEnvironment(Map<String, String> environment) {
-        this.environment.putAll(environment);
+    public boolean isApplyDefaultMatrixSet() {
+        return null != applyDefaultMatrix;
+    }
+
+    public boolean isApplyDefaultMatrix() {
+        return null != applyDefaultMatrix && applyDefaultMatrix;
+    }
+
+    public void setApplyDefaultMatrix(Boolean applyDefaultMatrix) {
+        this.applyDefaultMatrix = applyDefaultMatrix;
+    }
+
+    public Matrix getMatrix() {
+        return matrix;
+    }
+
+    public void setMatrix(Matrix matrix) {
+        this.matrix.merge(matrix);
     }
 
     @Override
@@ -208,6 +238,7 @@ public final class CommandHooks extends AbstractActivatable<CommandHooks> implem
         map.put("active", getActive());
         map.put("condition", condition);
         map.put("environment", environment);
+        matrix.asMap(map);
 
         Map<String, Map<String, Object>> m = new LinkedHashMap<>();
         int i = 0;

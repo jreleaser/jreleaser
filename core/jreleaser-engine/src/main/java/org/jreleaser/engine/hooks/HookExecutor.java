@@ -48,6 +48,7 @@ import static java.lang.System.lineSeparator;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardOpenOption.WRITE;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
+import static org.jreleaser.util.CollectionUtils.mapOf;
 import static org.jreleaser.util.StringUtils.isFalse;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -91,8 +92,12 @@ public final class HookExecutor {
     }
 
     private Map<String, String> resolveEnvironment(Map<String, String> src) {
+        return resolveEnvironment(src, null);
+    }
+
+    private Map<String, String> resolveEnvironment(Map<String, String> src, TemplateContext additionalContext) {
         Map<String, String> env = new LinkedHashMap<>();
-        TemplateContext props = context.props();
+        TemplateContext props = context.props().setAll(additionalContext);
         src.forEach((k, v) -> {
             String value = resolveTemplate(v, props);
             if (isNotBlank(value)) env.put(k, value);
@@ -127,22 +132,39 @@ public final class HookExecutor {
         context.getLogger().setPrefix("hooks");
         context.getLogger().increaseIndent();
 
-        Map<String, String> localEnv = new LinkedHashMap<>(rootEnv);
-        localEnv.putAll(scriptHooks.getEnvironment());
-        localEnv = resolveEnvironment(localEnv);
-
         try {
             for (ScriptHook hook : hooks) {
-                Path scriptFile = null;
+                if (!hook.getMatrix().isEmpty()) {
+                    for (Map<String, String> matrixRow : hook.getMatrix().resolve()) {
+                        Map<String, String> localEnv = new LinkedHashMap<>(rootEnv);
+                        localEnv.putAll(scriptHooks.getEnvironment());
+                        localEnv = resolveEnvironment(localEnv, asTemplateContext(matrixRow));
+                        Path scriptFile = null;
 
-                try {
-                    scriptFile = createScriptFile(context, hook, event);
-                } catch (IOException e) {
-                    throw new JReleaserException(RB.$("ERROR_script_hook_create_error"), e);
+                        try {
+                            scriptFile = createScriptFile(context, hook, asTemplateContext(matrixRow), event);
+                        } catch (IOException e) {
+                            throw new JReleaserException(RB.$("ERROR_script_hook_create_error"), e);
+                        }
+
+                        String resolvedCmd = hook.getShell().expression().replace("{{script}}", scriptFile.toAbsolutePath().toString());
+                        executeCommandLine(localEnv, asTemplateContext(matrixRow), hook, resolvedCmd, resolvedCmd, "ERROR_script_hook_unexpected_error");
+                    }
+                } else {
+                    Map<String, String> localEnv = new LinkedHashMap<>(rootEnv);
+                    localEnv.putAll(scriptHooks.getEnvironment());
+                    localEnv = resolveEnvironment(localEnv);
+                    Path scriptFile = null;
+
+                    try {
+                        scriptFile = createScriptFile(context, hook, null, event);
+                    } catch (IOException e) {
+                        throw new JReleaserException(RB.$("ERROR_script_hook_create_error"), e);
+                    }
+
+                    String resolvedCmd = hook.getShell().expression().replace("{{script}}", scriptFile.toAbsolutePath().toString());
+                    executeCommandLine(localEnv, null, hook, resolvedCmd, resolvedCmd, "ERROR_script_hook_unexpected_error");
                 }
-
-                String resolvedCmd = hook.getShell().expression().replace("{{script}}", scriptFile.toAbsolutePath().toString());
-                executeCommandLine(localEnv, hook, resolvedCmd, resolvedCmd, "ERROR_script_hook_unexpected_error");
             }
         } finally {
             context.getLogger().decreaseIndent();
@@ -150,8 +172,8 @@ public final class HookExecutor {
         }
     }
 
-    private Path createScriptFile(JReleaserContext context, ScriptHook hook, ExecutionEvent event) throws IOException {
-        String scriptContents = hook.getResolvedRun(context, event);
+    private Path createScriptFile(JReleaserContext context, ScriptHook hook, TemplateContext additionalContext, ExecutionEvent event) throws IOException {
+        String scriptContents = hook.getResolvedRun(context, additionalContext, event);
         Path scriptFile = Files.createTempFile("jreleaser", hook.getShell().extension());
 
         if (hook.getShell() == org.jreleaser.model.api.hooks.ScriptHook.Shell.PWSH ||
@@ -191,14 +213,23 @@ public final class HookExecutor {
         context.getLogger().setPrefix("hooks");
         context.getLogger().increaseIndent();
 
-        Map<String, String> localEnv = new LinkedHashMap<>(rootEnv);
-        localEnv.putAll(commandHooks.getEnvironment());
-        localEnv = resolveEnvironment(localEnv);
-
         try {
             for (CommandHook hook : hooks) {
-                String resolvedCmd = hook.getResolvedCmd(context, event);
-                executeCommandLine(localEnv, hook, hook.getCmd(), resolvedCmd, "ERROR_command_hook_unexpected_error");
+                if (!hook.getMatrix().isEmpty()) {
+                    for (Map<String, String> matrixRow : hook.getMatrix().resolve()) {
+                        Map<String, String> localEnv = new LinkedHashMap<>(rootEnv);
+                        localEnv.putAll(commandHooks.getEnvironment());
+                        localEnv = resolveEnvironment(localEnv, asTemplateContext(matrixRow));
+                        String resolvedCmd = hook.getResolvedCmd(context, asTemplateContext(matrixRow), event);
+                        executeCommandLine(localEnv, asTemplateContext(matrixRow), hook, hook.getCmd(), resolvedCmd, "ERROR_command_hook_unexpected_error");
+                    }
+                } else {
+                    Map<String, String> localEnv = new LinkedHashMap<>(rootEnv);
+                    localEnv.putAll(commandHooks.getEnvironment());
+                    localEnv = resolveEnvironment(localEnv);
+                    String resolvedCmd = hook.getResolvedCmd(context, null, event);
+                    executeCommandLine(localEnv, null, hook, hook.getCmd(), resolvedCmd, "ERROR_command_hook_unexpected_error");
+                }
             }
         } finally {
             context.getLogger().decreaseIndent();
@@ -206,12 +237,12 @@ public final class HookExecutor {
         }
     }
 
-    private void executeCommandLine(Map<String, String> localEnv, Hook hook, String cmd, String resolvedCmd, String errorKey) {
+    private void executeCommandLine(Map<String, String> localEnv, TemplateContext additionalContext, Hook hook, String cmd, String resolvedCmd, String errorKey) {
         List<String> commandLine = null;
 
         Map<String, String> hookEnv = new LinkedHashMap<>(localEnv);
         hookEnv.putAll(hook.getEnvironment());
-        hookEnv = resolveEnvironment(hookEnv);
+        hookEnv = resolveEnvironment(hookEnv, additionalContext);
 
         try {
             commandLine = parseCommand(resolvedCmd);
@@ -356,5 +387,11 @@ public final class HookExecutor {
         }
 
         return result;
+    }
+
+    private TemplateContext asTemplateContext(Map<String, String> matrix) {
+        TemplateContext props = new TemplateContext();
+        props.setAll(mapOf("matrix", matrix));
+        return props;
     }
 }

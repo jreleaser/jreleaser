@@ -22,6 +22,7 @@ import org.gradle.api.Action
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.common.Activatable
+import org.jreleaser.gradle.plugin.dsl.common.Matrix
 
 /**
  *
@@ -34,6 +35,8 @@ interface ScriptHooks extends Activatable {
 
     MapProperty<String, String> getEnvironment()
 
+    Property<Boolean> getApplyDefaultMatrix()
+
     void environment(String key, String value)
 
     void before(Action<? super ScriptHook> action)
@@ -42,9 +45,13 @@ interface ScriptHooks extends Activatable {
 
     void failure(Action<? super ScriptHook> action)
 
+    void matrix(Action<? super Matrix> action)
+
     void before(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ScriptHook) Closure<Void> action)
 
     void success(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ScriptHook) Closure<Void> action)
 
     void failure(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ScriptHook) Closure<Void> action)
+
+    void matrix(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Matrix) Closure<Void> action)
 }

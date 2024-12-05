@@ -23,6 +23,7 @@ import org.jreleaser.model.internal.hooks.ScriptHook;
 import org.jreleaser.model.internal.hooks.ScriptHooks;
 import org.jreleaser.util.Errors;
 
+import static org.jreleaser.model.internal.validation.common.MatrixValidator.validateMatrix;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -42,6 +43,15 @@ public final class ScriptHooksValidator {
         boolean activeSet = hooks.isActiveSet();
         resolveActivatable(context, hooks, "hooks.script", "ALWAYS");
         hooks.resolveEnabled(context.getModel().getProject());
+
+        if (hooks.getMatrix().isEmpty()) {
+            hooks.setMatrix(context.getModel().getHooks().getMatrix());
+        }
+        if (hooks.isApplyDefaultMatrix()) {
+            hooks.setMatrix(context.getModel().getMatrix());
+        }
+
+        validateMatrix(context, hooks.getMatrix(), "hooks.script.matrix", errors);
 
         for (int i = 0; i < hooks.getBefore().size(); i++) {
             validateScriptHook(context, hooks.getBefore().get(i), "before", i, errors);
@@ -73,6 +83,15 @@ public final class ScriptHooksValidator {
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
+
+        if (hook.getMatrix().isEmpty()) {
+            hook.setMatrix(context.getModel().getHooks().getScript().getMatrix());
+        }
+        if (hook.isApplyDefaultMatrix()) {
+            hook.setMatrix(context.getModel().getMatrix());
+        }
+
+        validateMatrix(context, hook.getMatrix(), "hooks.script." + type + "[" + index + "].matrix", errors);
 
         if (isBlank(hook.getRun())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "hook.script"));

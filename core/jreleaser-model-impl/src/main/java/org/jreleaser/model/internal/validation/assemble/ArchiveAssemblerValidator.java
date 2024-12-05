@@ -25,9 +25,12 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.ArchiveAssembler;
 import org.jreleaser.util.Errors;
 
+import java.util.List;
 import java.util.Map;
 
+import static org.jreleaser.model.Constants.KEY_PLATFORM;
 import static org.jreleaser.model.internal.validation.assemble.AssemblersValidator.validateAssembler;
+import static org.jreleaser.model.internal.validation.common.MatrixValidator.validateMatrix;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -69,6 +72,16 @@ public final class ArchiveAssemblerValidator {
             context.getLogger().debug(RB.$("validation.disabled.error"));
             assembler.disable();
             return;
+        }
+
+        if (assembler.isApplyDefaultMatrix()) {
+            assembler.setMatrix(context.getModel().getMatrix());
+        }
+
+        validateMatrix(context, assembler.getMatrix(), "assemble.archive." + assembler.getName() + ".matrix", errors);
+        List<Map<String, String>> matrix = assembler.getMatrix().resolve();
+        if (!matrix.isEmpty() && matrix.get(0).containsKey(KEY_PLATFORM)) {
+            assembler.setAttachPlatform(false);
         }
 
         assembler.setPlatform(assembler.getPlatform().mergeValues(context.getModel().getPlatform()));

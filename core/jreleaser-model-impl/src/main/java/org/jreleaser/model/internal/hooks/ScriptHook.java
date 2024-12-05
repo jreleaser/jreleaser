@@ -42,7 +42,7 @@ public final class ScriptHook extends AbstractHook<ScriptHook> {
 
     @JsonIgnore
     private final org.jreleaser.model.api.hooks.ScriptHook immutable = new org.jreleaser.model.api.hooks.ScriptHook() {
-        private static final long serialVersionUID = 8771352191826189819L;
+        private static final long serialVersionUID = -338908878151893273L;
 
         @Override
         public String getRun() {
@@ -57,6 +57,16 @@ public final class ScriptHook extends AbstractHook<ScriptHook> {
         @Override
         public Map<String, String> getEnvironment() {
             return unmodifiableMap(ScriptHook.this.getEnvironment());
+        }
+
+        @Override
+        public boolean isApplyDefaultMatrix() {
+            return ScriptHook.this.isApplyDefaultMatrix();
+        }
+
+        @Override
+        public org.jreleaser.model.api.common.Matrix getMatrix() {
+            return matrix.asImmutable();
         }
 
         @Override
@@ -111,8 +121,8 @@ public final class ScriptHook extends AbstractHook<ScriptHook> {
         this.shell = merge(this.shell, source.shell);
     }
 
-    public String getResolvedRun(JReleaserContext context, ExecutionEvent event) {
-        TemplateContext props = context.fullProps();
+    public String getResolvedRun(JReleaserContext context, TemplateContext additionalContext, ExecutionEvent event) {
+        TemplateContext props = context.fullProps().setAll(additionalContext);
         props.set("event", event);
         return resolveTemplate(run, props);
     }

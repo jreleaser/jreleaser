@@ -19,6 +19,7 @@ package org.jreleaser.model.api.hooks;
 
 import org.jreleaser.model.api.common.Activatable;
 import org.jreleaser.model.api.common.Domain;
+import org.jreleaser.model.api.common.Matrix;
 
 import java.util.List;
 import java.util.Map;
@@ -37,4 +38,8 @@ public interface CommandHooks extends Domain, Activatable {
     Map<String, String> getEnvironment();
 
     String getCondition();
+
+    boolean isApplyDefaultMatrix();
+
+    Matrix getMatrix();
 }

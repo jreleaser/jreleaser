@@ -27,6 +27,9 @@ import org.jreleaser.util.PlatformUtils;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
+
+import static org.jreleaser.model.Constants.KEY_PLATFORM;
 
 /**
  * @author Andres Almiray
@@ -47,6 +50,23 @@ public final class ArchiveAssemblerResolver {
     }
 
     private static void resolveArchiveOutputs(JReleaserContext context, ArchiveAssembler assembler, Errors errors) {
+        if (!assembler.getMatrix().isEmpty()) {
+            for (Map<String, String> matrixRow : assembler.getMatrix().resolve()) {
+                if (matrixRow.containsKey(KEY_PLATFORM)) {
+                    String srcPlatform = matrixRow.get(KEY_PLATFORM);
+                    if (context.isPlatformSelected(srcPlatform, assembler.getPlatform())) {
+                        resolveArchiveOutput(context, assembler, matrixRow, srcPlatform, errors);
+                    }
+                } else {
+                    resolveArchiveOutput(context, assembler, matrixRow, assembler.isAttachPlatform() ? PlatformUtils.getCurrentFull() : "", errors);
+                }
+            }
+        } else {
+            resolveArchiveOutput(context, assembler, null, assembler.isAttachPlatform() ? PlatformUtils.getCurrentFull() : "", errors);
+        }
+    }
+
+    private static void resolveArchiveOutput(JReleaserContext context, ArchiveAssembler assembler, Map<String, String> matrix, String platform, Errors errors) {
         if (assembler.isAttachPlatform() &&
             !context.isPlatformSelected(PlatformUtils.getCurrentFull())) return;
 
@@ -54,7 +74,8 @@ public final class ArchiveAssemblerResolver {
             .resolve(assembler.getName())
             .resolve(assembler.getType());
 
-        String archiveName = assembler.getResolvedArchiveName(context);
+
+        String archiveName = assembler.getResolvedArchiveName(context, matrix);
 
         for (org.jreleaser.model.Archive.Format format : assembler.getFormats()) {
             Path path = baseOutputDirectory
@@ -65,7 +86,7 @@ public final class ArchiveAssemblerResolver {
                 errors.assembly(RB.$("validation_missing_assembly",
                     assembler.getType(), assembler.getName(), assembler.getName()));
             } else {
-                Artifact artifact = Artifact.of(path, assembler.isAttachPlatform() ? PlatformUtils.getCurrentFull() : "");
+                Artifact artifact = Artifact.of(path, platform);
                 artifact.resolveActiveAndSelected(context);
                 artifact.setExtraProperties(assembler.getExtraProperties());
                 assembler.addOutput(artifact);

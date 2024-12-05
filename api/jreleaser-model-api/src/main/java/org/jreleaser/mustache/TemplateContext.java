@@ -32,6 +32,13 @@ public final class TemplateContext {
         return new TemplateContext();
     }
 
+    public static TemplateContext from(Map<String, Object> props) {
+        if (props != null) {
+            return new TemplateContext(props);
+        }
+        return new TemplateContext();
+    }
+
     public TemplateContext() {
     }
 
@@ -63,13 +70,15 @@ public final class TemplateContext {
         return (V) properties.get(key);
     }
 
-    public void setAll(TemplateContext other) {
+    public TemplateContext setAll(TemplateContext other) {
         if (null != other) properties.putAll(other.properties);
+        return this;
     }
 
-    public <V> void setAll(Map<String, V> props) {
-        if (null == props || props.isEmpty()) return;
+    public <V> TemplateContext setAll(Map<String, V> props) {
+        if (null == props || props.isEmpty()) return this;
         props.forEach(this::set);
+        return this;
     }
 
     public <V> V set(String key, V value) {

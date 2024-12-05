@@ -27,8 +27,10 @@ import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.assemble.ArchiveAssembler
 import org.jreleaser.gradle.plugin.dsl.common.ArchiveOptions
+import org.jreleaser.gradle.plugin.dsl.common.Matrix
 import org.jreleaser.gradle.plugin.internal.dsl.catalog.swid.SwidTagImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.ArchiveOptionsImpl
+import org.jreleaser.gradle.plugin.internal.dsl.common.MatrixImpl
 import org.jreleaser.gradle.plugin.internal.dsl.platform.PlatformImpl
 import org.jreleaser.model.Archive
 import org.jreleaser.model.Distribution.DistributionType
@@ -48,22 +50,26 @@ class ArchiveAssemblerImpl extends AbstractAssembler implements ArchiveAssembler
     String name
     final Property<String> archiveName
     final Property<DistributionType> distributionType
+    final Property<Boolean> applyDefaultMatrix
     final Property<Boolean> attachPlatform
     final SetProperty<Archive.Format> formats
     final PlatformImpl platform
     final ArchiveOptionsImpl options
     final SwidTagImpl swid
+    final MatrixImpl matrix
 
     @Inject
     ArchiveAssemblerImpl(ObjectFactory objects) {
         super(objects)
         archiveName = objects.property(String).convention(Providers.<String> notDefined())
         distributionType = objects.property(DistributionType).convention(DistributionType.JAVA_BINARY)
+        applyDefaultMatrix = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         attachPlatform = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         formats = objects.setProperty(Archive.Format).convention(Providers.<Set<Archive.Format>> notDefined())
         platform = objects.newInstance(PlatformImpl, objects)
         options = objects.newInstance(ArchiveOptionsImpl, objects)
         swid = objects.newInstance(SwidTagImpl, objects)
+        matrix = objects.newInstance(MatrixImpl, objects)
     }
 
     @Internal
@@ -71,8 +77,10 @@ class ArchiveAssemblerImpl extends AbstractAssembler implements ArchiveAssembler
         super.isSet() ||
             archiveName.present ||
             distributionType.present ||
+            applyDefaultMatrix.present ||
             attachPlatform.present ||
             formats.present ||
+            matrix.isSet() ||
             options.isSet()
     }
 
@@ -99,17 +107,30 @@ class ArchiveAssemblerImpl extends AbstractAssembler implements ArchiveAssembler
         ConfigureUtil.configure(action, options)
     }
 
+    @Override
+    void matrix(Action<? super Matrix> action) {
+        action.execute(matrix)
+    }
+
+    @Override
+    @CompileDynamic
+    void matrix(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Matrix) Closure<Void> action) {
+        ConfigureUtil.configure(action, matrix)
+    }
+
     org.jreleaser.model.internal.assemble.ArchiveAssembler toModel() {
         org.jreleaser.model.internal.assemble.ArchiveAssembler assembler = new org.jreleaser.model.internal.assemble.ArchiveAssembler()
         assembler.name = name
         fillProperties(assembler)
         if (archiveName.present) assembler.archiveName = archiveName.get()
+        if (applyDefaultMatrix.present) assembler.applyDefaultMatrix = applyDefaultMatrix.get()
         if (attachPlatform.present) assembler.attachPlatform = attachPlatform.get()
         assembler.platform = platform.toModel()
         assembler.swid = swid.toModel()
         assembler.distributionType = distributionType.get()
         assembler.formats = (Set<Archive.Format>) formats.getOrElse([] as Set<Archive.Format>)
         if (options.isSet()) assembler.options = options.toModel()
+        if (matrix.isSet()) assembler.setMatrix(matrix.toModel())
         assembler
     }
 }
