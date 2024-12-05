@@ -77,7 +77,10 @@ interface Project extends ExtraProperties {
 
     Links getLinks()
 
+    @Deprecated
     Java getJava()
+
+    Languages getLanguages()
 
     Snapshot getSnapshot()
 
@@ -87,8 +90,14 @@ interface Project extends ExtraProperties {
 
     void links(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Links) Closure<Void> action)
 
+    void languages(Action<? super Languages> action)
+
+    void languages(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Languages) Closure<Void> action)
+
+    @Deprecated
     void java(Action<? super Java> action)
 
+    @Deprecated
     void java(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Java) Closure<Void> action)
 
     void snapshot(Action<? super Snapshot> action)

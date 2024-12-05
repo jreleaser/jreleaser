@@ -119,7 +119,7 @@ public final class JavaArchiveAssemblerValidator {
 
     private static void validateJava(JReleaserContext context, Mode mode, JavaArchiveAssembler assembler, Errors errors) {
         JavaArchiveAssembler.Java java = assembler.getJava();
-        Java projectJava = context.getModel().getProject().getJava();
+        Java projectJava = context.getModel().getProject().getLanguages().getJava();
 
         if (isBlank(java.getMainModule())) {
             java.setMainModule(projectJava.getMainModule());

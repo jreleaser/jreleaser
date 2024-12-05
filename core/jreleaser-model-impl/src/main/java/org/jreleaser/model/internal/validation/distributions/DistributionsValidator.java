@@ -237,7 +237,7 @@ public final class DistributionsValidator {
     private static boolean validateJava(JReleaserContext context, Distribution distribution, Errors errors) {
         Project project = context.getModel().getProject();
 
-        Java projectJava = project.getJava();
+        Java projectJava = project.getLanguages().getJava();
         Java distributionJava = distribution.getJava();
         if (!distributionJava.isEnabledSet() && projectJava.isSet()) {
             distributionJava.setEnabled(projectJava.isSet());

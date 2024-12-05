@@ -182,7 +182,7 @@ public final class AssemblersValidator {
         Project project = context.getModel().getProject();
 
         Java assemblerJava = assembler.getJava();
-        Java projectJava = project.getJava();
+        Java projectJava = project.getLanguages().getJava();
 
         if (!assemblerJava.isEnabledSet() && projectJava.isEnabledSet()) {
             assemblerJava.setEnabled(projectJava.isEnabled());

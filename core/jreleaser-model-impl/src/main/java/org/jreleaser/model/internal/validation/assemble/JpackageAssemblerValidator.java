@@ -23,6 +23,7 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.JlinkAssembler;
 import org.jreleaser.model.internal.assemble.JpackageAssembler;
 import org.jreleaser.model.internal.common.Artifact;
+import org.jreleaser.model.internal.common.Java;
 import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.PlatformUtils;
@@ -284,8 +285,9 @@ public final class JpackageAssemblerValidator {
     private static boolean validateJava(JReleaserContext context, JpackageAssembler jpackage, Errors errors) {
         Project project = context.getModel().getProject();
 
-        if (!jpackage.getJava().isEnabledSet() && project.getJava().isEnabledSet()) {
-            jpackage.getJava().setEnabled(project.getJava().isEnabled());
+        Java java = project.getLanguages().getJava();
+        if (!jpackage.getJava().isEnabledSet() && java.isEnabledSet()) {
+            jpackage.getJava().setEnabled(java.isEnabled());
         }
         if (!jpackage.getJava().isEnabledSet()) {
             jpackage.getJava().setEnabled(jpackage.getJava().isSet());
@@ -294,19 +296,19 @@ public final class JpackageAssemblerValidator {
         if (!jpackage.getJava().isEnabled()) return false;
 
         if (isBlank(jpackage.getJava().getArtifactId())) {
-            jpackage.getJava().setArtifactId(project.getJava().getArtifactId());
+            jpackage.getJava().setArtifactId(java.getArtifactId());
         }
         if (isBlank(jpackage.getJava().getGroupId())) {
-            jpackage.getJava().setGroupId(project.getJava().getGroupId());
+            jpackage.getJava().setGroupId(java.getGroupId());
         }
         if (isBlank(jpackage.getJava().getVersion())) {
-            jpackage.getJava().setVersion(project.getJava().getVersion());
+            jpackage.getJava().setVersion(java.getVersion());
         }
         if (isBlank(jpackage.getJava().getMainModule())) {
-            jpackage.getJava().setMainModule(project.getJava().getMainModule());
+            jpackage.getJava().setMainModule(java.getMainModule());
         }
         if (isBlank(jpackage.getJava().getMainClass())) {
-            jpackage.getJava().setMainClass(project.getJava().getMainClass());
+            jpackage.getJava().setMainClass(java.getMainClass());
         }
 
         if (isBlank(jpackage.getJava().getGroupId())) {

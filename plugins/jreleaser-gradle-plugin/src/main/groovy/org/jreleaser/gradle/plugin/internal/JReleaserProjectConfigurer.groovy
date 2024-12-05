@@ -370,18 +370,18 @@ class JReleaserProjectConfigurer {
             javaVersion = JavaVersion.current().toString()
         }
 
-        if (isBlank(model.project.java.version)) model.project.java.version = javaVersion
-        if (isBlank(model.project.java.artifactId)) model.project.java.artifactId = project.name
-        if (isBlank(model.project.java.groupId)) model.project.java.groupId = project.group.toString()
-        if (!model.project.java.multiProjectSet) {
-            model.project.java.multiProject = !project.rootProject.childProjects.isEmpty()
+        if (isBlank(model.project.languages.java.version)) model.project.languages.java.version = javaVersion
+        if (isBlank(model.project.languages.java.artifactId)) model.project.languages.java.artifactId = project.name
+        if (isBlank(model.project.languages.java.groupId)) model.project.languages.java.groupId = project.group.toString()
+        if (!model.project.languages.java.multiProjectSet) {
+            model.project.languages.java.multiProject = !project.rootProject.childProjects.isEmpty()
         }
 
-        if (isBlank(model.project.java.mainClass)) {
+        if (isBlank(model.project.languages.java.mainClass)) {
             JavaApplication application = (JavaApplication) project.extensions.findByType(JavaApplication)
             if (application) {
-                model.project.java.mainClass = application.mainClass.orNull
-                model.project.java.mainModule = application.mainModule.orNull
+                model.project.languages.java.mainClass = application.mainClass.orNull
+                model.project.languages.java.mainModule = application.mainModule.orNull
             }
         }
     }

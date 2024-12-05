@@ -32,7 +32,6 @@ import org.jreleaser.mustache.MustacheUtils;
 import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.util.Env;
 import org.jreleaser.util.PlatformUtils;
-import org.jreleaser.version.SemanticVersion;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -762,22 +761,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
         }
         project.getLinks().fillProps(props);
 
-        if (project.getJava().isEnabled()) {
-            props.setAll(project.getJava().resolvedExtraProperties());
-            props.set(Constants.KEY_PROJECT_JAVA_GROUP_ID, project.getJava().getGroupId());
-            props.set(Constants.KEY_PROJECT_JAVA_ARTIFACT_ID, project.getJava().getArtifactId());
-            String javaVersion = project.getJava().getVersion();
-            props.set(Constants.KEY_PROJECT_JAVA_VERSION, javaVersion);
-            props.set(Constants.KEY_PROJECT_JAVA_MAIN_CLASS, project.getJava().getMainClass());
-            if (isNotBlank(javaVersion)) {
-                SemanticVersion jv = SemanticVersion.of(javaVersion);
-                props.set(Constants.KEY_PROJECT_JAVA_VERSION_MAJOR, jv.getMajor());
-                if (jv.hasMinor()) props.set(Constants.KEY_PROJECT_JAVA_VERSION_MINOR, jv.getMinor());
-                if (jv.hasPatch()) props.set(Constants.KEY_PROJECT_JAVA_VERSION_PATCH, jv.getPatch());
-                if (jv.hasTag()) props.set(Constants.KEY_PROJECT_JAVA_VERSION_TAG, jv.getTag());
-                if (jv.hasBuild()) props.set(Constants.KEY_PROJECT_JAVA_VERSION_BUILD, jv.getBuild());
-            }
-        }
+        project.getLanguages().fillProperties(props);
 
         project.parseVersion();
         props.setAll(project.resolvedExtraProperties());

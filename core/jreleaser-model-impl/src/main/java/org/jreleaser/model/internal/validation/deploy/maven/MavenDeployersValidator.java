@@ -222,7 +222,7 @@ public final class MavenDeployersValidator {
         int index = 0;
         for (MavenDeployer.ArtifactOverride artifactOverride : mavenDeployer.getArtifactOverrides()) {
             if (isBlank(artifactOverride.getGroupId())) {
-                artifactOverride.setGroupId(context.getModel().getProject().getJava().getGroupId());
+                artifactOverride.setGroupId(context.getModel().getProject().getLanguages().getJava().getGroupId());
             }
 
             if (isBlank(artifactOverride.getGroupId())) {

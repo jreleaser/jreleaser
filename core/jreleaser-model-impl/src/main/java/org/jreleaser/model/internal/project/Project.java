@@ -71,14 +71,14 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public final class Project extends AbstractModelObject<Project> implements Domain, ExtraProperties, Active.Releaseable {
-    private static final long serialVersionUID = -4652723515081514165L;
+    private static final long serialVersionUID = 7080958109557667812L;
 
     private final List<String> authors = new ArrayList<>();
     private final List<String> tags = new ArrayList<>();
     private final List<String> maintainers = new ArrayList<>();
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private final Links links = new Links();
-    private final Java java = new Java();
+    private final Languages languages = new Languages();
     private final Snapshot snapshot = new Snapshot();
     private final List<Screenshot> screenshots = new ArrayList<>();
     private final List<Icon> icons = new ArrayList<>();
@@ -95,7 +95,7 @@ public final class Project extends AbstractModelObject<Project> implements Domai
 
     @JsonIgnore
     private final org.jreleaser.model.api.project.Project immutable = new org.jreleaser.model.api.project.Project() {
-        private static final long serialVersionUID = 4384858957895818432L;
+        private static final long serialVersionUID = -2581431031545327120L;
 
         private List<? extends org.jreleaser.model.api.common.Screenshot> screenshots;
         private List<? extends org.jreleaser.model.api.common.Icon> icons;
@@ -200,9 +200,15 @@ public final class Project extends AbstractModelObject<Project> implements Domai
             return icons;
         }
 
+        @Deprecated
         @Override
         public org.jreleaser.model.api.common.Java getJava() {
-            return java.asImmutable();
+            return languages.getJava().asImmutable();
+        }
+
+        @Override
+        public org.jreleaser.model.api.project.Languages getLanguages() {
+            return languages.asImmutable();
         }
 
         @Override
@@ -262,7 +268,7 @@ public final class Project extends AbstractModelObject<Project> implements Domai
         this.copyright = merge(this.copyright, source.copyright);
         this.vendor = merge(this.vendor, source.vendor);
         this.stereotype = merge(this.stereotype, source.stereotype);
-        setJava(source.java);
+        setLanguages(source.languages);
         setSnapshot(source.snapshot);
         setAuthors(merge(this.authors, source.authors));
         setTags(merge(this.tags, source.tags));
@@ -471,12 +477,24 @@ public final class Project extends AbstractModelObject<Project> implements Domai
         }
     }
 
+    @Deprecated
+    @JsonPropertyDescription("project.java is deprecated since 1.16.0 and will be removed in 2.0.0. Use project.languages.java instead")
     public Java getJava() {
-        return java;
+        return languages.getJava();
     }
 
+    @Deprecated
     public void setJava(Java java) {
-        this.java.merge(java);
+        nag("project.java is deprecated since 1.16.0 and will be removed in 2.0.0. Use project.languages.java instead");
+        this.languages.getJava().merge(java);
+    }
+
+    public Languages getLanguages() {
+        return languages;
+    }
+
+    public void setLanguages(Languages languages) {
+        this.languages.merge(languages);
     }
 
     @Override
@@ -561,8 +579,8 @@ public final class Project extends AbstractModelObject<Project> implements Domai
         }
         map.put("icons", sm);
         map.put("extraProperties", getExtraProperties());
-        if (java.isEnabled()) {
-            map.put("java", java.asMap(full));
+        if (languages.isEnabled() || full) {
+            map.put("languages", languages.asMap(full));
         }
         return map;
     }
@@ -869,22 +887,7 @@ public final class Project extends AbstractModelObject<Project> implements Domai
             props.set(Constants.KEY_PROJECT_VENDOR, project.getVendor());
             project.getLinks().fillProps(props);
 
-            if (project.getJava().isEnabled()) {
-                props.setAll(project.getJava().resolvedExtraProperties());
-                props.set(Constants.KEY_PROJECT_JAVA_GROUP_ID, project.getJava().getGroupId());
-                props.set(Constants.KEY_PROJECT_JAVA_ARTIFACT_ID, project.getJava().getArtifactId());
-                String javaVersion = project.getJava().getVersion();
-                props.set(Constants.KEY_PROJECT_JAVA_VERSION, javaVersion);
-                props.set(Constants.KEY_PROJECT_JAVA_MAIN_CLASS, project.getJava().getMainClass());
-                if (isNotBlank(javaVersion)) {
-                    SemanticVersion jv = SemanticVersion.of(javaVersion);
-                    props.set(Constants.KEY_PROJECT_JAVA_VERSION_MAJOR, jv.getMajor());
-                    if (jv.hasMinor()) props.set(Constants.KEY_PROJECT_JAVA_VERSION_MINOR, jv.getMinor());
-                    if (jv.hasPatch()) props.set(Constants.KEY_PROJECT_JAVA_VERSION_PATCH, jv.getPatch());
-                    if (jv.hasTag()) props.set(Constants.KEY_PROJECT_JAVA_VERSION_TAG, jv.getTag());
-                    if (jv.hasBuild()) props.set(Constants.KEY_PROJECT_JAVA_VERSION_BUILD, jv.getBuild());
-                }
-            }
+            project.getLanguages().fillProperties(props);
 
             project.parseVersion();
             props.setAll(project.resolvedExtraProperties());

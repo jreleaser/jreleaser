@@ -32,9 +32,9 @@ import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.common.Icon
 import org.jreleaser.gradle.plugin.dsl.common.Java
 import org.jreleaser.gradle.plugin.dsl.common.Screenshot
+import org.jreleaser.gradle.plugin.dsl.project.Languages
 import org.jreleaser.gradle.plugin.dsl.project.Project
 import org.jreleaser.gradle.plugin.internal.dsl.common.IconImpl
-import org.jreleaser.gradle.plugin.internal.dsl.common.JavaImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.ScreenshotImpl
 import org.jreleaser.model.Stereotype
 import org.kordamp.gradle.util.ConfigureUtil
@@ -67,7 +67,7 @@ class ProjectImpl implements Project {
     final ListProperty<String> tags
     final ListProperty<String> maintainers
     final MapProperty<String, Object> extraProperties
-    final JavaImpl java
+    final LanguagesImpl languages
     final SnapshotImpl snapshot
     final LinksImpl links
 
@@ -97,7 +97,7 @@ class ProjectImpl implements Project {
         maintainers = objects.listProperty(String).convention(Providers.<List<String>> notDefined())
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
 
-        java = objects.newInstance(JavaImpl, objects)
+        languages = objects.newInstance(LanguagesImpl, objects)
         snapshot = objects.newInstance(SnapshotImpl, objects)
         links = objects.newInstance(LinksImpl, objects)
 
@@ -118,6 +118,11 @@ class ProjectImpl implements Project {
                 icon
             }
         })
+    }
+
+    @Deprecated
+    Java getJava() {
+        languages.java
     }
 
     @Override
@@ -160,14 +165,27 @@ class ProjectImpl implements Project {
     }
 
     @Override
-    void java(Action<? super Java> action) {
-        action.execute(java)
+    void languages(Action<? super Languages> action) {
+        action.execute(languages)
     }
 
     @Override
     @CompileDynamic
+    void languages(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Languages) Closure<Void> action) {
+        ConfigureUtil.configure(action, languages)
+    }
+
+    @Override
+    @Deprecated
+    void java(Action<? super Java> action) {
+        action.execute(languages.java)
+    }
+
+    @Override
+    @Deprecated
+    @CompileDynamic
     void java(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Java) Closure<Void> action) {
-        ConfigureUtil.configure(action, java)
+        ConfigureUtil.configure(action, languages.java)
     }
 
     @Override
@@ -222,7 +240,7 @@ class ProjectImpl implements Project {
         project.tags = (List<String>) tags.getOrElse([])
         project.maintainers = (List<String>) maintainers.getOrElse([])
         if (extraProperties.present) project.extraProperties.putAll(extraProperties.get())
-        project.java = java.toModel()
+        project.languages = languages.toModel()
         project.snapshot = snapshot.toModel()
         project.links = links.toModel()
         for (ScreenshotImpl screenshot : screenshots) {

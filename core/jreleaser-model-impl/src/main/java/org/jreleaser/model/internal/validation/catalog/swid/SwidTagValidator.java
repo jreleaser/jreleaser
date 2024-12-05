@@ -118,7 +118,7 @@ public final class SwidTagValidator {
         Project project = context.getModel().getProject();
 
         if (isBlank(tag.getTagId())) {
-            Java java = project.getJava();
+            Java java = project.getLanguages().getJava();
             if (java.isEnabled()) {
                 tag.setTagId(UUID.nameUUIDFromBytes(
                     (java.getGroupId() + "-" +

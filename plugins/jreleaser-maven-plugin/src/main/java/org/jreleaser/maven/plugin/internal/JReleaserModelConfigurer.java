@@ -22,6 +22,7 @@ import org.apache.maven.model.Developer;
 import org.apache.maven.model.License;
 import org.apache.maven.project.MavenProject;
 import org.jreleaser.model.internal.JReleaserModel;
+import org.jreleaser.model.internal.common.Java;
 import org.jreleaser.model.internal.environment.Environment;
 import org.jreleaser.model.internal.project.Project;
 
@@ -84,13 +85,14 @@ public final class JReleaserModelConfigurer {
             project.setInceptionYear(mavenProject.getInceptionYear());
         }
 
-        project.getJava().setGroupId(mavenProject.getGroupId());
-        project.getJava().setArtifactId(mavenProject.getArtifactId());
-        if (isBlank(project.getJava().getVersion())) {
-            project.getJava().setVersion(resolveJavaVersion(mavenProject));
+        Java java = project.getLanguages().getJava();
+        java.setGroupId(mavenProject.getGroupId());
+        java.setArtifactId(mavenProject.getArtifactId());
+        if (isBlank(java.getVersion())) {
+            java.setVersion(resolveJavaVersion(mavenProject));
         }
-        if (!project.getJava().isMultiProjectSet()) {
-            project.getJava().setMultiProject(session.getAllProjects().size() > 1);
+        if (!java.isMultiProjectSet()) {
+            java.setMultiProject(session.getAllProjects().size() > 1);
         }
     }
 

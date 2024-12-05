@@ -119,7 +119,8 @@ public final class ProjectValidator {
 
         boolean javaAssemblers = !context.getModel().getAssemble().getJlink().isEmpty() ||
             !context.getModel().getAssemble().getJpackage().isEmpty() ||
-            !context.getModel().getAssemble().getNativeImage().isEmpty();
+            !context.getModel().getAssemble().getNativeImage().isEmpty() ||
+            !context.getModel().getAssemble().getJavaArchive().isEmpty();
 
         boolean nexusDeployers = !context.getModel().getDeploy().getMaven().getNexus2().isEmpty();
         boolean mcDeployers = !context.getModel().getDeploy().getMaven().getMavenCentral().isEmpty();
@@ -227,8 +228,8 @@ public final class ProjectValidator {
     }
 
     private static void validateJava(JReleaserContext context, Project project, Errors errors) {
-        context.getLogger().debug("project.java");
-        Java java = project.getJava();
+        context.getLogger().debug("project.languages.java");
+        Java java = project.getLanguages().getJava();
         java.setEnabled(true);
 
         java.setArtifactId(

@@ -115,7 +115,7 @@ public final class Nexus2MavenDeployerValidator {
             errors.configuration(e.getMessage());
         }
 
-        if (isBlank(context.getModel().getProject().getJava().getGroupId())) {
+        if (isBlank(context.getModel().getProject().getLanguages().getJava().getGroupId())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "project.java.groupId"));
         }
     }

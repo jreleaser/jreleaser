@@ -101,7 +101,7 @@ public final class MavenCentralMavenDeployerValidator {
                 tmp));
 
         if (isBlank(mavenDeployer.getNamespace())) {
-            mavenDeployer.setNamespace(context.getModel().getProject().getJava().getGroupId());
+            mavenDeployer.setNamespace(context.getModel().getProject().getLanguages().getJava().getGroupId());
         }
 
         if (isBlank(mavenDeployer.getNamespace())) {

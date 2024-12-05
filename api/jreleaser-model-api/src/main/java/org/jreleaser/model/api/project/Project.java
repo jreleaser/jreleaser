@@ -83,7 +83,10 @@ public interface Project extends Domain, ExtraProperties, Active.Releaseable {
 
     List<? extends Icon> getIcons();
 
+    @Deprecated
     Java getJava();
+
+    Languages getLanguages();
 
     List<String> getAuthors();
 
