@@ -9,14 +9,14 @@ confinement: {{snapConfinement}}
 base: {{snapBase}}
 type: app
 
-{{#hasArchitectures}}
+{{#snapHasArchitectures}}
 architectures:
   {{#snapArchitectures}}
   - build-on: {{buildOn}}
     {{#hasRunOn}}run-on: {{runOn}}{{/hasRunOn}}
     {{#ignoreError}}build-error: ignore{{/ignoreError}}
   {{/snapArchitectures}}
-{{/hasArchitectures}}
+{{/snapHasArchitectures}}
 apps:
   {{distributionExecutableName}}:
     command: {{distributionExecutableUnix}}
