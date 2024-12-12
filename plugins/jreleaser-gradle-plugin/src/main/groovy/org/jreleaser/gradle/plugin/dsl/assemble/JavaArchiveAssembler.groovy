@@ -21,6 +21,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
+import org.jreleaser.gradle.plugin.dsl.catalog.swid.SwidTagAware
 import org.jreleaser.gradle.plugin.dsl.common.ArchiveOptions
 import org.jreleaser.gradle.plugin.dsl.common.Artifact
 import org.jreleaser.gradle.plugin.dsl.common.EnvironmentVariables
@@ -35,7 +36,7 @@ import org.jreleaser.model.Archive.Format
  * @since 1.4.0
  */
 @CompileStatic
-interface JavaArchiveAssembler extends Assembler {
+interface JavaArchiveAssembler extends Assembler, SwidTagAware {
     Property<String> getArchiveName()
 
     SetProperty<Format> getFormats()

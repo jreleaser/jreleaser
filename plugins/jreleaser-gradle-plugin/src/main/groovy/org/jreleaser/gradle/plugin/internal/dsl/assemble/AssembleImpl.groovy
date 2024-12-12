@@ -27,6 +27,7 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.assemble.ArchiveAssembler
 import org.jreleaser.gradle.plugin.dsl.assemble.Assemble
+import org.jreleaser.gradle.plugin.dsl.assemble.DebAssembler
 import org.jreleaser.gradle.plugin.dsl.assemble.JavaArchiveAssembler
 import org.jreleaser.gradle.plugin.dsl.assemble.JlinkAssembler
 import org.jreleaser.gradle.plugin.dsl.assemble.JpackageAssembler
@@ -47,6 +48,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 class AssembleImpl implements Assemble {
     final Property<Active> active
     final NamedDomainObjectContainer<ArchiveAssembler> archive
+    final NamedDomainObjectContainer<DebAssembler> deb
     final NamedDomainObjectContainer<JavaArchiveAssembler> javaArchive
     final NamedDomainObjectContainer<JlinkAssembler> jlink
     final NamedDomainObjectContainer<JpackageAssembler> jpackage
@@ -62,6 +64,15 @@ class AssembleImpl implements Assemble {
                 ArchiveAssemblerImpl archive = objects.newInstance(ArchiveAssemblerImpl, objects)
                 archive.name = name
                 archive
+            }
+        })
+
+        deb = objects.domainObjectContainer(DebAssembler, new NamedDomainObjectFactory<DebAssembler>() {
+            @Override
+            DebAssembler create(String name) {
+                DebAssemblerImpl deb = objects.newInstance(DebAssemblerImpl, objects)
+                deb.name = name
+                deb
             }
         })
 
@@ -115,6 +126,11 @@ class AssembleImpl implements Assemble {
     }
 
     @Override
+    void deb(Action<? super NamedDomainObjectContainer<DebAssembler>> action) {
+        action.execute(deb)
+    }
+
+    @Override
     void javaArchive(Action<? super NamedDomainObjectContainer<JavaArchiveAssembler>> action) {
         action.execute(javaArchive)
     }
@@ -138,6 +154,12 @@ class AssembleImpl implements Assemble {
     @CompileDynamic
     void archive(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, archive)
+    }
+
+    @Override
+    @CompileDynamic
+    void deb(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
+        ConfigureUtil.configure(action, deb)
     }
 
     @Override
@@ -170,6 +192,7 @@ class AssembleImpl implements Assemble {
         if (active.present) assemble.active = active.get()
 
         archive.each { assemble.addArchive(((ArchiveAssemblerImpl) it).toModel()) }
+        deb.each { assemble.addDeb(((DebAssemblerImpl) it).toModel()) }
         javaArchive.each { assemble.addJavaArchive(((JavaArchiveAssemblerImpl) it).toModel()) }
         jlink.each { assemble.addJlink(((JlinkAssemblerImpl) it).toModel()) }
         jpackage.each { assemble.addJpackage(((JpackageAssemblerImpl) it).toModel()) }

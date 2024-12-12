@@ -22,6 +22,7 @@ import org.gradle.api.Action
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
+import org.jreleaser.gradle.plugin.dsl.catalog.swid.SwidTagAware
 import org.jreleaser.gradle.plugin.dsl.common.ArchiveOptions
 import org.jreleaser.gradle.plugin.dsl.common.Artifact
 import org.jreleaser.model.Archive
@@ -32,7 +33,7 @@ import org.jreleaser.model.Archive
  * @since 0.2.0
  */
 @CompileStatic
-interface JlinkAssembler extends JavaAssembler {
+interface JlinkAssembler extends JavaAssembler, SwidTagAware {
     Property<String> getImageName()
 
     Property<String> getImageNameTransform()

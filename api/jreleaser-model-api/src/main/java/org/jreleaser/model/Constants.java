@@ -440,6 +440,36 @@ public interface Constants {
     String KEY_WINGET_HAS_PACKAGE_DEPENDENCIES = "wingetHasPackageDependencies";
     String KEY_WINGET_PACKAGE_DEPENDENCIES = "wingetPackageDependencies";
 
+    String KEY_DEB_INSTALLATION_PATH = "debInstallationPath";
+    String KEY_DEB_ARCHITECTURE = "debControlArchitecture";
+    String KEY_DEB_CONTROL_PACKAGE = "debControlPackage";
+    String KEY_DEB_CONTROL_VERSION = "debControlVersion";
+    String KEY_DEB_CONTROL_REVISION = "debControlRevision";
+    String KEY_DEB_CONTROL_MAINTAINER = "debControlMaintainer";
+    String KEY_DEB_CONTROL_SECTION = "debControlSection";
+    String KEY_DEB_CONTROL_PRIORITY = "debControlPriority";
+    String KEY_DEB_CONTROL_PROVIDES = "debControlProvides";
+    String KEY_DEB_CONTROL_ARCHITECTURE = "debControlArchitecture";
+    String KEY_DEB_CONTROL_ESSENTIAL = "debControlEssential";
+    String KEY_DEB_CONTROL_DESCRIPTION = "debControlDescription";
+    String KEY_DEB_CONTROL_HOMEPAGE = "debControlHomepage";
+    String KEY_DEB_CONTROL_BUILT_USING = "debControlBuiltUsing";
+    String KEY_DEB_CONTROL_INSTALLED_SIZE = "debControlInstalledSize";
+    String KEY_DEB_CONTROL_HAS_DEPENDS = "debControlHasDepends";
+    String KEY_DEB_CONTROL_DEPENDS = "debControlDepends";
+    String KEY_DEB_CONTROL_HAS_PRE_DEPENDS = "debControlHasPreDepends";
+    String KEY_DEB_CONTROL_PRE_DEPENDS = "debControlPreDepends";
+    String KEY_DEB_CONTROL_HAS_RECOMMENDS = "debControlHasPreDepends";
+    String KEY_DEB_CONTROL_RECOMMENDS = "debControlPreDepends";
+    String KEY_DEB_CONTROL_HAS_SUGGESTS = "debControlHasPreDepends";
+    String KEY_DEB_CONTROL_SUGGESTS = "debControlPreDepends";
+    String KEY_DEB_CONTROL_HAS_ENHANCES = "debControlHasPreDepends";
+    String KEY_DEB_CONTROL_ENHANCES = "debControlPreDepends";
+    String KEY_DEB_CONTROL_HAS_BREAKS = "debControlHasPreDepends";
+    String KEY_DEB_CONTROL_BREAKS = "debControlPreDepends";
+    String KEY_DEB_CONTROL_HAS_CONFLICTS = "debControlHasPreDepends";
+    String KEY_DEB_CONTROL_CONFLICTS = "debControlPreDepends";
+
     // Linkedin
     String KEY_LINKEDIN_OWNER = "linkedinOwner";
     String KEY_LINKEDIN_SUBJECT = "linkedinSubject";

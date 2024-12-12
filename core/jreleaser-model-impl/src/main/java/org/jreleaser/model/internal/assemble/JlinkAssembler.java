@@ -23,6 +23,7 @@ import org.jreleaser.model.Archive;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Stereotype;
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.catalog.swid.SwidTagAware;
 import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.common.ArchiveOptions;
 import org.jreleaser.model.internal.common.Artifact;
@@ -53,8 +54,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, org.jreleaser.model.api.assemble.JlinkAssembler> {
-    private static final long serialVersionUID = 7359918516454561904L;
+public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, org.jreleaser.model.api.assemble.JlinkAssembler> implements SwidTagAware {
+    private static final long serialVersionUID = -9000983489057581536L;
 
     private final Set<Artifact> targetJdks = new LinkedHashSet<>();
     private final Set<String> moduleNames = new LinkedHashSet<>();

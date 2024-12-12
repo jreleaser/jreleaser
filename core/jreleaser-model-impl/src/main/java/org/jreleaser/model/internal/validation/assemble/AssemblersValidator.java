@@ -23,6 +23,7 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.ArchiveAssembler;
 import org.jreleaser.model.internal.assemble.Assemble;
 import org.jreleaser.model.internal.assemble.Assembler;
+import org.jreleaser.model.internal.assemble.DebAssembler;
 import org.jreleaser.model.internal.assemble.JavaArchiveAssembler;
 import org.jreleaser.model.internal.assemble.JavaAssembler;
 import org.jreleaser.model.internal.assemble.JlinkAssembler;
@@ -40,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jreleaser.model.internal.validation.assemble.ArchiveAssemblerValidator.validateArchive;
+import static org.jreleaser.model.internal.validation.assemble.DebAssemblerValidator.validateDeb;
 import static org.jreleaser.model.internal.validation.assemble.JavaArchiveAssemblerValidator.validateJavaArchive;
 import static org.jreleaser.model.internal.validation.assemble.JlinkAssemblerValidator.validateJlink;
 import static org.jreleaser.model.internal.validation.assemble.JpackageAssemblerValidator.postValidateJpackage;
@@ -70,6 +72,7 @@ public final class AssemblersValidator {
         validateJlink(context, mode, errors);
         validateJpackage(context, mode, errors);
         validateNativeImage(context, mode, errors);
+        validateDeb(context, mode, errors);
 
         if (!mode.validateConfig() && !mode.validateAssembly()) {
             context.getLogger().debug(RB.$("validation.disabled"));
@@ -81,6 +84,10 @@ public final class AssemblersValidator {
         for (ArchiveAssembler archive : assemble.getActiveArchives()) {
             List<String> types = byDistributionName.computeIfAbsent(archive.getName(), k -> new ArrayList<>());
             types.add(archive.getType());
+        }
+        for (DebAssembler deb : assemble.getActiveDebs()) {
+            List<String> types = byDistributionName.computeIfAbsent(deb.getName(), k -> new ArrayList<>());
+            types.add(deb.getType());
         }
         for (JavaArchiveAssembler archive : assemble.getActiveJavaArchives()) {
             List<String> types = byDistributionName.computeIfAbsent(archive.getName(), k -> new ArrayList<>());
@@ -112,6 +119,7 @@ public final class AssemblersValidator {
 
         if (assemble.isEnabled()) {
             boolean enabled = !assemble.getActiveArchives().isEmpty() ||
+                !assemble.getActiveDebs().isEmpty() ||
                 !assemble.getActiveJavaArchives().isEmpty() ||
                 !assemble.getActiveJlinks().isEmpty() ||
                 !assemble.getActiveJpackages().isEmpty() ||

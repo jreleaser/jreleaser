@@ -52,8 +52,6 @@ interface Assembler extends Activatable, ExtraProperties {
 
     Platform getPlatform()
 
-    SwidTag getSwid()
-
     void setStereotype(String str)
 
     void artifact(Action<? super Artifact> action)
@@ -64,8 +62,6 @@ interface Assembler extends Activatable, ExtraProperties {
 
     void platform(Action<? super Platform> action)
 
-    void swid(Action<? super SwidTag> action)
-
     void artifact(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
 
     void files(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Glob) Closure<Void> action)
@@ -73,6 +69,4 @@ interface Assembler extends Activatable, ExtraProperties {
     void fileSet(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = FileSet) Closure<Void> action)
 
     void platform(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Platform) Closure<Void> action)
-
-    void swid(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SwidTag) Closure<Void> action)
 }

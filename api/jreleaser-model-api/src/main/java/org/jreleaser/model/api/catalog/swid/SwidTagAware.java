@@ -15,31 +15,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.api.assemble;
-
-import org.jreleaser.model.Archive;
-import org.jreleaser.model.api.catalog.swid.SwidTagAware;
-import org.jreleaser.model.api.common.ArchiveOptions;
-import org.jreleaser.model.api.common.Matrix;
-
-import java.util.Set;
+package org.jreleaser.model.api.catalog.swid;
 
 /**
  * @author Andres Almiray
- * @since 0.8.0
+ * @since 1.16.0
  */
-public interface ArchiveAssembler extends Assembler, SwidTagAware {
-    String TYPE = "archive";
-
-    String getArchiveName();
-
-    boolean isApplyDefaultMatrix();
-
-    boolean isAttachPlatform();
-
-    Set<Archive.Format> getFormats();
-
-    ArchiveOptions getOptions();
-
-    Matrix getMatrix();
+public interface SwidTagAware {
+    SwidTag getSwid();
 }

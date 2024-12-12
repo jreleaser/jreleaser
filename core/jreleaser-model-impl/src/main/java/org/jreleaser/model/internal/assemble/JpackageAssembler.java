@@ -69,7 +69,7 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
 
     @JsonIgnore
     private final org.jreleaser.model.api.assemble.JpackageAssembler immutable = new org.jreleaser.model.api.assemble.JpackageAssembler() {
-        private static final long serialVersionUID = 6049902192812473827L;
+        private static final long serialVersionUID = -5355530264697452901L;
 
         private Set<? extends org.jreleaser.model.api.common.Artifact> artifacts;
         private Set<? extends org.jreleaser.model.api.common.Artifact> runtimeImages;
@@ -199,11 +199,6 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
         @Override
         public org.jreleaser.model.api.platform.Platform getPlatform() {
             return JpackageAssembler.this.getPlatform().asImmutable();
-        }
-
-        @Override
-        public org.jreleaser.model.api.catalog.swid.SwidTag getSwid() {
-            return JpackageAssembler.this.getSwid().asImmutable();
         }
 
         @Override

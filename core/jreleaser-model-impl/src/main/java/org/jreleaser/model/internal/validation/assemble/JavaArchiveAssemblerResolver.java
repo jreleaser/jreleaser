@@ -45,7 +45,7 @@ public final class JavaArchiveAssemblerResolver {
         }
     }
 
-    private static void resolveJavaArchiveOutputs(JReleaserContext context, JavaArchiveAssembler assembler, Errors errors) {
+    public static void resolveJavaArchiveOutputs(JReleaserContext context, JavaArchiveAssembler assembler, Errors errors) {
         Path baseOutputDirectory = context.getAssembleDirectory()
             .resolve(assembler.getName())
             .resolve(assembler.getType());

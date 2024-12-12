@@ -28,6 +28,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.assemble.JavaArchiveAssembler
+import org.jreleaser.gradle.plugin.dsl.catalog.swid.SwidTag
 import org.jreleaser.gradle.plugin.dsl.common.ArchiveOptions
 import org.jreleaser.gradle.plugin.dsl.common.Artifact
 import org.jreleaser.gradle.plugin.dsl.common.EnvironmentVariables
@@ -136,8 +137,13 @@ class JavaArchiveAssemblerImpl extends AbstractAssembler implements JavaArchiveA
     }
 
     @Override
+    void swid(Action<? super SwidTag> action) {
+        action.execute(swid)
+    }
+
+    @Override
     @CompileDynamic
-    void java(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = org.jreleaser.gradle.plugin.dsl.assemble.JavaArchiveAssembler.Java) Closure<Void> action) {
+    void java(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JavaArchiveAssembler.Java) Closure<Void> action) {
         ConfigureUtil.configure(action, java)
     }
 
@@ -163,6 +169,12 @@ class JavaArchiveAssemblerImpl extends AbstractAssembler implements JavaArchiveA
     @CompileDynamic
     void options(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArchiveOptions) Closure<Void> action) {
         ConfigureUtil.configure(action, options)
+    }
+
+    @Override
+    @CompileDynamic
+    void swid(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SwidTag) Closure<Void> action) {
+        ConfigureUtil.configure(action, swid)
     }
 
     org.jreleaser.model.internal.assemble.JavaArchiveAssembler toModel() {

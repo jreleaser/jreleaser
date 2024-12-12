@@ -44,23 +44,25 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.2.0
  */
 public final class Assemble extends AbstractActivatable<Assemble> implements Domain, Activatable {
-    private static final long serialVersionUID = -1628051897310444948L;
+    private static final long serialVersionUID = -8583480962034792210L;
 
     private final Map<String, ArchiveAssembler> archive = new LinkedHashMap<>();
     private final Map<String, JavaArchiveAssembler> javaArchive = new LinkedHashMap<>();
     private final Map<String, JlinkAssembler> jlink = new LinkedHashMap<>();
     private final Map<String, JpackageAssembler> jpackage = new LinkedHashMap<>();
     private final Map<String, NativeImageAssembler> nativeImage = new LinkedHashMap<>();
+    private final Map<String, DebAssembler> deb = new LinkedHashMap<>();
 
     @JsonIgnore
     private final org.jreleaser.model.api.assemble.Assemble immutable = new org.jreleaser.model.api.assemble.Assemble() {
-        private static final long serialVersionUID = -7622959098817234697L;
+        private static final long serialVersionUID = -8443781654883590115L;
 
         private Map<String, ? extends org.jreleaser.model.api.assemble.ArchiveAssembler> archive;
         private Map<String, ? extends org.jreleaser.model.api.assemble.JavaArchiveAssembler> javaArchive;
         private Map<String, ? extends org.jreleaser.model.api.assemble.JlinkAssembler> jlink;
         private Map<String, ? extends org.jreleaser.model.api.assemble.JpackageAssembler> jpackage;
         private Map<String, ? extends org.jreleaser.model.api.assemble.NativeImageAssembler> nativeImage;
+        private Map<String, ? extends org.jreleaser.model.api.assemble.DebAssembler> deb;
 
         @Override
         public Map<String, ? extends org.jreleaser.model.api.assemble.ArchiveAssembler> getArchive() {
@@ -113,6 +115,16 @@ public final class Assemble extends AbstractActivatable<Assemble> implements Dom
         }
 
         @Override
+        public Map<String, ? extends org.jreleaser.model.api.assemble.DebAssembler> getDeb() {
+            if (null == deb) {
+                deb = Assemble.this.deb.values().stream()
+                    .map(DebAssembler::asImmutable)
+                    .collect(toMap(org.jreleaser.model.api.assemble.Assembler::getName, identity()));
+            }
+            return deb;
+        }
+
+        @Override
         public Active getActive() {
             return Assemble.this.getActive();
         }
@@ -144,6 +156,7 @@ public final class Assemble extends AbstractActivatable<Assemble> implements Dom
         setJlink(mergeModel(this.jlink, source.jlink));
         setJpackage(mergeModel(this.jpackage, source.jpackage));
         setNativeImage(mergeModel(this.nativeImage, source.nativeImage));
+        setDeb(mergeModel(this.deb, source.deb));
     }
 
     @Deprecated
@@ -212,6 +225,38 @@ public final class Assemble extends AbstractActivatable<Assemble> implements Dom
         this.jlink.put(jlink.getName(), jlink);
     }
 
+    public Assembler<?> findAssembler(String name) {
+        if (isBlank(name)) {
+            throw new JReleaserException("Assembler name must not be blank");
+        }
+
+        if (archive.containsKey(name)) {
+            return archive.get(name);
+        }
+
+        if (deb.containsKey(name)) {
+            return deb.get(name);
+        }
+
+        if (javaArchive.containsKey(name)) {
+            return javaArchive.get(name);
+        }
+
+        if (jlink.containsKey(name)) {
+            return jlink.get(name);
+        }
+
+        if (jpackage.containsKey(name)) {
+            return jpackage.get(name);
+        }
+
+        if (nativeImage.containsKey(name)) {
+            return nativeImage.get(name);
+        }
+
+        throw new JReleaserException("Assembler '" + name + "' not found");
+    }
+
     public JlinkAssembler findJlink(String name) {
         if (isBlank(name)) {
             throw new JReleaserException("Jlink name must not be blank");
@@ -262,6 +307,25 @@ public final class Assemble extends AbstractActivatable<Assemble> implements Dom
         this.nativeImage.put(nativeImage.getName(), nativeImage);
     }
 
+    public List<DebAssembler> getActiveDebs() {
+        return deb.values().stream()
+            .filter(DebAssembler::isEnabled)
+            .collect(toList());
+    }
+
+    public Map<String, DebAssembler> getDeb() {
+        return deb;
+    }
+
+    public void setDeb(Map<String, DebAssembler> deb) {
+        this.deb.clear();
+        this.deb.putAll(deb);
+    }
+
+    public void addDeb(DebAssembler deb) {
+        this.deb.put(deb.getName(), deb);
+    }
+
     @Override
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
@@ -274,6 +338,13 @@ public final class Assemble extends AbstractActivatable<Assemble> implements Dom
             .map(d -> d.asMap(full))
             .collect(toList());
         if (!archive.isEmpty()) map.put("archive", archive);
+
+        List<Map<String, Object>> deb = this.deb.values()
+            .stream()
+            .filter(d -> full || d.isEnabled())
+            .map(d -> d.asMap(full))
+            .collect(toList());
+        if (!deb.isEmpty()) map.put("deb", deb);
 
         List<Map<String, Object>> javaArchive = this.javaArchive.values()
             .stream()
@@ -310,6 +381,8 @@ public final class Assemble extends AbstractActivatable<Assemble> implements Dom
         switch (assemblerName) {
             case org.jreleaser.model.api.assemble.ArchiveAssembler.TYPE:
                 return (Map<String, A>) archive;
+            case org.jreleaser.model.api.assemble.DebAssembler.TYPE:
+                return (Map<String, A>) deb;
             case org.jreleaser.model.api.assemble.JavaArchiveAssembler.TYPE:
                 return (Map<String, A>) javaArchive;
             case org.jreleaser.model.api.assemble.JlinkAssembler.TYPE:
@@ -330,6 +403,7 @@ public final class Assemble extends AbstractActivatable<Assemble> implements Dom
         assemblers.addAll((List<A>) getActiveJlinks());
         assemblers.addAll((List<A>) getActiveJpackages());
         assemblers.addAll((List<A>) getActiveNativeImages());
+        assemblers.addAll((List<A>) getActiveDebs());
         return assemblers;
     }
 }

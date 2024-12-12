@@ -20,6 +20,7 @@ package org.jreleaser.model.internal.assemble;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Stereotype;
 import org.jreleaser.model.internal.catalog.swid.SwidTag;
+import org.jreleaser.model.internal.catalog.swid.SwidTagAware;
 import org.jreleaser.model.internal.common.AbstractActivatable;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.FileSet;
@@ -77,7 +78,7 @@ public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A ext
         this.platform.merge(source.getPlatform());
         this.stereotype = merge(this.stereotype, source.getStereotype());
         this.templateDirectory = merge(this.templateDirectory, source.getTemplateDirectory());
-        this.swid.merge(source.getSwid());
+        setSwid(source.getSwid());
         setSkipTemplates(merge(this.skipTemplates, source.getSkipTemplates()));
         setOutputs(merge(this.outputs, source.getOutputs()));
         setArtifacts(merge(this.artifacts, source.getArtifacts()));
@@ -309,7 +310,9 @@ public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A ext
         asMap(full, props);
         props.put("templateDirectory", templateDirectory);
         props.put("skipTemplates", skipTemplates);
-        props.put("swid", swid.asMap(full));
+        if (this instanceof SwidTagAware) {
+            props.put("swid", swid.asMap(full));
+        }
         Map<String, Map<String, Object>> mappedArtifacts = new LinkedHashMap<>();
         int i = 0;
         for (Artifact artifact : artifacts) {

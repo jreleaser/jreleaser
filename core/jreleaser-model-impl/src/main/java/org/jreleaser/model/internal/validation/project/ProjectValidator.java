@@ -107,12 +107,10 @@ public final class ProjectValidator {
                 "project.versionPattern", VersionPattern.Type.CALVER.toString()));
         }
 
-        // TODO: NATIVE_PACKAGE may not necessarily be related to Java
         boolean javaDistributions = context.getModel().getDistributions().values().stream()
             .map(Distribution::getType)
             .anyMatch(type -> type == org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY ||
-                type == org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR ||
-                type == org.jreleaser.model.Distribution.DistributionType.NATIVE_PACKAGE) ||
+                type == org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR) ||
             context.getModel().getDistributions().values().stream()
                 .anyMatch(distribution -> distribution.getType() == org.jreleaser.model.Distribution.DistributionType.BINARY &&
                     isTrue(distribution.getExtraProperties().get(Constants.KEY_GRAALVM_NAGIVE_IMAGE)));

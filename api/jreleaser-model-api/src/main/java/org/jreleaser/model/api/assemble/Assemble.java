@@ -36,4 +36,6 @@ public interface Assemble extends Domain, Activatable {
     Map<String, ? extends JpackageAssembler> getJpackage();
 
     Map<String, ? extends NativeImageAssembler> getNativeImage();
+
+    Map<String, ? extends DebAssembler> getDeb();
 }

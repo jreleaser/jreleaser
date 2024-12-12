@@ -26,6 +26,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.assemble.ArchiveAssembler
+import org.jreleaser.gradle.plugin.dsl.catalog.swid.SwidTag
 import org.jreleaser.gradle.plugin.dsl.common.ArchiveOptions
 import org.jreleaser.gradle.plugin.dsl.common.Matrix
 import org.jreleaser.gradle.plugin.internal.dsl.catalog.swid.SwidTagImpl
@@ -116,6 +117,17 @@ class ArchiveAssemblerImpl extends AbstractAssembler implements ArchiveAssembler
     @CompileDynamic
     void matrix(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Matrix) Closure<Void> action) {
         ConfigureUtil.configure(action, matrix)
+    }
+
+    @Override
+    void swid(Action<? super SwidTag> action) {
+        action.execute(swid)
+    }
+
+    @Override
+    @CompileDynamic
+    void swid(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SwidTag) Closure<Void> action) {
+        ConfigureUtil.configure(action, swid)
     }
 
     org.jreleaser.model.internal.assemble.ArchiveAssembler toModel() {

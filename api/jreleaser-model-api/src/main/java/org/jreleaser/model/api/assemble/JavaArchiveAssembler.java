@@ -18,6 +18,7 @@
 package org.jreleaser.model.api.assemble;
 
 import org.jreleaser.model.Archive;
+import org.jreleaser.model.api.catalog.swid.SwidTagAware;
 import org.jreleaser.model.api.common.ArchiveOptions;
 import org.jreleaser.model.api.common.Artifact;
 import org.jreleaser.model.api.common.Domain;
@@ -33,7 +34,7 @@ import java.util.Set;
  * @author Andres Almiray
  * @since 1.4.0
  */
-public interface JavaArchiveAssembler extends Assembler {
+public interface JavaArchiveAssembler extends Assembler, SwidTagAware {
     String TYPE = "java-archive";
 
     String getArchiveName();

@@ -25,6 +25,7 @@ import org.jreleaser.model.internal.packagers.Packagers;
 import org.jreleaser.model.internal.packagers.RepositoryPackager;
 import org.jreleaser.model.internal.packagers.RepositoryTap;
 import org.jreleaser.model.internal.packagers.SdkmanPackager;
+import org.jreleaser.model.internal.packagers.TemplatePackager;
 import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.internal.release.BaseReleaser;
 import org.jreleaser.model.internal.release.Releaser;
@@ -180,14 +181,20 @@ public final class PackagersValidator {
     }
 
     private static void validatePackager(JReleaserContext context,
+                                         TemplatePackager<?> packager) {
+        resolveActivatable(context, packager, "packagers." + packager.getType(), "NEVER");
+        packager.resolveEnabled(context.getModel().getProject());
+    }
+
+    private static void validatePackager(JReleaserContext context,
                                          RepositoryPackager<?> packager,
                                          RepositoryTap tap) {
+        validatePackager(context, packager);
+
         BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
         validateCommitAuthor(packager, service);
         validateOwner(tap, service);
 
-        resolveActivatable(context, packager, "packagers." + packager.getType(), "NEVER");
-        packager.resolveEnabled(context.getModel().getProject());
         packager.getRepositoryTap().resolveEnabled(context.getModel().getProject());
 
         tap.setUsername(

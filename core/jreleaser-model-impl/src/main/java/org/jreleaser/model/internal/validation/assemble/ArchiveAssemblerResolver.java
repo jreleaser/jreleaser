@@ -49,7 +49,7 @@ public final class ArchiveAssemblerResolver {
         }
     }
 
-    private static void resolveArchiveOutputs(JReleaserContext context, ArchiveAssembler assembler, Errors errors) {
+    public static void resolveArchiveOutputs(JReleaserContext context, ArchiveAssembler assembler, Errors errors) {
         if (!assembler.getMatrix().isEmpty()) {
             for (Map<String, String> matrixRow : assembler.getMatrix().resolve()) {
                 if (matrixRow.containsKey(KEY_PLATFORM)) {

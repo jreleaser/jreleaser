@@ -22,6 +22,7 @@ import org.jreleaser.model.internal.environment.Environment;
 import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.internal.validation.assemble.ArchiveAssemblerResolver.resolveArchiveOutputs;
+import static org.jreleaser.model.internal.validation.assemble.DebAssemblerResolver.resolveDebOutputs;
 import static org.jreleaser.model.internal.validation.assemble.JavaArchiveAssemblerResolver.resolveJavaArchiveOutputs;
 import static org.jreleaser.model.internal.validation.assemble.JlinkAssemblerResolver.resolveJlinkOutputs;
 import static org.jreleaser.model.internal.validation.assemble.JpackageAssemblerResolver.resolveJpackageOutputs;
@@ -43,6 +44,9 @@ public final class AssemblersResolver {
         context.getLogger().debug("assemble");
         if (!environment.getBooleanProperty("skipArchiveResolver")) {
             resolveArchiveOutputs(context, errors);
+        }
+        if (!environment.getBooleanProperty("skipDebResolver")) {
+            resolveDebOutputs(context, errors);
         }
         if (!environment.getBooleanProperty("skipJavaArchiveResolver")) {
             resolveJavaArchiveOutputs(context, errors);

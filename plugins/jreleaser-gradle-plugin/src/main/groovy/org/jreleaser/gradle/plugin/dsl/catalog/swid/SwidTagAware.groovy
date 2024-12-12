@@ -15,31 +15,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.api.assemble;
+package org.jreleaser.gradle.plugin.dsl.catalog.swid
 
-import org.jreleaser.model.Archive;
-import org.jreleaser.model.api.catalog.swid.SwidTagAware;
-import org.jreleaser.model.api.common.ArchiveOptions;
-import org.jreleaser.model.api.common.Matrix;
-
-import java.util.Set;
+import groovy.transform.CompileStatic
+import org.gradle.api.Action
+import org.jreleaser.gradle.plugin.dsl.catalog.swid.SwidTag
 
 /**
+ *
  * @author Andres Almiray
- * @since 0.8.0
+ * @since 1.16.0
  */
-public interface ArchiveAssembler extends Assembler, SwidTagAware {
-    String TYPE = "archive";
+@CompileStatic
+interface SwidTagAware {
+    SwidTag getSwid()
 
-    String getArchiveName();
+    void swid(Action<? super SwidTag> action)
 
-    boolean isApplyDefaultMatrix();
-
-    boolean isAttachPlatform();
-
-    Set<Archive.Format> getFormats();
-
-    ArchiveOptions getOptions();
-
-    Matrix getMatrix();
+    void swid(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SwidTag) Closure<Void> action)
 }

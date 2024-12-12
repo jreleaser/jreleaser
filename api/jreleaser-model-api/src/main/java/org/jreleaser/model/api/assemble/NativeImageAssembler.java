@@ -18,6 +18,7 @@
 package org.jreleaser.model.api.assemble;
 
 import org.jreleaser.model.Archive;
+import org.jreleaser.model.api.catalog.swid.SwidTagAware;
 import org.jreleaser.model.api.common.Activatable;
 import org.jreleaser.model.api.common.ArchiveOptions;
 import org.jreleaser.model.api.common.Artifact;
@@ -30,7 +31,7 @@ import java.util.Set;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public interface NativeImageAssembler extends Assembler, JavaAssembler {
+public interface NativeImageAssembler extends Assembler, JavaAssembler, SwidTagAware {
     String TYPE = "native-image";
 
     String getImageName();

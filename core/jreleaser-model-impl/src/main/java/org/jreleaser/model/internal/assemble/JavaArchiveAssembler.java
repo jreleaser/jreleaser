@@ -24,6 +24,7 @@ import org.jreleaser.model.Archive;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Stereotype;
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.catalog.swid.SwidTagAware;
 import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.common.ArchiveOptions;
 import org.jreleaser.model.internal.common.Artifact;
@@ -55,8 +56,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 1.4.0
  */
-public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAssembler, org.jreleaser.model.api.assemble.JavaArchiveAssembler> {
-    private static final long serialVersionUID = -839479966828294855L;
+public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAssembler, org.jreleaser.model.api.assemble.JavaArchiveAssembler> implements SwidTagAware {
+    private static final long serialVersionUID = -7711922837441535536L;
 
     private final Set<Archive.Format> formats = new LinkedHashSet<>();
     private final ArchiveOptions options = new ArchiveOptions();

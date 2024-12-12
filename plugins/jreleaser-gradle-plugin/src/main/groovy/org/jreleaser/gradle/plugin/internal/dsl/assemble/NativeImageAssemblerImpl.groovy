@@ -29,6 +29,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.assemble.NativeImageAssembler
+import org.jreleaser.gradle.plugin.dsl.catalog.swid.SwidTag
 import org.jreleaser.gradle.plugin.dsl.common.ArchiveOptions
 import org.jreleaser.gradle.plugin.dsl.common.Artifact
 import org.jreleaser.gradle.plugin.internal.dsl.catalog.swid.SwidTagImpl
@@ -173,6 +174,11 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
     }
 
     @Override
+    void swid(Action<? super SwidTag> action) {
+        action.execute(swid)
+    }
+
+    @Override
     @CompileDynamic
     void graal(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
         ConfigureUtil.configure(action, graal)
@@ -212,6 +218,12 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
     @CompileDynamic
     void options(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArchiveOptions) Closure<Void> action) {
         ConfigureUtil.configure(action, options)
+    }
+
+    @Override
+    @CompileDynamic
+    void swid(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SwidTag) Closure<Void> action) {
+        ConfigureUtil.configure(action, swid)
     }
 
     @Override

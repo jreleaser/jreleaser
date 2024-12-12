@@ -29,6 +29,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.assemble.JlinkAssembler
+import org.jreleaser.gradle.plugin.dsl.catalog.swid.SwidTag
 import org.jreleaser.gradle.plugin.dsl.common.ArchiveOptions
 import org.jreleaser.gradle.plugin.dsl.common.Artifact
 import org.jreleaser.gradle.plugin.internal.dsl.catalog.swid.SwidTagImpl
@@ -157,10 +158,8 @@ class JlinkAssemblerImpl extends AbstractJavaAssembler implements JlinkAssembler
     }
 
     @Override
-    void setActive(String str) {
-        if (isNotBlank(str)) {
-            active.set(Active.of(str.trim()))
-        }
+    void swid(Action<? super SwidTag> action) {
+        action.execute(swid)
     }
 
     @Override
@@ -191,6 +190,19 @@ class JlinkAssemblerImpl extends AbstractJavaAssembler implements JlinkAssembler
     @CompileDynamic
     void javaArchive(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JavaArchive) Closure<Void> action) {
         ConfigureUtil.configure(action, javaArchive)
+    }
+
+    @Override
+    @CompileDynamic
+    void swid(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SwidTag) Closure<Void> action) {
+        ConfigureUtil.configure(action, swid)
+    }
+
+    @Override
+    void setActive(String str) {
+        if (isNotBlank(str)) {
+            active.set(Active.of(str.trim()))
+        }
     }
 
     org.jreleaser.model.internal.assemble.JlinkAssembler toModel() {

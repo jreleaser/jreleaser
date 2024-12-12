@@ -42,6 +42,7 @@ import org.jreleaser.model.api.release.Releaser;
 import org.jreleaser.model.api.signing.Keyring;
 import org.jreleaser.model.api.signing.SigningException;
 import org.jreleaser.model.api.upload.Uploader;
+import org.jreleaser.model.internal.assemble.DebAssembler;
 import org.jreleaser.model.internal.assemble.JavaArchiveAssembler;
 import org.jreleaser.model.internal.assemble.JavaAssembler;
 import org.jreleaser.model.internal.assemble.NativeImageAssembler;
@@ -575,6 +576,8 @@ public class JReleaserContext {
                 distribution.getJava().setMainModule(javaArchiveAssembler.getJava().getMainModule());
                 distribution.getJava().setJvmOptions(javaArchiveAssembler.getJava().getJvmOptions());
                 distribution.getJava().setEnvironmentVariables(javaArchiveAssembler.getJava().getEnvironmentVariables());
+            } else if (assembler instanceof DebAssembler) {
+                distribution.getExecutable().setName(((DebAssembler) assembler).getExecutable());
             }
             mergeArtifacts(assembler, distribution);
 

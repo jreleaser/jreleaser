@@ -22,6 +22,8 @@ import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveException;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
+import org.apache.commons.compress.archivers.ar.ArArchiveEntry;
+import org.apache.commons.compress.archivers.ar.ArArchiveOutputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
@@ -65,6 +67,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -171,10 +174,41 @@ public final class FileUtils {
         try (ZipArchiveOutputStream out = new ZipArchiveOutputStream(dest.toFile())) {
             out.setMethod(ZipOutputStream.DEFLATED);
 
-            TreeSet<Path> paths = collectPaths(src);
+            Set<Path> paths = !options.getIncludedPaths().isEmpty() ? options.getIncludedPaths() : collectPaths(src);
             FileTime fileTime = null != options.getTimestamp() ? FileTime.from(options.getTimestamp().toInstant()) : null;
+            String rootEntryName = options.getRootEntryName();
+            if (null == rootEntryName) {
+                rootEntryName = "";
+            } else if (!rootEntryName.endsWith("/")) {
+                rootEntryName += "/";
+            }
+
+            Set<String> entryNames = new TreeSet<>();
             for (Path path : paths) {
-                String entryName = src.relativize(path).toString();
+                String entryName = rootEntryName + src.relativize(path);
+                entryNames.add(entryName);
+
+                if (options.isCreateIntermediateDirs()) {
+                    Path parentPath = Paths.get(entryName).getParent();
+                    if (null != parentPath) {
+                        Iterator<Path> it = parentPath.iterator();
+                        List<String> directories = new ArrayList<>();
+                        while (it.hasNext()) {
+                            Path directoryPath = it.next();
+                            directories.add(directoryPath.getFileName().toString());
+                            String directoryEntryName = String.join("/", directories) + "/";
+                            if ("./".equals(directoryEntryName)) continue;
+                            if (!entryNames.contains(directoryEntryName)) {
+                                ZipArchiveEntry archiveEntry = new ZipArchiveEntry(directoryEntryName);
+                                if (null != fileTime) archiveEntry.setTime(fileTime);
+                                out.putArchiveEntry(archiveEntry);
+                                out.closeArchiveEntry();
+                                entryNames.add(directoryEntryName);
+                            }
+                        }
+                    }
+                }
+
                 File inputFile = path.toFile();
                 ZipArchiveEntry archiveEntry = new ZipArchiveEntry(inputFile, entryName);
                 if (null != fileTime) archiveEntry.setTime(fileTime);
@@ -191,6 +225,17 @@ public final class FileUtils {
                 }
                 out.closeArchiveEntry();
             }
+        }
+    }
+
+    public static void ar(Path src, Path dest) throws IOException {
+        ar(src, dest, new ArchiveOptions());
+    }
+
+    public static void ar(Path src, Path dest, ArchiveOptions options) throws IOException {
+        try (ArArchiveOutputStream out = new ArArchiveOutputStream(
+            Files.newOutputStream(dest, CREATE, TRUNCATE_EXISTING))) {
+            ar(src, out, options);
         }
     }
 
@@ -250,15 +295,46 @@ public final class FileUtils {
         }
     }
 
-
     private static void tar(Path src, TarArchiveOutputStream out, ArchiveOptions options) throws IOException {
+        Set<Path> paths = !options.getIncludedPaths().isEmpty() ? options.getIncludedPaths() : collectPaths(src);
+
         out.setLongFileMode(options.getLongFileMode().toLongFileMode());
         out.setBigNumberMode(options.getBigNumberMode().toBigNumberMode());
 
-        TreeSet<Path> paths = collectPaths(src);
         FileTime fileTime = null != options.getTimestamp() ? FileTime.from(options.getTimestamp().toInstant()) : null;
+        String rootEntryName = options.getRootEntryName();
+        if (null == rootEntryName) {
+            rootEntryName = "";
+        } else if (!rootEntryName.endsWith("/")) {
+            rootEntryName += "/";
+        }
+
+        Set<String> entryNames = new TreeSet<>();
         for (Path path : paths) {
-            String entryName = src.relativize(path).toString();
+            String entryName = rootEntryName + src.relativize(path);
+            entryNames.add(entryName);
+
+            if (options.isCreateIntermediateDirs()) {
+                Path parentPath = Paths.get(entryName).getParent();
+                if (null != parentPath) {
+                    Iterator<Path> it = parentPath.iterator();
+                    List<String> directories = new ArrayList<>();
+                    while (it.hasNext()) {
+                        Path directoryPath = it.next();
+                        directories.add(directoryPath.getFileName().toString());
+                        String directoryEntryName = String.join("/", directories) + "/";
+                        if ("./".equals(directoryEntryName)) continue;
+                        if (!entryNames.contains(directoryEntryName)) {
+                            TarArchiveEntry archiveEntry = new TarArchiveEntry(directoryEntryName);
+                            if (null != fileTime) archiveEntry.setModTime(fileTime);
+                            out.putArchiveEntry(archiveEntry);
+                            out.closeArchiveEntry();
+                            entryNames.add(directoryEntryName);
+                        }
+                    }
+                }
+            }
+
             File inputFile = path.toFile();
             TarArchiveEntry archiveEntry = out.createArchiveEntry(inputFile, entryName);
             if (null != fileTime) archiveEntry.setModTime(fileTime);
@@ -266,6 +342,56 @@ public final class FileUtils {
             if (inputFile.isFile() && Files.isExecutable(path)) {
                 archiveEntry.setMode(0100755);
             }
+
+            out.putArchiveEntry(archiveEntry);
+
+            if (inputFile.isFile()) {
+                out.write(Files.readAllBytes(path));
+            }
+
+            out.closeArchiveEntry();
+        }
+    }
+
+    private static void ar(Path src, ArArchiveOutputStream out, ArchiveOptions options) throws IOException {
+        Set<Path> paths = !options.getIncludedPaths().isEmpty() ? options.getIncludedPaths() : collectPaths(src);
+
+        out.setLongFileMode(options.getLongFileMode().toLongFileMode());
+        String rootEntryName = options.getRootEntryName();
+        if (null == rootEntryName) {
+            rootEntryName = "";
+        } else if (!rootEntryName.endsWith("/")) {
+            rootEntryName += "/";
+        }
+
+        Set<String> entryNames = new TreeSet<>();
+        for (Path path : paths) {
+            String entryName = rootEntryName + src.relativize(path);
+
+            entryNames.add(entryName);
+
+            if (options.isCreateIntermediateDirs()) {
+                Path parentPath = Paths.get(entryName).getParent();
+                if (null != parentPath) {
+                    Iterator<Path> it = parentPath.iterator();
+                    List<String> directories = new ArrayList<>();
+                    while (it.hasNext()) {
+                        Path directoryPath = it.next();
+                        directories.add(directoryPath.getFileName().toString());
+                        String directoryEntryName = String.join("/", directories) + "/";
+                        if ("./".equals(directoryEntryName)) continue;
+                        if (!entryNames.contains(directoryEntryName)) {
+                            ArArchiveEntry archiveEntry = new ArArchiveEntry(directoryEntryName, directoryEntryName.length());
+                            out.putArchiveEntry(archiveEntry);
+                            out.closeArchiveEntry();
+                            entryNames.add(directoryEntryName);
+                        }
+                    }
+                }
+            }
+
+            File inputFile = path.toFile();
+            ArArchiveEntry archiveEntry = out.createArchiveEntry(inputFile, entryName);
 
             out.putArchiveEntry(archiveEntry);
 
@@ -290,9 +416,20 @@ public final class FileUtils {
     }
 
     public static class ArchiveOptions {
+        private final Set<Path> includedPaths = new LinkedHashSet<>();
+        private String rootEntryName;
         private ZonedDateTime timestamp;
         private TarMode longFileMode = TarMode.ERROR;
         private TarMode bigNumberMode = TarMode.ERROR;
+        private boolean createIntermediateDirs;
+
+        public boolean isCreateIntermediateDirs() {
+            return createIntermediateDirs;
+        }
+
+        public String getRootEntryName() {
+            return rootEntryName;
+        }
 
         public ZonedDateTime getTimestamp() {
             return timestamp;
@@ -304,6 +441,25 @@ public final class FileUtils {
 
         public TarMode getBigNumberMode() {
             return bigNumberMode;
+        }
+
+        public Set<Path> getIncludedPaths() {
+            return includedPaths;
+        }
+
+        public ArchiveOptions withCreateIntermediateDirs(boolean createIntermediateDirs) {
+            this.createIntermediateDirs = createIntermediateDirs;
+            return this;
+        }
+
+        public ArchiveOptions withIncludedPath(Path path) {
+            this.includedPaths.add(path);
+            return this;
+        }
+
+        public ArchiveOptions withRootEntryName(String rootEntryName) {
+            this.rootEntryName = rootEntryName;
+            return this;
         }
 
         public ArchiveOptions withTimestamp(ZonedDateTime timestamp) {

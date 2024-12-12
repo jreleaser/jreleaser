@@ -49,7 +49,7 @@ public final class NativeImageAssemblerResolver {
         }
     }
 
-    private static void resolveNativeImageOutputs(JReleaserContext context, NativeImageAssembler assembler, Errors errors) {
+    public static void resolveNativeImageOutputs(JReleaserContext context, NativeImageAssembler assembler, Errors errors) {
         Path baseOutputDirectory = context.getAssembleDirectory()
             .resolve(assembler.getName())
             .resolve(assembler.getType());

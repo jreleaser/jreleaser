@@ -31,6 +31,8 @@ import org.jreleaser.gradle.plugin.dsl.common.Activatable
 interface Assemble extends Activatable {
     NamedDomainObjectContainer<ArchiveAssembler> getArchive()
 
+    NamedDomainObjectContainer<DebAssembler> getDeb()
+
     NamedDomainObjectContainer<JavaArchiveAssembler> getJavaArchive()
 
     NamedDomainObjectContainer<JlinkAssembler> getJlink()
@@ -41,6 +43,8 @@ interface Assemble extends Activatable {
 
     void archive(Action<? super NamedDomainObjectContainer<ArchiveAssembler>> action)
 
+    void deb(Action<? super NamedDomainObjectContainer<DebAssembler>> action)
+
     void javaArchive(Action<? super NamedDomainObjectContainer<JavaArchiveAssembler>> action)
 
     void jlink(Action<? super NamedDomainObjectContainer<JlinkAssembler>> action)
@@ -50,6 +54,8 @@ interface Assemble extends Activatable {
     void nativeImage(Action<? super NamedDomainObjectContainer<NativeImageAssembler>> action)
 
     void archive(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
+
+    void deb(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 
     void javaArchive(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 
