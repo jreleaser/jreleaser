@@ -26,6 +26,7 @@ image:https://bestpractices.coreinfrastructure.org/projects/6393/badge["OpenSSF 
 image:https://img.shields.io/ossf-scorecard/github.com/{project-owner}/{project-name}?label=openssf%20scorecard["OpenSSF Scorecard", link="https://api.securityscorecards.dev/projects/github.com/{project-owner}/{project-name}"]
 image:https://slsa.dev/images/gh-badge-level3.svg["SLSA 3", link="https://slsa.dev"]
 image:https://img.shields.io/opencollective/all/{project-name}?logo=opencollective&logoColor=white["Open Collective backers and sponsors", link="https://opencollective.com/{project-name}"]
+image:https://img.shields.io/reproducible-central/artifact/{project-group}/jreleaser-model-api/1.15.0[Reproducible Central Artifact]
 
 image:https://img.shields.io/maven-central/v/{project-group}/{project-artifactId}?logo=apache%20maven[Download, link="https://search.maven.org/#search|ga|1|g:{project-group} AND a:{project-artifactId}"]
 image:https://img.shields.io/gradle-plugin-portal/v/{plugin-id}?logo=gradle["Gradle Plugin Portal", link="https://plugins.gradle.org/plugin/{plugin-id}"]
@@ -64,15 +65,15 @@ image:https://img.shields.io/flathub/downloads/org.jreleaser.cli?label=flathub&l
 image:https://img.shields.io/chocolatey/dt/{project-owner}?label=chocolatey&logo=chocolatey&logoColor=white[Chocolatey, link="https://community.chocolatey.org/packages/{project-owner}"]
 image:https://img.shields.io/github/downloads/{project-owner}/{project-name}-appimage/total?label=appimage&logo=linux&logoColor=white[AppImage, link="https://github.com/{project-owner}/{project-name}-appimage"]
 image:https://img.shields.io/homebrew/installs/dy/{project-name}?color=green&label=homebrew&logo=homebrew&logoColor=white[Homebrew, link="https://formulae.brew.sh/formula/{project-name}"]
+image:https://img.shields.io/visual-studio-marketplace/azure-devops/installs/total/JReleaser.jreleaser-azure-devops-extension?label=Azure%20Devops%20Extension["Azure Devops Extension", link="https://github.com/jreleaser/jreleaser-azure-devops-extension"]
 
 == Code Health
 
 image:http://img.shields.io/github/actions/workflow/status/{project-owner}/{project-name}/codeql.yml?branch=main&logo=github&label=CodeQL["CodeQL", link="https://github.com/{project-owner}/{project-name}/actions"]
 image:https://img.shields.io/coverallsCoverage/github/{project-owner}/{project-name}?label=coveralls&logo=coveralls["Coveralls", link="https://coveralls.io/github/{project-owner}/{project-name}?branch=main"]
 image:https://img.shields.io/codecov/c/github/{project-owner}/{project-name}?label=codecov&logo=codecov&logoColor=white["Codecov", link="https://app.codecov.io/gh/{project-owner}/{project-name}"]
-image:https://img.shields.io/snyk/vulnerabilities/github/{project-owner}/{project-name}?logo=snyk[Snyk Vulnerabilities for GitHub Repo]
 image:https://sonarcloud.io/api/project_badges/measure?project=org_jreleaser_jreleaser&metric=security_rating[link="https://sonarcloud.io/summary/new_code?id=org_jreleaser_jreleaser"]
-image:https://img.shields.io/librariesio/github/{project-owner}/{project-name}?logo=libraries.io&logoColor=white["Libraries.io dependency status for GitHub repo", link="https://libraries.io/maven/org.jreleaser:{project-name}"]
+image:https://img.shields.io/librariesio/github/{project-owner}/{project-name}?logo=libraries.io&logoColor=white["Libraries.io dependency status for GitHub repo", link="https://libraries.io/maven/{project-group}:{project-name}"]
 
 == Build from source
 
