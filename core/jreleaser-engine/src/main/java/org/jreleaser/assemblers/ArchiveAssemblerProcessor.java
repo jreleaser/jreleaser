@@ -33,8 +33,11 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Collections.emptyMap;
 import static org.jreleaser.model.Constants.KEY_PLATFORM;
 import static org.jreleaser.util.CollectionUtils.mapOf;
+import static org.jreleaser.util.StringUtils.capitalize;
+import static org.jreleaser.util.StringUtils.isTrue;
 
 /**
  * @author Andres Almiray
@@ -61,20 +64,18 @@ public class ArchiveAssemblerProcessor extends AbstractAssemblerProcessor<org.jr
                 }
             }
         } else {
-            doAssemble(props, 0, null);
+            doAssemble(props, 0, emptyMap());
         }
     }
 
     private void doAssemble(TemplateContext props, int itemIndex, Map<String, String> matrix) throws AssemblerProcessingException {
-        boolean hasMatrix = null != matrix;
-
         Path assembleDirectory = props.get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY);
         String archiveName = assembler.getResolvedArchiveName(context, matrix);
 
         Path workDirectory = assembleDirectory.resolve(WORK_DIRECTORY);
         Path matrixDirectory = workDirectory.resolve("matrix-" + itemIndex);
         Path archiveDirectory = workDirectory.resolve(archiveName);
-        if (hasMatrix) {
+        if (!matrix.isEmpty()) {
             workDirectory = matrixDirectory;
             archiveDirectory = matrixDirectory.resolve(archiveName);
         }
@@ -98,6 +99,8 @@ public class ArchiveAssemblerProcessor extends AbstractAssemblerProcessor<org.jr
 
         // run archive x format
         for (Archive.Format format : assembler.getFormats()) {
+            String skipKey = "skip" + capitalize(format.formatted());
+            if (getAssembler().extraPropertyIsTrue(skipKey) || isTrue(matrix.get(skipKey))) continue;
             archive(workDirectory, assembleDirectory, archiveName, format);
         }
     }

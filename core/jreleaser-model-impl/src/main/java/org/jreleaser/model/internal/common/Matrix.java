@@ -66,7 +66,7 @@ public final class Matrix extends AbstractModelObject<Matrix> implements Domain 
 
         @Override
         public Map<String, Object> asMap(boolean full) {
-            return unmodifiableMap(Matrix.this.asMap(full));
+            return Matrix.this.asMap(full);
         }
     };
 
