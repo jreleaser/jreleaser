@@ -469,7 +469,7 @@ distributions:
       - path: '{{jpackageDir}}/JReleaser-{{projectVersionNumber}}-osx-aarch64.pkg'
         transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}-osx-aarch64.pkg'
         platform: 'osx-aarch_64'
-      - path: '{{jpackageDir}}/jreleaser_{{projectVersionNumber}}-1_amd64.deb'
+      - path: '{{jpackageDir}}/jreleaser_{{projectVersionNumber}}_amd64.deb'
         transform: '{{distributionName}}/{{distributionName}}_{{projectEffectiveVersion}}-1_amd64.deb'
         platform: 'linux-x86_64'
       - path: '{{jpackageDir}}/jreleaser-{{projectVersionNumber}}-1.x86_64.rpm'
