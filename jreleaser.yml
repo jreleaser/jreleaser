@@ -38,11 +38,12 @@ project:
     - url: https://raw.githubusercontent.com/jreleaser/jreleaser/main/src/media/icon_256x256.png
       width: 256
       height: 256
-  java:
-    groupId: org.jreleaser
-    version: 8
-    multiProject: true
-    mainClass: org.jreleaser.cli.Main
+  languages:
+    java:
+      groupId: org.jreleaser
+      version: 8
+      multiProject: true
+      mainClass: org.jreleaser.cli.Main
   tags:
     - 'jreleaser'
     - 'release'
@@ -185,7 +186,7 @@ assemble:
     jreleaser-standalone:
       active: ALWAYS
       java:
-        version: 17
+        version: 21
       imageName: '{{distributionName}}-{{projectEffectiveVersion}}'
       executable: jreleaser
       fileSets:
