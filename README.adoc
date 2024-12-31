@@ -4,7 +4,7 @@
 :project-name:    jreleaser
 :project-group:   org.jreleaser
 :project-artifactId: jreleaser-model-api
-:project-version: 1.15.0
+:project-version: 1.16.0
 :plugin-path:     org/jreleaser
 :plugin-id:       org.jreleaser
 
