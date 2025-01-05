@@ -2,7 +2,7 @@
 
 ## How do I install these tools?
 
-1. Install [scoop](https://github.com/lukesampson/scoop).
+1. Install [scoop](https://github.com/ScoopInstaller/Install).
 
 2. Add this bucket to scoop:
 
