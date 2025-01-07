@@ -47,6 +47,7 @@ import java.util.StringTokenizer;
 import static java.lang.System.lineSeparator;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardOpenOption.WRITE;
+import static org.jreleaser.model.Constants.KEY_PLATFORM;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.util.CollectionUtils.mapOf;
 import static org.jreleaser.util.StringUtils.isFalse;
@@ -136,19 +137,27 @@ public final class HookExecutor {
             for (ScriptHook hook : hooks) {
                 if (!hook.getMatrix().isEmpty()) {
                     for (Map<String, String> matrixRow : hook.getMatrix().resolve()) {
+                        if (matrixRow.containsKey(KEY_PLATFORM)) {
+                            String srcPlatform = matrixRow.get(KEY_PLATFORM);
+                            if (!context.isPlatformSelected(srcPlatform)) {
+                                continue;
+                            }
+                        }
+
+                        TemplateContext additionalContext = asTemplateContext(matrixRow);
                         Map<String, String> localEnv = new LinkedHashMap<>(rootEnv);
                         localEnv.putAll(scriptHooks.getEnvironment());
-                        localEnv = resolveEnvironment(localEnv, asTemplateContext(matrixRow));
+                        localEnv = resolveEnvironment(localEnv, additionalContext);
                         Path scriptFile = null;
 
                         try {
-                            scriptFile = createScriptFile(context, hook, asTemplateContext(matrixRow), event);
+                            scriptFile = createScriptFile(context, hook, additionalContext, event);
                         } catch (IOException e) {
                             throw new JReleaserException(RB.$("ERROR_script_hook_create_error"), e);
                         }
 
                         String resolvedCmd = hook.getShell().expression().replace("{{script}}", scriptFile.toAbsolutePath().toString());
-                        executeCommandLine(localEnv, asTemplateContext(matrixRow), hook, resolvedCmd, resolvedCmd, "ERROR_script_hook_unexpected_error");
+                        executeCommandLine(localEnv, additionalContext, hook, resolvedCmd, resolvedCmd, "ERROR_script_hook_unexpected_error");
                     }
                 } else {
                     Map<String, String> localEnv = new LinkedHashMap<>(rootEnv);
@@ -217,11 +226,19 @@ public final class HookExecutor {
             for (CommandHook hook : hooks) {
                 if (!hook.getMatrix().isEmpty()) {
                     for (Map<String, String> matrixRow : hook.getMatrix().resolve()) {
+                        if (matrixRow.containsKey(KEY_PLATFORM)) {
+                            String srcPlatform = matrixRow.get(KEY_PLATFORM);
+                            if (!context.isPlatformSelected(srcPlatform)) {
+                                continue;
+                            }
+                        }
+
+                        TemplateContext additionalContext = asTemplateContext(matrixRow);
                         Map<String, String> localEnv = new LinkedHashMap<>(rootEnv);
                         localEnv.putAll(commandHooks.getEnvironment());
-                        localEnv = resolveEnvironment(localEnv, asTemplateContext(matrixRow));
-                        String resolvedCmd = hook.getResolvedCmd(context, asTemplateContext(matrixRow), event);
-                        executeCommandLine(localEnv, asTemplateContext(matrixRow), hook, hook.getCmd(), resolvedCmd, "ERROR_command_hook_unexpected_error");
+                        localEnv = resolveEnvironment(localEnv, additionalContext);
+                        String resolvedCmd = hook.getResolvedCmd(context, additionalContext, event);
+                        executeCommandLine(localEnv, additionalContext, hook, hook.getCmd(), resolvedCmd, "ERROR_command_hook_unexpected_error");
                     }
                 } else {
                     Map<String, String> localEnv = new LinkedHashMap<>(rootEnv);
