@@ -38,7 +38,7 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
  * @since 1.5.0
  */
 public final class GradleWrapperDownloader {
-    private static final String GRADLE_VERSION = "8.10";
+    private static final String GRADLE_VERSION = "8.12";
 
     private static final String DEFAULT_DOWNLOAD_URL = "https://services.gradle.org/distributions/gradle-" + GRADLE_VERSION + "-bin.zip";
     private static final String DISTRIBUTION_FILE_NAME = "gradle-" + GRADLE_VERSION + "-bin.zip";
