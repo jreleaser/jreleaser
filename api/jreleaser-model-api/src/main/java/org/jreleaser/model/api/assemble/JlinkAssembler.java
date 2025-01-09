@@ -23,6 +23,7 @@ import org.jreleaser.model.api.common.ArchiveOptions;
 import org.jreleaser.model.api.common.Artifact;
 import org.jreleaser.model.api.common.Domain;
 import org.jreleaser.model.api.common.EnabledAware;
+import org.jreleaser.model.api.common.Matrix;
 
 import java.util.List;
 import java.util.Set;
@@ -47,6 +48,12 @@ public interface JlinkAssembler extends Assembler, JavaAssembler, SwidTagAware {
     ArchiveOptions getOptions();
 
     Set<? extends Artifact> getTargetJdks();
+
+    boolean isApplyDefaultMatrix();
+
+    Matrix getMatrix();
+
+    Artifact getTargetJdkPattern();
 
     Set<String> getModuleNames();
 

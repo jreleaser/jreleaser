@@ -25,6 +25,7 @@ import org.gradle.api.provider.SetProperty
 import org.jreleaser.gradle.plugin.dsl.catalog.swid.SwidTagAware
 import org.jreleaser.gradle.plugin.dsl.common.ArchiveOptions
 import org.jreleaser.gradle.plugin.dsl.common.Artifact
+import org.jreleaser.gradle.plugin.dsl.common.Matrix
 import org.jreleaser.model.Archive
 
 /**
@@ -50,6 +51,8 @@ interface JlinkAssembler extends JavaAssembler, SwidTagAware {
 
     ListProperty<String> getArgs()
 
+    Property<Boolean> getApplyDefaultMatrix()
+
     void arg(String arg)
 
     void jdeps(Action<? super Jdeps> action)
@@ -62,6 +65,10 @@ interface JlinkAssembler extends JavaAssembler, SwidTagAware {
 
     void javaArchive(Action<? super JavaArchive> action)
 
+    void matrix(Action<? super Matrix> action)
+
+    void targetJdkPattern(Action<? super Artifact> action)
+
     void jdeps(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Jdeps) Closure<Void> action)
 
     void jdk(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
@@ -71,6 +78,10 @@ interface JlinkAssembler extends JavaAssembler, SwidTagAware {
     void options(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArchiveOptions) Closure<Void> action)
 
     void javaArchive(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JavaArchive) Closure<Void> action)
+
+    void matrix(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Matrix) Closure<Void> action)
+
+    void targetJdkPattern(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
 
     @CompileStatic
     interface Jdeps {

@@ -32,10 +32,12 @@ import org.jreleaser.gradle.plugin.dsl.assemble.JlinkAssembler
 import org.jreleaser.gradle.plugin.dsl.catalog.swid.SwidTag
 import org.jreleaser.gradle.plugin.dsl.common.ArchiveOptions
 import org.jreleaser.gradle.plugin.dsl.common.Artifact
+import org.jreleaser.gradle.plugin.dsl.common.Matrix
 import org.jreleaser.gradle.plugin.internal.dsl.catalog.swid.SwidTagImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.ArchiveOptionsImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.ArtifactImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.JavaImpl
+import org.jreleaser.gradle.plugin.internal.dsl.common.MatrixImpl
 import org.jreleaser.gradle.plugin.internal.dsl.platform.PlatformImpl
 import org.jreleaser.model.Active
 import org.jreleaser.model.Archive
@@ -69,6 +71,9 @@ class JlinkAssemblerImpl extends AbstractJavaAssembler implements JlinkAssembler
     private final JavaArchiveImpl javaArchive
     private final ArtifactImpl jdk
     final NamedDomainObjectContainer<ArtifactImpl> targetJdks
+    final Property<Boolean> applyDefaultMatrix
+    final ArtifactImpl targetJdkPattern
+    final MatrixImpl matrix
 
     @Inject
     JlinkAssemblerImpl(ObjectFactory objects) {
@@ -98,6 +103,10 @@ class JlinkAssemblerImpl extends AbstractJavaAssembler implements JlinkAssembler
                 artifact
             }
         })
+
+        applyDefaultMatrix = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+        targetJdkPattern = objects.newInstance(ArtifactImpl, objects)
+        matrix = objects.newInstance(MatrixImpl, objects)
     }
 
     @Override
@@ -121,6 +130,9 @@ class JlinkAssemblerImpl extends AbstractJavaAssembler implements JlinkAssembler
             moduleNames.present ||
             additionalModuleNames.present ||
             !targetJdks.isEmpty() ||
+            applyDefaultMatrix.present ||
+            targetJdkPattern.isSet() ||
+            matrix.isSet() ||
             platform.isSet() ||
             options.isSet()
     }
@@ -163,6 +175,16 @@ class JlinkAssemblerImpl extends AbstractJavaAssembler implements JlinkAssembler
     }
 
     @Override
+    void matrix(Action<? super Matrix> action) {
+        action.execute(matrix)
+    }
+
+    @Override
+    void targetJdkPattern(Action<? super Artifact> action) {
+        action.execute(targetJdkPattern)
+    }
+
+    @Override
     @CompileDynamic
     void jdeps(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Jdeps) Closure<Void> action) {
         ConfigureUtil.configure(action, jdeps)
@@ -199,6 +221,18 @@ class JlinkAssemblerImpl extends AbstractJavaAssembler implements JlinkAssembler
     }
 
     @Override
+    @CompileDynamic
+    void matrix(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Matrix) Closure<Void> action) {
+        ConfigureUtil.configure(action, matrix)
+    }
+
+    @Override
+    @CompileDynamic
+    void targetJdkPattern(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
+        ConfigureUtil.configure(action, targetJdkPattern)
+    }
+
+    @Override
     void setActive(String str) {
         if (isNotBlank(str)) {
             active.set(Active.of(str.trim()))
@@ -224,6 +258,9 @@ class JlinkAssemblerImpl extends AbstractJavaAssembler implements JlinkAssembler
         for (ArtifactImpl artifact : targetJdks) {
             assembler.addTargetJdk(artifact.toModel())
         }
+        if (applyDefaultMatrix.present) assembler.applyDefaultMatrix = applyDefaultMatrix.get()
+        if (matrix.isSet()) assembler.setMatrix(matrix.toModel())
+        if (targetJdkPattern.isSet()) assembler.setTargetJdkPattern(targetJdkPattern.toModel())
         if (options.isSet()) assembler.options = options.toModel()
         assembler.swid = swid.toModel()
         assembler

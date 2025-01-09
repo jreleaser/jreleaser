@@ -31,6 +31,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import static java.util.stream.Collectors.groupingBy;
+import static org.jreleaser.model.Constants.KEY_PLATFORM;
+import static org.jreleaser.model.internal.common.Matrix.replaceWithMatrix;
 import static org.jreleaser.model.internal.validation.assemble.AssemblersValidator.validateJava;
 import static org.jreleaser.model.internal.validation.assemble.AssemblersValidator.validateJavaAssembler;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
@@ -94,6 +96,19 @@ public final class JlinkAssemblerValidator {
         }
         if (isBlank(assembler.getExecutable())) {
             assembler.setExecutable(assembler.getName());
+        }
+
+        if (assembler.isApplyDefaultMatrix()) {
+            assembler.setMatrix(context.getModel().getMatrix());
+        }
+
+        if (!assembler.getMatrix().isEmpty() && isNotBlank(assembler.getTargetJdkPattern().getPath())) {
+            for (Map<String, String> matrixRow : assembler.getMatrix().resolve()) {
+                Artifact targetJdk = new Artifact();
+                targetJdk.setPlatform(matrixRow.get(KEY_PLATFORM));
+                targetJdk.setPath(replaceWithMatrix(assembler.getTargetJdkPattern().getPath(), matrixRow));
+                assembler.addTargetJdk(targetJdk);
+            }
         }
 
         int i = 0;

@@ -31,6 +31,7 @@ import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.common.EnabledAware;
 import org.jreleaser.model.internal.common.FileSet;
 import org.jreleaser.model.internal.common.Glob;
+import org.jreleaser.model.internal.common.Matrix;
 import org.jreleaser.mustache.TemplateContext;
 
 import java.util.ArrayList;
@@ -55,7 +56,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.2.0
  */
 public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, org.jreleaser.model.api.assemble.JlinkAssembler> implements SwidTagAware {
-    private static final long serialVersionUID = -9000983489057581536L;
+    private static final long serialVersionUID = 723923403162010924L;
 
     private final Set<Artifact> targetJdks = new LinkedHashSet<>();
     private final Set<String> moduleNames = new LinkedHashSet<>();
@@ -65,15 +66,18 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
     private final Jdeps jdeps = new Jdeps();
     private final ArchiveOptions options = new ArchiveOptions();
     private final JavaArchive javaArchive = new JavaArchive();
+    private final Matrix matrix = new Matrix();
+    private final Artifact targetJdkPattern = new Artifact();
 
     private String imageName;
     private String imageNameTransform;
     private Archive.Format archiveFormat;
     private Boolean copyJars;
+    private Boolean applyDefaultMatrix;
 
     @JsonIgnore
     private final org.jreleaser.model.api.assemble.JlinkAssembler immutable = new org.jreleaser.model.api.assemble.JlinkAssembler() {
-        private static final long serialVersionUID = -2185840622092695158L;
+        private static final long serialVersionUID = -1451343134953991242L;
 
         private Set<? extends org.jreleaser.model.api.common.Artifact> artifacts;
         private List<? extends org.jreleaser.model.api.common.FileSet> fileSets;
@@ -120,6 +124,21 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
                     .collect(toSet());
             }
             return targetJdks;
+        }
+
+        @Override
+        public boolean isApplyDefaultMatrix() {
+            return JlinkAssembler.this.isApplyDefaultMatrix();
+        }
+
+        @Override
+        public org.jreleaser.model.api.common.Matrix getMatrix() {
+            return matrix.asImmutable();
+        }
+
+        @Override
+        public org.jreleaser.model.api.common.Artifact getTargetJdkPattern() {
+            return targetJdkPattern.asImmutable();
         }
 
         @Override
@@ -299,6 +318,7 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
         this.imageNameTransform = merge(this.imageNameTransform, source.imageNameTransform);
         this.archiveFormat = merge(this.archiveFormat, source.archiveFormat);
         this.copyJars = merge(this.copyJars, source.copyJars);
+        this.applyDefaultMatrix = merge(this.applyDefaultMatrix, source.applyDefaultMatrix);
         setJavaArchive(source.javaArchive);
         setOptions(source.options);
         setJdeps(source.jdeps);
@@ -307,6 +327,8 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
         setModuleNames(merge(this.moduleNames, source.moduleNames));
         setAdditionalModuleNames(merge(this.additionalModuleNames, source.additionalModuleNames));
         setArgs(merge(this.args, source.args));
+        setMatrix(source.matrix);
+        setTargetJdkPattern(source.targetJdkPattern);
     }
 
     public String getResolvedImageName(JReleaserContext context) {
@@ -389,6 +411,34 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
         }
     }
 
+    public boolean isApplyDefaultMatrixSet() {
+        return null != applyDefaultMatrix;
+    }
+
+    public boolean isApplyDefaultMatrix() {
+        return null != applyDefaultMatrix && applyDefaultMatrix;
+    }
+
+    public void setApplyDefaultMatrix(Boolean applyDefaultMatrix) {
+        this.applyDefaultMatrix = applyDefaultMatrix;
+    }
+
+    public Matrix getMatrix() {
+        return matrix;
+    }
+
+    public void setMatrix(Matrix matrix) {
+        this.matrix.merge(matrix);
+    }
+
+    public Artifact getTargetJdkPattern() {
+        return targetJdkPattern;
+    }
+
+    public void setTargetJdkPattern(Artifact artifactPattern) {
+        this.targetJdkPattern.merge(artifactPattern);
+    }
+
     public Set<String> getModuleNames() {
         return moduleNames;
     }
@@ -453,6 +503,9 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
         for (Artifact targetJdk : getTargetJdks()) {
             mappedJdks.put("jdk " + (i++), targetJdk.asMap(full));
         }
+        props.put("applyDefaultMatrix", isApplyDefaultMatrix());
+        matrix.asMap(props);
+        props.put("targetJdkPattern", targetJdkPattern.asMap(full));
         props.put("jdk", jdk.asMap(full));
         props.put("targetJdks", mappedJdks);
         props.put("copyJars", isCopyJars());

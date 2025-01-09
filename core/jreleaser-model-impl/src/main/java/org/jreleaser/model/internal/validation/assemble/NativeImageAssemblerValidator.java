@@ -111,8 +111,6 @@ public final class NativeImageAssemblerValidator {
             }
         }
 
-        System.out.println();
-
         int i = 0;
         for (Artifact graalJdk : assembler.getGraalJdks()) {
             validateJdk(context, mode, assembler, graalJdk, i++, errors);
