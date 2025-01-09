@@ -32,10 +32,12 @@ import org.jreleaser.gradle.plugin.dsl.assemble.NativeImageAssembler
 import org.jreleaser.gradle.plugin.dsl.catalog.swid.SwidTag
 import org.jreleaser.gradle.plugin.dsl.common.ArchiveOptions
 import org.jreleaser.gradle.plugin.dsl.common.Artifact
+import org.jreleaser.gradle.plugin.dsl.common.Matrix
 import org.jreleaser.gradle.plugin.internal.dsl.catalog.swid.SwidTagImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.ArchiveOptionsImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.ArtifactImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.JavaImpl
+import org.jreleaser.gradle.plugin.internal.dsl.common.MatrixImpl
 import org.jreleaser.gradle.plugin.internal.dsl.platform.PlatformImpl
 import org.jreleaser.model.Active
 import org.jreleaser.model.Archive
@@ -69,6 +71,9 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
     private final WindowsImpl windows
     private final OsxImpl osx
     final NamedDomainObjectContainer<ArtifactImpl> graalJdks
+    final Property<Boolean> applyDefaultMatrix
+    final ArtifactImpl graalJdkPattern
+    final MatrixImpl matrix
 
     @Inject
     NativeImageAssemblerImpl(ObjectFactory objects) {
@@ -98,6 +103,10 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
                 artifact
             }
         })
+
+        applyDefaultMatrix = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+        graalJdkPattern = objects.newInstance(ArtifactImpl, objects)
+        matrix = objects.newInstance(MatrixImpl, objects)
     }
 
     @Override
@@ -121,6 +130,9 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
             windows.isSet() ||
             osx.isSet() ||
             !graalJdks.isEmpty() ||
+            applyDefaultMatrix.present ||
+            graalJdkPattern.isSet() ||
+            matrix.isSet() ||
             options.isSet()
     }
 
@@ -179,6 +191,16 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
     }
 
     @Override
+    void matrix(Action<? super Matrix> action) {
+        action.execute(matrix)
+    }
+
+    @Override
+    void graalJdkPattern(Action<? super Artifact> action) {
+        action.execute(graalJdkPattern)
+    }
+
+    @Override
     @CompileDynamic
     void graal(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
         ConfigureUtil.configure(action, graal)
@@ -227,6 +249,18 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
     }
 
     @Override
+    @CompileDynamic
+    void matrix(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Matrix) Closure<Void> action) {
+        ConfigureUtil.configure(action, matrix)
+    }
+
+    @Override
+    @CompileDynamic
+    void graalJdkPattern(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
+        ConfigureUtil.configure(action, graalJdkPattern)
+    }
+
+    @Override
     void setActive(String str) {
         if (isNotBlank(str)) {
             active.set(Active.of(str.trim()))
@@ -252,6 +286,9 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
         for (ArtifactImpl artifact : graalJdks) {
             assembler.addGraalJdk(artifact.toModel())
         }
+        if (applyDefaultMatrix.present) assembler.applyDefaultMatrix = applyDefaultMatrix.get()
+        if (matrix.isSet()) assembler.setMatrix(matrix.toModel())
+        if (graalJdkPattern.isSet()) assembler.setGraalJdkPattern(graalJdkPattern.toModel())
         if (options.isSet()) assembler.options = options.toModel()
         assembler.swid = swid.toModel()
         assembler

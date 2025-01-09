@@ -31,6 +31,7 @@ import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.common.FileSet;
 import org.jreleaser.model.internal.common.Glob;
+import org.jreleaser.model.internal.common.Matrix;
 import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.util.PlatformUtils;
 
@@ -56,12 +57,14 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.2.0
  */
 public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImageAssembler, org.jreleaser.model.api.assemble.NativeImageAssembler> implements SwidTagAware {
-    private static final long serialVersionUID = 3475271658640868162L;
+    private static final long serialVersionUID = -3829413289834521303L;
 
     private final List<String> args = new ArrayList<>();
     private final Set<String> components = new LinkedHashSet<>();
     private final Artifact graal = new Artifact();
     private final Set<Artifact> graalJdks = new LinkedHashSet<>();
+    private final Matrix matrix = new Matrix();
+    private final Artifact graalJdkPattern = new Artifact();
     private final Upx upx = new Upx();
     private final Linux linux = new Linux();
     private final Windows windows = new Windows();
@@ -71,10 +74,11 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
     private String imageName;
     private String imageNameTransform;
     private Archive.Format archiveFormat;
+    private Boolean applyDefaultMatrix;
 
     @JsonIgnore
     private final org.jreleaser.model.api.assemble.NativeImageAssembler immutable = new org.jreleaser.model.api.assemble.NativeImageAssembler() {
-        private static final long serialVersionUID = -3773732095608192037L;
+        private static final long serialVersionUID = -6244360660293716374L;
 
         private Set<? extends org.jreleaser.model.api.common.Artifact> artifacts;
         private Set<? extends org.jreleaser.model.api.common.Artifact> graalJdks;
@@ -116,6 +120,21 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
                     .collect(toSet());
             }
             return graalJdks;
+        }
+
+        @Override
+        public boolean isApplyDefaultMatrix() {
+            return NativeImageAssembler.this.isApplyDefaultMatrix();
+        }
+
+        @Override
+        public org.jreleaser.model.api.common.Matrix getMatrix() {
+            return matrix.asImmutable();
+        }
+
+        @Override
+        public org.jreleaser.model.api.common.Artifact getGraalJdkPattern() {
+            return graalJdkPattern.asImmutable();
         }
 
         @Override
@@ -304,6 +323,7 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
         this.imageName = merge(this.imageName, source.imageName);
         this.imageNameTransform = merge(this.imageNameTransform, source.imageNameTransform);
         this.archiveFormat = merge(this.archiveFormat, source.archiveFormat);
+        this.applyDefaultMatrix = merge(this.applyDefaultMatrix, source.applyDefaultMatrix);
         setOptions(source.options);
         setGraal(source.graal);
         setGraalJdks(merge(this.graalJdks, source.graalJdks));
@@ -313,6 +333,8 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
         setLinux(source.linux);
         setWindows(source.windows);
         setOsx(source.osx);
+        setMatrix(source.matrix);
+        setGraalJdkPattern(source.graalJdkPattern);
     }
 
     public String getResolvedImageName(JReleaserContext context) {
@@ -401,6 +423,34 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
         }
     }
 
+    public boolean isApplyDefaultMatrixSet() {
+        return null != applyDefaultMatrix;
+    }
+
+    public boolean isApplyDefaultMatrix() {
+        return null != applyDefaultMatrix && applyDefaultMatrix;
+    }
+
+    public void setApplyDefaultMatrix(Boolean applyDefaultMatrix) {
+        this.applyDefaultMatrix = applyDefaultMatrix;
+    }
+
+    public Matrix getMatrix() {
+        return matrix;
+    }
+
+    public void setMatrix(Matrix matrix) {
+        this.matrix.merge(matrix);
+    }
+
+    public Artifact getGraalJdkPattern() {
+        return graalJdkPattern;
+    }
+
+    public void setGraalJdkPattern(Artifact artifactPattern) {
+        this.graalJdkPattern.merge(artifactPattern);
+    }
+
     public List<String> getArgs() {
         return args;
     }
@@ -458,6 +508,10 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
         props.put("imageNameTransform", imageNameTransform);
         props.put("archiveFormat", archiveFormat);
         props.put("options", options.asMap(full));
+        props.put("applyDefaultMatrix", isApplyDefaultMatrix());
+        matrix.asMap(props);
+        props.put("graalJdkPattern", graalJdkPattern.asMap(full));
+
         Map<String, Map<String, Object>> mappedJdks = new LinkedHashMap<>();
         int i = 0;
         for (Artifact graalJdk : getGraalJdks()) {

@@ -35,13 +35,14 @@ import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.stream.Collectors.toList;
 import static org.jreleaser.util.CollectionUtils.mapOf;
+import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
  * @since 1.16.0
  */
 public final class Matrix extends AbstractModelObject<Matrix> implements Domain {
-    private static final long serialVersionUID = -8589009503056323578L;
+    private static final long serialVersionUID = -3894675341354234809L;
 
     private final Map<String, List<String>> vars = new LinkedHashMap<>();
     private final List<Map<String, String>> rows = new ArrayList<>();
@@ -171,5 +172,18 @@ public final class Matrix extends AbstractModelObject<Matrix> implements Domain 
         TemplateContext props = new TemplateContext();
         props.setAll(mapOf("matrix", matrix));
         return props;
+    }
+
+    public static String replaceWithMatrix(Object value, Map<String, String> matrix) {
+        if (null == value) return null;
+
+        String input = String.valueOf(value);
+        if (isBlank(input)) return "";
+
+        for (Map.Entry<String, String> e : matrix.entrySet()) {
+            input = input.replaceAll("\\{\\{\\s*matrix." + e.getKey() + "\\s*}}", e.getValue());
+        }
+
+        return input;
     }
 }

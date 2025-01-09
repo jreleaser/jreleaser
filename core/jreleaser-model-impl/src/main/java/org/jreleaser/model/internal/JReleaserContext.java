@@ -108,6 +108,7 @@ import static org.jreleaser.model.Constants.KEY_VERSION_PRERELEASE;
 import static org.jreleaser.model.Constants.KEY_VERSION_TAG;
 import static org.jreleaser.model.Constants.KEY_VERSION_WEEK;
 import static org.jreleaser.model.Constants.KEY_VERSION_YEAR;
+import static org.jreleaser.model.internal.common.Matrix.replaceWithMatrix;
 import static org.jreleaser.util.CollectionUtils.safePut;
 import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -625,19 +626,6 @@ public class JReleaserContext {
         }
 
         return artifact;
-    }
-
-    private String replaceWithMatrix(Object value, Map<String, String> matrix) {
-        if (null == value) return null;
-
-        String input = String.valueOf(value);
-        if (isBlank(input)) return "";
-
-        for (Map.Entry<String, String> e : matrix.entrySet()) {
-            input = input.replaceAll("\\{\\{\\s*matrix." + e.getKey() + "\\s*}}", e.getValue());
-        }
-
-        return input;
     }
 
     private void mergeArtifacts(org.jreleaser.model.internal.assemble.Assembler<?> assembler, org.jreleaser.model.internal.distributions.Distribution distribution) {

@@ -23,6 +23,7 @@ import org.jreleaser.model.api.common.Activatable;
 import org.jreleaser.model.api.common.ArchiveOptions;
 import org.jreleaser.model.api.common.Artifact;
 import org.jreleaser.model.api.common.Domain;
+import org.jreleaser.model.api.common.Matrix;
 
 import java.util.List;
 import java.util.Set;
@@ -45,6 +46,12 @@ public interface NativeImageAssembler extends Assembler, JavaAssembler, SwidTagA
     Artifact getGraal();
 
     Set<? extends Artifact> getGraalJdks();
+
+    boolean isApplyDefaultMatrix();
+
+    Matrix getMatrix();
+
+    Artifact getGraalJdkPattern();
 
     List<String> getArgs();
 

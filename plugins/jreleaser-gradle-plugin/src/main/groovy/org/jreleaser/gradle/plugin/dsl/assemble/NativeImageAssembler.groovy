@@ -26,6 +26,7 @@ import org.jreleaser.gradle.plugin.dsl.catalog.swid.SwidTagAware
 import org.jreleaser.gradle.plugin.dsl.common.Activatable
 import org.jreleaser.gradle.plugin.dsl.common.ArchiveOptions
 import org.jreleaser.gradle.plugin.dsl.common.Artifact
+import org.jreleaser.gradle.plugin.dsl.common.Matrix
 import org.jreleaser.model.Archive
 
 /**
@@ -45,6 +46,8 @@ interface NativeImageAssembler extends JavaAssembler, SwidTagAware {
 
     Property<Archive.Format> getArchiveFormat()
 
+    Property<Boolean> getApplyDefaultMatrix()
+
     void setArchiveFormat(String str)
 
     void arg(String arg)
@@ -63,6 +66,10 @@ interface NativeImageAssembler extends JavaAssembler, SwidTagAware {
 
     void graalJdk(Action<? super Artifact> action)
 
+    void matrix(Action<? super Matrix> action)
+
+    void graalJdkPattern(Action<? super Artifact> action)
+
     void options(Action<? super ArchiveOptions> action)
 
     void graal(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
@@ -76,6 +83,10 @@ interface NativeImageAssembler extends JavaAssembler, SwidTagAware {
     void osx(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Osx) Closure<Void> action)
 
     void graalJdk(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
+
+    void matrix(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Matrix) Closure<Void> action)
+
+    void graalJdkPattern(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
 
     void options(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArchiveOptions) Closure<Void> action)
 

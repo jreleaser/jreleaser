@@ -31,6 +31,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import static java.util.stream.Collectors.groupingBy;
+import static org.jreleaser.model.Constants.KEY_PLATFORM;
+import static org.jreleaser.model.internal.common.Matrix.replaceWithMatrix;
 import static org.jreleaser.model.internal.validation.assemble.AssemblersValidator.validateJava;
 import static org.jreleaser.model.internal.validation.assemble.AssemblersValidator.validateJavaAssembler;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
@@ -95,6 +97,21 @@ public final class NativeImageAssemblerValidator {
             assembler.setImageName(assembler.getExecutable() + "-" +
                 context.getModel().getProject().getResolvedVersion());
         }
+
+        if (assembler.isApplyDefaultMatrix()) {
+            assembler.setMatrix(context.getModel().getMatrix());
+        }
+
+        if (!assembler.getMatrix().isEmpty() && isNotBlank(assembler.getGraalJdkPattern().getPath())) {
+            for (Map<String, String> matrixRow : assembler.getMatrix().resolve()) {
+                Artifact graalJdk = new Artifact();
+                graalJdk.setPlatform(matrixRow.get(KEY_PLATFORM));
+                graalJdk.setPath(replaceWithMatrix(assembler.getGraalJdkPattern().getPath(), matrixRow));
+                assembler.addGraalJdk(graalJdk);
+            }
+        }
+
+        System.out.println();
 
         int i = 0;
         for (Artifact graalJdk : assembler.getGraalJdks()) {
