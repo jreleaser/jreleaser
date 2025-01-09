@@ -28,6 +28,7 @@ import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.common.Executable;
 import org.jreleaser.model.internal.common.ExtraProperties;
 import org.jreleaser.model.internal.common.Java;
+import org.jreleaser.model.internal.common.Matrix;
 import org.jreleaser.model.internal.packagers.Packager;
 import org.jreleaser.model.internal.packagers.Packagers;
 import org.jreleaser.model.internal.platform.Platform;
@@ -75,7 +76,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public final class Distribution extends Packagers<Distribution> implements Domain, Activatable, ExtraProperties {
-    private static final long serialVersionUID = 8423362983187267131L;
+    private static final long serialVersionUID = 4193247619396188350L;
 
     private final List<String> tags = new ArrayList<>();
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
@@ -83,16 +84,34 @@ public final class Distribution extends Packagers<Distribution> implements Domai
     private final Java java = new Java();
     private final Platform platform = new Platform();
     private final Executable executable = new Executable();
+    private final Matrix matrix = new Matrix();
+    private final Artifact artifactPattern = new Artifact();
 
     private String name;
     private org.jreleaser.model.Distribution.DistributionType type = org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
     private Stereotype stereotype;
+    private Boolean applyDefaultMatrix;
 
     @JsonIgnore
     private final org.jreleaser.model.api.distributions.Distribution immutable = new org.jreleaser.model.api.distributions.Distribution() {
-        private static final long serialVersionUID = 1918136121866210647L;
+        private static final long serialVersionUID = -1641288946409889390L;
 
         private Set<? extends org.jreleaser.model.api.common.Artifact> artifacts;
+
+        @Override
+        public boolean isApplyDefaultMatrix() {
+            return Distribution.this.isApplyDefaultMatrix();
+        }
+
+        @Override
+        public org.jreleaser.model.api.common.Matrix getMatrix() {
+            return matrix.asImmutable();
+        }
+
+        @Override
+        public org.jreleaser.model.api.common.Artifact getArtifactPattern() {
+            return artifactPattern.asImmutable();
+        }
 
         @Override
         public org.jreleaser.model.api.platform.Platform getPlatform() {
@@ -251,12 +270,15 @@ public final class Distribution extends Packagers<Distribution> implements Domai
         this.name = merge(this.name, source.name);
         this.type = merge(this.type, source.type);
         this.stereotype = merge(this.stereotype, source.stereotype);
+        this.applyDefaultMatrix = merge(this.applyDefaultMatrix, source.applyDefaultMatrix);
         setExecutable(source.executable);
         setPlatform(source.platform);
         setJava(source.java);
         setTags(merge(this.tags, source.tags));
         setExtraProperties(merge(this.extraProperties, source.extraProperties));
         setArtifacts(merge(this.artifacts, source.artifacts));
+        setMatrix(source.matrix);
+        setArtifactPattern(source.artifactPattern);
     }
 
     public TemplateContext props() {
@@ -399,6 +421,34 @@ public final class Distribution extends Packagers<Distribution> implements Domai
         this.java.merge(java);
     }
 
+    public boolean isApplyDefaultMatrixSet() {
+        return null != applyDefaultMatrix;
+    }
+
+    public boolean isApplyDefaultMatrix() {
+        return null != applyDefaultMatrix && applyDefaultMatrix;
+    }
+
+    public void setApplyDefaultMatrix(Boolean applyDefaultMatrix) {
+        this.applyDefaultMatrix = applyDefaultMatrix;
+    }
+
+    public Matrix getMatrix() {
+        return matrix;
+    }
+
+    public void setMatrix(Matrix matrix) {
+        this.matrix.merge(matrix);
+    }
+
+    public Artifact getArtifactPattern() {
+        return artifactPattern;
+    }
+
+    public void setArtifactPattern(Artifact artifactPattern) {
+        this.artifactPattern.merge(artifactPattern);
+    }
+
     @Override
     public Map<String, Object> getExtraProperties() {
         return extraProperties;
@@ -480,6 +530,10 @@ public final class Distribution extends Packagers<Distribution> implements Domai
         props.put("type", type);
         props.put("executable", executable.asMap(full));
         if (full || platform.isSet()) props.put("platform", platform.asMap(full));
+
+        props.put("applyDefaultMatrix", isApplyDefaultMatrix());
+        matrix.asMap(props);
+        props.put("artifactPattern", artifactPattern.asMap(full));
 
         Map<String, Map<String, Object>> mappedArtifacts = new LinkedHashMap<>();
         int i = 0;

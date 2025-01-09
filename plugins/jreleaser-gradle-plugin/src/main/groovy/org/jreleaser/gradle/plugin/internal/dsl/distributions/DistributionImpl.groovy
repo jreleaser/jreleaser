@@ -30,6 +30,7 @@ import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.common.Artifact
 import org.jreleaser.gradle.plugin.dsl.common.Executable
 import org.jreleaser.gradle.plugin.dsl.common.Java
+import org.jreleaser.gradle.plugin.dsl.common.Matrix
 import org.jreleaser.gradle.plugin.dsl.distributions.Distribution
 import org.jreleaser.gradle.plugin.dsl.packagers.AppImagePackager
 import org.jreleaser.gradle.plugin.dsl.packagers.AsdfPackager
@@ -50,6 +51,7 @@ import org.jreleaser.gradle.plugin.dsl.platform.Platform
 import org.jreleaser.gradle.plugin.internal.dsl.common.ArtifactImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.ExecutableImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.JavaImpl
+import org.jreleaser.gradle.plugin.internal.dsl.common.MatrixImpl
 import org.jreleaser.gradle.plugin.internal.dsl.packagers.AppImagePackagerImpl
 import org.jreleaser.gradle.plugin.internal.dsl.packagers.AsdfPackagerImpl
 import org.jreleaser.gradle.plugin.internal.dsl.packagers.BrewPackagerImpl
@@ -108,6 +110,9 @@ class DistributionImpl implements Distribution {
     final SnapPackagerImpl snap
     final SpecPackagerImpl spec
     final WingetPackagerImpl winget
+    final Property<Boolean> applyDefaultMatrix
+    final ArtifactImpl artifactPattern
+    final MatrixImpl matrix
 
     private final NamedDomainObjectContainer<ArtifactImpl> artifacts
 
@@ -120,6 +125,9 @@ class DistributionImpl implements Distribution {
         distributionType = objects.property(DistributionType).convention(DistributionType.JAVA_BINARY)
         tags = objects.listProperty(String).convention(Providers.<List<String>> notDefined())
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
+        applyDefaultMatrix = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+        artifactPattern = objects.newInstance(ArtifactImpl, objects)
+        matrix = objects.newInstance(MatrixImpl, objects)
 
         artifacts = objects.domainObjectContainer(ArtifactImpl, new NamedDomainObjectFactory<ArtifactImpl>() {
             @Override
@@ -169,6 +177,16 @@ class DistributionImpl implements Distribution {
         if (isNotBlank(tag)) {
             tags.add(tag.trim())
         }
+    }
+
+    @Override
+    void matrix(Action<? super Matrix> action) {
+        action.execute(matrix)
+    }
+
+    @Override
+    void artifactPattern(Action<? super Artifact> action) {
+        action.execute(artifactPattern)
     }
 
     @Override
@@ -271,6 +289,18 @@ class DistributionImpl implements Distribution {
         if (isNotBlank(str)) {
             active.set(Active.of(str.trim()))
         }
+    }
+
+    @Override
+    @CompileDynamic
+    void matrix(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Matrix) Closure<Void> action) {
+        ConfigureUtil.configure(action, matrix)
+    }
+
+    @Override
+    @CompileDynamic
+    void artifactPattern(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
+        ConfigureUtil.configure(action, artifactPattern)
     }
 
     @Override
@@ -400,6 +430,9 @@ class DistributionImpl implements Distribution {
         for (ArtifactImpl artifact : artifacts) {
             distribution.addArtifact(artifact.toModel())
         }
+        if (applyDefaultMatrix.present) distribution.applyDefaultMatrix = applyDefaultMatrix.get()
+        if (matrix.isSet()) distribution.setMatrix(matrix.toModel())
+        if (artifactPattern.isSet()) distribution.setArtifactPattern(artifactPattern.toModel())
         distribution.tags = (List<String>) tags.getOrElse([])
         if (extraProperties.present) distribution.extraProperties.putAll(extraProperties.get())
         if (appImage.isSet()) distribution.appImage = appImage.toModel()

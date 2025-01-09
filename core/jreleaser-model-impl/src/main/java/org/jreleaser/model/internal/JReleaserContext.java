@@ -111,6 +111,7 @@ import static org.jreleaser.model.Constants.KEY_VERSION_YEAR;
 import static org.jreleaser.util.CollectionUtils.safePut;
 import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.isBlank;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -585,6 +586,58 @@ public class JReleaserContext {
             extraProperties.putAll(assembler.getExtraProperties());
             distribution.mergeExtraProperties(extraProperties);
         }
+
+        resolveArtifactPatterns();
+    }
+
+    private void resolveArtifactPatterns() {
+        for (org.jreleaser.model.internal.distributions.Distribution distribution : model.getDistributions().values()) {
+            if (distribution.isApplyDefaultMatrix()) {
+                distribution.setMatrix(model.getMatrix());
+            }
+
+            if (!distribution.getMatrix().isEmpty() && isNotBlank(distribution.getArtifactPattern().getPath())) {
+                List<Artifact> artifacts = new ArrayList<>();
+                for (Map<String, String> matrixRow : distribution.getMatrix().resolve()) {
+                    artifacts.add(createArtifact(distribution.getArtifactPattern(), matrixRow));
+                }
+                mergeArtifacts(artifacts, distribution);
+            }
+        }
+    }
+
+    private Artifact createArtifact(Artifact artifactPattern, Map<String, String> matrix) {
+        Artifact artifact = new Artifact();
+        artifact.setPlatform(matrix.get(KEY_PLATFORM));
+
+        artifact.setPath(replaceWithMatrix(artifactPattern.getPath(), matrix));
+        artifact.setTransform(replaceWithMatrix(artifactPattern.getTransform(), matrix));
+
+        for (Map.Entry<String, Object> property : artifactPattern.getExtraProperties().entrySet()) {
+            artifact.addExtraProperty(property.getKey(), replaceWithMatrix(property.getValue(), matrix));
+        }
+
+        for (Map.Entry<String, String> property : matrix.entrySet()) {
+            if (property.getKey().startsWith("extraProperties.")) {
+                String key = property.getKey().substring("extraProperties.".length());
+                artifact.addExtraProperty(key, property.getValue());
+            }
+        }
+
+        return artifact;
+    }
+
+    private String replaceWithMatrix(Object value, Map<String, String> matrix) {
+        if (null == value) return null;
+
+        String input = String.valueOf(value);
+        if (isBlank(input)) return "";
+
+        for (Map.Entry<String, String> e : matrix.entrySet()) {
+            input = input.replaceAll("\\{\\{\\s*matrix." + e.getKey() + "\\s*}}", e.getValue());
+        }
+
+        return input;
     }
 
     private void mergeArtifacts(org.jreleaser.model.internal.assemble.Assembler<?> assembler, org.jreleaser.model.internal.distributions.Distribution distribution) {
@@ -595,6 +648,28 @@ public class JReleaserContext {
                     if (isPlatformSelected(other)) other.select();
                     if (incoming.isSelected() && other.isSelected()) {
                         Path p1 = incoming.getResolvedPath(this, assembler);
+                        Path p2 = other.getResolvedPath(this, distribution);
+                        return p1.equals(p2);
+                    }
+                    return false;
+                })
+                .findFirst();
+            if (artifact.isPresent()) {
+                artifact.get().mergeWith(incoming);
+            } else {
+                distribution.addArtifact(incoming);
+            }
+        }
+    }
+
+    private void mergeArtifacts(List<Artifact> artifacts, org.jreleaser.model.internal.distributions.Distribution distribution) {
+        for (Artifact incoming : artifacts) {
+            Optional<Artifact> artifact = distribution.getArtifacts().stream()
+                .filter(other -> {
+                    if (isPlatformSelected(incoming)) incoming.select();
+                    if (isPlatformSelected(other)) other.select();
+                    if (incoming.isSelected() && other.isSelected()) {
+                        Path p1 = incoming.getResolvedPath(this, distribution);
                         Path p2 = other.getResolvedPath(this, distribution);
                         return p1.equals(p2);
                     }

@@ -22,6 +22,7 @@ import org.jreleaser.model.Archive;
 import org.jreleaser.model.Constants;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.ArchiveAssembler;
+import org.jreleaser.model.internal.common.Matrix;
 import org.jreleaser.model.spi.assemble.AssemblerProcessingException;
 import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.util.FileUtils;
@@ -35,7 +36,6 @@ import java.util.Map;
 
 import static java.util.Collections.emptyMap;
 import static org.jreleaser.model.Constants.KEY_PLATFORM;
-import static org.jreleaser.util.CollectionUtils.mapOf;
 import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.isTrue;
 
@@ -92,9 +92,9 @@ public class ArchiveAssemblerProcessor extends AbstractAssemblerProcessor<org.jr
 
         // copy fileSets
         context.getLogger().debug(RB.$("assembler.copy.files"), context.relativizeToBasedir(archiveDirectory));
-        copyArtifacts(context, asTemplateContext(matrix), archiveDirectory, PlatformUtils.getCurrentFull(), assembler.isAttachPlatform());
-        copyFiles(context, asTemplateContext(matrix), archiveDirectory);
-        copyFileSets(context, asTemplateContext(matrix), archiveDirectory);
+        copyArtifacts(context, Matrix.asTemplateContext(matrix), archiveDirectory, PlatformUtils.getCurrentFull(), assembler.isAttachPlatform());
+        copyFiles(context, Matrix.asTemplateContext(matrix), archiveDirectory);
+        copyFileSets(context, Matrix.asTemplateContext(matrix), archiveDirectory);
         generateSwidTag(context, archiveDirectory);
 
         // run archive x format
@@ -103,12 +103,6 @@ public class ArchiveAssemblerProcessor extends AbstractAssemblerProcessor<org.jr
             if (getAssembler().extraPropertyIsTrue(skipKey) || isTrue(matrix.get(skipKey))) continue;
             archive(workDirectory, assembleDirectory, archiveName, format);
         }
-    }
-
-    private TemplateContext asTemplateContext(Map<String, String> matrix) {
-        TemplateContext props = new TemplateContext();
-        props.setAll(mapOf("matrix", matrix));
-        return props;
     }
 
     private void archive(Path workDirectory, Path assembleDirectory, String archiveName, Archive.Format format) throws AssemblerProcessingException {

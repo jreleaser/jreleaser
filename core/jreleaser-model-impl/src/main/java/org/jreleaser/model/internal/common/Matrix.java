@@ -18,6 +18,7 @@
 package org.jreleaser.model.internal.common;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.jreleaser.mustache.TemplateContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,7 +41,7 @@ import static org.jreleaser.util.CollectionUtils.mapOf;
  * @since 1.16.0
  */
 public final class Matrix extends AbstractModelObject<Matrix> implements Domain {
-    private static final long serialVersionUID = 5914850093276859188L;
+    private static final long serialVersionUID = -8589009503056323578L;
 
     private final Map<String, List<String>> vars = new LinkedHashMap<>();
     private final List<Map<String, String>> rows = new ArrayList<>();
@@ -164,5 +165,11 @@ public final class Matrix extends AbstractModelObject<Matrix> implements Domain 
         while (i1.hasNext() || i2.hasNext()) map.put(i1.next(), i2.next());
 
         return map;
+    }
+
+    public static TemplateContext asTemplateContext(Map<String, String> matrix) {
+        TemplateContext props = new TemplateContext();
+        props.setAll(mapOf("matrix", matrix));
+        return props;
     }
 }

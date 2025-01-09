@@ -91,7 +91,6 @@ abstract class AbstractHook implements Hook {
         action.execute(matrix)
     }
 
-
     @Override
     @CompileDynamic
     void filter(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Filter) Closure<Void> action) {

@@ -21,6 +21,7 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.api.hooks.ExecutionEvent;
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.common.Matrix;
 import org.jreleaser.model.internal.hooks.CommandHook;
 import org.jreleaser.model.internal.hooks.CommandHooks;
 import org.jreleaser.model.internal.hooks.Hook;
@@ -49,7 +50,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardOpenOption.WRITE;
 import static org.jreleaser.model.Constants.KEY_PLATFORM;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
-import static org.jreleaser.util.CollectionUtils.mapOf;
 import static org.jreleaser.util.StringUtils.isFalse;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -144,7 +144,7 @@ public final class HookExecutor {
                             }
                         }
 
-                        TemplateContext additionalContext = asTemplateContext(matrixRow);
+                        TemplateContext additionalContext = Matrix.asTemplateContext(matrixRow);
                         Map<String, String> localEnv = new LinkedHashMap<>(rootEnv);
                         localEnv.putAll(scriptHooks.getEnvironment());
                         localEnv = resolveEnvironment(localEnv, additionalContext);
@@ -233,7 +233,7 @@ public final class HookExecutor {
                             }
                         }
 
-                        TemplateContext additionalContext = asTemplateContext(matrixRow);
+                        TemplateContext additionalContext = Matrix.asTemplateContext(matrixRow);
                         Map<String, String> localEnv = new LinkedHashMap<>(rootEnv);
                         localEnv.putAll(commandHooks.getEnvironment());
                         localEnv = resolveEnvironment(localEnv, additionalContext);
@@ -404,11 +404,5 @@ public final class HookExecutor {
         }
 
         return result;
-    }
-
-    private TemplateContext asTemplateContext(Map<String, String> matrix) {
-        TemplateContext props = new TemplateContext();
-        props.setAll(mapOf("matrix", matrix));
-        return props;
     }
 }

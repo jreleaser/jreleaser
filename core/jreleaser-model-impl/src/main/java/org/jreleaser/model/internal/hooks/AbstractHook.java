@@ -48,6 +48,7 @@ public abstract class AbstractHook<S extends AbstractHook<S>> extends AbstractAc
         this.continueOnError = merge(this.continueOnError, source.continueOnError);
         this.verbose = merge(this.verbose, source.verbose);
         this.condition = merge(this.condition, source.condition);
+        this.applyDefaultMatrix = merge(this.applyDefaultMatrix, source.applyDefaultMatrix);
         setFilter(source.getFilter());
         setPlatforms(merge(this.platforms, source.getPlatforms()));
         setEnvironment(merge(this.environment, source.getEnvironment()));
@@ -170,6 +171,7 @@ public abstract class AbstractHook<S extends AbstractHook<S>> extends AbstractAc
             map.put("filter", filterAsMap);
         }
         map.put("environment", environment);
+        map.put("applyDefaultMatrix", isApplyDefaultMatrix());
         matrix.asMap(map);
         asMap(full, map);
 

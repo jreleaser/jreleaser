@@ -26,6 +26,7 @@ import org.jreleaser.gradle.plugin.dsl.common.Artifact
 import org.jreleaser.gradle.plugin.dsl.common.Executable
 import org.jreleaser.gradle.plugin.dsl.common.ExtraProperties
 import org.jreleaser.gradle.plugin.dsl.common.Java
+import org.jreleaser.gradle.plugin.dsl.common.Matrix
 import org.jreleaser.gradle.plugin.dsl.packagers.Packagers
 import org.jreleaser.gradle.plugin.dsl.platform.Platform
 import org.jreleaser.model.Distribution.DistributionType
@@ -56,7 +57,13 @@ interface Distribution extends Activatable, ExtraProperties, Packagers {
 
     void setStereotype(String str)
 
+    Property<Boolean> getApplyDefaultMatrix()
+
+    void matrix(Action<? super Matrix> action)
+
     void artifact(Action<? super Artifact> action)
+
+    void artifactPattern(Action<? super Artifact> action)
 
     void java(Action<? super Java> action)
 
@@ -66,9 +73,13 @@ interface Distribution extends Activatable, ExtraProperties, Packagers {
 
     void artifact(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
 
+    void artifactPattern(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
+
     void java(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Java) Closure<Void> action)
 
     void platform(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Platform) Closure<Void> action)
 
     void executable(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Executable) Closure<Void> action)
+
+    void matrix(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Matrix) Closure<Void> action)
 }
