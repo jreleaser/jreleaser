@@ -140,6 +140,11 @@ jdks {
         url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-23.0.1/graalvm-community-jdk-23.0.1_linux-x64_bin.tar.gz'
         checksum = 'e26a0a74064b1689c056b5f24d7cc3b271f57f576be063b139d27aafa1322951'
     }
+    graal23LinuxArm {
+        platform = 'linux-aarch64'
+        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-23.0.1/graalvm-community-jdk-23.0.1_linux-aarch64_bin.tar.gz'
+        checksum = '5a456db9162a89be5fadd50e703c19313d25ef7f5043b750b639cd0460335e60'
+    }
     graal23Windows {
         platform = 'windows-x86_64'
         url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-23.0.1/graalvm-community-jdk-23.0.1_windows-x64_bin.zip'
@@ -162,7 +167,7 @@ afterEvaluate {
     def copyJdksToCache = project.tasks.findByName('copyJdksToCache')
     ['zulu21Linux', 'zulu21LinuxArm', 'zulu21LinuxMusl', 'zulu21LinuxMuslArm',
      'zulu21Windows', 'zulu21WindowsArm', 'zulu21Osx', 'zulu21OsxArm',
-     'graal23Osx', 'graal23OsxArm', 'graal23Linux', 'graal23Windows'].each { jdk ->
+     'graal23Osx', 'graal23OsxArm', 'graal23Linux', 'graal23LinuxArm', 'graal23Windows'].each { jdk ->
         def copyTask = project.tasks.findByName('copyJdkFromCache' + jdk.capitalize())
         if (copyJdksToCache && copyTask) copyTask.dependsOn(copyJdksToCache)
     }

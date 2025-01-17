@@ -20,10 +20,11 @@ jobs:
       fail-fast: false
       matrix:
         job:
-          - { os: ubuntu-latest,  platform: linux-x86_64,   platformReplaced: linux-x86_64 }
-          - { os: macos-13,       platform: osx-x86_64,     platformReplaced: osx-x86_64 }
-          - { os: macos-14,       platform: osx-aarch_64,   platformReplaced: osx-aarch64 }
-          - { os: windows-latest, platform: windows-x86_64, platformReplaced: windows-x86_64 }
+          - { os: ubuntu-latest,    platform: linux-x86_64,   platformReplaced: linux-x86_64   }
+          - { os: ubuntu-22.04-arm, platform: linux-aarch_64, platformReplaced: linux-aarch64  }
+          - { os: macos-13,         platform: osx-x86_64,     platformReplaced: osx-x86_64     }
+          - { os: macos-14,         platform: osx-aarch_64,   platformReplaced: osx-aarch64    }
+          - { os: windows-latest,   platform: windows-x86_64, platformReplaced: windows-x86_64 }
     runs-on: ${{ matrix.job.os }}
     steps:
       - name: Checkout
