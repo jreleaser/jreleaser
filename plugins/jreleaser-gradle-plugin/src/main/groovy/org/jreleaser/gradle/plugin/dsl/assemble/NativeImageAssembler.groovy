@@ -58,11 +58,24 @@ interface NativeImageAssembler extends JavaAssembler, SwidTagAware {
 
     void upx(Action<? super Upx> action)
 
-    void linux(Action<? super Linux> action)
+    @Deprecated
+    void linux(Action<? super LinuxX86> action)
 
-    void windows(Action<? super Windows> action)
+    @Deprecated
+    void windows(Action<? super WindowsX86> action)
 
-    void osx(Action<? super Osx> action)
+    @Deprecated
+    void osx(Action<? super MacosX86> action)
+
+    void linuxX86(Action<? super LinuxX86> action)
+
+    void windowsX86(Action<? super WindowsX86> action)
+
+    void macosX86(Action<? super MacosX86> action)
+
+    void linuxArm(Action<? super LinuxArm> action)
+
+    void macosArm(Action<? super MacosArm> action)
 
     void graalJdk(Action<? super Artifact> action)
 
@@ -76,11 +89,24 @@ interface NativeImageAssembler extends JavaAssembler, SwidTagAware {
 
     void upx(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Upx) Closure<Void> action)
 
-    void linux(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Linux) Closure<Void> action)
+    @Deprecated
+    void linux(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = LinuxX86) Closure<Void> action)
 
-    void windows(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Windows) Closure<Void> action)
+    @Deprecated
+    void windows(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = WindowsX86) Closure<Void> action)
 
-    void osx(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Osx) Closure<Void> action)
+    @Deprecated
+    void osx(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = MacosX86) Closure<Void> action)
+
+    void linuxX86(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = LinuxX86) Closure<Void> action)
+
+    void windowsX86(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = WindowsX86) Closure<Void> action)
+
+    void macosX86(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = MacosX86) Closure<Void> action)
+
+    void linuxArm(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = LinuxArm) Closure<Void> action)
+
+    void macosArm(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = MacosArm) Closure<Void> action)
 
     void graalJdk(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
 
@@ -98,21 +124,36 @@ interface NativeImageAssembler extends JavaAssembler, SwidTagAware {
         void arg(String arg)
     }
 
-    interface Linux {
+    interface PlatformCustomizer {
         ListProperty<String> getArgs()
 
         void arg(String arg)
     }
 
-    interface Windows {
-        ListProperty<String> getArgs()
-
-        void arg(String arg)
+    @Deprecated
+    interface Linux extends PlatformCustomizer {
     }
 
-    interface Osx {
-        ListProperty<String> getArgs()
+    @Deprecated
+    interface Windows extends PlatformCustomizer {
+    }
 
-        void arg(String arg)
+    @Deprecated
+    interface Osx extends PlatformCustomizer {
+    }
+
+    interface LinuxX86 extends Linux {
+    }
+
+    interface WindowsX86 extends Windows {
+    }
+
+    interface MacosX86 extends Osx {
+    }
+
+    interface LinuxArm extends PlatformCustomizer {
+    }
+
+    interface MacosArm extends PlatformCustomizer {
     }
 }

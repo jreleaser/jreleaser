@@ -67,9 +67,11 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
 
     private final ArtifactImpl graal
     private final UpxImpl upx
-    private final LinuxImpl linux
-    private final WindowsImpl windows
-    private final OsxImpl osx
+    private final LinuxX86Impl linuxX86
+    private final WindowsX86Impl windowsX86
+    private final MacosX86Impl macosX86
+    private final LinuxArmImpl linuxArm
+    private final MacosArmImpl macosArm
     final NamedDomainObjectContainer<ArtifactImpl> graalJdks
     final Property<Boolean> applyDefaultMatrix
     final ArtifactImpl graalJdkPattern
@@ -89,9 +91,11 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
         graal = objects.newInstance(ArtifactImpl, objects)
         graal.setName('graal')
         upx = objects.newInstance(UpxImpl, objects)
-        linux = objects.newInstance(LinuxImpl, objects)
-        windows = objects.newInstance(WindowsImpl, objects)
-        osx = objects.newInstance(OsxImpl, objects)
+        linuxX86 = objects.newInstance(LinuxX86Impl, objects)
+        windowsX86 = objects.newInstance(WindowsX86Impl, objects)
+        macosX86 = objects.newInstance(MacosX86Impl, objects)
+        linuxArm = objects.newInstance(LinuxArmImpl, objects)
+        macosArm = objects.newInstance(MacosArmImpl, objects)
         options = objects.newInstance(ArchiveOptionsImpl, objects)
         swid = objects.newInstance(SwidTagImpl, objects)
 
@@ -126,9 +130,11 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
             java.isSet() ||
             graal.isSet() ||
             upx.isSet() ||
-            linux.isSet() ||
-            windows.isSet() ||
-            osx.isSet() ||
+            linuxX86.isSet() ||
+            windowsX86.isSet() ||
+            macosX86.isSet() ||
+            linuxArm.isSet() ||
+            macosArm.isSet() ||
             !graalJdks.isEmpty() ||
             applyDefaultMatrix.present ||
             graalJdkPattern.isSet() ||
@@ -161,18 +167,46 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
     }
 
     @Override
-    void linux(Action<? super Linux> action) {
-        action.execute(linux)
+    @Deprecated
+    void linux(Action<? super LinuxX86> action) {
+        action.execute(linuxX86)
     }
 
     @Override
-    void windows(Action<? super Windows> action) {
-        action.execute(windows)
+    @Deprecated
+    void windows(Action<? super WindowsX86> action) {
+        action.execute(windowsX86)
     }
 
     @Override
-    void osx(Action<? super Osx> action) {
-        action.execute(osx)
+    @Deprecated
+    void osx(Action<? super MacosX86> action) {
+        action.execute(macosX86)
+    }
+
+    @Override
+    void linuxX86(Action<? super LinuxX86> action) {
+        action.execute(linuxX86)
+    }
+
+    @Override
+    void windowsX86(Action<? super WindowsX86> action) {
+        action.execute(windowsX86)
+    }
+
+    @Override
+    void macosX86(Action<? super MacosX86> action) {
+        action.execute(macosX86)
+    }
+
+    @Override
+    void linuxArm(Action<? super LinuxArm> action) {
+        action.execute(linuxArm)
+    }
+
+    @Override
+    void macosArm(Action<? super MacosArm> action) {
+        action.execute(macosArm)
     }
 
     @Override
@@ -214,20 +248,53 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
 
     @Override
     @CompileDynamic
+    @Deprecated
     void linux(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Upx) Closure<Void> action) {
-        ConfigureUtil.configure(action, linux)
+        ConfigureUtil.configure(action, linuxX86)
     }
 
     @Override
     @CompileDynamic
+    @Deprecated
     void windows(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Upx) Closure<Void> action) {
-        ConfigureUtil.configure(action, windows)
+        ConfigureUtil.configure(action, windowsX86)
     }
 
     @Override
     @CompileDynamic
+    @Deprecated
     void osx(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Upx) Closure<Void> action) {
-        ConfigureUtil.configure(action, osx)
+        ConfigureUtil.configure(action, macosX86)
+    }
+
+    @Override
+    @CompileDynamic
+    void linuxX86(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Upx) Closure<Void> action) {
+        ConfigureUtil.configure(action, linuxX86)
+    }
+
+    @Override
+    @CompileDynamic
+    void windowsX86(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Upx) Closure<Void> action) {
+        ConfigureUtil.configure(action, windowsX86)
+    }
+
+    @Override
+    @CompileDynamic
+    void macosX86(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Upx) Closure<Void> action) {
+        ConfigureUtil.configure(action, macosX86)
+    }
+
+    @Override
+    @CompileDynamic
+    void linuxArm(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Upx) Closure<Void> action) {
+        ConfigureUtil.configure(action, linuxArm)
+    }
+
+    @Override
+    @CompileDynamic
+    void macosArm(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Upx) Closure<Void> action) {
+        ConfigureUtil.configure(action, macosArm)
     }
 
     @Override
@@ -280,9 +347,11 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
         assembler.components = (Set<String>) components.getOrElse([] as Set)
         if (graal.isSet()) assembler.graal = graal.toModel()
         if (upx.isSet()) assembler.upx = upx.toModel()
-        if (linux.isSet()) assembler.linux = linux.toModel()
-        if (windows.isSet()) assembler.windows = windows.toModel()
-        if (osx.isSet()) assembler.osx = osx.toModel()
+        if (linuxX86.isSet()) assembler.linuxX86 = linuxX86.toModel()
+        if (windowsX86.isSet()) assembler.windowsX86 = windowsX86.toModel()
+        if (macosX86.isSet()) assembler.macosX86 = macosX86.toModel()
+        if (linuxArm.isSet()) assembler.linuxArm = linuxArm.toModel()
+        if (macosArm.isSet()) assembler.macosArm = macosArm.toModel()
         for (ArtifactImpl artifact : graalJdks) {
             assembler.addGraalJdk(artifact.toModel())
         }
@@ -338,11 +407,11 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
     }
 
     @CompileStatic
-    static class LinuxImpl implements Linux {
+    static class LinuxX86Impl implements LinuxX86 {
         final ListProperty<String> args
 
         @Inject
-        LinuxImpl(ObjectFactory objects) {
+        LinuxX86Impl(ObjectFactory objects) {
             args = objects.listProperty(String).convention(Providers.<List<String>> notDefined())
         }
 
@@ -358,19 +427,19 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
             args.present
         }
 
-        org.jreleaser.model.internal.assemble.NativeImageAssembler.Linux toModel() {
-            org.jreleaser.model.internal.assemble.NativeImageAssembler.Linux linux = new org.jreleaser.model.internal.assemble.NativeImageAssembler.Linux()
-            linux.args = (List<String>) args.getOrElse([])
-            linux
+        org.jreleaser.model.internal.assemble.NativeImageAssembler.LinuxX86 toModel() {
+            org.jreleaser.model.internal.assemble.NativeImageAssembler.LinuxX86 linuxX86 = new org.jreleaser.model.internal.assemble.NativeImageAssembler.LinuxX86()
+            linuxX86.args = (List<String>) args.getOrElse([])
+            linuxX86
         }
     }
 
     @CompileStatic
-    static class WindowsImpl implements Windows {
+    static class WindowsX86Impl implements WindowsX86 {
         final ListProperty<String> args
 
         @Inject
-        WindowsImpl(ObjectFactory objects) {
+        WindowsX86Impl(ObjectFactory objects) {
             args = objects.listProperty(String).convention(Providers.<List<String>> notDefined())
         }
 
@@ -386,19 +455,19 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
             args.present
         }
 
-        org.jreleaser.model.internal.assemble.NativeImageAssembler.Windows toModel() {
-            org.jreleaser.model.internal.assemble.NativeImageAssembler.Windows windows = new org.jreleaser.model.internal.assemble.NativeImageAssembler.Windows()
-            windows.args = (List<String>) args.getOrElse([])
-            windows
+        org.jreleaser.model.internal.assemble.NativeImageAssembler.WindowsX86 toModel() {
+            org.jreleaser.model.internal.assemble.NativeImageAssembler.WindowsX86 windowsX86 = new org.jreleaser.model.internal.assemble.NativeImageAssembler.WindowsX86()
+            windowsX86.args = (List<String>) args.getOrElse([])
+            windowsX86
         }
     }
 
     @CompileStatic
-    static class OsxImpl implements Osx {
+    static class MacosX86Impl implements MacosX86 {
         final ListProperty<String> args
 
         @Inject
-        OsxImpl(ObjectFactory objects) {
+        MacosX86Impl(ObjectFactory objects) {
             args = objects.listProperty(String).convention(Providers.<List<String>> notDefined())
         }
 
@@ -414,10 +483,66 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
             args.present
         }
 
-        org.jreleaser.model.internal.assemble.NativeImageAssembler.Osx toModel() {
-            org.jreleaser.model.internal.assemble.NativeImageAssembler.Osx osx = new org.jreleaser.model.internal.assemble.NativeImageAssembler.Osx()
-            osx.args = (List<String>) args.getOrElse([])
-            osx
+        org.jreleaser.model.internal.assemble.NativeImageAssembler.MacosX86 toModel() {
+            org.jreleaser.model.internal.assemble.NativeImageAssembler.MacosX86 macosX86 = new org.jreleaser.model.internal.assemble.NativeImageAssembler.MacosX86()
+            macosX86.args = (List<String>) args.getOrElse([])
+            macosX86
+        }
+    }
+
+    @CompileStatic
+    static class LinuxArmImpl implements LinuxArm {
+        final ListProperty<String> args
+
+        @Inject
+        LinuxArmImpl(ObjectFactory objects) {
+            args = objects.listProperty(String).convention(Providers.<List<String>> notDefined())
+        }
+
+        @Override
+        void arg(String arg) {
+            if (isNotBlank(arg)) {
+                args.add(arg.trim())
+            }
+        }
+
+        @Internal
+        boolean isSet() {
+            args.present
+        }
+
+        org.jreleaser.model.internal.assemble.NativeImageAssembler.LinuxArm toModel() {
+            org.jreleaser.model.internal.assemble.NativeImageAssembler.LinuxArm linuxArm = new org.jreleaser.model.internal.assemble.NativeImageAssembler.LinuxArm()
+            linuxArm.args = (List<String>) args.getOrElse([])
+            linuxArm
+        }
+    }
+
+    @CompileStatic
+    static class MacosArmImpl implements MacosArm {
+        final ListProperty<String> args
+
+        @Inject
+        MacosArmImpl(ObjectFactory objects) {
+            args = objects.listProperty(String).convention(Providers.<List<String>> notDefined())
+        }
+
+        @Override
+        void arg(String arg) {
+            if (isNotBlank(arg)) {
+                args.add(arg.trim())
+            }
+        }
+
+        @Internal
+        boolean isSet() {
+            args.present
+        }
+
+        org.jreleaser.model.internal.assemble.NativeImageAssembler.MacosArm toModel() {
+            org.jreleaser.model.internal.assemble.NativeImageAssembler.MacosArm macosArm = new org.jreleaser.model.internal.assemble.NativeImageAssembler.MacosArm()
+            macosArm.args = (List<String>) args.getOrElse([])
+            macosArm
         }
     }
 }

@@ -59,11 +59,24 @@ public interface NativeImageAssembler extends Assembler, JavaAssembler, SwidTagA
 
     Upx getUpx();
 
+    @Deprecated
     Linux getLinux();
 
+    @Deprecated
     Windows getWindows();
 
+    @Deprecated
     Osx getOsx();
+
+    LinuxX86 getLinuxX86();
+
+    WindowsX86 getWindowsX86();
+
+    MacosX86 getMacosX86();
+
+    LinuxArm getLinuxArm();
+
+    MacosArm getMacosArm();
 
     interface PlatformCustomizer extends Domain {
         String getPlatform();
@@ -77,12 +90,30 @@ public interface NativeImageAssembler extends Assembler, JavaAssembler, SwidTagA
         List<String> getArgs();
     }
 
+    @Deprecated
     interface Linux extends PlatformCustomizer {
     }
 
+    @Deprecated
     interface Osx extends PlatformCustomizer {
     }
 
+    @Deprecated
     interface Windows extends PlatformCustomizer {
+    }
+
+    interface LinuxX86 extends Linux {
+    }
+
+    interface MacosX86 extends Osx {
+    }
+
+    interface WindowsX86 extends Windows {
+    }
+
+    interface LinuxArm extends PlatformCustomizer {
+    }
+
+    interface MacosArm extends PlatformCustomizer {
     }
 }

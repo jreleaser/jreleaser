@@ -48,6 +48,7 @@ import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
+import static org.jreleaser.model.JReleaserOutput.nag;
 import static org.jreleaser.model.api.assemble.NativeImageAssembler.TYPE;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -57,7 +58,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.2.0
  */
 public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImageAssembler, org.jreleaser.model.api.assemble.NativeImageAssembler> implements SwidTagAware {
-    private static final long serialVersionUID = -3829413289834521303L;
+    private static final long serialVersionUID = 8523239721945981332L;
 
     private final List<String> args = new ArrayList<>();
     private final Set<String> components = new LinkedHashSet<>();
@@ -66,9 +67,11 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
     private final Matrix matrix = new Matrix();
     private final Artifact graalJdkPattern = new Artifact();
     private final Upx upx = new Upx();
-    private final Linux linux = new Linux();
-    private final Windows windows = new Windows();
-    private final Osx osx = new Osx();
+    private final LinuxX86 linuxX86 = new LinuxX86();
+    private final WindowsX86 windowsX86 = new WindowsX86();
+    private final MacosX86 macosX86 = new MacosX86();
+    private final LinuxArm linuxArm = new LinuxArm();
+    private final MacosArm macosArm = new MacosArm();
     private final ArchiveOptions options = new ArchiveOptions();
 
     private String imageName;
@@ -78,7 +81,7 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
 
     @JsonIgnore
     private final org.jreleaser.model.api.assemble.NativeImageAssembler immutable = new org.jreleaser.model.api.assemble.NativeImageAssembler() {
-        private static final long serialVersionUID = -6244360660293716374L;
+        private static final long serialVersionUID = -555250291042674316L;
 
         private Set<? extends org.jreleaser.model.api.common.Artifact> artifacts;
         private Set<? extends org.jreleaser.model.api.common.Artifact> graalJdks;
@@ -154,17 +157,42 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
 
         @Override
         public Linux getLinux() {
-            return linux.asImmutable();
+            return getLinuxX86();
         }
 
         @Override
         public Windows getWindows() {
-            return windows.asImmutable();
+            return getWindowsX86();
         }
 
         @Override
         public Osx getOsx() {
-            return osx.asImmutable();
+            return getMacosX86();
+        }
+
+        @Override
+        public LinuxX86 getLinuxX86() {
+            return linuxX86.asImmutable();
+        }
+
+        @Override
+        public WindowsX86 getWindowsX86() {
+            return windowsX86.asImmutable();
+        }
+
+        @Override
+        public MacosX86 getMacosX86() {
+            return macosX86.asImmutable();
+        }
+
+        @Override
+        public LinuxArm getLinuxArm() {
+            return linuxArm.asImmutable();
+        }
+
+        @Override
+        public MacosArm getMacosArm() {
+            return macosArm.asImmutable();
         }
 
         @Override
@@ -330,9 +358,11 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
         setArgs(merge(this.args, source.args));
         setComponents(merge(this.components, source.components));
         setUpx(source.upx);
-        setLinux(source.linux);
-        setWindows(source.windows);
-        setOsx(source.osx);
+        setLinuxX86(source.linuxX86);
+        setWindowsX86(source.windowsX86);
+        setMacosX86(source.macosX86);
+        setLinuxArm(source.linuxArm);
+        setMacosArm(source.macosArm);
         setMatrix(source.matrix);
         setGraalJdkPattern(source.graalJdkPattern);
     }
@@ -353,11 +383,11 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
     public PlatformCustomizer getResolvedPlatformCustomizer() {
         String currentPlatform = PlatformUtils.getCurrentFull();
         if (PlatformUtils.isMac(currentPlatform)) {
-            return getOsx();
+            return PlatformUtils.isArm(currentPlatform) ? getMacosArm() : getMacosX86();
         } else if (PlatformUtils.isWindows(currentPlatform)) {
-            return getWindows();
+            return getWindowsX86();
         }
-        return getLinux();
+        return PlatformUtils.isArm(currentPlatform) ? getLinuxArm() : getLinuxX86();
     }
 
     public String getImageName() {
@@ -477,28 +507,77 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
         this.upx.merge(upx);
     }
 
-    public Linux getLinux() {
-        return linux;
+    @Deprecated
+    public LinuxX86 getLinux() {
+        return getLinuxX86();
     }
 
-    public void setLinux(Linux linux) {
-        this.linux.merge(linux);
+    @Deprecated
+    public void setLinux(LinuxX86 linux) {
+        nag("native-image.linux is deprecated since 1.17.0 and will be removed in 2.0.0. Use native-image.linuxX86 instead");
+        setLinuxX86(linux);
     }
 
-    public Windows getWindows() {
-        return windows;
+    @Deprecated
+    public WindowsX86 getWindows() {
+        return getWindowsX86();
     }
 
-    public void setWindows(Windows windows) {
-        this.windows.merge(windows);
+    @Deprecated
+    public void setWindows(WindowsX86 windows) {
+        nag("native-image.windows is deprecated since 1.17.0 and will be removed in 2.0.0. Use native-image.windowsX86 instead");
+        setWindowsX86(windows);
     }
 
-    public Osx getOsx() {
-        return osx;
+    @Deprecated
+    public MacosX86 getOsx() {
+        return getMacosX86();
     }
 
-    public void setOsx(Osx osx) {
-        this.osx.merge(osx);
+    @Deprecated
+    public void setOsx(MacosX86 osx) {
+        nag("native-image.osx is deprecated since 1.17.0 and will be removed in 2.0.0. Use native-image.macosX86 instead");
+        setMacosX86(osx);
+    }
+
+    public LinuxX86 getLinuxX86() {
+        return linuxX86;
+    }
+
+    public void setLinuxX86(LinuxX86 linuxX86) {
+        this.linuxX86.merge(linuxX86);
+    }
+
+    public WindowsX86 getWindowsX86() {
+        return windowsX86;
+    }
+
+    public void setWindowsX86(WindowsX86 windowsX86) {
+        this.windowsX86.merge(windowsX86);
+    }
+
+    public MacosX86 getMacosX86() {
+        return macosX86;
+    }
+
+    public void setMacosX86(MacosX86 macosX86) {
+        this.macosX86.merge(macosX86);
+    }
+
+    public LinuxArm getLinuxArm() {
+        return linuxArm;
+    }
+
+    public void setLinuxArm(LinuxArm linuxArm) {
+        this.linuxArm.merge(linuxArm);
+    }
+
+    public MacosArm getMacosArm() {
+        return macosArm;
+    }
+
+    public void setMacosArm(MacosArm macosArm) {
+        this.macosArm.merge(macosArm);
     }
 
     @Override
@@ -522,9 +601,11 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
         props.put("args", args);
         props.put("components", components);
         props.put("upx", upx.asMap(full));
-        props.putAll(linux.asMap(full));
-        props.putAll(osx.asMap(full));
-        props.putAll(windows.asMap(full));
+        if (full || linuxX86.isSet()) props.putAll(linuxX86.asMap(full));
+        if (full || macosX86.isSet()) props.putAll(macosX86.asMap(full));
+        if (full || windowsX86.isSet()) props.putAll(windowsX86.asMap(full));
+        if (full || linuxArm.isSet()) props.putAll(linuxArm.asMap(full));
+        if (full || macosArm.isSet()) props.putAll(macosArm.asMap(full));
     }
 
     public interface PlatformCustomizer extends Domain {
@@ -613,7 +694,7 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
     }
 
     private abstract static class AbstractPlatformCustomizer<S extends AbstractPlatformCustomizer<S>> extends AbstractModelObject<S> implements PlatformCustomizer {
-        private static final long serialVersionUID = 8640931163688760790L;
+        private static final long serialVersionUID = -6257221685457294205L;
 
         private final List<String> args = new ArrayList<>();
         private final String platform;
@@ -643,6 +724,10 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
             return platform;
         }
 
+        public boolean isSet() {
+            return !args.isEmpty();
+        }
+
         @Override
         public Map<String, Object> asMap(boolean full) {
             Map<String, Object> props = new LinkedHashMap<>();
@@ -654,98 +739,162 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
         }
     }
 
-    public static final class Linux extends NativeImageAssembler.AbstractPlatformCustomizer<Linux> {
-        private static final long serialVersionUID = -7751015791770722168L;
+    public static final class LinuxX86 extends NativeImageAssembler.AbstractPlatformCustomizer<LinuxX86> {
+        private static final long serialVersionUID = -8831893038081740645L;
 
         @JsonIgnore
-        private final org.jreleaser.model.api.assemble.NativeImageAssembler.Linux immutable = new org.jreleaser.model.api.assemble.NativeImageAssembler.Linux() {
-            private static final long serialVersionUID = -4020602674846221641L;
+        private final org.jreleaser.model.api.assemble.NativeImageAssembler.LinuxX86 immutable = new org.jreleaser.model.api.assemble.NativeImageAssembler.LinuxX86() {
+            private static final long serialVersionUID = -3352619976211811469L;
 
             @Override
             public String getPlatform() {
-                return Linux.this.getPlatform();
+                return LinuxX86.this.getPlatform();
             }
 
             @Override
             public List<String> getArgs() {
-                return unmodifiableList(Linux.this.getArgs());
+                return unmodifiableList(LinuxX86.this.getArgs());
             }
 
             @Override
             public Map<String, Object> asMap(boolean full) {
-                return unmodifiableMap(Linux.this.asMap(full));
+                return unmodifiableMap(LinuxX86.this.asMap(full));
             }
         };
 
-        public Linux() {
-            super("linux");
+        public LinuxX86() {
+            super("linuxX86");
         }
 
-        public org.jreleaser.model.api.assemble.NativeImageAssembler.Linux asImmutable() {
+        public org.jreleaser.model.api.assemble.NativeImageAssembler.LinuxX86 asImmutable() {
             return immutable;
         }
     }
 
-    public static final class Windows extends NativeImageAssembler.AbstractPlatformCustomizer<Windows> {
-        private static final long serialVersionUID = -2310019463850744244L;
+    public static final class MacosX86 extends NativeImageAssembler.AbstractPlatformCustomizer<MacosX86> {
+        private static final long serialVersionUID = 1765626220071702695L;
 
         @JsonIgnore
-        private final org.jreleaser.model.api.assemble.NativeImageAssembler.Windows immutable = new org.jreleaser.model.api.assemble.NativeImageAssembler.Windows() {
-            private static final long serialVersionUID = 1216711581026682524L;
+        private final org.jreleaser.model.api.assemble.NativeImageAssembler.MacosX86 immutable = new org.jreleaser.model.api.assemble.NativeImageAssembler.MacosX86() {
+            private static final long serialVersionUID = 5024962242878918936L;
 
             @Override
             public String getPlatform() {
-                return Windows.this.getPlatform();
+                return MacosX86.this.getPlatform();
             }
 
             @Override
             public List<String> getArgs() {
-                return unmodifiableList(Windows.this.getArgs());
+                return unmodifiableList(MacosX86.this.getArgs());
             }
 
             @Override
             public Map<String, Object> asMap(boolean full) {
-                return unmodifiableMap(Windows.this.asMap(full));
+                return unmodifiableMap(MacosX86.this.asMap(full));
             }
         };
 
-        public Windows() {
-            super("windows");
+        public MacosX86() {
+            super("macosX86");
         }
 
-        public org.jreleaser.model.api.assemble.NativeImageAssembler.Windows asImmutable() {
+        public org.jreleaser.model.api.assemble.NativeImageAssembler.MacosX86 asImmutable() {
             return immutable;
         }
     }
 
-    public static final class Osx extends NativeImageAssembler.AbstractPlatformCustomizer<Osx> {
-        private static final long serialVersionUID = 1619426199448547975L;
+    public static final class WindowsX86 extends NativeImageAssembler.AbstractPlatformCustomizer<WindowsX86> {
+        private static final long serialVersionUID = -2428122936085887109L;
 
         @JsonIgnore
-        private final org.jreleaser.model.api.assemble.NativeImageAssembler.Osx immutable = new org.jreleaser.model.api.assemble.NativeImageAssembler.Osx() {
-            private static final long serialVersionUID = -4484609486153782109L;
+        private final org.jreleaser.model.api.assemble.NativeImageAssembler.WindowsX86 immutable = new org.jreleaser.model.api.assemble.NativeImageAssembler.WindowsX86() {
+            private static final long serialVersionUID = 5225971842238088904L;
 
             @Override
             public String getPlatform() {
-                return Osx.this.getPlatform();
+                return WindowsX86.this.getPlatform();
             }
 
             @Override
             public List<String> getArgs() {
-                return unmodifiableList(Osx.this.getArgs());
+                return unmodifiableList(WindowsX86.this.getArgs());
             }
 
             @Override
             public Map<String, Object> asMap(boolean full) {
-                return unmodifiableMap(Osx.this.asMap(full));
+                return unmodifiableMap(WindowsX86.this.asMap(full));
             }
         };
 
-        public Osx() {
-            super("osx");
+        public WindowsX86() {
+            super("windowsX86");
         }
 
-        public org.jreleaser.model.api.assemble.NativeImageAssembler.Osx asImmutable() {
+        public org.jreleaser.model.api.assemble.NativeImageAssembler.WindowsX86 asImmutable() {
+            return immutable;
+        }
+    }
+
+    public static final class LinuxArm extends NativeImageAssembler.AbstractPlatformCustomizer<LinuxArm> {
+        private static final long serialVersionUID = 7581399244465819003L;
+
+        @JsonIgnore
+        private final org.jreleaser.model.api.assemble.NativeImageAssembler.LinuxArm immutable = new org.jreleaser.model.api.assemble.NativeImageAssembler.LinuxArm() {
+            private static final long serialVersionUID = -6003576591744585492L;
+
+            @Override
+            public String getPlatform() {
+                return LinuxArm.this.getPlatform();
+            }
+
+            @Override
+            public List<String> getArgs() {
+                return unmodifiableList(LinuxArm.this.getArgs());
+            }
+
+            @Override
+            public Map<String, Object> asMap(boolean full) {
+                return unmodifiableMap(LinuxArm.this.asMap(full));
+            }
+        };
+
+        public LinuxArm() {
+            super("linuxArm");
+        }
+
+        public org.jreleaser.model.api.assemble.NativeImageAssembler.LinuxArm asImmutable() {
+            return immutable;
+        }
+    }
+
+    public static final class MacosArm extends NativeImageAssembler.AbstractPlatformCustomizer<MacosArm> {
+        private static final long serialVersionUID = 4870042060382221246L;
+
+        @JsonIgnore
+        private final org.jreleaser.model.api.assemble.NativeImageAssembler.MacosArm immutable = new org.jreleaser.model.api.assemble.NativeImageAssembler.MacosArm() {
+            private static final long serialVersionUID = -432154406205528371L;
+
+            @Override
+            public String getPlatform() {
+                return MacosArm.this.getPlatform();
+            }
+
+            @Override
+            public List<String> getArgs() {
+                return unmodifiableList(MacosArm.this.getArgs());
+            }
+
+            @Override
+            public Map<String, Object> asMap(boolean full) {
+                return unmodifiableMap(MacosArm.this.asMap(full));
+            }
+        };
+
+        public MacosArm() {
+            super("macosArm");
+        }
+
+        public org.jreleaser.model.api.assemble.NativeImageAssembler.MacosArm asImmutable() {
             return immutable;
         }
     }
