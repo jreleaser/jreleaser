@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.jreleaser.model.internal.validation.assemble.ArchiveAssemblerValidator.validateArchive;
+import static org.jreleaser.model.internal.validation.assemble.DebAssemblerValidator.postValidateDeb;
 import static org.jreleaser.model.internal.validation.assemble.DebAssemblerValidator.validateDeb;
 import static org.jreleaser.model.internal.validation.assemble.JavaArchiveAssemblerValidator.validateJavaArchive;
 import static org.jreleaser.model.internal.validation.assemble.JlinkAssemblerValidator.validateJlink;
@@ -132,10 +133,11 @@ public final class AssemblersValidator {
         }
     }
 
-    public static void postValidateAssemblers(JReleaserContext context) {
+    public static void postValidateAssemblers(JReleaserContext context, Errors errors) {
         context.getLogger().debug("assemble");
 
-        postValidateJpackage(context);
+        postValidateDeb(context, errors);
+        postValidateJpackage(context, errors);
     }
 
     public static void validateAssembler(JReleaserContext context, Mode mode, Assembler<?> assembler, Errors errors) {

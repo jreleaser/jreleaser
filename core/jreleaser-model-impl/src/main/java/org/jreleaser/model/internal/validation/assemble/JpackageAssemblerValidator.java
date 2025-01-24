@@ -67,12 +67,10 @@ public final class JpackageAssemblerValidator {
         }
     }
 
-    public static void postValidateJpackage(JReleaserContext context) {
+    public static void postValidateJpackage(JReleaserContext context, Errors errors) {
         context.getLogger().debug("assemble.jpackage");
-        Map<String, JpackageAssembler> jpackage = context.getModel().getAssemble().getJpackage();
-
-        for (Map.Entry<String, JpackageAssembler> e : jpackage.entrySet()) {
-            postValidateJpackage(context, e.getValue());
+        for (JpackageAssembler assembler : context.getModel().getAssemble().getActiveJpackages()) {
+            postValidateJpackage(context, assembler, errors);
         }
     }
 
@@ -340,12 +338,18 @@ public final class JpackageAssemblerValidator {
         }
     }
 
-    private static void postValidateJpackage(JReleaserContext context, JpackageAssembler jpackage) {
+    private static void postValidateJpackage(JReleaserContext context, JpackageAssembler assembler, Errors errors) {
         Project project = context.getModel().getProject();
-        if (!jpackage.resolveEnabled(project)) return;
+        if (!assembler.resolveEnabled(project)) return;
 
-        JpackageAssembler.ApplicationPackage applicationPackage = jpackage.getApplicationPackage();
+        JpackageAssembler.ApplicationPackage applicationPackage = assembler.getApplicationPackage();
 
+        if (isBlank(applicationPackage.getVendor())) {
+            applicationPackage.setVendor(project.getVendor());
+        }
+        if (isBlank(applicationPackage.getVendor())) {
+            errors.configuration(RB.$("validation_jpackage_missing_vendor", assembler.getName()));
+        }
         if (isBlank(applicationPackage.getCopyright())) {
             applicationPackage.setCopyright(project.getCopyright());
         }

@@ -169,7 +169,9 @@ public final class ProjectValidator {
             project.getLinks().setDocumentation(project.getLinks().getHomepage());
         }
 
-        if (context.getModel().getAssemble().isEnabled()) {
+        if (mode.validateAssembly() &&
+            (!context.getModel().getAssemble().getActiveDebs().isEmpty() ||
+                !context.getModel().getAssemble().getActiveJpackages().isEmpty())) {
             if (isBlank(project.getDescription())) {
                 errors.configuration(RB.$("validation_must_not_be_blank", "project.description"));
             }
@@ -209,10 +211,10 @@ public final class ProjectValidator {
             errors.configuration(RB.$("validation_must_not_be_blank", "project.description"));
         }
         if (isBlank(project.getLinks().getHomepage())) {
-            errors.configuration(RB.$("validation_must_not_be_blank", "project.website"));
+            errors.configuration(RB.$("validation_must_not_be_blank", "project.links.homepage"));
         }
         if (isBlank(project.getLinks().getDocumentation())) {
-            errors.configuration(RB.$("validation_must_not_be_blank", "project.docsUrl"));
+            errors.configuration(RB.$("validation_must_not_be_blank", "project.links.documentation"));
         }
         if (isBlank(project.getLicense())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "project.license"));

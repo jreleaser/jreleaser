@@ -157,6 +157,22 @@ public final class DebAssemblerValidator {
         if (!control.isEssentialSet()) {
             control.setEssential(false);
         }
+    }
+
+    public static void postValidateDeb(JReleaserContext context, Errors errors) {
+        context.getLogger().debug("assemble.deb");
+
+        for (DebAssembler assembler : context.getModel().getAssemble().getActiveDebs()) {
+            postValidateDeb(context, assembler, errors);
+
+        }
+    }
+
+    private static void postValidateDeb(JReleaserContext context, DebAssembler assembler, Errors errors) {
+        Project project = context.getModel().getProject();
+        if (!assembler.resolveEnabled(project)) return;
+
+        DebAssembler.Control control = assembler.getControl();
 
         if (isBlank(control.getDescription())) {
             control.setDescription(project.getLongDescription());
