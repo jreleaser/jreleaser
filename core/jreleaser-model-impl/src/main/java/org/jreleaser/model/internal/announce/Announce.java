@@ -376,11 +376,14 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         this.telegram.merge(telegram);
     }
 
+    @JsonPropertyDescription("announce.twitter is deprecated since 1.17.0 and will be removed in 2.0.0")
     public TwitterAnnouncer getTwitter() {
         return twitter;
     }
 
+    @JsonPropertyDescription("announce.twitter is deprecated since 1.17.0 and will be removed in 2.0.0")
     public void setTwitter(TwitterAnnouncer twitter) {
+        nag("announce.twitter is deprecated since 1.17.0 and will be removed in 2.0.0");
         this.twitter.merge(twitter);
     }
 

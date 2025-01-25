@@ -23,6 +23,7 @@ import java.util.List;
  * @author Andres Almiray
  * @since 0.1.0
  */
+@Deprecated
 public interface TwitterAnnouncer extends Announcer {
     String TYPE = "twitter";
     String TWITTER_CONSUMER_KEY = "TWITTER_CONSUMER_KEY";
