@@ -140,9 +140,6 @@ announce:
   bluesky:
     active: RELEASE
     statusTemplate: src/jreleaser/bluesky.tpl
-  twitter:
-    active: RELEASE
-    statusTemplate: src/jreleaser/twitter.tpl
   mastodon:
     active: RELEASE
     host: https://fosstodon.org
