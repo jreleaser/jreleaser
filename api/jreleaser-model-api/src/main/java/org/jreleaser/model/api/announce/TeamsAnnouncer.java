@@ -21,6 +21,7 @@ package org.jreleaser.model.api.announce;
  * @author Andres Almiray
  * @since 0.2.0
  */
+@Deprecated
 public interface TeamsAnnouncer extends Announcer {
     String TYPE = "teams";
     String TEAMS_WEBHOOK = "TEAMS_WEBHOOK";

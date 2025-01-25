@@ -21,6 +21,7 @@ package org.jreleaser.model.api.announce;
  * @author Andres Almiray
  * @since 0.2.0
  */
+@Deprecated
 public interface GitterAnnouncer extends Announcer {
     String TYPE = "gitter";
     String GITTER_WEBHOOK = "GITTER_WEBHOOK";

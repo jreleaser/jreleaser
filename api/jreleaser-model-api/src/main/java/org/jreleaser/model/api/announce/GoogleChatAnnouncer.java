@@ -21,6 +21,7 @@ package org.jreleaser.model.api.announce;
  * @author Anyul Rivas
  * @since 0.5.0
  */
+@Deprecated
 public interface GoogleChatAnnouncer extends Announcer {
     String TYPE = "googlechat";
     String GOOGLE_CHAT_WEBHOOK = "GOOGLE_CHAT_WEBHOOK";

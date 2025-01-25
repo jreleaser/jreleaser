@@ -21,6 +21,7 @@ package org.jreleaser.model.api.announce;
  * @author Andres Almiray
  * @since 0.2.0
  */
+@Deprecated
 public interface DiscordAnnouncer extends Announcer {
     String TYPE = "discord";
     String DISCORD_WEBHOOK = "DISCORD_WEBHOOK";

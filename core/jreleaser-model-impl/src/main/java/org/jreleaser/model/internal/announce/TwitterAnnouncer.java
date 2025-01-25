@@ -46,6 +46,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
+@Deprecated
 public final class TwitterAnnouncer extends AbstractAnnouncer<TwitterAnnouncer, org.jreleaser.model.api.announce.TwitterAnnouncer> {
     private static final long serialVersionUID = -5723247167488210082L;
 

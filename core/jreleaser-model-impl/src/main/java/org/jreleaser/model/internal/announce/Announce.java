@@ -246,11 +246,14 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         this.bluesky.merge(bluesky);
     }
 
+    @Deprecated
     @JsonPropertyDescription("announce.discord is deprecated since 1.4.0 and will be removed in 2.0.0")
     public DiscordAnnouncer getDiscord() {
         return discord;
     }
 
+    @Deprecated
+    @JsonPropertyDescription("announce.discord is deprecated since 1.4.0 and will be removed in 2.0.0")
     public void setDiscord(DiscordAnnouncer discord) {
         this.discord.merge(discord);
     }
@@ -271,20 +274,26 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         this.discussions.merge(discussions);
     }
 
+    @Deprecated
     @JsonPropertyDescription("announce.gitter is deprecated since 1.4.0 and will be removed in 2.0.0")
     public GitterAnnouncer getGitter() {
         return gitter;
     }
 
+    @Deprecated
+    @JsonPropertyDescription("announce.gitter is deprecated since 1.4.0 and will be removed in 2.0.0")
     public void setGitter(GitterAnnouncer gitter) {
         this.gitter.merge(gitter);
     }
 
+    @Deprecated
     @JsonPropertyDescription("announce.googleChat is deprecated since 1.4.0 and will be removed in 2.0.0")
     public GoogleChatAnnouncer getGoogleChat() {
         return googleChat;
     }
 
+    @Deprecated
+    @JsonPropertyDescription("announce.googleChat is deprecated since 1.4.0 and will be removed in 2.0.0")
     public void setGoogleChat(GoogleChatAnnouncer googleChat) {
         this.googleChat.merge(googleChat);
     }
@@ -326,11 +335,14 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         this.mastodon.merge(mastodon);
     }
 
+    @Deprecated
     @JsonPropertyDescription("announce.mattermost is deprecated since 1.4.0 and will be removed in 2.0.0")
     public MattermostAnnouncer getMattermost() {
         return mattermost;
     }
 
+    @Deprecated
+    @JsonPropertyDescription("announce.mattermost is deprecated since 1.4.0 and will be removed in 2.0.0")
     public void setMattermost(MattermostAnnouncer mattermost) {
         this.mattermost.merge(mattermost);
     }
@@ -359,11 +371,14 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         this.slack.merge(slack);
     }
 
+    @Deprecated
     @JsonPropertyDescription("announce.teams is deprecated since 1.4.0 and will be removed in 2.0.0")
     public TeamsAnnouncer getTeams() {
         return teams;
     }
 
+    @Deprecated
+    @JsonPropertyDescription("announce.teams is deprecated since 1.4.0 and will be removed in 2.0.0")
     public void setTeams(TeamsAnnouncer teams) {
         this.teams.merge(teams);
     }
@@ -376,14 +391,15 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         this.telegram.merge(telegram);
     }
 
+    @Deprecated
     @JsonPropertyDescription("announce.twitter is deprecated since 1.17.0 and will be removed in 2.0.0")
     public TwitterAnnouncer getTwitter() {
         return twitter;
     }
 
+    @Deprecated
     @JsonPropertyDescription("announce.twitter is deprecated since 1.17.0 and will be removed in 2.0.0")
     public void setTwitter(TwitterAnnouncer twitter) {
-        nag("announce.twitter is deprecated since 1.17.0 and will be removed in 2.0.0");
         this.twitter.merge(twitter);
     }
 

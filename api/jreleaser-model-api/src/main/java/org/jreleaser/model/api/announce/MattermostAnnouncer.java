@@ -21,6 +21,7 @@ package org.jreleaser.model.api.announce;
  * @author Andres Almiray
  * @since 0.4.0
  */
+@Deprecated
 public interface MattermostAnnouncer extends Announcer {
     String TYPE = "mattermost";
     String MATTERMOST_WEBHOOK = "MATTERMOST_WEBHOOK";
