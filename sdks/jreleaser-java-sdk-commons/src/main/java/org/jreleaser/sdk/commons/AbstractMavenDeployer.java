@@ -383,7 +383,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
             }
             return false;
         } catch (IOException e) {
-            context.getLogger().warn(RB.$("ERROR_deployer_read_local_file"), e);
+            context.getLogger().warn(RB.$("ERROR_deployer_read_local_file", jar.getLocalPath()), e);
             return false;
         } finally {
             IOUtils.closeQuietly(jarFile);
