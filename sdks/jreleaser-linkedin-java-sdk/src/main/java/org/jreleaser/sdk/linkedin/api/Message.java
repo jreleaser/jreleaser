@@ -29,9 +29,6 @@ public class Message {
     private String subject;
     private Text text;
     private Distribution distribution = new Distribution();
-    {
-        distribution.setLinkedInDistributionTarget(new Distribution.Target());
-    }
 
     public String getOwner() {
         return owner;
