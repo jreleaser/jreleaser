@@ -786,6 +786,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "morisil",
+      "name": "Kazik Pogoda",
+      "avatar_url": "https://avatars.githubusercontent.com/u/817413?v=4",
+      "profile": "https://xemantic.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
