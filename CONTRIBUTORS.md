@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-83-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-84-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -117,6 +117,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/mattjohnson"><img src="https://avatars.githubusercontent.com/u/501041?v=4?s=100" width="100px;" alt="Matt Johnson"/><br /><sub><b>Matt Johnson</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=mattjohnson" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://filip-prochazka.com"><img src="https://avatars.githubusercontent.com/u/158625?v=4?s=100" width="100px;" alt="Filip Procházka"/><br /><sub><b>Filip Procházka</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=fprochazka" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/marbleVHS"><img src="https://avatars.githubusercontent.com/u/30772967?v=4?s=100" width="100px;" alt="Vladislav Vorobev"/><br /><sub><b>Vladislav Vorobev</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=marbleVHS" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://xemantic.com"><img src="https://avatars.githubusercontent.com/u/817413?v=4?s=100" width="100px;" alt="Kazik Pogoda"/><br /><sub><b>Kazik Pogoda</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=morisil" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
