@@ -59,7 +59,7 @@ public class RestAPIException extends RuntimeException {
     }
 
     public RestAPIException(Request request, int status, String reason, String body, Map<String, Collection<String>> headers) {
-        this(request, status, reason, "", headers, null);
+        this(request, status, reason, body, headers, null);
     }
 
     public RestAPIException(Request request, int status, String reason, String body, Map<String, Collection<String>> headers, Throwable cause) {
