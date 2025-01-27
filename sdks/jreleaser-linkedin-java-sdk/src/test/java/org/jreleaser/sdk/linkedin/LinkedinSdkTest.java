@@ -75,6 +75,9 @@ class LinkedinSdkTest {
                 "  \"subject\" : \"App 1.0.0 released\",\n" +
                 "  \"text\" : {\n" +
                 "    \"text\" : \"App 1.0.0 has been released\"\n" +
+                "  },\n" +
+                "  \"distribution\": {\n" +
+                "    \"linkedInDistributionTarget\": { }\n" +
                 "  }\n" +
                 "}");
     }
@@ -105,6 +108,9 @@ class LinkedinSdkTest {
                 "  \"subject\" : \"App 1.0.0 released\",\n" +
                 "  \"text\" : {\n" +
                 "    \"text\" : \"App 1.0.0 has been released\"\n" +
+                "  },\n" +
+                "  \"distribution\": {\n" +
+                "    \"linkedInDistributionTarget\": { }\n" +
                 "  }\n" +
                 "}");
     }
