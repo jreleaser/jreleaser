@@ -28,6 +28,7 @@ public class Message {
     private String owner;
     private String subject;
     private Text text;
+    private Distribution distribution = new Distribution();
 
     public String getOwner() {
         return owner;
@@ -53,6 +54,14 @@ public class Message {
         this.text = text;
     }
 
+    public Distribution getDistribution() {
+        return distribution;
+    }
+
+    public void setDistribution(Distribution distribution) {
+        this.distribution = distribution;
+    }
+
     public static Message of(String subject, String text) {
         Message message = new Message();
         message.subject = subject;
@@ -73,6 +82,23 @@ public class Message {
 
         public void setText(String text) {
             this.text = text;
+        }
+    }
+
+    public static final class Distribution {
+        private Target linkedInDistributionTarget = new Target();
+
+        public Target getLinkedInDistributionTarget() {
+            return linkedInDistributionTarget;
+        }
+
+        public void setLinkedInDistributionTarget(Target linkedInDistributionTarget) {
+            this.linkedInDistributionTarget = linkedInDistributionTarget;
+        }
+
+        @JsonIgnoreProperties(ignoreUnknown = true)
+        public static final class Target {
+
         }
     }
 }
