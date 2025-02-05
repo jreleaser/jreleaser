@@ -197,7 +197,7 @@ public final class MavenCentralMavenDeployer extends AbstractMavenDeployer<Maven
     };
 
     public MavenCentralMavenDeployer() {
-        super(org.jreleaser.model.api.deploy.maven.MavenCentralMavenDeployer.TYPE);
+        super(org.jreleaser.model.api.deploy.maven.MavenCentralMavenDeployer.TYPE, true);
     }
 
     @Override
