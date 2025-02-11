@@ -23,8 +23,8 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.options.Option
 import org.jreleaser.engine.context.ContextCreator
 import org.jreleaser.gradle.plugin.JReleaserExtension
@@ -64,7 +64,7 @@ abstract class AbstractJReleaserTask extends DefaultTask {
     @Input
     final Property<Boolean> strict
 
-    @InputFiles
+    @OutputDirectory
     final DirectoryProperty outputDirectory
 
     @Internal
@@ -83,7 +83,7 @@ abstract class AbstractJReleaserTask extends DefaultTask {
         dryrun = objects.property(Boolean)
         gitRootSearch = objects.property(Boolean)
         strict = objects.property(Boolean)
-        outputDirectory = objects.directoryProperty()
+        outputDirectory = objects.directoryProperty().convention(project.layout.buildDirectory.dir('jreleaser'))
     }
 
     @Option(option = 'dryrun', description = 'Skip remote operations (OPTIONAL).')
