@@ -204,6 +204,16 @@ profiles {
                             outputName = "${project.name}-${project.version}-cyclonedx".toString()
                             destination = file('build/reports/cyclonedx')
                             includeLicenseText = false
+
+                            def lic = new org.cyclonedx.model.License()
+                            lic.setId('Apache-2.0')
+                            lic.setUrl('https://www.apache.org/licenses/LICENSE-2.0')
+                            def attachmentText = new org.cyclonedx.model.AttachmentText()
+                            attachmentText.setText('')
+                            lic.setLicenseText(attachmentText)
+                            licenseChoice { lc ->
+                                lc.addLicense(lic)
+                            }
                         }
 
                         publishing {
