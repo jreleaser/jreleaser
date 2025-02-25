@@ -64,7 +64,7 @@ public class JReleaserInitMojo extends AbstractMojo {
     /**
      * Overwrite existing files.
      */
-    @Parameter(property = "jreleaser.template.overwrite")
+    @Parameter(property = "jreleaser.init.overwrite")
     private boolean overwrite;
 
     @Override
