@@ -1,6 +1,8 @@
 package org.jreleaser.engine.init;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.jreleaser.logging.JReleaserLogger;
+import org.jreleaser.logging.SimpleJReleaserLoggerAdapter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -14,9 +16,10 @@ public class InitTest {
     void jsonSyntaxIsCorrect(@TempDir Path outputDirectory) {
         // given:
         String format = "json";
+        JReleaserLogger logger = new SimpleJReleaserLoggerAdapter();
 
         // when:
-        Init.execute(null, format, false, outputDirectory);
+        Init.execute(logger, format, false, outputDirectory);
         Path outputFile = outputDirectory.resolve("jreleaser." + format);
 
         // then:
