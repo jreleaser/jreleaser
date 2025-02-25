@@ -11,12 +11,12 @@
     "links": {
       "homepage": "https://acme.com/app"
     },
-    "languages" {
+    "languages": {
         "java": {
           "groupId": "com.acme",
           "version": "8"
-        },
-    }
+        }
+    },
     "inceptionYear": "@year@"
   },
 

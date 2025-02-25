@@ -22,6 +22,7 @@ dependencies {
     api project(':jreleaser-tool-java-sdk')
     api project(':jreleaser-signing-java-sdk')
     api project(':jreleaser-command-java-sdk')
+    testRuntimeOnly project(':jreleaser-config-json')
 
     api "org.apache.commons:commons-text:$commonsTextVersion"
     api "com.github.victools:jsonschema-generator:$jsonSchemaVersion"
