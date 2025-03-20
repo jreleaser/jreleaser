@@ -59,6 +59,10 @@ public final class DebAssemblerResolver {
     }
 
     private static void resolveDebOutputs(JReleaserContext context, DebAssembler assembler, Errors errors) {
+        if (!assembler.isEnabled() || !context.isDistributionSelected(assembler.getName())) {
+            return;
+        }
+
         Path assembleDirectory = context.getAssembleDirectory()
             .resolve(assembler.getName())
             .resolve(assembler.getType());

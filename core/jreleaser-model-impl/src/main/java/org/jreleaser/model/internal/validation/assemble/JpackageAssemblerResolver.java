@@ -50,6 +50,10 @@ public final class JpackageAssemblerResolver {
     }
 
     private static void resolveJpackageOutputs(JReleaserContext context, JpackageAssembler assembler, Errors errors) {
+        if (!assembler.isEnabled() || !context.isDistributionSelected(assembler.getName())) {
+            return;
+        }
+
         Path baseOutputDirectory = context.getAssembleDirectory()
             .resolve(assembler.getName())
             .resolve(assembler.getType());

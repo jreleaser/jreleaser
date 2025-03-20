@@ -50,6 +50,10 @@ public final class NativeImageAssemblerResolver {
     }
 
     public static void resolveNativeImageOutputs(JReleaserContext context, NativeImageAssembler assembler, Errors errors) {
+        if (!assembler.isEnabled() || !context.isDistributionSelected(assembler.getName())) {
+            return;
+        }
+
         Path baseOutputDirectory = context.getAssembleDirectory()
             .resolve(assembler.getName())
             .resolve(assembler.getType());

@@ -24,6 +24,7 @@ import org.jreleaser.extensions.api.workflow.WorkflowListener;
 import org.jreleaser.extensions.api.workflow.WorkflowListenerException;
 import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.logging.SimpleJReleaserLoggerAdapter;
+import org.jreleaser.model.Active;
 import org.jreleaser.model.Constants;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.JReleaserVersion;
@@ -561,7 +562,12 @@ public class JReleaserContext {
             }
             distribution.setName(assembler.getName());
             distribution.setType(assembler.getDistributionType());
-            distribution.setActive(assembler.getActive());
+
+            distribution.setActive(Active.NEVER);
+            if (isDistributionSelected(distribution.getName())) {
+                distribution.setActive(assembler.getActive());
+            }
+
             if (assembler instanceof JavaAssembler) {
                 distribution.getExecutable().setName(((JavaAssembler<?>) assembler).getExecutable());
                 distribution.setJava(((JavaAssembler<?>) assembler).getJava());
@@ -670,6 +676,18 @@ public class JReleaserContext {
                 distribution.addArtifact(incoming);
             }
         }
+    }
+
+    public boolean isDistributionSelected(String distributionName) {
+        if (!getIncludedDistributions().isEmpty() && getIncludedDistributions().contains(distributionName)) {
+            return true;
+        } else if (!getExcludedDistributions().isEmpty() && !getExcludedDistributions().contains(distributionName)) {
+            return true;
+        } else if (getIncludedDistributions().isEmpty() && getExcludedDistributions().isEmpty()) {
+            return true;
+        }
+
+        return false;
     }
 
     public boolean isPlatformSelected(Artifact artifact) {

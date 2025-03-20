@@ -50,6 +50,10 @@ public final class JlinkAssemblerResolver {
     }
 
     public static void resolveJlinkOutputs(JReleaserContext context, JlinkAssembler assembler, Errors errors) {
+        if (!assembler.isEnabled() || !context.isDistributionSelected(assembler.getName())) {
+            return;
+        }
+
         Path baseOutputDirectory = context.getAssembleDirectory()
             .resolve(assembler.getName())
             .resolve(assembler.getType());

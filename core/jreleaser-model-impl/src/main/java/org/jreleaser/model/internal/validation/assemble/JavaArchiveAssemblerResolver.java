@@ -46,6 +46,10 @@ public final class JavaArchiveAssemblerResolver {
     }
 
     public static void resolveJavaArchiveOutputs(JReleaserContext context, JavaArchiveAssembler assembler, Errors errors) {
+        if (!assembler.isEnabled() || !context.isDistributionSelected(assembler.getName())) {
+            return;
+        }
+
         Path baseOutputDirectory = context.getAssembleDirectory()
             .resolve(assembler.getName())
             .resolve(assembler.getType());
