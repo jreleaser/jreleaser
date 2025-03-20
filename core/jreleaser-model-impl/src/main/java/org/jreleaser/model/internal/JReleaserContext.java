@@ -82,6 +82,7 @@ import java.util.stream.Collectors;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
+import static java.util.stream.Collectors.toList;
 import static org.jreleaser.model.Constants.KEY_COMMIT_FULL_HASH;
 import static org.jreleaser.model.Constants.KEY_COMMIT_SHORT_HASH;
 import static org.jreleaser.model.Constants.KEY_GRAALVM_NAGIVE_IMAGE;
@@ -438,7 +439,7 @@ public class JReleaserContext {
         this.strict = strict;
         this.selectedPlatforms.addAll(selectedPlatforms.stream()
             .filter(PlatformUtils::isSupported)
-            .collect(Collectors.toList()));
+            .collect(toList()));
 
         try {
             logger.increaseIndent();
@@ -817,6 +818,16 @@ public class JReleaserContext {
         return tmp;
     }
 
+    private List<String> compact(List<String> list) {
+        if (null == list || list.isEmpty()) return Collections.emptyList();
+
+        return list.stream()
+            .map(s -> s.toLowerCase(Locale.ENGLISH))
+            .map(s -> s.replace("-", ""))
+            .map(s -> s.replace(" ", ""))
+            .collect(toList());
+    }
+
     public List<WorkflowListener> getWorkflowListeners() {
         return workflowListeners;
     }
@@ -868,7 +879,7 @@ public class JReleaserContext {
 
     public void setIncludedPackagers(List<String> includedPackagers) {
         this.includedPackagers.clear();
-        this.includedPackagers.addAll(includedPackagers);
+        this.includedPackagers.addAll(compact(includedPackagers));
     }
 
     public List<String> getIncludedDownloaderTypes() {
@@ -967,7 +978,7 @@ public class JReleaserContext {
 
     public void setExcludedPackagers(List<String> excludedPackagers) {
         this.excludedPackagers.clear();
-        this.excludedPackagers.addAll(normalize(excludedPackagers));
+        this.excludedPackagers.addAll(compact(excludedPackagers));
     }
 
     public List<String> getExcludedDownloaderTypes() {
