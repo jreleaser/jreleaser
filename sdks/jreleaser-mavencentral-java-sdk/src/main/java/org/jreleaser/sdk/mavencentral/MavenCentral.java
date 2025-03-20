@@ -171,7 +171,10 @@ public class MavenCentral {
         context.getLogger().debug(RB.$("maven.central.wait.deployment.state", deploymentId, Arrays.asList(states)));
 
         Optional<Deployment> deployment = retrier.retry(o -> o.map(Deployment::isTransitioning).orElse(false),
-            () -> status(deploymentId));
+            () -> status(deploymentId),
+            states[0] != State.PUBLISHED? () -> {}: () -> {
+                context.getLogger().warn(RB.$("WARN_maven_central_publication_timeout", deploymentId));
+            });
 
         if (deployment.isPresent()) {
             if (deployment.get().isTransitioning()) {
@@ -218,6 +221,10 @@ public class MavenCentral {
         }
 
         public <R> R retry(CheckedPredicate<R> stopFunction, CheckedSupplier<R> retriableOperation) {
+            return retry(stopFunction, retriableOperation, () -> {});
+        }
+
+        public <R> R retry(CheckedPredicate<R> stopFunction, CheckedSupplier<R> retriableOperation, Runnable retryHandler) {
             final int maxAttempts = maxRetries + 1;
 
             RetryPolicy<R> policy = RetryPolicy.<R>builder()
@@ -233,6 +240,7 @@ public class MavenCentral {
                 .handleResultIf(stopFunction)
                 .withDelay(Duration.ofSeconds(delay))
                 .withMaxRetries(maxRetries)
+                .onRetriesExceeded(listener -> retryHandler.run())
                 .onFailedAttempt(event -> {
                     logger.info(RB.$("nexus.retry.attempt"), event.getAttemptCount(), maxAttempts);
                     logger.debug(RB.$("nexus.retry.failed.attempt", event.getAttemptCount(), maxAttempts, event.getLastResult()), event.getLastException());
