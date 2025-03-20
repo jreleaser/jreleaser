@@ -406,6 +406,9 @@ distributions:
         active: RELEASE
         name: jreleaser-appimage
         commitMessage: 'jreleaser {{tagName}}'
+      skipReleases:
+        - .*-RC.*
+        - .*-M.*
     brew:
       active: ALWAYS
       continueOnError: true
