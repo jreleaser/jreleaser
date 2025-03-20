@@ -383,6 +383,7 @@ public final class DockerPackagerValidator {
             registry.setRepositoryName(model.getRelease().getReleaser().getOwner());
             registry.setUsername(username);
             self.addRegistry(registry);
+            registries.add(registry);
         }
 
         for (AbstractDockerConfiguration.Registry registry : registries) {
