@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-85-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-86-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -121,6 +121,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://algomaster99.github.io/"><img src="https://avatars.githubusercontent.com/u/35191225?v=4?s=100" width="100px;" alt="Aman Sharma"/><br /><sub><b>Aman Sharma</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=algomaster99" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/anneloreegger"><img src="https://avatars.githubusercontent.com/u/25572437?v=4?s=100" width="100px;" alt="anneloreegger"/><br /><sub><b>anneloreegger</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=anneloreegger" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
