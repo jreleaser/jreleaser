@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-88-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-89-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -124,6 +124,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/anneloreegger"><img src="https://avatars.githubusercontent.com/u/25572437?v=4?s=100" width="100px;" alt="anneloreegger"/><br /><sub><b>anneloreegger</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=anneloreegger" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/martinfrancois"><img src="https://avatars.githubusercontent.com/u/14319020?v=4?s=100" width="100px;" alt="François Martin"/><br /><sub><b>François Martin</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=martinfrancois" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/PReimers"><img src="https://avatars.githubusercontent.com/u/1785288?v=4?s=100" width="100px;" alt="Patrick Reimers"/><br /><sub><b>Patrick Reimers</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=preimers" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://people.apache.org/~hboutemy"><img src="https://avatars.githubusercontent.com/u/237462?v=4?s=100" width="100px;" alt="Hervé Boutemy"/><br /><sub><b>Hervé Boutemy</b></sub></a><br /><a href="#infra-hboutemy" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
     </tr>
   </tbody>
 </table>
