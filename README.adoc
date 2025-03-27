@@ -26,7 +26,7 @@ image:https://bestpractices.coreinfrastructure.org/projects/6393/badge["OpenSSF 
 image:https://img.shields.io/ossf-scorecard/github.com/{project-owner}/{project-name}?label=openssf%20scorecard["OpenSSF Scorecard", link="https://api.securityscorecards.dev/projects/github.com/{project-owner}/{project-name}"]
 image:https://slsa.dev/images/gh-badge-level3.svg["SLSA 3", link="https://slsa.dev"]
 image:https://img.shields.io/opencollective/all/{project-name}?logo=opencollective&logoColor=white["Open Collective backers and sponsors", link="https://opencollective.com/{project-name}"]
-image:https://img.shields.io/reproducible-central/artifact/{project-group}/jreleaser-model-api/{project-version}[Reproducible Central Artifact]
+image:https://img.shields.io/reproducible-central/artifact/{project-group}/jreleaser-model-api/{project-version}[Reproducible Central Artifact], link="https://github.com/jvm-repo-rebuild/reproducible-central/blob/master/content/org/jreleaser/README.md"
 
 image:https://img.shields.io/maven-central/v/{project-group}/{project-artifactId}?logo=apache%20maven[Download, link="https://search.maven.org/#search|ga|1|g:{project-group} AND a:{project-artifactId}"]
 image:https://img.shields.io/gradle-plugin-portal/v/{plugin-id}?logo=gradle["Gradle Plugin Portal", link="https://plugins.gradle.org/plugin/{plugin-id}"]
