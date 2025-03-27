@@ -831,6 +831,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "hboutemy",
+      "name": "Hervé Boutemy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/237462?v=4",
+      "profile": "http://people.apache.org/~hboutemy",
+      "contributions": [
+        "infra"
+      ]
     }
   ],
   "contributorsPerLine": 7,
