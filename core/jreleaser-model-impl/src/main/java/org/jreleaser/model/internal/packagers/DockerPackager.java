@@ -88,7 +88,7 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
 
     @JsonIgnore
     private final org.jreleaser.model.api.packagers.DockerPackager immutable = new org.jreleaser.model.api.packagers.DockerPackager() {
-        private static final long serialVersionUID = -8249625838795141546L;
+        private static final long serialVersionUID = 8086673555899372436L;
 
         private Set<? extends org.jreleaser.model.api.packagers.DockerConfiguration.Registry> registries;
         private Map<String, ? extends org.jreleaser.model.api.packagers.DockerSpec> specs;
@@ -106,6 +106,11 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
         @Override
         public DockerRepository getRepository() {
             return repository.asImmutable();
+        }
+
+        @Override
+        public DockerCommand getCommand() {
+            return DockerPackager.this.getCommand();
         }
 
         @Override

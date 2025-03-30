@@ -55,6 +55,7 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
     final ListProperty<String> preCommands
     final ListProperty<String> postCommands
     final MapProperty<String, String> labels
+    final Property<org.jreleaser.model.api.packagers.DockerConfiguration.DockerCommand> command
 
     final NamedDomainObjectContainer<RegistryImpl> registries
     final BuildxImpl buildx
@@ -72,6 +73,7 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
         preCommands = objects.listProperty(String).convention(Providers.<List<String>> notDefined())
         postCommands = objects.listProperty(String).convention(Providers.<List<String>> notDefined())
         labels = objects.mapProperty(String, String).convention(Providers.notDefined())
+        command = objects.property(org.jreleaser.model.api.packagers.DockerConfiguration.DockerCommand).convention(Providers.<org.jreleaser.model.api.packagers.DockerConfiguration.DockerCommand> notDefined())
 
         registries = objects.domainObjectContainer(RegistryImpl)
         buildx = objects.newInstance(BuildxImpl, objects)
@@ -86,6 +88,13 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
     void setActive(String str) {
         if (isNotBlank(str)) {
             active.set(Active.of(str.trim()))
+        }
+    }
+
+    @Override
+    void setCommand(String str) {
+        if (isNotBlank(str)) {
+            command.set(org.jreleaser.model.api.packagers.DockerConfiguration.DockerCommand.of(str.trim()))
         }
     }
 
@@ -158,6 +167,7 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
             buildArgs.present ||
             preCommands.present ||
             postCommands.present ||
+            command.present ||
             labels.present ||
             registries.size() ||
             buildx.isSet()
@@ -183,6 +193,7 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
         if (preCommands.present) docker.preCommands.addAll(preCommands.get())
         if (postCommands.present) docker.postCommands.addAll(postCommands.get())
         if (labels.present) docker.labels.putAll(labels.get())
+        if (command.present) docker.command = command.get()
         for (RegistryImpl registry : registries) {
             docker.addRegistry(registry.toModel())
         }

@@ -101,6 +101,12 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
 
     boolean isUseLocalArtifactSet();
 
+    org.jreleaser.model.api.packagers.DockerConfiguration.DockerCommand getCommand();
+
+    void setCommand(org.jreleaser.model.api.packagers.DockerConfiguration.DockerCommand command);
+
+    void setCommand(String command);
+
     Buildx getBuildx();
 
     void setBuildx(Buildx buildx);

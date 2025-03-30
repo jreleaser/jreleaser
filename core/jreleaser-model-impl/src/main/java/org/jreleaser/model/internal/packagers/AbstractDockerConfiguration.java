@@ -51,6 +51,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
     private String templateDirectory;
     protected Boolean useLocalArtifact;
     private String baseImage;
+    private org.jreleaser.model.api.packagers.DockerConfiguration.DockerCommand command;
 
     @Override
     public void merge(S source) {
@@ -60,6 +61,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
         setExtraProperties(merge(this.extraProperties, source.getExtraProperties()));
         this.baseImage = merge(this.baseImage, source.getBaseImage());
         this.useLocalArtifact = merge(this.useLocalArtifact, source.useLocalArtifact);
+        this.command = merge(this.command, source.getCommand());
         setImageNames(merge(this.imageNames, source.getImageNames()));
         setBuildArgs(merge(this.buildArgs, source.getBuildArgs()));
         setPreCommands(merge(this.preCommands, source.getPreCommands()));
@@ -258,6 +260,21 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
     }
 
     @Override
+    public org.jreleaser.model.api.packagers.DockerConfiguration.DockerCommand getCommand() {
+        return command;
+    }
+
+    @Override
+    public void setCommand(org.jreleaser.model.api.packagers.DockerConfiguration.DockerCommand command) {
+        this.command = command;
+    }
+
+    @Override
+    public void setCommand(String command) {
+        setCommand(org.jreleaser.model.api.packagers.DockerConfiguration.DockerCommand.of(command));
+    }
+
+    @Override
     public Buildx getBuildx() {
         return buildx;
     }
@@ -274,6 +291,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
         Map<String, Object> props = new LinkedHashMap<>();
         props.put("enabled", isEnabled());
         props.put("active", getActive());
+        props.put("command", null != command ? command.formatted() : "");
         props.put("templateDirectory", templateDirectory);
         props.put("skipTemplates", skipTemplates);
         props.put("useLocalArtifact", isUseLocalArtifact());

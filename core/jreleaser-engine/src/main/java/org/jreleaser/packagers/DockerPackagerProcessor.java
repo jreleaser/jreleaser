@@ -263,7 +263,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
     }
 
     private Command buildCommand(TemplateContext props, DockerConfiguration docker) {
-        Command cmd = createCommand("build");
+        Command cmd = createCommand(docker, "build");
         for (int i = 0; i < docker.getBuildArgs().size(); i++) {
             String arg = docker.getBuildArgs().get(i);
             if (arg.contains("{{")) {
@@ -276,7 +276,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
     }
 
     private Command buildxBuildCommand(TemplateContext props, DockerConfiguration docker) {
-        Command cmd = createCommand("buildx");
+        Command cmd = createCommand(docker, "buildx");
         cmd.arg("build");
 
         List<String> platforms = new ArrayList<>();
@@ -303,7 +303,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
     }
 
     private Command buildxCreateCommand(TemplateContext props, DockerConfiguration docker) {
-        Command cmd = createCommand("buildx");
+        Command cmd = createCommand(docker, "buildx");
         cmd.arg("create");
         for (int i = 0; i < docker.getBuildx().getCreateBuilderFlags().size(); i++) {
             String arg = docker.getBuildx().getCreateBuilderFlags().get(i);
@@ -316,9 +316,9 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         return cmd;
     }
 
-    private Command createCommand(String name) {
-        return new Command("docker" + (PlatformUtils.isWindows() ? ".exe" : ""))
-            .arg("-l")
+    private Command createCommand(DockerConfiguration docker, String name) {
+        return new Command(docker.getCommand().formatted() + (PlatformUtils.isWindows() ? ".exe" : ""))
+            .arg("--log-level")
             .arg("error")
             .arg(name);
     }
@@ -366,7 +366,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         }
 
         for (DockerConfiguration.Registry registry : docker.getRegistries()) {
-            login(registry);
+            login(docker, registry);
         }
 
         if (docker.getBuildx().isEnabled()) {
@@ -398,13 +398,13 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
                     .map(tag -> tag.split(":")[0])
                     .collect(toSet());
                 for (String imageName : uniqueImageNames) {
-                    push(e.getKey(), imageName);
+                    push(docker, e.getKey(), imageName);
                 }
             }
         }
 
         for (DockerConfiguration.Registry registry : docker.getRegistries()) {
-            logout(registry);
+            logout(docker, registry);
         }
     }
 
@@ -412,7 +412,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         if (docker.getBuildx().isEnabled() && docker.getBuildx().isCreateBuilder()) {
             int i = docker.getBuildx().getCreateBuilderFlags().indexOf("--name");
             String builderName = docker.getBuildx().getCreateBuilderFlags().get(i + 1);
-            Command cmd = createCommand("buildx")
+            Command cmd = createCommand(docker, "buildx")
                 .arg("rm")
                 .arg(resolveTemplate(builderName, props).trim());
 
@@ -430,7 +430,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         }
 
         for (String builderName : builderNames) {
-            Command cmd = createCommand("buildx")
+            Command cmd = createCommand(packager, "buildx")
                 .arg("rm")
                 .arg(resolveTemplate(builderName, props).trim());
 
@@ -438,10 +438,10 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         }
     }
 
-    private void login(DockerConfiguration.Registry registry) throws PackagerProcessingException {
+    private void login(DockerConfiguration docker, DockerConfiguration.Registry registry) throws PackagerProcessingException {
         if (registry.isExternalLogin()) return;
 
-        Command cmd = createCommand("login");
+        Command cmd = createCommand(docker, "login");
         if (isNotBlank(registry.getServer())) {
             cmd.arg(registry.getServer());
         }
@@ -502,8 +502,8 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         return tags;
     }
 
-    private void push(String server, String imageName) throws PackagerProcessingException {
-        Command cmd = createCommand("push")
+    private void push(DockerConfiguration docker, String server, String imageName) throws PackagerProcessingException {
+        Command cmd = createCommand(docker, "push")
             .arg("--quiet")
             .arg("--all-tags")
             .arg(imageName);
@@ -514,10 +514,10 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         if (!context.isDryrun()) executeCommand(cmd);
     }
 
-    private void logout(DockerConfiguration.Registry registry) throws PackagerProcessingException {
+    private void logout(DockerConfiguration docker, DockerConfiguration.Registry registry) throws PackagerProcessingException {
         if (registry.isExternalLogin()) return;
 
-        Command cmd = createCommand("logout");
+        Command cmd = createCommand(docker, "logout");
         if (isNotBlank(registry.getServer())) {
             cmd.arg(registry.getServerName());
         }

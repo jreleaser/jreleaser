@@ -20,7 +20,6 @@ package org.jreleaser.gradle.plugin.dsl.catalog.swid
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
-import org.jreleaser.gradle.plugin.dsl.common.ExtraProperties
 
 /**
  *

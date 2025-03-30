@@ -166,6 +166,14 @@ public final class DockerPackagerValidator {
             packager.setUseLocalArtifact(true);
         }
 
+        if (null == packager.getCommand()) {
+            packager.setCommand(parentPackager.getCommand());
+        }
+
+        if (null == packager.getCommand()) {
+            packager.setCommand(org.jreleaser.model.api.packagers.DockerConfiguration.DockerCommand.DOCKER);
+        }
+
         validateBuildx(context, distribution, packager, packager.getBuildx(), parentPackager.getBuildx(), errors);
 
         for (Map.Entry<String, DockerSpec> e : packager.getSpecs().entrySet()) {
@@ -180,6 +188,12 @@ public final class DockerPackagerValidator {
     private static void validateBuildx(JReleaserContext context, Distribution distribution, DockerPackager packager, DockerConfiguration.Buildx buildx, DockerConfiguration.Buildx parentBuildx, Errors errors) {
         if (!buildx.isEnabledSet()) {
             buildx.setEnabled(parentBuildx.isEnabled());
+        }
+
+        if (buildx.isEnabled() && packager.getCommand() != org.jreleaser.model.api.packagers.DockerConfiguration.DockerCommand.DOCKER) {
+            errors.configuration(RB.$("validation_docker_buildx_not_available", packager.getCommand().formatted()));
+            packager.disable();
+            return;
         }
 
         if (!buildx.isCreateBuilderSet()) {
@@ -275,6 +289,14 @@ public final class DockerPackagerValidator {
         }
         if (distribution.getType() == org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR) {
             spec.setUseLocalArtifact(true);
+        }
+
+        if (null == spec.getCommand()) {
+            spec.setCommand(docker.getCommand());
+        }
+
+        if (null == spec.getCommand()) {
+            spec.setCommand(org.jreleaser.model.api.packagers.DockerConfiguration.DockerCommand.DOCKER);
         }
 
         validateBuildx(context, distribution, docker, spec.getBuildx(), docker.getBuildx(), errors);

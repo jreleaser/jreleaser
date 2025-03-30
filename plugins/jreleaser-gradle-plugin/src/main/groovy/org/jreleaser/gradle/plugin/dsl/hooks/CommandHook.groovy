@@ -19,7 +19,6 @@ package org.jreleaser.gradle.plugin.dsl.hooks
 
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.SetProperty
 import org.jreleaser.gradle.plugin.dsl.common.Activatable
 
 /**

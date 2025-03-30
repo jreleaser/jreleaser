@@ -48,7 +48,7 @@ public final class DockerSpec extends AbstractDockerConfiguration<DockerSpec> im
 
     @JsonIgnore
     private final org.jreleaser.model.api.packagers.DockerSpec immutable = new org.jreleaser.model.api.packagers.DockerSpec() {
-        private static final long serialVersionUID = -932413489796274177L;
+        private static final long serialVersionUID = 4314004887192195726L;
 
         private Set<? extends org.jreleaser.model.api.packagers.DockerPackager.Registry> registries;
 
@@ -140,6 +140,11 @@ public final class DockerSpec extends AbstractDockerConfiguration<DockerSpec> im
         @Override
         public String getPrefix() {
             return DockerSpec.this.prefix();
+        }
+
+        @Override
+        public org.jreleaser.model.api.packagers.DockerConfiguration.DockerCommand getCommand() {
+            return DockerSpec.this.getCommand();
         }
 
         @Override

@@ -19,7 +19,6 @@ package org.jreleaser.gradle.plugin.dsl.catalog.swid
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
-import org.jreleaser.gradle.plugin.dsl.catalog.swid.SwidTag
 
 /**
  *

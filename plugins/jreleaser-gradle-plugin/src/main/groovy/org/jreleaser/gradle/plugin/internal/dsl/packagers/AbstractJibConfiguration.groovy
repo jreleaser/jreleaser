@@ -30,7 +30,6 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.packagers.JibConfiguration
-import org.jreleaser.gradle.plugin.internal.dsl.common.CommitAuthorImpl
 import org.jreleaser.model.Active
 import org.kordamp.gradle.util.ConfigureUtil
 

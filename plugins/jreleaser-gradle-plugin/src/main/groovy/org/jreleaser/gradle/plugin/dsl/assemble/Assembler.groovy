@@ -22,7 +22,6 @@ import org.gradle.api.Action
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
-import org.jreleaser.gradle.plugin.dsl.catalog.swid.SwidTag
 import org.jreleaser.gradle.plugin.dsl.common.Activatable
 import org.jreleaser.gradle.plugin.dsl.common.Artifact
 import org.jreleaser.gradle.plugin.dsl.common.ExtraProperties

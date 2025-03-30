@@ -20,7 +20,6 @@ package org.jreleaser.gradle.plugin.dsl.upload
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
-import org.jreleaser.gradle.plugin.dsl.upload.WebUploader
 import org.jreleaser.model.Http
 
 /**

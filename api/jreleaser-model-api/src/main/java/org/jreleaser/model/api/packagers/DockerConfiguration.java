@@ -22,8 +22,11 @@ import org.jreleaser.model.api.common.Domain;
 import org.jreleaser.model.api.common.ExtraProperties;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+
+import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
  * @author Andres Almiray
@@ -52,7 +55,23 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
 
     boolean isUseLocalArtifact();
 
+    DockerCommand getCommand();
+
     Buildx getBuildx();
+
+    enum DockerCommand {
+        DOCKER,
+        PODMAN;
+
+        public static DockerCommand of(String str) {
+            if (isBlank(str)) return null;
+            return DockerCommand.valueOf(str.toUpperCase(Locale.ENGLISH).trim());
+        }
+
+        public String formatted() {
+            return name().toLowerCase(Locale.ENGLISH);
+        }
+    }
 
     interface Registry extends Domain, Comparable<Registry> {
         String getServer();

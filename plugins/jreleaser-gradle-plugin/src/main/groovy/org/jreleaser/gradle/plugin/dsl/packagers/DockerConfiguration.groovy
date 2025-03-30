@@ -57,6 +57,10 @@ interface DockerConfiguration extends Activatable, ExtraProperties {
 
     MapProperty<String, String> getLabels()
 
+    Property<org.jreleaser.model.api.packagers.DockerConfiguration.DockerCommand> getCommand()
+
+    void setCommand(String str)
+
     void imageName(String imageName)
 
     void buildArg(String buildArg)
