@@ -77,6 +77,7 @@ import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.FileVisitResult.CONTINUE;
+import static java.util.stream.Collectors.toSet;
 import static org.jreleaser.model.spi.deploy.maven.Deployable.EXT_ASC;
 import static org.jreleaser.model.spi.deploy.maven.Deployable.EXT_JAR;
 import static org.jreleaser.model.spi.deploy.maven.Deployable.EXT_POM;
@@ -121,7 +122,14 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
     }
 
     protected Set<Deployable> collectDeployables() {
-        Set<Deployable> deployables = collectDeployableArtifacts();
+        return collectDeployables(true, true);
+    }
+
+    protected Set<Deployable> collectDeployables(boolean sign, boolean checksum) {
+        Set<Deployable> deployables = collectDeployableArtifacts().stream()
+            .filter(deployable -> sign || !deployable.isSignature())
+            .filter(deployable -> checksum || !deployable.isChecksum())
+            .collect(toSet());
 
         Map<String, Deployable> deployablesMap = deployables.stream()
             .collect(Collectors.toMap(Deployable::getFullDeployPath, Function.identity()));
@@ -132,8 +140,8 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
             throw new JReleaserException(RB.$("ERROR_deployer_maven_central_rules"));
         }
 
-        signDeployables(deployablesMap, deployables);
-        checksumDeployables(deployablesMap, deployables);
+        if (sign) signDeployables(deployablesMap, deployables);
+        if (checksum) checksumDeployables(deployablesMap, deployables);
 
         return deployables;
     }

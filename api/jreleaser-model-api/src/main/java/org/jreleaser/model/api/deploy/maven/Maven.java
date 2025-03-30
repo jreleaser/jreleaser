@@ -43,6 +43,8 @@ public interface Maven extends Domain, Activatable {
 
     Map<String, ? extends Nexus2MavenDeployer> getNexus2();
 
+    Map<String, ? extends Nexus3MavenDeployer> getNexus3();
+
     Map<String, ? extends MavenCentralMavenDeployer> getMavenCentral();
 
     interface Pomchecker extends Domain {

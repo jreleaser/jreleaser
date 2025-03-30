@@ -44,6 +44,8 @@ interface Maven extends Activatable {
 
     NamedDomainObjectContainer<Nexus2MavenDeployer> getNexus2()
 
+    NamedDomainObjectContainer<Nexus3MavenDeployer> getNexus3()
+
     NamedDomainObjectContainer<MavenCentralMavenDeployer> getMavenCentral()
 
     void artifactory(Action<? super NamedDomainObjectContainer<ArtifactoryMavenDeployer>> action)
@@ -60,6 +62,8 @@ interface Maven extends Activatable {
 
     void nexus2(Action<? super NamedDomainObjectContainer<Nexus2MavenDeployer>> action)
 
+    void nexus3(Action<? super NamedDomainObjectContainer<Nexus3MavenDeployer>> action)
+
     void mavenCentral(Action<? super NamedDomainObjectContainer<MavenCentralMavenDeployer>> action)
 
     void artifactory(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
@@ -75,6 +79,8 @@ interface Maven extends Activatable {
     void gitlab(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 
     void nexus2(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
+
+    void nexus3(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 
     void mavenCentral(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 

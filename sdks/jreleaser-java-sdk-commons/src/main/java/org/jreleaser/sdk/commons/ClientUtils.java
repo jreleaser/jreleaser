@@ -24,7 +24,6 @@ import feign.Feign;
 import feign.RedirectionInterceptor;
 import feign.Request;
 import feign.Response;
-import feign.form.FormData;
 import feign.form.FormEncoder;
 import feign.jackson.JacksonDecoder;
 import feign.jackson.JacksonEncoder;
@@ -57,7 +56,9 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.cert.X509Certificate;
+import java.util.Collection;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -73,24 +74,25 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
 public final class ClientUtils {
     private static final Tika TIKA = new Tika();
+    public static final String CRLF = "\r\n";
 
     private ClientUtils() {
         // noop
     }
 
-    public static FormData toFormData(String fileName, String contentType, String content) {
+    public static feign.form.FormData toFormData(String fileName, String contentType, String content) {
         return toFormData(fileName, contentType, content.getBytes(UTF_8));
     }
 
-    public static FormData toFormData(String fileName, String contentType, byte[] content) {
-        return FormData.builder()
+    public static feign.form.FormData toFormData(String fileName, String contentType, byte[] content) {
+        return feign.form.FormData.builder()
             .fileName(fileName)
             .contentType(contentType)
             .data(content)
             .build();
     }
 
-    public static FormData toFormData(Path asset) throws IOException {
+    public static feign.form.FormData toFormData(Path asset) throws IOException {
         return toFormData(asset.getFileName().toString(),
             MediaType.parse(TIKA.detect(asset)).toString(),
             Files.readAllBytes(asset));
@@ -220,7 +222,7 @@ public final class ClientUtils {
                                   URI uri,
                                   int connectTimeout,
                                   int readTimeout,
-                                  FormData data,
+                                  feign.form.FormData data,
                                   Map<String, String> headers) throws UploadException {
         headers.put("METHOD", "POST");
         return uploadFile(logger, uri, connectTimeout, readTimeout, data, headers);
@@ -230,7 +232,7 @@ public final class ClientUtils {
                                   String url,
                                   int connectTimeout,
                                   int readTimeout,
-                                  FormData data,
+                                  feign.form.FormData data,
                                   Map<String, String> headers) throws UploadException {
         headers.put("METHOD", "POST");
         try {
@@ -245,7 +247,7 @@ public final class ClientUtils {
                                  String url,
                                  int connectTimeout,
                                  int readTimeout,
-                                 FormData data,
+                                 feign.form.FormData data,
                                  Map<String, String> headers) throws UploadException {
         headers.put("METHOD", "PUT");
         headers.put("Expect", "100-continue");
@@ -261,7 +263,7 @@ public final class ClientUtils {
                                      URI uri,
                                      int connectTimeout,
                                      int readTimeout,
-                                     FormData data,
+                                     feign.form.FormData data,
                                      Map<String, String> headers) throws UploadException {
         try {
             // create URL
@@ -302,6 +304,109 @@ public final class ClientUtils {
             try (OutputStream os = connection.getOutputStream()) {
                 os.write(data.getData(), 0, data.getData().length);
                 os.flush();
+            }
+
+            // handle response
+            logger.debug(RB.$("webhook.response.handle"));
+            int status = connection.getResponseCode();
+            if (status >= 400) {
+                String reason = connection.getResponseMessage();
+                StringBuilder b = new StringBuilder("Got ")
+                    .append(status);
+                if (isNotBlank(reason)) {
+                    b.append(" reason: ")
+                        .append(reason);
+                }
+                logger.trace(RB.$("webhook.server.reply", status, reason));
+
+                try (Reader reader = newInputStreamReader(connection.getErrorStream())) {
+                    String message = IOUtils.toString(reader);
+                    if (isNotBlank(message)) {
+                        b.append(", ")
+                            .append(message);
+                    }
+                }
+                throw new UploadException(b.toString());
+            }
+
+            return newInputStreamReader(connection.getInputStream());
+        } catch (IOException e) {
+            logger.trace(e);
+            throw new UploadException(e);
+        }
+    }
+
+    public static Reader postData(JReleaserLogger logger,
+                                  String url,
+                                  int connectTimeout,
+                                  int readTimeout,
+                                  Collection<FormData> data,
+                                  Map<String, String> headers) throws UploadException {
+        headers.put("METHOD", "POST");
+        try {
+            return upload(logger, new URI(url), connectTimeout, readTimeout, data, headers);
+        } catch (URISyntaxException e) {
+            logger.trace(e);
+            throw new UploadException(e);
+        }
+    }
+
+    private static Reader upload(JReleaserLogger logger,
+                                 URI uri,
+                                 int connectTimeout,
+                                 int readTimeout,
+                                 Collection<FormData> data,
+                                 Map<String, String> headers) throws UploadException {
+        try {
+            // create URL
+            URL theUrl = uri.toURL();
+            logger.debug("url: {}", theUrl);
+
+            // open connection
+            logger.debug(RB.$("webhook.connection.open"));
+            HttpURLConnection connection = (HttpURLConnection) theUrl.openConnection();
+            // set options
+            logger.debug(RB.$("webhook.connection.configure"));
+            connection.setConnectTimeout(connectTimeout * 1000);
+            connection.setReadTimeout(readTimeout * 1000);
+            connection.setAllowUserInteraction(false);
+            connection.setInstanceFollowRedirects(true);
+
+            connection.setRequestMethod(headers.remove("METHOD"));
+            if (!headers.containsKey("Accept")) {
+                connection.addRequestProperty("Accept", "*/*");
+            }
+            String boundary = UUID.randomUUID().toString();
+            connection.addRequestProperty("User-Agent", "JReleaser/" + JReleaserVersion.getPlainVersion());
+            connection.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
+            headers.forEach(connection::setRequestProperty);
+
+            connection.getRequestProperties().forEach((k, v) -> {
+                if (JReleaserModelPrinter.isSecret(k)) {
+                    logger.debug("{}: {}", k, Constants.HIDE);
+                } else {
+                    logger.debug("{}: {}", k, v);
+                }
+            });
+
+            connection.setDoOutput(true);
+
+            // write message
+            logger.debug(RB.$("webhook.data.send"));
+            try (OutputStream os = connection.getOutputStream()) {
+                byte[] boundaryData = (CRLF + "--" + boundary + CRLF).getBytes(UTF_8);
+                byte[] boundaryDataEnd = (CRLF + "--" + boundary + "--" + CRLF).getBytes(UTF_8);
+                os.write(boundaryData, 0, boundaryData.length);
+
+                int i = 1;
+                for (FormData d : data) {
+                    d.writeTo(os);
+                    if (i++ != data.size()) {
+                        os.write(boundaryData, 0, boundaryData.length);
+                    } else {
+                        os.write(boundaryDataEnd, 0, boundaryDataEnd.length);
+                    }
+                }
             }
 
             // handle response
@@ -407,6 +512,49 @@ public final class ClientUtils {
         @Override
         public boolean verify(String hostname, SSLSession session) {
             return true;
+        }
+    }
+
+    public interface FormData {
+        void writeTo(OutputStream os) throws IOException;
+    }
+
+    public static class FieldFormData implements FormData {
+        private final String name;
+        private final Object value;
+
+        public FieldFormData(String name, Object value) {
+            this.name = name;
+            this.value = value;
+        }
+
+        @Override
+        public void writeTo(OutputStream os) throws IOException {
+            String header = "Content-Disposition: form-data; name=\"" + name + "\"" + CRLF + CRLF;
+            byte[] input = header.getBytes(UTF_8);
+            os.write(input, 0, input.length);
+            byte[] data = String.valueOf(value).getBytes(UTF_8);
+            os.write(data, 0, data.length);
+        }
+    }
+
+    public static class FileFormData implements FormData {
+        private final String name;
+        private final Path path;
+
+        public FileFormData(String name, Path path) {
+            this.name = name;
+            this.path = path;
+        }
+
+        @Override
+        public void writeTo(OutputStream os) throws IOException {
+            byte[] data = Files.readAllBytes(path);
+            String header = "Content-Disposition: form-data; name=\"" + name + "\"; filename=\"" + path.getFileName() + "\"" + CRLF
+                + "Content-Type: application/octet-stream" + CRLF + CRLF;
+            byte[] input = header.getBytes(UTF_8);
+            os.write(input, 0, input.length);
+            os.write(data, 0, data.length);
         }
     }
 }

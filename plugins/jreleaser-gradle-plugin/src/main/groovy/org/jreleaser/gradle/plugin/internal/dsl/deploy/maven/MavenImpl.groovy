@@ -34,6 +34,7 @@ import org.jreleaser.gradle.plugin.dsl.deploy.maven.GitlabMavenDeployer
 import org.jreleaser.gradle.plugin.dsl.deploy.maven.Maven
 import org.jreleaser.gradle.plugin.dsl.deploy.maven.MavenCentralMavenDeployer
 import org.jreleaser.gradle.plugin.dsl.deploy.maven.Nexus2MavenDeployer
+import org.jreleaser.gradle.plugin.dsl.deploy.maven.Nexus3MavenDeployer
 import org.jreleaser.model.Active
 import org.kordamp.gradle.util.ConfigureUtil
 
@@ -56,6 +57,7 @@ class MavenImpl implements Maven {
     final NamedDomainObjectContainer<GithubMavenDeployer> github
     final NamedDomainObjectContainer<GitlabMavenDeployer> gitlab
     final NamedDomainObjectContainer<Nexus2MavenDeployer> nexus2
+    final NamedDomainObjectContainer<Nexus3MavenDeployer> nexus3
     final NamedDomainObjectContainer<MavenCentralMavenDeployer> mavenCentral
 
     final PomcheckerImpl pomchecker
@@ -128,6 +130,15 @@ class MavenImpl implements Maven {
             }
         })
 
+        nexus3 = objects.domainObjectContainer(Nexus3MavenDeployer, new NamedDomainObjectFactory<Nexus3MavenDeployer>() {
+            @Override
+            Nexus3MavenDeployer create(String name) {
+                Nexus3MavenDeployerImpl h = objects.newInstance(Nexus3MavenDeployerImpl, objects)
+                h.name = name
+                return h
+            }
+        })
+
         mavenCentral = objects.domainObjectContainer(MavenCentralMavenDeployer, new NamedDomainObjectFactory<MavenCentralMavenDeployer>() {
             @Override
             MavenCentralMavenDeployer create(String name) {
@@ -178,6 +189,11 @@ class MavenImpl implements Maven {
     @Override
     void nexus2(Action<? super NamedDomainObjectContainer<Nexus2MavenDeployer>> action) {
         action.execute(nexus2)
+    }
+
+    @Override
+    void nexus3(Action<? super NamedDomainObjectContainer<Nexus3MavenDeployer>> action) {
+        action.execute(nexus3)
     }
 
     @Override
@@ -234,6 +250,12 @@ class MavenImpl implements Maven {
 
     @Override
     @CompileDynamic
+    void nexus3(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
+        ConfigureUtil.configure(action, nexus3)
+    }
+
+    @Override
+    @CompileDynamic
     void mavenCentral(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, mavenCentral)
     }
@@ -257,6 +279,7 @@ class MavenImpl implements Maven {
         github.each { maven.addGithub(((GithubMavenDeployerImpl) it).toModel()) }
         gitlab.each { maven.addGitlab(((GitlabMavenDeployerImpl) it).toModel()) }
         nexus2.each { maven.addNexus2(((Nexus2MavenDeployerImpl) it).toModel()) }
+        nexus3.each { maven.addNexus3(((Nexus3MavenDeployerImpl) it).toModel()) }
         mavenCentral.each { maven.addMavenCentral(((MavenCentralMavenDeployerImpl) it).toModel()) }
 
         maven

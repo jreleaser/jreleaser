@@ -76,6 +76,8 @@ public class Deployable implements Comparable<Deployable> {
     private final String groupId;
     private final String artifactId;
     private final String version;
+    private final String classifier;
+    private final String extension;
     private final String packaging;
     private final boolean relocated;
 
@@ -99,13 +101,28 @@ public class Deployable implements Comparable<Deployable> {
                 gid = gid.substring(1);
             }
             this.groupId = gid;
+
+            String str = filename.substring(filename.indexOf(version) + version.length() + 1);
+            if (filename.charAt(filename.indexOf(version) + version.length()) == '-') {
+                this.classifier = str.substring(0, str.indexOf('.'));
+            } else {
+                this.classifier = "";
+            }
+
+            int dot = filename.lastIndexOf('.');
+            if (dot > -1) {
+                this.extension = filename.substring(dot + 1);
+            } else {
+                this.extension = "";
+            }
         } else {
             this.version = "";
             this.artifactId = "";
             this.groupId = "";
+            this.classifier = "";
+            this.extension = "";
         }
     }
-
 
     public TemplateContext props() {
         TemplateContext props = new TemplateContext();
@@ -167,6 +184,14 @@ public class Deployable implements Comparable<Deployable> {
 
     public String getVersion() {
         return version;
+    }
+
+    public String getClassifier() {
+        return classifier;
+    }
+
+    public String getExtension() {
+        return extension;
     }
 
     public Path getLocalPath() {

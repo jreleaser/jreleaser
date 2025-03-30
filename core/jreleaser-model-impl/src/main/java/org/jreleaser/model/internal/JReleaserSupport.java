@@ -120,6 +120,7 @@ public final class JReleaserSupport {
         set.add(org.jreleaser.model.api.deploy.maven.GithubMavenDeployer.TYPE);
         set.add(org.jreleaser.model.api.deploy.maven.GitlabMavenDeployer.TYPE);
         set.add(org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.TYPE);
+        set.add(org.jreleaser.model.api.deploy.maven.Nexus3MavenDeployer.TYPE);
         return unmodifiableSet(set);
     }
 

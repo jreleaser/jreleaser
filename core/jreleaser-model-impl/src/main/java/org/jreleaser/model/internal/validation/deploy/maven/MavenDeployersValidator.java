@@ -37,6 +37,7 @@ import static org.jreleaser.model.internal.validation.deploy.maven.GithubMavenDe
 import static org.jreleaser.model.internal.validation.deploy.maven.GitlabMavenDeployerValidator.validateGitlabMavenDeployer;
 import static org.jreleaser.model.internal.validation.deploy.maven.MavenCentralMavenDeployerValidator.validateMavenCentralMavenDeployer;
 import static org.jreleaser.model.internal.validation.deploy.maven.Nexus2MavenDeployerValidator.validateNexus2MavenDeployer;
+import static org.jreleaser.model.internal.validation.deploy.maven.Nexus3MavenDeployerValidator.validateNexus3MavenDeployer;
 import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -62,6 +63,7 @@ public final class MavenDeployersValidator {
         validateGithubMavenDeployer(context, mode, errors);
         validateGitlabMavenDeployer(context, mode, errors);
         validateNexus2MavenDeployer(context, mode, errors);
+        validateNexus3MavenDeployer(context, mode, errors);
         validateMavenCentralMavenDeployer(context, mode, errors);
 
         if (mode.validateDeploy() || mode.validateConfig()) {
@@ -77,6 +79,7 @@ public final class MavenDeployersValidator {
                     !maven.getActiveGithubs().isEmpty() ||
                     !maven.getActiveGitlabs().isEmpty() ||
                     !maven.getActiveNexus2s().isEmpty() ||
+                    !maven.getActiveNexus3s().isEmpty() ||
                     !maven.getActiveMavenCentrals().isEmpty();
 
                 if (!activeSet && !enabled) {

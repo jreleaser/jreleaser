@@ -102,6 +102,7 @@ public final class JsonSchemaGenerator {
         mappings.put("Map<String, GithubMavenDeployer>", "GithubMavenDeployerMap");
         mappings.put("Map<String, GitlabMavenDeployer>", "GitlabMavenDeployerMap");
         mappings.put("Map<String, Nexus2MavenDeployer>", "Nexus2MavenDeployerMap");
+        mappings.put("Map<String, Nexus3MavenDeployer>", "Nexus3MavenDeployerMap");
         mappings.put("Map<String, MavenCentralMavenDeployer>", "MavenCentralMavenDeployerMap");
         mappings.put("Map<String, SwidTag>", "SwidTagMap");
 
