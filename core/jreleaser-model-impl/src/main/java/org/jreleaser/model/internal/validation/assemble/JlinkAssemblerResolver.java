@@ -80,6 +80,7 @@ public final class JlinkAssemblerResolver {
             if (!Files.exists(image)) {
                 errors.assembly(RB.$("validation_missing_assembly",
                     assembler.getType(), assembler.getName(), assembler.getName()));
+                errors.assembly(context.relativizeToBasedir(image.toAbsolutePath()).toString());
             } else {
                 Artifact artifact = Artifact.of(image, platform);
                 artifact.resolveActiveAndSelected(context);

@@ -23,12 +23,14 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.NativeImageAssembler;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.util.Errors;
+import org.jreleaser.util.PlatformUtils;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
 import static org.jreleaser.model.Constants.KEY_ARCHIVE_FORMAT;
+import static org.jreleaser.util.FileType.EXE;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -68,23 +70,46 @@ public final class NativeImageAssemblerResolver {
 
             String platform = graalJdk.getPlatform();
             String platformReplaced = assembler.getPlatform().applyReplacements(platform);
-            String str = graalJdk.getExtraProperties()
-                .getOrDefault(KEY_ARCHIVE_FORMAT, assembler.getArchiveFormat())
-                .toString();
-            Archive.Format archiveFormat = Archive.Format.of(str);
 
-            Path image = baseOutputDirectory
-                .resolve(imageName + "-" + platformReplaced + "." + archiveFormat.extension())
-                .toAbsolutePath();
+            if (assembler.getArchiving().isEnabled()) {
+                String str = graalJdk.getExtraProperties()
+                    .getOrDefault(KEY_ARCHIVE_FORMAT, assembler.getArchiving().getFormat())
+                    .toString();
+                Archive.Format archiveFormat = Archive.Format.of(str);
 
-            if (!Files.exists(image)) {
-                errors.assembly(RB.$("validation_missing_assembly",
-                    assembler.getType(), assembler.getName(), assembler.getName()));
+                Path image = baseOutputDirectory
+                    .resolve(imageName + "-" + platformReplaced + "." + archiveFormat.extension())
+                    .toAbsolutePath();
+
+                if (!Files.exists(image)) {
+                    errors.assembly(RB.$("validation_missing_assembly",
+                        assembler.getType(), assembler.getName(), assembler.getName()));
+                } else {
+                    Artifact artifact = Artifact.of(image, platform);
+                    artifact.resolveActiveAndSelected(context);
+                    artifact.setExtraProperties(assembler.getExtraProperties());
+                    assembler.addOutput(artifact);
+                }
             } else {
-                Artifact artifact = Artifact.of(image, platform);
-                artifact.resolveActiveAndSelected(context);
-                artifact.setExtraProperties(assembler.getExtraProperties());
-                assembler.addOutput(artifact);
+                String finalImageName = imageName + "-" + platformReplaced;
+                if (PlatformUtils.isWindows(platform)) {
+                    finalImageName += EXE.extension();
+                }
+
+                Path image = baseOutputDirectory
+                    .resolve(finalImageName)
+                    .toAbsolutePath();
+
+                if (!Files.exists(image)) {
+                    errors.assembly(RB.$("validation_missing_assembly",
+                        assembler.getType(), assembler.getName(), assembler.getName()));
+                    errors.assembly(context.relativizeToBasedir(image.toAbsolutePath()).toString());
+                } else {
+                    Artifact artifact = Artifact.of(image, platform);
+                    artifact.resolveActiveAndSelected(context);
+                    artifact.setExtraProperties(assembler.getExtraProperties());
+                    assembler.addOutput(artifact);
+                }
             }
         }
     }

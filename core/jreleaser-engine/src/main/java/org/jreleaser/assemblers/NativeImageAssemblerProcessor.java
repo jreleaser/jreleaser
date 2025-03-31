@@ -140,18 +140,22 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<or
         String finalImageName = imageName + "-" + platformReplaced;
 
         String executable = assembler.getExecutable();
+        if (!assembler.getArchiving().isEnabled()) {
+            executable = finalImageName;
+        }
+        String executableFileName = executable;
         if (PlatformUtils.isWindows()) {
-            executable += EXE.extension();
+            executableFileName += EXE.extension();
         }
         context.getLogger().info("- {}", finalImageName);
 
-        Path image = assembleDirectory.resolve(executable).toAbsolutePath();
+        Path image = assembleDirectory.resolve(executableFileName).toAbsolutePath();
         try {
             if (Files.exists(image)) {
                 Files.deleteIfExists(image);
             }
         } catch (IOException e) {
-            throw new AssemblerProcessingException(RB.$("ERROR_assembler_delete_image", executable), e);
+            throw new AssemblerProcessingException(RB.$("ERROR_assembler_delete_image", executableFileName), e);
         }
 
         assembler.getArgs().stream()
@@ -198,13 +202,15 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<or
             }
         }
 
-        cmd.arg("-H:Name=" + assembler.getExecutable());
+        cmd.arg("-H:Name=" + executable);
         context.getLogger().debug(String.join(" ", cmd.getArgs()));
         executeCommand(image.getParent(), cmd);
 
         if (assembler.getUpx().isEnabled()) {
             upx(image);
         }
+
+        if (!assembler.getArchiving().isEnabled()) return;
 
         try {
             Path tempDirectory = Files.createTempDirectory("jreleaser");

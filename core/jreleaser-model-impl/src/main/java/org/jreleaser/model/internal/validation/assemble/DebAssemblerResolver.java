@@ -122,6 +122,7 @@ public final class DebAssemblerResolver {
         if (!Files.exists(path)) {
             errors.assembly(RB.$("validation_missing_assembly",
                 assembler.getType(), assembler.getName(), assembler.getName()));
+            errors.assembly(context.relativizeToBasedir(path.toAbsolutePath()).toString());
         } else {
             Artifact a = Artifact.of(path, platform);
             a.resolveActiveAndSelected(context);

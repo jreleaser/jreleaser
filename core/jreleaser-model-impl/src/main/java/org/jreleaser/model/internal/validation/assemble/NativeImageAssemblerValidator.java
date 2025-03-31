@@ -90,12 +90,23 @@ public final class NativeImageAssemblerValidator {
 
         assembler.setPlatform(assembler.getPlatform().mergeValues(context.getModel().getPlatform()));
 
+        if (!assembler.getArchiving().isEnabledSet()) {
+            assembler.getArchiving().setEnabled(true);
+        }
+        if (assembler.getArchiving().isEnabled() && null == assembler.getArchiving().getFormat()) {
+            assembler.getArchiving().setFormat(Archive.Format.ZIP);
+        }
+
         if (isBlank(assembler.getExecutable())) {
             assembler.setExecutable(assembler.getName());
         }
         if (isBlank(assembler.getImageName())) {
-            assembler.setImageName(assembler.getExecutable() + "-" +
-                context.getModel().getProject().getResolvedVersion());
+            if (assembler.getArchiving().isEnabled()) {
+                assembler.setImageName(assembler.getExecutable() + "-" +
+                    context.getModel().getProject().getResolvedVersion());
+            } else {
+                assembler.setImageName(assembler.getExecutable());
+            }
         }
 
         if (assembler.isApplyDefaultMatrix()) {
@@ -166,10 +177,6 @@ public final class NativeImageAssemblerValidator {
                     assembler.getGraal().resolveActiveAndSelected(context);
                 }
             }
-        }
-
-        if (null == assembler.getArchiveFormat()) {
-            assembler.setArchiveFormat(Archive.Format.ZIP);
         }
 
         if (null == assembler.getOptions().getTimestamp()) {

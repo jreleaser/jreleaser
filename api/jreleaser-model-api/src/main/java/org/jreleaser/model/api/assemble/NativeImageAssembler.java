@@ -39,7 +39,10 @@ public interface NativeImageAssembler extends Assembler, JavaAssembler, SwidTagA
 
     String getImageNameTransform();
 
+    @Deprecated
     Archive.Format getArchiveFormat();
+
+    Archiving getArchiving();
 
     ArchiveOptions getOptions();
 
@@ -77,6 +80,12 @@ public interface NativeImageAssembler extends Assembler, JavaAssembler, SwidTagA
     LinuxArm getLinuxArm();
 
     MacosArm getMacosArm();
+
+    interface Archiving extends Domain {
+        boolean isEnabled();
+
+        Archive.Format getFormat();
+    }
 
     interface PlatformCustomizer extends Domain {
         String getPlatform();

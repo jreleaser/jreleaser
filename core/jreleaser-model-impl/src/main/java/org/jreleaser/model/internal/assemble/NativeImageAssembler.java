@@ -58,12 +58,13 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.2.0
  */
 public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImageAssembler, org.jreleaser.model.api.assemble.NativeImageAssembler> implements SwidTagAware {
-    private static final long serialVersionUID = 8523239721945981332L;
+    private static final long serialVersionUID = -6941740718518870981L;
 
     private final List<String> args = new ArrayList<>();
     private final Set<String> components = new LinkedHashSet<>();
     private final Artifact graal = new Artifact();
     private final Set<Artifact> graalJdks = new LinkedHashSet<>();
+    private final Archiving archiving = new Archiving();
     private final Matrix matrix = new Matrix();
     private final Artifact graalJdkPattern = new Artifact();
     private final Upx upx = new Upx();
@@ -76,12 +77,11 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
 
     private String imageName;
     private String imageNameTransform;
-    private Archive.Format archiveFormat;
     private Boolean applyDefaultMatrix;
 
     @JsonIgnore
     private final org.jreleaser.model.api.assemble.NativeImageAssembler immutable = new org.jreleaser.model.api.assemble.NativeImageAssembler() {
-        private static final long serialVersionUID = -555250291042674316L;
+        private static final long serialVersionUID = 2532557224813258883L;
 
         private Set<? extends org.jreleaser.model.api.common.Artifact> artifacts;
         private Set<? extends org.jreleaser.model.api.common.Artifact> graalJdks;
@@ -101,8 +101,14 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
         }
 
         @Override
+        @Deprecated
         public Archive.Format getArchiveFormat() {
-            return archiveFormat;
+            return NativeImageAssembler.this.getArchiveFormat();
+        }
+
+        @Override
+        public Archiving getArchiving() {
+            return archiving.asImmutable();
         }
 
         @Override
@@ -350,8 +356,8 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
         super.merge(source);
         this.imageName = merge(this.imageName, source.imageName);
         this.imageNameTransform = merge(this.imageNameTransform, source.imageNameTransform);
-        this.archiveFormat = merge(this.archiveFormat, source.archiveFormat);
         this.applyDefaultMatrix = merge(this.applyDefaultMatrix, source.applyDefaultMatrix);
+        setArchiving(source.archiving);
         setOptions(source.options);
         setGraal(source.graal);
         setGraalJdks(merge(this.graalJdks, source.graalJdks));
@@ -406,16 +412,29 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
         this.imageNameTransform = imageNameTransform;
     }
 
+    @Deprecated
     public Archive.Format getArchiveFormat() {
-        return archiveFormat;
+        return archiving.getFormat();
     }
 
+    @Deprecated
     public void setArchiveFormat(Archive.Format archiveFormat) {
-        this.archiveFormat = archiveFormat;
+        nag("nativeImage.archiveFormat is deprecated since 1.18.0 and will be removed in 2.0.0. Use nativeImage.archiving.format instead");
+        archiving.setFormat(archiveFormat);
     }
 
+    @Deprecated
     public void setArchiveFormat(String archiveFormat) {
-        this.archiveFormat = Archive.Format.of(archiveFormat);
+        nag("nativeImage.archiveFormat is deprecated since 1.18.0 and will be removed in 2.0.0. Use nativeImage.archiving.format instead");
+        setArchiveFormat(Archive.Format.of(archiveFormat));
+    }
+
+    public Archiving getArchiving() {
+        return archiving;
+    }
+
+    public void setArchiving(Archiving archiving) {
+        this.archiving.merge(archiving);
     }
 
     public ArchiveOptions getOptions() {
@@ -585,7 +604,7 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
         super.asMap(full, props);
         props.put("imageName", imageName);
         props.put("imageNameTransform", imageNameTransform);
-        props.put("archiveFormat", archiveFormat);
+        props.put("archiving", archiving.asMap(full));
         props.put("options", options.asMap(full));
         props.put("applyDefaultMatrix", isApplyDefaultMatrix());
         matrix.asMap(props);
@@ -606,6 +625,77 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
         if (full || windowsX86.isSet()) props.putAll(windowsX86.asMap(full));
         if (full || linuxArm.isSet()) props.putAll(linuxArm.asMap(full));
         if (full || macosArm.isSet()) props.putAll(macosArm.asMap(full));
+    }
+
+    public static final class Archiving extends AbstractActivatable<Archiving> implements Domain {
+        private static final long serialVersionUID = -6730452833078647208L;
+
+        private Boolean enabled;
+        private Archive.Format format;
+
+        @JsonIgnore
+        private final org.jreleaser.model.api.assemble.NativeImageAssembler.Archiving immutable = new org.jreleaser.model.api.assemble.NativeImageAssembler.Archiving() {
+            private static final long serialVersionUID = -7026942817421830530L;
+
+            @Override
+            public boolean isEnabled() {
+                return Archiving.this.isEnabled();
+            }
+
+            @Override
+            public Archive.Format getFormat() {
+                return format;
+            }
+
+            @Override
+            public Map<String, Object> asMap(boolean full) {
+                return unmodifiableMap(Archiving.this.asMap(full));
+            }
+        };
+
+        public org.jreleaser.model.api.assemble.NativeImageAssembler.Archiving asImmutable() {
+            return immutable;
+        }
+
+        @Override
+        public void merge(Archiving source) {
+            super.merge(source);
+            this.enabled = merge(this.enabled, source.enabled);
+            this.format = merge(this.format, source.format);
+        }
+
+        public boolean isEnabled() {
+            return null != enabled && enabled;
+        }
+
+        public void setEnabled(Boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        public boolean isEnabledSet() {
+            return null != enabled;
+        }
+
+        public Archive.Format getFormat() {
+            return format;
+        }
+
+        public void setFormat(Archive.Format format) {
+            this.format = format;
+        }
+
+        public void setFormat(String format) {
+            this.format = Archive.Format.of(format);
+        }
+
+        @Override
+        public Map<String, Object> asMap(boolean full) {
+            Map<String, Object> props = new LinkedHashMap<>();
+            props.put("enabled", isEnabled());
+            props.put("format", format);
+
+            return props;
+        }
     }
 
     public interface PlatformCustomizer extends Domain {

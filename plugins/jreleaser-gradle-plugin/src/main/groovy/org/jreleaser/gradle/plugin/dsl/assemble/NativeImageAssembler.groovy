@@ -44,6 +44,7 @@ interface NativeImageAssembler extends JavaAssembler, SwidTagAware {
 
     SetProperty<String> getComponents()
 
+    @Deprecated
     Property<Archive.Format> getArchiveFormat()
 
     Property<Boolean> getApplyDefaultMatrix()
@@ -57,6 +58,8 @@ interface NativeImageAssembler extends JavaAssembler, SwidTagAware {
     void graal(Action<? super Artifact> action)
 
     void upx(Action<? super Upx> action)
+
+    void archiving(Action<? super Archiving> action)
 
     @Deprecated
     void linux(Action<? super LinuxX86> action)
@@ -89,6 +92,8 @@ interface NativeImageAssembler extends JavaAssembler, SwidTagAware {
 
     void upx(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Upx) Closure<Void> action)
 
+    void archiving(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Archiving) Closure<Void> action)
+
     @Deprecated
     void linux(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = LinuxX86) Closure<Void> action)
 
@@ -115,6 +120,14 @@ interface NativeImageAssembler extends JavaAssembler, SwidTagAware {
     void graalJdkPattern(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
 
     void options(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArchiveOptions) Closure<Void> action)
+
+    interface Archiving {
+        Property<Boolean> getEnabled()
+
+        Property<Archive.Format> getFormat()
+
+        void setFormat(String str)
+    }
 
     interface Upx extends Activatable {
         Property<String> getVersion()
