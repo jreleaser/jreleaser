@@ -31,6 +31,7 @@ import static org.jreleaser.model.internal.validation.common.Validator.resolveAc
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
 import static org.jreleaser.model.internal.validation.deploy.maven.ArtifactoryMavenDeployerValidator.validateArtifactoryMavenDeployer;
 import static org.jreleaser.model.internal.validation.deploy.maven.AzureMavenDeployerValidator.validateAzureMavenDeployer;
+import static org.jreleaser.model.internal.validation.deploy.maven.ForgejoMavenDeployerValidator.validateForgejoMavenDeployer;
 import static org.jreleaser.model.internal.validation.deploy.maven.GiteaMavenDeployerValidator.validateGiteaMavenDeployer;
 import static org.jreleaser.model.internal.validation.deploy.maven.GithubMavenDeployerValidator.validateGithubMavenDeployer;
 import static org.jreleaser.model.internal.validation.deploy.maven.GitlabMavenDeployerValidator.validateGitlabMavenDeployer;
@@ -56,6 +57,7 @@ public final class MavenDeployersValidator {
         validatePomchecker(context);
         validateArtifactoryMavenDeployer(context, mode, errors);
         validateAzureMavenDeployer(context, mode, errors);
+        validateForgejoMavenDeployer(context, mode, errors);
         validateGiteaMavenDeployer(context, mode, errors);
         validateGithubMavenDeployer(context, mode, errors);
         validateGitlabMavenDeployer(context, mode, errors);
@@ -70,6 +72,7 @@ public final class MavenDeployersValidator {
             if (maven.isEnabled()) {
                 boolean enabled = !maven.getActiveArtifactories().isEmpty() ||
                     !maven.getActiveAzures().isEmpty() ||
+                    !maven.getActiveForgejos().isEmpty() ||
                     !maven.getActiveGiteas().isEmpty() ||
                     !maven.getActiveGithubs().isEmpty() ||
                     !maven.getActiveGitlabs().isEmpty() ||

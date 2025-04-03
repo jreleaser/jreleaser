@@ -32,17 +32,18 @@ import static org.jreleaser.model.JReleaserOutput.nag;
  * @since 0.1.0
  */
 public final class Release extends AbstractModelObject<Release> implements Domain {
-    private static final long serialVersionUID = -7382956682399917298L;
+    private static final long serialVersionUID = 733767210402420780L;
 
     private GithubReleaser github;
     private GitlabReleaser gitlab;
     private GiteaReleaser gitea;
+    private ForgejoReleaser forgejo;
     private CodebergReleaser codeberg;
     private GenericGitReleaser generic;
 
     @JsonIgnore
     private final org.jreleaser.model.api.release.Release immutable = new org.jreleaser.model.api.release.Release() {
-        private static final long serialVersionUID = 8607297611597648860L;
+        private static final long serialVersionUID = -7332329413622289819L;
 
         @Override
         public org.jreleaser.model.api.release.GithubReleaser getGithub() {
@@ -57,6 +58,11 @@ public final class Release extends AbstractModelObject<Release> implements Domai
         @Override
         public org.jreleaser.model.api.release.GiteaReleaser getGitea() {
             return null != gitea ? gitea.asImmutable() : null;
+        }
+
+        @Override
+        public org.jreleaser.model.api.release.ForgejoReleaser getForgejo() {
+            return null != forgejo ? forgejo.asImmutable() : null;
         }
 
         @Override
@@ -89,6 +95,7 @@ public final class Release extends AbstractModelObject<Release> implements Domai
         this.github = merge(this.github, source.github);
         this.gitlab = merge(this.gitlab, source.gitlab);
         this.gitea = merge(this.gitea, source.gitea);
+        this.forgejo = merge(this.forgejo, source.forgejo);
         this.codeberg = merge(this.codeberg, source.codeberg);
         this.generic = merge(this.generic, source.generic);
     }
@@ -117,13 +124,21 @@ public final class Release extends AbstractModelObject<Release> implements Domai
         this.gitea = gitea;
     }
 
+    public ForgejoReleaser getForgejo() {
+        return forgejo;
+    }
+
+    public void setForgejo(ForgejoReleaser forgejo) {
+        this.forgejo = forgejo;
+    }
+
     public CodebergReleaser getCodeberg() {
         return codeberg;
     }
 
     public void setCodeberg(CodebergReleaser codeberg) {
         this.codeberg = codeberg;
-        nag("release.codeberg is deprecated since 1.6.0 and will be removed in 2.0.0. Use release.gitea instead");
+        nag("release.codeberg is deprecated since 1.6.0 and will be removed in 2.0.0. Use release.forgejo instead");
     }
 
     public GenericGitReleaser getGeneric() {
@@ -138,6 +153,7 @@ public final class Release extends AbstractModelObject<Release> implements Domai
         if (null != github) return github;
         if (null != gitlab) return gitlab;
         if (null != gitea) return gitea;
+        if (null != forgejo) return forgejo;
         if (null != codeberg) return codeberg;
         return generic;
     }
@@ -146,6 +162,7 @@ public final class Release extends AbstractModelObject<Release> implements Domai
         if (null != github) return github.asImmutable();
         if (null != gitlab) return gitlab.asImmutable();
         if (null != gitea) return gitea.asImmutable();
+        if (null != forgejo) return forgejo.asImmutable();
         if (null != codeberg) return codeberg.asImmutable();
         if (null != generic) return generic.asImmutable();
         return null;
@@ -157,6 +174,7 @@ public final class Release extends AbstractModelObject<Release> implements Domai
         if (null != github) map.put(org.jreleaser.model.api.release.GithubReleaser.TYPE, github.asMap(full));
         if (null != gitlab) map.put(org.jreleaser.model.api.release.GitlabReleaser.TYPE, gitlab.asMap(full));
         if (null != gitea) map.put(org.jreleaser.model.api.release.GiteaReleaser.TYPE, gitea.asMap(full));
+        if (null != forgejo) map.put(org.jreleaser.model.api.release.ForgejoReleaser.TYPE, forgejo.asMap(full));
         if (null != codeberg) map.put(org.jreleaser.model.api.release.CodebergReleaser.TYPE, codeberg.asMap(full));
         if (null != generic) map.put(org.jreleaser.model.api.release.GenericGitReleaser.TYPE, generic.asMap(full));
         return map;

@@ -33,6 +33,8 @@ public interface Maven extends Domain, Activatable {
 
     Map<String, ? extends AzureMavenDeployer> getAzure();
 
+    Map<String, ? extends ForgejoMavenDeployer> getForgejo();
+
     Map<String, ? extends GiteaMavenDeployer> getGitea();
 
     Map<String, ? extends GithubMavenDeployer> getGithub();

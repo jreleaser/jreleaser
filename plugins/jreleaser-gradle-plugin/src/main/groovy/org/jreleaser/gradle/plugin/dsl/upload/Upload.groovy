@@ -33,7 +33,9 @@ interface Upload extends Activatable {
 
     NamedDomainObjectContainer<FtpUploader> getFtp()
 
-    NamedDomainObjectContainer<GitlabUploader> getGitea()
+    NamedDomainObjectContainer<ForgejoUploader> getForgejo()
+
+    NamedDomainObjectContainer<GiteaUploader> getGitea()
 
     NamedDomainObjectContainer<GitlabUploader> getGitlab()
 
@@ -48,6 +50,8 @@ interface Upload extends Activatable {
     void artifactory(Action<? super NamedDomainObjectContainer<ArtifactoryUploader>> action)
 
     void ftp(Action<? super NamedDomainObjectContainer<FtpUploader>> action)
+
+    void forgejo(Action<? super NamedDomainObjectContainer<ForgejoUploader>> action)
 
     void gitea(Action<? super NamedDomainObjectContainer<GiteaUploader>> action)
 
@@ -64,6 +68,8 @@ interface Upload extends Activatable {
     void artifactory(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 
     void ftp(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
+
+    void forgejo(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 
     void gitea(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 

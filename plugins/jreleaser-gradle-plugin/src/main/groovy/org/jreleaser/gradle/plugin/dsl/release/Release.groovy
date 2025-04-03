@@ -33,6 +33,8 @@ interface Release {
 
     GiteaReleaser getGitea()
 
+    ForgejoReleaser getForgejo()
+
     CodebergReleaser getCodeberg()
 
     GenericGitReleaser getGeneric()
@@ -40,6 +42,8 @@ interface Release {
     void github(Action<? super GithubReleaser> action)
 
     void gitlab(Action<? super GitlabReleaser> action)
+
+    void forgejo(Action<? super ForgejoReleaser> action)
 
     void gitea(Action<? super GiteaReleaser> action)
 
@@ -52,6 +56,8 @@ interface Release {
     void gitlab(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = GitlabReleaser) Closure<Void> action)
 
     void gitea(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = GiteaReleaser) Closure<Void> action)
+
+    void forgejo(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ForgejoReleaser) Closure<Void> action)
 
     void codeberg(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CodebergReleaser) Closure<Void> action)
 

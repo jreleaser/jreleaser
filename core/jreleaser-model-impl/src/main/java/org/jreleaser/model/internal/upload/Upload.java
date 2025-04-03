@@ -47,10 +47,11 @@ import static org.jreleaser.util.StringUtils.getClassNameForLowerCaseHyphenSepar
  * @since 0.3.0
  */
 public final class Upload extends AbstractActivatable<Upload> implements Domain {
-    private static final long serialVersionUID = -8267239230459971399L;
+    private static final long serialVersionUID = 8786687188258016652L;
 
     private final Map<String, ArtifactoryUploader> artifactory = new LinkedHashMap<>();
     private final Map<String, FtpUploader> ftp = new LinkedHashMap<>();
+    private final Map<String, ForgejoUploader> forgejo = new LinkedHashMap<>();
     private final Map<String, GiteaUploader> gitea = new LinkedHashMap<>();
     private final Map<String, GitlabUploader> gitlab = new LinkedHashMap<>();
     private final Map<String, HttpUploader> http = new LinkedHashMap<>();
@@ -60,10 +61,11 @@ public final class Upload extends AbstractActivatable<Upload> implements Domain 
 
     @JsonIgnore
     private final org.jreleaser.model.api.upload.Upload immutable = new org.jreleaser.model.api.upload.Upload() {
-        private static final long serialVersionUID = -1954880769141203693L;
+        private static final long serialVersionUID = -2795529763700221567L;
 
         private Map<String, ? extends org.jreleaser.model.api.upload.ArtifactoryUploader> artifactory;
         private Map<String, ? extends org.jreleaser.model.api.upload.FtpUploader> ftp;
+        private Map<String, ? extends org.jreleaser.model.api.upload.ForgejoUploader> forgejo;
         private Map<String, ? extends org.jreleaser.model.api.upload.GiteaUploader> gitea;
         private Map<String, ? extends org.jreleaser.model.api.upload.GitlabUploader> gitlab;
         private Map<String, ? extends org.jreleaser.model.api.upload.HttpUploader> http;
@@ -89,6 +91,16 @@ public final class Upload extends AbstractActivatable<Upload> implements Domain 
                     .collect(toMap(org.jreleaser.model.api.upload.Uploader::getName, identity()));
             }
             return ftp;
+        }
+
+        @Override
+        public Map<String, ? extends org.jreleaser.model.api.upload.ForgejoUploader> getForgejo() {
+            if (null == forgejo) {
+                forgejo = Upload.this.forgejo.values().stream()
+                    .map(ForgejoUploader::asImmutable)
+                    .collect(toMap(org.jreleaser.model.api.upload.Uploader::getName, identity()));
+            }
+            return forgejo;
         }
 
         @Override
@@ -180,6 +192,7 @@ public final class Upload extends AbstractActivatable<Upload> implements Domain 
         super.merge(source);
         setArtifactory(mergeModel(this.artifactory, source.artifactory));
         setFtp(mergeModel(this.ftp, source.ftp));
+        setForgejo(mergeModel(this.forgejo, source.forgejo));
         setGitea(mergeModel(this.gitea, source.gitea));
         setGitlab(mergeModel(this.gitlab, source.gitlab));
         setHttp(mergeModel(this.http, source.http));
@@ -203,6 +216,8 @@ public final class Upload extends AbstractActivatable<Upload> implements Domain 
                 return Optional.ofNullable(artifactory.get(name));
             case org.jreleaser.model.api.upload.FtpUploader.TYPE:
                 return Optional.ofNullable(ftp.get(name));
+            case org.jreleaser.model.api.upload.ForgejoUploader.TYPE:
+                return Optional.ofNullable(forgejo.get(name));
             case org.jreleaser.model.api.upload.GiteaUploader.TYPE:
                 return Optional.ofNullable(gitea.get(name));
             case org.jreleaser.model.api.upload.GitlabUploader.TYPE:
@@ -226,6 +241,8 @@ public final class Upload extends AbstractActivatable<Upload> implements Domain 
                 return getActiveArtifactory(name);
             case org.jreleaser.model.api.upload.FtpUploader.TYPE:
                 return getActiveFtp(name);
+            case org.jreleaser.model.api.upload.ForgejoUploader.TYPE:
+                return getActiveForgejo(name);
             case org.jreleaser.model.api.upload.GiteaUploader.TYPE:
                 return getActiveGitea(name);
             case org.jreleaser.model.api.upload.GitlabUploader.TYPE:
@@ -252,6 +269,13 @@ public final class Upload extends AbstractActivatable<Upload> implements Domain 
 
     public Optional<FtpUploader> getActiveFtp(String name) {
         return ftp.values().stream()
+            .filter(Uploader::isEnabled)
+            .filter(a -> name.equals(a.getName()))
+            .findFirst();
+    }
+
+    public Optional<ForgejoUploader> getActiveForgejo(String name) {
+        return forgejo.values().stream()
             .filter(Uploader::isEnabled)
             .filter(a -> name.equals(a.getName()))
             .findFirst();
@@ -335,6 +359,25 @@ public final class Upload extends AbstractActivatable<Upload> implements Domain 
 
     public void addFtp(FtpUploader ftp) {
         this.ftp.put(ftp.getName(), ftp);
+    }
+
+    public List<ForgejoUploader> getActiveForgejos() {
+        return forgejo.values().stream()
+            .filter(ForgejoUploader::isEnabled)
+            .collect(toList());
+    }
+
+    public Map<String, ForgejoUploader> getForgejo() {
+        return forgejo;
+    }
+
+    public void setForgejo(Map<String, ForgejoUploader> forgejo) {
+        this.forgejo.clear();
+        this.forgejo.putAll(forgejo);
+    }
+
+    public void addForgejo(ForgejoUploader forgejo) {
+        this.forgejo.put(forgejo.getName(), forgejo);
     }
 
     public List<GiteaUploader> getActiveGiteas() {
@@ -471,6 +514,13 @@ public final class Upload extends AbstractActivatable<Upload> implements Domain 
             .collect(toList());
         if (!ftp.isEmpty()) map.put("ftp", ftp);
 
+        List<Map<String, Object>> forgejo = this.forgejo.values()
+            .stream()
+            .filter(d -> full || d.isEnabled())
+            .map(d -> d.asMap(full))
+            .collect(toList());
+        if (!forgejo.isEmpty()) map.put("forgejo", forgejo);
+
         List<Map<String, Object>> gitea = this.gitea.values()
             .stream()
             .filter(d -> full || d.isEnabled())
@@ -522,6 +572,8 @@ public final class Upload extends AbstractActivatable<Upload> implements Domain 
                 return (Map<String, A>) artifactory;
             case org.jreleaser.model.api.upload.FtpUploader.TYPE:
                 return (Map<String, A>) ftp;
+            case org.jreleaser.model.api.upload.ForgejoUploader.TYPE:
+                return (Map<String, A>) forgejo;
             case org.jreleaser.model.api.upload.GiteaUploader.TYPE:
                 return (Map<String, A>) gitea;
             case org.jreleaser.model.api.upload.GitlabUploader.TYPE:
@@ -543,6 +595,7 @@ public final class Upload extends AbstractActivatable<Upload> implements Domain 
         List<A> uploaders = new ArrayList<>();
         uploaders.addAll((List<A>) getActiveArtifactories());
         uploaders.addAll((List<A>) getActiveFtps());
+        uploaders.addAll((List<A>) getActiveForgejos());
         uploaders.addAll((List<A>) getActiveGiteas());
         uploaders.addAll((List<A>) getActiveGitlabs());
         uploaders.addAll((List<A>) getActiveHttps());

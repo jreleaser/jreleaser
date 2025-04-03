@@ -82,6 +82,7 @@ public final class JsonSchemaGenerator {
         mappings.put("Map<String, DockerSpec>", "DockerSpecMap");
         mappings.put("Map<String, JibSpec>", "JibSpecMap");
         mappings.put("Map<String, ArtifactoryUploader>", "ArtifactoryUploaderMap");
+        mappings.put("Map<String, ForgejoUploader>", "ForgejoUploaderMap");
         mappings.put("Map<String, GiteaUploader>", "GiteaUploaderMap");
         mappings.put("Map<String, GitlabUploader>", "GitlabUploaderMap");
         mappings.put("Map<String, FtpUploader>", "FtpUploaderMap");
@@ -96,6 +97,7 @@ public final class JsonSchemaGenerator {
         mappings.put("Map<String, Extension>", "ExtensionMap");
         mappings.put("Map<String, ArtifactoryMavenDeployer>", "ArtifactoryMavenDeployerMap");
         mappings.put("Map<String, AzureMavenDeployer>", "AzureMavenDeployerMap");
+        mappings.put("Map<String, ForgejoMavenDeployer>", "ForgejoMavenDeployerMap");
         mappings.put("Map<String, GiteaMavenDeployer>", "GiteaMavenDeployerMap");
         mappings.put("Map<String, GithubMavenDeployer>", "GithubMavenDeployerMap");
         mappings.put("Map<String, GitlabMavenDeployer>", "GitlabMavenDeployerMap");

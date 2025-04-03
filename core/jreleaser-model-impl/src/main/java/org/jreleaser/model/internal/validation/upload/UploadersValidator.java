@@ -25,6 +25,7 @@ import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.upload.ArtifactoryUploaderValidator.validateArtifactory;
+import static org.jreleaser.model.internal.validation.upload.ForgejoUploaderValidator.validateForgejoUploader;
 import static org.jreleaser.model.internal.validation.upload.FtpUploaderValidator.validateFtpUploader;
 import static org.jreleaser.model.internal.validation.upload.GiteaUploaderValidator.validateGiteaUploader;
 import static org.jreleaser.model.internal.validation.upload.GitlabUploaderValidator.validateGitlabUploader;
@@ -48,6 +49,7 @@ public final class UploadersValidator {
 
         validateArtifactory(context, mode, errors);
         validateFtpUploader(context, mode, errors);
+        validateForgejoUploader(context, mode, errors);
         validateGiteaUploader(context, mode, errors);
         validateGitlabUploader(context, mode, errors);
         validateHttpUploader(context, mode, errors);
@@ -63,6 +65,7 @@ public final class UploadersValidator {
             if (upload.isEnabled()) {
                 boolean enabled = !upload.getActiveArtifactories().isEmpty() ||
                     !upload.getActiveFtps().isEmpty() ||
+                    !upload.getActiveForgejos().isEmpty() ||
                     !upload.getActiveGiteas().isEmpty() ||
                     !upload.getActiveGitlabs().isEmpty() ||
                     !upload.getActiveHttps().isEmpty() ||

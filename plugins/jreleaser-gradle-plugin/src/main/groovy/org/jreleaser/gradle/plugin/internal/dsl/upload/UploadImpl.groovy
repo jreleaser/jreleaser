@@ -26,6 +26,7 @@ import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.upload.ArtifactoryUploader
+import org.jreleaser.gradle.plugin.dsl.upload.ForgejoUploader
 import org.jreleaser.gradle.plugin.dsl.upload.FtpUploader
 import org.jreleaser.gradle.plugin.dsl.upload.GiteaUploader
 import org.jreleaser.gradle.plugin.dsl.upload.GitlabUploader
@@ -52,6 +53,7 @@ class UploadImpl implements Upload {
     final Property<Active> active
     final NamedDomainObjectContainer<ArtifactoryUploader> artifactory
     final NamedDomainObjectContainer<FtpUploader> ftp
+    final NamedDomainObjectContainer<ForgejoUploader> forgejo
     final NamedDomainObjectContainer<GiteaUploader> gitea
     final NamedDomainObjectContainer<GitlabUploader> gitlab
     final NamedDomainObjectContainer<HttpUploader> http
@@ -76,6 +78,15 @@ class UploadImpl implements Upload {
             @Override
             FtpUploader create(String name) {
                 FtpUploaderImpl h = objects.newInstance(FtpUploaderImpl, objects)
+                h.name = name
+                return h
+            }
+        })
+
+        forgejo = objects.domainObjectContainer(ForgejoUploader, new NamedDomainObjectFactory<ForgejoUploader>() {
+            @Override
+            ForgejoUploader create(String name) {
+                ForgejoUploaderImpl h = objects.newInstance(ForgejoUploaderImpl, objects)
                 h.name = name
                 return h
             }
@@ -154,6 +165,11 @@ class UploadImpl implements Upload {
     }
 
     @Override
+    void forgejo(Action<? super NamedDomainObjectContainer<ForgejoUploader>> action) {
+        action.execute(forgejo)
+    }
+
+    @Override
     void gitea(Action<? super NamedDomainObjectContainer<GiteaUploader>> action) {
         action.execute(gitea)
     }
@@ -193,6 +209,12 @@ class UploadImpl implements Upload {
     @CompileDynamic
     void ftp(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
         ConfigureUtil.configure(action, ftp)
+    }
+
+    @Override
+    @CompileDynamic
+    void forgejo(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
+        ConfigureUtil.configure(action, forgejo)
     }
 
     @Override
@@ -239,6 +261,7 @@ class UploadImpl implements Upload {
         artifactory.each { upload.addArtifactory(((ArtifactoryUploaderImpl) it).toModel()) }
         ftp.each { upload.addFtp(((FtpUploaderImpl) it).toModel()) }
         gitea.each { upload.addGitea(((GiteaUploaderImpl) it).toModel()) }
+        forgejo.each { upload.addForgejo(((ForgejoUploaderImpl) it).toModel()) }
         gitlab.each { upload.addGitlab(((GitlabUploaderImpl) it).toModel()) }
         http.each { upload.addHttp(((HttpUploaderImpl) it).toModel()) }
         s3.each { upload.addS3(((S3UploaderImpl) it).toModel()) }

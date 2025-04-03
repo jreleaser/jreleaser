@@ -23,23 +23,20 @@ import org.jreleaser.model.api.common.Apply;
 import org.jreleaser.model.api.common.ExtraProperties;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.util.VersionUtils;
-import org.jreleaser.model.spi.release.Asset;
-import org.jreleaser.model.spi.release.Release;
 import org.jreleaser.model.spi.release.ReleaseException;
-import org.jreleaser.model.spi.release.Repository;
 import org.jreleaser.model.spi.release.User;
 import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.commons.RestAPIException;
+import org.jreleaser.sdk.forgejo.Forgejo;
+import org.jreleaser.sdk.forgejo.api.Asset;
+import org.jreleaser.sdk.forgejo.api.Issue;
+import org.jreleaser.sdk.forgejo.api.Label;
+import org.jreleaser.sdk.forgejo.api.Milestone;
+import org.jreleaser.sdk.forgejo.api.Release;
+import org.jreleaser.sdk.forgejo.api.Repository;
 import org.jreleaser.sdk.git.ChangelogProvider;
 import org.jreleaser.sdk.git.GitSdk;
 import org.jreleaser.sdk.git.release.AbstractReleaser;
-import org.jreleaser.sdk.gitea.Gitea;
-import org.jreleaser.sdk.gitea.api.GtAsset;
-import org.jreleaser.sdk.gitea.api.GtIssue;
-import org.jreleaser.sdk.gitea.api.GtLabel;
-import org.jreleaser.sdk.gitea.api.GtMilestone;
-import org.jreleaser.sdk.gitea.api.GtRelease;
-import org.jreleaser.sdk.gitea.api.GtRepository;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -61,11 +58,11 @@ import static org.jreleaser.util.StringUtils.uncapitalize;
  */
 @org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.release.CodebergReleaser> {
-    private static final long serialVersionUID = -4458608993449050365L;
+    private static final long serialVersionUID = -5294232312152902809L;
 
     private final org.jreleaser.model.internal.release.CodebergReleaser codeberg;
 
-    public CodebergReleaser(JReleaserContext context, Set<Asset> assets) {
+    public CodebergReleaser(JReleaserContext context, Set<org.jreleaser.model.spi.release.Asset> assets) {
         super(context, assets);
         codeberg = context.getModel().getRelease().getCodeberg();
     }
@@ -84,7 +81,7 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
         String tagName = codeberg.getEffectiveTagName(context.getModel());
 
         try {
-            Gitea api = new Gitea(context.asImmutable(),
+            Forgejo api = new Forgejo(context.asImmutable(),
                 codeberg.getApiEndpoint(),
                 codeberg.getToken(),
                 codeberg.getConnectTimeout(),
@@ -98,7 +95,7 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
             String changelog = context.getChangelog().getResolvedChangelog();
 
             context.getLogger().debug(RB.$("git.releaser.release.lookup"), tagName, codeberg.getCanonicalRepoName());
-            GtRelease release = findReleaseByTag(api, tagName);
+            Release release = findReleaseByTag(api, tagName);
             boolean snapshot = context.getModel().getProject().isSnapshot();
             if (null != release) {
                 context.getLogger().debug(RB.$("git.releaser.release.exists"), tagName);
@@ -112,7 +109,7 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
                 } else if (codeberg.getUpdate().isEnabled()) {
                     context.getLogger().debug(RB.$("git.releaser.release.update"), tagName);
                     if (!context.isDryrun()) {
-                        GtRelease updater = new GtRelease();
+                        Release updater = new Release();
                         if (codeberg.getPrerelease().isEnabledSet()) {
                             updater.setPrerelease(codeberg.getPrerelease().isEnabled());
                         }
@@ -155,30 +152,30 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
         }
     }
 
-    private GtRelease findReleaseByTag(Gitea api, String tagName) {
+    private Release findReleaseByTag(Forgejo api, String tagName) {
         if (context.isDryrun()) return null;
         return api.findReleaseByTag(codeberg.getOwner(), codeberg.getName(), tagName);
     }
 
-    protected Repository.Kind resolveRepositoryKind() {
-        return Repository.Kind.CODEBERG;
+    protected org.jreleaser.model.spi.release.Repository.Kind resolveRepositoryKind() {
+        return org.jreleaser.model.spi.release.Repository.Kind.CODEBERG;
     }
 
     @Override
-    public Repository maybeCreateRepository(String owner, String repo, String password, ExtraProperties extraProperties) throws IOException {
+    public org.jreleaser.model.spi.release.Repository maybeCreateRepository(String owner, String repo, String password, ExtraProperties extraProperties) throws IOException {
         context.getLogger().debug(RB.$("git.repository.lookup"), owner, repo);
 
-        Gitea api = new Gitea(context.asImmutable(),
+        Forgejo api = new Forgejo(context.asImmutable(),
             codeberg.getApiEndpoint(),
             password,
             codeberg.getConnectTimeout(),
             codeberg.getReadTimeout());
-        GtRepository repository = api.findRepository(owner, repo);
+        Repository repository = api.findRepository(owner, repo);
         if (null == repository) {
             repository = api.createRepository(owner, repo);
         }
 
-        return new Repository(
+        return new org.jreleaser.model.spi.release.Repository(
             resolveRepositoryKind(),
             owner,
             repo,
@@ -200,7 +197,7 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
                 host += "/";
             }
 
-            return new Gitea(context.asImmutable(),
+            return new Forgejo(context.asImmutable(),
                 codeberg.getApiEndpoint(),
                 codeberg.getToken(),
                 codeberg.getConnectTimeout(),
@@ -215,18 +212,18 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
     }
 
     @Override
-    public List<Release> listReleases(String owner, String repo) throws IOException {
-        Gitea api = new Gitea(context.asImmutable(),
+    public List<org.jreleaser.model.spi.release.Release> listReleases(String owner, String repo) throws IOException {
+        Forgejo api = new Forgejo(context.asImmutable(),
             codeberg.getApiEndpoint(),
             codeberg.getToken(),
             codeberg.getConnectTimeout(),
             codeberg.getReadTimeout());
 
-        List<Release> releases = api.listReleases(owner, repo);
+        List<org.jreleaser.model.spi.release.Release> releases = api.listReleases(owner, repo);
 
         VersionUtils.clearUnparseableTags();
         Pattern versionPattern = VersionUtils.resolveVersionPattern(context);
-        for (Release release : releases) {
+        for (org.jreleaser.model.spi.release.Release release : releases) {
             release.setVersion(VersionUtils.version(context, release.getTagName(), versionPattern));
         }
 
@@ -235,9 +232,9 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
         return releases;
     }
 
-    private void createRelease(Gitea api, String tagName, String changelog, boolean deleteTags) throws IOException {
+    private void createRelease(Forgejo api, String tagName, String changelog, boolean deleteTags) throws IOException {
         if (context.isDryrun()) {
-            for (Asset asset : assets) {
+            for (org.jreleaser.model.spi.release.Asset asset : assets) {
                 if (0 == Files.size(asset.getPath()) || !Files.exists(asset.getPath())) {
                     // do not upload empty or non existent files
                     continue;
@@ -260,7 +257,7 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
         }
 
         // remote tag/release
-        GtRelease release = new GtRelease();
+        Release release = new Release();
         release.setName(codeberg.getEffectiveReleaseName());
         release.setTagName(tagName);
         release.setTargetCommitish(codeberg.getResolvedBranchPush(context.getModel()));
@@ -276,7 +273,7 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
         api.uploadAssets(codeberg.getOwner(), codeberg.getName(), release, assets);
 
         if (codeberg.getMilestone().isClose() && !context.getModel().getProject().isSnapshot()) {
-            Optional<GtMilestone> milestone = api.findMilestoneByName(
+            Optional<Milestone> milestone = api.findMilestoneByName(
                 codeberg.getOwner(),
                 codeberg.getName(),
                 codeberg.getMilestone().getEffectiveName());
@@ -288,7 +285,7 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
         updateIssues(codeberg, api);
     }
 
-    private void updateIssues(org.jreleaser.model.internal.release.CodebergReleaser codeberg, Gitea api) throws IOException {
+    private void updateIssues(org.jreleaser.model.internal.release.CodebergReleaser codeberg, Forgejo api) throws IOException {
         if (!codeberg.getIssues().isEnabled()) return;
 
         List<String> issueNumbers = ChangelogProvider.getIssues(context);
@@ -315,7 +312,7 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
             labelColor = labelColor.substring(1);
         }
 
-        GtLabel gtLabel = null;
+        Label gtLabel = null;
 
         try {
             gtLabel = api.getOrCreateLabel(
@@ -328,7 +325,7 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
             throw new IllegalStateException(RB.$("ERROR_git_releaser_fetch_label", tagName, labelName), e);
         }
 
-        Optional<GtMilestone> milestone = Optional.empty();
+        Optional<Milestone> milestone = Optional.empty();
         Apply applyMilestone = codeberg.getIssues().getApplyMilestone();
         if (codeberg.getMilestone().isClose() && !context.getModel().getProject().isSnapshot()) {
             milestone = api.findMilestoneByName(
@@ -345,10 +342,10 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
         }
 
         for (String issueNumber : issueNumbers) {
-            Optional<GtIssue> op = api.findIssue(codeberg.getOwner(), codeberg.getName(), Integer.parseInt(issueNumber));
+            Optional<Issue> op = api.findIssue(codeberg.getOwner(), codeberg.getName(), Integer.parseInt(issueNumber));
             if (!op.isPresent()) continue;
 
-            GtIssue gtIssue = op.get();
+            Issue gtIssue = op.get();
             if ("closed".equals(gtIssue.getState()) && gtIssue.getLabels().stream().noneMatch(l -> l.getName().equals(labelName))) {
                 context.getLogger().debug(RB.$("git.issue.release", issueNumber));
                 api.addLabelToIssue(codeberg.getOwner(), codeberg.getName(), gtIssue, gtLabel);
@@ -359,8 +356,8 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
         }
     }
 
-    private void applyMilestone(org.jreleaser.model.internal.release.CodebergReleaser codeberg, Gitea api, String issueNumber, GtIssue gtIssue, Apply applyMilestone, GtMilestone targetMilestone) {
-        GtMilestone issueMilestone = gtIssue.getMilestone();
+    private void applyMilestone(org.jreleaser.model.internal.release.CodebergReleaser codeberg, Forgejo api, String issueNumber, Issue gtIssue, Apply applyMilestone, Milestone targetMilestone) {
+        Milestone issueMilestone = gtIssue.getMilestone();
         String targetMilestoneTitle = targetMilestone.getTitle();
 
         if (null == issueMilestone) {
@@ -386,12 +383,12 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
         }
     }
 
-    private void updateAssets(Gitea api, GtRelease release) throws IOException {
-        Set<Asset> assetsToBeUpdated = new TreeSet<>();
-        Set<Asset> assetsToBeUploaded = new TreeSet<>();
+    private void updateAssets(Forgejo api, Release release) throws IOException {
+        Set<org.jreleaser.model.spi.release.Asset> assetsToBeUpdated = new TreeSet<>();
+        Set<org.jreleaser.model.spi.release.Asset> assetsToBeUploaded = new TreeSet<>();
 
-        Map<String, GtAsset> existingAssets = api.listAssets(codeberg.getOwner(), codeberg.getName(), release);
-        Map<String, Asset> assetsToBePublished = new LinkedHashMap<>();
+        Map<String, Asset> existingAssets = api.listAssets(codeberg.getOwner(), codeberg.getName(), release);
+        Map<String, org.jreleaser.model.spi.release.Asset> assetsToBePublished = new LinkedHashMap<>();
         assets.forEach(asset -> assetsToBePublished.put(asset.getFilename(), asset));
 
         assetsToBePublished.keySet().forEach(name -> {
@@ -406,7 +403,7 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
         api.uploadAssets(codeberg.getOwner(), codeberg.getName(), release, assetsToBeUploaded);
     }
 
-    private void deleteTags(Gitea api, String owner, String repo, String tagName) {
+    private void deleteTags(Forgejo api, String owner, String repo, String tagName) {
         // delete remote tag
         try {
             api.deleteTag(owner, repo, tagName);

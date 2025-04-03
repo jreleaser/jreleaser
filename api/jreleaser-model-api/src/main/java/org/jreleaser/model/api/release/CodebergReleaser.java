@@ -21,6 +21,6 @@ package org.jreleaser.model.api.release;
  * @author Andres Almiray
  * @since 0.4.0
  */
-public interface CodebergReleaser extends GiteaReleaser {
+public interface CodebergReleaser extends ForgejoReleaser {
     String TYPE = "codeberg";
 }

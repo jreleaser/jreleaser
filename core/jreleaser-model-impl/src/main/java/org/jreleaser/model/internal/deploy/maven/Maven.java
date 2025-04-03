@@ -41,10 +41,11 @@ import static java.util.stream.Collectors.toMap;
  * @since 1.3.0
  */
 public final class Maven extends AbstractActivatable<Maven> implements Domain, Activatable {
-    private static final long serialVersionUID = 1126431134090848347L;
+    private static final long serialVersionUID = 9116616947203747928L;
 
     private final Map<String, ArtifactoryMavenDeployer> artifactory = new LinkedHashMap<>();
     private final Map<String, AzureMavenDeployer> azure = new LinkedHashMap<>();
+    private final Map<String, ForgejoMavenDeployer> forgejo = new LinkedHashMap<>();
     private final Map<String, GiteaMavenDeployer> gitea = new LinkedHashMap<>();
     private final Map<String, GithubMavenDeployer> github = new LinkedHashMap<>();
     private final Map<String, GitlabMavenDeployer> gitlab = new LinkedHashMap<>();
@@ -54,10 +55,11 @@ public final class Maven extends AbstractActivatable<Maven> implements Domain, A
 
     @JsonIgnore
     private final org.jreleaser.model.api.deploy.maven.Maven immutable = new org.jreleaser.model.api.deploy.maven.Maven() {
-        private static final long serialVersionUID = 6345180810995769120L;
+        private static final long serialVersionUID = -2972204848390694262L;
 
         private Map<String, ? extends org.jreleaser.model.api.deploy.maven.ArtifactoryMavenDeployer> artifactory;
         private Map<String, ? extends org.jreleaser.model.api.deploy.maven.AzureMavenDeployer> azure;
+        private Map<String, ? extends org.jreleaser.model.api.deploy.maven.ForgejoMavenDeployer> forgejo;
         private Map<String, ? extends org.jreleaser.model.api.deploy.maven.GiteaMavenDeployer> gitea;
         private Map<String, ? extends org.jreleaser.model.api.deploy.maven.GithubMavenDeployer> github;
         private Map<String, ? extends org.jreleaser.model.api.deploy.maven.GitlabMavenDeployer> gitlab;
@@ -82,6 +84,16 @@ public final class Maven extends AbstractActivatable<Maven> implements Domain, A
                     .collect(toMap(org.jreleaser.model.api.deploy.maven.MavenDeployer::getName, identity()));
             }
             return azure;
+        }
+
+        @Override
+        public Map<String, ? extends org.jreleaser.model.api.deploy.maven.ForgejoMavenDeployer> getForgejo() {
+            if (null == forgejo) {
+                forgejo = Maven.this.forgejo.values().stream()
+                    .map(ForgejoMavenDeployer::asImmutable)
+                    .collect(toMap(org.jreleaser.model.api.deploy.maven.MavenDeployer::getName, identity()));
+            }
+            return forgejo;
         }
 
         @Override
@@ -168,6 +180,7 @@ public final class Maven extends AbstractActivatable<Maven> implements Domain, A
         super.merge(source);
         setArtifactory(mergeModel(this.artifactory, source.artifactory));
         setAzure(mergeModel(this.azure, source.azure));
+        setForgejo(mergeModel(this.forgejo, source.forgejo));
         setGitea(mergeModel(this.gitea, source.gitea));
         setGithub(mergeModel(this.github, source.github));
         setGitlab(mergeModel(this.gitlab, source.gitlab));
@@ -181,6 +194,7 @@ public final class Maven extends AbstractActivatable<Maven> implements Domain, A
         return super.isSet() ||
             !artifactory.isEmpty() ||
             !azure.isEmpty() ||
+            !forgejo.isEmpty() ||
             !gitea.isEmpty() ||
             !github.isEmpty() ||
             !gitlab.isEmpty() ||
@@ -197,6 +211,13 @@ public final class Maven extends AbstractActivatable<Maven> implements Domain, A
 
     public Optional<AzureMavenDeployer> getActiveAzure(String name) {
         return azure.values().stream()
+            .filter(MavenDeployer::isEnabled)
+            .filter(a -> name.equals(a.getName()))
+            .findFirst();
+    }
+
+    public Optional<ForgejoMavenDeployer> getActiveForgejo(String name) {
+        return forgejo.values().stream()
             .filter(MavenDeployer::isEnabled)
             .filter(a -> name.equals(a.getName()))
             .findFirst();
@@ -253,6 +274,7 @@ public final class Maven extends AbstractActivatable<Maven> implements Domain, A
         List list = new ArrayList<>();
         list.addAll(getActiveArtifactories());
         list.addAll(getActiveAzures());
+        list.addAll(getActiveForgejos());
         list.addAll(getActiveGiteas());
         list.addAll(getActiveGithubs());
         list.addAll(getActiveGitlabs());
@@ -285,6 +307,25 @@ public final class Maven extends AbstractActivatable<Maven> implements Domain, A
 
     public void addAzure(AzureMavenDeployer azure) {
         this.azure.put(azure.getName(), azure);
+    }
+
+    public List<ForgejoMavenDeployer> getActiveForgejos() {
+        return forgejo.values().stream()
+            .filter(ForgejoMavenDeployer::isEnabled)
+            .collect(toList());
+    }
+
+    public Map<String, ForgejoMavenDeployer> getForgejo() {
+        return forgejo;
+    }
+
+    public void setForgejo(Map<String, ForgejoMavenDeployer> forgejo) {
+        this.forgejo.clear();
+        this.forgejo.putAll(forgejo);
+    }
+
+    public void addForgejo(ForgejoMavenDeployer forgejo) {
+        this.forgejo.put(forgejo.getName(), forgejo);
     }
 
     public List<GiteaMavenDeployer> getActiveGiteas() {
@@ -411,6 +452,13 @@ public final class Maven extends AbstractActivatable<Maven> implements Domain, A
             .collect(toList());
         if (!azure.isEmpty()) map.put("azure", azure);
 
+        List<Map<String, Object>> forgejo = this.forgejo.values()
+            .stream()
+            .filter(d -> full || d.isEnabled())
+            .map(d -> d.asMap(full))
+            .collect(toList());
+        if (!forgejo.isEmpty()) map.put("forgejo", forgejo);
+
         List<Map<String, Object>> gitea = this.gitea.values()
             .stream()
             .filter(d -> full || d.isEnabled())
@@ -455,6 +503,8 @@ public final class Maven extends AbstractActivatable<Maven> implements Domain, A
                 return (Map<String, A>) artifactory;
             case org.jreleaser.model.api.deploy.maven.AzureMavenDeployer.TYPE:
                 return (Map<String, A>) azure;
+            case org.jreleaser.model.api.deploy.maven.ForgejoMavenDeployer.TYPE:
+                return (Map<String, A>) forgejo;
             case org.jreleaser.model.api.deploy.maven.GiteaMavenDeployer.TYPE:
                 return (Map<String, A>) gitea;
             case org.jreleaser.model.api.deploy.maven.GithubMavenDeployer.TYPE:
@@ -474,6 +524,7 @@ public final class Maven extends AbstractActivatable<Maven> implements Domain, A
         List<A> deployers = new ArrayList<>();
         deployers.addAll((List<A>) getActiveArtifactories());
         deployers.addAll((List<A>) getActiveAzures());
+        deployers.addAll((List<A>) getActiveForgejos());
         deployers.addAll((List<A>) getActiveGiteas());
         deployers.addAll((List<A>) getActiveGithubs());
         deployers.addAll((List<A>) getActiveGitlabs());

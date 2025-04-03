@@ -26,6 +26,6 @@ import org.gradle.api.provider.Property
  * @since 0.4.0
  */
 @CompileStatic
-interface CodebergReleaser extends GiteaReleaser {
+interface CodebergReleaser extends ForgejoReleaser {
     Property<Boolean> getDraft()
 }

@@ -34,6 +34,8 @@ interface Maven extends Activatable {
 
     NamedDomainObjectContainer<AzureMavenDeployer> getAzure()
 
+    NamedDomainObjectContainer<ForgejoMavenDeployer> getForgejo()
+
     NamedDomainObjectContainer<GiteaMavenDeployer> getGitea()
 
     NamedDomainObjectContainer<GithubMavenDeployer> getGithub()
@@ -48,6 +50,8 @@ interface Maven extends Activatable {
 
     void azure(Action<? super NamedDomainObjectContainer<AzureMavenDeployer>> action)
 
+    void forgejo(Action<? super NamedDomainObjectContainer<ForgejoMavenDeployer>> action)
+
     void gitea(Action<? super NamedDomainObjectContainer<GiteaMavenDeployer>> action)
 
     void github(Action<? super NamedDomainObjectContainer<GithubMavenDeployer>> action)
@@ -61,6 +65,8 @@ interface Maven extends Activatable {
     void artifactory(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 
     void azure(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
+
+    void forgejo(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 
     void gitea(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 

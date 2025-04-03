@@ -101,6 +101,7 @@ public final class JReleaserSupport {
         Set<String> set = new LinkedHashSet<>();
         set.add(org.jreleaser.model.api.upload.ArtifactoryUploader.TYPE);
         set.add(org.jreleaser.model.api.upload.FtpUploader.TYPE);
+        set.add(org.jreleaser.model.api.upload.ForgejoUploader.TYPE);
         set.add(org.jreleaser.model.api.upload.GiteaUploader.TYPE);
         set.add(org.jreleaser.model.api.upload.GitlabUploader.TYPE);
         set.add(org.jreleaser.model.api.upload.HttpUploader.TYPE);
@@ -114,6 +115,7 @@ public final class JReleaserSupport {
         Set<String> set = new LinkedHashSet<>();
         set.add(org.jreleaser.model.api.deploy.maven.ArtifactoryMavenDeployer.TYPE);
         set.add(org.jreleaser.model.api.deploy.maven.AzureMavenDeployer.TYPE);
+        set.add(org.jreleaser.model.api.deploy.maven.ForgejoMavenDeployer.TYPE);
         set.add(org.jreleaser.model.api.deploy.maven.GiteaMavenDeployer.TYPE);
         set.add(org.jreleaser.model.api.deploy.maven.GithubMavenDeployer.TYPE);
         set.add(org.jreleaser.model.api.deploy.maven.GitlabMavenDeployer.TYPE);

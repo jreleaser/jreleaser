@@ -24,6 +24,7 @@ import org.jreleaser.model.internal.release.Release;
 import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.internal.validation.release.CodebergReleaserValidator.validateCodeberg;
+import static org.jreleaser.model.internal.validation.release.ForgejoReleaserValidator.validateForgejo;
 import static org.jreleaser.model.internal.validation.release.GenericGitReleaserValidator.validateGeneric;
 import static org.jreleaser.model.internal.validation.release.GiteaReleaserValidator.validateGitea;
 import static org.jreleaser.model.internal.validation.release.GithubReleaserValidator.validateGithub;
@@ -46,6 +47,7 @@ public final class ReleaseValidator {
         if (validateGithub(context, mode, release.getGithub(), errors)) count++;
         if (validateGitlab(context, mode, release.getGitlab(), errors)) count++;
         if (validateGitea(context, mode, release.getGitea(), errors)) count++;
+        if (validateForgejo(context, mode, release.getForgejo(), errors)) count++;
         if (validateCodeberg(context, mode, release.getCodeberg(), errors)) count++;
         if (validateGeneric(context, mode, release.getGeneric(), errors)) count++;
 
@@ -55,7 +57,7 @@ public final class ReleaseValidator {
                 return;
             }
             if (count > 1) {
-                errors.configuration(RB.$("validation_release_requirement", "release.[github|gitlab|gitea|codeberg|generic]"));
+                errors.configuration(RB.$("validation_release_requirement", "release.[github|gitlab|gitea|forgejo|codeberg|generic]"));
             }
         }
     }

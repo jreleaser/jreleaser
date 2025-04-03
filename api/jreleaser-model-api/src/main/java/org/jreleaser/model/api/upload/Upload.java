@@ -31,6 +31,8 @@ public interface Upload extends Domain, Activatable {
 
     Map<String, ? extends FtpUploader> getFtp();
 
+    Map<String, ? extends ForgejoUploader> getForgejo();
+
     Map<String, ? extends GiteaUploader> getGitea();
 
     Map<String, ? extends GitlabUploader> getGitlab();

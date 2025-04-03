@@ -55,6 +55,7 @@ dependencies {
     // release
     api project(':jreleaser-github-java-sdk')
     api project(':jreleaser-gitlab-java-sdk')
+    api project(':jreleaser-forgejo-java-sdk')
     api project(':jreleaser-gitea-java-sdk')
     api project(':jreleaser-codeberg-java-sdk')
     api project(':jreleaser-genericgit-java-sdk')
