@@ -840,6 +840,15 @@
       "contributions": [
         "infra"
       ]
+    },
+    {
+      "login": "agreedSkiing",
+      "name": "Erik Åsén",
+      "avatar_url": "https://avatars.githubusercontent.com/u/93997033?v=4",
+      "profile": "https://github.com/agreedSkiing",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
