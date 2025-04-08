@@ -30,6 +30,8 @@ import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
+import static org.jreleaser.util.StringUtils.isNotBlank
+
 /**
  *
  * @author Andres Almiray
@@ -38,6 +40,7 @@ import javax.inject.Inject
 @CompileStatic
 class GithubReleaserImpl extends BaseReleaserImpl implements GithubReleaser {
     final Property<Boolean> draft
+    final Property<org.jreleaser.model.api.release.GithubReleaser.MakeLatest> makeLatest
     final Property<String> discussionCategoryName
     final ChangelogImpl changelog
     final MilestoneImpl milestone
@@ -49,6 +52,7 @@ class GithubReleaserImpl extends BaseReleaserImpl implements GithubReleaser {
     GithubReleaserImpl(ObjectFactory objects) {
         super(objects)
         draft = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+        makeLatest = objects.property(org.jreleaser.model.api.release.GithubReleaser.MakeLatest).convention(Providers.<org.jreleaser.model.api.release.GithubReleaser.MakeLatest> notDefined())
         discussionCategoryName = objects.property(String).convention(Providers.<String> notDefined())
 
         changelog = objects.newInstance(ChangelogImpl, objects)
@@ -63,12 +67,20 @@ class GithubReleaserImpl extends BaseReleaserImpl implements GithubReleaser {
     boolean isSet() {
         super.isSet() ||
             draft.present ||
+            makeLatest.present ||
             prerelease.isSet() ||
             releaseNotes.isSet() ||
             discussionCategoryName.present ||
             changelog.isSet() ||
             milestone.isSet() ||
             commitAuthor.isSet()
+    }
+
+    @Override
+    void setMakeLatest(String str) {
+        if (isNotBlank(str)) {
+            makeLatest.set(org.jreleaser.model.api.release.GithubReleaser.MakeLatest.of(str.trim()))
+        }
     }
 
     @Override
@@ -97,6 +109,7 @@ class GithubReleaserImpl extends BaseReleaserImpl implements GithubReleaser {
         org.jreleaser.model.internal.release.GithubReleaser service = new org.jreleaser.model.internal.release.GithubReleaser()
         toModel(service)
         if (draft.present) service.draft = draft.get()
+        if (makeLatest.present) service.makeLatest = makeLatest.get()
         service.prerelease = prerelease.toModel()
         service.releaseNotes = releaseNotes.toModel()
         if (discussionCategoryName.present) service.discussionCategoryName = discussionCategoryName.get()

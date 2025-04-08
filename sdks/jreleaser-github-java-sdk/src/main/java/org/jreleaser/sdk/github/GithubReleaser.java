@@ -348,6 +348,7 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
         release.setTagName(tagName);
         release.setTargetCommitish(github.getResolvedBranchPush(context.getModel()));
         release.setBody(changelog);
+        release.setMakeLatest(github.getMakeLatest().formatted());
         if (github.getPrerelease().isEnabledSet()) {
             release.setPrerelease(github.getPrerelease().isEnabled());
         }

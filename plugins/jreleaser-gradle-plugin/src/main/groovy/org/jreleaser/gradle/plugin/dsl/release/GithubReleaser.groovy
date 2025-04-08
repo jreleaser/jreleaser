@@ -30,6 +30,8 @@ import org.gradle.api.provider.Property
 interface GithubReleaser extends BaseReleaser {
     Property<Boolean> getDraft()
 
+    Property<org.jreleaser.model.api.release.GithubReleaser.MakeLatest> getMakeLatest()
+
     Property<String> getDiscussionCategoryName()
 
     Prerelease getPrerelease()
@@ -43,6 +45,8 @@ interface GithubReleaser extends BaseReleaser {
     void prerelease(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Prerelease) Closure<Void> action)
 
     void releaseNotes(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ReleaseNotes) Closure<Void> action)
+
+    void setMakeLatest(String makeLatest)
 
     @CompileStatic
     interface ReleaseNotes {

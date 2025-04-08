@@ -33,15 +33,17 @@ import static java.util.Collections.unmodifiableMap;
  * @since 0.1.0
  */
 public final class GithubReleaser extends BaseReleaser<org.jreleaser.model.api.release.GithubReleaser, GithubReleaser> {
-    private static final long serialVersionUID = -7946819245345601709L;
+    private static final long serialVersionUID = 8444833889157237176L;
+
     private final ReleaseNotes releaseNotes = new ReleaseNotes();
 
     private Boolean draft;
     private String discussionCategoryName;
+    private org.jreleaser.model.api.release.GithubReleaser.MakeLatest makeLatest;
 
     @JsonIgnore
     private final org.jreleaser.model.api.release.GithubReleaser immutable = new org.jreleaser.model.api.release.GithubReleaser() {
-        private static final long serialVersionUID = -4561765054201402112L;
+        private static final long serialVersionUID = -9123016069637288447L;
 
         @Override
         public boolean isPrerelease() {
@@ -51,6 +53,11 @@ public final class GithubReleaser extends BaseReleaser<org.jreleaser.model.api.r
         @Override
         public boolean isDraft() {
             return GithubReleaser.this.isDraft();
+        }
+
+        @Override
+        public MakeLatest getMakeLatest() {
+            return makeLatest;
         }
 
         @Override
@@ -307,8 +314,23 @@ public final class GithubReleaser extends BaseReleaser<org.jreleaser.model.api.r
     public void merge(GithubReleaser source) {
         super.merge(source);
         this.draft = merge(this.draft, source.draft);
+        this.makeLatest = merge(this.makeLatest, source.makeLatest);
         this.discussionCategoryName = merge(this.discussionCategoryName, source.discussionCategoryName);
         setReleaseNotes(source.releaseNotes);
+    }
+
+    public org.jreleaser.model.api.release.GithubReleaser.MakeLatest getMakeLatest() {
+        return makeLatest;
+    }
+
+    public void setMakeLatest(org.jreleaser.model.api.release.GithubReleaser.MakeLatest makeLatest) {
+        this.makeLatest = makeLatest;
+    }
+
+    public void setMakeLatest(String makeLatest) {
+        if (null != makeLatest) {
+            setMakeLatest(org.jreleaser.model.api.release.GithubReleaser.MakeLatest.of(makeLatest.trim()));
+        }
     }
 
     public boolean isDraft() {
@@ -350,6 +372,7 @@ public final class GithubReleaser extends BaseReleaser<org.jreleaser.model.api.r
         map.put("draft", isDraft());
         map.put("discussionCategoryName", discussionCategoryName);
         map.put("releaseNotes", releaseNotes.asMap(full));
+        map.put("makeLatest", null != makeLatest ? makeLatest.formatted() : null);
         return map;
     }
 

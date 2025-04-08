@@ -40,6 +40,7 @@ public class GhRelease {
     private Date createdAt;
     private Date publishedAt;
     private String discussionCategoryName;
+    private String makeLatest;
 
     public Long getId() {
         return id;
@@ -143,5 +144,13 @@ public class GhRelease {
 
     public void setDiscussionCategoryName(String discussionCategoryName) {
         this.discussionCategoryName = discussionCategoryName;
+    }
+
+    public String getMakeLatest() {
+        return makeLatest;
+    }
+
+    public void setMakeLatest(String makeLatest) {
+        this.makeLatest = makeLatest;
     }
 }

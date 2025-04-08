@@ -54,6 +54,13 @@ public final class GithubReleaserValidator {
                 ""));
         service.getPrerelease().isPrerelease(context.getModel().getProject().getResolvedVersion());
 
+        service.setMakeLatest(
+            checkProperty(context,
+                "MAKE_LATEST",
+                "release.github.make.latest",
+                service.getMakeLatest(),
+                org.jreleaser.model.api.release.GithubReleaser.MakeLatest.TRUE));
+
         if (!service.isDraftSet()) {
             service.setDraft(
                 checkProperty(context,
