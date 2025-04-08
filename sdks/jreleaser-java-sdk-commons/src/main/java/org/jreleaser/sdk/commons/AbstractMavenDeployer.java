@@ -673,6 +673,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
             String stagingPath = path.getParent().toAbsolutePath().toString();
             PomResult pomResult = parsePom(path);
             deployables.add(new Deployable(
+                projectIsSnapshot,
                 stagingRepository,
                 stagingPath.substring(stagingRepository.length()),
                 pomResult.packaging,

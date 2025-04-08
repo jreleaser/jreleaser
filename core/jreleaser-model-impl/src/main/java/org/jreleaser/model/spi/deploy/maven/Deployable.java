@@ -80,15 +80,17 @@ public class Deployable implements Comparable<Deployable> {
     private final String extension;
     private final String packaging;
     private final boolean relocated;
+    private final boolean snapshot;
 
-    public Deployable(String stagingRepository, String path, String packaging, String filename, boolean relocated) {
+    public Deployable(boolean snapshot, String stagingRepository, String path, String packaging, String filename, boolean relocated) {
+        this.snapshot = snapshot;
         this.stagingRepository = stagingRepository;
         this.path = path;
         this.filename = filename;
         this.packaging = packaging;
         this.relocated = relocated;
 
-        if (!MAVEN_METADATA_XML.equals(filename)) {
+        if (!filename.startsWith(MAVEN_METADATA_XML)) {
             Path p = Paths.get(path);
             this.version = p.getFileName().toString();
             p = p.getParent();
@@ -102,9 +104,21 @@ public class Deployable implements Comparable<Deployable> {
             }
             this.groupId = gid;
 
-            String str = filename.substring(filename.indexOf(version) + version.length() + 1);
-            if (filename.charAt(filename.indexOf(version) + version.length()) == '-') {
-                this.classifier = str.substring(0, str.indexOf('.'));
+            String v = version;
+            int l = version.length();
+            if (snapshot) {
+                // SNAPSHOT replaced with YYYYMMDD.HHmmSS-#
+                v = version.substring(0, version.length() - "SNAPSHOT".length());
+                l = v.length() + 17;
+            }
+
+            if (filename.contains(v)) {
+                String str = filename.substring(filename.indexOf(v) + l + 1);
+                if (filename.charAt(filename.indexOf(v) + l) == '-') {
+                    this.classifier = str.substring(0, str.indexOf('.'));
+                } else {
+                    this.classifier = "";
+                }
             } else {
                 this.classifier = "";
             }
@@ -203,11 +217,11 @@ public class Deployable implements Comparable<Deployable> {
     }
 
     public Deployable deriveByFilename(String filename) {
-        return new Deployable(stagingRepository, path, packaging, filename, false);
+        return new Deployable(snapshot, stagingRepository, path, packaging, filename, false);
     }
 
     public Deployable deriveByFilename(String packaging, String filename) {
-        return new Deployable(stagingRepository, path, packaging, filename, false);
+        return new Deployable(snapshot, stagingRepository, path, packaging, filename, false);
     }
 
     @Override
