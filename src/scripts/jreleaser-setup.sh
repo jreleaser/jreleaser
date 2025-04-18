@@ -100,12 +100,12 @@ install() {
   local mode=""
 
   case $platform in
-  *osx-x86_64* | *osx-aarch64* | *linux-x86_64* | *windows-x86_64*)
+  *osx-x86_64* | *osx-aarch64* | *linux-x86_64* | *linux-aarch64* | *windows-x86_64*)
     # native executable
     distroname="$distroname-native-$latest_version-$platform"
     mode="native"
     ;;
-  *linux-aarch64* | *windows-aarch64*)
+  *windows-aarch64*)
     # bundled Java runtime
     distroname="$distroname-standalone-$latest_version-$platform"
     mode="standalone"
