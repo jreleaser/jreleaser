@@ -50,7 +50,12 @@ class ConfigureShadowRelocation extends DefaultTask {
                         jf.entries().each {
                             entry ->
                                 if (entry.name.endsWith(".class") && entry.name != "module-info.class") {
-                                    packages << entry.name[0..entry.name.lastIndexOf('/') - 1].replaceAll('/', '.')
+                                    String entryName = entry.name[0..entry.name.lastIndexOf('/') - 1].replaceAll('/', '.')
+                                    def matcher = entryName =~ /META-INF\.versions\.\d+\..*?/
+                                    if (matcher) {
+                                        entryName =  entryName - matcher[0]
+                                    }
+                                    if (!entryName.contains('META-INF')) packages << entryName
                                 }
                         }
                     }
@@ -58,7 +63,7 @@ class ConfigureShadowRelocation extends DefaultTask {
                     jf.close()
                 }
         }
-        packages.each {
+        packages.sort().each {
             target.relocate(it, "${prefix}.${it}")
         }
     }
