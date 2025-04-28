@@ -77,10 +77,10 @@ public final class MavenCentralMavenDeployerValidator {
         }
 
         if (mavenDeployer.getRetryDelay() <= 0) {
-            mavenDeployer.setRetryDelay(10);
+            mavenDeployer.setRetryDelay(20);
         }
         if (mavenDeployer.getMaxRetries() <= 0) {
-            mavenDeployer.setMaxRetries(60);
+            mavenDeployer.setMaxRetries(100);
         }
 
         if (mavenDeployer.getStage() == PUBLISH) {

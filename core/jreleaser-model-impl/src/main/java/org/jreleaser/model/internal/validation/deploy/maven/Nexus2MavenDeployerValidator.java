@@ -67,10 +67,10 @@ public final class Nexus2MavenDeployerValidator {
         }
 
         if (mavenDeployer.getTransitionDelay() <= 0) {
-            mavenDeployer.setTransitionDelay(10);
+            mavenDeployer.setTransitionDelay(20);
         }
         if (mavenDeployer.getTransitionMaxRetries() <= 0) {
-            mavenDeployer.setTransitionMaxRetries(60);
+            mavenDeployer.setTransitionMaxRetries(100);
         }
 
         validateMavenDeployer(context, mavenDeployer, errors);
