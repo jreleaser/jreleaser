@@ -2,8 +2,8 @@
 
 set -e
 
-JACOCO_VERSION="0.8.12"
-ASM_VERSION="9.7"
+JACOCO_VERSION="0.8.13"
+ASM_VERSION="9.8"
 ARGS4J_VERSION="2.0.28"
 
 echo "⬇️  Downloading JaCoCo CLI"
