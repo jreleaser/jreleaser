@@ -104,7 +104,7 @@ enforce {
         r.exclude("org.jreleaser:jreleaser-test-support")
         // check & tests
         r.exclude("org.junit-pioneer:junit-pioneer:$junitPioneerVersion")
-        r.exclude("com.puppycrawl.tools:checkstyle:$checkstyleVersion")
+        r.exclude("com.puppycrawl.tools:checkstyle")
         r.exclude("com.google.errorprone:error_prone_core:$errorproneVersion")
         r.exclude("com.google.errorprone:error_prone_annotation:$errorproneVersion")
         r.exclude("com.google.errorprone:error_prone_check_api:$errorproneVersion")
