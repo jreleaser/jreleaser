@@ -32,7 +32,7 @@ import java.util.Set;
  */
 @CommandLine.Command(name = "generate")
 public class TemplateGenerate extends AbstractLoggingCommand<Template> {
-    @CommandLine.ArgGroup(exclusive = true, multiplicity = "1")
+    @CommandLine.ArgGroup(multiplicity = "1")
     Composite composite;
 
     static class Composite {
@@ -118,7 +118,6 @@ public class TemplateGenerate extends AbstractLoggingCommand<Template> {
 
     @CommandLine.Option(names = {"-sn", "--snapshot"})
     boolean snapshot;
-
 
     @Override
     protected void collectCandidateDeprecatedArgs(Set<AbstractCommand.DeprecatedArg> args) {

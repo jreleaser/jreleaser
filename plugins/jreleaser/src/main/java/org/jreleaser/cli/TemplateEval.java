@@ -31,8 +31,8 @@ import java.nio.file.Path;
  */
 @CommandLine.Command(name = "eval")
 public class TemplateEval extends AbstractPlatformAwareModelCommand<Template> {
-    @CommandLine.ArgGroup
-    Config.Exclusive exclusive;
+    @CommandLine.ArgGroup(multiplicity = "1")
+    Exclusive exclusive;
 
     static class Exclusive {
         @CommandLine.Option(names = {"--announce"}, required = true)
