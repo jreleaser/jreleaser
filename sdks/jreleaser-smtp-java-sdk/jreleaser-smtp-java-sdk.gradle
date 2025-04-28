@@ -21,7 +21,8 @@ dependencies {
 
     api project(':jreleaser-model-impl')
 
-    api "com.sun.mail:jakarta.mail:$mailApiVersion"
+    api "jakarta.mail:jakarta.mail-api:$mailApiVersion"
+    api "jakarta.activation:jakarta.activation-api:$activationApiVersion"
 
     testImplementation "com.icegreen:greenmail:$greenmailVersion"
     testImplementation "com.icegreen:greenmail-junit5:$greenmailVersion"

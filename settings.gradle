@@ -115,6 +115,7 @@ enforce {
         r.exclude("com.github.ben-manes.caffeine:caffeine:$caffeineVersion")
         r.exclude("com.github.spotbugs:spotbugs:$spotbugsVersion")
         r.exclude("com.github.spotbugs:spotbugs-annotations:$spotbugsVersion")
+        r.exclude("org.eclipse.angus:jakarta.mail:$angusVersion")
     }
 
     rule(enforcer.rules.ForceDependencies) { r ->
@@ -135,11 +136,11 @@ enforce {
             "com.google.googlejavaformat:google-java-format:$gJavaFormatVersion",
             "com.google.guava:guava:$guavaVersion",
             "com.googlecode.javaewah:JavaEWAH:$javaEWAHVersion",
-            "com.sun.mail:jakarta.mail:$mailApiVersion",
+            "jakarta.mail:jakarta.mail-api:$mailApiVersion",
+            "jakarta.activation:jakarta.activation-api:$activationApiVersion",
             "commons-codec:commons-codec:$commonsCodecVersion",
             "commons-io:commons-io:$commonsIoVersion",
             "info.picocli:picocli:$picocliVersion",
-            "jakarta.activation:jakarta.activation-api:$jakartaActivatinVersion",
             "junit:junit:$junitVersion",
             "net.bytebuddy:byte-buddy:$bytebuddyVersion",
             "net.minidev:json-smart:$jsonSmartVersion",

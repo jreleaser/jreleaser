@@ -89,7 +89,6 @@ shadowJar {
 
 tasks.shadowJar.dependsOn(tasks.register('relocateShadowJar', org.jreleaser.gradle.shadow.ConfigureShadowRelocation) { t->
     t.target = tasks.shadowJar
-    t.exclude('jakarta.mail')
     t.exclude('zstd-jni')
     t.exclude('jreleaser-logger-api')
     t.exclude('jreleaser-model-api')
