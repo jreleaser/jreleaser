@@ -113,6 +113,8 @@ enforce {
         r.exclude("org.mockito:mockito-junit-jupiter:$mockitoVersion")
         r.exclude("org.mockito:mockito-inline:$mockitoInlineVersion")
         r.exclude("com.github.ben-manes.caffeine:caffeine:$caffeineVersion")
+        r.exclude("com.github.spotbugs:spotbugs:$spotbugsVersion")
+        r.exclude("com.github.spotbugs:spotbugs-annotations:$spotbugsVersion")
     }
 
     rule(enforcer.rules.ForceDependencies) { r ->
