@@ -209,6 +209,7 @@ public interface Constants {
     String KEY_APPIMAGE_COMPONENT_ID = "appImageComponentId";
     String KEY_APPIMAGE_CATEGORIES = "appImageCategories";
     String KEY_APPIMAGE_CATEGORIES_BY_COMMA = "appImageCategoriesByComma";
+    String KEY_APPIMAGE_DEVELOPER_ID = "appImageDeveloperId";
     String KEY_APPIMAGE_DEVELOPER_NAME = "appImageDeveloperName";
     String KEY_APPIMAGE_REQUIRES_TERMINAL = "appImageRequiresTerminal";
     String KEY_APPIMAGE_RELEASES = "appImageReleases";

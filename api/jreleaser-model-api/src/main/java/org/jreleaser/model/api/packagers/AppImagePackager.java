@@ -35,6 +35,8 @@ public interface AppImagePackager extends RepositoryPackager {
 
     List<String> getCategories();
 
+    String getDeveloperId();
+
     String getDeveloperName();
 
     boolean isRequiresTerminal();

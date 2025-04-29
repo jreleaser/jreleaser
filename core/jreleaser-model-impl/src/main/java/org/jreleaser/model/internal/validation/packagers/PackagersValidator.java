@@ -68,6 +68,9 @@ public final class PackagersValidator {
         if (packagers.getAppImage().getIcons().isEmpty()) {
             packagers.getAppImage().setIcons(project.getIcons());
         }
+        if (isBlank(packagers.getAppImage().getDeveloperId())) {
+            packagers.getAppImage().setDeveloperId(gitService.getOwner());
+        }
         if (isBlank(packagers.getAppImage().getDeveloperName())) {
             packagers.getAppImage().setDeveloperName(String.join(", ", project.getAuthors()));
         }

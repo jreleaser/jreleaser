@@ -32,13 +32,14 @@ import java.util.Set;
  * @since 0.1.0
  */
 public abstract class AbstractAppdataPackager<A extends org.jreleaser.model.api.packagers.RepositoryPackager, S extends AbstractAppdataPackager<A, S>> extends AbstractRepositoryPackager<A, S> implements RepositoryPackager<A> {
-    private static final long serialVersionUID = -7485882117643430732L;
+    private static final long serialVersionUID = -7192006991401574870L;
 
     private final List<Screenshot> screenshots = new ArrayList<>();
     private final List<String> categories = new ArrayList<>();
     private final List<Icon> icons = new ArrayList<>();
     private final Set<String> skipReleases = new LinkedHashSet<>();
     private String componentId;
+    private String developerId;
     private String developerName;
 
     protected AbstractAppdataPackager(String type) {
@@ -49,6 +50,7 @@ public abstract class AbstractAppdataPackager<A extends org.jreleaser.model.api.
     public void merge(S source) {
         super.merge(source);
         this.componentId = merge(this.componentId, source.getComponentId());
+        this.developerId = merge(this.developerId, source.getDeveloperId());
         this.developerName = merge(this.developerName, source.getDeveloperName());
         setCategories(merge(this.categories, source.getCategories()));
         setScreenshots(merge(this.screenshots, source.getScreenshots()));
@@ -71,6 +73,14 @@ public abstract class AbstractAppdataPackager<A extends org.jreleaser.model.api.
     public void setCategories(List<String> tags) {
         this.categories.clear();
         this.categories.addAll(tags);
+    }
+
+    public String getDeveloperId() {
+        return developerId;
+    }
+
+    public void setDeveloperId(String developerId) {
+        this.developerId = developerId;
     }
 
     public String getDeveloperName() {
@@ -125,6 +135,7 @@ public abstract class AbstractAppdataPackager<A extends org.jreleaser.model.api.
         super.asMap(full, props);
         props.put("componentId", componentId);
         props.put("categories", categories);
+        props.put("developerId", developerId);
         props.put("developerName", developerName);
         Map<String, Map<String, Object>> sm = new LinkedHashMap<>();
         int i = 0;

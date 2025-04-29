@@ -40,6 +40,7 @@ import static java.util.stream.Collectors.toList;
 import static org.jreleaser.model.Constants.KEY_APPIMAGE_CATEGORIES;
 import static org.jreleaser.model.Constants.KEY_APPIMAGE_CATEGORIES_BY_COMMA;
 import static org.jreleaser.model.Constants.KEY_APPIMAGE_COMPONENT_ID;
+import static org.jreleaser.model.Constants.KEY_APPIMAGE_DEVELOPER_ID;
 import static org.jreleaser.model.Constants.KEY_APPIMAGE_DEVELOPER_NAME;
 import static org.jreleaser.model.Constants.KEY_APPIMAGE_DISTRIBUTION_ARTIFACT_FILE;
 import static org.jreleaser.model.Constants.KEY_APPIMAGE_DISTRIBUTION_ARTIFACT_FILE_NAME;
@@ -115,6 +116,7 @@ public class AppImagePackagerProcessor extends AbstractRepositoryPackagerProcess
         props.set(KEY_APPIMAGE_COMPONENT_ID, getPackager().getComponentId());
         props.set(KEY_APPIMAGE_CATEGORIES, getPackager().getCategories());
         props.set(KEY_APPIMAGE_CATEGORIES_BY_COMMA, String.join(",", getPackager().getCategories()));
+        props.set(KEY_APPIMAGE_DEVELOPER_ID, getPackager().getDeveloperId());
         props.set(KEY_APPIMAGE_DEVELOPER_NAME, getPackager().getDeveloperName());
         props.set(KEY_APPIMAGE_REQUIRES_TERMINAL, getPackager().isRequiresTerminal());
         props.set(KEY_APPIMAGE_REPO_OWNER, packager.getRepository().getOwner());

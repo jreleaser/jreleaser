@@ -1133,8 +1133,7 @@ public final class Project extends AbstractModelObject<Project> implements Domai
         public Collection<LinkTemplate> asLinkTemplates(boolean flatpak) {
             List<LinkTemplate> links = new ArrayList<>();
             if (isNotBlank(homepage)) links.add(new LinkTemplate("homepage", homepage));
-            if (!flatpak && isNotBlank(documentation)) links.add(new LinkTemplate("documentation", documentation));
-            if (!flatpak && isNotBlank(license)) links.add(new LinkTemplate("license", license));
+            if (!flatpak && isNotBlank(documentation)) links.add(new LinkTemplate("help", documentation));
             if (isNotBlank(bugTracker)) links.add(new LinkTemplate("bugtracker", bugTracker));
             if (isNotBlank(vcsBrowser)) links.add(new LinkTemplate("vcs-browser", vcsBrowser));
             if (isNotBlank(faq)) links.add(new LinkTemplate("faq", faq));

@@ -24,7 +24,10 @@
     </release>
     {{/appImageReleases}}
   </releases>
-  <developer_name>{{appImageDeveloperName}}</developer_name>
+  <developer>
+    <id>{{appImageDeveloperId}}</id>
+    <name>{{appImageDeveloperName}}</name>
+  </developer>
   <screenshots>
      {{#appImageScreenshots}}
      {{#caption}}

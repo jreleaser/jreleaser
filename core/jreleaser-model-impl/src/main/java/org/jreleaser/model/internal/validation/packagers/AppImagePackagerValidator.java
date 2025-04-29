@@ -114,6 +114,9 @@ public final class AppImagePackagerValidator {
             packager.setRequiresTerminal(true);
         }
 
+        if (isBlank(packager.getDeveloperId())) {
+            packager.setDeveloperId(parentPackager.getDeveloperId());
+        }
         if (isBlank(packager.getDeveloperName())) {
             packager.setDeveloperName(parentPackager.getDeveloperName());
         }

@@ -53,6 +53,7 @@ class AppImagePackagerImpl extends AbstractRepositoryPackager implements AppImag
     final TapImpl repository
     final Property<String> componentId
     final ListProperty<String> categories
+    final Property<String> developerId
     final Property<String> developerName
     final Property<Boolean> requiresTerminal
     final SetProperty<String> skipReleases
@@ -67,6 +68,7 @@ class AppImagePackagerImpl extends AbstractRepositoryPackager implements AppImag
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
         componentId = objects.property(String).convention(Providers.<String> notDefined())
         categories = objects.listProperty(String).convention(Providers.<List<String>> notDefined())
+        developerId = objects.property(String).convention(Providers.<String> notDefined())
         developerName = objects.property(String).convention(Providers.<String> notDefined())
         requiresTerminal = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         skipReleases = objects.setProperty(String).convention(Providers.<Set<String>> notDefined())
@@ -98,6 +100,7 @@ class AppImagePackagerImpl extends AbstractRepositoryPackager implements AppImag
             repository.isSet() ||
             componentId.present ||
             categories.present ||
+            developerId.present ||
             developerName.present ||
             requiresTerminal.present ||
             skipReleases.present ||
@@ -171,6 +174,7 @@ class AppImagePackagerImpl extends AbstractRepositoryPackager implements AppImag
         if (commitAuthor.isSet()) packager.commitAuthor = commitAuthor.toModel()
         if (componentId.present) packager.componentId = componentId.get()
         packager.categories = (List<String>) categories.getOrElse([])
+        if (developerId.present) packager.developerId = developerId.get()
         if (developerName.present) packager.developerName = developerName.get()
         if (requiresTerminal.present) packager.requiresTerminal = requiresTerminal.get()
         packager.skipReleases = (Set<String>) skipReleases.getOrElse(new LinkedHashSet<String>())

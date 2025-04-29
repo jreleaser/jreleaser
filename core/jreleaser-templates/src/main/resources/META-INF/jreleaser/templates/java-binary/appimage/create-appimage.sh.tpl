@@ -5,7 +5,7 @@
 
 SYSTEM_ARCH="x86_64"
 DISTRIBUTION_FILE="{{appImageDistributionArtifactFile}}"
-DISTRIBUTION_FILE_NAME="{{appImageDistributionArtifactRootEntryName}}"
+DISTRIBUTION_FILE_NAME="{{appImageDistributionArtifactFileName}}"
 DISTRIBUTION_NAME="{{distributionExecutableName}}"
 DISTRIBUTION_EXEC="{{distributionExecutableUnix}}"
 DISTRIBUTION_ID="{{appImageComponentId}}"
@@ -52,7 +52,6 @@ ln -s AppDir/usr/share/${DISTRIBUTION_NAME}/bin/${DISTRIBUTION_EXEC} AppDir/usr/
 mkdir -p AppDir/usr/share/applications/
 mkdir -p AppDir/usr/share/metainfo
 cp ../${DISTRIBUTION_ID}.appdata.xml AppDir/usr/share/metainfo
-cp ../${DISTRIBUTION_ID}.appdata.xml AppDir/usr/share/metainfo/${DISTRIBUTION_NAME}.appdata.xml
 cp ../${DISTRIBUTION_NAME}.desktop AppDir/usr/share/applications
 ln -s usr/share/applications/${DISTRIBUTION_NAME}.desktop AppDir/${DISTRIBUTION_NAME}.desktop
 {{#appImageIcons}}

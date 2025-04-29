@@ -36,6 +36,8 @@ interface AppImagePackager extends RepositoryPackager {
 
     ListProperty<String> getCategories()
 
+    Property<String> getDeveloperId()
+
     Property<String> getDeveloperName()
 
     Property<Boolean> getRequiresTerminal()

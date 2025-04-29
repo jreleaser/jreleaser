@@ -39,7 +39,6 @@ chmod +x AppDir/usr/share/${DISTRIBUTION_NAME}/${DISTRIBUTION_EXEC}
 mkdir -p AppDir/usr/share/applications/
 mkdir -p AppDir/usr/share/metainfo
 cp ../${DISTRIBUTION_ID}.appdata.xml AppDir/usr/share/metainfo
-cp ../${DISTRIBUTION_ID}.appdata.xml AppDir/usr/share/metainfo/${DISTRIBUTION_NAME}.appdata.xml
 cp ../${DISTRIBUTION_NAME}.desktop AppDir/usr/share/applications
 ln -s usr/share/applications/${DISTRIBUTION_NAME}.desktop AppDir/${DISTRIBUTION_NAME}.desktop
 {{#appImageIcons}}
