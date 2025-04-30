@@ -23,11 +23,14 @@ import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.common.TimeoutAware;
 import org.jreleaser.model.internal.deploy.Deployer;
+import org.jreleaser.model.spi.deploy.maven.Deployable;
 import org.jreleaser.mustache.TemplateContext;
 
+import java.net.URI;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import static java.util.Collections.unmodifiableMap;
@@ -108,6 +111,10 @@ public interface MavenDeployer<A extends org.jreleaser.model.api.deploy.maven.Ma
     List<String> keysFor(String property);
 
     void setSnapshotSupported(Boolean snapshotSupported);
+
+    org.jreleaser.model.api.deploy.maven.MavenDeployer.MavenMetadataTransformationMode getMavenMetadataTransformationMode();
+
+    Optional<URI> getMavenMetadataUrl(Deployable deployable);
 
     public final class ArtifactOverride extends AbstractModelObject<ArtifactOverride> implements Domain {
         private static final long serialVersionUID = 8057060716591206147L;

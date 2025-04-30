@@ -21,14 +21,17 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Http;
 import org.jreleaser.model.internal.common.AbstractActivatable;
 import org.jreleaser.model.internal.common.ExtraProperties;
+import org.jreleaser.model.spi.deploy.maven.Deployable;
 import org.jreleaser.mustache.TemplateContext;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.jreleaser.model.Constants.HIDE;
@@ -324,6 +327,16 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
     @Override
     public void setSnapshotSupported(Boolean snapshotSupported) {
         this.snapshotSupported = snapshotSupported;
+    }
+
+    @Override
+    public org.jreleaser.model.api.deploy.maven.MavenDeployer.MavenMetadataTransformationMode getMavenMetadataTransformationMode() {
+        return org.jreleaser.model.api.deploy.maven.MavenDeployer.MavenMetadataTransformationMode.DISABLED;
+    }
+
+    @Override
+    public Optional<URI> getMavenMetadataUrl(Deployable deployable) {
+        return Optional.empty();
     }
 
     @Override
