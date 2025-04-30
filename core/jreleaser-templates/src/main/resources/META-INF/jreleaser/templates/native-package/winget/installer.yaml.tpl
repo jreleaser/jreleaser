@@ -1,5 +1,5 @@
 # {{jreleaserCreationStamp}}
-# yaml-language-server: $schema=https://aka.ms/winget-manifest.installer.1.4.0.schema.json
+# yaml-language-server: $schema=https://aka.ms/winget-manifest.installer.1.9.0.schema.json
 
 PackageIdentifier: {{wingetPackageIdentifier}}
 PackageVersion: {{wingetPackageVersion}}
@@ -42,4 +42,4 @@ Installers:
       {{/wingetHasPackageDependencies}}
     {{/wingetHasDependencies}}
 ManifestType: installer
-ManifestVersion: 1.6.0
+ManifestVersion: 1.9.0
