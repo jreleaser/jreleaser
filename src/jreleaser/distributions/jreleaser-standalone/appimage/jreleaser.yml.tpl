@@ -33,9 +33,6 @@ announce:
   bluesky:
     active: RELEASE
     status: '🚀 {{distributionExecutableName}}-{{=<% %>=}}{{projectVersion}}<%={{ }}=%>-x86_64.AppImage has been released! {{=<% %>=}}{{releaseNotesUrl}}<%={{ }}=%>'
-  twitter:
-    active: RELEASE
-    status: '🚀 {{distributionExecutableName}}-{{=<% %>=}}{{projectVersion}}<%={{ }}=%>-x86_64.AppImage has been released! {{=<% %>=}}{{releaseNotesUrl}}<%={{ }}=%>'
   mastodon:
     active: RELEASE
     host: https://fosstodon.org

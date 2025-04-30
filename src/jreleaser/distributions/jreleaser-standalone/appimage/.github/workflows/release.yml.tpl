@@ -42,10 +42,6 @@ jobs:
           JRELEASER_GPG_PASSPHRASE: ${{=<% %>=}}{{ secrets.GPG_PASSPHRASE }}<%={{ }}=%>
           JRELEASER_GPG_PUBLIC_KEY: ${{=<% %>=}}{{ secrets.GPG_PUBLIC_KEY }}<%={{ }}=%>
           JRELEASER_GPG_SECRET_KEY: ${{=<% %>=}}{{ secrets.GPG_SECRET_KEY }}<%={{ }}=%>
-          JRELEASER_TWITTER_CONSUMER_KEY: ${{=<% %>=}}{{ secrets.TWITTER_CONSUMER_KEY }}<%={{ }}=%>
-          JRELEASER_TWITTER_CONSUMER_SECRET: ${{=<% %>=}}{{ secrets.TWITTER_CONSUMER_SECRET }}<%={{ }}=%>
-          JRELEASER_TWITTER_ACCESS_TOKEN: ${{=<% %>=}}{{ secrets.TWITTER_ACCESS_TOKEN }}<%={{ }}=%>
-          JRELEASER_TWITTER_ACCESS_TOKEN_SECRET: ${{=<% %>=}}{{ secrets.TWITTER_ACCESS_TOKEN_SECRET }}<%={{ }}=%>
           JRELEASER_MASTODON_ACCESS_TOKEN: ${{=<% %>=}}{{ secrets.MASTODON_ACCESS_TOKEN }}<%={{ }}=%>
           JRELEASER_BLUESKY_HOST: ${{=<% %>=}}{{ secrets.BLUESKY_HOST }}<%={{ }}=%>
           JRELEASER_BLUESKY_HANDLE: ${{=<% %>=}}{{ secrets.BLUESKY_HANDLE }}<%={{ }}=%>
