@@ -147,16 +147,6 @@ announce:
   openCollective:
     active: RELEASE
     message: '{{#f_md2html}}🚀 JReleaser {{projectVersion}} has been released! [{{releaseNotesUrl}}]({{releaseNotesUrl}}){{/f_md2html}}'
-  http:
-    noticeable:
-      active: RELEASE
-      url: https://api.noticeable.io/graphql
-      authorization: BEARER
-      bearerKeyword: Apikey
-      method: POST
-      headers:
-        Accept: application/json
-        Content-Type: application/json
 
 assemble:
   javaArchive:
