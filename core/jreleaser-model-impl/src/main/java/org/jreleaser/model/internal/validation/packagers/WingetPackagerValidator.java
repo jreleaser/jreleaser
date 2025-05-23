@@ -161,6 +161,8 @@ public final class WingetPackagerValidator {
         tags.addAll(parentPackager.getTags());
         tags.addAll(packager.getTags());
         packager.setTags(tags);
+
+        if (errors.hasErrors()) packager.disable();
     }
 
     private static void validateWingetPackage(JReleaserContext context, Distribution distribution, WingetPackager packager, WingetPackager parentPackager, Errors errors) {

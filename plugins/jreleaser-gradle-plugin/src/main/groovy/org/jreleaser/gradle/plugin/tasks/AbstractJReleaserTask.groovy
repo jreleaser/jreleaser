@@ -56,6 +56,9 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 @CompileStatic
 abstract class AbstractJReleaserTask extends DefaultTask {
     @Input
+    final Property<Boolean> yolo
+
+    @Input
     final Property<Boolean> dryrun
 
     @Input
@@ -80,10 +83,16 @@ abstract class AbstractJReleaserTask extends DefaultTask {
     AbstractJReleaserTask(ObjectFactory objects) {
         jlogger = objects.property(JReleaserLoggerService)
         mode = FULL
+        yolo = objects.property(Boolean)
         dryrun = objects.property(Boolean)
         gitRootSearch = objects.property(Boolean)
         strict = objects.property(Boolean)
         outputDirectory = objects.directoryProperty().convention(project.layout.buildDirectory.dir('jreleaser'))
+    }
+
+    @Option(option = 'yolo', description = 'Skip non-configured operations (OPTIONAL).')
+    void setYolo(boolean yolo) {
+        this.yolo.set(yolo)
     }
 
     @Option(option = 'dryrun', description = 'Skip remote operations (OPTIONAL).')
@@ -127,6 +136,7 @@ abstract class AbstractJReleaserTask extends DefaultTask {
             createModel(),
             project.projectDir.toPath(),
             outputDirectory.get().asFile.toPath(),
+            yolo.getOrElse(false),
             dryrun.getOrElse(false),
             gitRootSearch.getOrElse(false),
             strict.getOrElse(false),

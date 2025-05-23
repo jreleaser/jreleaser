@@ -27,6 +27,7 @@ import org.jreleaser.util.Errors;
 import java.util.Map;
 
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.mergeErrors;
 import static org.jreleaser.model.internal.validation.deploy.maven.MavenDeployersValidator.validateMavenDeployer;
 import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -47,7 +48,9 @@ public final class GitlabMavenDeployerValidator {
         for (Map.Entry<String, GitlabMavenDeployer> e : gitlab.entrySet()) {
             e.getValue().setName(e.getKey());
             if (mode.validateDeploy() || mode.validateConfig()) {
-                validateGitlabMavenDeployer(context, e.getValue(), errors);
+                Errors incoming = new Errors();
+                validateGitlabMavenDeployer(context, e.getValue(), incoming);
+                mergeErrors(context, errors, incoming, e.getValue());
             }
         }
     }

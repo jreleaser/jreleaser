@@ -61,6 +61,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 abstract class AbstractJReleaserTask extends Task {
     protected File basedir;
     protected File configFile;
+    protected Boolean yolo;
     protected Boolean dryrun;
     protected Boolean gitRootSearch;
     protected Boolean strict;
@@ -77,6 +78,10 @@ abstract class AbstractJReleaserTask extends Task {
 
     public void setConfigFile(File configFile) {
         this.configFile = configFile;
+    }
+
+    public void setYolo(Boolean yolo) {
+        this.yolo = yolo;
     }
 
     public void setDryrun(Boolean dryrun) {
@@ -177,6 +182,7 @@ abstract class AbstractJReleaserTask extends Task {
             actualConfigFile,
             actualBasedir,
             getOutputDirectory(),
+            resolveBoolean(org.jreleaser.model.api.JReleaserContext.YOLO, yolo),
             resolveBoolean(org.jreleaser.model.api.JReleaserContext.DRY_RUN, dryrun),
             resolveBoolean(org.jreleaser.model.api.JReleaserContext.GIT_ROOT_SEARCH, gitRootSearch),
             resolveBoolean(org.jreleaser.model.api.JReleaserContext.STRICT, strict),

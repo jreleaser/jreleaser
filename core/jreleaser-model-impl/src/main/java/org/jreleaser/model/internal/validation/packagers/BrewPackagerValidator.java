@@ -141,6 +141,8 @@ public final class BrewPackagerValidator {
         if (!cask.isEnabled()) {
             validateArtifactPlatforms(distribution, packager, candidateArtifacts, errors);
         }
+
+        if (errors.hasErrors()) packager.disable();
     }
 
     private static BrewPackager.Cask preValidateCask(Distribution distribution, BrewPackager packager, BrewPackager parentPackager) {

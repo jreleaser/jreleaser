@@ -139,5 +139,7 @@ public final class MacportsPackagerValidator {
                 errors.configuration(RB.$("validation_is_missing", "distribution." + distribution.getName() + ".java.version"));
             }
         }
+
+        if (errors.hasErrors()) packager.disable();
     }
 }

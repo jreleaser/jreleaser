@@ -55,6 +55,20 @@ public final class Validator {
         // noop
     }
 
+    public static void mergeErrors(JReleaserContext context, Errors errors, Errors incoming, Activatable activatable) {
+        if (incoming.hasErrors()) {
+            if (context.isYolo()) {
+                errors.mergeAsWarnings(incoming);
+                if (null != activatable) {
+                    activatable.disable();
+                }
+            } else {
+                errors.merge(incoming);
+            }
+            incoming.clear();
+        }
+    }
+
     public static String checkProperty(JReleaserContext context, String key, String property, String value, Errors errors) {
         if (isNotBlank(value)) return value;
         Environment environment = context.getModel().getEnvironment();
@@ -237,6 +251,10 @@ public final class Validator {
                 repository.getUsername(),
                 parentRepository.getUsername()));
 
+        if (isBlank(repository.getUsername())) {
+            repository.disable();
+        }
+
         repository.setToken(
             checkProperty(context,
                 listOf(
@@ -245,6 +263,10 @@ public final class Validator {
                 "distributions." + distributionName + "." + property + ".token",
                 repository.getToken(),
                 parentRepository.getToken()));
+
+        if (isBlank(repository.getToken())) {
+            repository.disable();
+        }
 
         repository.setBranch(
             checkProperty(context,

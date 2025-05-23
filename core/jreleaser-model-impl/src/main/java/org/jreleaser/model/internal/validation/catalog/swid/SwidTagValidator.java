@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.jreleaser.model.internal.validation.common.Validator.mergeErrors;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.CollectionUtils.setOf;
@@ -54,7 +55,9 @@ public final class SwidTagValidator {
         for (Map.Entry<String, SwidTag> e : swid.entrySet()) {
             e.getValue().setName(e.getKey());
             if (mode.validateConfig() || mode.validateAssembly()) {
-                validateSwid(context, e.getValue(), errors);
+                Errors incoming = new Errors();
+                validateSwid(context, e.getValue(), incoming);
+                mergeErrors(context, errors, incoming, e.getValue());
             }
         }
     }

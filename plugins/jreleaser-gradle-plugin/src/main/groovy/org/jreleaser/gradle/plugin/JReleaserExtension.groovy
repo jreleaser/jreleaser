@@ -54,6 +54,8 @@ interface JReleaserExtension {
 
     Property<Boolean> getEnabled()
 
+    Property<Boolean> getYolo()
+
     Property<Boolean> getDryrun()
 
     Property<Boolean> getGitRootSearch()

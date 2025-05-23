@@ -31,6 +31,7 @@ import static org.jreleaser.model.api.deploy.maven.MavenCentralMavenDeployer.DEP
 import static org.jreleaser.model.api.deploy.maven.MavenCentralMavenDeployer.Stage.FULL;
 import static org.jreleaser.model.api.deploy.maven.MavenCentralMavenDeployer.Stage.PUBLISH;
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.mergeErrors;
 import static org.jreleaser.model.internal.validation.deploy.maven.MavenDeployersValidator.validateMavenDeployer;
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -50,7 +51,9 @@ public final class MavenCentralMavenDeployerValidator {
         for (Map.Entry<String, MavenCentralMavenDeployer> e : mavenCentral.entrySet()) {
             e.getValue().setName(e.getKey());
             if (mode.validateDeploy() || mode.validateConfig()) {
-                validateMavenCentralMavenDeployer(context, e.getValue(), errors);
+                Errors incoming = new Errors();
+                validateMavenCentralMavenDeployer(context, e.getValue(), incoming);
+                mergeErrors(context, errors, incoming, e.getValue());
             }
         }
     }

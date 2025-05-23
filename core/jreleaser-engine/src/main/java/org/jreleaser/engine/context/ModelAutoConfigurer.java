@@ -64,6 +64,7 @@ public final class ModelAutoConfigurer {
     private JReleaserLogger logger;
     private Path basedir;
     private Path outputDirectory;
+    private Boolean yolo;
     private Boolean dryrun;
     private Boolean gitRootSearch;
     private Boolean strict;
@@ -114,6 +115,11 @@ public final class ModelAutoConfigurer {
 
     public ModelAutoConfigurer outputDirectory(Path outputDirectory) {
         this.outputDirectory = outputDirectory;
+        return this;
+    }
+
+    public ModelAutoConfigurer yolo(Boolean yolo) {
+        this.yolo = yolo;
         return this;
     }
 
@@ -400,6 +406,7 @@ public final class ModelAutoConfigurer {
             autoConfiguredModel(basedir),
             basedir,
             outputDirectory,
+            resolveBoolean(org.jreleaser.model.api.JReleaserContext.YOLO, yolo),
             resolveBoolean(org.jreleaser.model.api.JReleaserContext.DRY_RUN, dryrun),
             resolveBoolean(org.jreleaser.model.api.JReleaserContext.GIT_ROOT_SEARCH, gitRootSearch),
             resolveBoolean(org.jreleaser.model.api.JReleaserContext.STRICT, strict),

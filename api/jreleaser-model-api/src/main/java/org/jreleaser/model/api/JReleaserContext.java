@@ -38,6 +38,7 @@ import static org.jreleaser.mustache.MustacheUtils.passThrough;
  */
 public interface JReleaserContext extends Serializable {
     String BASEDIR = "BASEDIR";
+    String YOLO = "YOLO";
     String DRY_RUN = "DRY_RUN";
     String GIT_ROOT_SEARCH = "GIT_ROOT_SEARCH";
     String STRICT = "STRICT";
@@ -76,6 +77,8 @@ public interface JReleaserContext extends Serializable {
     Path getArtifactsDirectory();
 
     Path getDeployDirectory();
+
+    boolean isYolo();
 
     boolean isDryrun();
 

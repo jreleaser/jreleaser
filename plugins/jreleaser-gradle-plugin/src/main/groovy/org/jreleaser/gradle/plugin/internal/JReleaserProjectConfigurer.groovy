@@ -92,6 +92,7 @@ class JReleaserProjectConfigurer {
                 @Override
                 void execute(JReleaserConfigTask t) {
                     t.outputDirectory.set(outputDirectory)
+                    t.yolo.set(extension.yolo)
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
@@ -127,6 +128,7 @@ class JReleaserProjectConfigurer {
                 @Override
                 void execute(JReleaserDownloadTask t) {
                     t.outputDirectory.set(outputDirectory)
+                    t.yolo.set(extension.yolo)
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
@@ -140,6 +142,7 @@ class JReleaserProjectConfigurer {
                 @Override
                 void execute(JReleaserAssembleTask t) {
                     t.outputDirectory.set(outputDirectory)
+                    t.yolo.set(extension.yolo)
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
@@ -153,6 +156,7 @@ class JReleaserProjectConfigurer {
                 @Override
                 void execute(JReleaserChangelogTask t) {
                     t.outputDirectory.set(outputDirectory)
+                    t.yolo.set(extension.yolo)
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
@@ -166,6 +170,7 @@ class JReleaserProjectConfigurer {
                 @Override
                 void execute(JReleaserChecksumTask t) {
                     t.outputDirectory.set(outputDirectory)
+                    t.yolo.set(extension.yolo)
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
@@ -182,6 +187,7 @@ class JReleaserProjectConfigurer {
                 @Override
                 void execute(JReleaserSignTask t) {
                     t.outputDirectory.set(outputDirectory)
+                    t.yolo.set(extension.yolo)
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
@@ -198,6 +204,7 @@ class JReleaserProjectConfigurer {
                 @Override
                 void execute(JReleaserDeployTask t) {
                     t.outputDirectory.set(outputDirectory)
+                    t.yolo.set(extension.yolo)
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
@@ -211,6 +218,7 @@ class JReleaserProjectConfigurer {
                 @Override
                 void execute(JReleaserCatalogTask t) {
                     t.outputDirectory.set(outputDirectory)
+                    t.yolo.set(extension.yolo)
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
@@ -224,6 +232,7 @@ class JReleaserProjectConfigurer {
                 @Override
                 void execute(JReleaserUploadTask t) {
                     t.outputDirectory.set(outputDirectory)
+                    t.yolo.set(extension.yolo)
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
@@ -240,6 +249,7 @@ class JReleaserProjectConfigurer {
                 @Override
                 void execute(JReleaserReleaseTask t) {
                     t.outputDirectory.set(outputDirectory)
+                    t.yolo.set(extension.yolo)
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
@@ -256,6 +266,7 @@ class JReleaserProjectConfigurer {
                 @Override
                 void execute(JReleaseAutoConfigReleaseTask t) {
                     t.outputDirectory.set(outputDirectory)
+                    t.yolo.set(extension.yolo)
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
@@ -269,6 +280,7 @@ class JReleaserProjectConfigurer {
                 @Override
                 void execute(JReleaserPrepareTask t) {
                     t.outputDirectory.set(outputDirectory)
+                    t.yolo.set(extension.yolo)
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
@@ -285,6 +297,7 @@ class JReleaserProjectConfigurer {
                 @Override
                 void execute(JReleaserPackageTask t) {
                     t.outputDirectory.set(outputDirectory)
+                    t.yolo.set(extension.yolo)
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
@@ -301,6 +314,7 @@ class JReleaserProjectConfigurer {
                 @Override
                 void execute(JReleaserPublishTask t) {
                     t.outputDirectory.set(outputDirectory)
+                    t.yolo.set(extension.yolo)
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
@@ -317,6 +331,7 @@ class JReleaserProjectConfigurer {
                 @Override
                 void execute(JReleaserAnnounceTask t) {
                     t.outputDirectory.set(outputDirectory)
+                    t.yolo.set(extension.yolo)
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)
@@ -333,6 +348,7 @@ class JReleaserProjectConfigurer {
                 @Override
                 void execute(JReleaserFullReleaseTask t) {
                     t.outputDirectory.set(outputDirectory)
+                    t.yolo.set(extension.yolo)
                     t.dryrun.set(extension.dryrun)
                     t.gitRootSearch.set(extension.gitRootSearch)
                     t.strict.set(extension.strict)

@@ -65,6 +65,7 @@ class WorkflowImpl implements Workflow {
         Throwable endSessionException = null;
 
         Instant start = Instant.now();
+        context.getLogger().info(RB.$("workflow.yolo"), context.isYolo());
         context.getLogger().info(RB.$("workflow.dryrun"), context.isDryrun());
         logFilters("workflow.included.downloader.types", context.getIncludedDownloaderTypes());
         logFilters("workflow.excluded.downloader.types", context.getExcludedDownloaderTypes());

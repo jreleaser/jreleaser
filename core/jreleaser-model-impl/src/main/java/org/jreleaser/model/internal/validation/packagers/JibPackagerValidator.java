@@ -209,6 +209,8 @@ public final class JibPackagerValidator {
             }
             validateJibSpec(context, distribution, spec, packager, errors);
         }
+
+        if (errors.hasErrors()) packager.disable();
     }
 
     public static void validateJibSpec(JReleaserContext context, Distribution distribution, JibSpec spec, JibPackager jib, Errors errors) {

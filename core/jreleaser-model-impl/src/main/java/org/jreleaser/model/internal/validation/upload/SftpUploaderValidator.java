@@ -26,6 +26,7 @@ import org.jreleaser.util.Errors;
 import java.util.Map;
 
 import static org.jreleaser.model.internal.validation.common.SshValidator.validateSsh;
+import static org.jreleaser.model.internal.validation.common.Validator.mergeErrors;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;
 import static org.jreleaser.util.CollectionUtils.listOf;
@@ -47,7 +48,9 @@ public final class SftpUploaderValidator {
         for (Map.Entry<String, SftpUploader> e : sftp.entrySet()) {
             e.getValue().setName(e.getKey());
             if (mode.validateConfig()) {
-                validateSftpUploader(context, e.getValue(), errors);
+                Errors incoming = new Errors();
+                validateSftpUploader(context, e.getValue(), incoming);
+                mergeErrors(context, errors, incoming, e.getValue());
             }
         }
     }

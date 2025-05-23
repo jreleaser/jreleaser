@@ -107,5 +107,7 @@ public final class AsdfPackagerValidator {
             packager.setDownloadUrl(parentPackager.getDownloadUrl());
         }
         validateArtifactPlatforms(distribution, packager, candidateArtifacts, errors);
+
+        if (errors.hasErrors()) packager.disable();
     }
 }

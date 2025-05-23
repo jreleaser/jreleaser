@@ -84,6 +84,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 class JReleaserExtensionImpl implements JReleaserExtension {
     final RegularFileProperty configFile
     final Property<Boolean> enabled
+    final Property<Boolean> yolo
     final Property<Boolean> dryrun
     final Property<Boolean> gitRootSearch
     final Property<Boolean> strict
@@ -118,6 +119,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
         this.layout = layout
         configFile = objects.fileProperty()
         enabled = objects.property(Boolean).convention(true)
+        yolo = objects.property(Boolean).convention(resolveBoolean(org.jreleaser.model.api.JReleaserContext.YOLO))
         dryrun = objects.property(Boolean).convention(resolveBoolean(org.jreleaser.model.api.JReleaserContext.DRY_RUN))
         strict = objects.property(Boolean).convention(resolveBoolean(org.jreleaser.model.api.JReleaserContext.STRICT))
         gitRootSearch = objects.property(Boolean).convention(resolveBoolean(org.jreleaser.model.api.JReleaserContext.GIT_ROOT_SEARCH))

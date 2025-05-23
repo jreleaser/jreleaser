@@ -58,6 +58,9 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
     final DirectoryProperty outputDirectory
     @Input
     @Optional
+    final Property<Boolean> yolo
+    @Input
+    @Optional
     final Property<Boolean> dryrun
     @Input
     @Optional
@@ -270,6 +273,11 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
         this.commitAuthorEmail.set(commitAuthorEmail)
     }
 
+    @Option(option = 'yolo', description = 'Skip non-configured sections (OPTIONAL).')
+    void setYolo(boolean yolo) {
+        this.yolo.set(yolo)
+    }
+
     @Option(option = 'dryrun', description = 'Skip remote operations (OPTIONAL).')
     void setDryrun(boolean dryrun) {
         this.dryrun.set(dryrun)
@@ -378,6 +386,7 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
 
     @Inject
     JReleaseAutoConfigReleaseTask(ObjectFactory objects) {
+        yolo = objects.property(Boolean)
         dryrun = objects.property(Boolean)
         gitRootSearch = objects.property(Boolean)
         strict = objects.property(Boolean)
@@ -428,6 +437,7 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
             .logger(jlogger.get().logger)
             .basedir(project.projectDir.toPath())
             .outputDirectory(outputDirectory.get().asFile.toPath())
+            .yolo(yolo.getOrElse(false))
             .dryrun(dryrun.getOrElse(false))
             .gitRootSearch(gitRootSearch.getOrElse(false))
             .strict(strict.getOrElse(false))

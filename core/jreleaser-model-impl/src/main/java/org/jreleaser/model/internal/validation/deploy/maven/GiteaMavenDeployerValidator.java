@@ -26,6 +26,7 @@ import org.jreleaser.util.Errors;
 import java.util.Map;
 
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.mergeErrors;
 import static org.jreleaser.model.internal.validation.deploy.maven.MavenDeployersValidator.validateMavenDeployer;
 import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -46,7 +47,9 @@ public final class GiteaMavenDeployerValidator {
         for (Map.Entry<String, GiteaMavenDeployer> e : gitea.entrySet()) {
             e.getValue().setName(e.getKey());
             if (mode.validateDeploy() || mode.validateConfig()) {
-                validateGiteaMavenDeployer(context, e.getValue(), errors);
+                Errors incoming = new Errors();
+                validateGiteaMavenDeployer(context, e.getValue(), incoming);
+                mergeErrors(context, errors, incoming, e.getValue());
             }
         }
     }

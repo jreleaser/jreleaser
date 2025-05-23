@@ -188,6 +188,8 @@ public final class ChocolateyPackagerValidator {
             // invalid
             errors.configuration(RB.$("validation_chocolatey_package_version", packager.getPackageVersion()));
         }
+
+        if (errors.hasErrors()) packager.disable();
     }
 
     private static void checkSemver(SemanticVersion version) {

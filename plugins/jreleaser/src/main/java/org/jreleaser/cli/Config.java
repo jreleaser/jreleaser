@@ -35,7 +35,7 @@ public class Config extends AbstractPlatformAwareModelCommand<Main> {
     @CommandLine.Option(names = {"-f", "--full"})
     boolean full;
 
-    @CommandLine.ArgGroup(multiplicity = "1")
+    @CommandLine.ArgGroup
     Exclusive exclusive;
 
     static class Exclusive {

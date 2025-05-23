@@ -76,6 +76,12 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
     protected File configFile;
 
     /**
+     * Skips non-configured operations.
+     */
+    @Parameter(property = "jreleaser.yolo")
+    protected Boolean yolo;
+
+    /**
      * Skips remote operations.
      */
     @Parameter(property = "jreleaser.dry.run")
@@ -173,6 +179,7 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
                 null == configFile ? convertModel() : readModel(logger),
                 basedir,
                 outputDirectory.toPath(),
+                resolveBoolean(org.jreleaser.model.api.JReleaserContext.YOLO, yolo),
                 resolveBoolean(org.jreleaser.model.api.JReleaserContext.DRY_RUN, dryrun),
                 resolveBoolean(org.jreleaser.model.api.JReleaserContext.GIT_ROOT_SEARCH, gitRootSearch),
                 resolveBoolean(org.jreleaser.model.api.JReleaserContext.STRICT, strict),

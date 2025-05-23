@@ -40,6 +40,7 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.joining;
 import static org.jreleaser.model.Constants.KEY_GRAALVM_NAGIVE_IMAGE;
 import static org.jreleaser.model.api.release.Releaser.KEY_SKIP_RELEASE_SIGNATURES;
+import static org.jreleaser.model.internal.validation.common.Validator.mergeErrors;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.packagers.AppImagePackagerValidator.validateAppImage;
 import static org.jreleaser.model.internal.validation.packagers.AsdfPackagerValidator.validateAsdf;
@@ -79,6 +80,7 @@ public final class DistributionsValidator {
         Map<String, Distribution> distributions = context.getModel().getDistributions();
         if (!distributions.isEmpty()) context.getLogger().debug("distributions");
 
+        Errors incoming = new Errors();
         for (Map.Entry<String, Distribution> e : distributions.entrySet()) {
             Distribution distribution = e.getValue();
             if (isBlank(distribution.getName())) {
@@ -86,7 +88,8 @@ public final class DistributionsValidator {
             }
             if (context.isDistributionIncluded(distribution)) {
                 if (mode.validateConfig()) {
-                    validateDistribution(context, distribution, errors);
+                    validateDistribution(context, distribution, incoming);
+                    mergeErrors(context, errors, incoming, distribution);
                 }
             } else {
                 distribution.setActive(Active.NEVER);
@@ -95,9 +98,10 @@ public final class DistributionsValidator {
         }
 
         if (mode.validateConfig()) {
-            postValidateBrew(context, errors);
-            postValidateJBang(context, errors);
-            postValidateSdkman(context, errors);
+            postValidateBrew(context, incoming);
+            postValidateJBang(context, incoming);
+            postValidateSdkman(context, incoming);
+            mergeErrors(context, errors, incoming, null);
         }
     }
 

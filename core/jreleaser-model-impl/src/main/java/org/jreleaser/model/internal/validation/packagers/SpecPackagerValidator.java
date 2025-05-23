@@ -121,5 +121,7 @@ public final class SpecPackagerValidator {
                 packager.setPackageName(distribution.getName());
             }
         }
+
+        if (errors.hasErrors()) packager.disable();
     }
 }

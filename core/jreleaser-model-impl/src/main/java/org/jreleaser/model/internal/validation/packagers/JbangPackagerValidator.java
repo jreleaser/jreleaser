@@ -103,6 +103,8 @@ public final class JbangPackagerValidator {
         if (isBlank(distribution.getJava().getMainClass())) {
             errors.configuration(RB.$("validation_must_not_be_blank", "distribution." + distribution.getName() + ".java.mainClass"));
         }
+
+        if (errors.hasErrors()) packager.disable();
     }
 
     public static void postValidateJBang(JReleaserContext context, Errors errors) {

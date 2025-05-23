@@ -140,6 +140,8 @@ public final class SdkmanPackagerValidator {
         validateTimeout(packager);
 
         validateArtifactPlatforms(distribution, packager, candidateArtifacts, errors);
+
+        if (errors.hasErrors()) packager.disable();
     }
 
     public static void postValidateSdkman(JReleaserContext context, Errors errors) {

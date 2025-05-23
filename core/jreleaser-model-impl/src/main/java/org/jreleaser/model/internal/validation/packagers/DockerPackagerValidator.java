@@ -183,6 +183,8 @@ public final class DockerPackagerValidator {
             }
             validateDockerSpec(context, distribution, spec, packager, errors);
         }
+
+        if (errors.hasErrors()) packager.disable();
     }
 
     private static void validateBuildx(JReleaserContext context, Distribution distribution, DockerPackager packager, DockerConfiguration.Buildx buildx, DockerConfiguration.Buildx parentBuildx, Errors errors) {

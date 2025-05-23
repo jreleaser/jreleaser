@@ -24,6 +24,7 @@ import org.jreleaser.util.Errors;
 
 import java.util.Map;
 
+import static org.jreleaser.model.internal.validation.common.Validator.mergeErrors;
 import static org.jreleaser.model.internal.validation.deploy.maven.MavenDeployersValidator.validateMavenDeployer;
 
 /**
@@ -42,7 +43,9 @@ public final class ArtifactoryMavenDeployerValidator {
         for (Map.Entry<String, ArtifactoryMavenDeployer> e : artifactory.entrySet()) {
             e.getValue().setName(e.getKey());
             if (mode.validateDeploy() || mode.validateConfig()) {
-                validateMavenDeployer(context, e.getValue(), errors);
+                Errors incoming = new Errors();
+                validateMavenDeployer(context, e.getValue(), incoming);
+                mergeErrors(context, errors, incoming, e.getValue());
             }
         }
     }

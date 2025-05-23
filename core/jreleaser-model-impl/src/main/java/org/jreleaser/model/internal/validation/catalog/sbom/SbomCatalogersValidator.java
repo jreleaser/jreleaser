@@ -26,6 +26,7 @@ import org.jreleaser.util.Errors;
 
 import static org.jreleaser.model.internal.validation.catalog.sbom.CyclonedxSbomCatalogerValidator.validateCyclonedxSbomCataloger;
 import static org.jreleaser.model.internal.validation.catalog.sbom.SyftSbomCatalogerValidator.validateSyftSbomCataloger;
+import static org.jreleaser.model.internal.validation.common.Validator.mergeErrors;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.util.StringUtils.isBlank;
 
@@ -42,8 +43,11 @@ public final class SbomCatalogersValidator {
         Sbom sbom = context.getModel().getCatalog().getSbom();
         context.getLogger().debug("catalog.sbom");
 
-        validateCyclonedxSbomCataloger(context, sbom.getCyclonedx(), errors);
-        validateSyftSbomCataloger(context, sbom.getSyft(), errors);
+        Errors incoming = new Errors();
+        validateCyclonedxSbomCataloger(context, sbom.getCyclonedx(), incoming);
+        mergeErrors(context, errors, incoming, sbom.getCyclonedx());
+        validateSyftSbomCataloger(context, sbom.getSyft(), incoming);
+        mergeErrors(context, errors, incoming, sbom.getSyft());
 
         if (mode.validateConfig()) {
             boolean activeSet = sbom.isActiveSet();

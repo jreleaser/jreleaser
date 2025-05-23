@@ -66,6 +66,7 @@ public class JReleaserAutoConfigReleaseTask extends Task {
     private JReleaserLogger logger;
     private Path actualBasedir;
     private File basedir;
+    private Boolean yolo;
     private Boolean dryrun;
     private Boolean gitRootSearch;
     private Boolean strict;
@@ -100,6 +101,10 @@ public class JReleaserAutoConfigReleaseTask extends Task {
     private boolean signing;
     private boolean armored;
     private FileSet fileSet;
+
+    public void setYolo(Boolean yolo) {
+        this.yolo = yolo;
+    }
 
     public void setDryrun(Boolean dryrun) {
         this.dryrun = dryrun;
@@ -290,6 +295,7 @@ public class JReleaserAutoConfigReleaseTask extends Task {
             .logger(logger)
             .basedir(actualBasedir)
             .outputDirectory(getOutputDirectory())
+            .yolo(yolo)
             .dryrun(dryrun)
             .gitRootSearch(gitRootSearch)
             .strict(strict)

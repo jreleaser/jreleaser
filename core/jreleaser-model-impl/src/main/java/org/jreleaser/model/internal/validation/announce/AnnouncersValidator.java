@@ -43,6 +43,7 @@ import static org.jreleaser.model.internal.validation.announce.TelegramAnnouncer
 import static org.jreleaser.model.internal.validation.announce.TwitterAnnouncerValidator.validateTwitter;
 import static org.jreleaser.model.internal.validation.announce.WebhooksAnnouncerValidator.validateWebhooks;
 import static org.jreleaser.model.internal.validation.announce.ZulipAnnouncerValidator.validateZulip;
+import static org.jreleaser.model.internal.validation.common.Validator.mergeErrors;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 
 /**
@@ -63,26 +64,47 @@ public final class AnnouncersValidator {
             return;
         }
 
-        validateArticle(context, announce.getArticle(), errors);
-        validateBluesky(context, announce.getBluesky(), errors);
-        validateDiscussions(context, announce.getDiscussions(), errors);
-        validateDiscord(context, announce.getDiscord(), errors);
-        validateDiscourse(context, announce.getDiscourse(), errors);
-        validateGitter(context, announce.getGitter(), errors);
-        validateGoogleChat(context, announce.getGoogleChat(), errors);
-        validateLinkedin(context, announce.getLinkedin(), errors);
-        validateHttpAnnouncers(context, mode, announce.getConfiguredHttp(), errors);
-        validateSmtp(context, announce.getSmtp(), errors);
-        validateMastodon(context, announce.getMastodon(), errors);
-        validateMattermost(context, announce.getMattermost(), errors);
-        validateOpenCollective(context, announce.getOpenCollective(), errors);
-        validateSdkmanAnnouncer(context, announce.getSdkman(), errors);
-        validateSlack(context, announce.getSlack(), errors);
-        validateTeams(context, announce.getTeams(), errors);
-        validateTelegram(context, announce.getTelegram(), errors);
-        validateTwitter(context, announce.getTwitter(), errors);
-        validateWebhooks(context, mode, announce.getConfiguredWebhooks(), errors);
-        validateZulip(context, announce.getZulip(), errors);
+        Errors incoming = new Errors();
+        validateArticle(context, announce.getArticle(), incoming);
+        mergeErrors(context, errors, incoming, announce.getArticle());
+        validateBluesky(context, announce.getBluesky(), incoming);
+        mergeErrors(context, errors, incoming, announce.getBluesky());
+        validateDiscussions(context, announce.getDiscussions(), incoming);
+        mergeErrors(context, errors, incoming, announce.getDiscussions());
+        validateDiscord(context, announce.getDiscord(), incoming);
+        mergeErrors(context, errors, incoming, announce.getDiscord());
+        validateDiscourse(context, announce.getDiscourse(), incoming);
+        mergeErrors(context, errors, incoming, announce.getDiscourse());
+        validateGitter(context, announce.getGitter(), incoming);
+        mergeErrors(context, errors, incoming, announce.getGitter());
+        validateGoogleChat(context, announce.getGoogleChat(), incoming);
+        mergeErrors(context, errors, incoming, announce.getGoogleChat());
+        validateLinkedin(context, announce.getLinkedin(), incoming);
+        mergeErrors(context, errors, incoming, announce.getLinkedin());
+        validateHttpAnnouncers(context, mode, announce.getConfiguredHttp(), incoming);
+        mergeErrors(context, errors, incoming, announce.getConfiguredHttp());
+        validateSmtp(context, announce.getSmtp(), incoming);
+        mergeErrors(context, errors, incoming, announce.getSmtp());
+        validateMastodon(context, announce.getMastodon(), incoming);
+        mergeErrors(context, errors, incoming, announce.getMastodon());
+        validateMattermost(context, announce.getMattermost(), incoming);
+        mergeErrors(context, errors, incoming, announce.getMattermost());
+        validateOpenCollective(context, announce.getOpenCollective(), incoming);
+        mergeErrors(context, errors, incoming, announce.getOpenCollective());
+        validateSdkmanAnnouncer(context, announce.getSdkman(), incoming);
+        mergeErrors(context, errors, incoming, announce.getSdkman());
+        validateSlack(context, announce.getSlack(), incoming);
+        mergeErrors(context, errors, incoming, announce.getSlack());
+        validateTeams(context, announce.getTeams(), incoming);
+        mergeErrors(context, errors, incoming, announce.getTeams());
+        validateTelegram(context, announce.getTelegram(), incoming);
+        mergeErrors(context, errors, incoming, announce.getTelegram());
+        validateTwitter(context, announce.getTwitter(), incoming);
+        mergeErrors(context, errors, incoming, announce.getTwitter());
+        validateWebhooks(context, mode, announce.getConfiguredWebhooks(), incoming);
+        mergeErrors(context, errors, incoming, announce.getConfiguredWebhooks());
+        validateZulip(context, announce.getZulip(), incoming);
+        mergeErrors(context, errors, incoming, announce.getZulip());
 
         boolean activeSet = announce.isActiveSet();
         resolveActivatable(context, announce, "announce", "ALWAYS");

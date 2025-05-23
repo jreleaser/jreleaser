@@ -58,6 +58,9 @@ public abstract class AbstractModelCommand<C extends IO> extends AbstractLogging
     @CommandLine.Option(names = {"-grs", "--git-root-search"})
     Boolean gitRootSearch;
 
+    @CommandLine.Option(names = {"--yolo"})
+    Boolean yolo;
+
     @CommandLine.Option(names = {"--strict"})
     Boolean strict;
 
@@ -155,6 +158,7 @@ public abstract class AbstractModelCommand<C extends IO> extends AbstractLogging
             model,
             actualBasedir,
             getOutputDirectory(),
+            resolveBoolean(org.jreleaser.model.api.JReleaserContext.YOLO, yolo()),
             resolveBoolean(org.jreleaser.model.api.JReleaserContext.DRY_RUN, dryrun()),
             resolveBoolean(org.jreleaser.model.api.JReleaserContext.GIT_ROOT_SEARCH, gitRootSearch()),
             resolveBoolean(org.jreleaser.model.api.JReleaserContext.STRICT, strict()),
@@ -200,6 +204,10 @@ public abstract class AbstractModelCommand<C extends IO> extends AbstractLogging
 
     protected Boolean dryrun() {
         return false;
+    }
+
+    protected Boolean yolo() {
+        return yolo;
     }
 
     protected Boolean strict() {

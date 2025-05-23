@@ -70,6 +70,11 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
     @Parameter(property = "jreleaser.output.directory", defaultValue = "${project.build.directory}/jreleaser")
     private File outputDirectory;
     /**
+     * Skips non-configured operations.
+     */
+    @Parameter(property = "jreleaser.yolo")
+    protected Boolean yolo;
+    /**
      * Skips remote operations.
      */
     @Parameter(property = "jreleaser.dry.run")
@@ -273,6 +278,7 @@ public class JReleaserAutoConfigReleaseMojo extends AbstractMojo {
             .logger(getLogger())
             .basedir(project.getBasedir().toPath())
             .outputDirectory(outputDirectory.toPath())
+            .yolo(yolo)
             .dryrun(dryrun)
             .gitRootSearch(gitRootSearch)
             .strict(strict)

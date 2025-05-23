@@ -149,6 +149,8 @@ public final class SnapPackagerValidator {
                 errors.configuration(RB.$("validation_snap_missing_buildon", "distribution." + distribution.getName() + ".snap.architectures", i));
             }
         }
+
+        if (errors.hasErrors()) packager.disable();
     }
 
     private static void mergeSnapPlugs(SnapPackager packager, SnapPackager common) {

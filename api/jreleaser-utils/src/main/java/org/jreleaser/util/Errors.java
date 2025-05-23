@@ -31,11 +31,35 @@ import java.util.Set;
  * @since 0.2.0
  */
 public class Errors implements Serializable {
-    private static final long serialVersionUID = -7835875752041439694L;
+    private static final long serialVersionUID = -3601667298659606426L;
 
     private final Set<Error> assemblyErrors = new LinkedHashSet<>();
     private final Set<Error> configurationErrors = new LinkedHashSet<>();
     private final Set<Error> warnings = new LinkedHashSet<>();
+
+    public Errors merge(Errors other) {
+        this.assemblyErrors.addAll(other.assemblyErrors);
+        this.configurationErrors.addAll(other.configurationErrors);
+        this.warnings.addAll(other.warnings);
+
+        return this;
+    }
+
+    public Errors clear() {
+        this.assemblyErrors.clear();
+        this.configurationErrors.clear();
+        this.warnings.clear();
+
+        return this;
+    }
+
+    public Errors mergeAsWarnings(Errors other) {
+        this.warnings.addAll(other.assemblyErrors);
+        this.warnings.addAll(other.configurationErrors);
+        this.warnings.addAll(other.warnings);
+
+        return this;
+    }
 
     public boolean hasErrors() {
         return !assemblyErrors.isEmpty() || !configurationErrors.isEmpty();

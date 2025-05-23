@@ -124,6 +124,7 @@ public class JReleaserContext {
     private final JReleaserModel model;
     private final Path basedir;
     private final Path outputDirectory;
+    private final boolean yolo;
     private final boolean dryrun;
     private final boolean strict;
     private final boolean gitRootSearch;
@@ -165,7 +166,7 @@ public class JReleaserContext {
 
     @JsonIgnore
     private final org.jreleaser.model.api.JReleaserContext immutable = new org.jreleaser.model.api.JReleaserContext() {
-        private static final long serialVersionUID = -4198066601336237321L;
+        private static final long serialVersionUID = 8947541863163002549L;
 
         @Override
         public Path relativize(Path basedir, Path other) {
@@ -245,6 +246,11 @@ public class JReleaserContext {
         @Override
         public Path getDeployDirectory() {
             return JReleaserContext.this.getDeployDirectory();
+        }
+
+        @Override
+        public boolean isYolo() {
+            return JReleaserContext.this.isYolo();
         }
 
         @Override
@@ -407,6 +413,7 @@ public class JReleaserContext {
             new JReleaserModel(),
             basedir,
             basedir.resolve("out/jreleaser"),
+            false,
             true,
             true,
             false,
@@ -421,6 +428,7 @@ public class JReleaserContext {
                             JReleaserModel model,
                             Path basedir,
                             Path outputDirectory,
+                            boolean yolo,
                             boolean dryrun,
                             boolean gitRootSearch,
                             boolean strict,
@@ -433,6 +441,7 @@ public class JReleaserContext {
         this.model = model;
         this.basedir = basedir;
         this.outputDirectory = outputDirectory;
+        this.yolo = yolo;
         this.dryrun = dryrun;
         this.gitRootSearch = gitRootSearch;
         this.strict = strict;
@@ -782,6 +791,10 @@ public class JReleaserContext {
         return outputDirectory.resolve("deploy");
     }
 
+    public boolean isYolo() {
+        return yolo;
+    }
+
     public boolean isDryrun() {
         return dryrun;
     }
@@ -1075,6 +1088,7 @@ public class JReleaserContext {
         return "JReleaserContext[" +
             "basedir=" + basedir.toAbsolutePath() +
             ", outputDirectory=" + outputDirectory.toAbsolutePath() +
+            ", yolo=" + yolo +
             ", dryrun=" + dryrun +
             ", gitRootSearch=" + gitRootSearch +
             ", strict=" + strict +

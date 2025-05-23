@@ -319,6 +319,7 @@ public class Release extends AbstractPlatformAwareModelCommand<Main> {
             .logger(logger)
             .basedir(actualBasedir)
             .outputDirectory(getOutputDirectory())
+            .yolo(yolo())
             .dryrun(dryrun())
             .gitRootSearch(gitRootSearch())
             .strict(strict())

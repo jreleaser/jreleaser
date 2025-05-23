@@ -113,5 +113,7 @@ public final class ScoopPackagerValidator {
         }
 
         validateArtifactPlatforms(distribution, packager, candidateArtifacts, errors);
+
+        if (errors.hasErrors()) packager.disable();
     }
 }

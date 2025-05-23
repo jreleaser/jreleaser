@@ -182,5 +182,7 @@ public final class AppImagePackagerValidator {
             packager.setDownloadUrl(parentPackager.getDownloadUrl());
         }
         validateArtifactPlatforms(distribution, packager, candidateArtifacts, errors);
+
+        if (errors.hasErrors()) packager.disable();
     }
 }
