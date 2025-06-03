@@ -39,4 +39,5 @@ dependencies {
     api "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
     api "io.github.openfeign.form:feign-form:$feignFormVersion"
     api "commons-io:commons-io:$commonsIoVersion"
+    api "dev.failsafe:failsafe:$failsafeVersion"
 }
