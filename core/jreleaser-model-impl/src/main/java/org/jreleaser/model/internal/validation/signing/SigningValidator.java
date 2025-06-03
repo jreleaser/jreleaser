@@ -21,6 +21,7 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.deploy.maven.MavenDeployer;
+import org.jreleaser.model.internal.environment.Environment;
 import org.jreleaser.model.internal.signing.Signing;
 import org.jreleaser.util.DefaultVersions;
 import org.jreleaser.util.Errors;
@@ -38,6 +39,8 @@ import static org.jreleaser.model.api.signing.Signing.GPG_PUBLIC_KEYRING;
 import static org.jreleaser.model.api.signing.Signing.GPG_SECRET_KEY;
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
+import static org.jreleaser.util.Env.envKey;
+import static org.jreleaser.util.Env.sysKey;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -69,13 +72,26 @@ public final class SigningValidator {
 
         boolean cosign = signing.resolveMode() == org.jreleaser.model.Signing.Mode.COSIGN;
 
-        signing.setPassphrase(
-            checkProperty(context,
-                cosign ? COSIGN_PASSWORD : GPG_PASSPHRASE,
-                "signing.passphrase",
-                signing.getPassphrase(),
-                errors,
-                context.isDryrun()));
+        String passphrase = checkProperty(context,
+            cosign ? COSIGN_PASSWORD : GPG_PASSPHRASE,
+            "signing.passphrase",
+            signing.getPassphrase(),
+            new Errors(),
+            false);
+
+        if (isBlank(passphrase)) {
+            String key = cosign ? COSIGN_PASSWORD : GPG_PASSPHRASE;
+            Environment environment = context.getModel().getEnvironment();
+            String dsl = context.getConfigurer().toString();
+            String configFilePath = environment.getPropertiesFile().toAbsolutePath().normalize().toString();
+            String value = environment.resolve(key);
+            String envKey = envKey(key);
+            String sysKey = sysKey(key);
+            context.getLogger().warn(RB.$("signing.passphrase.blank", dsl, sysKey, envKey, configFilePath, key));
+            passphrase = "";
+        }
+
+        signing.setPassphrase(passphrase);
 
         if (signing.resolveMode() == org.jreleaser.model.Signing.Mode.COMMAND) {
             signing.getCommand().setExecutable(
