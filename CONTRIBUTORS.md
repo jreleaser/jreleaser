@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-90-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-91-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -126,6 +126,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/PReimers"><img src="https://avatars.githubusercontent.com/u/1785288?v=4?s=100" width="100px;" alt="Patrick Reimers"/><br /><sub><b>Patrick Reimers</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=preimers" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://people.apache.org/~hboutemy"><img src="https://avatars.githubusercontent.com/u/237462?v=4?s=100" width="100px;" alt="Hervé Boutemy"/><br /><sub><b>Hervé Boutemy</b></sub></a><br /><a href="#infra-hboutemy" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/agreedSkiing"><img src="https://avatars.githubusercontent.com/u/93997033?v=4?s=100" width="100px;" alt="Erik Åsén"/><br /><sub><b>Erik Åsén</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=agreedSkiing" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/JonasVautherin"><img src="https://avatars.githubusercontent.com/u/2606672?v=4?s=100" width="100px;" alt="Jonas Vautherin"/><br /><sub><b>Jonas Vautherin</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=JonasVautherin" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
