@@ -20,8 +20,11 @@ package org.jreleaser.model.internal.announce;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
+import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static org.jreleaser.model.Constants.HIDE;
 import static org.jreleaser.model.Constants.UNSET;
@@ -33,7 +36,9 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public final class SlackAnnouncer extends AbstractMessageAnnouncer<SlackAnnouncer, org.jreleaser.model.api.announce.SlackAnnouncer> {
-    private static final long serialVersionUID = 588094747076475409L;
+    private static final long serialVersionUID = 6555571745045248029L;
+
+    private final List<String> channels = new ArrayList<>();
 
     private String token;
     private String webhook;
@@ -41,7 +46,7 @@ public final class SlackAnnouncer extends AbstractMessageAnnouncer<SlackAnnounce
 
     @JsonIgnore
     private final org.jreleaser.model.api.announce.SlackAnnouncer immutable = new org.jreleaser.model.api.announce.SlackAnnouncer() {
-        private static final long serialVersionUID = -6078751771948977999L;
+        private static final long serialVersionUID = 7371077151260242382L;
 
         @Override
         public String getType() {
@@ -61,6 +66,11 @@ public final class SlackAnnouncer extends AbstractMessageAnnouncer<SlackAnnounce
         @Override
         public String getChannel() {
             return channel;
+        }
+
+        @Override
+        public List<String> getChannels() {
+            return unmodifiableList(channels);
         }
 
         @Override
@@ -134,6 +144,7 @@ public final class SlackAnnouncer extends AbstractMessageAnnouncer<SlackAnnounce
         this.token = merge(this.token, source.token);
         this.channel = merge(this.channel, source.channel);
         this.webhook = merge(this.webhook, source.webhook);
+        setChannels(merge(this.channels, source.channels));
     }
 
     public String getToken() {
@@ -160,11 +171,27 @@ public final class SlackAnnouncer extends AbstractMessageAnnouncer<SlackAnnounce
         this.channel = channel;
     }
 
+    public List<String> getChannels() {
+        return channels;
+    }
+
+    public void setChannels(List<String> channels) {
+        this.channels.clear();
+        this.channels.addAll(channels);
+    }
+
+    public void addChannel(String channel) {
+        if (isNotBlank(channel)) {
+            this.channels.add(channel.trim());
+        }
+    }
+
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("webhook", isNotBlank(webhook) ? HIDE : UNSET);
         props.put("token", isNotBlank(token) ? HIDE : UNSET);
         props.put("channel", channel);
+        props.put("channels", channels);
         super.asMap(full, props);
     }
 }

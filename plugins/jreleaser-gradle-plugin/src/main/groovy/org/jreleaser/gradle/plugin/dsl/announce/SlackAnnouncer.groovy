@@ -19,6 +19,7 @@ package org.jreleaser.gradle.plugin.dsl.announce
 
 import groovy.transform.CompileStatic
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 
 /**
@@ -34,9 +35,13 @@ interface SlackAnnouncer extends Announcer {
 
     Property<String> getChannel()
 
+    ListProperty<String> getChannels()
+
     Property<String> getMessage()
 
     RegularFileProperty getMessageTemplate()
 
     void setMessageTemplate(String messageTemplate)
+
+    void channel(String channel)
 }

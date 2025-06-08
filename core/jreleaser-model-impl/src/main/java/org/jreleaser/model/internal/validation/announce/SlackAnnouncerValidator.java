@@ -61,7 +61,7 @@ public final class SlackAnnouncerValidator {
                 "announce.slack.token",
                 announcer.getToken(),
                 ignored,
-                context.isDryrun()));
+                false));
 
         announcer.setWebhook(
             checkProperty(context,
@@ -71,7 +71,7 @@ public final class SlackAnnouncerValidator {
                 "announce.slack.webhook",
                 announcer.getWebhook(),
                 ignored,
-                context.isDryrun()));
+                false));
 
         String token = announcer.getToken();
         String webhook = announcer.getWebhook();
@@ -81,8 +81,8 @@ public final class SlackAnnouncerValidator {
             return;
         }
 
-        if (isBlank(announcer.getChannel())) {
-            announcer.setChannel("#announce");
+        if (isBlank(announcer.getChannel()) && announcer.getChannels().isEmpty()) {
+            announcer.addChannel("#announce");
         }
 
         if (isBlank(announcer.getMessage()) && isBlank(announcer.getMessageTemplate())) {

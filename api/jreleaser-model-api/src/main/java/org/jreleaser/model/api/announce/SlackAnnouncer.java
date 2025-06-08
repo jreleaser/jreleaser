@@ -17,6 +17,8 @@
  */
 package org.jreleaser.model.api.announce;
 
+import java.util.List;
+
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -31,6 +33,8 @@ public interface SlackAnnouncer extends Announcer {
     String getWebhook();
 
     String getChannel();
+
+    List<String> getChannels();
 
     String getMessage();
 

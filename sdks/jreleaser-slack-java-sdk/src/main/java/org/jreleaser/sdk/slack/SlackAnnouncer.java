@@ -82,7 +82,9 @@ public class SlackAnnouncer implements Announcer<org.jreleaser.model.api.announc
                     .dryrun(context.isDryrun())
                     .build();
 
-                sdk.message(slack.getChannel(), message);
+                for (String channel : slack.getChannels()) {
+                    sdk.message(channel, message);
+                }
             } catch (SlackException e) {
                 context.getLogger().trace(e);
                 errors.add(e.toString());

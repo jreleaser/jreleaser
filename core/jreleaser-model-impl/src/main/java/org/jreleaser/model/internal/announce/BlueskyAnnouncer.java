@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static org.jreleaser.model.Constants.HIDE;
 import static org.jreleaser.model.Constants.KEY_PREVIOUS_TAG_NAME;
@@ -87,7 +88,7 @@ public final class BlueskyAnnouncer extends AbstractAnnouncer<BlueskyAnnouncer, 
 
         @Override
         public List<String> getStatuses() {
-            return statuses;
+            return unmodifiableList(statuses);
         }
 
         @Override

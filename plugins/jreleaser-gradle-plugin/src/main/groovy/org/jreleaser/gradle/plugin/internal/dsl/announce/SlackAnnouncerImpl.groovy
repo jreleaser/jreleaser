@@ -17,15 +17,19 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.announce
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.announce.SlackAnnouncer
 
 import javax.inject.Inject
+
+import static org.jreleaser.util.StringUtils.isNotBlank
 
 /**
  *
@@ -39,6 +43,7 @@ class SlackAnnouncerImpl extends AbstractAnnouncer implements SlackAnnouncer {
     final Property<String> channel
     final Property<String> message
     final RegularFileProperty messageTemplate
+    final ListProperty<String> channels
 
     @Inject
     SlackAnnouncerImpl(ObjectFactory objects) {
@@ -48,6 +53,7 @@ class SlackAnnouncerImpl extends AbstractAnnouncer implements SlackAnnouncer {
         channel = objects.property(String).convention(Providers.<String> notDefined())
         message = objects.property(String).convention(Providers.<String> notDefined())
         messageTemplate = objects.fileProperty().convention(Providers.notDefined())
+        channels = objects.listProperty(String).convention(Providers.<List<String>> notDefined())
     }
 
     @Override
@@ -63,7 +69,16 @@ class SlackAnnouncerImpl extends AbstractAnnouncer implements SlackAnnouncer {
             webhook.present ||
             channel.present ||
             message.present ||
-            messageTemplate.present
+            messageTemplate.present ||
+            channels.present
+    }
+
+    @Override
+    @CompileDynamic
+    void channel(String channel) {
+        if (isNotBlank(channel)) {
+            channels.add(channel.trim())
+        }
     }
 
     org.jreleaser.model.internal.announce.SlackAnnouncer toModel() {
@@ -76,6 +91,7 @@ class SlackAnnouncerImpl extends AbstractAnnouncer implements SlackAnnouncer {
         if (messageTemplate.present) {
             announcer.messageTemplate = messageTemplate.asFile.get().absolutePath
         }
+        announcer.channels = (List<String>) channels.getOrElse([])
         announcer
     }
 }
