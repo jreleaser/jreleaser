@@ -95,6 +95,8 @@ tasks.shadowJar.dependsOn(tasks.register('relocateShadowJar', org.jreleaser.grad
     t.exclude('jreleaser-resource-bundle')
     t.exclude('jreleaser-utils')
     t.exclude('jreleaser-templates')
+    t.exclude('jakarta.mail-api')
+    t.exclude('jakarta.activation-api')
 })
 
 jar.finalizedBy shadowJar
