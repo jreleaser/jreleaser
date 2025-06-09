@@ -427,10 +427,19 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
             GlIssue glIssue = op.get();
             if ("closed".equals(glIssue.getState()) && glIssue.getLabels().stream().noneMatch(l -> l.equals(labelName))) {
                 context.getLogger().debug(RB.$("git.issue.release", issueNumber));
-                api.addLabelToIssue(projectIdentifier, glIssue, glLabel);
-                api.commentOnIssue(projectIdentifier, glIssue, comment);
 
-                milestone.ifPresent(glMilestone -> applyMilestone(api, projectIdentifier, issueNumber, glIssue, applyMilestone, glMilestone));
+                try {
+                    api.addLabelToIssue(projectIdentifier, glIssue, glLabel);
+                    api.commentOnIssue(projectIdentifier, glIssue, comment);
+
+                    milestone.ifPresent(glMilestone -> applyMilestone(api, projectIdentifier, issueNumber, glIssue, applyMilestone, glMilestone));
+                } catch (RestAPIException e) {
+                    if (e.isForbidden()) {
+                        context.getLogger().warn(e.getMessage());
+                    } else {
+                        throw e;
+                    }
+                }
             }
         }
     }

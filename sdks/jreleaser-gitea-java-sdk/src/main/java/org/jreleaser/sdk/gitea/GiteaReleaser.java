@@ -350,10 +350,19 @@ public class GiteaReleaser extends AbstractReleaser<org.jreleaser.model.api.rele
             GtIssue gtIssue = op.get();
             if ("closed".equals(gtIssue.getState()) && gtIssue.getLabels().stream().noneMatch(l -> l.getName().equals(labelName))) {
                 context.getLogger().debug(RB.$("git.issue.release", issueNumber));
-                api.addLabelToIssue(gitea.getOwner(), gitea.getName(), gtIssue, gtLabel);
-                api.commentOnIssue(gitea.getOwner(), gitea.getName(), gtIssue, comment);
 
-                milestone.ifPresent(gtMilestone -> applyMilestone(gitea, api, issueNumber, gtIssue, applyMilestone, gtMilestone));
+                try {
+                    api.addLabelToIssue(gitea.getOwner(), gitea.getName(), gtIssue, gtLabel);
+                    api.commentOnIssue(gitea.getOwner(), gitea.getName(), gtIssue, comment);
+
+                    milestone.ifPresent(gtMilestone -> applyMilestone(gitea, api, issueNumber, gtIssue, applyMilestone, gtMilestone));
+                } catch (RestAPIException e) {
+                    if (e.isForbidden()) {
+                        context.getLogger().warn(e.getMessage());
+                    } else {
+                        throw e;
+                    }
+                }
             }
         }
     }

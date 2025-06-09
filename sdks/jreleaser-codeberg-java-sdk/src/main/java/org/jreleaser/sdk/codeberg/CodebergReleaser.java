@@ -348,10 +348,19 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
             Issue gtIssue = op.get();
             if ("closed".equals(gtIssue.getState()) && gtIssue.getLabels().stream().noneMatch(l -> l.getName().equals(labelName))) {
                 context.getLogger().debug(RB.$("git.issue.release", issueNumber));
-                api.addLabelToIssue(codeberg.getOwner(), codeberg.getName(), gtIssue, gtLabel);
-                api.commentOnIssue(codeberg.getOwner(), codeberg.getName(), gtIssue, comment);
 
-                milestone.ifPresent(gtMilestone -> applyMilestone(codeberg, api, issueNumber, gtIssue, applyMilestone, gtMilestone));
+                try {
+                    api.addLabelToIssue(codeberg.getOwner(), codeberg.getName(), gtIssue, gtLabel);
+                    api.commentOnIssue(codeberg.getOwner(), codeberg.getName(), gtIssue, comment);
+
+                    milestone.ifPresent(gtMilestone -> applyMilestone(codeberg, api, issueNumber, gtIssue, applyMilestone, gtMilestone));
+                } catch (RestAPIException e) {
+                    if (e.isForbidden()) {
+                        context.getLogger().warn(e.getMessage());
+                    } else {
+                        throw e;
+                    }
+                }
             }
         }
     }

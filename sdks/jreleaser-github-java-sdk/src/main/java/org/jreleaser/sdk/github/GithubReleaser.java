@@ -448,10 +448,18 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
             GhIssue ghIssue = op.get();
             if ("closed".equals(ghIssue.getState()) && ghIssue.getLabels().stream().noneMatch(l -> l.getName().equals(labelName))) {
                 context.getLogger().debug(RB.$("git.issue.release", issueNumber));
-                api.addLabelToIssue(github.getOwner(), github.getName(), ghIssue, ghLabel);
-                api.commentOnIssue(github.getOwner(), github.getName(), ghIssue, comment);
+                try {
+                    api.addLabelToIssue(github.getOwner(), github.getName(), ghIssue, ghLabel);
+                    api.commentOnIssue(github.getOwner(), github.getName(), ghIssue, comment);
 
-                milestone.ifPresent(ghMilestone -> applyMilestone(github, api, issueNumber, ghIssue, applyMilestone, ghMilestone));
+                    milestone.ifPresent(ghMilestone -> applyMilestone(github, api, issueNumber, ghIssue, applyMilestone, ghMilestone));
+                } catch (RestAPIException e) {
+                    if (e.isForbidden()) {
+                        context.getLogger().warn(e.getMessage());
+                    } else {
+                        throw e;
+                    }
+                }
             }
         }
     }

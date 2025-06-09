@@ -347,10 +347,19 @@ public class ForgejoReleaser extends AbstractReleaser<org.jreleaser.model.api.re
             Issue issue = op.get();
             if ("closed".equals(issue.getState()) && issue.getLabels().stream().noneMatch(l -> l.getName().equals(labelName))) {
                 context.getLogger().debug(RB.$("git.issue.release", issueNumber));
-                api.addLabelToIssue(forgejo.getOwner(), forgejo.getName(), issue, label);
-                api.commentOnIssue(forgejo.getOwner(), forgejo.getName(), issue, comment);
 
-                milestone.ifPresent(m -> applyMilestone(forgejo, api, issueNumber, issue, applyMilestone, m));
+                try {
+                    api.addLabelToIssue(forgejo.getOwner(), forgejo.getName(), issue, label);
+                    api.commentOnIssue(forgejo.getOwner(), forgejo.getName(), issue, comment);
+
+                    milestone.ifPresent(m -> applyMilestone(forgejo, api, issueNumber, issue, applyMilestone, m));
+                } catch (RestAPIException e) {
+                    if (e.isForbidden()) {
+                        context.getLogger().warn(e.getMessage());
+                    } else {
+                        throw e;
+                    }
+                }
             }
         }
     }
