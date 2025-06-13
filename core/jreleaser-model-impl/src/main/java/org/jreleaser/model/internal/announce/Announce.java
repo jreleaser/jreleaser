@@ -266,10 +266,14 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         this.discourse.merge(discourse);
     }
 
+    @Deprecated
+    @JsonPropertyDescription("announce.discussions is deprecated since 1.19.0 and will be removed in 2.0.0")
     public DiscussionsAnnouncer getDiscussions() {
         return discussions;
     }
 
+    @Deprecated
+    @JsonPropertyDescription("announce.discussions is deprecated since 1.19.0 and will be removed in 2.0.0")
     public void setDiscussions(DiscussionsAnnouncer discussions) {
         this.discussions.merge(discussions);
     }

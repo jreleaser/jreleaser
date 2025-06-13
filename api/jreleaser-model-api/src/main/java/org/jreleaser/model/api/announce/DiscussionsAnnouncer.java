@@ -21,6 +21,7 @@ package org.jreleaser.model.api.announce;
  * @author Andres Almiray
  * @since 0.1.0
  */
+@Deprecated
 public interface DiscussionsAnnouncer extends Announcer {
     String TYPE = "discussions";
 

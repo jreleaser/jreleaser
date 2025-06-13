@@ -35,6 +35,7 @@ public interface Announce extends Domain, Activatable {
 
     DiscourseAnnouncer getDiscourse();
 
+    @Deprecated
     DiscussionsAnnouncer getDiscussions();
 
     GitterAnnouncer getGitter();
