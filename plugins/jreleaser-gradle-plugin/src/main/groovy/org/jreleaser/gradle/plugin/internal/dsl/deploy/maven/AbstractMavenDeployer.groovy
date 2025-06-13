@@ -174,9 +174,9 @@ abstract class AbstractMavenDeployer implements MavenDeployer {
         if (username.present) deployer.username = username.get()
         if (password.present) deployer.password = password.get()
         if (authorization.present) deployer.authorization = authorization.get()
-        Set<String> temp = []
-        temp.addAll( (List<String>) stagingRepositories.getOrElse([]))
-        stagingRepositories2.each {   RegularFile file ->  temp.add(file.asFile.absolutePath)    }
+        Set<String> temp = new TreeSet<>()
+        temp.addAll((List<String>) stagingRepositories.getOrElse([]))
+        stagingRepositories2.each { RegularFile file -> temp.add(file.asFile.absolutePath) }
         deployer.stagingRepositories = temp.toList()
         for (ArtifactOverrideImpl artifact : artifactOverrides) {
             deployer.addArtifactOverride(artifact.toModel())
