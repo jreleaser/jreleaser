@@ -19,6 +19,7 @@ package org.jreleaser.model.internal.validation.packagers;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
+import org.jreleaser.model.api.JReleaserCommand;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.JReleaserModel;
 import org.jreleaser.model.internal.common.Artifact;
@@ -435,13 +436,16 @@ public final class DockerPackagerValidator {
                         ".registry." + serverName + ".username"));
                 }
 
-                registry.setPassword(
-                    checkProperty(context,
-                        resolveKeys(element, serverName, ".password"),
-                        "registry." + serverName + ".password",
-                        registry.getPassword(),
-                        errors,
-                        context.isDryrun()));
+                if (context.getCommand() == JReleaserCommand.PUBLISH ||
+                    context.getCommand() == JReleaserCommand.FULL_RELEASE) {
+                    registry.setPassword(
+                        checkProperty(context,
+                            resolveKeys(element, serverName, ".password"),
+                            "registry." + serverName + ".password",
+                            registry.getPassword(),
+                            errors,
+                            context.isDryrun()));
+                }
             }
         }
     }
