@@ -18,6 +18,7 @@
 package org.jreleaser.model.internal.validation.deploy.maven;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.model.Active;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.Stage;
 import org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer.StageOperation;
@@ -57,6 +58,20 @@ public final class Nexus2MavenDeployerValidator {
     }
 
     private static void validateNexus2MavenDeployer(JReleaserContext context, Nexus2MavenDeployer mavenDeployer, Errors errors) {
+        if (context.getModel().getProject().isSnapshot()) {
+            mavenDeployer.setSnapshotUrl(
+                checkProperty(context,
+                    mavenDeployer.keysFor("snapshot.url"),
+                    "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".snapshotUrl",
+                    mavenDeployer.getSnapshotUrl(),
+                    errors));
+        }
+
+        if (Active.SNAPSHOT == mavenDeployer.getActive() &&
+            isBlank(mavenDeployer.getUrl())) {
+            mavenDeployer.setUrl(mavenDeployer.getSnapshotUrl());
+        }
+
         if (isNotBlank(mavenDeployer.getUrl()) &&
             mavenDeployer.getUrl().contains("oss.sonatype.org") &&
             !mavenDeployer.isApplyMavenCentralRulesSet()) {
@@ -78,15 +93,6 @@ public final class Nexus2MavenDeployerValidator {
 
         validateMavenDeployer(context, mavenDeployer, errors);
         if (!mavenDeployer.isEnabled()) return;
-
-        if (context.getModel().getProject().isSnapshot()) {
-            mavenDeployer.setSnapshotUrl(
-                checkProperty(context,
-                    mavenDeployer.keysFor("snapshot.url"),
-                    "deploy.maven." + mavenDeployer.getType() + "." + mavenDeployer.getName() + ".snapshotUrl",
-                    mavenDeployer.getSnapshotUrl(),
-                    errors));
-        }
 
         mavenDeployer.setStagingProfileId(
             checkProperty(context,
