@@ -18,6 +18,7 @@
 package org.jreleaser.model.spi.deploy.maven;
 
 import org.jreleaser.mustache.TemplateContext;
+import org.jreleaser.version.SemanticVersion;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -284,5 +285,32 @@ public class Deployable implements Comparable<Deployable> {
 
     public boolean isMavenMetadata() {
         return filename.endsWith(MAVEN_METADATA_XML);
+    }
+
+    public boolean isVersionSpecificMavenMetadata() {
+        if (!isMavenMetadata()) return false;
+        try {
+            SemanticVersion.of(Paths.get(path).getFileName().toString());
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Deployable{" +
+            "stagingRepository='" + stagingRepository + '\'' +
+            ", path='" + path + '\'' +
+            ", filename='" + filename + '\'' +
+            ", groupId='" + groupId + '\'' +
+            ", artifactId='" + artifactId + '\'' +
+            ", version='" + version + '\'' +
+            ", classifier='" + classifier + '\'' +
+            ", extension='" + extension + '\'' +
+            ", packaging='" + packaging + '\'' +
+            ", relocated=" + relocated +
+            ", snapshot=" + snapshot +
+            '}';
     }
 }
