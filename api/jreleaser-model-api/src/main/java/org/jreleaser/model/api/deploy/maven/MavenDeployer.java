@@ -17,12 +17,15 @@
  */
 package org.jreleaser.model.api.deploy.maven;
 
+import static org.jreleaser.util.StringUtils.isBlank;
+
 import org.jreleaser.model.Http;
 import org.jreleaser.model.api.common.Domain;
 import org.jreleaser.model.api.common.TimeoutAware;
 import org.jreleaser.model.api.deploy.Deployer;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -68,5 +71,14 @@ public interface MavenDeployer extends Deployer, TimeoutAware {
         boolean isJavadocJar();
 
         boolean isVerifyPom();
+    }
+
+    enum MavenMetadataTransformationMode {
+        DISABLED, MERGE, RECREATE;
+
+        public static MavenMetadataTransformationMode of(String str) {
+            if (isBlank(str)) return null;
+            return MavenMetadataTransformationMode.valueOf(str.toUpperCase(Locale.ENGLISH).trim());
+        }
     }
 }

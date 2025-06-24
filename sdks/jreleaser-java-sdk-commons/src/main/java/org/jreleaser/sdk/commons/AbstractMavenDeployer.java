@@ -17,9 +17,12 @@
  */
 package org.jreleaser.sdk.commons;
 
+import dev.failsafe.Failsafe;
+import dev.failsafe.RetryPolicy;
 import feign.form.FormData;
 import org.apache.commons.io.IOUtils;
 import org.jreleaser.bundle.RB;
+import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.api.signing.SigningException;
 import org.jreleaser.model.internal.JReleaserContext;
@@ -37,15 +40,23 @@ import org.jreleaser.util.Algorithm;
 import org.jreleaser.util.ChecksumUtils;
 import org.jreleaser.util.CollectionUtils;
 import org.jreleaser.util.Errors;
+import org.jreleaser.util.MavenMetadataTransformationUtils;
+import org.jreleaser.version.SemanticVersion;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import java.io.BufferedInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -57,10 +68,12 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -107,9 +120,21 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
         .e("https://pgp.mit.edu", "https://pgp.mit.edu/pks/lookup?op=get&search=0x%s");
 
     protected final JReleaserContext context;
+    private final RetryPolicy<byte[]> retryPolicy;
+    private final Comparator<String> versionComparator = Comparator.comparing(SemanticVersion::of);
 
     protected AbstractMavenDeployer(JReleaserContext context) {
         this.context = context;
+        // Let's give a few retires for the XML download, while it should usually work on the first try, network issues happen:
+        final int maxRetries = 5;
+        JReleaserLogger logger = context.getLogger();
+        retryPolicy = RetryPolicy.<byte[]>builder()
+            .withDelay(Duration.ofSeconds(15))
+            .withMaxRetries(maxRetries)
+            .onFailedAttempt(event -> {
+                logger.info(RB.$("mavenMetadataTransformation.retry.attempt"), event.getAttemptCount(), maxRetries);
+                logger.debug(RB.$("mavenMetadataTransformation.retry.failed.attempt", event.getAttemptCount(), maxRetries, event.getLastResult()), event.getLastException());
+            }).build();
     }
 
     protected Set<Deployable> collectDeployableArtifacts() {
@@ -140,6 +165,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
             throw new JReleaserException(RB.$("ERROR_deployer_maven_central_rules"));
         }
 
+        mergeDeployableMavenMetadata(deployablesMap, deployables);
         if (sign) signDeployables(deployablesMap, deployables);
         if (checksum) checksumDeployables(deployablesMap, deployables);
 
@@ -594,6 +620,61 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
             } catch (IOException e) {
                 throw new JReleaserException(RB.$("ERROR_unexpected_error_calculate_checksum", deployable.getFilename()), e);
             }
+        }
+    }
+
+    private void mergeDeployableMavenMetadata(Map<String, Deployable> deployablesMap, Set<Deployable> deployables) {
+        org.jreleaser.model.api.deploy.maven.MavenDeployer.MavenMetadataTransformationMode mode = getDeployer().getMavenMetadataTransformationMode();
+        if (org.jreleaser.model.api.deploy.maven.MavenDeployer.MavenMetadataTransformationMode.DISABLED.equals(mode)) {
+            return;
+        }
+
+        try {
+            context.getLogger().info(RB.$("mavenMetadataTransformation.header"));
+            context.getLogger().increaseIndent();
+            context.getLogger().setPrefix("maven-metadata");
+
+            for (Deployable deployable : deployablesMap.values()) {
+                // We only need the metadata xmls that are in the outer directory and are not version-specific ones.
+                if (deployable.isMavenMetadata() && !deployable.isVersionSpecificMavenMetadata()) {
+                    context.getLogger().info(RB.$("mavenMetadataTransformation.processing", deployable.getPath()));
+                    getDeployer().getMavenMetadataUrl(deployable).ifPresent(mavenMetadataUrl -> {
+                        byte[] xml = Failsafe.with(retryPolicy).get(() -> {
+                            try (InputStream is = mavenMetadataUrl.toURL().openConnection().getInputStream();
+                                 BufferedInputStream buf = new BufferedInputStream(is)) {
+                                return buf.readAllBytes();
+                            }
+                        });
+                        try (Writer writer = context.isDryrun() ? new StringWriter() : new FileWriter(deployable.getLocalPath().toAbsolutePath().toFile(), false)) {
+                            if (org.jreleaser.model.api.deploy.maven.MavenDeployer.MavenMetadataTransformationMode.MERGE.equals(mode)) {
+                                MavenMetadataTransformationUtils.mergeMetadataXml(
+                                    xml,
+                                    context.getModel().getProject().getVersion(),
+                                    writer,
+                                    versionComparator
+                                );
+                            } else if (org.jreleaser.model.api.deploy.maven.MavenDeployer.MavenMetadataTransformationMode.RECREATE.equals(mode)) {
+                                MavenMetadataTransformationUtils.recreateMetadataXml(
+                                    xml,
+                                    context.getModel().getProject().getVersion(),
+                                    deployable.getGroupId(),
+                                    deployable.getArtifactId(),
+                                    writer,
+                                    versionComparator
+                                );
+                            }
+                            if (context.isDryrun()) {
+                                context.getLogger().debug(RB.$("mavenMetadataTransformation.result"), writer.toString());
+                            }
+                        } catch (IOException | XMLStreamException e) {
+                            throw new JReleaserException(RB.$("ERROR_unexpected_error_transforming_metadata", deployable.getLocalPath()), e);
+                        }
+                    });
+                }
+            }
+        } finally {
+            context.getLogger().decreaseIndent();
+            context.getLogger().restorePrefix();
         }
     }
 
