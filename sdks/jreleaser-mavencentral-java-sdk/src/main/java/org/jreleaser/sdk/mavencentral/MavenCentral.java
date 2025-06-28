@@ -118,6 +118,7 @@ public class MavenCentral {
 
     public Optional<Deployment> status(String deploymentId) throws MavenCentralException {
         return wrap(() -> {
+            context.getLogger().debug(RB.$("maven.central.deployment.status"), deploymentId);
             Map<String, Object> params = new LinkedHashMap<>();
             params.put("id", deploymentId);
             return Optional.ofNullable(api.status(params));
@@ -135,6 +136,7 @@ public class MavenCentral {
         return wrap(() -> {
             FormData formData = ClientUtils.toFormData(bundle);
             String deploymentId = api.upload(formData);
+            context.getLogger().info(RB.$("maven.central.bundled.uploaded"), bundle.getFileName(), deploymentId);
             waitForState(deploymentId, State.VALIDATED, State.FAILED);
             return deploymentId;
         });
