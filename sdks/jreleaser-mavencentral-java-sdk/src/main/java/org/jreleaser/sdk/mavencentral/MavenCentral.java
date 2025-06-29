@@ -128,7 +128,7 @@ public class MavenCentral {
     public void publish(String deploymentId) throws MavenCentralException {
         wrap(() -> {
             api.publish(deploymentId);
-            waitForState(deploymentId, State.PUBLISHED, State.FAILED);
+            waitForState(deploymentId, true, State.PUBLISHED, State.FAILED);
         });
     }
 
@@ -137,7 +137,7 @@ public class MavenCentral {
             FormData formData = ClientUtils.toFormData(bundle);
             String deploymentId = api.upload(formData);
             context.getLogger().info(RB.$("maven.central.bundled.uploaded"), bundle.getFileName(), deploymentId);
-            waitForState(deploymentId, State.VALIDATED, State.FAILED);
+            waitForState(deploymentId, false, State.VALIDATED, State.FAILED);
             return deploymentId;
         });
     }
@@ -169,14 +169,20 @@ public class MavenCentral {
         }
     }
 
-    private void waitForState(String deploymentId, State... states) throws MavenCentralException {
+    private void waitForState(String deploymentId, boolean checkTimeout, State... states) throws MavenCentralException {
         context.getLogger().debug(RB.$("maven.central.wait.deployment.state", deploymentId, Arrays.asList(states)));
 
+        Boolean[] timeout = new Boolean[]{false};
         Optional<Deployment> deployment = retrier.retry(o -> o.map(Deployment::isTransitioning).orElse(false),
             () -> status(deploymentId),
             states[0] != State.PUBLISHED? () -> {}: () -> {
                 context.getLogger().warn(RB.$("WARN_maven_central_publication_timeout", deploymentId));
+                timeout[0] = true;
             });
+
+        if (checkTimeout && timeout[0]) {
+            return;
+        }
 
         if (deployment.isPresent()) {
             if (deployment.get().isTransitioning()) {
