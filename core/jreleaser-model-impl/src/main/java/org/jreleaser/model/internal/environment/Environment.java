@@ -219,8 +219,10 @@ public final class Environment extends AbstractModelObject<Environment> implemen
             Set<String> keyNames = new TreeSet<>();
             Properties envVars = new Properties();
             System.getenv().forEach((k, v) -> {
-                if (k.startsWith(JRELEASER_ENV_PREFIX)) keyNames.add(k);
-                if (k.startsWith(JRELEASER_ENV_PREFIX)) envVars.put(k, v);
+                if (k.startsWith(JRELEASER_ENV_PREFIX) && isNotBlank(v)) {
+                    keyNames.add(k);
+                    envVars.put(k, v);
+                }
             });
             if (System.getenv().containsKey(envKey(DEFAULT_GIT_REMOTE))) {
                 keyNames.add(envKey(DEFAULT_GIT_REMOTE));

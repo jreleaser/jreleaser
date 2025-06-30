@@ -78,7 +78,7 @@ public final class Environment {
 
         Set<String> vars = new TreeSet<>();
         System.getenv().forEach((k, v) -> {
-            if (k.startsWith(JRELEASER_ENV_PREFIX)) vars.add(k);
+            if (k.startsWith(JRELEASER_ENV_PREFIX) && isNotBlank(v)) vars.add(k);
         });
         if (System.getenv().containsKey(envKey(DEFAULT_GIT_REMOTE))) {
             vars.add(envKey(DEFAULT_GIT_REMOTE));
