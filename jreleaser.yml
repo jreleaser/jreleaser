@@ -131,6 +131,8 @@ deploy:
       release-deploy:
         active: RELEASE
         url: https://central.sonatype.com/api/v1/publisher
+        maxRetries: 150
+        retryDelay: 30
         stagingRepositories:
           - build/repos/local/release
 
