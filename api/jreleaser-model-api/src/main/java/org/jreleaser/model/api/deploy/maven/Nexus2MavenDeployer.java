@@ -32,6 +32,8 @@ public interface Nexus2MavenDeployer extends MavenDeployer {
 
     String getSnapshotUrl();
 
+    String getSnapshotServiceUrl();
+
     String getVerifyUrl();
 
     boolean isCloseRepository();
@@ -49,6 +51,8 @@ public interface Nexus2MavenDeployer extends MavenDeployer {
     Stage getStartStage();
 
     Stage getEndStage();
+
+    MavenMetadataTransformationMode getMavenMetadataTransformationMode();
 
     enum Stage {
         UPLOAD,

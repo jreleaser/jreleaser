@@ -20,10 +20,14 @@ package org.jreleaser.model.internal.deploy.maven;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Http;
+import org.jreleaser.model.spi.deploy.maven.Deployable;
 import org.jreleaser.mustache.TemplateContext;
 
+import java.net.URI;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import static java.util.Collections.unmodifiableList;
@@ -39,11 +43,13 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
     private static final long serialVersionUID = 9077911047137402294L;
 
     private String snapshotUrl;
+    private String snapshotServiceUrl;
     private String verifyUrl;
     private Boolean closeRepository;
     private Boolean releaseRepository;
     private int transitionDelay;
     private int transitionMaxRetries;
+    private org.jreleaser.model.api.deploy.maven.MavenDeployer.MavenMetadataTransformationMode mavenMetadataTransformationMode;
 
     private String stagingProfileId;
     private String stagingRepositoryId;
@@ -64,6 +70,11 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
         @Override
         public String getSnapshotUrl() {
             return snapshotUrl;
+        }
+
+        @Override
+        public String getSnapshotServiceUrl() {
+            return snapshotServiceUrl;
         }
 
         @Override
@@ -119,6 +130,11 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
         @Override
         public Stage getEndStage() {
             return Nexus2MavenDeployer.this.getEndStage();
+        }
+
+        @Override
+        public MavenMetadataTransformationMode getMavenMetadataTransformationMode() {
+            return Nexus2MavenDeployer.this.getMavenMetadataTransformationMode();
         }
 
         @Override
@@ -236,10 +252,41 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
         super.merge(source);
         this.verifyUrl = merge(this.verifyUrl, source.verifyUrl);
         this.snapshotUrl = merge(this.snapshotUrl, source.snapshotUrl);
+        this.snapshotServiceUrl = merge(this.snapshotServiceUrl, source.snapshotServiceUrl);
         this.closeRepository = merge(this.closeRepository, source.closeRepository);
         this.releaseRepository = merge(this.releaseRepository, source.releaseRepository);
         this.transitionDelay = merge(this.transitionDelay, source.transitionDelay);
         this.transitionMaxRetries = merge(this.transitionMaxRetries, source.transitionMaxRetries);
+        this.mavenMetadataTransformationMode = merge(this.mavenMetadataTransformationMode, source.mavenMetadataTransformationMode);
+    }
+
+    @Override
+    public org.jreleaser.model.api.deploy.maven.MavenDeployer.MavenMetadataTransformationMode getMavenMetadataTransformationMode() {
+        return mavenMetadataTransformationMode;
+    }
+
+    public void setMavenMetadataTransformationMode(org.jreleaser.model.api.deploy.maven.MavenDeployer.MavenMetadataTransformationMode mavenMetadataTransformationMode) {
+        this.mavenMetadataTransformationMode = mavenMetadataTransformationMode;
+    }
+
+    @Override
+    public Optional<URI> getMavenMetadataUrl(Deployable deployable) {
+        // snapshot url has a format :
+        //      https://oss.sonatype.org/content/repositories/snapshots/
+        // for metadata download we need a:
+        //      https://oss.sonatype.org/content/repositories/snapshots/groupid/artifactid/maven-metadata.xml
+        // for the service url we are looking to get a:
+        //      https://oss.sonatype.org/service/local/repositories/snapshots/content/
+        // so we can get a
+        //      https://oss.sonatype.org/service/local/repositories/snapshots/content/groupid/artifactid/
+        switch (mavenMetadataTransformationMode) {
+            case MERGE:
+                return Optional.of(URI.create(String.format(Locale.ROOT, "%s%s/maven-metadata.xml", snapshotUrl, deployable.getPath().substring(1))));
+            case RECREATE:
+                return Optional.of(URI.create(String.format(Locale.ROOT, "%s%s/", snapshotServiceUrl, deployable.getPath().substring(1))));
+            default:
+                return Optional.empty();
+        }
     }
 
     public String getVerifyUrl() {
@@ -256,6 +303,14 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
 
     public void setSnapshotUrl(String snapshotUrl) {
         this.snapshotUrl = snapshotUrl;
+    }
+
+    public String getSnapshotServiceUrl() {
+        return snapshotServiceUrl;
+    }
+
+    public void setSnapshotServiceUrl(String snapshotServiceUrl) {
+        this.snapshotServiceUrl = snapshotServiceUrl;
     }
 
     public boolean isCloseRepository() {
@@ -341,6 +396,7 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("verifyUrl", verifyUrl);
         props.put("snapshotUrl", snapshotUrl);
+        props.put("snapshotServiceUrl", snapshotServiceUrl);
         props.put("closeRepository", isCloseRepository());
         props.put("releaseRepository", isReleaseRepository());
         props.put("transitionDelay", transitionDelay);
@@ -349,5 +405,6 @@ public final class Nexus2MavenDeployer extends AbstractMavenDeployer<Nexus2Maven
         props.put("stagingRepositoryId", stagingRepositoryId);
         props.put("startStage", startStage);
         props.put("endStage", endStage);
+        props.put("mavenMetadataTransformationMode", mavenMetadataTransformationMode);
     }
 }
