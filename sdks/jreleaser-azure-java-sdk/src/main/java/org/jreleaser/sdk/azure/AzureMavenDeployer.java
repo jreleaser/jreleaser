@@ -40,6 +40,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * @author Andres Almiray
  * @since 1.5.0
  */
+@org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class AzureMavenDeployer extends AbstractMavenDeployer<org.jreleaser.model.api.deploy.maven.AzureMavenDeployer, org.jreleaser.model.internal.deploy.maven.AzureMavenDeployer> {
     private org.jreleaser.model.internal.deploy.maven.AzureMavenDeployer deployer;
 

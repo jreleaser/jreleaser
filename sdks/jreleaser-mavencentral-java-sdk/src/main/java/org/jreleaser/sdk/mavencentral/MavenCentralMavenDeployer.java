@@ -46,6 +46,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 1.12.0
  */
+@org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class MavenCentralMavenDeployer extends AbstractMavenDeployer<org.jreleaser.model.api.deploy.maven.MavenCentralMavenDeployer,
     org.jreleaser.model.internal.deploy.maven.MavenCentralMavenDeployer> {
 

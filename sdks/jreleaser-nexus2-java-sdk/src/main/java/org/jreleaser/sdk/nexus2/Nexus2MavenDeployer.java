@@ -42,6 +42,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 1.3.0
  */
+@org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class Nexus2MavenDeployer extends AbstractMavenDeployer<org.jreleaser.model.api.deploy.maven.Nexus2MavenDeployer,
     org.jreleaser.model.internal.deploy.maven.Nexus2MavenDeployer> {
 

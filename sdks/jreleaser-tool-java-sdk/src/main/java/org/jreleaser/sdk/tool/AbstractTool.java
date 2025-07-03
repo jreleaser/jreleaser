@@ -33,6 +33,7 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @author Andres Almiray
  * @since 1.0.0
  */
+@org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class AbstractTool {
     protected final JReleaserContext context;
     protected final DownloadableTool tool;

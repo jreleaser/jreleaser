@@ -32,6 +32,7 @@ import java.util.Set;
  * @author Andres Almiray
  * @since 1.18.0
  */
+@org.jreleaser.infra.nativeimage.annotations.NativeImage
 public class Nexus3MavenDeployer extends AbstractMavenDeployer<org.jreleaser.model.api.deploy.maven.Nexus3MavenDeployer,
     org.jreleaser.model.internal.deploy.maven.Nexus3MavenDeployer> {
 
