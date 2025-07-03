@@ -93,11 +93,15 @@ enforce {
 
     rule(enforcer.rules.EnforceBytecodeVersion) { r ->
         r.exclude("org.graalvm.sdk:graal-sdk:$graalVersion")
+        r.exclude("org.graalvm.sdk:collections:$graalVersion")
+        r.exclude("org.graalvm.sdk:nativeimage:$graalVersion")
+        r.exclude("org.graalvm.sdk:word:$graalVersion")
         r.exclude("org.graalvm.nativeimage:svm:$graalVersion")
         r.exclude("org.graalvm.nativeimage:pointsto:$graalVersion")
         r.exclude("org.graalvm.nativeimage:native-image-base:$graalVersion")
         r.exclude("org.graalvm.compiler:compiler:$graalVersion")
         r.exclude("org.graalvm.truffle:truffle-api:$graalVersion")
+        r.exclude("org.graalvm.truffle:truffle-compiler:$graalVersion")
         r.exclude("org.graalvm.nativeimage:objectfile:$graalVersion")
         r.exclude("org.kordamp.gradle:base-gradle-plugin:$kordampPluginVersion")
         r.exclude("org.jreleaser:jreleaser-graalvm-sdk")
