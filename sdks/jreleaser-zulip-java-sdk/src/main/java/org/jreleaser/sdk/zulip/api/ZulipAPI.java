@@ -19,13 +19,12 @@ package org.jreleaser.sdk.zulip.api;
 
 import feign.Headers;
 import feign.RequestLine;
-import org.jreleaser.infra.nativeimage.annotations.ProxyConfig;
 
 /**
  * @author Andres Almiray
  * @since 0.1.0
  */
-@ProxyConfig
+@org.jreleaser.infra.nativeimage.annotations.ProxyConfig
 public interface ZulipAPI {
     @RequestLine("POST /messages")
     @Headers("Content-Type: application/x-www-form-urlencoded")

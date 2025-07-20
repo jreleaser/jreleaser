@@ -21,7 +21,6 @@ import feign.Headers;
 import feign.Param;
 import feign.QueryMap;
 import feign.RequestLine;
-import org.jreleaser.infra.nativeimage.annotations.ProxyConfig;
 
 import java.util.List;
 import java.util.Map;
@@ -30,7 +29,7 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.9.0
  */
-@ProxyConfig
+@org.jreleaser.infra.nativeimage.annotations.ProxyConfig
 public interface DiscoAPI {
     @RequestLine("GET /packages")
     @Headers("Content-Type: application/json")

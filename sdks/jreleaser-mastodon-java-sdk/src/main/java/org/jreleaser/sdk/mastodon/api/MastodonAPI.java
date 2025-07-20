@@ -19,13 +19,12 @@ package org.jreleaser.sdk.mastodon.api;
 
 import feign.Headers;
 import feign.RequestLine;
-import org.jreleaser.infra.nativeimage.annotations.ProxyConfig;
 
 /**
  * @author Andres Almiray
  * @since 0.4.0
  */
-@ProxyConfig
+@org.jreleaser.infra.nativeimage.annotations.ProxyConfig
 public interface MastodonAPI {
     @RequestLine("POST /statuses")
     @Headers("Content-Type: application/json")

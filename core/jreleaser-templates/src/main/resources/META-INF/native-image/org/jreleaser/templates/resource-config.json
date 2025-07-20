@@ -1,0 +1,15 @@
+{
+    "resources": {
+        "includes": [
+            {
+                "pattern": "META-INF/jreleaser/icons/.*/.*"
+            },
+            {
+                "pattern": "META-INF/jreleaser/templates/.*"
+            },
+            {
+                "pattern": "META-INF/jreleaser/templates.properties"
+            }
+        ]
+    }
+}

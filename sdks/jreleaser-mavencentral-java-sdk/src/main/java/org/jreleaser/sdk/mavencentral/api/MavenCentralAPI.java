@@ -29,6 +29,7 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 1.12.0
  */
+@org.jreleaser.infra.nativeimage.annotations.ProxyConfig
 public interface MavenCentralAPI {
     @RequestLine("DELETE /deployment/{deploymentId}")
     @Headers("Content-Type: application/json")

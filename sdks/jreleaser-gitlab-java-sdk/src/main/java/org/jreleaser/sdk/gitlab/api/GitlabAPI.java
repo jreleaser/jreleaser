@@ -22,7 +22,6 @@ import feign.Param;
 import feign.QueryMap;
 import feign.RequestLine;
 import feign.form.FormData;
-import org.jreleaser.infra.nativeimage.annotations.ProxyConfig;
 import org.jreleaser.sdk.gitlab.internal.Page;
 
 import java.net.URI;
@@ -33,7 +32,7 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.1.0
  */
-@ProxyConfig
+@org.jreleaser.infra.nativeimage.annotations.ProxyConfig
 public interface GitlabAPI {
     @RequestLine("GET /user")
     GlUser getCurrentUser();

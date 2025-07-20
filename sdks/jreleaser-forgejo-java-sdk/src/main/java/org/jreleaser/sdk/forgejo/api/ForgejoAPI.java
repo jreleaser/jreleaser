@@ -22,7 +22,6 @@ import feign.Param;
 import feign.QueryMap;
 import feign.RequestLine;
 import feign.form.FormData;
-import org.jreleaser.infra.nativeimage.annotations.ProxyConfig;
 import org.jreleaser.sdk.forgejo.internal.Page;
 
 import java.util.List;
@@ -32,7 +31,7 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 1.18.0
  */
-@ProxyConfig
+@org.jreleaser.infra.nativeimage.annotations.ProxyConfig
 public interface ForgejoAPI {
     @RequestLine("GET /repos/{owner}/{repo}")
     Repository getRepository(@Param("owner") String owner, @Param("repo") String repo);

@@ -19,7 +19,6 @@ package org.jreleaser.sdk.discourse.api;
 
 import feign.Headers;
 import feign.RequestLine;
-import org.jreleaser.infra.nativeimage.annotations.ProxyConfig;
 
 import java.util.Map;
 
@@ -27,7 +26,7 @@ import java.util.Map;
  * @author shblue21
  * @since 1.3.0
  */
-@ProxyConfig
+@org.jreleaser.infra.nativeimage.annotations.ProxyConfig
 public interface DiscourseAPI {
     @RequestLine("POST /posts.json")
     @Headers("Content-Type: application/json")

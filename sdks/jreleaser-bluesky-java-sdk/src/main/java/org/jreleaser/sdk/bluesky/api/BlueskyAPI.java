@@ -20,16 +20,14 @@ package org.jreleaser.sdk.bluesky.api;
 import feign.Headers;
 import feign.Param;
 import feign.RequestLine;
-import org.jreleaser.infra.nativeimage.annotations.ProxyConfig;
 
 /**
  * @author Simon Verhoeven
  * @author Tom Cools
  * @since 1.7.0
  */
-@ProxyConfig
+@org.jreleaser.infra.nativeimage.annotations.ProxyConfig
 public interface BlueskyAPI {
-
     @RequestLine("POST /xrpc/com.atproto.server.createSession")
     @Headers("Content-Type: application/json")
     CreateSessionResponse createSession(CreateSessionRequest request);

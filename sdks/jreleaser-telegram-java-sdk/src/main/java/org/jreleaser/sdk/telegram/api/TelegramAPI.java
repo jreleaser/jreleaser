@@ -19,13 +19,12 @@ package org.jreleaser.sdk.telegram.api;
 
 import feign.Headers;
 import feign.RequestLine;
-import org.jreleaser.infra.nativeimage.annotations.ProxyConfig;
 
 /**
  * @author Andres Almiray
  * @since 0.8.0
  */
-@ProxyConfig
+@org.jreleaser.infra.nativeimage.annotations.ProxyConfig
 public interface TelegramAPI {
     @RequestLine("POST /sendMessage")
     @Headers("Content-Type: application/x-www-form-urlencoded")

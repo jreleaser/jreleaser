@@ -19,13 +19,12 @@ package org.jreleaser.sdk.linkedin.api;
 
 import feign.Headers;
 import feign.RequestLine;
-import org.jreleaser.infra.nativeimage.annotations.ProxyConfig;
 
 /**
  * @author Andres Almiray
  * @since 1.5.0
  */
-@ProxyConfig
+@org.jreleaser.infra.nativeimage.annotations.ProxyConfig
 public interface LinkedinAPI {
     @RequestLine("GET /me")
     @Headers("Content-Type: application/json")

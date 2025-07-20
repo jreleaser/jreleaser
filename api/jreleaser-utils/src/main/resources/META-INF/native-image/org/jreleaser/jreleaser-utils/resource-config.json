@@ -1,0 +1,9 @@
+{
+    "resources": {
+        "includes": [
+            {
+                "pattern": "org/jreleaser/default_versions.properties"
+            }
+        ]
+    }
+}

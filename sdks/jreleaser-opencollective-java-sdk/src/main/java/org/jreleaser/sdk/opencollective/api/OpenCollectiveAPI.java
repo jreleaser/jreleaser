@@ -19,13 +19,12 @@ package org.jreleaser.sdk.opencollective.api;
 
 import feign.Headers;
 import feign.RequestLine;
-import org.jreleaser.infra.nativeimage.annotations.ProxyConfig;
 
 /**
  * @author Andres Almiray
  * @since 1.6.0
  */
-@ProxyConfig
+@org.jreleaser.infra.nativeimage.annotations.ProxyConfig
 public interface OpenCollectiveAPI {
     @RequestLine("POST /")
     @Headers("Content-Type: application/json")

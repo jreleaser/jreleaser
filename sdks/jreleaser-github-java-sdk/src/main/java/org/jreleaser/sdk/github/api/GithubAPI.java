@@ -21,7 +21,6 @@ import feign.Headers;
 import feign.Param;
 import feign.QueryMap;
 import feign.RequestLine;
-import org.jreleaser.infra.nativeimage.annotations.ProxyConfig;
 import org.jreleaser.sdk.github.internal.Page;
 
 import java.net.URI;
@@ -32,7 +31,7 @@ import java.util.Map;
  * @author Andres Almiray
  * @since 0.6.0
  */
-@ProxyConfig
+@org.jreleaser.infra.nativeimage.annotations.ProxyConfig
 public interface GithubAPI {
     @RequestLine("GET /repos/{owner}/{repo}")
     GhRepository getRepository(@Param("owner") String owner, @Param("repo") String repo);
