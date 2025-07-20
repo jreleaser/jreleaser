@@ -37,6 +37,7 @@ import org.jreleaser.util.Algorithm;
 import org.jreleaser.util.ChecksumUtils;
 import org.jreleaser.util.CollectionUtils;
 import org.jreleaser.util.Errors;
+import org.jreleaser.util.FileUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -657,6 +658,8 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
         }
 
         private void match(Path path) {
+            if (FileUtils.isHidden(path)) return;
+
             String filename = path.getFileName().toString();
 
             if (filename.contains(MAVEN_METADATA_XML)) {

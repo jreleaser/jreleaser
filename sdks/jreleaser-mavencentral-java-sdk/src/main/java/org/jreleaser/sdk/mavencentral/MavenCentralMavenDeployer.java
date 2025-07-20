@@ -185,7 +185,7 @@ public class MavenCentralMavenDeployer extends AbstractMavenDeployer<org.jreleas
             for (String stagingRepository : deployer.getStagingRepositories()) {
                 Path stagingRepositoryDir = context.getBasedir().resolve(stagingRepository).normalize();
                 FileUtils.copyFilesRecursive(context.getLogger(), stagingRepositoryDir, bundleDir,
-                    p -> p.getFileName().toString().contains("maven-metadata.xml"));
+                    p -> FileUtils.isHidden(p) || p.getFileName().toString().contains("maven-metadata.xml"));
             }
 
             Files.createDirectories(bundleZip.getParent());

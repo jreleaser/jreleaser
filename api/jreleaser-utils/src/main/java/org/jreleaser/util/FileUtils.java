@@ -126,6 +126,14 @@ public final class FileUtils {
         //noop
     }
 
+    public static boolean isHidden(Path path) {
+        try {
+            return Files.isHidden(path);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static void listFilesAndConsume(Path path, Consumer<Stream<Path>> consumer) throws IOException {
         if (!Files.exists(path)) return;
         try (Stream<Path> files = Files.list(path)) {
