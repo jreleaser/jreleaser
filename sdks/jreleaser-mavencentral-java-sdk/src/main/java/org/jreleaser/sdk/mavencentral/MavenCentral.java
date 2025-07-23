@@ -34,6 +34,7 @@ import feign.jackson.JacksonDecoder;
 import org.apache.commons.io.IOUtils;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.logging.JReleaserLogger;
+import org.jreleaser.model.Http;
 import org.jreleaser.model.api.JReleaserContext;
 import org.jreleaser.model.spi.deploy.maven.Deployable;
 import org.jreleaser.mustache.Templates;
@@ -78,6 +79,7 @@ public class MavenCentral {
 
     public MavenCentral(JReleaserContext context,
                         String apiHost,
+                        Http.Authorization authorization,
                         String username,
                         String password,
                         int connectTimeout,
@@ -85,19 +87,23 @@ public class MavenCentral {
                         boolean dryrun,
                         int retryDelay,
                         int maxRetries) {
-        requireNonNull(context, "'context' must not be blank");
         requireNonBlank(apiHost, "'apiHost' must not be blank");
-        requireNonBlank(username, "'username' must not be blank");
-        requireNonBlank(password, "'password' must not be blank");
+        requireNonNull(authorization, "'authorization' must not be blank");
 
-        this.context = context;
+        this.context = requireNonNull(context, "'context' must not be blank");
         this.dryrun = dryrun;
         this.connectTimeout = connectTimeout;
         this.readTimeout = readTimeout;
         this.retrier = new Retrier(context.getLogger(), retryDelay, maxRetries);
+
+        TokenAuthRequestInterceptor authRequestInterceptor = new TokenAuthRequestInterceptor(password);
+        if (authorization == Http.Authorization.BASIC) {
+            new TokenAuthRequestInterceptor(TokenAuthRequestInterceptor.BEARER, username, password);
+        }
+
         this.api = ClientUtils.builder(context, connectTimeout, readTimeout)
             .decoder(new MavenCentralDecoder())
-            .requestInterceptor(new TokenAuthRequestInterceptor("Bearer", username, password))
+            .requestInterceptor(authRequestInterceptor)
             .errorDecoder(new MavenCentralErrorDecoder(context.getLogger()))
             .target(MavenCentralAPI.class, apiHost);
     }
