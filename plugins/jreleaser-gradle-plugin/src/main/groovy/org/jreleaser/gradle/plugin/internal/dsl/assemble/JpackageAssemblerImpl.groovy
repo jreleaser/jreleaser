@@ -278,6 +278,7 @@ class JpackageAssemblerImpl extends AbstractJavaAssembler implements JpackageAss
         final ListProperty<String> types
         final Property<String> installDir
         final Property<String> resourceDir
+        final Property<Boolean> launcherAsService
 
         @Inject
         AbstractPlatformPackager(ObjectFactory objects) {
@@ -286,6 +287,7 @@ class JpackageAssemblerImpl extends AbstractJavaAssembler implements JpackageAss
             types = objects.listProperty(String).convention(Providers.<List<String>> notDefined())
             installDir = objects.property(String).convention(Providers.<String> notDefined())
             resourceDir = objects.property(String).convention(Providers.<String> notDefined())
+            launcherAsService = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         }
 
         @Override
@@ -300,7 +302,8 @@ class JpackageAssemblerImpl extends AbstractJavaAssembler implements JpackageAss
                 types.present ||
                 jdk.isSet() ||
                 installDir.present ||
-                resourceDir.present
+                resourceDir.present ||
+                launcherAsService.present
         }
 
         protected abstract ArtifactImpl getJdk()
@@ -322,6 +325,7 @@ class JpackageAssemblerImpl extends AbstractJavaAssembler implements JpackageAss
             p.types = (List<String>) types.getOrElse([] as List<String>)
             p.installDir = installDir.orNull
             p.resourceDir = resourceDir.orNull
+            p.launcherAsService = launcherAsService.orNull
             if (jdk.isSet()) p.jdk = jdk.toModel()
         }
     }
@@ -393,8 +397,11 @@ class JpackageAssemblerImpl extends AbstractJavaAssembler implements JpackageAss
         final Property<Boolean> menu
         final Property<Boolean> perUserInstall
         final Property<Boolean> shortcut
+        final Property<Boolean> shortcutPrompt
         final Property<String> menuGroup
         final Property<String> upgradeUuid
+        final Property<String> helpUrl
+        final Property<String> updateUrl
         private final ArtifactImpl jdk
 
         @Inject
@@ -405,8 +412,11 @@ class JpackageAssemblerImpl extends AbstractJavaAssembler implements JpackageAss
             menu = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
             perUserInstall = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
             shortcut = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+            shortcutPrompt = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
             menuGroup = objects.property(String).convention(Providers.<String> notDefined())
             upgradeUuid = objects.property(String).convention(Providers.<String> notDefined())
+            helpUrl = objects.property(String).convention(Providers.<String> notDefined())
+            updateUrl = objects.property(String).convention(Providers.<String> notDefined())
             jdk = objects.newInstance(ArtifactImpl, objects)
             jdk.setName('jdk')
         }
@@ -419,8 +429,11 @@ class JpackageAssemblerImpl extends AbstractJavaAssembler implements JpackageAss
                 menu.present ||
                 perUserInstall.present ||
                 shortcut.present ||
+                shortcutPrompt.present ||
                 menuGroup.present ||
-                upgradeUuid.present
+                upgradeUuid.present ||
+                helpUrl.present ||
+                updateUrl.present
         }
 
         @Override
@@ -436,8 +449,11 @@ class JpackageAssemblerImpl extends AbstractJavaAssembler implements JpackageAss
             a.menu = menu.orNull
             a.perUserInstall = perUserInstall.orNull
             a.shortcut = shortcut.orNull
+            a.shortcutPrompt = shortcutPrompt.orNull
             a.menuGroup = menuGroup.orNull
             a.upgradeUuid = upgradeUuid.orNull
+            a.helpUrl = helpUrl.orNull
+            a.updateUrl = updateUrl.orNull
             if (jdk.isSet()) a.jdk = jdk.toModel()
             a
         }

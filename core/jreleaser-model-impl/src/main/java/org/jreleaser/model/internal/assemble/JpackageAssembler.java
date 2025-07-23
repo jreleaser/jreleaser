@@ -461,6 +461,10 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
         String getResourceDir();
 
         void setResourceDir(String resourceDir);
+
+        boolean isLauncherAsService();
+
+        void setLauncherAsService(Boolean launcherAsService);
     }
 
     public static final class ApplicationPackage extends AbstractModelObject<ApplicationPackage> implements Domain {
@@ -695,7 +699,7 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
     }
 
     public abstract static class AbstractPlatformPackager<S extends AbstractPlatformPackager<S>> extends AbstractModelObject<S> implements PlatformPackager {
-        private static final long serialVersionUID = 2046243917741810506L;
+        private static final long serialVersionUID = 8350662398551017463L;
 
         private final Artifact jdk = new Artifact();
         private final List<String> types = new ArrayList<>();
@@ -708,6 +712,7 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
         private String icon;
         private String installDir;
         private String resourceDir;
+        private Boolean launcherAsService;
 
         protected AbstractPlatformPackager(String platform, List<String> validTypes) {
             this.platform = platform;
@@ -721,6 +726,7 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
             this.enabled = this.merge(this.enabled, source.isEnabled());
             this.installDir = this.merge(this.installDir, source.getInstallDir());
             this.resourceDir = this.merge(this.resourceDir, source.getResourceDir());
+            this.launcherAsService = this.merge(this.launcherAsService, source.isLauncherAsService());
             setJdk(source.getJdk());
             setTypes(merge(this.types, source.getTypes()));
         }
@@ -819,6 +825,16 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
         }
 
         @Override
+        public boolean isLauncherAsService() {
+            return null != launcherAsService && launcherAsService;
+        }
+
+        @Override
+        public void setLauncherAsService(Boolean launcherAsService) {
+            this.launcherAsService = launcherAsService;
+        }
+
+        @Override
         public Map<String, Object> asMap(boolean full) {
             if (!full && !isEnabled()) return Collections.emptyMap();
 
@@ -830,6 +846,7 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
             props.put("types", types);
             props.put("jdk", jdk.asMap(full));
             props.put("installDir", installDir);
+            props.put("launcherAsService", isLauncherAsService());
             asMap(full, props);
 
             Map<String, Object> map = new LinkedHashMap<>();
@@ -854,7 +871,7 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
 
         @JsonIgnore
         private final org.jreleaser.model.api.assemble.JpackageAssembler.Linux immutable = new org.jreleaser.model.api.assemble.JpackageAssembler.Linux() {
-            private static final long serialVersionUID = 2520774986990267446L;
+            private static final long serialVersionUID = 6801354680613876649L;
 
             @Override
             public List<String> getPackageDeps() {
@@ -934,6 +951,11 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
             @Override
             public String getResourceDir() {
                 return Linux.this.getResourceDir();
+            }
+
+            @Override
+            public boolean isLauncherAsService() {
+                return Linux.this.isLauncherAsService();
             }
 
             @Override
@@ -1036,25 +1058,28 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
             props.put("license", license);
             props.put("appRelease", appRelease);
             props.put("appCategory", appCategory);
-            props.put("shortcut", shortcut);
+            props.put("shortcut", isShortcut());
             props.put("packageDeps", packageDeps);
         }
     }
 
     public static final class Windows extends AbstractPlatformPackager<Windows> {
-        private static final long serialVersionUID = -8740230984658635712L;
+        private static final long serialVersionUID = 5422667595967237081L;
 
         private Boolean console;
         private Boolean dirChooser;
         private Boolean menu;
         private Boolean perUserInstall;
         private Boolean shortcut;
+        private Boolean shortcutPrompt;
         private String menuGroup;
         private String upgradeUuid;
+        private String helpUrl;
+        private String updateUrl;
 
         @JsonIgnore
         private final org.jreleaser.model.api.assemble.JpackageAssembler.Windows immutable = new org.jreleaser.model.api.assemble.JpackageAssembler.Windows() {
-            private static final long serialVersionUID = -6571133010636822955L;
+            private static final long serialVersionUID = 6920391900633709089L;
 
             @Override
             public boolean isConsole() {
@@ -1082,6 +1107,11 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
             }
 
             @Override
+            public boolean isShortcutPrompt() {
+                return Windows.this.isShortcutPrompt();
+            }
+
+            @Override
             public String getMenuGroup() {
                 return menuGroup;
             }
@@ -1089,6 +1119,16 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
             @Override
             public String getUpgradeUuid() {
                 return upgradeUuid;
+            }
+
+            @Override
+            public String getHelpUrl() {
+                return helpUrl;
+            }
+
+            @Override
+            public String getUpdateUrl() {
+                return updateUrl;
             }
 
             @Override
@@ -1132,6 +1172,11 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
             }
 
             @Override
+            public boolean isLauncherAsService() {
+                return Windows.this.isLauncherAsService();
+            }
+
+            @Override
             public Map<String, Object> asMap(boolean full) {
                 return unmodifiableMap(Windows.this.asMap(full));
             }
@@ -1153,8 +1198,11 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
             this.menu = this.merge(this.menu, source.menu);
             this.perUserInstall = this.merge(this.perUserInstall, source.perUserInstall);
             this.shortcut = this.merge(this.shortcut, source.shortcut);
+            this.shortcutPrompt = this.merge(this.shortcutPrompt, source.shortcutPrompt);
             this.menuGroup = this.merge(this.menuGroup, source.menuGroup);
             this.upgradeUuid = this.merge(this.upgradeUuid, source.upgradeUuid);
+            this.helpUrl = this.merge(this.helpUrl, source.helpUrl);
+            this.updateUrl = this.merge(this.updateUrl, source.updateUrl);
         }
 
         public boolean isConsole() {
@@ -1197,6 +1245,14 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
             this.shortcut = shortcut;
         }
 
+        public boolean isShortcutPrompt() {
+            return null != shortcutPrompt && shortcutPrompt;
+        }
+
+        public void setShortcutPrompt(Boolean shortcutPrompt) {
+            this.shortcutPrompt = shortcutPrompt;
+        }
+
         public String getMenuGroup() {
             return menuGroup;
         }
@@ -1213,15 +1269,34 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
             this.upgradeUuid = upgradeUuid;
         }
 
+        public String getHelpUrl() {
+            return helpUrl;
+        }
+
+        public void setHelpUrl(String helpUrl) {
+            this.helpUrl = helpUrl;
+        }
+
+        public String getUpdateUrl() {
+            return updateUrl;
+        }
+
+        public void setUpdateUrl(String updateUrl) {
+            this.updateUrl = updateUrl;
+        }
+
         @Override
         protected void asMap(boolean full, Map<String, Object> props) {
-            props.put("console", console);
-            props.put("dirChooser", dirChooser);
-            props.put("menu", menu);
-            props.put("perUserInstall", perUserInstall);
-            props.put("shortcut", shortcut);
+            props.put("console", isConsole());
+            props.put("dirChooser", isDirChooser());
+            props.put("menu", isMenu());
+            props.put("perUserInstall", isPerUserInstall());
+            props.put("shortcut", isShortcut());
+            props.put("shortcutPrompt", isShortcutPrompt());
             props.put("menuGroup", menuGroup);
             props.put("upgradeUuid", upgradeUuid);
+            props.put("helpUrl", helpUrl);
+            props.put("updateUrl", updateUrl);
         }
     }
 
@@ -1237,7 +1312,7 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
 
         @JsonIgnore
         private final org.jreleaser.model.api.assemble.JpackageAssembler.Osx immutable = new org.jreleaser.model.api.assemble.JpackageAssembler.Osx() {
-            private static final long serialVersionUID = 2993684370219100767L;
+            private static final long serialVersionUID = 8703264589112990966L;
 
             @Override
             public String getPackageIdentifier() {
@@ -1307,6 +1382,11 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
             @Override
             public String getResourceDir() {
                 return Osx.this.getResourceDir();
+            }
+
+            @Override
+            public boolean isLauncherAsService() {
+                return Osx.this.isLauncherAsService();
             }
 
             @Override
@@ -1389,7 +1469,7 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
             props.put("packageSigningPrefix", packageSigningPrefix);
             props.put("signingKeychain", signingKeychain);
             props.put("signingKeyUsername", signingKeyUsername);
-            props.put("sign", sign);
+            props.put("sign", isSign());
         }
     }
 }

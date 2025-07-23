@@ -80,6 +80,8 @@ public interface JpackageAssembler extends Assembler, JavaAssembler {
         String getInstallDir();
 
         String getResourceDir();
+
+        boolean isLauncherAsService();
     }
 
     interface Launcher extends Domain {
@@ -133,8 +135,14 @@ public interface JpackageAssembler extends Assembler, JavaAssembler {
 
         boolean isShortcut();
 
+        boolean isShortcutPrompt();
+
         String getMenuGroup();
 
         String getUpgradeUuid();
+
+        String getHelpUrl();
+
+        String getUpdateUrl();
     }
 }

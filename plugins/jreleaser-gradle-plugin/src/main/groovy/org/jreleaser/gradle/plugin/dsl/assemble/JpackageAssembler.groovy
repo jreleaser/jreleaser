@@ -99,6 +99,8 @@ interface JpackageAssembler extends JavaAssembler {
 
         Property<String> getResourceDir()
 
+        Property<Boolean> getLauncherAsService()
+
         void jdk(Action<? super Artifact> action)
 
         void jdk(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
@@ -135,9 +137,15 @@ interface JpackageAssembler extends JavaAssembler {
 
         Property<Boolean> getShortcut()
 
+        Property<Boolean> getShortcutPrompt()
+
         Property<String> getMenuGroup()
 
         Property<String> getUpgradeUuid()
+
+        Property<String> getHelpUrl()
+
+        Property<String> getUpdateUrl()
     }
 
     @CompileStatic

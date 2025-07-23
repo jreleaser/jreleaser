@@ -356,7 +356,7 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
         } else if (packager instanceof JpackageAssembler.Linux) {
             customizeLinux(type, (JpackageAssembler.Linux) packager, inputsDirectory, cmd);
         } else if (packager instanceof JpackageAssembler.Windows) {
-            customizeWindows((JpackageAssembler.Windows) packager, inputsDirectory, cmd);
+            customizeWindows((JpackageAssembler.Windows) packager, inputsDirectory, cmd, props);
         }
     }
 
@@ -431,7 +431,7 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
             .arg(inputsDirectory.resolve(assembler.getName() + ".png").toAbsolutePath().toString());
     }
 
-    private void customizeWindows(JpackageAssembler.Windows packager, Path inputsDirectory, Command cmd) {
+    private void customizeWindows(JpackageAssembler.Windows packager, Path inputsDirectory, Command cmd, TemplateContext props) {
         if (packager.isConsole()) {
             cmd.arg("--win-console");
         }
@@ -447,6 +447,9 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
         if (packager.isShortcut()) {
             cmd.arg("--win-shortcut");
         }
+        if (packager.isShortcutPrompt()) {
+            cmd.arg("--win-shortcut-prompt");
+        }
         if (isNotBlank(packager.getMenuGroup())) {
             cmd.arg("--win-menu-group")
                 .arg(maybeQuote(packager.getMenuGroup()));
@@ -454,6 +457,14 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
         if (isNotBlank(packager.getUpgradeUuid())) {
             cmd.arg("--win-upgrade-uuid")
                 .arg(packager.getUpgradeUuid());
+        }
+        if (isNotBlank(packager.getHelpUrl())) {
+            cmd.arg("--win-help-url")
+                .arg(resolveTemplate(packager.getHelpUrl(), props));
+        }
+        if (isNotBlank(packager.getUpdateUrl())) {
+            cmd.arg("--win-update-url")
+                .arg(resolveTemplate(packager.getUpdateUrl(), props));
         }
 
         cmd.arg("--icon")
