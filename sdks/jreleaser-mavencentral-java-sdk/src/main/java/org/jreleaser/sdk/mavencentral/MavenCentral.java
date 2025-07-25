@@ -299,6 +299,16 @@ public class MavenCentral {
                     response.request());
             }
 
+            // Handle Unauthorized error
+            if (response.status() == 401) {
+                return new MavenCentralAPIException(401, "❌ Unauthorized (401): Please check your Maven Central credentials or token.", response.headers());
+            }
+
+            // Handle Forbidden error
+            if (response.status() == 403) {
+                return new MavenCentralAPIException(403, "❌ Forbidden (403): You don't have permission to upload to this repository.", response.headers());
+            }
+
             return new MavenCentralAPIException(response.status(), response.reason(), response.headers());
         }
     }
