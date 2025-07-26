@@ -97,7 +97,7 @@ public class MavenCentralMavenDeployer extends AbstractMavenDeployer<org.jreleas
             deployer.getAuthorization(),
             deployer.getUsername(), deployer.getPassword(),
             deployer.getConnectTimeout(), deployer.getReadTimeout(), context.isDryrun(),
-            deployer.getRetryDelay(), deployer.getMaxRetries());
+            deployer.getRetryDelay(), deployer.getMaxRetries(), deployer.getName());
 
         context.getAdditionalProperties().put(prefix("namespace"), deployer.getNamespace());
         Deployment deployment = null;
