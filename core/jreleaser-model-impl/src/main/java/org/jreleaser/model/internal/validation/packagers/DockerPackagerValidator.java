@@ -413,7 +413,7 @@ public final class DockerPackagerValidator {
             self.getLabels().put(LABEL_OCI_IMAGE_REVISION, "{{commitFullHash}}");
         }
         if (!self.getLabels().containsKey(LABEL_OCI_IMAGE_SOURCE)) {
-            self.getLabels().put(LABEL_OCI_IMAGE_SOURCE, "{{projectSource}}");
+            self.getLabels().put(LABEL_OCI_IMAGE_SOURCE, "{{repoUrl}}");
         }
         
     }
