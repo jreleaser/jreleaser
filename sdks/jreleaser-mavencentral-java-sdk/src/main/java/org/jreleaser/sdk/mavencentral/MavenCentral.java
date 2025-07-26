@@ -86,7 +86,8 @@ public class MavenCentral {
                         int readTimeout,
                         boolean dryrun,
                         int retryDelay,
-                        int maxRetries) {
+                        int maxRetries,
+                        String deployerName) {
         requireNonBlank(apiHost, "'apiHost' must not be blank");
         requireNonNull(authorization, "'authorization' must not be blank");
 
@@ -104,7 +105,7 @@ public class MavenCentral {
         this.api = ClientUtils.builder(context, connectTimeout, readTimeout)
             .decoder(new MavenCentralDecoder())
             .requestInterceptor(authRequestInterceptor)
-            .errorDecoder(new MavenCentralErrorDecoder(context.getLogger()))
+            .errorDecoder(new MavenCentralErrorDecoder(context.getLogger(), deployerName))
             .target(MavenCentralAPI.class, apiHost);
     }
 
@@ -267,9 +268,11 @@ public class MavenCentral {
     static class MavenCentralErrorDecoder implements ErrorDecoder {
         private final ErrorDecoder defaultErrorDecoder = new Default();
         private final JReleaserLogger logger;
+        private final String deployerName;
 
-        public MavenCentralErrorDecoder(JReleaserLogger logger) {
+        public MavenCentralErrorDecoder(JReleaserLogger logger, String deployerName) {
             this.logger = logger;
+            this.deployerName = deployerName;
         }
 
         @Override
@@ -297,6 +300,16 @@ public class MavenCentral {
                     response.request().httpMethod(),
                     (Long) null,
                     response.request());
+            }
+
+            // Handle Unauthorized error
+            if (response.status() == 401) {
+                return new MavenCentralAPIException(401, RB.$("ERROR_maven_central_unauthorized", "deploy.maven." + deployerName), response.headers());
+            }
+            
+            // Handle Forbidden error
+            if (response.status() == 403) {
+                return new MavenCentralAPIException(403, RB.$("ERROR_maven_central_forbidden"), response.headers());
             }
 
             return new MavenCentralAPIException(response.status(), response.reason(), response.headers());
