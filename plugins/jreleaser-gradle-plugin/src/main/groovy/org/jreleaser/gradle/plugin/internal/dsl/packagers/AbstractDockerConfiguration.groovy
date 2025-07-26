@@ -49,6 +49,7 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
     final ListProperty<String> skipTemplates
     final MapProperty<String, Object> extraProperties
     final Property<String> baseImage
+    final Property<String> entrypoint
     final Property<Boolean> useLocalArtifact
     final SetProperty<String> imageNames
     final ListProperty<String> buildArgs
@@ -67,6 +68,7 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
         skipTemplates = objects.listProperty(String).convention(Providers.<List<String>> notDefined())
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
         baseImage = objects.property(String).convention(Providers.<String> notDefined())
+        entrypoint = objects.property(String).convention(Providers.<String> notDefined())
         useLocalArtifact = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         imageNames = objects.setProperty(String).convention(Providers.<Set<String>> notDefined())
         buildArgs = objects.listProperty(String).convention(Providers.<List<String>> notDefined())
@@ -162,6 +164,7 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
             skipTemplates.present ||
             extraProperties.present ||
             baseImage.present ||
+            entrypoint.present ||
             useLocalArtifact.present ||
             imageNames.present ||
             buildArgs.present ||
@@ -187,6 +190,7 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
         docker.skipTemplates = (List<String>) skipTemplates.getOrElse([])
         if (extraProperties.present) docker.extraProperties.putAll(extraProperties.get())
         if (baseImage.present) docker.baseImage = baseImage.get()
+        if (entrypoint.present) docker.entrypoint = entrypoint.get()
         if (useLocalArtifact.present) docker.useLocalArtifact = useLocalArtifact.get()
         if (imageNames.present) docker.imageNames.addAll(imageNames.get())
         if (buildArgs.present) docker.buildArgs.addAll(buildArgs.get())

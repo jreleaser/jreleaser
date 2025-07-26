@@ -54,6 +54,7 @@ import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_MODULE;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY;
 import static org.jreleaser.model.Constants.KEY_DOCKER_BASE_IMAGE;
+import static org.jreleaser.model.Constants.KEY_DOCKER_ENTRYPOINT;
 import static org.jreleaser.model.Constants.KEY_DOCKER_LABELS;
 import static org.jreleaser.model.Constants.KEY_DOCKER_POST_COMMANDS;
 import static org.jreleaser.model.Constants.KEY_DOCKER_PRE_COMMANDS;
@@ -547,6 +548,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
     protected void fillDockerProperties(TemplateContext props, DockerConfiguration docker) {
         props.set(KEY_DOCKER_BASE_IMAGE,
             resolveTemplate(docker.getBaseImage(), props));
+        props.set(KEY_DOCKER_ENTRYPOINT, passThrough(docker.getEntrypoint()));
 
         List<String> labels = new ArrayList<>();
         docker.getLabels().forEach((label, value) -> labels.add(passThrough("\"" + label + "\"=\"" +

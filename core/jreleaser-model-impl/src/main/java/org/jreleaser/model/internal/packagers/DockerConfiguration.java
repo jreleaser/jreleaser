@@ -46,6 +46,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public interface DockerConfiguration extends Domain, ExtraProperties, Activatable {
     String TYPE = "docker";
+    String DEFAULT_ENTRYPOINT = "[\"/{{distributionArtifactRootEntryName}}/bin/{{distributionExecutableUnix}}\"]";
 
     String getTemplateDirectory();
 
@@ -62,6 +63,10 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
     String getBaseImage();
 
     void setBaseImage(String baseImage);
+
+    String getEntrypoint();
+
+    void setEntrypoint(String entrypoint);
 
     Map<String, String> getLabels();
 

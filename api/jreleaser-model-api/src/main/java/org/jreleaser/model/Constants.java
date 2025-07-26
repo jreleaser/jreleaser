@@ -270,6 +270,7 @@ public interface Constants {
     // Docker
     String KEY_DOCKER_SPEC_NAME = "dockerSpecName";
     String KEY_DOCKER_BASE_IMAGE = "dockerBaseImage";
+    String KEY_DOCKER_ENTRYPOINT = "dockerEntrypoint";
     String KEY_DOCKER_LABELS = "dockerLabels";
     String KEY_DOCKER_PRE_COMMANDS = "dockerPreCommands";
     String KEY_DOCKER_POST_COMMANDS = "dockerPostCommands";

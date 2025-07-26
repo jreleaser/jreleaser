@@ -36,7 +36,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfiguration<S>> extends AbstractActivatable<S>
     implements DockerConfiguration, ExtraProperties {
-    private static final long serialVersionUID = 9145623803421730899L;
+    private static final long serialVersionUID = 6130010655883777857L;
 
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private final Map<String, String> labels = new LinkedHashMap<>();
@@ -51,6 +51,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
     private String templateDirectory;
     protected Boolean useLocalArtifact;
     private String baseImage;
+    private String entrypoint;
     private org.jreleaser.model.api.packagers.DockerConfiguration.DockerCommand command;
 
     @Override
@@ -60,6 +61,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
         setSkipTemplates(merge(this.skipTemplates, source.getSkipTemplates()));
         setExtraProperties(merge(this.extraProperties, source.getExtraProperties()));
         this.baseImage = merge(this.baseImage, source.getBaseImage());
+        this.entrypoint = merge(this.entrypoint, source.getEntrypoint());
         this.useLocalArtifact = merge(this.useLocalArtifact, source.useLocalArtifact);
         this.command = merge(this.command, source.getCommand());
         setImageNames(merge(this.imageNames, source.getImageNames()));
@@ -133,6 +135,16 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
     @Override
     public void setBaseImage(String baseImage) {
         this.baseImage = baseImage;
+    }
+
+    @Override
+    public String getEntrypoint() {
+        return entrypoint;
+    }
+
+    @Override
+    public void setEntrypoint(String entrypoint) {
+        this.entrypoint = entrypoint;
     }
 
     @Override
@@ -296,6 +308,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
         props.put("skipTemplates", skipTemplates);
         props.put("useLocalArtifact", isUseLocalArtifact());
         props.put("baseImage", baseImage);
+        props.put("entrypoint", entrypoint);
         props.put("imageNames", imageNames);
         props.put("buildArgs", buildArgs);
         props.put("labels", labels);

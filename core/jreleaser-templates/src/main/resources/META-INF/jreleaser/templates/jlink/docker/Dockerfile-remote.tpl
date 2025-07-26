@@ -22,4 +22,4 @@ RUN curl -Ls "{{distributionUrl}}" --output {{distributionArtifactFile}} && \
 ENV JAVA_HOME="/{{distributionArtifactRootEntryName}}"
 ENV PATH="${PATH}:${JAVA_HOME}/bin"
 
-ENTRYPOINT ["/{{distributionArtifactRootEntryName}}/bin/{{distributionExecutableUnix}}"]
+ENTRYPOINT {{dockerEntrypoint}}

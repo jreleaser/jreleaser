@@ -127,6 +127,13 @@ public final class DockerPackagerValidator {
         }
         validateBaseImage(distribution, packager, errors);
 
+        if (isBlank(packager.getEntrypoint())) {
+            packager.setEntrypoint(parentPackager.getEntrypoint());
+        }
+        if (isBlank(packager.getEntrypoint())) {
+            packager.setEntrypoint(DockerConfiguration.DEFAULT_ENTRYPOINT);
+        }
+
         if (packager.getImageNames().isEmpty()) {
             packager.setImageNames(parentPackager.getImageNames());
         }
@@ -247,6 +254,13 @@ public final class DockerPackagerValidator {
         mergeExtraProperties(spec, docker);
 
         validateBaseImage(distribution, spec, errors);
+
+        if (isBlank(spec.getEntrypoint())) {
+            spec.setEntrypoint(docker.getEntrypoint());
+        }
+        if (isBlank(spec.getEntrypoint())) {
+            spec.setEntrypoint(DockerConfiguration.DEFAULT_ENTRYPOINT);
+        }
 
         if (spec.getImageNames().isEmpty()) {
             spec.addImageName("{{repoOwner}}/{{distributionName}}-{{dockerSpecName}}:{{tagName}}");

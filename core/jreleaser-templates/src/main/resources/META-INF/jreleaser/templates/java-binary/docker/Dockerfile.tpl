@@ -21,4 +21,4 @@ RUN unzip {{distributionArtifactFile}} && \
 
 ENV PATH="${PATH}:/{{distributionArtifactRootEntryName}}/bin"
 
-ENTRYPOINT ["/{{distributionArtifactRootEntryName}}/bin/{{distributionExecutableUnix}}"]
+ENTRYPOINT {{dockerEntrypoint}}

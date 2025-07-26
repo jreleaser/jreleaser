@@ -20,4 +20,4 @@ RUN curl -Ls "{{distributionUrl}}" --output {{distributionArtifactFile}} && \
 
 ENV PATH="${PATH}:/{{distributionArtifactRootEntryName}}/bin"
 
-ENTRYPOINT ["/{{distributionArtifactRootEntryName}}/bin/{{distributionExecutableUnix}}"]
+ENTRYPOINT {{dockerEntrypoint}}
