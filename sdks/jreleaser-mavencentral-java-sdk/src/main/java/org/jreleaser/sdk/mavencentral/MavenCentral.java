@@ -17,33 +17,11 @@
  */
 package org.jreleaser.sdk.mavencentral;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import dev.failsafe.Failsafe;
-import dev.failsafe.RetryPolicy;
-import dev.failsafe.function.CheckedPredicate;
-import dev.failsafe.function.CheckedSupplier;
-import feign.FeignException;
-import feign.Response;
-import feign.RetryableException;
-import feign.codec.DecodeException;
-import feign.codec.Decoder;
-import feign.codec.ErrorDecoder;
-import feign.form.FormData;
-import feign.jackson.JacksonDecoder;
-import org.apache.commons.io.IOUtils;
-import org.jreleaser.bundle.RB;
-import org.jreleaser.logging.JReleaserLogger;
-import org.jreleaser.model.Http;
-import org.jreleaser.model.api.JReleaserContext;
-import org.jreleaser.model.spi.deploy.maven.Deployable;
-import org.jreleaser.mustache.Templates;
-import org.jreleaser.sdk.commons.ClientUtils;
-import org.jreleaser.sdk.commons.feign.TokenAuthRequestInterceptor;
-import org.jreleaser.sdk.mavencentral.api.Deployment;
-import org.jreleaser.sdk.mavencentral.api.MavenCentralAPI;
-import org.jreleaser.sdk.mavencentral.api.MavenCentralAPIException;
-import org.jreleaser.sdk.mavencentral.api.State;
+import static java.lang.System.lineSeparator;
+import static java.util.Objects.requireNonNull;
+import static org.jreleaser.util.IoUtils.newInputStreamReader;
+import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.StringUtils.requireNonBlank;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -59,11 +37,35 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import static java.lang.System.lineSeparator;
-import static java.util.Objects.requireNonNull;
-import static org.jreleaser.util.IoUtils.newInputStreamReader;
-import static org.jreleaser.util.StringUtils.isNotBlank;
-import static org.jreleaser.util.StringUtils.requireNonBlank;
+import org.apache.commons.io.IOUtils;
+import org.jreleaser.bundle.RB;
+import org.jreleaser.logging.JReleaserLogger;
+import org.jreleaser.model.Http;
+import org.jreleaser.model.api.JReleaserContext;
+import org.jreleaser.model.spi.deploy.maven.Deployable;
+import org.jreleaser.mustache.Templates;
+import org.jreleaser.sdk.commons.ClientUtils;
+import org.jreleaser.sdk.commons.feign.TokenAuthRequestInterceptor;
+import org.jreleaser.sdk.mavencentral.api.Deployment;
+import org.jreleaser.sdk.mavencentral.api.MavenCentralAPI;
+import org.jreleaser.sdk.mavencentral.api.MavenCentralAPIException;
+import org.jreleaser.sdk.mavencentral.api.State;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import dev.failsafe.Failsafe;
+import dev.failsafe.RetryPolicy;
+import dev.failsafe.function.CheckedPredicate;
+import dev.failsafe.function.CheckedSupplier;
+import feign.FeignException;
+import feign.Response;
+import feign.RetryableException;
+import feign.codec.DecodeException;
+import feign.codec.Decoder;
+import feign.codec.ErrorDecoder;
+import feign.form.FormData;
+import feign.jackson.JacksonDecoder;
 
 /**
  * @author Andres Almiray
@@ -78,15 +80,15 @@ public class MavenCentral {
     private final Retrier retrier;
 
     public MavenCentral(JReleaserContext context,
-                        String apiHost,
-                        Http.Authorization authorization,
-                        String username,
-                        String password,
-                        int connectTimeout,
-                        int readTimeout,
-                        boolean dryrun,
-                        int retryDelay,
-                        int maxRetries) {
+            String apiHost,
+            Http.Authorization authorization,
+            String username,
+            String password,
+            int connectTimeout,
+            int readTimeout,
+            boolean dryrun,
+            int retryDelay,
+            int maxRetries) {
         requireNonBlank(apiHost, "'apiHost' must not be blank");
         requireNonNull(authorization, "'authorization' must not be blank");
 
@@ -102,10 +104,10 @@ public class MavenCentral {
         }
 
         this.api = ClientUtils.builder(context, connectTimeout, readTimeout)
-            .decoder(new MavenCentralDecoder())
-            .requestInterceptor(authRequestInterceptor)
-            .errorDecoder(new MavenCentralErrorDecoder(context.getLogger()))
-            .target(MavenCentralAPI.class, apiHost);
+                .decoder(new MavenCentralDecoder())
+                .requestInterceptor(authRequestInterceptor)
+                .errorDecoder(new MavenCentralErrorDecoder(context.getLogger()))
+                .target(MavenCentralAPI.class, apiHost);
     }
 
     public boolean artifactExists(Deployable deployable, String verifyUrl) {
@@ -113,8 +115,8 @@ public class MavenCentral {
             verifyUrl = Templates.resolveTemplate(verifyUrl, deployable.props());
             if (ClientUtils.head(context.getLogger(), verifyUrl, connectTimeout, readTimeout)) {
                 context.getLogger().warn(" ! " + RB.$("nexus.deploy.artifact.exists",
-                    deployable.getDeployPath(),
-                    deployable.getLocalPath().getFileName().toString()));
+                        deployable.getDeployPath(),
+                        deployable.getLocalPath().getFileName().toString()));
                 return true;
             }
         }
@@ -150,7 +152,8 @@ public class MavenCentral {
 
     private void wrap(MavenCentralOperation operation) throws MavenCentralException {
         try {
-            if (!dryrun) operation.execute();
+            if (!dryrun)
+                operation.execute();
         } catch (MavenCentralException e) {
             context.getLogger().trace(e);
             throw e;
@@ -178,13 +181,14 @@ public class MavenCentral {
     private void waitForState(String deploymentId, boolean checkTimeout, State... states) throws MavenCentralException {
         context.getLogger().debug(RB.$("maven.central.wait.deployment.state", deploymentId, Arrays.asList(states)));
 
-        Boolean[] timeout = new Boolean[]{false};
+        Boolean[] timeout = new Boolean[] { false };
         Optional<Deployment> deployment = retrier.retry(o -> o.map(Deployment::isTransitioning).orElse(false),
-            () -> status(deploymentId),
-            states[0] != State.PUBLISHED? () -> {}: () -> {
-                context.getLogger().warn(RB.$("WARN_maven_central_publication_timeout", deploymentId));
-                timeout[0] = true;
-            });
+                () -> status(deploymentId),
+                states[0] != State.PUBLISHED ? () -> {
+                } : () -> {
+                    context.getLogger().warn(RB.$("WARN_maven_central_publication_timeout", deploymentId));
+                    timeout[0] = true;
+                });
 
         if (checkTimeout && timeout[0]) {
             return;
@@ -197,7 +201,8 @@ public class MavenCentral {
 
             if (Arrays.binarySearch(states, deployment.get().getDeploymentState()) < 0) {
                 Set<String> messages = resolveErrorMessages(deployment.get());
-                String title = RB.$("maven.central.wait.deployment.invalid.state", deploymentId, Arrays.asList(states), deployment.get().getDeploymentState());
+                String title = RB.$("maven.central.wait.deployment.invalid.state", deploymentId, Arrays.asList(states),
+                        deployment.get().getDeploymentState());
                 if (!messages.isEmpty()) {
                     throw new MavenCentralException(title + lineSeparator() + String.join(lineSeparator(), messages));
                 } else {
@@ -235,30 +240,33 @@ public class MavenCentral {
         }
 
         public <R> R retry(CheckedPredicate<R> stopFunction, CheckedSupplier<R> retriableOperation) {
-            return retry(stopFunction, retriableOperation, () -> {});
+            return retry(stopFunction, retriableOperation, () -> {
+            });
         }
 
-        public <R> R retry(CheckedPredicate<R> stopFunction, CheckedSupplier<R> retriableOperation, Runnable retryHandler) {
+        public <R> R retry(CheckedPredicate<R> stopFunction, CheckedSupplier<R> retriableOperation,
+                Runnable retryHandler) {
             final int maxAttempts = maxRetries + 1;
 
             RetryPolicy<R> policy = RetryPolicy.<R>builder()
-                .handle(IllegalStateException.class)
-                .handleIf(exception -> {
-                    if (exception instanceof MavenCentralAPIException) {
-                        MavenCentralAPIException mavenCentralException = (MavenCentralAPIException) exception;
-                        return !mavenCentralException.isUnauthorized();
-                    }
+                    .handle(IllegalStateException.class)
+                    .handleIf(exception -> {
+                        if (exception instanceof MavenCentralAPIException) {
+                            MavenCentralAPIException mavenCentralException = (MavenCentralAPIException) exception;
+                            return !mavenCentralException.isUnauthorized();
+                        }
 
-                    return false;
-                })
-                .handleResultIf(stopFunction)
-                .withDelay(Duration.ofSeconds(delay))
-                .withMaxRetries(maxRetries)
-                .onRetriesExceeded(listener -> retryHandler.run())
-                .onFailedAttempt(event -> {
-                    logger.info(RB.$("nexus.retry.attempt"), event.getAttemptCount(), maxAttempts);
-                    logger.debug(RB.$("nexus.retry.failed.attempt", event.getAttemptCount(), maxAttempts, event.getLastResult()), event.getLastException());
-                }).build();
+                        return false;
+                    })
+                    .handleResultIf(stopFunction)
+                    .withDelay(Duration.ofSeconds(delay))
+                    .withMaxRetries(maxRetries)
+                    .onRetriesExceeded(listener -> retryHandler.run())
+                    .onFailedAttempt(event -> {
+                        logger.info(RB.$("nexus.retry.attempt"), event.getAttemptCount(), maxAttempts);
+                        logger.debug(RB.$("nexus.retry.failed.attempt", event.getAttemptCount(), maxAttempts,
+                                event.getLastResult()), event.getLastException());
+                    }).build();
 
             return Failsafe.with(policy).get(retriableOperation);
         }
@@ -292,21 +300,20 @@ public class MavenCentral {
                 }
 
                 return new RetryableException(
-                    response.status(),
-                    response.reason(),
-                    response.request().httpMethod(),
-                    (Long) null,
-                    response.request());
+                        response.status(),
+                        response.reason(),
+                        response.request().httpMethod(),
+                        (Long) null,
+                        response.request());
             }
 
             // Handle Unauthorized error
             if (response.status() == 401) {
-                return new MavenCentralAPIException(401, "❌ Unauthorized (401): Please check your Maven Central credentials or token.", response.headers());
+                return new MavenCentralAPIException(401, RB.$("ERROR_unauthorized"), response.headers());
             }
-
             // Handle Forbidden error
             if (response.status() == 403) {
-                return new MavenCentralAPIException(403, "❌ Forbidden (403): You don't have permission to upload to this repository.", response.headers());
+                return new MavenCentralAPIException(403, RB.$("ERROR_forbidden"), response.headers());
             }
 
             return new MavenCentralAPIException(response.status(), response.reason(), response.headers());
@@ -315,7 +322,7 @@ public class MavenCentral {
 
     static class MavenCentralDecoder implements Decoder {
         private final JacksonDecoder json = new JacksonDecoder(new ObjectMapper()
-            .registerModule(new JavaTimeModule()));
+                .registerModule(new JavaTimeModule()));
 
         @Override
         public Object decode(Response response, Type type) throws IOException, DecodeException, FeignException {
