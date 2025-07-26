@@ -18,6 +18,8 @@
 package org.jreleaser.model.internal.packagers;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.jreleaser.model.Active;
+import org.jreleaser.model.internal.common.AbstractActivatable;
 import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.common.Activatable;
 import org.jreleaser.model.internal.common.Domain;
@@ -111,9 +113,9 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
 
     void setBuildx(Buildx buildx);
 
-    final class Registry extends AbstractModelObject<Registry> implements Domain, Comparable<Registry> {
+    final class Registry extends AbstractActivatable<Registry> implements Domain, Comparable<Registry> {
         public static final String DEFAULT_NAME = "DEFAULT";
-        private static final long serialVersionUID = -1522955594088189796L;
+        private static final long serialVersionUID = -1752312309985279497L;
 
         private String server;
         private String serverName = DEFAULT_NAME;
@@ -124,7 +126,17 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
 
         @JsonIgnore
         private final org.jreleaser.model.api.packagers.DockerConfiguration.Registry immutable = new org.jreleaser.model.api.packagers.DockerConfiguration.Registry() {
-            private static final long serialVersionUID = -1273111436252150810L;
+            private static final long serialVersionUID = -5747348498530533170L;
+
+            @Override
+            public Active getActive() {
+                return Registry.this.getActive();
+            }
+
+            @Override
+            public boolean isEnabled() {
+                return Registry.this.isEnabled();
+            }
 
             @Override
             public String getServer() {
@@ -174,6 +186,7 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
 
         @Override
         public void merge(DockerConfiguration.Registry source) {
+            super.merge(source);
             this.server = merge(this.server, source.server);
             this.serverName = merge(this.serverName, source.serverName);
             this.repositoryName = merge(this.repositoryName, source.repositoryName);
@@ -237,6 +250,8 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
         @Override
         public Map<String, Object> asMap(boolean full) {
             Map<String, Object> map = new LinkedHashMap<>();
+            map.put("enabled", isEnabled());
+            map.put("active", getActive());
             map.put("server", server);
             map.put("serverName", serverName);
             map.put("repositoryName", repositoryName);

@@ -73,7 +73,7 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
         }
     }
 
-    interface Registry extends Domain, Comparable<Registry> {
+    interface Registry extends Domain, Activatable, Comparable<Registry> {
         String getServer();
 
         String getServerName();

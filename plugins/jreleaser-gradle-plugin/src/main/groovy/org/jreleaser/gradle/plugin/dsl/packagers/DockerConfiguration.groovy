@@ -82,7 +82,7 @@ interface DockerConfiguration extends Activatable, ExtraProperties {
     void buildx(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Buildx) Closure<Void> action)
 
     @CompileStatic
-    interface Registry {
+    interface Registry extends Activatable {
         Property<String> getServer()
 
         Property<String> getRepositoryName()

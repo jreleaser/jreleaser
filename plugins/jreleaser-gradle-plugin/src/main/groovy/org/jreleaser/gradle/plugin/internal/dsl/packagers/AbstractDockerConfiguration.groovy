@@ -203,6 +203,7 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
     @CompileStatic
     static class RegistryImpl implements Registry {
         final String name
+        final Property<Active> active
         final Property<String> server
         final Property<String> repositoryName
         final Property<String> username
@@ -212,6 +213,7 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
         @Inject
         RegistryImpl(String name, ObjectFactory objects) {
             this.name = name
+            active = objects.property(Active).convention(Providers.<Active> notDefined())
             server = objects.property(String).convention(Providers.<String> notDefined())
             repositoryName = objects.property(String).convention(Providers.<String> notDefined())
             username = objects.property(String).convention(Providers.<String> notDefined())
@@ -219,9 +221,17 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
             externalLogin = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         }
 
+        @Override
+        void setActive(String str) {
+            if (isNotBlank(str)) {
+                active.set(Active.of(str.trim()))
+            }
+        }
+
         org.jreleaser.model.internal.packagers.DockerConfiguration.Registry toModel() {
             org.jreleaser.model.internal.packagers.DockerConfiguration.Registry registry = new org.jreleaser.model.internal.packagers.DockerConfiguration.Registry()
             registry.serverName = name
+            if (active.present) registry.active = active.get()
             if (server.present) registry.server = server.get()
             if (repositoryName.present) registry.repositoryName = repositoryName.get()
             if (username.present) registry.username = username.get()

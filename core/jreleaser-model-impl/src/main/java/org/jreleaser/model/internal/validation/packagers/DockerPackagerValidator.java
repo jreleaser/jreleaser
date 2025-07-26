@@ -403,6 +403,7 @@ public final class DockerPackagerValidator {
             String username = model.getRelease().getReleaser().getUsername();
             context.getLogger().info(RB.$("validation_docker_no_registries", element, username));
             DockerConfiguration.Registry registry = new DockerConfiguration.Registry();
+            registry.setActive(Active.ALWAYS);
             registry.setServerName(DOCKER_IO);
             registry.setServer(DOCKER_IO);
             registry.setRepositoryName(model.getRelease().getReleaser().getOwner());
@@ -430,7 +431,12 @@ public final class DockerPackagerValidator {
                 registry.setRepositoryName(service.getOwner());
             }
 
-            if (!registry.isExternalLogin()) {
+            if (null == registry.getActive()) {
+                registry.setActive(self.getActive());
+            }
+            registry.resolveEnabled(context.getModel().getProject());
+
+            if (registry.isEnabled() && !registry.isExternalLogin()) {
                 if (isBlank(registry.getUsername())) {
                     errors.configuration(RB.$("validation_must_not_be_blank", element +
                         ".registry." + serverName + ".username"));
