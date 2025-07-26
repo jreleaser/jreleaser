@@ -39,4 +39,10 @@ dependencies {
     api "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
     api "io.github.openfeign.form:feign-form:$feignFormVersion"
     api "commons-io:commons-io:$commonsIoVersion"
+
+    // Test dependencies
+    testImplementation 'org.mockito:mockito-core:5.2.0'
+    testImplementation 'org.mockito:mockito-inline:5.2.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:5.2.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.13.2'
 }
