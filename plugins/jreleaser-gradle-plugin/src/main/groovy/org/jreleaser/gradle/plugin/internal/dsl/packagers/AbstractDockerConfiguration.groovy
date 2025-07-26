@@ -49,6 +49,7 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
     final ListProperty<String> skipTemplates
     final MapProperty<String, Object> extraProperties
     final Property<String> baseImage
+    final Property<String> entrypoint
     final Property<Boolean> useLocalArtifact
     final SetProperty<String> imageNames
     final ListProperty<String> buildArgs
@@ -67,6 +68,7 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
         skipTemplates = objects.listProperty(String).convention(Providers.<List<String>> notDefined())
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
         baseImage = objects.property(String).convention(Providers.<String> notDefined())
+        entrypoint = objects.property(String).convention(Providers.<String> notDefined())
         useLocalArtifact = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         imageNames = objects.setProperty(String).convention(Providers.<Set<String>> notDefined())
         buildArgs = objects.listProperty(String).convention(Providers.<List<String>> notDefined())
@@ -162,6 +164,7 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
             skipTemplates.present ||
             extraProperties.present ||
             baseImage.present ||
+            entrypoint.present ||
             useLocalArtifact.present ||
             imageNames.present ||
             buildArgs.present ||
@@ -187,6 +190,7 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
         docker.skipTemplates = (List<String>) skipTemplates.getOrElse([])
         if (extraProperties.present) docker.extraProperties.putAll(extraProperties.get())
         if (baseImage.present) docker.baseImage = baseImage.get()
+        if (entrypoint.present) docker.entrypoint = entrypoint.get()
         if (useLocalArtifact.present) docker.useLocalArtifact = useLocalArtifact.get()
         if (imageNames.present) docker.imageNames.addAll(imageNames.get())
         if (buildArgs.present) docker.buildArgs.addAll(buildArgs.get())
@@ -203,6 +207,7 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
     @CompileStatic
     static class RegistryImpl implements Registry {
         final String name
+        final Property<Active> active
         final Property<String> server
         final Property<String> repositoryName
         final Property<String> username
@@ -212,6 +217,7 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
         @Inject
         RegistryImpl(String name, ObjectFactory objects) {
             this.name = name
+            active = objects.property(Active).convention(Providers.<Active> notDefined())
             server = objects.property(String).convention(Providers.<String> notDefined())
             repositoryName = objects.property(String).convention(Providers.<String> notDefined())
             username = objects.property(String).convention(Providers.<String> notDefined())
@@ -219,9 +225,17 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
             externalLogin = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         }
 
+        @Override
+        void setActive(String str) {
+            if (isNotBlank(str)) {
+                active.set(Active.of(str.trim()))
+            }
+        }
+
         org.jreleaser.model.internal.packagers.DockerConfiguration.Registry toModel() {
             org.jreleaser.model.internal.packagers.DockerConfiguration.Registry registry = new org.jreleaser.model.internal.packagers.DockerConfiguration.Registry()
             registry.serverName = name
+            if (active.present) registry.active = active.get()
             if (server.present) registry.server = server.get()
             if (repositoryName.present) registry.repositoryName = repositoryName.get()
             if (username.present) registry.username = username.get()

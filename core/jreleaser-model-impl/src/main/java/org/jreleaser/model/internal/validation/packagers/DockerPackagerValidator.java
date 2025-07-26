@@ -128,6 +128,13 @@ public final class DockerPackagerValidator {
         }
         validateBaseImage(distribution, packager, errors);
 
+        if (isBlank(packager.getEntrypoint())) {
+            packager.setEntrypoint(parentPackager.getEntrypoint());
+        }
+        if (isBlank(packager.getEntrypoint())) {
+            packager.setEntrypoint(DockerConfiguration.DEFAULT_ENTRYPOINT);
+        }
+
         if (packager.getImageNames().isEmpty()) {
             packager.setImageNames(parentPackager.getImageNames());
         }
@@ -248,6 +255,13 @@ public final class DockerPackagerValidator {
         mergeExtraProperties(spec, docker);
 
         validateBaseImage(distribution, spec, errors);
+
+        if (isBlank(spec.getEntrypoint())) {
+            spec.setEntrypoint(docker.getEntrypoint());
+        }
+        if (isBlank(spec.getEntrypoint())) {
+            spec.setEntrypoint(DockerConfiguration.DEFAULT_ENTRYPOINT);
+        }
 
         if (spec.getImageNames().isEmpty()) {
             spec.addImageName("{{repoOwner}}/{{distributionName}}-{{dockerSpecName}}:{{tagName}}");
@@ -408,6 +422,7 @@ public final class DockerPackagerValidator {
             String username = model.getRelease().getReleaser().getUsername();
             context.getLogger().info(RB.$("validation_docker_no_registries", element, username));
             DockerConfiguration.Registry registry = new DockerConfiguration.Registry();
+            registry.setActive(Active.ALWAYS);
             registry.setServerName(DOCKER_IO);
             registry.setServer(DOCKER_IO);
             registry.setRepositoryName(model.getRelease().getReleaser().getOwner());
@@ -435,7 +450,12 @@ public final class DockerPackagerValidator {
                 registry.setRepositoryName(service.getOwner());
             }
 
-            if (!registry.isExternalLogin()) {
+            if (null == registry.getActive()) {
+                registry.setActive(self.getActive());
+            }
+            registry.resolveEnabled(context.getModel().getProject());
+
+            if (registry.isEnabled() && !registry.isExternalLogin()) {
                 if (isBlank(registry.getUsername())) {
                     errors.configuration(RB.$("validation_must_not_be_blank", element +
                         ".registry." + serverName + ".username"));
