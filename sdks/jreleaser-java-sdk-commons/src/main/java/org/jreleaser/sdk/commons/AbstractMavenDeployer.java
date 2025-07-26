@@ -503,7 +503,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
                     context.getLogger().warn(RB.$("signing.public.key.no.expiration.date", keyID));
 
                 } else if (Instant.now().isAfter(ed)) {
-                    context.getLogger().warn(RB.$("ERROR_public_key_expired", keyID, LocalDateTime.ofInstant(ed, ZoneId.systemDefault())));
+                        throw new JReleaserException(RB.$("ERROR_public_key_expired", keyID, LocalDateTime.ofInstant(ed, ZoneId.systemDefault())));
                 } else {
                     context.getLogger().info(RB.$("signing.public.key.expiration.date", keyID, LocalDateTime.ofInstant(ed, ZoneId.systemDefault())));
                 }
