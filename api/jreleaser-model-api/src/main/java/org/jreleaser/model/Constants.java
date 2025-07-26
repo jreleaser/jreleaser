@@ -521,4 +521,5 @@ public interface Constants {
     String LABEL_OCI_IMAGE_VERSION = "org.opencontainers.image.version";
     String LABEL_OCI_IMAGE_LICENSES = "org.opencontainers.image.licenses";
     String LABEL_OCI_IMAGE_URL = "org.opencontainers.image.url";
+    String LABEL_OCI_IMAGE_SOURCE = "org.opencontainers.image.source";
 }

@@ -50,6 +50,7 @@ import static org.jreleaser.model.Constants.LABEL_OCI_IMAGE_REVISION;
 import static org.jreleaser.model.Constants.LABEL_OCI_IMAGE_TITLE;
 import static org.jreleaser.model.Constants.LABEL_OCI_IMAGE_URL;
 import static org.jreleaser.model.Constants.LABEL_OCI_IMAGE_VERSION;
+import static org.jreleaser.model.Constants.LABEL_OCI_IMAGE_SOURCE;
 import static org.jreleaser.model.internal.packagers.DockerConfiguration.Registry.DEFAULT_NAME;
 import static org.jreleaser.model.internal.validation.common.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.model.internal.validation.common.TemplateValidator.validateTemplate;
@@ -411,6 +412,10 @@ public final class DockerPackagerValidator {
         if (!self.getLabels().containsKey(LABEL_OCI_IMAGE_REVISION)) {
             self.getLabels().put(LABEL_OCI_IMAGE_REVISION, "{{commitFullHash}}");
         }
+        if (!self.getLabels().containsKey(LABEL_OCI_IMAGE_SOURCE)) {
+            self.getLabels().put(LABEL_OCI_IMAGE_SOURCE, "{{projectSource}}");
+        }
+        
     }
 
     private static void validateRegistries(JReleaserContext context, DockerConfiguration self, DockerConfiguration other, Errors errors, String element) {
