@@ -54,6 +54,15 @@ public abstract class AbstractRepositoryPackagerProcessor<T extends RepositoryPa
 
     @Override
     protected void doPublishDistribution(Distribution distribution, TemplateContext props) throws PackagerProcessingException {
+        Path publishDirectory = getPublishDirectory(props);
+        try {
+            // cleanup from previous session
+            FileUtils.deleteFiles(publishDirectory);
+            Files.createDirectories(publishDirectory);
+        } catch (IOException e) {
+            throw new PackagerProcessingException(e);
+        }
+
         RepositoryTap tap = packager.getRepositoryTap();
         if (!tap.isEnabled()) {
             context.getLogger().info(RB.$("repository.disabled"), tap.getCanonicalRepoName());
@@ -61,9 +70,6 @@ public abstract class AbstractRepositoryPackagerProcessor<T extends RepositoryPa
         }
 
         context.getLogger().info(RB.$("repository.setup"), tap.getCanonicalRepoName());
-        if (context.isDryrun()) {
-            return;
-        }
 
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
         String target = tap.getCanonicalRepoName();
@@ -84,7 +90,6 @@ public abstract class AbstractRepositoryPackagerProcessor<T extends RepositoryPa
             // clone the repository
             target = repository.getHttpUrl();
             context.getLogger().debug(RB.$("repository.clone"), repository.getHttpUrl());
-            Path directory = Files.createTempDirectory("jreleaser-" + tap.getResolvedName());
 
             String pullBranch = tap.getBranch();
             String pushBranch = resolveTemplate(tap.getBranchPush(), props);
@@ -92,7 +97,7 @@ public abstract class AbstractRepositoryPackagerProcessor<T extends RepositoryPa
             Git git = Git.cloneRepository()
                 .setCredentialsProvider(credentialsProvider)
                 .setBranch(pullBranch)
-                .setDirectory(directory.toFile())
+                .setDirectory(publishDirectory.toFile())
                 .setURI(repository.getHttpUrl())
                 .call();
 
@@ -115,7 +120,7 @@ public abstract class AbstractRepositoryPackagerProcessor<T extends RepositoryPa
                     .call();
             }
 
-            prepareWorkingCopy(props, directory, distribution);
+            prepareWorkingCopy(props, publishDirectory, distribution);
 
             // add everything
             git.add()
@@ -163,14 +168,16 @@ public abstract class AbstractRepositoryPackagerProcessor<T extends RepositoryPa
                 .call();
 
             context.getLogger().info(RB.$("repository.push"), target);
-            // push commit
-            context.getLogger().debug(RB.$("repository.commit.push"));
-            git.push()
-                .setDryRun(false)
-                .setPushAll()
-                .setCredentialsProvider(credentialsProvider)
-                .setPushTags()
-                .call();
+            if (!context.isDryrun()) {
+                // push commit
+                context.getLogger().debug(RB.$("repository.commit.push"));
+                git.push()
+                    .setDryRun(false)
+                    .setPushAll()
+                    .setCredentialsProvider(credentialsProvider)
+                    .setPushTags()
+                    .call();
+            }
         } catch (Exception e) {
             throw new PackagerProcessingException(RB.$("ERROR_unexpected_repository_update", target), e);
         }

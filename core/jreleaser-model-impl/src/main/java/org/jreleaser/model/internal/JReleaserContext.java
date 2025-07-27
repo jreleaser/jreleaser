@@ -166,7 +166,7 @@ public class JReleaserContext {
 
     @JsonIgnore
     private final org.jreleaser.model.api.JReleaserContext immutable = new org.jreleaser.model.api.JReleaserContext() {
-        private static final long serialVersionUID = 8947541863163002549L;
+        private static final long serialVersionUID = -4823233546663741626L;
 
         @Override
         public Path relativize(Path basedir, Path other) {
@@ -226,6 +226,11 @@ public class JReleaserContext {
         @Override
         public Path getPackageDirectory() {
             return JReleaserContext.this.getPackageDirectory();
+        }
+
+        @Override
+        public Path getPublishDirectory() {
+            return JReleaserContext.this.getPublishDirectory();
         }
 
         @Override
@@ -459,6 +464,7 @@ public class JReleaserContext {
             logger.debug(RB.$("context.path.set", Constants.KEY_SIGNATURES_DIRECTORY, getSignaturesDirectory()));
             logger.debug(RB.$("context.path.set", Constants.KEY_PREPARE_DIRECTORY, getPrepareDirectory()));
             logger.debug(RB.$("context.path.set", Constants.KEY_PACKAGE_DIRECTORY, getPackageDirectory()));
+            logger.debug(RB.$("context.path.set", Constants.KEY_PUBLISH_DIRECTORY, getPublishDirectory()));
             logger.debug(RB.$("context.path.set", Constants.KEY_DOWNLOAD_DIRECTORY, getDownloadDirectory()));
             logger.debug(RB.$("context.path.set", Constants.KEY_ASSEMBLE_DIRECTORY, getAssembleDirectory()));
             logger.debug(RB.$("context.path.set", Constants.KEY_ARTIFACTS_DIRECTORY, getArtifactsDirectory()));
@@ -775,6 +781,10 @@ public class JReleaserContext {
         return outputDirectory.resolve("package");
     }
 
+    public Path getPublishDirectory() {
+        return outputDirectory.resolve("publish");
+    }
+
     public Path getAssembleDirectory() {
         return outputDirectory.resolve("assemble");
     }
@@ -1065,6 +1075,7 @@ public class JReleaserContext {
         props.set(Constants.KEY_SIGNATURES_DIRECTORY, getSignaturesDirectory());
         props.set(Constants.KEY_PREPARE_DIRECTORY, getPrepareDirectory());
         props.set(Constants.KEY_PACKAGE_DIRECTORY, getPackageDirectory());
+        props.set(Constants.KEY_PUBLISH_DIRECTORY, getPublishDirectory());
         props.set(Constants.KEY_DOWNLOAD_DIRECTORY, getDownloadDirectory());
         props.set(Constants.KEY_ASSEMBLE_DIRECTORY, getAssembleDirectory());
         props.set(Constants.KEY_ARTIFACTS_DIRECTORY, getArtifactsDirectory());

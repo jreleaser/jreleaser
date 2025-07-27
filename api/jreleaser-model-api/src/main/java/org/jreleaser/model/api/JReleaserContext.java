@@ -70,6 +70,8 @@ public interface JReleaserContext extends Serializable {
 
     Path getPackageDirectory();
 
+    Path getPublishDirectory();
+
     Path getAssembleDirectory();
 
     Path getDownloadDirectory();

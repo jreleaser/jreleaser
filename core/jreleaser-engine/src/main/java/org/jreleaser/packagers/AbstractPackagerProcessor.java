@@ -74,6 +74,7 @@ import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_SIZE;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ARTIFACT_VERSION;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY;
+import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_PUBLISH_DIRECTORY;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_SHA_256;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_SIZE;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_URL;
@@ -478,6 +479,10 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
 
     protected Path getPackageDirectory(TemplateContext props) {
         return props.get(KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
+    }
+
+    protected Path getPublishDirectory(TemplateContext props) {
+        return props.get(KEY_DISTRIBUTION_PUBLISH_DIRECTORY);
     }
 
     protected void safePut(TemplateContext dest, String key, Object value) {

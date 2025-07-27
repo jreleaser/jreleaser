@@ -111,10 +111,14 @@ public class DistributionProcessor {
         TemplateContext props = context.props();
         props.set(Constants.KEY_PREPARE_DIRECTORY, context.getPrepareDirectory());
         props.set(Constants.KEY_PACKAGE_DIRECTORY, context.getPackageDirectory());
+        props.set(Constants.KEY_PUBLISH_DIRECTORY, context.getPublishDirectory());
         props.set(Constants.KEY_DISTRIBUTION_PREPARE_DIRECTORY, context.getPrepareDirectory()
             .resolve(distributionName)
             .resolve(packagerName));
         props.set(Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY, context.getPackageDirectory()
+            .resolve(distributionName)
+            .resolve(packagerName));
+        props.set(Constants.KEY_DISTRIBUTION_PUBLISH_DIRECTORY, context.getPublishDirectory()
             .resolve(distributionName)
             .resolve(packagerName));
         return props;

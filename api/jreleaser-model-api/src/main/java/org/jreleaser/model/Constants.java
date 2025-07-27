@@ -501,8 +501,10 @@ public interface Constants {
     String KEY_DOWNLOAD_DIRECTORY = "downloadDirectory";
     String KEY_PREPARE_DIRECTORY = "prepareDirectory";
     String KEY_PACKAGE_DIRECTORY = "packageDirectory";
+    String KEY_PUBLISH_DIRECTORY = "publishDirectory";
     String KEY_DISTRIBUTION_PREPARE_DIRECTORY = "distributionPrepareDirectory";
     String KEY_DISTRIBUTION_PACKAGE_DIRECTORY = "distributionPackageDirectory";
+    String KEY_DISTRIBUTION_PUBLISH_DIRECTORY = "distributionPublishDirectory";
 
     String KEY_GRAALVM_NAGIVE_IMAGE = "graalVMNativeImage";
 
