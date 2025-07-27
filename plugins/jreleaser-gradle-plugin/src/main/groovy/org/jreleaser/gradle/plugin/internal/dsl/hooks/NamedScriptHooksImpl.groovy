@@ -29,7 +29,6 @@ import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.common.Matrix
 import org.jreleaser.gradle.plugin.dsl.hooks.NamedScriptHooks
 import org.jreleaser.gradle.plugin.dsl.hooks.ScriptHook
-import org.jreleaser.gradle.plugin.dsl.hooks.ScriptHooks
 import org.jreleaser.gradle.plugin.internal.dsl.common.MatrixImpl
 import org.jreleaser.model.Active
 import org.kordamp.gradle.util.ConfigureUtil
@@ -41,13 +40,13 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 /**
  *
  * @author Andres Almiray
- * @since 1.6.0
+ * @since 1.20.0
  */
 @CompileStatic
-class ScriptHooksImpl implements ScriptHooks {
+class NamedScriptHooksImpl implements NamedScriptHooks {
+    String name
     final Property<Active> active
 
-    final NamedDomainObjectContainer<NamedScriptHooks> groups
     final NamedDomainObjectContainer<ScriptHookImpl> before
     final NamedDomainObjectContainer<ScriptHookImpl> success
     final NamedDomainObjectContainer<ScriptHookImpl> failure
@@ -57,21 +56,12 @@ class ScriptHooksImpl implements ScriptHooks {
     final MatrixImpl matrix
 
     @Inject
-    ScriptHooksImpl(ObjectFactory objects) {
+    NamedScriptHooksImpl(ObjectFactory objects) {
         active = objects.property(Active).convention(Providers.<Active> notDefined())
         condition = objects.property(String).convention(Providers.<String> notDefined())
         environment = objects.mapProperty(String, String).convention(Providers.notDefined())
         applyDefaultMatrix = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         matrix = objects.newInstance(MatrixImpl, objects)
-
-        groups = objects.domainObjectContainer(NamedScriptHooks, new NamedDomainObjectFactory<NamedScriptHooks>() {
-            @Override
-            NamedScriptHooksImpl create(String name) {
-                NamedScriptHooksImpl hook = objects.newInstance(NamedScriptHooksImpl, objects)
-                hook.name = name
-                hook
-            }
-        })
 
         before = objects.domainObjectContainer(ScriptHookImpl, new NamedDomainObjectFactory<ScriptHookImpl>() {
             @Override
@@ -102,8 +92,7 @@ class ScriptHooksImpl implements ScriptHooks {
     }
 
     boolean isSet() {
-        !groups.empty ||
-            !before.empty ||
+        !before.empty ||
             !success.empty ||
             !failure.empty
     }
@@ -120,11 +109,6 @@ class ScriptHooksImpl implements ScriptHooks {
         if (isNotBlank(key) && isNotBlank(value)) {
             environment.put(key.trim(), value.trim())
         }
-    }
-
-    @Override
-    void group(Action<? super NamedDomainObjectContainer<NamedScriptHooks>> action) {
-        action.execute(groups)
     }
 
     @Override
@@ -145,12 +129,6 @@ class ScriptHooksImpl implements ScriptHooks {
     @Override
     void matrix(Action<? super Matrix> action) {
         action.execute(matrix)
-    }
-
-    @Override
-    @CompileDynamic
-    void group(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, groups)
     }
 
     @Override
@@ -177,11 +155,11 @@ class ScriptHooksImpl implements ScriptHooks {
         ConfigureUtil.configure(action, matrix)
     }
 
-    org.jreleaser.model.internal.hooks.ScriptHooks toModel() {
-        org.jreleaser.model.internal.hooks.ScriptHooks scriptHooks = new org.jreleaser.model.internal.hooks.ScriptHooks()
+    org.jreleaser.model.internal.hooks.NamedScriptHooks toModel() {
+        org.jreleaser.model.internal.hooks.NamedScriptHooks scriptHooks = new org.jreleaser.model.internal.hooks.NamedScriptHooks()
+        scriptHooks.name = name
         if (active.present) scriptHooks.active = active.get()
 
-        groups.each { scriptHooks.addGroup(((NamedScriptHooksImpl) it).toModel()) }
         before.forEach { ScriptHookImpl hook -> scriptHooks.addBefore(hook.toModel()) }
         success.forEach { ScriptHookImpl hook -> scriptHooks.addSuccess(hook.toModel()) }
         failure.forEach { ScriptHookImpl hook -> scriptHooks.addFailure(hook.toModel()) }

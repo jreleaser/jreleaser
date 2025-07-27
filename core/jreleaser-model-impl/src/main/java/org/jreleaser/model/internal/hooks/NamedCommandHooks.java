@@ -30,55 +30,47 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.unmodifiableMap;
-import static java.util.function.UnaryOperator.identity;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 
 /**
  * @author Andres Almiray
  * @since 1.2.0
  */
-public final class CommandHooks extends AbstractActivatable<CommandHooks> implements Domain {
-    private static final long serialVersionUID = 1032968472650371631L;
+public final class NamedCommandHooks extends AbstractActivatable<NamedCommandHooks> implements Domain {
+    private static final long serialVersionUID = -5644580395019320416L;
 
-    private final Map<String, NamedCommandHooks> groups = new LinkedHashMap<>();
     private final List<CommandHook> before = new ArrayList<>();
     private final List<CommandHook> success = new ArrayList<>();
     private final List<CommandHook> failure = new ArrayList<>();
     private final Map<String, String> environment = new LinkedHashMap<>();
     private final Matrix matrix = new Matrix();
 
+    private String name;
     private String condition;
     private Boolean applyDefaultMatrix;
 
     @JsonIgnore
-    private final org.jreleaser.model.api.hooks.CommandHooks immutable = new org.jreleaser.model.api.hooks.CommandHooks() {
-        private static final long serialVersionUID = -7008621316266711034L;
+    private final org.jreleaser.model.api.hooks.NamedCommandHooks immutable = new org.jreleaser.model.api.hooks.NamedCommandHooks() {
+        private static final long serialVersionUID = -5941160336124473447L;
 
-        private Map<String, ? extends org.jreleaser.model.api.hooks.NamedCommandHooks> groups;
         private List<? extends org.jreleaser.model.api.hooks.CommandHook> before;
         private List<? extends org.jreleaser.model.api.hooks.CommandHook> success;
         private List<? extends org.jreleaser.model.api.hooks.CommandHook> failure;
 
         @Override
-        public String getCondition() {
-            return CommandHooks.this.getCondition();
+        public String getName() {
+            return NamedCommandHooks.this.getName();
         }
 
         @Override
-        public Map<String, ? extends org.jreleaser.model.api.hooks.NamedCommandHooks> getGroups() {
-            if (null == groups) {
-                groups = CommandHooks.this.groups.values().stream()
-                    .map(NamedCommandHooks::asImmutable)
-                    .collect(toMap(org.jreleaser.model.api.hooks.NamedCommandHooks::getName, identity()));
-            }
-            return groups;
+        public String getCondition() {
+            return NamedCommandHooks.this.getCondition();
         }
 
         @Override
         public List<? extends org.jreleaser.model.api.hooks.CommandHook> getBefore() {
             if (null == before) {
-                before = CommandHooks.this.before.stream()
+                before = NamedCommandHooks.this.before.stream()
                     .map(CommandHook::asImmutable)
                     .collect(toList());
             }
@@ -88,7 +80,7 @@ public final class CommandHooks extends AbstractActivatable<CommandHooks> implem
         @Override
         public List<? extends org.jreleaser.model.api.hooks.CommandHook> getSuccess() {
             if (null == success) {
-                success = CommandHooks.this.success.stream()
+                success = NamedCommandHooks.this.success.stream()
                     .map(CommandHook::asImmutable)
                     .collect(toList());
             }
@@ -98,7 +90,7 @@ public final class CommandHooks extends AbstractActivatable<CommandHooks> implem
         @Override
         public List<? extends org.jreleaser.model.api.hooks.CommandHook> getFailure() {
             if (null == failure) {
-                failure = CommandHooks.this.failure.stream()
+                failure = NamedCommandHooks.this.failure.stream()
                     .map(CommandHook::asImmutable)
                     .collect(toList());
             }
@@ -107,12 +99,12 @@ public final class CommandHooks extends AbstractActivatable<CommandHooks> implem
 
         @Override
         public Map<String, String> getEnvironment() {
-            return unmodifiableMap(CommandHooks.this.getEnvironment());
+            return unmodifiableMap(NamedCommandHooks.this.getEnvironment());
         }
 
         @Override
         public boolean isApplyDefaultMatrix() {
-            return CommandHooks.this.isApplyDefaultMatrix();
+            return NamedCommandHooks.this.isApplyDefaultMatrix();
         }
 
         @Override
@@ -122,33 +114,33 @@ public final class CommandHooks extends AbstractActivatable<CommandHooks> implem
 
         @Override
         public Active getActive() {
-            return CommandHooks.this.getActive();
+            return NamedCommandHooks.this.getActive();
         }
 
         @Override
         public boolean isEnabled() {
-            return CommandHooks.this.isEnabled();
+            return NamedCommandHooks.this.isEnabled();
         }
 
         @Override
         public Map<String, Object> asMap(boolean full) {
-            return Collections.unmodifiableMap(CommandHooks.this.asMap(full));
+            return Collections.unmodifiableMap(NamedCommandHooks.this.asMap(full));
         }
     };
 
-    public CommandHooks() {
+    public NamedCommandHooks() {
         enabledSet(true);
     }
 
-    public org.jreleaser.model.api.hooks.CommandHooks asImmutable() {
+    public org.jreleaser.model.api.hooks.NamedCommandHooks asImmutable() {
         return immutable;
     }
 
     @Override
-    public void merge(CommandHooks source) {
+    public void merge(NamedCommandHooks source) {
         super.merge(source);
+        this.name = merge(this.name, source.name);
         this.condition = merge(this.condition, source.condition);
-        setGroups(mergeModel(this.groups, source.groups));
         setBefore(merge(this.before, source.before));
         setSuccess(merge(this.success, source.success));
         setFailure(merge(this.failure, source.failure));
@@ -164,25 +156,20 @@ public final class CommandHooks extends AbstractActivatable<CommandHooks> implem
             !failure.isEmpty();
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getCondition() {
         return condition;
     }
 
     public void setCondition(String condition) {
         this.condition = condition;
-    }
-
-    public Map<String, NamedCommandHooks> getGroups() {
-        return groups;
-    }
-
-    public void setGroups(Map<String, NamedCommandHooks> groups) {
-        this.groups.clear();
-        this.groups.putAll(groups);
-    }
-
-    public void addGroup(NamedCommandHooks hook) {
-        this.groups.put(hook.getName(), hook);
     }
 
     public List<CommandHook> getBefore() {
@@ -264,6 +251,7 @@ public final class CommandHooks extends AbstractActivatable<CommandHooks> implem
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
         map.put("active", getActive());
+        map.put("name", name);
         map.put("condition", condition);
         map.put("environment", environment);
         matrix.asMap(map);
@@ -288,13 +276,6 @@ public final class CommandHooks extends AbstractActivatable<CommandHooks> implem
             m.put("hook " + (i++), hook.asMap(full));
         }
         map.put("failure", m);
-
-        List<Map<String, Object>> groups = this.groups.values()
-            .stream()
-            .filter(d -> full || d.isEnabled())
-            .map(d -> d.asMap(full))
-            .collect(toList());
-        if (!groups.isEmpty()) map.put("groups", groups);
 
         return map;
     }

@@ -19,9 +19,12 @@ package org.jreleaser.model.internal.validation.hooks;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.hooks.NamedScriptHooks;
 import org.jreleaser.model.internal.hooks.ScriptHook;
 import org.jreleaser.model.internal.hooks.ScriptHooks;
 import org.jreleaser.util.Errors;
+
+import java.util.Map;
 
 import static org.jreleaser.model.internal.validation.common.MatrixValidator.validateMatrix;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
@@ -61,6 +64,53 @@ public final class ScriptHooksValidator {
         }
         for (int i = 0; i < hooks.getFailure().size(); i++) {
             validateScriptHook(context, hooks.getFailure().get(i), "failure", i, errors);
+        }
+
+        for (Map.Entry<String, NamedScriptHooks> e : hooks.getGroups().entrySet()) {
+            e.getValue().setName(e.getKey());
+            validateNamedScriptHooks(context, e.getValue(), errors);
+        }
+
+        if (hooks.isEnabled()) {
+            boolean enabled = hooks.getBefore().stream().anyMatch(ScriptHook::isEnabled) ||
+                hooks.getSuccess().stream().anyMatch(ScriptHook::isEnabled) ||
+                hooks.getFailure().stream().anyMatch(ScriptHook::isEnabled) ||
+                hooks.getGroups().values().stream().anyMatch(NamedScriptHooks::isEnabled);
+
+            if (!activeSet && !enabled) {
+                context.getLogger().debug(RB.$("validation.disabled"));
+                hooks.disable();
+            }
+        }
+    }
+
+    public static void validateNamedScriptHooks(JReleaserContext context, NamedScriptHooks hooks, Errors errors) {
+        context.getLogger().debug("hooks.script." + hooks.getName());
+
+        boolean activeSet = hooks.isActiveSet();
+        resolveActivatable(context, hooks, "hooks.script." + hooks.getName(), "ALWAYS");
+        hooks.resolveEnabled(context.getModel().getProject());
+
+        if (hooks.getMatrix().isEmpty()) {
+            hooks.setMatrix(context.getModel().getHooks().getMatrix());
+        }
+        if (hooks.isApplyDefaultMatrix()) {
+            hooks.setMatrix(context.getModel().getMatrix());
+        }
+
+        validateMatrix(context, hooks.getMatrix(), "hooks.script.matrix", errors);
+
+        for (int i = 0; i < hooks.getBefore().size(); i++) {
+            hooks.getBefore().get(i).setName(hooks.getName());
+            validateScriptHook(context, hooks.getBefore().get(i), hooks.getName() + ".before", i, errors);
+        }
+        for (int i = 0; i < hooks.getSuccess().size(); i++) {
+            hooks.getSuccess().get(i).setName(hooks.getName());
+            validateScriptHook(context, hooks.getSuccess().get(i), hooks.getName() + ".success", i, errors);
+        }
+        for (int i = 0; i < hooks.getFailure().size(); i++) {
+            hooks.getFailure().get(i).setName(hooks.getName());
+            validateScriptHook(context, hooks.getFailure().get(i), hooks.getName() + ".failure", i, errors);
         }
 
         if (hooks.isEnabled()) {

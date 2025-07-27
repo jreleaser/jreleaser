@@ -35,6 +35,8 @@ public interface JReleaserLogger {
 
     void decreaseIndent();
 
+    void replacePrefix(String prefix);
+
     void setPrefix(String prefix);
 
     void restorePrefix();

@@ -29,6 +29,7 @@ import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.common.Matrix
 import org.jreleaser.gradle.plugin.dsl.hooks.CommandHook
 import org.jreleaser.gradle.plugin.dsl.hooks.CommandHooks
+import org.jreleaser.gradle.plugin.dsl.hooks.NamedCommandHooks
 import org.jreleaser.gradle.plugin.internal.dsl.common.MatrixImpl
 import org.jreleaser.model.Active
 import org.kordamp.gradle.util.ConfigureUtil
@@ -46,6 +47,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 class CommandHooksImpl implements CommandHooks {
     final Property<Active> active
 
+    final NamedDomainObjectContainer<NamedCommandHooks> groups
     final NamedDomainObjectContainer<CommandHookImpl> before
     final NamedDomainObjectContainer<CommandHookImpl> success
     final NamedDomainObjectContainer<CommandHookImpl> failure
@@ -61,6 +63,15 @@ class CommandHooksImpl implements CommandHooks {
         environment = objects.mapProperty(String, String).convention(Providers.notDefined())
         applyDefaultMatrix = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         matrix = objects.newInstance(MatrixImpl, objects)
+
+        groups = objects.domainObjectContainer(NamedCommandHooks, new NamedDomainObjectFactory<NamedCommandHooks>() {
+            @Override
+            NamedCommandHooksImpl create(String name) {
+                NamedCommandHooksImpl hook = objects.newInstance(NamedCommandHooksImpl, objects)
+                hook.name = name
+                hook
+            }
+        })
 
         before = objects.domainObjectContainer(CommandHookImpl, new NamedDomainObjectFactory<CommandHookImpl>() {
             @Override
@@ -91,7 +102,8 @@ class CommandHooksImpl implements CommandHooks {
     }
 
     boolean isSet() {
-        !before.empty ||
+        !groups.empty ||
+            !before.empty ||
             !success.empty ||
             !failure.empty
     }
@@ -108,6 +120,11 @@ class CommandHooksImpl implements CommandHooks {
         if (isNotBlank(key) && isNotBlank(value)) {
             environment.put(key.trim(), value.trim())
         }
+    }
+
+    @Override
+    void group(Action<? super NamedDomainObjectContainer<NamedCommandHooks>> action) {
+        action.execute(groups)
     }
 
     @Override
@@ -128,6 +145,12 @@ class CommandHooksImpl implements CommandHooks {
     @Override
     void matrix(Action<? super Matrix> action) {
         action.execute(matrix)
+    }
+
+    @Override
+    @CompileDynamic
+    void group(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
+        ConfigureUtil.configure(action, groups)
     }
 
     @Override
@@ -158,6 +181,7 @@ class CommandHooksImpl implements CommandHooks {
         org.jreleaser.model.internal.hooks.CommandHooks commandHooks = new org.jreleaser.model.internal.hooks.CommandHooks()
         if (active.present) commandHooks.active = active.get()
 
+        groups.each { commandHooks.addGroup(((NamedCommandHooksImpl) it).toModel()) }
         before.forEach { CommandHookImpl hook -> commandHooks.addBefore(hook.toModel()) }
         success.forEach { CommandHookImpl hook -> commandHooks.addSuccess(hook.toModel()) }
         failure.forEach { CommandHookImpl hook -> commandHooks.addFailure(hook.toModel()) }

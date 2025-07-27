@@ -117,12 +117,30 @@ public final class HookExecutor {
         switch (event.getType()) {
             case BEFORE:
                 hooks.addAll((Collection<ScriptHook>) filter(scriptHooks.getBefore(), event));
+                scriptHooks.getGroups().values().forEach(group -> {
+                    if (!group.isEnabled() || evaluateCondition(group.getCondition())) {
+                        return;
+                    }
+                    hooks.addAll((Collection<ScriptHook>) filter(group.getBefore(), event));
+                });
                 break;
             case SUCCESS:
                 hooks.addAll((Collection<ScriptHook>) filter(scriptHooks.getSuccess(), event));
+                scriptHooks.getGroups().values().forEach(group -> {
+                    if (!group.isEnabled() || evaluateCondition(group.getCondition())) {
+                        return;
+                    }
+                    hooks.addAll((Collection<ScriptHook>) filter(group.getSuccess(), event));
+                });
                 break;
             case FAILURE:
                 hooks.addAll((Collection<ScriptHook>) filter(scriptHooks.getFailure(), event));
+                scriptHooks.getGroups().values().forEach(group -> {
+                    if (!group.isEnabled() || evaluateCondition(group.getCondition())) {
+                        return;
+                    }
+                    hooks.addAll((Collection<ScriptHook>) filter(group.getFailure(), event));
+                });
                 break;
         }
 
@@ -135,6 +153,12 @@ public final class HookExecutor {
 
         try {
             for (ScriptHook hook : hooks) {
+                String prefix = "hooks";
+                if (isNotBlank(hook.getName())) {
+                    prefix += "." + hook.getName();
+                }
+                context.getLogger().replacePrefix(prefix);
+
                 if (!hook.getMatrix().isEmpty()) {
                     for (Map<String, String> matrixRow : hook.getMatrix().resolve()) {
                         if (matrixRow.containsKey(KEY_PLATFORM)) {
@@ -206,12 +230,30 @@ public final class HookExecutor {
         switch (event.getType()) {
             case BEFORE:
                 hooks.addAll((Collection<CommandHook>) filter(commandHooks.getBefore(), event));
+                commandHooks.getGroups().values().forEach(group -> {
+                    if (!group.isEnabled() || evaluateCondition(group.getCondition())) {
+                        return;
+                    }
+                    hooks.addAll((Collection<CommandHook>) filter(group.getBefore(), event));
+                });
                 break;
             case SUCCESS:
                 hooks.addAll((Collection<CommandHook>) filter(commandHooks.getSuccess(), event));
+                commandHooks.getGroups().values().forEach(group -> {
+                    if (!group.isEnabled() || evaluateCondition(group.getCondition())) {
+                        return;
+                    }
+                    hooks.addAll((Collection<CommandHook>) filter(group.getSuccess(), event));
+                });
                 break;
             case FAILURE:
                 hooks.addAll((Collection<CommandHook>) filter(commandHooks.getFailure(), event));
+                commandHooks.getGroups().values().forEach(group -> {
+                    if (!group.isEnabled() || evaluateCondition(group.getCondition())) {
+                        return;
+                    }
+                    hooks.addAll((Collection<CommandHook>) filter(group.getFailure(), event));
+                });
                 break;
         }
 
@@ -224,6 +266,12 @@ public final class HookExecutor {
 
         try {
             for (CommandHook hook : hooks) {
+                String prefix = "hooks";
+                if (isNotBlank(hook.getName())) {
+                    prefix += "." + hook.getName();
+                }
+                context.getLogger().replacePrefix(prefix);
+
                 if (!hook.getMatrix().isEmpty()) {
                     for (Map<String, String> matrixRow : hook.getMatrix().resolve()) {
                         if (matrixRow.containsKey(KEY_PLATFORM)) {

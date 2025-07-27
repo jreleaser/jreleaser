@@ -21,7 +21,10 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.hooks.CommandHook;
 import org.jreleaser.model.internal.hooks.CommandHooks;
+import org.jreleaser.model.internal.hooks.NamedCommandHooks;
 import org.jreleaser.util.Errors;
+
+import java.util.Map;
 
 import static org.jreleaser.model.internal.validation.common.MatrixValidator.validateMatrix;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
@@ -61,6 +64,53 @@ public final class CommandHooksValidator {
         }
         for (int i = 0; i < hooks.getFailure().size(); i++) {
             validateCommandHook(context, hooks.getFailure().get(i), "failure", i, errors);
+        }
+
+        for (Map.Entry<String, NamedCommandHooks> e : hooks.getGroups().entrySet()) {
+            e.getValue().setName(e.getKey());
+            validateNamedCommandHooks(context, e.getValue(), errors);
+        }
+
+        if (hooks.isEnabled()) {
+            boolean enabled = hooks.getBefore().stream().anyMatch(CommandHook::isEnabled) ||
+                hooks.getSuccess().stream().anyMatch(CommandHook::isEnabled) ||
+                hooks.getFailure().stream().anyMatch(CommandHook::isEnabled) ||
+                hooks.getGroups().values().stream().anyMatch(NamedCommandHooks::isEnabled);
+
+            if (!activeSet && !enabled) {
+                context.getLogger().debug(RB.$("validation.disabled"));
+                hooks.disable();
+            }
+        }
+    }
+
+    private static void validateNamedCommandHooks(JReleaserContext context, NamedCommandHooks hooks, Errors errors) {
+        context.getLogger().debug("hooks.command." + hooks.getName());
+
+        boolean activeSet = hooks.isActiveSet();
+        resolveActivatable(context, hooks, "hooks.command." + hooks.getName(), "ALWAYS");
+        hooks.resolveEnabled(context.getModel().getProject());
+
+        if (hooks.getMatrix().isEmpty()) {
+            hooks.setMatrix(context.getModel().getHooks().getMatrix());
+        }
+        if (hooks.isApplyDefaultMatrix()) {
+            hooks.setMatrix(context.getModel().getMatrix());
+        }
+
+        validateMatrix(context, hooks.getMatrix(), "hooks.command.matrix", errors);
+
+        for (int i = 0; i < hooks.getBefore().size(); i++) {
+            hooks.getBefore().get(i).setName(hooks.getName());
+            validateCommandHook(context, hooks.getBefore().get(i), hooks.getName() + ".before", i, errors);
+        }
+        for (int i = 0; i < hooks.getSuccess().size(); i++) {
+            hooks.getSuccess().get(i).setName(hooks.getName());
+            validateCommandHook(context, hooks.getSuccess().get(i), hooks.getName() + ".success", i, errors);
+        }
+        for (int i = 0; i < hooks.getFailure().size(); i++) {
+            hooks.getFailure().get(i).setName(hooks.getName());
+            validateCommandHook(context, hooks.getFailure().get(i), hooks.getName() + ".failure", i, errors);
         }
 
         if (hooks.isEnabled()) {

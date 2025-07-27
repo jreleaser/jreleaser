@@ -30,15 +30,18 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.unmodifiableMap;
+import static java.util.function.UnaryOperator.identity;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * @author Andres Almiray
  * @since 1.6.0
  */
 public final class ScriptHooks extends AbstractActivatable<ScriptHooks> implements Domain {
-    private static final long serialVersionUID = -4297448990828592276L;
+    private static final long serialVersionUID = 1187801964887441750L;
 
+    private final Map<String, NamedScriptHooks> groups = new LinkedHashMap<>();
     private final List<ScriptHook> before = new ArrayList<>();
     private final List<ScriptHook> success = new ArrayList<>();
     private final List<ScriptHook> failure = new ArrayList<>();
@@ -50,8 +53,9 @@ public final class ScriptHooks extends AbstractActivatable<ScriptHooks> implemen
 
     @JsonIgnore
     private final org.jreleaser.model.api.hooks.ScriptHooks immutable = new org.jreleaser.model.api.hooks.ScriptHooks() {
-        private static final long serialVersionUID = 5161877226451497599L;
+        private static final long serialVersionUID = -1023913545346878510L;
 
+        private Map<String, ? extends org.jreleaser.model.api.hooks.NamedScriptHooks> groups;
         private List<? extends org.jreleaser.model.api.hooks.ScriptHook> before;
         private List<? extends org.jreleaser.model.api.hooks.ScriptHook> success;
         private List<? extends org.jreleaser.model.api.hooks.ScriptHook> failure;
@@ -59,6 +63,16 @@ public final class ScriptHooks extends AbstractActivatable<ScriptHooks> implemen
         @Override
         public String getCondition() {
             return ScriptHooks.this.getCondition();
+        }
+
+        @Override
+        public Map<String, ? extends org.jreleaser.model.api.hooks.NamedScriptHooks> getGroups() {
+            if (null == groups) {
+                groups = ScriptHooks.this.groups.values().stream()
+                    .map(NamedScriptHooks::asImmutable)
+                    .collect(toMap(org.jreleaser.model.api.hooks.NamedScriptHooks::getName, identity()));
+            }
+            return groups;
         }
 
         @Override
@@ -134,6 +148,7 @@ public final class ScriptHooks extends AbstractActivatable<ScriptHooks> implemen
     public void merge(ScriptHooks source) {
         super.merge(source);
         this.condition = merge(this.condition, source.condition);
+        setGroups(mergeModel(this.groups, source.groups));
         setBefore(merge(this.before, source.before));
         setSuccess(merge(this.success, source.success));
         setFailure(merge(this.failure, source.failure));
@@ -155,6 +170,19 @@ public final class ScriptHooks extends AbstractActivatable<ScriptHooks> implemen
 
     public void setCondition(String condition) {
         this.condition = condition;
+    }
+
+    public Map<String, NamedScriptHooks> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(Map<String, NamedScriptHooks> groups) {
+        this.groups.clear();
+        this.groups.putAll(groups);
+    }
+
+    public void addGroup(NamedScriptHooks hook) {
+        this.groups.put(hook.getName(), hook);
     }
 
     public List<ScriptHook> getBefore() {
@@ -260,6 +288,13 @@ public final class ScriptHooks extends AbstractActivatable<ScriptHooks> implemen
             m.put("hook " + (i++), hook.asMap(full));
         }
         map.put("failure", m);
+
+        List<Map<String, Object>> groups = this.groups.values()
+            .stream()
+            .filter(d -> full || d.isEnabled())
+            .map(d -> d.asMap(full))
+            .collect(toList());
+        if (!groups.isEmpty()) map.put("groups", groups);
 
         return map;
     }

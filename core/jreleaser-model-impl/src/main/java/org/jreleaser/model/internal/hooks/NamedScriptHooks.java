@@ -30,76 +30,68 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.unmodifiableMap;
-import static java.util.function.UnaryOperator.identity;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
 
 /**
  * @author Andres Almiray
- * @since 1.2.0
+ * @since 1.6.0
  */
-public final class CommandHooks extends AbstractActivatable<CommandHooks> implements Domain {
-    private static final long serialVersionUID = 1032968472650371631L;
+public final class NamedScriptHooks extends AbstractActivatable<NamedScriptHooks> implements Domain {
+    private static final long serialVersionUID = -6502126145832381920L;
 
-    private final Map<String, NamedCommandHooks> groups = new LinkedHashMap<>();
-    private final List<CommandHook> before = new ArrayList<>();
-    private final List<CommandHook> success = new ArrayList<>();
-    private final List<CommandHook> failure = new ArrayList<>();
+    private final List<ScriptHook> before = new ArrayList<>();
+    private final List<ScriptHook> success = new ArrayList<>();
+    private final List<ScriptHook> failure = new ArrayList<>();
     private final Map<String, String> environment = new LinkedHashMap<>();
     private final Matrix matrix = new Matrix();
 
+    private String name;
     private String condition;
     private Boolean applyDefaultMatrix;
 
     @JsonIgnore
-    private final org.jreleaser.model.api.hooks.CommandHooks immutable = new org.jreleaser.model.api.hooks.CommandHooks() {
-        private static final long serialVersionUID = -7008621316266711034L;
+    private final org.jreleaser.model.api.hooks.NamedScriptHooks immutable = new org.jreleaser.model.api.hooks.NamedScriptHooks() {
+        private static final long serialVersionUID = 6452589570225991883L;
 
-        private Map<String, ? extends org.jreleaser.model.api.hooks.NamedCommandHooks> groups;
-        private List<? extends org.jreleaser.model.api.hooks.CommandHook> before;
-        private List<? extends org.jreleaser.model.api.hooks.CommandHook> success;
-        private List<? extends org.jreleaser.model.api.hooks.CommandHook> failure;
+        private List<? extends org.jreleaser.model.api.hooks.ScriptHook> before;
+        private List<? extends org.jreleaser.model.api.hooks.ScriptHook> success;
+        private List<? extends org.jreleaser.model.api.hooks.ScriptHook> failure;
+
+        @Override
+        public String getName() {
+            return NamedScriptHooks.this.getName();
+        }
 
         @Override
         public String getCondition() {
-            return CommandHooks.this.getCondition();
+            return NamedScriptHooks.this.getCondition();
         }
 
         @Override
-        public Map<String, ? extends org.jreleaser.model.api.hooks.NamedCommandHooks> getGroups() {
-            if (null == groups) {
-                groups = CommandHooks.this.groups.values().stream()
-                    .map(NamedCommandHooks::asImmutable)
-                    .collect(toMap(org.jreleaser.model.api.hooks.NamedCommandHooks::getName, identity()));
-            }
-            return groups;
-        }
-
-        @Override
-        public List<? extends org.jreleaser.model.api.hooks.CommandHook> getBefore() {
+        public List<? extends org.jreleaser.model.api.hooks.ScriptHook> getBefore() {
             if (null == before) {
-                before = CommandHooks.this.before.stream()
-                    .map(CommandHook::asImmutable)
+                before = NamedScriptHooks.this.before.stream()
+                    .map(ScriptHook::asImmutable)
                     .collect(toList());
             }
             return before;
         }
 
         @Override
-        public List<? extends org.jreleaser.model.api.hooks.CommandHook> getSuccess() {
+        public List<? extends org.jreleaser.model.api.hooks.ScriptHook> getSuccess() {
             if (null == success) {
-                success = CommandHooks.this.success.stream()
-                    .map(CommandHook::asImmutable)
+                success = NamedScriptHooks.this.success.stream()
+                    .map(ScriptHook::asImmutable)
                     .collect(toList());
             }
             return success;
         }
 
         @Override
-        public List<? extends org.jreleaser.model.api.hooks.CommandHook> getFailure() {
+        public List<? extends org.jreleaser.model.api.hooks.ScriptHook> getFailure() {
             if (null == failure) {
-                failure = CommandHooks.this.failure.stream()
-                    .map(CommandHook::asImmutable)
+                failure = NamedScriptHooks.this.failure.stream()
+                    .map(ScriptHook::asImmutable)
                     .collect(toList());
             }
             return failure;
@@ -107,12 +99,12 @@ public final class CommandHooks extends AbstractActivatable<CommandHooks> implem
 
         @Override
         public Map<String, String> getEnvironment() {
-            return unmodifiableMap(CommandHooks.this.getEnvironment());
+            return unmodifiableMap(NamedScriptHooks.this.getEnvironment());
         }
 
         @Override
         public boolean isApplyDefaultMatrix() {
-            return CommandHooks.this.isApplyDefaultMatrix();
+            return NamedScriptHooks.this.isApplyDefaultMatrix();
         }
 
         @Override
@@ -122,33 +114,33 @@ public final class CommandHooks extends AbstractActivatable<CommandHooks> implem
 
         @Override
         public Active getActive() {
-            return CommandHooks.this.getActive();
+            return NamedScriptHooks.this.getActive();
         }
 
         @Override
         public boolean isEnabled() {
-            return CommandHooks.this.isEnabled();
+            return NamedScriptHooks.this.isEnabled();
         }
 
         @Override
         public Map<String, Object> asMap(boolean full) {
-            return Collections.unmodifiableMap(CommandHooks.this.asMap(full));
+            return Collections.unmodifiableMap(NamedScriptHooks.this.asMap(full));
         }
     };
 
-    public CommandHooks() {
+    public NamedScriptHooks() {
         enabledSet(true);
     }
 
-    public org.jreleaser.model.api.hooks.CommandHooks asImmutable() {
+    public org.jreleaser.model.api.hooks.NamedScriptHooks asImmutable() {
         return immutable;
     }
 
     @Override
-    public void merge(CommandHooks source) {
+    public void merge(NamedScriptHooks source) {
         super.merge(source);
+        this.name = merge(this.name, source.name);
         this.condition = merge(this.condition, source.condition);
-        setGroups(mergeModel(this.groups, source.groups));
         setBefore(merge(this.before, source.before));
         setSuccess(merge(this.success, source.success));
         setFailure(merge(this.failure, source.failure));
@@ -164,6 +156,14 @@ public final class CommandHooks extends AbstractActivatable<CommandHooks> implem
             !failure.isEmpty();
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getCondition() {
         return condition;
     }
@@ -172,59 +172,46 @@ public final class CommandHooks extends AbstractActivatable<CommandHooks> implem
         this.condition = condition;
     }
 
-    public Map<String, NamedCommandHooks> getGroups() {
-        return groups;
-    }
-
-    public void setGroups(Map<String, NamedCommandHooks> groups) {
-        this.groups.clear();
-        this.groups.putAll(groups);
-    }
-
-    public void addGroup(NamedCommandHooks hook) {
-        this.groups.put(hook.getName(), hook);
-    }
-
-    public List<CommandHook> getBefore() {
+    public List<ScriptHook> getBefore() {
         return before;
     }
 
-    public void setBefore(List<CommandHook> before) {
+    public void setBefore(List<ScriptHook> before) {
         this.before.clear();
         this.before.addAll(before);
     }
 
-    public List<CommandHook> getSuccess() {
+    public List<ScriptHook> getSuccess() {
         return success;
     }
 
-    public void setSuccess(List<CommandHook> success) {
+    public void setSuccess(List<ScriptHook> success) {
         this.success.clear();
         this.success.addAll(success);
     }
 
-    public List<CommandHook> getFailure() {
+    public List<ScriptHook> getFailure() {
         return failure;
     }
 
-    public void setFailure(List<CommandHook> failure) {
+    public void setFailure(List<ScriptHook> failure) {
         this.failure.clear();
         this.failure.addAll(failure);
     }
 
-    public void addBefore(CommandHook hook) {
+    public void addBefore(ScriptHook hook) {
         if (null != hook) {
             this.before.add(hook);
         }
     }
 
-    public void addSuccess(CommandHook hook) {
+    public void addSuccess(ScriptHook hook) {
         if (null != hook) {
             this.success.add(hook);
         }
     }
 
-    public void addFailure(CommandHook hook) {
+    public void addFailure(ScriptHook hook) {
         if (null != hook) {
             this.failure.add(hook);
         }
@@ -264,37 +251,31 @@ public final class CommandHooks extends AbstractActivatable<CommandHooks> implem
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("enabled", isEnabled());
         map.put("active", getActive());
+        map.put("name", name);
         map.put("condition", condition);
         map.put("environment", environment);
         matrix.asMap(map);
 
         Map<String, Map<String, Object>> m = new LinkedHashMap<>();
         int i = 0;
-        for (CommandHook hook : getBefore()) {
+        for (ScriptHook hook : getBefore()) {
             m.put("hook " + (i++), hook.asMap(full));
         }
         map.put("before", m);
 
         m = new LinkedHashMap<>();
         i = 0;
-        for (CommandHook hook : getSuccess()) {
+        for (ScriptHook hook : getSuccess()) {
             m.put("hook " + (i++), hook.asMap(full));
         }
         map.put("success", m);
 
         m = new LinkedHashMap<>();
         i = 0;
-        for (CommandHook hook : getFailure()) {
+        for (ScriptHook hook : getFailure()) {
             m.put("hook " + (i++), hook.asMap(full));
         }
         map.put("failure", m);
-
-        List<Map<String, Object>> groups = this.groups.values()
-            .stream()
-            .filter(d -> full || d.isEnabled())
-            .map(d -> d.asMap(full))
-            .collect(toList());
-        if (!groups.isEmpty()) map.put("groups", groups);
 
         return map;
     }

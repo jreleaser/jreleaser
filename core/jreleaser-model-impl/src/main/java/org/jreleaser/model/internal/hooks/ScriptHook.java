@@ -35,7 +35,7 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
  * @since 1.6.0
  */
 public final class ScriptHook extends AbstractHook<ScriptHook> {
-    private static final long serialVersionUID = -8731244470036406905L;
+    private static final long serialVersionUID = -3434334171967497493L;
 
     private String run;
     private org.jreleaser.model.api.hooks.ScriptHook.Shell shell = org.jreleaser.model.api.hooks.ScriptHook.Shell.BASH;

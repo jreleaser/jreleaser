@@ -29,6 +29,8 @@ import java.util.Map;
  * @since 1.6.0
  */
 public interface ScriptHooks extends Domain, Activatable {
+    Map<String, ? extends NamedScriptHooks> getGroups();
+
     List<? extends ScriptHook> getBefore();
 
     List<? extends ScriptHook> getSuccess();

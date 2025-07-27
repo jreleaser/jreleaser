@@ -30,7 +30,7 @@ import java.util.Set;
  * @since 1.2.0
  */
 public abstract class AbstractHook<S extends AbstractHook<S>> extends AbstractActivatable<S> implements Hook {
-    private static final long serialVersionUID = 6507186145048072581L;
+    private static final long serialVersionUID = -6030166783085333908L;
 
     private final Map<String, String> environment = new LinkedHashMap<>();
     private final Set<String> platforms = new LinkedHashSet<>();
@@ -39,6 +39,7 @@ public abstract class AbstractHook<S extends AbstractHook<S>> extends AbstractAc
 
     protected Boolean continueOnError;
     protected Boolean verbose;
+    protected String name;
     protected String condition;
     protected Boolean applyDefaultMatrix;
 
@@ -47,6 +48,7 @@ public abstract class AbstractHook<S extends AbstractHook<S>> extends AbstractAc
         super.merge(source);
         this.continueOnError = merge(this.continueOnError, source.continueOnError);
         this.verbose = merge(this.verbose, source.verbose);
+        this.name = merge(this.name, source.name);
         this.condition = merge(this.condition, source.condition);
         this.applyDefaultMatrix = merge(this.applyDefaultMatrix, source.applyDefaultMatrix);
         setFilter(source.getFilter());
@@ -83,6 +85,16 @@ public abstract class AbstractHook<S extends AbstractHook<S>> extends AbstractAc
     @Override
     public boolean isVerboseSet() {
         return null != verbose;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
@@ -165,6 +177,7 @@ public abstract class AbstractHook<S extends AbstractHook<S>> extends AbstractAc
         map.put("continueOnError", isContinueOnError());
         map.put("verbose", isVerbose());
         map.put("platforms", platforms);
+        map.put("name", name);
         map.put("condition", condition);
         Map<String, Object> filterAsMap = filter.asMap(full);
         if (full || !filterAsMap.isEmpty()) {

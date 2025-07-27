@@ -27,9 +27,8 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.common.Matrix
-import org.jreleaser.gradle.plugin.dsl.hooks.NamedScriptHooks
-import org.jreleaser.gradle.plugin.dsl.hooks.ScriptHook
-import org.jreleaser.gradle.plugin.dsl.hooks.ScriptHooks
+import org.jreleaser.gradle.plugin.dsl.hooks.CommandHook
+import org.jreleaser.gradle.plugin.dsl.hooks.NamedCommandHooks
 import org.jreleaser.gradle.plugin.internal.dsl.common.MatrixImpl
 import org.jreleaser.model.Active
 import org.kordamp.gradle.util.ConfigureUtil
@@ -41,60 +40,51 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 /**
  *
  * @author Andres Almiray
- * @since 1.6.0
+ * @since 1.20.0
  */
 @CompileStatic
-class ScriptHooksImpl implements ScriptHooks {
+class NamedCommandHooksImpl implements NamedCommandHooks {
+    String name
     final Property<Active> active
 
-    final NamedDomainObjectContainer<NamedScriptHooks> groups
-    final NamedDomainObjectContainer<ScriptHookImpl> before
-    final NamedDomainObjectContainer<ScriptHookImpl> success
-    final NamedDomainObjectContainer<ScriptHookImpl> failure
+    final NamedDomainObjectContainer<CommandHookImpl> before
+    final NamedDomainObjectContainer<CommandHookImpl> success
+    final NamedDomainObjectContainer<CommandHookImpl> failure
     final Property<String> condition
     final MapProperty<String, String> environment
     final Property<Boolean> applyDefaultMatrix
     final MatrixImpl matrix
 
     @Inject
-    ScriptHooksImpl(ObjectFactory objects) {
+    NamedCommandHooksImpl(ObjectFactory objects) {
         active = objects.property(Active).convention(Providers.<Active> notDefined())
         condition = objects.property(String).convention(Providers.<String> notDefined())
         environment = objects.mapProperty(String, String).convention(Providers.notDefined())
         applyDefaultMatrix = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         matrix = objects.newInstance(MatrixImpl, objects)
 
-        groups = objects.domainObjectContainer(NamedScriptHooks, new NamedDomainObjectFactory<NamedScriptHooks>() {
+        before = objects.domainObjectContainer(CommandHookImpl, new NamedDomainObjectFactory<CommandHookImpl>() {
             @Override
-            NamedScriptHooksImpl create(String name) {
-                NamedScriptHooksImpl hook = objects.newInstance(NamedScriptHooksImpl, objects)
+            CommandHookImpl create(String name) {
+                CommandHookImpl hook = objects.newInstance(CommandHookImpl, objects)
                 hook.name = name
                 hook
             }
         })
 
-        before = objects.domainObjectContainer(ScriptHookImpl, new NamedDomainObjectFactory<ScriptHookImpl>() {
+        success = objects.domainObjectContainer(CommandHookImpl, new NamedDomainObjectFactory<CommandHookImpl>() {
             @Override
-            ScriptHookImpl create(String name) {
-                ScriptHookImpl hook = objects.newInstance(ScriptHookImpl, objects)
+            CommandHookImpl create(String name) {
+                CommandHookImpl hook = objects.newInstance(CommandHookImpl, objects)
                 hook.name = name
                 hook
             }
         })
 
-        success = objects.domainObjectContainer(ScriptHookImpl, new NamedDomainObjectFactory<ScriptHookImpl>() {
+        failure = objects.domainObjectContainer(CommandHookImpl, new NamedDomainObjectFactory<CommandHookImpl>() {
             @Override
-            ScriptHookImpl create(String name) {
-                ScriptHookImpl hook = objects.newInstance(ScriptHookImpl, objects)
-                hook.name = name
-                hook
-            }
-        })
-
-        failure = objects.domainObjectContainer(ScriptHookImpl, new NamedDomainObjectFactory<ScriptHookImpl>() {
-            @Override
-            ScriptHookImpl create(String name) {
-                ScriptHookImpl hook = objects.newInstance(ScriptHookImpl, objects)
+            CommandHookImpl create(String name) {
+                CommandHookImpl hook = objects.newInstance(CommandHookImpl, objects)
                 hook.name = name
                 hook
             }
@@ -102,8 +92,7 @@ class ScriptHooksImpl implements ScriptHooks {
     }
 
     boolean isSet() {
-        !groups.empty ||
-            !before.empty ||
+        !before.empty ||
             !success.empty ||
             !failure.empty
     }
@@ -123,22 +112,17 @@ class ScriptHooksImpl implements ScriptHooks {
     }
 
     @Override
-    void group(Action<? super NamedDomainObjectContainer<NamedScriptHooks>> action) {
-        action.execute(groups)
-    }
-
-    @Override
-    void before(Action<? super ScriptHook> action) {
+    void before(Action<? super CommandHook> action) {
         action.execute(before.maybeCreate("before-${before.size()}".toString()))
     }
 
     @Override
-    void success(Action<? super ScriptHook> action) {
+    void success(Action<? super CommandHook> action) {
         action.execute(success.maybeCreate("success-${success.size()}".toString()))
     }
 
     @Override
-    void failure(Action<? super ScriptHook> action) {
+    void failure(Action<? super CommandHook> action) {
         action.execute(failure.maybeCreate("failure-${failure.size()}".toString()))
     }
 
@@ -149,25 +133,19 @@ class ScriptHooksImpl implements ScriptHooks {
 
     @Override
     @CompileDynamic
-    void group(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, groups)
-    }
-
-    @Override
-    @CompileDynamic
-    void before(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ScriptHook) Closure<Void> action) {
+    void before(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommandHook) Closure<Void> action) {
         ConfigureUtil.configure(action, before.maybeCreate("before-${before.size()}".toString()))
     }
 
     @Override
     @CompileDynamic
-    void success(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ScriptHook) Closure<Void> action) {
+    void success(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommandHook) Closure<Void> action) {
         ConfigureUtil.configure(action, success.maybeCreate("success-${success.size()}".toString()))
     }
 
     @Override
     @CompileDynamic
-    void failure(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ScriptHook) Closure<Void> action) {
+    void failure(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommandHook) Closure<Void> action) {
         ConfigureUtil.configure(action, failure.maybeCreate("failure-${failure.size()}".toString()))
     }
 
@@ -177,19 +155,19 @@ class ScriptHooksImpl implements ScriptHooks {
         ConfigureUtil.configure(action, matrix)
     }
 
-    org.jreleaser.model.internal.hooks.ScriptHooks toModel() {
-        org.jreleaser.model.internal.hooks.ScriptHooks scriptHooks = new org.jreleaser.model.internal.hooks.ScriptHooks()
-        if (active.present) scriptHooks.active = active.get()
+    org.jreleaser.model.internal.hooks.NamedCommandHooks toModel() {
+        org.jreleaser.model.internal.hooks.NamedCommandHooks commandHooks = new org.jreleaser.model.internal.hooks.NamedCommandHooks()
+        commandHooks.name = name
+        if (active.present) commandHooks.active = active.get()
 
-        groups.each { scriptHooks.addGroup(((NamedScriptHooksImpl) it).toModel()) }
-        before.forEach { ScriptHookImpl hook -> scriptHooks.addBefore(hook.toModel()) }
-        success.forEach { ScriptHookImpl hook -> scriptHooks.addSuccess(hook.toModel()) }
-        failure.forEach { ScriptHookImpl hook -> scriptHooks.addFailure(hook.toModel()) }
-        if (condition.present) scriptHooks.condition = condition.get()
-        if (environment.present) scriptHooks.environment.putAll(environment.get())
-        if (applyDefaultMatrix.present) scriptHooks.applyDefaultMatrix = applyDefaultMatrix.get()
-        if (matrix.isSet()) scriptHooks.setMatrix(matrix.toModel())
+        before.forEach { CommandHookImpl hook -> commandHooks.addBefore(hook.toModel()) }
+        success.forEach { CommandHookImpl hook -> commandHooks.addSuccess(hook.toModel()) }
+        failure.forEach { CommandHookImpl hook -> commandHooks.addFailure(hook.toModel()) }
+        if (condition.present) commandHooks.condition = condition.get()
+        if (environment.present) commandHooks.environment.putAll(environment.get())
+        if (applyDefaultMatrix.present) commandHooks.applyDefaultMatrix = applyDefaultMatrix.get()
+        if (matrix.isSet()) commandHooks.setMatrix(matrix.toModel())
 
-        scriptHooks
+        commandHooks
     }
 }

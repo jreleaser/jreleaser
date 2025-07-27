@@ -26,16 +26,14 @@ import java.util.Map;
 
 /**
  * @author Andres Almiray
- * @since 1.2.0
+ * @since 1.20.0
  */
-public interface CommandHooks extends Domain, Activatable {
-    Map<String, ? extends NamedCommandHooks> getGroups();
+public interface NamedScriptHooks extends Domain, Activatable {
+    List<? extends ScriptHook> getBefore();
 
-    List<? extends CommandHook> getBefore();
+    List<? extends ScriptHook> getSuccess();
 
-    List<? extends CommandHook> getSuccess();
-
-    List<? extends CommandHook> getFailure();
+    List<? extends ScriptHook> getFailure();
 
     Map<String, String> getEnvironment();
 
@@ -44,4 +42,6 @@ public interface CommandHooks extends Domain, Activatable {
     boolean isApplyDefaultMatrix();
 
     Matrix getMatrix();
+
+    String getName();
 }

@@ -56,6 +56,12 @@ public abstract class AbstractJReleaserLogger implements JReleaserLogger {
     }
 
     @Override
+    public void replacePrefix(String prefix) {
+        restorePrefix();
+        setPrefix(prefix);
+    }
+
+    @Override
     public void setPrefix(String prefix) {
         this.prefix.push(prefix);
     }

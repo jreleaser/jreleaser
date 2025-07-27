@@ -19,6 +19,7 @@ package org.jreleaser.gradle.plugin.dsl.hooks
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.common.Activatable
@@ -31,11 +32,15 @@ import org.jreleaser.gradle.plugin.dsl.common.Matrix
  */
 @CompileStatic
 interface CommandHooks extends Activatable {
+    NamedDomainObjectContainer<NamedCommandHooks> getGroups()
+
     Property<String> getCondition()
 
     MapProperty<String, String> getEnvironment()
 
     Property<Boolean> getApplyDefaultMatrix()
+
+    void group(Action<? super NamedDomainObjectContainer<NamedCommandHooks>> action)
 
     void environment(String key, String value)
 
@@ -46,6 +51,8 @@ interface CommandHooks extends Activatable {
     void failure(Action<? super CommandHook> action)
 
     void matrix(Action<? super Matrix> action)
+
+    void group(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 
     void before(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommandHook) Closure<Void> action)
 

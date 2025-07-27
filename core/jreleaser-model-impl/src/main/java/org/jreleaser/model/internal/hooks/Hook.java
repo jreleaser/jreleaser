@@ -57,6 +57,10 @@ public interface Hook extends Domain, Activatable {
 
     boolean isVerboseSet();
 
+    String getName();
+
+    void setName(String name);
+
     String getCondition();
 
     void setCondition(String condition);
