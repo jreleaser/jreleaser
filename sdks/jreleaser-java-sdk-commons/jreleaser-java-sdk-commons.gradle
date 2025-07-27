@@ -41,8 +41,8 @@ dependencies {
     api "commons-io:commons-io:$commonsIoVersion"
 
     // Test dependencies
-    testImplementation 'org.mockito:mockito-core:5.2.0'
-    testImplementation 'org.mockito:mockito-inline:5.2.0'
-    testImplementation 'org.mockito:mockito-junit-jupiter:5.2.0'
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.13.2'
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
+    testImplementation "org.mockito:mockito-inline:$mockitoInlineVersion"
+    testImplementation "org.mockito:mockito-junit-jupiter:$mockitoJunitJupiterVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter:$junit5Version"
 }

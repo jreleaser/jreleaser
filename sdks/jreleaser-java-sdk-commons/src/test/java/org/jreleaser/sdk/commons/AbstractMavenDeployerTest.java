@@ -92,10 +92,8 @@ class AbstractMavenDeployerTest {
             if (cause instanceof java.lang.reflect.InvocationTargetException && cause.getCause() != null) {
                 cause = cause.getCause();
             }
-            System.out.println("Actual exception: " + cause);
-            System.out.println("Actual message: " + cause.getMessage());
             assertTrue(cause instanceof JReleaserException, "Expected JReleaserException but got: " + cause);
-            assertTrue(cause.getMessage().contains("Unexpected error when signing key"), "Actual message: " + cause.getMessage());
+            assertTrue(cause.getMessage().contains("Signing key ABCDEF expired at"), "Actual message: " + cause.getMessage());
         } catch (Exception e) {
             fail(e);
         }
