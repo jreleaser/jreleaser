@@ -34,6 +34,7 @@ import static org.jreleaser.model.api.JReleaserContext.Mode.ANNOUNCE
 import static org.jreleaser.model.api.JReleaserContext.Mode.ASSEMBLE
 import static org.jreleaser.model.api.JReleaserContext.Mode.CHANGELOG
 import static org.jreleaser.model.api.JReleaserContext.Mode.CONFIG
+import static org.jreleaser.model.api.JReleaserContext.Mode.DEPLOY
 import static org.jreleaser.model.api.JReleaserContext.Mode.DOWNLOAD
 
 /**
@@ -58,6 +59,9 @@ abstract class JReleaserConfigTask extends AbstractPlatformAwareJReleaserTask {
     final Property<Boolean> changelog
 
     @Input
+    final Property<Boolean> deploy
+
+    @Input
     final Property<Boolean> download
 
     @Inject
@@ -67,6 +71,7 @@ abstract class JReleaserConfigTask extends AbstractPlatformAwareJReleaserTask {
         assembly = objects.property(Boolean).convention(false)
         announce = objects.property(Boolean).convention(false)
         changelog = objects.property(Boolean).convention(false)
+        deploy = objects.property(Boolean).convention(false)
         download = objects.property(Boolean).convention(false)
         command = JReleaserCommand.CONFIG
     }
@@ -96,9 +101,16 @@ abstract class JReleaserConfigTask extends AbstractPlatformAwareJReleaserTask {
         this.download.set(download)
     }
 
+    @Option(option = 'deploy', description = 'Display deploy configuration (OPTIONAL).')
+    void setDeploy(boolean deploy) {
+        this.deploy.set(deploy)
+    }
+
     @TaskAction
     void performAction() {
-        if (download.get()) {
+        if (deploy.get()) {
+            mode = DEPLOY
+        } else if (download.get()) {
             mode = DOWNLOAD
         } else if (announce.get()) {
             mode = ANNOUNCE

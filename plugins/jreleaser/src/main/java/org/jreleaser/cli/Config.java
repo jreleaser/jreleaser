@@ -50,6 +50,9 @@ public class Config extends AbstractPlatformAwareModelCommand<Main> {
 
         @CommandLine.Option(names = {"-d", "--download"}, required = true)
         boolean download;
+
+        @CommandLine.Option(names = {"--deploy"}, required = true)
+        boolean deploy;
     }
 
     @Override
@@ -68,11 +71,16 @@ public class Config extends AbstractPlatformAwareModelCommand<Main> {
 
     @Override
     protected Mode getMode() {
+        if (deploy()) return Mode.DEPLOY;
         if (download()) return Mode.DOWNLOAD;
         if (assembly()) return Mode.ASSEMBLE;
         if (changelog()) return Mode.CHANGELOG;
         if (announce()) return Mode.ANNOUNCE;
         return Mode.CONFIG;
+    }
+
+    private boolean deploy() {
+        return null != exclusive && exclusive.deploy;
     }
 
     private boolean download() {

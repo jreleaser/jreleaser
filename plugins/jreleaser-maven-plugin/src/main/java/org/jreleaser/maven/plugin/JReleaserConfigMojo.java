@@ -67,6 +67,11 @@ public class JReleaserConfigMojo extends AbstractPlatformAwareMojo {
      */
     @Parameter(property = "jreleaser.config.download")
     private boolean download;
+    /**
+     * Display deploy configuration.
+     */
+    @Parameter(property = "jreleaser.config.deploy")
+    private boolean deploy;
 
     @Override
     protected void doExecute() throws MojoExecutionException, MojoFailureException {
@@ -79,6 +84,7 @@ public class JReleaserConfigMojo extends AbstractPlatformAwareMojo {
 
     @Override
     protected Mode getMode() {
+        if (deploy) return Mode.DEPLOY;
         if (download) return Mode.DOWNLOAD;
         if (assembly) return Mode.ASSEMBLE;
         if (changelog) return Mode.CHANGELOG;

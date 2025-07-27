@@ -32,6 +32,7 @@ import static org.jreleaser.util.IoUtils.newPrintWriter;
 public class JReleaserConfigTask extends AbstractPlatformAwareJReleaserTask {
     private boolean full;
     private boolean assembly;
+    private boolean deploy;
     private boolean download;
     private boolean changelog;
     private boolean announce;
@@ -42,6 +43,10 @@ public class JReleaserConfigTask extends AbstractPlatformAwareJReleaserTask {
 
     public void setAssembly(boolean assembly) {
         this.assembly = assembly;
+    }
+
+    public void setDeploy(boolean deploy) {
+        this.deploy = deploy;
     }
 
     public void setDownload(boolean download) {
@@ -66,6 +71,7 @@ public class JReleaserConfigTask extends AbstractPlatformAwareJReleaserTask {
 
     @Override
     protected Mode getMode() {
+        if (deploy) return Mode.DEPLOY;
         if (download) return Mode.DOWNLOAD;
         if (assembly) return Mode.ASSEMBLE;
         if (changelog) return Mode.CHANGELOG;

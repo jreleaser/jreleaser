@@ -45,6 +45,7 @@
     <property name="jreleaser.assembly" value="false"/>
     <property name="jreleaser.changelog" value="false"/>
     <property name="jreleaser.download" value="false"/>
+    <property name="jreleaser.deploy" value="false"/>
     <property name="jreleaser.outputdir" value="build"/>
     <property name="jreleaser.select.current.platform" value="false"/>
     <property name="jreleaser.announcers" value=""/>
@@ -168,6 +169,7 @@
                           assembly="${jreleaser.assembly}"
                           changelog="${jreleaser.changelog}"
                           download="${jreleaser.download}"
+                          deploy="${jreleaser.deploy}"
                           basedir="${jreleaser.basedir}"
                           settingsFile="${jreleaser.settings.file}"
                           configFile="${jreleaser.config.file}"
