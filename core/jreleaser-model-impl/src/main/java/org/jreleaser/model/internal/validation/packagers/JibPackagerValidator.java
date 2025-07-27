@@ -25,6 +25,7 @@ import org.jreleaser.model.internal.distributions.Distribution;
 import org.jreleaser.model.internal.packagers.JibConfiguration;
 import org.jreleaser.model.internal.packagers.JibPackager;
 import org.jreleaser.model.internal.packagers.JibSpec;
+import org.jreleaser.model.internal.packagers.RepositoryTap;
 import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.internal.release.BaseReleaser;
 import org.jreleaser.model.internal.validation.common.Validator;
@@ -45,6 +46,7 @@ import static org.jreleaser.model.Constants.DOCKER_IO;
 import static org.jreleaser.model.Constants.LABEL_OCI_IMAGE_DESCRIPTION;
 import static org.jreleaser.model.Constants.LABEL_OCI_IMAGE_LICENSES;
 import static org.jreleaser.model.Constants.LABEL_OCI_IMAGE_REVISION;
+import static org.jreleaser.model.Constants.LABEL_OCI_IMAGE_SOURCE;
 import static org.jreleaser.model.Constants.LABEL_OCI_IMAGE_TITLE;
 import static org.jreleaser.model.Constants.LABEL_OCI_IMAGE_URL;
 import static org.jreleaser.model.Constants.LABEL_OCI_IMAGE_VERSION;
@@ -196,7 +198,7 @@ public final class JibPackagerValidator {
         if (!packager.getLabels().containsKey(LABEL_OCI_IMAGE_TITLE)) {
             packager.getLabels().put(LABEL_OCI_IMAGE_TITLE, "{{distributionName}}");
         }
-        validateLabels(packager);
+        validateLabels(context, packager, packager.getRepositoryTap());
 
         validateArtifactPlatforms(distribution, packager, candidateArtifacts, errors);
 
@@ -248,7 +250,7 @@ public final class JibPackagerValidator {
             labels.put(LABEL_OCI_IMAGE_TITLE, jib.getLabels().get(LABEL_OCI_IMAGE_TITLE) + "-{{jibSpecName}}");
         }
         spec.setLabels(labels);
-        validateLabels(spec);
+        validateLabels(context, spec, jib.getRepositoryTap());
 
         if (isBlank(spec.getCreationTime())) {
             spec.setCreationTime(jib.getCreationTime());
@@ -345,7 +347,7 @@ public final class JibPackagerValidator {
             .anyMatch(artifact -> PlatformUtils.isAlpineLinux(artifact.getPlatform()));
     }
 
-    private static void validateLabels(JibConfiguration self) {
+    private static void validateLabels(JReleaserContext context, JibConfiguration self, RepositoryTap repository) {
         if (!self.getLabels().containsKey(LABEL_OCI_IMAGE_DESCRIPTION)) {
             self.getLabels().put(LABEL_OCI_IMAGE_DESCRIPTION, "{{projectDescription}}");
         }
@@ -360,6 +362,11 @@ public final class JibPackagerValidator {
         }
         if (!self.getLabels().containsKey(LABEL_OCI_IMAGE_REVISION)) {
             self.getLabels().put(LABEL_OCI_IMAGE_REVISION, "{{commitFullHash}}");
+        }
+        if (!self.getLabels().containsKey(LABEL_OCI_IMAGE_SOURCE)) {
+            BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
+            self.getLabels().put(LABEL_OCI_IMAGE_SOURCE,
+                service.getResolvedRepoUrl(context.getModel(), repository.getOwner(), repository.getResolvedName()));
         }
     }
 

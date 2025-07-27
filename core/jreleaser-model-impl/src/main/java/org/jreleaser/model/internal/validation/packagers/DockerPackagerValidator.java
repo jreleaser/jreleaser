@@ -28,6 +28,7 @@ import org.jreleaser.model.internal.packagers.AbstractDockerConfiguration;
 import org.jreleaser.model.internal.packagers.DockerConfiguration;
 import org.jreleaser.model.internal.packagers.DockerPackager;
 import org.jreleaser.model.internal.packagers.DockerSpec;
+import org.jreleaser.model.internal.packagers.RepositoryTap;
 import org.jreleaser.model.internal.project.Project;
 import org.jreleaser.model.internal.release.BaseReleaser;
 import org.jreleaser.model.internal.validation.common.Validator;
@@ -47,6 +48,7 @@ import static org.jreleaser.model.Constants.DOCKER_IO;
 import static org.jreleaser.model.Constants.LABEL_OCI_IMAGE_DESCRIPTION;
 import static org.jreleaser.model.Constants.LABEL_OCI_IMAGE_LICENSES;
 import static org.jreleaser.model.Constants.LABEL_OCI_IMAGE_REVISION;
+import static org.jreleaser.model.Constants.LABEL_OCI_IMAGE_SOURCE;
 import static org.jreleaser.model.Constants.LABEL_OCI_IMAGE_TITLE;
 import static org.jreleaser.model.Constants.LABEL_OCI_IMAGE_URL;
 import static org.jreleaser.model.Constants.LABEL_OCI_IMAGE_VERSION;
@@ -165,7 +167,7 @@ public final class DockerPackagerValidator {
         if (!packager.getLabels().containsKey(LABEL_OCI_IMAGE_TITLE)) {
             packager.getLabels().put(LABEL_OCI_IMAGE_TITLE, "{{distributionName}}");
         }
-        validateLabels(packager);
+        validateLabels(context, packager, packager.getRepositoryTap());
 
         validateArtifactPlatforms(distribution, packager, candidateArtifacts, errors);
 
@@ -291,7 +293,7 @@ public final class DockerPackagerValidator {
             labels.put(LABEL_OCI_IMAGE_TITLE, docker.getLabels().get(LABEL_OCI_IMAGE_TITLE) + "-{{dockerSpecName}}");
         }
         spec.setLabels(labels);
-        validateLabels(spec);
+        validateLabels(context, spec, docker.getRepositoryTap());
 
         validateRegistries(context, spec, docker, errors, element);
 
@@ -395,7 +397,7 @@ public final class DockerPackagerValidator {
         }
     }
 
-    private static void validateLabels(DockerConfiguration self) {
+    private static void validateLabels(JReleaserContext context, DockerConfiguration self, RepositoryTap repository) {
         if (!self.getLabels().containsKey(LABEL_OCI_IMAGE_DESCRIPTION)) {
             self.getLabels().put(LABEL_OCI_IMAGE_DESCRIPTION, "{{projectDescription}}");
         }
@@ -410,6 +412,11 @@ public final class DockerPackagerValidator {
         }
         if (!self.getLabels().containsKey(LABEL_OCI_IMAGE_REVISION)) {
             self.getLabels().put(LABEL_OCI_IMAGE_REVISION, "{{commitFullHash}}");
+        }
+        if (!self.getLabels().containsKey(LABEL_OCI_IMAGE_SOURCE)) {
+            BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
+            self.getLabels().put(LABEL_OCI_IMAGE_SOURCE,
+                service.getResolvedRepoUrl(context.getModel(), repository.getOwner(), repository.getResolvedName()));
         }
     }
 
