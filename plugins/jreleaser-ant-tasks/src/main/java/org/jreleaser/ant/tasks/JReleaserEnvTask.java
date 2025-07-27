@@ -24,7 +24,9 @@ import org.jreleaser.engine.environment.Environment;
 import org.jreleaser.logging.JReleaserLogger;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.PrintWriter;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.jreleaser.util.IoUtils.newPrintWriter;
@@ -34,10 +36,28 @@ import static org.jreleaser.util.IoUtils.newPrintWriter;
  * @since 1.4.0
  */
 public class JReleaserEnvTask extends Task {
+    protected File settingsFile;
+
+    public void setSettingsFile(File settingsFile) {
+        this.settingsFile = settingsFile;
+    }
+
     @Override
     public void execute() throws BuildException {
         Banner.display(newPrintWriter(System.err));
-        Environment.display(initLogger(), Paths.get(".").normalize());
+        Environment.display(initLogger(), resolveBasedir(), resolveSettings());
+    }
+
+    private Path resolveSettings() {
+        if (null != settingsFile) {
+            return resolveBasedir().resolve(settingsFile.toPath()).normalize();
+        }
+
+        return null;
+    }
+
+    private Path resolveBasedir() {
+        return Paths.get(".").normalize();
     }
 
     private PrintWriter createTracer() {

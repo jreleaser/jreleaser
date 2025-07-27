@@ -20,10 +20,13 @@ package org.jreleaser.gradle.plugin.tasks
 import groovy.transform.CompileStatic
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.jreleaser.engine.environment.Environment
 import org.jreleaser.logging.JReleaserLogger
@@ -45,14 +48,20 @@ abstract class JReleaserEnvTask extends DefaultTask {
     @InputDirectory
     final DirectoryProperty basedir
 
+    @InputFile
+    @Optional
+    final RegularFileProperty settings
+
     @Inject
     JReleaserEnvTask(ObjectFactory objects) {
         jlogger = objects.property(JReleaserLogger)
         basedir = objects.directoryProperty()
+        settings = objects.fileProperty()
     }
 
     @TaskAction
     void performAction() {
-        Environment.display(jlogger.get(), basedir.get().asFile.toPath())
+        Environment.display(jlogger.get(), basedir.get().asFile.toPath(),
+            settings.present ? settings.get().asFile.toPath() : null)
     }
 }

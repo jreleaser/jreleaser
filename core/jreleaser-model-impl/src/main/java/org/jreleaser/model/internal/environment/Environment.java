@@ -188,23 +188,29 @@ public final class Environment extends AbstractModelObject<Environment> implemen
         if (null == vars) {
             vars = new Properties();
 
-            Path configDirectory = null;
+            Path settings = context.getSettings();
 
-            String home = System.getenv(XDG_CONFIG_HOME);
-            if (isNotBlank(home) && Files.exists(Paths.get(home).resolve("jreleaser"))) {
-                configDirectory = Paths.get(home).resolve("jreleaser");
-            }
+            if (null != settings) {
+                loadVariables(context, settings);
+            } else {
+                Path configDirectory = null;
 
-            if (null == configDirectory) {
-                home = System.getenv(JRELEASER_USER_HOME);
-                if (isBlank(home)) {
-                    home = System.getProperty("user.home") + File.separator + ".jreleaser";
+                String home = System.getenv(XDG_CONFIG_HOME);
+                if (isNotBlank(home) && Files.exists(Paths.get(home).resolve("jreleaser"))) {
+                    configDirectory = Paths.get(home).resolve("jreleaser");
                 }
-                configDirectory = Paths.get(home);
-            }
 
-            loadVariables(context, resolveConfigFileAt(configDirectory)
-                .orElse(configDirectory.resolve("config.properties")));
+                if (null == configDirectory) {
+                    home = System.getenv(JRELEASER_USER_HOME);
+                    if (isBlank(home)) {
+                        home = System.getProperty("user.home") + File.separator + ".jreleaser";
+                    }
+                    configDirectory = Paths.get(home);
+                }
+
+                loadVariables(context, resolveConfigFileAt(configDirectory)
+                    .orElse(configDirectory.resolve("config.properties")));
+            }
 
             if (isNotBlank(variables)) {
                 loadVariables(context, context.getBasedir().resolve(variables.trim()));

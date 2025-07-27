@@ -41,6 +41,7 @@ import org.jreleaser.util.PlatformUtils
 import org.jreleaser.util.StringUtils
 
 import javax.inject.Inject
+import java.nio.file.Path
 
 import static java.util.stream.Collectors.toList
 import static org.jreleaser.model.api.JReleaserContext.Mode.FULL
@@ -117,6 +118,15 @@ abstract class AbstractJReleaserTask extends DefaultTask {
         model
     }
 
+    private Path resolveSettings() {
+        JReleaserExtensionImpl extension = (JReleaserExtensionImpl) project.extensions.findByType(JReleaserExtension)
+        if (extension.getSettingsFile().present) {
+            return extension.getSettingsFile().asFile.get().toPath()
+        }
+
+        return null
+    }
+
     protected JReleaserContext createContext() {
         JReleaserLogger logger = jlogger.get().logger
         PlatformUtils.resolveCurrentPlatform(logger)
@@ -135,6 +145,7 @@ abstract class AbstractJReleaserTask extends DefaultTask {
             command,
             createModel(),
             project.projectDir.toPath(),
+            resolveSettings(),
             outputDirectory.get().asFile.toPath(),
             yolo.getOrElse(false),
             dryrun.getOrElse(false),

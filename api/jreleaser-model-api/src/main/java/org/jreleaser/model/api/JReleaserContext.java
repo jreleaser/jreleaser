@@ -58,6 +58,8 @@ public interface JReleaserContext extends Serializable {
 
     Path getBasedir();
 
+    Path getSettings();
+
     Path getOutputDirectory();
 
     Path getChecksumsDirectory();

@@ -318,6 +318,7 @@ public class Release extends AbstractPlatformAwareModelCommand<Main> {
         JReleaserContext context = ModelAutoConfigurer.builder()
             .logger(logger)
             .basedir(actualBasedir)
+            .settings(settingsFile)
             .outputDirectory(getOutputDirectory())
             .yolo(yolo())
             .dryrun(dryrun())

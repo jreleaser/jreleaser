@@ -24,6 +24,7 @@ import picocli.CommandLine;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.jreleaser.util.IoUtils.newPrintWriter;
@@ -34,9 +35,24 @@ import static org.jreleaser.util.IoUtils.newPrintWriter;
  */
 @CommandLine.Command(name = "env")
 public class Env extends AbstractCommand<Main> {
+    @CommandLine.Option(names = {"--settings-file"}, paramLabel = "<file>")
+    Path settingsFile;
+
     @Override
     protected void execute() {
-        Environment.display(initLogger(), Paths.get(".").normalize());
+        Environment.display(initLogger(), resolveBasedir(), resolveSettings());
+    }
+
+    private Path resolveSettings() {
+        if (null != settingsFile) {
+            return resolveBasedir().resolve(settingsFile).normalize();
+        }
+
+        return null;
+    }
+
+    private Path resolveBasedir() {
+        return Paths.get(".").normalize();
     }
 
     protected JReleaserLogger initLogger() {

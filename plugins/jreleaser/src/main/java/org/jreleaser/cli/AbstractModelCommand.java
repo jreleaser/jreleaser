@@ -55,6 +55,9 @@ public abstract class AbstractModelCommand<C extends IO> extends AbstractLogging
     @CommandLine.Option(names = {"-c", "--config-file"}, paramLabel = "<file>")
     Path configFile;
 
+    @CommandLine.Option(names = {"--settings-file"}, paramLabel = "<file>")
+    Path settingsFile;
+
     @CommandLine.Option(names = {"-grs", "--git-root-search"})
     Boolean gitRootSearch;
 
@@ -143,6 +146,14 @@ public abstract class AbstractModelCommand<C extends IO> extends AbstractLogging
         }
     }
 
+    private Path resolveSettings() {
+        if (null != settingsFile) {
+            return actualBasedir.resolve(settingsFile).normalize();
+        }
+
+        return null;
+    }
+
     protected abstract void doExecute(JReleaserContext context);
 
     protected JReleaserContext createContext() {
@@ -157,6 +168,7 @@ public abstract class AbstractModelCommand<C extends IO> extends AbstractLogging
             getCommand(),
             model,
             actualBasedir,
+            settingsFile,
             getOutputDirectory(),
             resolveBoolean(org.jreleaser.model.api.JReleaserContext.YOLO, yolo()),
             resolveBoolean(org.jreleaser.model.api.JReleaserContext.DRY_RUN, dryrun()),

@@ -52,24 +52,28 @@ public final class Environment {
         // noop
     }
 
-    public static void display(JReleaserLogger logger, Path basedir) {
-        Path configDirectory = null;
+    public static void display(JReleaserLogger logger, Path basedir, Path settings) {
+        if (null != settings) {
+            loadVariables(logger, settings);
+        } else {
+            Path configDirectory = null;
 
-        String home = System.getenv(XDG_CONFIG_HOME);
-        if (isNotBlank(home) && Files.exists(Paths.get(home).resolve("jreleaser"))) {
-            configDirectory = Paths.get(home).resolve("jreleaser");
-        }
-
-        if (null == configDirectory) {
-            home = System.getenv(JRELEASER_USER_HOME);
-            if (isBlank(home)) {
-                home = System.getProperty("user.home") + File.separator + ".jreleaser";
+            String home = System.getenv(XDG_CONFIG_HOME);
+            if (isNotBlank(home) && Files.exists(Paths.get(home).resolve("jreleaser"))) {
+                configDirectory = Paths.get(home).resolve("jreleaser");
             }
-            configDirectory = Paths.get(home);
-        }
 
-        loadVariables(logger, resolveConfigFileAt(configDirectory)
-            .orElse(configDirectory.resolve("config.properties")));
+            if (null == configDirectory) {
+                home = System.getenv(JRELEASER_USER_HOME);
+                if (isBlank(home)) {
+                    home = System.getProperty("user.home") + File.separator + ".jreleaser";
+                }
+                configDirectory = Paths.get(home);
+            }
+
+            loadVariables(logger, resolveConfigFileAt(configDirectory)
+                .orElse(configDirectory.resolve("config.properties")));
+        }
 
         Path envFilePath = basedir.resolve(".env");
         if (Files.exists(envFilePath)) {

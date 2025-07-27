@@ -63,6 +63,7 @@ public final class ModelAutoConfigurer {
     private final Set<UpdateSection> updateSections = new LinkedHashSet<>();
     private JReleaserLogger logger;
     private Path basedir;
+    private Path settings;
     private Path outputDirectory;
     private Boolean yolo;
     private Boolean dryrun;
@@ -112,6 +113,12 @@ public final class ModelAutoConfigurer {
         this.basedir = basedir;
         return this;
     }
+
+    public ModelAutoConfigurer settings(Path settings) {
+        this.settings = settings;
+        return this;
+    }
+
 
     public ModelAutoConfigurer outputDirectory(Path outputDirectory) {
         this.outputDirectory = outputDirectory;
@@ -405,6 +412,7 @@ public final class ModelAutoConfigurer {
             JReleaserCommand.RELEASE,
             autoConfiguredModel(basedir),
             basedir,
+            settings,
             outputDirectory,
             resolveBoolean(org.jreleaser.model.api.JReleaserContext.YOLO, yolo),
             resolveBoolean(org.jreleaser.model.api.JReleaserContext.DRY_RUN, dryrun),

@@ -52,6 +52,10 @@ interface JReleaserExtension {
 
     void setConfigFile(String path)
 
+    RegularFileProperty getSettingsFile()
+
+    void setSettingsFile(String path)
+
     Property<Boolean> getEnabled()
 
     Property<Boolean> getYolo()

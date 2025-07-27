@@ -83,6 +83,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 @CompileStatic
 class JReleaserExtensionImpl implements JReleaserExtension {
     final RegularFileProperty configFile
+    final RegularFileProperty settingsFile
     final Property<Boolean> enabled
     final Property<Boolean> yolo
     final Property<Boolean> dryrun
@@ -118,6 +119,7 @@ class JReleaserExtensionImpl implements JReleaserExtension {
                            Provider<String> versionProvider) {
         this.layout = layout
         configFile = objects.fileProperty()
+        settingsFile = objects.fileProperty()
         enabled = objects.property(Boolean).convention(true)
         yolo = objects.property(Boolean).convention(resolveBoolean(org.jreleaser.model.api.JReleaserContext.YOLO))
         dryrun = objects.property(Boolean).convention(resolveBoolean(org.jreleaser.model.api.JReleaserContext.DRY_RUN))
@@ -163,6 +165,12 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     void setConfigFile(String path) {
         if (isNotBlank(path)) {
             this.configFile.set(layout.projectDirectory.file(path.trim()))
+        }
+    }
+
+    void setSettingsFile(String path) {
+        if (isNotBlank(path)) {
+            this.settingsFile.set(layout.projectDirectory.file(path.trim()))
         }
     }
 

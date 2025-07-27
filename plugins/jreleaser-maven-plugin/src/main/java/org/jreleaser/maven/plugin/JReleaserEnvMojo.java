@@ -28,7 +28,9 @@ import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.maven.plugin.internal.JReleaserLoggerAdapter;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.PrintWriter;
+import java.nio.file.Path;
 
 import static org.jreleaser.util.IoUtils.newPrintWriter;
 
@@ -51,6 +53,9 @@ public class JReleaserEnvMojo extends AbstractMojo {
     @Parameter(property = "jreleaser.env.skip")
     private boolean skip;
 
+    @Parameter(property = "jreleaser.settings.file")
+    protected File settingsFile;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         Banner.display(project, getLog());
@@ -59,7 +64,19 @@ public class JReleaserEnvMojo extends AbstractMojo {
             return;
         }
 
-        Environment.display(getLogger(), project.getBasedir().toPath());
+        Environment.display(getLogger(), resolveBasedir(), resolveSettings());
+    }
+
+    private Path resolveSettings() {
+        if (null != settingsFile) {
+            return resolveBasedir().resolve(settingsFile.toPath()).normalize();
+        }
+
+        return null;
+    }
+
+    private Path resolveBasedir() {
+        return project.getBasedir().toPath().normalize();
     }
 
     protected JReleaserLogger getLogger() {

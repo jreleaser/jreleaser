@@ -123,6 +123,7 @@ public class JReleaserContext {
     private final JReleaserLogger logger;
     private final JReleaserModel model;
     private final Path basedir;
+    private final Path settings;
     private final Path outputDirectory;
     private final boolean yolo;
     private final boolean dryrun;
@@ -166,7 +167,7 @@ public class JReleaserContext {
 
     @JsonIgnore
     private final org.jreleaser.model.api.JReleaserContext immutable = new org.jreleaser.model.api.JReleaserContext() {
-        private static final long serialVersionUID = -4823233546663741626L;
+        private static final long serialVersionUID = 3397521336933553959L;
 
         @Override
         public Path relativize(Path basedir, Path other) {
@@ -196,6 +197,11 @@ public class JReleaserContext {
         @Override
         public Path getBasedir() {
             return JReleaserContext.this.getBasedir();
+        }
+
+        @Override
+        public Path getSettings() {
+            return JReleaserContext.this.getSettings();
         }
 
         @Override
@@ -417,6 +423,7 @@ public class JReleaserContext {
             JReleaserCommand.FULL_RELEASE,
             new JReleaserModel(),
             basedir,
+            null,
             basedir.resolve("out/jreleaser"),
             false,
             true,
@@ -432,6 +439,7 @@ public class JReleaserContext {
                             JReleaserCommand command,
                             JReleaserModel model,
                             Path basedir,
+                            Path settings,
                             Path outputDirectory,
                             boolean yolo,
                             boolean dryrun,
@@ -445,6 +453,7 @@ public class JReleaserContext {
         this.command = command;
         this.model = model;
         this.basedir = basedir;
+        this.settings = settings;
         this.outputDirectory = outputDirectory;
         this.yolo = yolo;
         this.dryrun = dryrun;
@@ -755,6 +764,10 @@ public class JReleaserContext {
 
     public Path getBasedir() {
         return basedir;
+    }
+
+    public Path getSettings() {
+        return settings;
     }
 
     public Path getOutputDirectory() {

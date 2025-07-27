@@ -26,6 +26,7 @@
     <property name="jreleaser.skip" value="false"/>
     <property name="jreleaser.basedir" value=""/>
     <property name="jreleaser.config.file" value=""/>
+    <property name="jreleaser.settings.file" value=""/>
     <property name="jreleaser.dry.run" value="false"/>
     <property name="jreleaser.git.root.search" value="false"/>
     <property name="jreleaser.strict" value="false"/>
@@ -73,7 +74,7 @@
     <property name="jreleaser.template.target.dir" value=""/>
 
     <target name="jreleaser-env">
-        <jreleaser:env/>
+        <jreleaser:env settingsFile="${jreleaser.settings.file}"/>
     </target>
 
     <target name="jreleaser-template-generate">
@@ -97,6 +98,7 @@
                                  changelog="${jreleaser.changelog}"
                                  download="${jreleaser.download}"
                                  basedir="${jreleaser.basedir}"
+                                 settingsFile="${jreleaser.settings.file}"
                                  configFile="${jreleaser.config.file}"
                                  outputDir="${jreleaser.outputdir}"
                                  inputFile="${jreleaser.template.input.file}"
@@ -110,6 +112,7 @@
                             strict="${jreleaser.strict}"
                             skip="${jreleaser.skip}"
                             basedir="${jreleaser.basedir}"
+                            settingsFile="${jreleaser.settings.file}"
                             configFile="${jreleaser.config.file}"
                             outputDir="${jreleaser.outputdir}"
                             announcers="${jreleaser.announcers}"
@@ -122,6 +125,7 @@
                             gitRootSearch="${jreleaser.git.root.search}"
                             strict="${jreleaser.strict}"
                             basedir="${jreleaser.basedir}"
+                            settingsFile="${jreleaser.settings.file}"
                             configFile="${jreleaser.config.file}"
                             outputDir="${jreleaser.outputdir}"
                             assemblers="${jreleaser.assemblers}"
@@ -136,6 +140,7 @@
                              strict="${jreleaser.strict}"
                              skip="${jreleaser.skip}"
                              basedir="${jreleaser.basedir}"
+                             settingsFile="${jreleaser.settings.file}"
                              configFile="${jreleaser.config.file}"
                              outputDir="${jreleaser.outputdir}"/>
     </target>
@@ -147,6 +152,7 @@
                             strict="${jreleaser.strict}"
                             skip="${jreleaser.skip}"
                             basedir="${jreleaser.basedir}"
+                            settingsFile="${jreleaser.settings.file}"
                             configFile="${jreleaser.config.file}"
                             outputDir="${jreleaser.outputdir}"
                             distributions="${jreleaser.distributions}"
@@ -163,6 +169,7 @@
                           changelog="${jreleaser.changelog}"
                           download="${jreleaser.download}"
                           basedir="${jreleaser.basedir}"
+                          settingsFile="${jreleaser.settings.file}"
                           configFile="${jreleaser.config.file}"
                           outputDir="${jreleaser.outputdir}"/>
     </target>
@@ -174,6 +181,7 @@
                                 strict="${jreleaser.strict}"
                                 skip="${jreleaser.skip}"
                                 basedir="${jreleaser.basedir}"
+                                settingsFile="${jreleaser.settings.file}"
                                 configFile="${jreleaser.config.file}"
                                 outputDir="${jreleaser.outputdir}"
                                 announcers="${jreleaser.announcers}"
@@ -210,6 +218,7 @@
                            strict="${jreleaser.strict}"
                            skip="${jreleaser.skip}"
                            basedir="${jreleaser.basedir}"
+                           settingsFile="${jreleaser.settings.file}"
                            configFile="${jreleaser.config.file}"
                            outputDir="${jreleaser.outputdir}"
                            distributions="${jreleaser.distributions}"
@@ -225,6 +234,7 @@
                            strict="${jreleaser.strict}"
                            skip="${jreleaser.skip}"
                            basedir="${jreleaser.basedir}"
+                           settingsFile="${jreleaser.settings.file}"
                            configFile="${jreleaser.config.file}"
                            outputDir="${jreleaser.outputdir}"
                            distributions="${jreleaser.distributions}"
@@ -240,6 +250,7 @@
                            strict="${jreleaser.strict}"
                            skip="${jreleaser.skip}"
                            basedir="${jreleaser.basedir}"
+                           settingsFile="${jreleaser.settings.file}"
                            configFile="${jreleaser.config.file}"
                            outputDir="${jreleaser.outputdir}"
                            distributions="${jreleaser.distributions}"
@@ -255,6 +266,7 @@
                            strict="${jreleaser.strict}"
                            skip="${jreleaser.skip}"
                            basedir="${jreleaser.basedir}"
+                           settingsFile="${jreleaser.settings.file}"
                            configFile="${jreleaser.config.file}"
                            outputDir="${jreleaser.outputdir}"
                            distributions="${jreleaser.distributions}"
@@ -278,6 +290,7 @@
                         strict="${jreleaser.strict}"
                         skip="${jreleaser.skip}"
                         basedir="${jreleaser.basedir}"
+                        settingsFile="${jreleaser.settings.file}"
                         configFile="${jreleaser.config.file}"
                         outputDir="${jreleaser.outputdir}"
                         distributions="${jreleaser.distributions}"
@@ -290,6 +303,7 @@
                           strict="${jreleaser.strict}"
                           skip="${jreleaser.skip}"
                           basedir="${jreleaser.basedir}"
+                          settingsFile="${jreleaser.settings.file}"
                           configFile="${jreleaser.config.file}"
                           outputDir="${jreleaser.outputdir}"
                           deployerTypes="${jreleaser.deployer.types}"
@@ -305,6 +319,7 @@
                            strict="${jreleaser.strict}"
                            skip="${jreleaser.skip}"
                            basedir="${jreleaser.basedir}"
+                           settingsFile="${jreleaser.settings.file}"
                            configFile="${jreleaser.config.file}"
                            outputDir="${jreleaser.outputdir}"
                            distributions="${jreleaser.distributions}"
@@ -324,6 +339,7 @@
                           strict="${jreleaser.strict}"
                           skip="${jreleaser.skip}"
                           basedir="${jreleaser.basedir}"
+                          settingsFile="${jreleaser.settings.file}"
                           configFile="${jreleaser.config.file}"
                           outputDir="${jreleaser.outputdir}"
                           distributions="${jreleaser.distributions}"
@@ -342,6 +358,7 @@
                             strict="${jreleaser.strict}"
                             skip="${jreleaser.skip}"
                             basedir="${jreleaser.basedir}"
+                            settingsFile="${jreleaser.settings.file}"
                             configFile="${jreleaser.config.file}"
                             outputDir="${jreleaser.outputdir}"
                             downloaderTypes="${jreleaser.downloader.types}"

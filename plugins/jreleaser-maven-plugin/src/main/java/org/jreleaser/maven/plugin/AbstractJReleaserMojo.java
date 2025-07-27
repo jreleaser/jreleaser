@@ -75,6 +75,9 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
     @Parameter(property = "jreleaser.config.file")
     protected File configFile;
 
+    @Parameter(property = "jreleaser.settings.file")
+    protected File settingsFile;
+
     /**
      * Skips non-configured operations.
      */
@@ -178,6 +181,7 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
                 getCommand(),
                 null == configFile ? convertModel() : readModel(logger),
                 basedir,
+                resolveSettings(),
                 outputDirectory.toPath(),
                 resolveBoolean(org.jreleaser.model.api.JReleaserContext.YOLO, yolo),
                 resolveBoolean(org.jreleaser.model.api.JReleaserContext.DRY_RUN, dryrun),
@@ -239,6 +243,14 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
             return Paths.get(session.getExecutionRootDirectory().trim());
         }
         return project.getBasedir().toPath();
+    }
+
+    private Path resolveSettings() {
+        if (null != settingsFile) {
+            return resolveBasedir().resolve(settingsFile.toPath()).normalize();
+        }
+
+        return null;
     }
 
     protected List<String> collectSelectedPlatforms() {

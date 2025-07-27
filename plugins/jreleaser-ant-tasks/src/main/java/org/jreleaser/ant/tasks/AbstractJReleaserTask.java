@@ -60,6 +60,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 abstract class AbstractJReleaserTask extends Task {
     protected File basedir;
+    protected File settingsFile;
     protected File configFile;
     protected Boolean yolo;
     protected Boolean dryrun;
@@ -74,6 +75,10 @@ abstract class AbstractJReleaserTask extends Task {
 
     public void setBasedir(File basedir) {
         this.basedir = basedir;
+    }
+
+    public void setSettingsFile(File settingsFile) {
+        this.settingsFile = settingsFile;
     }
 
     public void setConfigFile(File configFile) {
@@ -150,6 +155,14 @@ abstract class AbstractJReleaserTask extends Task {
         actualBasedir = (isNotBlank(resolvedBasedir) ? Paths.get(resolvedBasedir) : actualConfigFile.toAbsolutePath().getParent()).normalize();
     }
 
+    private Path resolveSettings() {
+        if (null != settingsFile) {
+            return actualBasedir.resolve(settingsFile.toPath()).normalize();
+        }
+
+        return null;
+    }
+
     protected abstract void doExecute(JReleaserContext context);
 
     protected JReleaserLogger initLogger() {
@@ -181,6 +194,7 @@ abstract class AbstractJReleaserTask extends Task {
             getCommand(),
             actualConfigFile,
             actualBasedir,
+            resolveSettings(),
             getOutputDirectory(),
             resolveBoolean(org.jreleaser.model.api.JReleaserContext.YOLO, yolo),
             resolveBoolean(org.jreleaser.model.api.JReleaserContext.DRY_RUN, dryrun),
