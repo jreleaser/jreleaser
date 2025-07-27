@@ -19,3 +19,6 @@ RUN chmod +x {{distributionArtifactRootEntryName}}/bin/{{distributionExecutableU
 ENV PATH="${PATH}:/{{distributionArtifactRootEntryName}}/bin"
 
 ENTRYPOINT {{dockerEntrypoint}}
+{{#dockerCmd}}
+CMD {{dockerCmd}}
+{{/dockerCmd}}

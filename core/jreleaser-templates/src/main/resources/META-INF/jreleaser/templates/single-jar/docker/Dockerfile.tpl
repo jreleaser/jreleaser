@@ -24,4 +24,6 @@ ENV PATH="${PATH}:/{{distributionName}}-{{projectVersion}}/bin"
 {{/dockerPostCommands}}
 
 ENTRYPOINT ["/{{distributionName}}-{{projectVersion}}/bin/{{distributionExecutableUnix}}"]
-CMD ["{{distributionExecutableUnix}}"]
+{{#dockerCmd}}
+CMD {{dockerCmd}}
+{{/dockerCmd}}

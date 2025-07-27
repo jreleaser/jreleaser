@@ -47,6 +47,8 @@ interface DockerConfiguration extends Activatable, ExtraProperties {
 
     Property<String> getEntrypoint()
 
+    Property<String> getCmd()
+
     Property<Boolean> getUseLocalArtifact()
 
     SetProperty<String> getImageNames()

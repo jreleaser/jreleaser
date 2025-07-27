@@ -19,3 +19,6 @@ RUN chmod +x /{{distributionExecutableName}}
 ENV PATH="${PATH}:/"
 
 ENTRYPOINT ["/{{distributionExecutableName}}"]
+{{#dockerCmd}}
+CMD {{dockerCmd}}
+{{/dockerCmd}}

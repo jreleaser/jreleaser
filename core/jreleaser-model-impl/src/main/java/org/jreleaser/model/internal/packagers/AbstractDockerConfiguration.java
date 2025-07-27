@@ -36,7 +36,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfiguration<S>> extends AbstractActivatable<S>
     implements DockerConfiguration, ExtraProperties {
-    private static final long serialVersionUID = 6130010655883777857L;
+    private static final long serialVersionUID = 4143174150504405626L;
 
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private final Map<String, String> labels = new LinkedHashMap<>();
@@ -52,6 +52,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
     protected Boolean useLocalArtifact;
     private String baseImage;
     private String entrypoint;
+    private String cmd;
     private org.jreleaser.model.api.packagers.DockerConfiguration.DockerCommand command;
 
     @Override
@@ -62,6 +63,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
         setExtraProperties(merge(this.extraProperties, source.getExtraProperties()));
         this.baseImage = merge(this.baseImage, source.getBaseImage());
         this.entrypoint = merge(this.entrypoint, source.getEntrypoint());
+        this.cmd = merge(this.cmd, source.getCmd());
         this.useLocalArtifact = merge(this.useLocalArtifact, source.useLocalArtifact);
         this.command = merge(this.command, source.getCommand());
         setImageNames(merge(this.imageNames, source.getImageNames()));
@@ -145,6 +147,16 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
     @Override
     public void setEntrypoint(String entrypoint) {
         this.entrypoint = entrypoint;
+    }
+
+    @Override
+    public String getCmd() {
+        return cmd;
+    }
+
+    @Override
+    public void setCmd(String cmd) {
+        this.cmd = cmd;
     }
 
     @Override
@@ -309,6 +321,7 @@ public abstract class AbstractDockerConfiguration<S extends AbstractDockerConfig
         props.put("useLocalArtifact", isUseLocalArtifact());
         props.put("baseImage", baseImage);
         props.put("entrypoint", entrypoint);
+        props.put("cmd", cmd);
         props.put("imageNames", imageNames);
         props.put("buildArgs", buildArgs);
         props.put("labels", labels);

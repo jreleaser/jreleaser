@@ -43,6 +43,8 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
 
     String getEntrypoint();
 
+    String getCmd();
+
     Map<String, String> getLabels();
 
     Set<String> getImageNames();

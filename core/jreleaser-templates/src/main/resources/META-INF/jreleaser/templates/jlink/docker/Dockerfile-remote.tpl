@@ -23,3 +23,6 @@ ENV JAVA_HOME="/{{distributionArtifactRootEntryName}}"
 ENV PATH="${PATH}:${JAVA_HOME}/bin"
 
 ENTRYPOINT {{dockerEntrypoint}}
+{{#dockerCmd}}
+CMD {{dockerCmd}}
+{{/dockerCmd}}

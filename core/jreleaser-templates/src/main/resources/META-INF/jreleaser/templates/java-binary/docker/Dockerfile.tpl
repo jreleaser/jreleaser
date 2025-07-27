@@ -22,3 +22,6 @@ RUN unzip {{distributionArtifactFile}} && \
 ENV PATH="${PATH}:/{{distributionArtifactRootEntryName}}/bin"
 
 ENTRYPOINT {{dockerEntrypoint}}
+{{#dockerCmd}}
+CMD {{dockerCmd}}
+{{/dockerCmd}}

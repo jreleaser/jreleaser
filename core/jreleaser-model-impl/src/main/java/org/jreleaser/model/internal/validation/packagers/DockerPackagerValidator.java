@@ -134,6 +134,10 @@ public final class DockerPackagerValidator {
             packager.setEntrypoint(DockerConfiguration.DEFAULT_ENTRYPOINT);
         }
 
+        if (isBlank(packager.getCmd())) {
+            packager.setCmd(parentPackager.getCmd());
+        }
+
         if (packager.getImageNames().isEmpty()) {
             packager.setImageNames(parentPackager.getImageNames());
         }
@@ -260,6 +264,10 @@ public final class DockerPackagerValidator {
         }
         if (isBlank(spec.getEntrypoint())) {
             spec.setEntrypoint(DockerConfiguration.DEFAULT_ENTRYPOINT);
+        }
+
+        if (isBlank(spec.getCmd())) {
+            spec.setCmd(docker.getCmd());
         }
 
         if (spec.getImageNames().isEmpty()) {
