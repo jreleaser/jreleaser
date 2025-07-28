@@ -20,6 +20,7 @@ package org.jreleaser.sdk.gitlab.api;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Andres Almiray
@@ -34,6 +35,7 @@ public class GlRelease {
     private String tagPath;
     private Date createdAt;
     private Date releasedAt;
+    private List<String> milestones;
 
     public String getName() {
         return name;
@@ -89,5 +91,13 @@ public class GlRelease {
 
     public void setReleasedAt(Date releasedAt) {
         this.releasedAt = releasedAt;
+    }
+
+    public void setMilestones(List<String> milestones) {
+        this.milestones = milestones;
+    }
+
+    public List<String> getMilestones() {
+        return milestones;
     }
 }
