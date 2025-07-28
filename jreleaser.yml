@@ -421,20 +421,20 @@ distributions:
       postCommands:
         - 'VOLUME /workspace'
       specs:
-        slim:
+        jreleaser-slim:
           imageNames:
-            - 'jreleaser/jreleaser-{{dockerSpecName}}:{{tagName}}'
-            - 'jreleaser/jreleaser-{{dockerSpecName}}:latest'
+            - 'jreleaser/{{dockerSpecName}}:{{tagName}}'
+            - 'jreleaser/{{dockerSpecName}}:latest'
           matchers:
             platform: 'linux-x86_64'
           preCommands:
             - 'ARG DEBIAN_FRONTEND=noninteractive'
             - 'ENV TZ=Europe/Zurich'
             - 'RUN apt-get update && apt-get install -y unzip binutils fakeroot rpm git'
-        alpine:
+        jreleaser-alpine:
           imageNames:
-            - 'jreleaser/jreleaser-{{dockerSpecName}}:{{tagName}}'
-            - 'jreleaser/jreleaser-{{dockerSpecName}}:latest'
+            - 'jreleaser/{{dockerSpecName}}:{{tagName}}'
+            - 'jreleaser/{{dockerSpecName}}:latest'
           matchers:
             platform: 'linux_musl-x86_64'
           preCommands:
