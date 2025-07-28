@@ -147,9 +147,10 @@ public final class DefaultExtensionManager implements ExtensionManager {
         }
 
         List<Path> jars = null;
-        try (Stream<Path> jarPaths = Files.list(directoryPath)) {
+        try (Stream<Path> jarPaths = Files.walk(directoryPath)) {
             jars = jarPaths
                 .filter(path -> path.getFileName().toString().endsWith(".jar"))
+                .filter(path -> Files.isRegularFile(path))
                 .collect(toList());
         } catch (IOException e) {
             context.getLogger().trace(e);
@@ -253,17 +254,16 @@ public final class DefaultExtensionManager implements ExtensionManager {
         try {
             FileUtils.deleteFiles(target, true);
 
-            //build and export the extension to a local jar 
-            // jbang export local --force -O out/.../<extname>.jar <scriptref>
-            // this will NOT include the extension dependencies as output
-            // would overlap with jresolver itself.
-            // once jbang supports buildTimeOnly deps we can use that to
-            // get additional deps.
+            // build and export the extension to a portable jar
+            // <extname>.jar and lib/<deps>.jar
+            // downside is that the lib dir will basically
+            // have a copy of jreleaser deps.
+            // once jbang supports buildTimeOnly deps it will be smaller.
             String targetJar = target.resolve(extensionDef.getName()).toString();
             List<String> args = new ArrayList<>();
-            args.add("-q");
+            args.add("--quiet");
             args.add("export");
-            args.add("local");
+            args.add("portable");
             args.add("--force");
             args.add("-O");
             args.add(targetJar);
