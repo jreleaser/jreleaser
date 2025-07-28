@@ -29,11 +29,138 @@ import org.mockito.MockedStatic;
 import java.time.Instant;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.when;
 
 class AbstractMavenDeployerTest {
+    @Test
+    void throwsExceptionWhenNoExpirationDate() {
+        try (MockedStatic<SigningUtils> signingUtils = mockStatic(SigningUtils.class)) {
+            signingUtils.when(() -> SigningUtils.getPublicKeyID(any())).thenReturn(Optional.of("ABCDEF"));
+            signingUtils.when(() -> SigningUtils.getFingerprint(any())).thenReturn(Optional.of("ABCDEF123456"));
+            // Set expiration date to Instant.EPOCH
+            signingUtils.when(() -> SigningUtils.getExpirationDateOfPublicKey(any()))
+                .thenReturn(Optional.of(Instant.EPOCH));
+
+            org.jreleaser.model.internal.deploy.maven.MavenDeployer<org.jreleaser.model.api.deploy.maven.MavenDeployer> mavenDeployer =
+                mock(org.jreleaser.model.internal.deploy.maven.MavenDeployer.class);
+            TestMavenDeployer deployer = new TestMavenDeployer(context, mavenDeployer);
+
+            Throwable thrown = assertThrows(Exception.class, () -> {
+                var method = AbstractMavenDeployer.class.getDeclaredMethod("verifyKeyIsValid");
+                method.setAccessible(true);
+                method.invoke(deployer);
+            });
+            Throwable cause = thrown;
+            if (cause instanceof java.lang.reflect.InvocationTargetException && cause.getCause() != null) {
+                cause = cause.getCause();
+            }
+            if (cause instanceof java.lang.reflect.InvocationTargetException && cause.getCause() != null) {
+                cause = cause.getCause();
+            }
+            assertTrue(cause instanceof JReleaserException, "Expected JReleaserException but got: " + cause);
+            String expectedMessage = org.jreleaser.bundle.RB.$("signing.public.key.no.expiration.date", "ABCDEF");
+            assertTrue(cause.getMessage().contains(expectedMessage), "Actual message: " + cause.getMessage());
+        } catch (Exception e) {
+            fail(e);
+        }
+    }
+    @Test
+    void throwsExceptionWhenPublicKeyIdNotFound() {
+        try (MockedStatic<SigningUtils> signingUtils = mockStatic(SigningUtils.class)) {
+            signingUtils.when(() -> SigningUtils.getPublicKeyID(any())).thenReturn(Optional.empty());
+            signingUtils.when(() -> SigningUtils.getFingerprint(any())).thenReturn(Optional.of("ABCDEF123456"));
+            signingUtils.when(() -> SigningUtils.getExpirationDateOfPublicKey(any())).thenReturn(Optional.of(Instant.now().plusSeconds(3600)));
+
+            org.jreleaser.model.internal.deploy.maven.MavenDeployer<org.jreleaser.model.api.deploy.maven.MavenDeployer> mavenDeployer =
+                mock(org.jreleaser.model.internal.deploy.maven.MavenDeployer.class);
+            TestMavenDeployer deployer = new TestMavenDeployer(context, mavenDeployer);
+
+            Throwable thrown = assertThrows(Exception.class, () -> {
+                var method = AbstractMavenDeployer.class.getDeclaredMethod("verifyKeyIsValid");
+                method.setAccessible(true);
+                method.invoke(deployer);
+            });
+            Throwable cause = thrown;
+            if (cause instanceof java.lang.reflect.InvocationTargetException && cause.getCause() != null) {
+                cause = cause.getCause();
+            }
+            if (cause instanceof java.lang.reflect.InvocationTargetException && cause.getCause() != null) {
+                cause = cause.getCause();
+            }
+            assertTrue(cause instanceof JReleaserException, "Expected JReleaserException but got: " + cause);
+            String expectedMessage = org.jreleaser.bundle.RB.$("ERROR_public_key_not_found");
+            assertTrue(cause.getMessage().contains(expectedMessage), "Actual message: " + cause.getMessage());
+        } catch (Exception e) {
+            fail(e);
+        }
+    }
+
+    @Test
+    void throwsExceptionWhenFingerprintNotFound() {
+        try (MockedStatic<SigningUtils> signingUtils = mockStatic(SigningUtils.class)) {
+            signingUtils.when(() -> SigningUtils.getPublicKeyID(any())).thenReturn(Optional.of("ABCDEF"));
+            signingUtils.when(() -> SigningUtils.getFingerprint(any())).thenReturn(Optional.empty());
+            signingUtils.when(() -> SigningUtils.getExpirationDateOfPublicKey(any())).thenReturn(Optional.of(Instant.now().plusSeconds(3600)));
+
+            org.jreleaser.model.internal.deploy.maven.MavenDeployer<org.jreleaser.model.api.deploy.maven.MavenDeployer> mavenDeployer =
+                mock(org.jreleaser.model.internal.deploy.maven.MavenDeployer.class);
+            TestMavenDeployer deployer = new TestMavenDeployer(context, mavenDeployer);
+
+            Throwable thrown = assertThrows(Exception.class, () -> {
+                var method = AbstractMavenDeployer.class.getDeclaredMethod("verifyKeyIsValid");
+                method.setAccessible(true);
+                method.invoke(deployer);
+            });
+            Throwable cause = thrown;
+            if (cause instanceof java.lang.reflect.InvocationTargetException && cause.getCause() != null) {
+                cause = cause.getCause();
+            }
+            if (cause instanceof java.lang.reflect.InvocationTargetException && cause.getCause() != null) {
+                cause = cause.getCause();
+            }
+            assertTrue(cause instanceof JReleaserException, "Expected JReleaserException but got: " + cause);
+            String expectedMessage = org.jreleaser.bundle.RB.$("ERROR_public_key_not_found");
+            assertTrue(cause.getMessage().contains(expectedMessage), "Actual message: " + cause.getMessage());
+        } catch (Exception e) {
+            fail(e);
+        }
+    }
+
+    @Test
+    void throwsExceptionWhenSigningUtilsThrows() {
+        try (MockedStatic<SigningUtils> signingUtils = mockStatic(SigningUtils.class)) {
+            signingUtils.when(() -> SigningUtils.getPublicKeyID(any())).thenThrow(new org.jreleaser.model.api.signing.SigningException("fail"));
+
+            org.jreleaser.model.internal.deploy.maven.MavenDeployer<org.jreleaser.model.api.deploy.maven.MavenDeployer> mavenDeployer =
+                mock(org.jreleaser.model.internal.deploy.maven.MavenDeployer.class);
+            TestMavenDeployer deployer = new TestMavenDeployer(context, mavenDeployer);
+
+            Throwable thrown = assertThrows(Exception.class, () -> {
+                var method = AbstractMavenDeployer.class.getDeclaredMethod("verifyKeyIsValid");
+                method.setAccessible(true);
+                method.invoke(deployer);
+            });
+            Throwable cause = thrown;
+            if (cause instanceof java.lang.reflect.InvocationTargetException && cause.getCause() != null) {
+                cause = cause.getCause();
+            }
+            if (cause instanceof java.lang.reflect.InvocationTargetException && cause.getCause() != null) {
+                cause = cause.getCause();
+            }
+            assertTrue(cause instanceof JReleaserException, "Expected JReleaserException but got: " + cause);
+            String expectedMessage = org.jreleaser.bundle.RB.$("ERROR_public_key_not_found");
+            assertTrue(cause.getMessage().contains(expectedMessage), "Actual message: " + cause.getMessage());
+        } catch (Exception e) {
+            fail(e);
+        }
+    }
     private JReleaserContext context;
 
     @BeforeEach
@@ -43,16 +170,16 @@ class AbstractMavenDeployerTest {
     }
 
 
-    static class TestMavenDeployer extends AbstractMavenDeployer {
-        private final org.jreleaser.model.internal.deploy.maven.MavenDeployer mavenDeployer;
+    static class TestMavenDeployer extends AbstractMavenDeployer<org.jreleaser.model.api.deploy.maven.MavenDeployer, org.jreleaser.model.internal.deploy.maven.MavenDeployer<org.jreleaser.model.api.deploy.maven.MavenDeployer>> {
+        private final org.jreleaser.model.internal.deploy.maven.MavenDeployer<org.jreleaser.model.api.deploy.maven.MavenDeployer> mavenDeployer;
 
-        TestMavenDeployer(JReleaserContext context, org.jreleaser.model.internal.deploy.maven.MavenDeployer mavenDeployer) {
+        TestMavenDeployer(JReleaserContext context, org.jreleaser.model.internal.deploy.maven.MavenDeployer<org.jreleaser.model.api.deploy.maven.MavenDeployer> mavenDeployer) {
             super(context);
             this.mavenDeployer = mavenDeployer;
         }
 
         @Override
-        public org.jreleaser.model.internal.deploy.maven.MavenDeployer getDeployer() {
+        public org.jreleaser.model.internal.deploy.maven.MavenDeployer<org.jreleaser.model.api.deploy.maven.MavenDeployer> getDeployer() {
             return mavenDeployer;
         }
 
@@ -61,7 +188,7 @@ class AbstractMavenDeployerTest {
             return "test";
         }
 
-        public void setDeployer(org.jreleaser.model.internal.deploy.maven.MavenDeployer deployer) {}
+        public void setDeployer(org.jreleaser.model.internal.deploy.maven.MavenDeployer<org.jreleaser.model.api.deploy.maven.MavenDeployer> deployer) {}
 
         @Override
         public void deploy(String s) {}
@@ -77,7 +204,8 @@ class AbstractMavenDeployerTest {
                 .thenReturn(Optional.of(Instant.now().minusSeconds(3600)));
 
 
-            org.jreleaser.model.internal.deploy.maven.MavenDeployer<?> mavenDeployer = mock(org.jreleaser.model.internal.deploy.maven.MavenDeployer.class);
+            org.jreleaser.model.internal.deploy.maven.MavenDeployer<org.jreleaser.model.api.deploy.maven.MavenDeployer> mavenDeployer =
+                mock(org.jreleaser.model.internal.deploy.maven.MavenDeployer.class);
             TestMavenDeployer deployer = new TestMavenDeployer(context, mavenDeployer);
 
             Throwable thrown = assertThrows(Exception.class, () -> {

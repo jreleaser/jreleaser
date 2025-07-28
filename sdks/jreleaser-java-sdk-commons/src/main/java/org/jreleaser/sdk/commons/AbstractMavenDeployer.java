@@ -470,46 +470,42 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
         try {
             publicKeyID = SigningUtils.getPublicKeyID(context.asImmutable());
         } catch (SigningException e) {
-            context.getLogger().warn(RB.$("ERROR_public_key_not_found"));
-            return;
+            throw new JReleaserException(RB.$("ERROR_public_key_not_found"));
         }
 
         if (!publicKeyID.isPresent()) {
-            context.getLogger().warn(RB.$("ERROR_public_key_not_found"));
-            return;
+            throw new JReleaserException(RB.$("ERROR_public_key_not_found"));
         }
 
         try {
             fingerprint = SigningUtils.getFingerprint(context.asImmutable());
         } catch (SigningException e) {
-            context.getLogger().warn(RB.$("ERROR_public_key_not_found"));
-            return;
+            throw new JReleaserException(RB.$("ERROR_public_key_not_found"));
         }
 
         if (!fingerprint.isPresent()) {
-            context.getLogger().warn(RB.$("ERROR_public_key_not_found"));
-            return;
+            throw new JReleaserException(RB.$("ERROR_public_key_not_found"));
         }
 
         String keyID = publicKeyID.get().toUpperCase(Locale.ENGLISH);
         String fp = fingerprint.get().toUpperCase(Locale.ENGLISH);
 
+        Optional<Instant> expirationDate;
         try {
-            Optional<Instant> expirationDate = SigningUtils.getExpirationDateOfPublicKey(context.asImmutable());
-
-            if (expirationDate.isPresent()) {
-                Instant ed = expirationDate.get();
-                if (Instant.EPOCH.equals(ed)) {
-                    context.getLogger().warn(RB.$("signing.public.key.no.expiration.date", keyID));
-                } else if (Instant.now().isAfter(ed)) {
-                    throw new JReleaserException(RB.$("ERROR_public_key_expired", keyID, LocalDateTime.ofInstant(ed, ZoneId.systemDefault())));
-                } else {
-                    context.getLogger().info(RB.$("signing.public.key.expiration.date", keyID, LocalDateTime.ofInstant(ed, ZoneId.systemDefault())));
-                }
-            }
+            expirationDate = SigningUtils.getExpirationDateOfPublicKey(context.asImmutable());
         } catch (SigningException e) {
-            context.getLogger().warn(RB.$("ERROR_public_key_not_found"));
-            return;
+            throw new JReleaserException(RB.$("ERROR_public_key_not_found"), e);
+        }
+
+        if (expirationDate.isPresent()) {
+            Instant ed = expirationDate.get();
+            if (Instant.EPOCH.equals(ed)) {
+                throw new JReleaserException(RB.$("signing.public.key.no.expiration.date", keyID));
+            } else if (Instant.now().isAfter(ed)) {
+                throw new JReleaserException(RB.$("ERROR_public_key_expired", keyID, LocalDateTime.ofInstant(ed, ZoneId.systemDefault())));
+            } else {
+                context.getLogger().info(RB.$("signing.public.key.expiration.date", keyID, LocalDateTime.ofInstant(ed, ZoneId.systemDefault())));
+            }
         }
 
         boolean published = false;
