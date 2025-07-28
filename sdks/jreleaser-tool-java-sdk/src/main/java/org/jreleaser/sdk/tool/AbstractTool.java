@@ -20,7 +20,6 @@ package org.jreleaser.sdk.tool;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.api.JReleaserContext;
 import org.jreleaser.sdk.command.Command;
-import org.jreleaser.sdk.command.Command.Result;
 import org.jreleaser.sdk.command.CommandException;
 import org.jreleaser.sdk.command.CommandExecutor;
 import org.jreleaser.util.PlatformUtils;
@@ -88,7 +87,6 @@ public class AbstractTool {
             throw new CommandException(RB.$("ERROR_command_execution_exit_value", result.getExitValue()));
         }
     }
-
 
     protected Command.Result executeCommand(CommandExecution execution) throws CommandException {
         return execution.execute();

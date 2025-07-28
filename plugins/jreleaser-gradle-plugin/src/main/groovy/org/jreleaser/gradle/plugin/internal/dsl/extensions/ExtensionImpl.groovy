@@ -42,6 +42,7 @@ class ExtensionImpl implements Extension {
     String name
     final Property<Boolean> enabled
     final Property<String> gav
+    final Property<String> jbang
     final DirectoryProperty directory
     final NamedDomainObjectContainer<ProviderImpl> providers
 
@@ -49,6 +50,7 @@ class ExtensionImpl implements Extension {
     ExtensionImpl(ObjectFactory objects) {
         enabled = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         gav = objects.property(String).convention(Providers.<String> notDefined())
+        jbang = objects.property(String).convention(Providers.<String> notDefined())
         directory = objects.directoryProperty().convention(Providers.notDefined())
 
         providers = objects.domainObjectContainer(ProviderImpl, new NamedDomainObjectFactory<ProviderImpl>() {
@@ -77,6 +79,7 @@ class ExtensionImpl implements Extension {
         extension.name = name
         if (enabled.present) extension.enabled = enabled.get()
         if (gav.present) extension.gav = gav.get()
+        if (jbang.present) extension.jbang = jbang.get()
         if (directory.present) {
             extension.directory = directory.get().asFile.toPath().toAbsolutePath().toString()
         }

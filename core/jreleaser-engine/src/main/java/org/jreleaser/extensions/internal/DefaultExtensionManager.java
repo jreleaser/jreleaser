@@ -422,7 +422,6 @@ public final class DefaultExtensionManager implements ExtensionManager {
             return this;
         }
 
-
         public ExtensionBuilder withExtensionPoint(String type, Map<String, Object> properties) {
             extensionPoints.put(type, new ExtensionPointDef(type, properties));
             return this;
