@@ -17,8 +17,10 @@
  */
 package org.jreleaser.sdk.tool;
 
+import org.apache.commons.io.IOUtils;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.logging.JReleaserLogger;
+import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.command.Command;
 import org.jreleaser.sdk.command.CommandException;
@@ -29,6 +31,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -189,7 +192,12 @@ public class DownloadableTool {
         }
 
         downloadUrl = resolveTemplate(downloadUrl, props) + filename;
-        try (InputStream stream = new URI(downloadUrl).toURL().openStream()) {
+
+        try {
+            URLConnection connection = new URI(downloadUrl).toURL().openConnection();
+            connection.setRequestProperty("User-Agent", "JReleaser/" + JReleaserVersion.getPlainVersion());
+            InputStream stream = connection.getInputStream();
+
             Path tmp = Files.createTempDirectory("jreleaser");
             Path destination = tmp.resolve(filename);
 
@@ -197,6 +205,7 @@ public class DownloadableTool {
             logger.debug(RB.$("tool.downloading", downloadUrl));
             Files.copy(stream, destination, REPLACE_EXISTING);
             logger.debug(RB.$("tool.downloaded", filename));
+            IOUtils.closeQuietly(stream);
 
             Files.createDirectories(dest);
             if (unpack) {
