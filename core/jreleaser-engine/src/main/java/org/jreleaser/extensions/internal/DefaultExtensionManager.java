@@ -26,6 +26,7 @@ import org.jreleaser.extensions.api.workflow.WorkflowListener;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.sdk.command.CommandException;
+import org.jreleaser.sdk.tool.JBang;
 import org.jreleaser.sdk.tool.Mvn;
 import org.jreleaser.sdk.tool.ToolException;
 import org.jreleaser.templates.TemplateResource;
@@ -129,6 +130,10 @@ public final class DefaultExtensionManager implements ExtensionManager {
 
         if (isNotBlank(extensionDef.getGav())) {
             directory = resolveJARs(context, extensionDef);
+        } 
+
+        if (isNotBlank(extensionDef.getJBang())) {
+            directory = resolveJBangJARs(context, extensionDef);
         }
 
         Path directoryPath = Paths.get(directory);
@@ -230,6 +235,50 @@ public final class DefaultExtensionManager implements ExtensionManager {
         return target.toString();
     }
 
+    private String resolveJBangJARs(JReleaserContext context, ExtensionDef extensionDef) {
+        Path target = context.getOutputDirectory().resolve("extensions")
+            .resolve(extensionDef.getName())
+            .toAbsolutePath();
+
+        JBang jbang = new JBang(context.asImmutable(), DefaultVersions.getInstance().getJBangVersion());
+
+        try {
+            if (!jbang.setup()) {
+                throw new JReleaserException(RB.$("tool_unavailable", "jbang"));
+            }
+        } catch (ToolException e) {
+            throw new JReleaserException(RB.$("tool_unavailable", "jbang"), e);
+        }
+
+        try {
+            FileUtils.deleteFiles(target, true);
+
+            //build and export the extension to a local jar 
+            // jbang export local --force -O out/.../<extname>.jar <scriptref>
+            // this will NOT include the extension dependencies as output
+            // would overlap with jresolver itself.
+            // once jbang supports buildTimeOnly deps we can use that to
+            // get additional deps.
+            String targetJar = target.resolve(extensionDef.getName()).toString();
+            List<String> args = new ArrayList<>();
+            args.add("-q");
+            args.add("export");
+            args.add("local");
+            args.add("--force");
+            args.add("-O");
+            args.add(targetJar);
+            args.add(extensionDef.getJBang());
+
+            context.getLogger().debug(RB.$("extension.manager.jbang.export.jars", extensionDef.getGav(), context.relativizeToBasedir(targetJar)));
+
+            jbang.invoke(context.getBasedir(), args);
+        } catch (IOException | CommandException e) {
+            throw new JReleaserException(RB.$("ERROR_unexpected_error"), e);
+        }
+
+        return target.toString();
+    }
+
     private void processExtension(JReleaserContext context, Extension extension, Set<String> visitedExtensionNames, Set<String> visitedExtensionTypes) {
         String extensionName = extension.getName();
         String extensionType = extension.getClass().getName();
@@ -277,13 +326,15 @@ public final class DefaultExtensionManager implements ExtensionManager {
         private final String name;
         private final String gav;
         private final String directory;
+        private final String jbang;
         private final boolean enabled;
         private final Map<String, ExtensionPointDef> extensionPoints = new LinkedHashMap<>();
 
-        private ExtensionDef(String name, String directory, String gav, boolean enabled, Map<String, ExtensionPointDef> extensionPoints) {
+        private ExtensionDef(String name, String directory, String gav, String jbang, boolean enabled, Map<String, ExtensionPointDef> extensionPoints) {
             this.name = name;
             this.gav = gav;
             this.directory = directory;
+            this.jbang = jbang;
             this.enabled = enabled;
             this.extensionPoints.putAll(extensionPoints);
         }
@@ -300,6 +351,9 @@ public final class DefaultExtensionManager implements ExtensionManager {
             return directory;
         }
 
+        public String getJBang() {
+            return jbang;
+        }
         private boolean isEnabled() {
             return enabled;
         }
@@ -333,6 +387,7 @@ public final class DefaultExtensionManager implements ExtensionManager {
         private final DefaultExtensionManager defaultExtensionManager;
         private String gav;
         private String directory;
+        private String jbang;
         private boolean enabled;
 
         public ExtensionBuilder(String name, DefaultExtensionManager defaultExtensionManager) {
@@ -357,10 +412,16 @@ public final class DefaultExtensionManager implements ExtensionManager {
             return this;
         }
 
+        public ExtensionBuilder withJBang(String jbang) {
+            this.jbang = jbang;
+            return this;
+        }
+
         public ExtensionBuilder withEnabled(boolean enabled) {
             this.enabled = enabled;
             return this;
         }
+
 
         public ExtensionBuilder withExtensionPoint(String type, Map<String, Object> properties) {
             extensionPoints.put(type, new ExtensionPointDef(type, properties));
@@ -369,7 +430,7 @@ public final class DefaultExtensionManager implements ExtensionManager {
 
         public void build() {
             defaultExtensionManager.extensionDefs.put(name,
-                new ExtensionDef(name, directory, gav, enabled, extensionPoints));
+                new ExtensionDef(name, directory, gav, jbang, enabled, extensionPoints));
         }
     }
 }
