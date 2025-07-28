@@ -339,7 +339,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
 
         publishToRepository(distribution, props);
         for (DockerSpec spec : packager.getActiveSpecs()) {
-            context.getLogger().debug(RB.$("distributions.action.publishing") + " {} spec", spec.getName());
+            context.getLogger().info(RB.$("distributions.action.publishing") + " {} spec", spec.getName());
             TemplateContext newProps = fillSpecProps(distribution, props, spec);
             publishDocker(newProps, spec);
         }
@@ -352,6 +352,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
 
     @Override
     protected void doPublishDistribution(Distribution distribution, TemplateContext props) throws PackagerProcessingException {
+        context.getLogger().info(RB.$("distributions.action.publishing") + " {}", distribution.getName());
         publishDocker(props, getPackager());
     }
 
@@ -359,13 +360,10 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         Map<String, List<String>> tagNames = resolveTagNames(docker, props);
 
         if (context.isDryrun()) {
-            for (Map.Entry<String, List<String>> e : tagNames.entrySet()) {
-                Set<String> uniqueImageNames = e.getValue().stream()
-                    .map(tag -> tag.split(":")[0])
-                    .collect(toSet());
-                for (String imageName : uniqueImageNames) {
-                    context.getLogger().info(" - {}", imageName);
-                }
+            Set<String> uniqueImageNames = new LinkedHashSet<>();
+            tagNames.values().forEach(uniqueImageNames::addAll);
+            for (String imageName : uniqueImageNames) {
+                context.getLogger().info(" - {}", imageName);
             }
             return;
         }
@@ -610,7 +608,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         String[] parts = imageName.split("/");
         parts = parts[parts.length - 1].split(":");
         if (isSpec) {
-            destination = directory.resolve(parts[0]);
+            destination = directory.resolve(((DockerSpec) docker).getName());
         }
 
         if (packager.getPackagerRepository().isVersionedSubfolders()) {
