@@ -56,10 +56,7 @@ class AbstractMavenDeployerTest {
                 method.invoke(deployer);
             });
             Throwable cause = thrown;
-            if (cause instanceof java.lang.reflect.InvocationTargetException && cause.getCause() != null) {
-                cause = cause.getCause();
-            }
-            if (cause instanceof java.lang.reflect.InvocationTargetException && cause.getCause() != null) {
+            while (cause instanceof java.lang.reflect.InvocationTargetException && cause.getCause() != null) {
                 cause = cause.getCause();
             }
             assertTrue(cause instanceof JReleaserException, "Expected JReleaserException but got: " + cause);
@@ -87,10 +84,7 @@ class AbstractMavenDeployerTest {
                 method.invoke(deployer);
             });
             Throwable cause = thrown;
-            if (cause instanceof java.lang.reflect.InvocationTargetException && cause.getCause() != null) {
-                cause = cause.getCause();
-            }
-            if (cause instanceof java.lang.reflect.InvocationTargetException && cause.getCause() != null) {
+            while (cause instanceof java.lang.reflect.InvocationTargetException && cause.getCause() != null) {
                 cause = cause.getCause();
             }
             assertTrue(cause instanceof JReleaserException, "Expected JReleaserException but got: " + cause);
@@ -116,10 +110,7 @@ class AbstractMavenDeployerTest {
                 method.invoke(deployer);
             });
             Throwable cause = thrown;
-            if (cause instanceof java.lang.reflect.InvocationTargetException && cause.getCause() != null) {
-                cause = cause.getCause();
-            }
-            if (cause instanceof java.lang.reflect.InvocationTargetException && cause.getCause() != null) {
+            while (cause instanceof java.lang.reflect.InvocationTargetException && cause.getCause() != null) {
                 cause = cause.getCause();
             }
             assertTrue(cause instanceof JReleaserException, "Expected JReleaserException but got: " + cause);
@@ -182,10 +173,7 @@ class AbstractMavenDeployerTest {
                 method.invoke(deployer);
             });
             Throwable cause = thrown;
-            if (cause instanceof java.lang.reflect.InvocationTargetException && cause.getCause() != null) {
-                cause = cause.getCause();
-            }
-            if (cause instanceof java.lang.reflect.InvocationTargetException && cause.getCause() != null) {
+            while (cause instanceof java.lang.reflect.InvocationTargetException && cause.getCause() != null) {
                 cause = cause.getCause();
             }
             assertTrue(cause instanceof JReleaserException, "Expected JReleaserException but got: " + cause);
