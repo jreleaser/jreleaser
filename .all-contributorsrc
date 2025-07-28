@@ -885,6 +885,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "dorianm",
+      "name": "Dorian Monnier",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4815363?v=4",
+      "profile": "https://github.com/dorianm",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
