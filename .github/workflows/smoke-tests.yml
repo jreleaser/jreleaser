@@ -10,7 +10,7 @@ env:
   JRELEASER_OCI_COMPARTMENTID: ${{ secrets.JRELEASER_OCI_COMPARTMENTID }}
 
 permissions:
-  contents: read
+  contents: write
   actions: write
 
 jobs:
