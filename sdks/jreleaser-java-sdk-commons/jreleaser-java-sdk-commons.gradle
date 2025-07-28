@@ -43,6 +43,4 @@ dependencies {
     // Test dependencies
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
     testImplementation "org.mockito:mockito-inline:$mockitoInlineVersion"
-    testImplementation "org.mockito:mockito-junit-jupiter:$mockitoJunitJupiterVersion"
-    testImplementation "org.junit.jupiter:junit-jupiter:$junit5Version"
 }

@@ -490,22 +490,22 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
         String keyID = publicKeyID.get().toUpperCase(Locale.ENGLISH);
         String fp = fingerprint.get().toUpperCase(Locale.ENGLISH);
 
-        Optional<Instant> expirationDate;
         try {
-            expirationDate = SigningUtils.getExpirationDateOfPublicKey(context.asImmutable());
-        } catch (SigningException e) {
-            throw new JReleaserException(RB.$("ERROR_public_key_not_found"), e);
-        }
+            Optional<Instant> expirationDate = SigningUtils.getExpirationDateOfPublicKey(context.asImmutable());
 
-        if (expirationDate.isPresent()) {
-            Instant ed = expirationDate.get();
-            if (Instant.EPOCH.equals(ed)) {
-                throw new JReleaserException(RB.$("signing.public.key.no.expiration.date", keyID));
-            } else if (Instant.now().isAfter(ed)) {
-                throw new JReleaserException(RB.$("ERROR_public_key_expired", keyID, LocalDateTime.ofInstant(ed, ZoneId.systemDefault())));
-            } else {
-                context.getLogger().info(RB.$("signing.public.key.expiration.date", keyID, LocalDateTime.ofInstant(ed, ZoneId.systemDefault())));
+            if (expirationDate.isPresent()) {
+                Instant ed = expirationDate.get();
+                if (Instant.EPOCH.equals(ed)) {
+                    context.getLogger().warn(RB.$("signing.public.key.no.expiration.date", keyID));
+
+                } else if (Instant.now().isAfter(ed)) {
+                        throw new JReleaserException(RB.$("ERROR_public_key_expired", keyID, LocalDateTime.ofInstant(ed, ZoneId.systemDefault())));
+                } else {
+                    context.getLogger().info(RB.$("signing.public.key.expiration.date", keyID, LocalDateTime.ofInstant(ed, ZoneId.systemDefault())));
+                }
             }
+        } catch (SigningException e) {
+            throw new JReleaserException(RB.$("ERROR_public_key_not_found"));
         }
 
         boolean published = false;
