@@ -283,6 +283,17 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
         release.setRef(gitlab.getResolvedBranchPush(context.getModel()));
         release.setDescription(changelog);
 
+        Optional<GlMilestone> milestone = api.findMilestoneByName(
+            gitlab.getOwner(),
+            gitlab.getName(),
+            projectIdentifier,
+            gitlab.getMilestone().getEffectiveName());
+        milestone.ifPresent(glMilestone -> {
+            List<String> milestones = new ArrayList<>();
+            milestones.add(glMilestone.getTitle());
+            release.setMilestones(milestones);
+        });
+
         // remote tag/release
         api.createRelease(gitlab.getOwner(), gitlab.getName(), projectIdentifier, release);
 
@@ -295,11 +306,6 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
         }
 
         if (gitlab.getMilestone().isClose() && !context.getModel().getProject().isSnapshot()) {
-            Optional<GlMilestone> milestone = api.findMilestoneByName(
-                gitlab.getOwner(),
-                gitlab.getName(),
-                projectIdentifier,
-                gitlab.getMilestone().getEffectiveName());
             milestone.ifPresent(glMilestone -> api.closeMilestone(gitlab.getOwner(),
                 gitlab.getName(),
                 projectIdentifier,
