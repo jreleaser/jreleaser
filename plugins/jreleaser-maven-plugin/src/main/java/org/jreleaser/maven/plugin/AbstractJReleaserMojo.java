@@ -171,6 +171,10 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
             }
             logger.increaseIndent();
             logger.info("- basedir set to {}", basedir.toAbsolutePath());
+            Path settings = resolveSettings();
+            if (null != settings) {
+                logger.info("- settings set to {}", settings.toAbsolutePath());
+            }
             logger.info("- outputdir set to {}", outputDirectory.toPath().toAbsolutePath());
             logger.decreaseIndent();
 
@@ -181,7 +185,7 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
                 getCommand(),
                 null == configFile ? convertModel() : readModel(logger),
                 basedir,
-                resolveSettings(),
+                settings,
                 outputDirectory.toPath(),
                 resolveBoolean(org.jreleaser.model.api.JReleaserContext.YOLO, yolo),
                 resolveBoolean(org.jreleaser.model.api.JReleaserContext.DRY_RUN, dryrun),

@@ -135,6 +135,10 @@ abstract class AbstractJReleaserTask extends DefaultTask {
         JReleaserVersion.banner(logger.getTracer())
         logger.increaseIndent()
         logger.info('- basedir set to {}', project.projectDir.toPath().toAbsolutePath())
+        Path settings = resolveSettings()
+        if (settings) {
+            logger.info('- settings set to {}', settings.toAbsolutePath())
+        }
         logger.info('- outputdir set to {}', outputDirectory.get().asFile.toPath().toAbsolutePath())
         logger.decreaseIndent()
 
@@ -145,7 +149,7 @@ abstract class AbstractJReleaserTask extends DefaultTask {
             command,
             createModel(),
             project.projectDir.toPath(),
-            resolveSettings(),
+            settings,
             outputDirectory.get().asFile.toPath(),
             yolo.getOrElse(false),
             dryrun.getOrElse(false),

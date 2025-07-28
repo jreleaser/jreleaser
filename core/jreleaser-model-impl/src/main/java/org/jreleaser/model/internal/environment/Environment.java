@@ -191,25 +191,14 @@ public final class Environment extends AbstractModelObject<Environment> implemen
             Path settings = context.getSettings();
 
             if (null != settings) {
-                loadVariables(context, settings);
+                if (!Files.isDirectory(settings)) {
+                    loadVariables(context, settings);
+                } else {
+                    context.getLogger().warn(RB.$("environment.load.variables.dir", settings.toAbsolutePath()));
+                    loadSettings(context);
+                }
             } else {
-                Path configDirectory = null;
-
-                String home = System.getenv(XDG_CONFIG_HOME);
-                if (isNotBlank(home) && Files.exists(Paths.get(home).resolve("jreleaser"))) {
-                    configDirectory = Paths.get(home).resolve("jreleaser");
-                }
-
-                if (null == configDirectory) {
-                    home = System.getenv(JRELEASER_USER_HOME);
-                    if (isBlank(home)) {
-                        home = System.getProperty("user.home") + File.separator + ".jreleaser";
-                    }
-                    configDirectory = Paths.get(home);
-                }
-
-                loadVariables(context, resolveConfigFileAt(configDirectory)
-                    .orElse(configDirectory.resolve("config.properties")));
+                loadSettings(context);
             }
 
             if (isNotBlank(variables)) {
@@ -259,6 +248,26 @@ public final class Environment extends AbstractModelObject<Environment> implemen
                 sourcedProperties.putAll(propertiesSource.getProperties());
             }
         }
+    }
+
+    private void loadSettings(JReleaserContext context) {
+        Path configDirectory = null;
+
+        String home = System.getenv(XDG_CONFIG_HOME);
+        if (isNotBlank(home) && Files.exists(Paths.get(home).resolve("jreleaser"))) {
+            configDirectory = Paths.get(home).resolve("jreleaser");
+        }
+
+        if (null == configDirectory) {
+            home = System.getenv(JRELEASER_USER_HOME);
+            if (isBlank(home)) {
+                home = System.getProperty("user.home") + File.separator + ".jreleaser";
+            }
+            configDirectory = Paths.get(home);
+        }
+
+        loadVariables(context, resolveConfigFileAt(configDirectory)
+            .orElse(configDirectory.resolve("config.properties")));
     }
 
     private void loadVariables(JReleaserContext context, Path file) {

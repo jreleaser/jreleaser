@@ -91,6 +91,10 @@ public abstract class AbstractModelCommand<C extends IO> extends AbstractLogging
         logger.info($("TEXT_config_file"), actualConfigFile);
         logger.increaseIndent();
         logger.info($("TEXT_basedir_set"), actualBasedir.toAbsolutePath());
+        Path settings = resolveSettings();
+        if (null != settings) {
+            logger.info($("TEXT_settings_set"), settings.toAbsolutePath());
+        }
         logger.info($("TEXT_outputdir_set"), getOutputDirectory().toAbsolutePath());
         logger.decreaseIndent();
         doExecute(createContext());
@@ -168,7 +172,7 @@ public abstract class AbstractModelCommand<C extends IO> extends AbstractLogging
             getCommand(),
             model,
             actualBasedir,
-            settingsFile,
+            resolveSettings(),
             getOutputDirectory(),
             resolveBoolean(org.jreleaser.model.api.JReleaserContext.YOLO, yolo()),
             resolveBoolean(org.jreleaser.model.api.JReleaserContext.DRY_RUN, dryrun()),

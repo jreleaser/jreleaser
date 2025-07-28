@@ -54,25 +54,14 @@ public final class Environment {
 
     public static void display(JReleaserLogger logger, Path basedir, Path settings) {
         if (null != settings) {
-            loadVariables(logger, settings);
+            if (!Files.isDirectory(settings)) {
+                loadVariables(logger, settings);
+            } else {
+                logger.warn(RB.$("environment.load.variables.dir", settings.toAbsolutePath()));
+                loadSettings(logger);
+            }
         } else {
-            Path configDirectory = null;
-
-            String home = System.getenv(XDG_CONFIG_HOME);
-            if (isNotBlank(home) && Files.exists(Paths.get(home).resolve("jreleaser"))) {
-                configDirectory = Paths.get(home).resolve("jreleaser");
-            }
-
-            if (null == configDirectory) {
-                home = System.getenv(JRELEASER_USER_HOME);
-                if (isBlank(home)) {
-                    home = System.getProperty("user.home") + File.separator + ".jreleaser";
-                }
-                configDirectory = Paths.get(home);
-            }
-
-            loadVariables(logger, resolveConfigFileAt(configDirectory)
-                .orElse(configDirectory.resolve("config.properties")));
+            loadSettings(logger);
         }
 
         Path envFilePath = basedir.resolve(".env");
@@ -92,6 +81,26 @@ public final class Environment {
             logger.info(RB.$("environment.variables.env"));
             vars.forEach(message -> logger.info("  " + message));
         }
+    }
+
+    private static void loadSettings(JReleaserLogger logger) {
+        Path configDirectory = null;
+
+        String home = System.getenv(XDG_CONFIG_HOME);
+        if (isNotBlank(home) && Files.exists(Paths.get(home).resolve("jreleaser"))) {
+            configDirectory = Paths.get(home).resolve("jreleaser");
+        }
+
+        if (null == configDirectory) {
+            home = System.getenv(JRELEASER_USER_HOME);
+            if (isBlank(home)) {
+                home = System.getProperty("user.home") + File.separator + ".jreleaser";
+            }
+            configDirectory = Paths.get(home);
+        }
+
+        loadVariables(logger, resolveConfigFileAt(configDirectory)
+            .orElse(configDirectory.resolve("config.properties")));
     }
 
     private static void loadVariables(JReleaserLogger logger, Path file) {
