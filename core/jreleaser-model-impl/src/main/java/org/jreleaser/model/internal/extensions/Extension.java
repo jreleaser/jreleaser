@@ -36,7 +36,7 @@ import static java.util.stream.Collectors.toList;
  * @since 1.3.0
  */
 public final class Extension extends AbstractModelObject<Extension> implements Domain, EnabledAware {
-    private static final long serialVersionUID = 8235578876272898843L;
+    private static final long serialVersionUID = 8235578876272898843L; //TODO: regenerate
 
     private final List<Provider> providers = new ArrayList<>();
     private Boolean enabled;
@@ -47,7 +47,7 @@ public final class Extension extends AbstractModelObject<Extension> implements D
 
     @JsonIgnore
     private final org.jreleaser.model.api.extensions.Extension immutable = new org.jreleaser.model.api.extensions.Extension() {
-        private static final long serialVersionUID = -8554317090414988357L;
+        private static final long serialVersionUID = -8554317090414988357L; //TODO: regenerate
 
         private List<? extends org.jreleaser.model.api.extensions.Extension.Provider> providers;
 
