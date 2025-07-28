@@ -142,6 +142,8 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         newProps.set(KEY_DOCKER_SPEC_NAME, spec.getName());
         fillDockerProperties(newProps, spec);
         verifyAndAddArtifacts(newProps, distribution, artifacts);
+        newProps.set(KEY_DOCKER_ENTRYPOINT, passThrough(resolveTemplate(spec.getEntrypoint(), newProps)));
+        newProps.set(KEY_DOCKER_CMD, passThrough(resolveTemplate(spec.getCmd(), newProps)));
         Path prepareDirectory = newProps.get(KEY_DISTRIBUTION_PREPARE_DIRECTORY);
         newProps.set(KEY_DISTRIBUTION_PREPARE_DIRECTORY, prepareDirectory.resolve(spec.getName()));
         Path packageDirectory = newProps.get(KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
