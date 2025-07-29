@@ -9,10 +9,6 @@ env:
   GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
   JRELEASER_OCI_COMPARTMENTID: ${{ secrets.JRELEASER_OCI_COMPARTMENTID }}
 
-permissions:
-  contents: write
-  actions: write
-
 jobs:
   precheck:
     name: Precheck
@@ -163,7 +159,7 @@ jobs:
           JRELEASER_OUTPUT_DIRECTORY: out
           JRELEASER_USER_HOME: ${{ github.workspace }}/smoketests-jreleaser/.jreleaser
           JRELEASER_PROJECT_VERSION: 1.0.0
-          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_PAT_TOKEN }}
           JRELEASER_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
@@ -341,7 +337,7 @@ jobs:
           JRELEASER_OUTPUT_DIRECTORY: out
           JRELEASER_USER_HOME: ${{ github.workspace }}/smoketests-jreleaser/.jreleaser
           JRELEASER_PROJECT_VERSION: 1.0.0
-          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_PAT_TOKEN }}
           JRELEASER_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
@@ -517,7 +513,7 @@ jobs:
           JRELEASER_OUTPUT_DIRECTORY: out
           JRELEASER_USER_HOME: ${{ github.workspace }}/smoketests-jreleaser/.jreleaser
           JRELEASER_PROJECT_VERSION: 1.0.0
-          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_PAT_TOKEN }}
           JRELEASER_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
@@ -692,7 +688,7 @@ jobs:
           JRELEASER_OUTPUT_DIRECTORY: out
           JRELEASER_USER_HOME: ${{ github.workspace }}/smoketests-jreleaser/.jreleaser
           JRELEASER_PROJECT_VERSION: 1.0.0
-          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_PAT_TOKEN }}
           JRELEASER_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
@@ -726,7 +722,7 @@ jobs:
         env:
           JRELEASER_USER_HOME: ${{ github.workspace }}/smoketests-jreleaser/.jreleaser
           JRELEASER_PROJECT_VERSION: 1.0.0
-          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_PAT_TOKEN }}
           JRELEASER_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
@@ -882,7 +878,7 @@ jobs:
           JRELEASER_OUTPUT_DIRECTORY: out
           JRELEASER_USER_HOME: ${{ github.workspace }}/smoketests-jreleaser/.jreleaser
           JRELEASER_PROJECT_VERSION: 1.0.0
-          JRELEASER_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_PAT_TOKEN }}
           JRELEASER_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
           JRELEASER_GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
