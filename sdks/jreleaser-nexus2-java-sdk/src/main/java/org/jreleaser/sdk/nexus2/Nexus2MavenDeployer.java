@@ -224,6 +224,16 @@ public class Nexus2MavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
             context.getLogger().info(RB.$("nexus.create.staging.repository", groupId));
             stagingRepositoryId = nexus.createStagingRepository(stagingProfileId, groupId);
             context.getAdditionalProperties().put(prefix("stagingRepositoryId"), stagingRepositoryId);
+
+            // Fetch and log the staging repository URL
+            StagingProfileRepository repo = nexus.getStagingRepository(stagingRepositoryId);
+            if (repo != null && repo.getRepositoryId() != null) {
+                // Compose the repository URL (Nexus2 pattern)
+                String repoUrl = nexus.getApiHost();
+                if (!repoUrl.endsWith("/")) repoUrl += "/";
+                repoUrl += "service/local/staging/deployByRepositoryId/" + repo.getRepositoryId() + "/";
+                context.getLogger().info(RB.$("nexus.staging.repository.url", repoUrl));
+            }
         } catch (Nexus2Exception e) {
             context.getLogger().trace(e);
             throw new DeployException(RB.$("ERROR_nexus_create_staging_repository", groupId), e);
