@@ -59,7 +59,7 @@ public final class DefaultVersions {
         return syftVersion;
     }
 
-    public String getJBangVersion() {
+    public String getJbangVersion() {
         return jbangVersion;
     }
 

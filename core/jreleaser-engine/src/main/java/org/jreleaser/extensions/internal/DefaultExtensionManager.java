@@ -132,7 +132,7 @@ public final class DefaultExtensionManager implements ExtensionManager {
             directory = resolveJARs(context, extensionDef);
         } 
 
-        if (isNotBlank(extensionDef.getJBang())) {
+        if (isNotBlank(extensionDef.getJbang())) {
             directory = resolveJBangJARs(context, extensionDef);
         }
 
@@ -241,7 +241,7 @@ public final class DefaultExtensionManager implements ExtensionManager {
             .resolve(extensionDef.getName())
             .toAbsolutePath();
 
-        JBang jbang = new JBang(context.asImmutable(), DefaultVersions.getInstance().getJBangVersion());
+        JBang jbang = new JBang(context.asImmutable(), DefaultVersions.getInstance().getJbangVersion());
 
         try {
             if (!jbang.setup()) {
@@ -267,7 +267,7 @@ public final class DefaultExtensionManager implements ExtensionManager {
             args.add("--force");
             args.add("-O");
             args.add(targetJar);
-            args.add(extensionDef.getJBang());
+            args.add(extensionDef.getJbang());
 
             context.getLogger().debug(RB.$("extension.manager.jbang.export.jars", extensionDef.getGav(), context.relativizeToBasedir(targetJar)));
 
@@ -351,7 +351,7 @@ public final class DefaultExtensionManager implements ExtensionManager {
             return directory;
         }
 
-        public String getJBang() {
+        public String getJbang() {
             return jbang;
         }
         private boolean isEnabled() {

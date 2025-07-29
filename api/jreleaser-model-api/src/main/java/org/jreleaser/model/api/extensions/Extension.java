@@ -34,7 +34,7 @@ public interface Extension extends Domain, EnabledAware {
 
     String getDirectory();
 
-    String getJBang();
+    String getJbang();
 
     List<? extends Provider> getProviders();
 

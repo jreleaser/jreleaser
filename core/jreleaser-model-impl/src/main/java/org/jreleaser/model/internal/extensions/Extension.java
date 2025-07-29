@@ -67,7 +67,7 @@ public final class Extension extends AbstractModelObject<Extension> implements D
         }
 
         @Override
-        public String getJBang() {
+        public String getJbang() {
             return jbang;
         }
 
@@ -137,11 +137,11 @@ public final class Extension extends AbstractModelObject<Extension> implements D
         this.gav = gav;
     }
 
-    public String getJBang() {
+    public String getJbang() {
         return jbang;
     }
 
-    public void setJBang(String jbang) {
+    public void setJbang(String jbang) {
         this.jbang = jbang;
     }
 
