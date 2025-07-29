@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.common.EnabledAware;
+import org.jreleaser.model.internal.tools.Jbang;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,18 +37,18 @@ import static java.util.stream.Collectors.toList;
  * @since 1.3.0
  */
 public final class Extension extends AbstractModelObject<Extension> implements Domain, EnabledAware {
-    private static final long serialVersionUID = 8235578876272898843L; //TODO: regenerate
+    private static final long serialVersionUID = -4404376822137828992L;
 
     private final List<Provider> providers = new ArrayList<>();
+    private final Jbang jbang = new Jbang();
     private Boolean enabled;
     private String name;
     private String gav;
     private String directory;
-    private String jbang;
 
     @JsonIgnore
     private final org.jreleaser.model.api.extensions.Extension immutable = new org.jreleaser.model.api.extensions.Extension() {
-        private static final long serialVersionUID = -8554317090414988357L; //TODO: regenerate
+        private static final long serialVersionUID = -2686799718269690059L;
 
         private List<? extends org.jreleaser.model.api.extensions.Extension.Provider> providers;
 
@@ -67,8 +68,8 @@ public final class Extension extends AbstractModelObject<Extension> implements D
         }
 
         @Override
-        public String getJbang() {
-            return jbang;
+        public org.jreleaser.model.api.tools.Jbang getJbang() {
+            return jbang.asImmutable();
         }
 
         @Override
@@ -102,7 +103,7 @@ public final class Extension extends AbstractModelObject<Extension> implements D
         this.name = merge(this.name, source.name);
         this.gav = merge(this.gav, source.gav);
         this.directory = merge(this.directory, source.directory);
-        this.jbang = merge(this.jbang, source.jbang);
+        setJbang(source.jbang);
         setProviders(merge(this.providers, source.providers));
     }
 
@@ -137,12 +138,12 @@ public final class Extension extends AbstractModelObject<Extension> implements D
         this.gav = gav;
     }
 
-    public String getJbang() {
+    public Jbang getJbang() {
         return jbang;
     }
 
-    public void setJbang(String jbang) {
-        this.jbang = jbang;
+    public void setJbang(Jbang jbang) {
+        this.jbang.merge(jbang);
     }
 
     public String getDirectory() {
@@ -176,12 +177,12 @@ public final class Extension extends AbstractModelObject<Extension> implements D
         props.put("enabled", isEnabled());
         props.put("gav", gav);
         props.put("directory", directory);
-        props.put("jbang", jbang);
+        props.put("jbang", jbang.asMap(full));
         Map<String, Map<String, Object>> m = new LinkedHashMap<>();
         for (int i = 0; i < providers.size(); i++) {
             m.put("provider " + i, providers.get(i).asMap(full));
         }
-        props.put("providers", m);  
+        props.put("providers", m);
 
         Map<String, Object> map = new LinkedHashMap<>();
         map.put(name, props);

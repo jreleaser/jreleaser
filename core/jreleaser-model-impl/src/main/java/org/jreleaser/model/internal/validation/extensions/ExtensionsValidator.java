@@ -20,6 +20,7 @@ package org.jreleaser.model.internal.validation.extensions;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.extensions.Extension;
+import org.jreleaser.model.internal.tools.Jbang;
 import org.jreleaser.util.Errors;
 
 import java.nio.file.Files;
@@ -73,12 +74,31 @@ public final class ExtensionsValidator {
                 "extension." + extension.getName() + ".directory", extension.getDirectory()));
         }
 
-        if (isNotBlank(extension.getGav()) && isNotBlank(extension.getDirectory())) {
-            errors.configuration(RB.$("validation_extension_gav_directory", "extension." + extension.getName()));
+        validateJbang(context, extension, extension.getJbang(), errors);
+
+        int count = 0;
+        count += isNotBlank(extension.getGav()) ? 1 : 0;
+        count += isNotBlank(extension.getDirectory()) ? 1 : 0;
+        count += extension.getJbang().isSet() ? 1 : 0;
+        if(count == 0) {
+            errors.configuration(RB.$("validation_extension_inputs", "extension." + extension.getName()));
+            extension.setEnabled(false);
+        } else if (count > 1) {
+            errors.configuration(RB.$("validation_extension_gav_directory_jbang", "extension." + extension.getName()));
+            extension.setEnabled(false);
         }
 
         for (int i = 0; i < extension.getProviders().size(); i++) {
             validateExtensionProvider(context, extension, extension.getProviders().get(i), i, errors);
+        }
+    }
+
+    private static void validateJbang(JReleaserContext context, Extension extension, Jbang jbang, Errors errors) {
+        context.getLogger().debug("extension.{}.jbang", extension.getName());
+        if (isBlank(jbang.getScript())) {
+            errors.configuration(RB.$("validation_must_not_be_blank", "extensions.{}.jbang.script", extension.getName()));
+            context.getLogger().debug(RB.$("validation.disabled.error"));
+            extension.setEnabled(false);
         }
     }
 

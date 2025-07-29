@@ -22,6 +22,7 @@ import org.gradle.api.Action
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
+import org.jreleaser.gradle.plugin.dsl.tools.Jbang
 
 /**
  *
@@ -36,11 +37,15 @@ interface Extension {
 
     DirectoryProperty getDirectory()
 
-    Property<String> getJbang()
+    Jbang getJbang()
 
     void provider(Action<? super Provider> action)
 
+    void jbang(Action<? super Jbang> action)
+
     void provider(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Provider) Closure<Void> action)
+
+    void jbang(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Jbang) Closure<Void> action)
 
     interface Provider {
         Property<String> getType()

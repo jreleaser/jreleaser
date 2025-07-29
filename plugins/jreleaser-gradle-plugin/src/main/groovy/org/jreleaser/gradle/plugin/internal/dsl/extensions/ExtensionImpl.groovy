@@ -28,6 +28,8 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.extensions.Extension
+import org.jreleaser.gradle.plugin.dsl.tools.Jbang
+import org.jreleaser.gradle.plugin.internal.dsl.tools.JbangImpl
 import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
@@ -42,16 +44,16 @@ class ExtensionImpl implements Extension {
     String name
     final Property<Boolean> enabled
     final Property<String> gav
-    final Property<String> jbang
     final DirectoryProperty directory
     final NamedDomainObjectContainer<ProviderImpl> providers
+    final JbangImpl jbang
 
     @Inject
     ExtensionImpl(ObjectFactory objects) {
         enabled = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         gav = objects.property(String).convention(Providers.<String> notDefined())
-        jbang = objects.property(String).convention(Providers.<String> notDefined())
         directory = objects.directoryProperty().convention(Providers.notDefined())
+        jbang = objects.newInstance(JbangImpl, objects)
 
         providers = objects.domainObjectContainer(ProviderImpl, new NamedDomainObjectFactory<ProviderImpl>() {
             @Override
@@ -69,9 +71,20 @@ class ExtensionImpl implements Extension {
     }
 
     @Override
+    void jbang(Action<? super Jbang> action) {
+        action.execute(jbang)
+    }
+
+    @Override
     @CompileDynamic
     void provider(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Provider) Closure<Void> action) {
         ConfigureUtil.configure(action, providers.maybeCreate("provider-${providers.size()}".toString()))
+    }
+
+    @Override
+    @CompileDynamic
+    void jbang(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Jbang) Closure<Void> action) {
+        ConfigureUtil.configure(jbang)
     }
 
     org.jreleaser.model.internal.extensions.Extension toModel() {
@@ -79,7 +92,7 @@ class ExtensionImpl implements Extension {
         extension.name = name
         if (enabled.present) extension.enabled = enabled.get()
         if (gav.present) extension.gav = gav.get()
-        if (jbang.present) extension.jbang = jbang.get()
+        extension.jbang = jbang.toModel()
         if (directory.present) {
             extension.directory = directory.get().asFile.toPath().toAbsolutePath().toString()
         }

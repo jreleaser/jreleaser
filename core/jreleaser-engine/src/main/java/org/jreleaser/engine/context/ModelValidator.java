@@ -121,11 +121,12 @@ public final class ModelValidator {
             if (isNotBlank(extension.getDirectory())) {
                 builder = builder.withDirectory(extension.getDirectory());
             }
-            if (isNotBlank(extension.getJbang())) {
+            if (extension.getJbang().isSet()) {
                 builder = builder.withJBang(extension.getJbang());
             }
 
             for (Extension.Provider provider : extension.getProviders()) {
+                System.out.println(provider.asImmutable());
                 builder = builder.withExtensionPoint(provider.getType(), provider.getProperties());
             }
 

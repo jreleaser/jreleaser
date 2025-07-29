@@ -25,6 +25,7 @@ import org.jreleaser.extensions.api.ExtensionPoint;
 import org.jreleaser.extensions.api.workflow.WorkflowListener;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.tools.Jbang;
 import org.jreleaser.sdk.command.CommandException;
 import org.jreleaser.sdk.tool.JBang;
 import org.jreleaser.sdk.tool.Mvn;
@@ -130,9 +131,9 @@ public final class DefaultExtensionManager implements ExtensionManager {
 
         if (isNotBlank(extensionDef.getGav())) {
             directory = resolveJARs(context, extensionDef);
-        } 
+        }
 
-        if (isNotBlank(extensionDef.getJbang())) {
+        if (extensionDef.getJbang().isSet()) {
             directory = resolveJBangJARs(context, extensionDef);
         }
 
@@ -150,7 +151,7 @@ public final class DefaultExtensionManager implements ExtensionManager {
         try (Stream<Path> jarPaths = Files.walk(directoryPath)) {
             jars = jarPaths
                 .filter(path -> path.getFileName().toString().endsWith(".jar"))
-                .filter(path -> Files.isRegularFile(path))
+                .filter(Files::isRegularFile)
                 .collect(toList());
         } catch (IOException e) {
             context.getLogger().trace(e);
@@ -241,7 +242,11 @@ public final class DefaultExtensionManager implements ExtensionManager {
             .resolve(extensionDef.getName())
             .toAbsolutePath();
 
-        JBang jbang = new JBang(context.asImmutable(), DefaultVersions.getInstance().getJbangVersion());
+        String jbangVersion = DefaultVersions.getInstance().getJbangVersion();
+        if (isNotBlank(extensionDef.getJbang().getVersion())) {
+            jbangVersion = extensionDef.getJbang().getVersion();
+        }
+        JBang jbang = new JBang(context.asImmutable(), jbangVersion);
 
         try {
             if (!jbang.setup()) {
@@ -267,7 +272,7 @@ public final class DefaultExtensionManager implements ExtensionManager {
             args.add("--force");
             args.add("-O");
             args.add(targetJar);
-            args.add(extensionDef.getJbang());
+            args.add(extensionDef.getJbang().getResolvedScript(context));
 
             context.getLogger().debug(RB.$("extension.manager.jbang.export.jars", extensionDef.getGav(), context.relativizeToBasedir(targetJar)));
 
@@ -326,15 +331,15 @@ public final class DefaultExtensionManager implements ExtensionManager {
         private final String name;
         private final String gav;
         private final String directory;
-        private final String jbang;
+        private final Jbang jbang = new Jbang();
         private final boolean enabled;
         private final Map<String, ExtensionPointDef> extensionPoints = new LinkedHashMap<>();
 
-        private ExtensionDef(String name, String directory, String gav, String jbang, boolean enabled, Map<String, ExtensionPointDef> extensionPoints) {
+        private ExtensionDef(String name, String directory, String gav, Jbang jbang, boolean enabled, Map<String, ExtensionPointDef> extensionPoints) {
             this.name = name;
             this.gav = gav;
             this.directory = directory;
-            this.jbang = jbang;
+            this.jbang.merge(jbang);
             this.enabled = enabled;
             this.extensionPoints.putAll(extensionPoints);
         }
@@ -351,9 +356,10 @@ public final class DefaultExtensionManager implements ExtensionManager {
             return directory;
         }
 
-        public String getJbang() {
+        public Jbang getJbang() {
             return jbang;
         }
+
         private boolean isEnabled() {
             return enabled;
         }
@@ -387,7 +393,7 @@ public final class DefaultExtensionManager implements ExtensionManager {
         private final DefaultExtensionManager defaultExtensionManager;
         private String gav;
         private String directory;
-        private String jbang;
+        private Jbang jbang;
         private boolean enabled;
 
         public ExtensionBuilder(String name, DefaultExtensionManager defaultExtensionManager) {
@@ -412,7 +418,7 @@ public final class DefaultExtensionManager implements ExtensionManager {
             return this;
         }
 
-        public ExtensionBuilder withJBang(String jbang) {
+        public ExtensionBuilder withJBang(Jbang jbang) {
             this.jbang = jbang;
             return this;
         }

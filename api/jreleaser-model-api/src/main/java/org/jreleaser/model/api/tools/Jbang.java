@@ -15,33 +15,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.api.extensions;
+package org.jreleaser.model.api.tools;
 
 import org.jreleaser.model.api.common.Domain;
-import org.jreleaser.model.api.common.EnabledAware;
-import org.jreleaser.model.api.tools.Jbang;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Andres Almiray
- * @since 1.3.0
+ * @since 1.20.0
  */
-public interface Extension extends Domain, EnabledAware {
-    String getName();
+public interface Jbang extends Domain {
+    String getVersion();
 
-    String getGav();
+    String getScript();
 
-    String getDirectory();
+    List<String> getArgs();
 
-    Jbang getJbang();
+    List<String> getJbangArgs();
 
-    List<? extends Provider> getProviders();
-
-    interface Provider extends Domain {
-        String getType();
-
-        Map<String, Object> getProperties();
-    }
+    List<String> getTrusts();
 }

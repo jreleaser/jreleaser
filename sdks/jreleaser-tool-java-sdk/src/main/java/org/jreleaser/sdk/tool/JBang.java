@@ -25,6 +25,6 @@ import org.jreleaser.model.api.JReleaserContext;
  */
 public class JBang extends AbstractTool {
     public JBang(JReleaserContext context, String version) {
-        super(context, "jbang", version);
+        super(context, "jbang", version, true);
     }
 }

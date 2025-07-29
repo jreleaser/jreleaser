@@ -15,33 +15,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.api.extensions;
+package org.jreleaser.gradle.plugin.dsl.tools
 
-import org.jreleaser.model.api.common.Domain;
-import org.jreleaser.model.api.common.EnabledAware;
-import org.jreleaser.model.api.tools.Jbang;
-
-import java.util.List;
-import java.util.Map;
+import groovy.transform.CompileStatic
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
 
 /**
+ *
  * @author Andres Almiray
- * @since 1.3.0
+ * @since 1.20.0
  */
-public interface Extension extends Domain, EnabledAware {
-    String getName();
+@CompileStatic
+interface Jbang {
+    Property<String> getVersion()
 
-    String getGav();
+    Property<String> getScript()
 
-    String getDirectory();
+    ListProperty<String> getArgs()
 
-    Jbang getJbang();
+    ListProperty<String> getJbangArgs()
 
-    List<? extends Provider> getProviders();
+    ListProperty<String> getTrusts()
 
-    interface Provider extends Domain {
-        String getType();
+    void arg(String arg)
 
-        Map<String, Object> getProperties();
-    }
+    void jbangArg(String jbangArg)
+
+    void trust(String trusts)
 }
