@@ -33,6 +33,7 @@ public final class DefaultVersions {
     private final String pomcheckerVersion = bundle.getString("pomchecker.version");
     private final String cyclonedxVersion = bundle.getString("cyclonedx.version");
     private final String syftVersion = bundle.getString("syft.version");
+    private final String jbangVersion = bundle.getString("jbang.version");
 
     public String getCosignVersion() {
         return cosignVersion;
@@ -56,6 +57,10 @@ public final class DefaultVersions {
 
     public String getSyftVersion() {
         return syftVersion;
+    }
+
+    public String getJbangVersion() {
+        return jbangVersion;
     }
 
     public static DefaultVersions getInstance() {

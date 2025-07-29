@@ -36,6 +36,8 @@ interface Extension {
 
     DirectoryProperty getDirectory()
 
+    Property<String> getJbang()
+
     void provider(Action<? super Provider> action)
 
     void provider(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Provider) Closure<Void> action)

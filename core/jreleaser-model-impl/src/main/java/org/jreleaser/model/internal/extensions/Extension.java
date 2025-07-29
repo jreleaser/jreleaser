@@ -36,17 +36,18 @@ import static java.util.stream.Collectors.toList;
  * @since 1.3.0
  */
 public final class Extension extends AbstractModelObject<Extension> implements Domain, EnabledAware {
-    private static final long serialVersionUID = 8235578876272898842L;
+    private static final long serialVersionUID = 8235578876272898843L; //TODO: regenerate
 
     private final List<Provider> providers = new ArrayList<>();
     private Boolean enabled;
     private String name;
     private String gav;
     private String directory;
+    private String jbang;
 
     @JsonIgnore
     private final org.jreleaser.model.api.extensions.Extension immutable = new org.jreleaser.model.api.extensions.Extension() {
-        private static final long serialVersionUID = -8554317090414988356L;
+        private static final long serialVersionUID = -8554317090414988357L; //TODO: regenerate
 
         private List<? extends org.jreleaser.model.api.extensions.Extension.Provider> providers;
 
@@ -63,6 +64,11 @@ public final class Extension extends AbstractModelObject<Extension> implements D
         @Override
         public String getDirectory() {
             return directory;
+        }
+
+        @Override
+        public String getJbang() {
+            return jbang;
         }
 
         @Override
@@ -96,6 +102,7 @@ public final class Extension extends AbstractModelObject<Extension> implements D
         this.name = merge(this.name, source.name);
         this.gav = merge(this.gav, source.gav);
         this.directory = merge(this.directory, source.directory);
+        this.jbang = merge(this.jbang, source.jbang);
         setProviders(merge(this.providers, source.providers));
     }
 
@@ -130,6 +137,14 @@ public final class Extension extends AbstractModelObject<Extension> implements D
         this.gav = gav;
     }
 
+    public String getJbang() {
+        return jbang;
+    }
+
+    public void setJbang(String jbang) {
+        this.jbang = jbang;
+    }
+
     public String getDirectory() {
         return directory;
     }
@@ -161,11 +176,12 @@ public final class Extension extends AbstractModelObject<Extension> implements D
         props.put("enabled", isEnabled());
         props.put("gav", gav);
         props.put("directory", directory);
+        props.put("jbang", jbang);
         Map<String, Map<String, Object>> m = new LinkedHashMap<>();
         for (int i = 0; i < providers.size(); i++) {
             m.put("provider " + i, providers.get(i).asMap(full));
         }
-        props.put("providers", m);
+        props.put("providers", m);  
 
         Map<String, Object> map = new LinkedHashMap<>();
         map.put(name, props);
