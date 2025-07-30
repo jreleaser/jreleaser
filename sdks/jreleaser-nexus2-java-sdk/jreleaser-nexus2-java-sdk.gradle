@@ -28,6 +28,4 @@ dependencies {
     // Test dependencies
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
     testImplementation "org.mockito:mockito-junit-jupiter:$mockitoVersion"
-    testImplementation "org.assertj:assertj-core:$assertjVersion"
-    testImplementation "org.hamcrest:hamcrest-library:$hamcrestVersion"
 }
