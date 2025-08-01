@@ -66,27 +66,7 @@ interface Maven extends Activatable {
 
     void mavenCentral(Action<? super NamedDomainObjectContainer<MavenCentralMavenDeployer>> action)
 
-    void artifactory(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
-
-    void azure(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
-
-    void forgejo(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
-
-    void gitea(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
-
-    void github(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
-
-    void gitlab(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
-
-    void nexus2(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
-
-    void nexus3(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
-
-    void mavenCentral(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
-
     void pomchecker(Action<? super Pomchecker> action)
-
-    void pomchecker(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Pomchecker) Closure<Void> action)
 
     @CompileStatic
     interface Pomchecker {

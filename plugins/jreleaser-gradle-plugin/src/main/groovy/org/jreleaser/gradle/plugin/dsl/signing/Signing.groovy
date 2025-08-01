@@ -61,10 +61,6 @@ interface Signing extends Activatable {
 
     void cosign(Action<? super Cosign> action)
 
-    void command(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Command) Closure<Void> action)
-
-    void cosign(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Cosign) Closure<Void> action)
-
     interface Command {
         Property<String> getExecutable()
 

@@ -17,7 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.catalog.swid
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
@@ -29,7 +29,6 @@ import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.catalog.swid.Entity
 import org.jreleaser.gradle.plugin.dsl.catalog.swid.SwidTag
 import org.jreleaser.model.Active
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -96,12 +95,6 @@ class SwidTagImpl implements SwidTag {
     @Override
     void entity(Action<? super Entity> action) {
         action.execute(entities.maybeCreate("entity-${entities.size()}".toString()))
-    }
-
-    @Override
-    @CompileDynamic
-    void entity(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Entity) Closure<Void> action) {
-        ConfigureUtil.configure(action, entities.maybeCreate("entity-${entities.size()}".toString()))
     }
 
     org.jreleaser.model.internal.catalog.swid.SwidTag toModel() {

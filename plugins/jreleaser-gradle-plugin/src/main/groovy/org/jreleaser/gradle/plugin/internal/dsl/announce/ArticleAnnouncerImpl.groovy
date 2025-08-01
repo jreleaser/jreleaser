@@ -17,7 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.announce
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
@@ -33,7 +33,6 @@ import org.jreleaser.gradle.plugin.dsl.packagers.Tap
 import org.jreleaser.gradle.plugin.internal.dsl.common.ArtifactImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.CommitAuthorImpl
 import org.jreleaser.gradle.plugin.internal.dsl.packagers.TapImpl
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -78,13 +77,6 @@ class ArticleAnnouncerImpl extends AbstractAnnouncer implements ArticleAnnouncer
     }
 
     @Override
-    @CompileDynamic
-    void file(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
-        ConfigureUtil.configure(action, files.maybeCreate("files-${files.size()}".toString()))
-    }
-
-
-    @Override
     void repository(Action<? super Tap> action) {
         action.execute(repository)
     }
@@ -92,18 +84,6 @@ class ArticleAnnouncerImpl extends AbstractAnnouncer implements ArticleAnnouncer
     @Override
     void commitAuthor(Action<? super CommitAuthor> action) {
         action.execute(commitAuthor)
-    }
-
-    @Override
-    @CompileDynamic
-    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action) {
-        ConfigureUtil.configure(action, repository)
-    }
-
-    @Override
-    @CompileDynamic
-    void commitAuthor(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommitAuthor) Closure<Void> action) {
-        ConfigureUtil.configure(action, commitAuthor)
     }
 
     @Override

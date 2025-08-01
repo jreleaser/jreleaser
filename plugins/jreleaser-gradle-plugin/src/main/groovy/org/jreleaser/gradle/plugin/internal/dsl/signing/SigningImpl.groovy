@@ -17,7 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.signing
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.file.RegularFileProperty
@@ -28,7 +28,6 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.signing.Signing
 import org.jreleaser.model.Active
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -110,18 +109,6 @@ class SigningImpl implements Signing {
     @Override
     void cosign(Action<? super Cosign> action) {
         action.execute(cosign)
-    }
-
-    @Override
-    @CompileDynamic
-    void command(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Command) Closure<Void> action) {
-        ConfigureUtil.configure(action, command)
-    }
-
-    @Override
-    @CompileDynamic
-    void cosign(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Cosign) Closure<Void> action) {
-        ConfigureUtil.configure(action, cosign)
     }
 
     org.jreleaser.model.internal.signing.Signing toModel() {

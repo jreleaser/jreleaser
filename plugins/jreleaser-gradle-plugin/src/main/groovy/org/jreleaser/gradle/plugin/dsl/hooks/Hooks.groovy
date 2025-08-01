@@ -52,12 +52,4 @@ interface Hooks extends Activatable {
     void jbang(Action<? super JbangHooks> action)
 
     void matrix(Action<? super Matrix> action)
-
-    void command(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommandHooks) Closure<Void> action)
-
-    void script(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ScriptHooks) Closure<Void> action)
-
-    void jbang(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JbangHooks) Closure<Void> action)
-
-    void matrix(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Matrix) Closure<Void> action)
 }

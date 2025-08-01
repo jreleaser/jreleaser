@@ -44,6 +44,4 @@ interface SwidTag extends Activatable {
     Property<Boolean> getPatch()
 
     void entity(Action<? super Entity> action)
-
-    void entity(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Entity) Closure<Void> action)
 }

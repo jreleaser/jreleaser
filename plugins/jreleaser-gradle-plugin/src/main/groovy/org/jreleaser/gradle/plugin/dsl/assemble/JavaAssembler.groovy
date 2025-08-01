@@ -40,10 +40,4 @@ interface JavaAssembler extends Assembler {
     void mainJar(Action<? super Artifact> action)
 
     void jars(Action<? super Glob> action)
-
-    void java(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Java) Closure<Void> action)
-
-    void mainJar(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
-
-    void jars(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Glob) Closure<Void> action)
 }

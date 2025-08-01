@@ -17,7 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.distributions
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
@@ -71,7 +71,6 @@ import org.jreleaser.gradle.plugin.internal.dsl.platform.PlatformImpl
 import org.jreleaser.model.Active
 import org.jreleaser.model.Distribution.DistributionType
 import org.jreleaser.model.Stereotype
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -289,133 +288,6 @@ class DistributionImpl implements Distribution {
         if (isNotBlank(str)) {
             active.set(Active.of(str.trim()))
         }
-    }
-
-    @Override
-    @CompileDynamic
-    void matrix(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Matrix) Closure<Void> action) {
-        ConfigureUtil.configure(action, matrix)
-    }
-
-    @Override
-    @CompileDynamic
-    void artifactPattern(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
-        ConfigureUtil.configure(action, artifactPattern)
-    }
-
-    @Override
-    @CompileDynamic
-    void artifact(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
-        ConfigureUtil.configure(action, artifacts.maybeCreate("artifact-${artifacts.size()}".toString()))
-    }
-
-    @Override
-    @CompileDynamic
-    void java(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Java) Closure<Void> action) {
-        ConfigureUtil.configure(action, java)
-    }
-
-    @Override
-    @CompileDynamic
-    void platform(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Platform) Closure<Void> action) {
-        ConfigureUtil.configure(action, platform)
-    }
-
-    @Override
-    @CompileDynamic
-    void executable(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Executable) Closure<Void> action) {
-        ConfigureUtil.configure(action, executable)
-    }
-
-    @Override
-    @CompileDynamic
-    void appImage(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = AppImagePackager) Closure<Void> action) {
-        ConfigureUtil.configure(action, appImage)
-    }
-
-    @Override
-    @CompileDynamic
-    void asdf(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = AsdfPackager) Closure<Void> action) {
-        ConfigureUtil.configure(action, asdf)
-    }
-
-    @Override
-    @CompileDynamic
-    void brew(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = BrewPackager) Closure<Void> action) {
-        ConfigureUtil.configure(action, brew)
-    }
-
-    @Override
-    @CompileDynamic
-    void chocolatey(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ChocolateyPackager) Closure<Void> action) {
-        ConfigureUtil.configure(action, chocolatey)
-    }
-
-    @Override
-    @CompileDynamic
-    void docker(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DockerPackager) Closure<Void> action) {
-        ConfigureUtil.configure(action, docker)
-    }
-
-    @Override
-    @CompileDynamic
-    void flatpak(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = FlatpakPackager) Closure<Void> action) {
-        ConfigureUtil.configure(action, flatpak)
-    }
-
-    @Override
-    @CompileDynamic
-    void gofish(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = GofishPackager) Closure<Void> action) {
-        ConfigureUtil.configure(action, gofish)
-    }
-
-    @Override
-    @CompileDynamic
-    void jbang(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JbangPackager) Closure<Void> action) {
-        ConfigureUtil.configure(action, jbang)
-    }
-
-    @Override
-    @CompileDynamic
-    void jib(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JibPackager) Closure<Void> action) {
-        ConfigureUtil.configure(action, jib)
-    }
-
-    @Override
-    @CompileDynamic
-    void macports(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = MacportsPackager) Closure<Void> action) {
-        ConfigureUtil.configure(action, macports)
-    }
-
-    @Override
-    @CompileDynamic
-    void scoop(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ScoopPackager) Closure<Void> action) {
-        ConfigureUtil.configure(action, scoop)
-    }
-
-    @Override
-    @CompileDynamic
-    @CompileDynamic
-    void sdkman(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SdkmanPackager) Closure<Void> action) {
-        ConfigureUtil.configure(action, sdkman)
-    }
-
-    @Override
-    @CompileDynamic
-    void snap(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SnapPackager) Closure<Void> action) {
-        ConfigureUtil.configure(action, snap)
-    }
-
-    @Override
-    @CompileDynamic
-    void spec(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SpecPackager) Closure<Void> action) {
-        ConfigureUtil.configure(action, spec)
-    }
-
-    @Override
-    @CompileDynamic
-    void winget(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = WingetPackager) Closure<Void> action) {
-        ConfigureUtil.configure(action, winget)
     }
 
     org.jreleaser.model.internal.distributions.Distribution toModel() {

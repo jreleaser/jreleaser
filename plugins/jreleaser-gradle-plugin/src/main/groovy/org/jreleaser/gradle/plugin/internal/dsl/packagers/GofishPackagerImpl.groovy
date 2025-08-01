@@ -17,7 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.packagers
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.model.ObjectFactory
@@ -26,7 +26,6 @@ import org.jreleaser.gradle.plugin.dsl.common.CommitAuthor
 import org.jreleaser.gradle.plugin.dsl.packagers.GofishPackager
 import org.jreleaser.gradle.plugin.dsl.packagers.Tap
 import org.jreleaser.gradle.plugin.internal.dsl.common.CommitAuthorImpl
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -63,18 +62,6 @@ class GofishPackagerImpl extends AbstractRepositoryPackager implements GofishPac
     @Override
     void commitAuthor(Action<? super CommitAuthor> action) {
         action.execute(commitAuthor)
-    }
-
-    @Override
-    @CompileDynamic
-    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action) {
-        ConfigureUtil.configure(action, repository)
-    }
-
-    @Override
-    @CompileDynamic
-    void commitAuthor(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommitAuthor) Closure<Void> action) {
-        ConfigureUtil.configure(action, commitAuthor)
     }
 
     org.jreleaser.model.internal.packagers.GofishPackager toModel() {

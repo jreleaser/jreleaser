@@ -37,7 +37,6 @@ import org.jreleaser.gradle.plugin.dsl.upload.SftpUploader
 import org.jreleaser.gradle.plugin.dsl.upload.Upload
 import org.jreleaser.gradle.plugin.internal.dsl.download.ScpUploaderImpl
 import org.jreleaser.model.Active
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -197,60 +196,6 @@ class UploadImpl implements Upload {
     @Override
     void sftp(Action<? super NamedDomainObjectContainer<SftpUploader>> action) {
         action.execute(sftp)
-    }
-
-    @Override
-    @CompileDynamic
-    void artifactory(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, artifactory)
-    }
-
-    @Override
-    @CompileDynamic
-    void ftp(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, ftp)
-    }
-
-    @Override
-    @CompileDynamic
-    void forgejo(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, forgejo)
-    }
-
-    @Override
-    @CompileDynamic
-    void gitea(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, gitea)
-    }
-
-    @Override
-    @CompileDynamic
-    void gitlab(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, gitlab)
-    }
-
-    @Override
-    @CompileDynamic
-    void http(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, http)
-    }
-
-    @Override
-    @CompileDynamic
-    void s3(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, s3)
-    }
-
-    @Override
-    @CompileDynamic
-    void scp(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, scp)
-    }
-
-    @Override
-    @CompileDynamic
-    void sftp(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, sftp)
     }
 
     @CompileDynamic

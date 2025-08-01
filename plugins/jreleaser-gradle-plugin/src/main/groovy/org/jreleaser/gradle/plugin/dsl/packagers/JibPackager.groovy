@@ -39,10 +39,6 @@ interface JibPackager extends JibConfiguration, RepositoryPackager {
 
     void specs(Action<? super NamedDomainObjectContainer<JibSpec>> action)
 
-    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JibRepository) Closure<Void> action)
-
-    void specs(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
-
     @CompileStatic
     interface JibRepository extends Tap {
         Property<Boolean> getVersionedSubfolders()

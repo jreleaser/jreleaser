@@ -17,7 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.extensions
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
@@ -30,7 +30,6 @@ import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.extensions.Extension
 import org.jreleaser.gradle.plugin.dsl.tools.Jbang
 import org.jreleaser.gradle.plugin.internal.dsl.tools.JbangImpl
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -73,18 +72,6 @@ class ExtensionImpl implements Extension {
     @Override
     void jbang(Action<? super Jbang> action) {
         action.execute(jbang)
-    }
-
-    @Override
-    @CompileDynamic
-    void provider(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Provider) Closure<Void> action) {
-        ConfigureUtil.configure(action, providers.maybeCreate("provider-${providers.size()}".toString()))
-    }
-
-    @Override
-    @CompileDynamic
-    void jbang(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Jbang) Closure<Void> action) {
-        ConfigureUtil.configure(jbang)
     }
 
     org.jreleaser.model.internal.extensions.Extension toModel() {

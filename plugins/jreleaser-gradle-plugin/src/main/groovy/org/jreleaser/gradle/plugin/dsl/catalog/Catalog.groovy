@@ -46,12 +46,4 @@ interface Catalog extends Activatable {
     void slsa(Action<? super SlsaCataloger> action)
 
     void swid(Action<? super NamedDomainObjectContainer<SwidTag>> action)
-
-    void sbom(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Sbom) Closure<Void> action)
-
-    void github(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = GithubCataloger) Closure<Void> action)
-
-    void slsa(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SlsaCataloger) Closure<Void> action)
-
-    void swid(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer<SwidTag>) Closure<Void> action)
 }

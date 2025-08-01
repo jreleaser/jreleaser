@@ -88,39 +88,6 @@ interface NativeImageAssembler extends JavaAssembler, SwidTagAware {
 
     void options(Action<? super ArchiveOptions> action)
 
-    void graal(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
-
-    void upx(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Upx) Closure<Void> action)
-
-    void archiving(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Archiving) Closure<Void> action)
-
-    @Deprecated
-    void linux(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = LinuxX86) Closure<Void> action)
-
-    @Deprecated
-    void windows(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = WindowsX86) Closure<Void> action)
-
-    @Deprecated
-    void osx(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = MacosX86) Closure<Void> action)
-
-    void linuxX86(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = LinuxX86) Closure<Void> action)
-
-    void windowsX86(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = WindowsX86) Closure<Void> action)
-
-    void macosX86(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = MacosX86) Closure<Void> action)
-
-    void linuxArm(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = LinuxArm) Closure<Void> action)
-
-    void macosArm(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = MacosArm) Closure<Void> action)
-
-    void graalJdk(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
-
-    void matrix(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Matrix) Closure<Void> action)
-
-    void graalJdkPattern(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
-
-    void options(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArchiveOptions) Closure<Void> action)
-
     interface Archiving {
         Property<Boolean> getEnabled()
 

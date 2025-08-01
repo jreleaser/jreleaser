@@ -17,7 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.catalog.sbom
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
@@ -26,10 +26,8 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.catalog.sbom.SbomCataloger
 import org.jreleaser.gradle.plugin.internal.dsl.catalog.AbstractCataloger
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
-
 /**
  *
  * @author Andres Almiray
@@ -58,12 +56,6 @@ abstract class AbstractSbomCataloger extends AbstractCataloger implements SbomCa
     @Override
     void pack(Action<? super Pack> action) {
         action.execute(pack)
-    }
-
-    @Override
-    @CompileDynamic
-    void pack(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Pack) Closure<Void> action) {
-        ConfigureUtil.configure(action, pack)
     }
 
     protected <C extends org.jreleaser.model.internal.catalog.sbom.SbomCataloger> void fillProperties(C cataloger) {

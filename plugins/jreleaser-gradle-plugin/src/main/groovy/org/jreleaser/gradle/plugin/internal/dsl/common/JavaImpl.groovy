@@ -17,7 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.common
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
@@ -29,7 +29,6 @@ import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.common.EnvironmentVariables
 import org.jreleaser.gradle.plugin.dsl.common.Java
 import org.jreleaser.gradle.plugin.dsl.common.JvmOptions
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -87,18 +86,6 @@ class JavaImpl implements Java {
     @Override
     void environmentVariables(Action<? super EnvironmentVariables> action) {
         action.execute(environmentVariables)
-    }
-
-    @Override
-    @CompileDynamic
-    void jvmOptions(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JvmOptions) Closure<Void> action) {
-        ConfigureUtil.configure(action, jvmOptions)
-    }
-
-    @Override
-    @CompileDynamic
-    void environmentVariables(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = EnvironmentVariables) Closure<Void> action) {
-        ConfigureUtil.configure(action, environmentVariables)
     }
 
     org.jreleaser.model.internal.common.Java toModel() {

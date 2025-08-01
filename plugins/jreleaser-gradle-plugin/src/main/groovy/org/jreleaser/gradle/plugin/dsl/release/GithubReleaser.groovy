@@ -42,10 +42,6 @@ interface GithubReleaser extends BaseReleaser {
 
     void releaseNotes(Action<? super ReleaseNotes> action)
 
-    void prerelease(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Prerelease) Closure<Void> action)
-
-    void releaseNotes(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ReleaseNotes) Closure<Void> action)
-
     void setMakeLatest(String makeLatest)
 
     @CompileStatic

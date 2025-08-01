@@ -17,7 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.download
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
@@ -29,12 +29,10 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.download.Downloader
 import org.jreleaser.model.Active
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
 import static org.jreleaser.util.StringUtils.isNotBlank
-
 /**
  *
  * @author Andres Almiray
@@ -69,12 +67,6 @@ abstract class AbstractDownloader implements Downloader {
     @Override
     void asset(Action<? super Asset> action) {
         action.execute(assets.maybeCreate("asset-${assets.size()}".toString()))
-    }
-
-    @Override
-    @CompileDynamic
-    void asset(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Asset) Closure<Void> action) {
-        ConfigureUtil.configure(action, assets.maybeCreate("asset-${assets.size()}".toString()))
     }
 
     @Internal
@@ -151,12 +143,6 @@ abstract class AbstractDownloader implements Downloader {
         @Override
         void unpack(Action<? super Unpack> action) {
             action.execute(unpack)
-        }
-
-        @Override
-        @CompileDynamic
-        void unpack(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Unpack) Closure<Void> action) {
-            ConfigureUtil.configure(action, unpack)
         }
 
         org.jreleaser.model.internal.download.Downloader.Asset toModel() {

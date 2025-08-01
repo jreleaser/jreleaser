@@ -17,7 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.assemble
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
@@ -41,7 +41,6 @@ import org.jreleaser.gradle.plugin.internal.dsl.common.MatrixImpl
 import org.jreleaser.gradle.plugin.internal.dsl.platform.PlatformImpl
 import org.jreleaser.model.Active
 import org.jreleaser.model.Archive
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -182,54 +181,6 @@ class JlinkAssemblerImpl extends AbstractJavaAssembler implements JlinkAssembler
     @Override
     void targetJdkPattern(Action<? super Artifact> action) {
         action.execute(targetJdkPattern)
-    }
-
-    @Override
-    @CompileDynamic
-    void jdeps(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Jdeps) Closure<Void> action) {
-        ConfigureUtil.configure(action, jdeps)
-    }
-
-    @Override
-    @CompileDynamic
-    void jdk(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
-        ConfigureUtil.configure(action, jdk)
-    }
-
-    @Override
-    @CompileDynamic
-    void targetJdk(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
-        ConfigureUtil.configure(action, targetJdks.maybeCreate("targetJdk-${targetJdks.size()}".toString()))
-    }
-
-    @Override
-    @CompileDynamic
-    void options(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArchiveOptions) Closure<Void> action) {
-        ConfigureUtil.configure(action, options)
-    }
-
-    @Override
-    @CompileDynamic
-    void javaArchive(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JavaArchive) Closure<Void> action) {
-        ConfigureUtil.configure(action, javaArchive)
-    }
-
-    @Override
-    @CompileDynamic
-    void swid(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SwidTag) Closure<Void> action) {
-        ConfigureUtil.configure(action, swid)
-    }
-
-    @Override
-    @CompileDynamic
-    void matrix(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Matrix) Closure<Void> action) {
-        ConfigureUtil.configure(action, matrix)
-    }
-
-    @Override
-    @CompileDynamic
-    void targetJdkPattern(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
-        ConfigureUtil.configure(action, targetJdkPattern)
     }
 
     @Override

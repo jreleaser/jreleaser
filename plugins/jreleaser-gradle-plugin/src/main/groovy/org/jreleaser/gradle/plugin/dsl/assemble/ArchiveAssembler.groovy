@@ -50,9 +50,5 @@ interface ArchiveAssembler extends Assembler, SwidTagAware {
 
     void options(Action<? super ArchiveOptions> action)
 
-    void options(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArchiveOptions) Closure<Void> action)
-
     void matrix(Action<? super Matrix> action)
-
-    void matrix(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Matrix) Closure<Void> action)
 }

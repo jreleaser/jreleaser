@@ -17,7 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.catalog
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
@@ -33,7 +33,6 @@ import org.jreleaser.gradle.plugin.dsl.catalog.swid.SwidTag
 import org.jreleaser.gradle.plugin.internal.dsl.catalog.sbom.SbomImpl
 import org.jreleaser.gradle.plugin.internal.dsl.catalog.swid.SwidTagImpl
 import org.jreleaser.model.Active
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -94,30 +93,6 @@ class CatalogImpl implements Catalog {
     @Override
     void swid(Action<? super NamedDomainObjectContainer<SwidTag>> action) {
         action.execute(swid)
-    }
-
-    @Override
-    @CompileDynamic
-    void sbom(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Sbom) Closure<Void> action) {
-        ConfigureUtil.configure(action, sbom)
-    }
-
-    @Override
-    @CompileDynamic
-    void github(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = GithubCataloger) Closure<Void> action) {
-        ConfigureUtil.configure(action, github)
-    }
-
-    @Override
-    @CompileDynamic
-    void slsa(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SlsaCataloger) Closure<Void> action) {
-        ConfigureUtil.configure(action, slsa)
-    }
-
-    @Override
-    @CompileDynamic
-    void swid(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer<SwidTag>) Closure<Void> action) {
-        ConfigureUtil.configure(action, swid)
     }
 
     org.jreleaser.model.internal.catalog.Catalog toModel() {

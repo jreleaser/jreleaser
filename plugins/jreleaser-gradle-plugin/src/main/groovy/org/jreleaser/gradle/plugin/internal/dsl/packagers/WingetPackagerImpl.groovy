@@ -17,7 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.packagers
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
@@ -32,7 +32,6 @@ import org.jreleaser.gradle.plugin.dsl.common.CommitAuthor
 import org.jreleaser.gradle.plugin.dsl.packagers.Tap
 import org.jreleaser.gradle.plugin.dsl.packagers.WingetPackager
 import org.jreleaser.gradle.plugin.internal.dsl.common.CommitAuthorImpl
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -122,36 +121,6 @@ class WingetPackagerImpl extends AbstractRepositoryPackager implements WingetPac
     @Override
     void installer(Action<? super Installer> action) {
         action.execute(installer)
-    }
-
-    @Override
-    @CompileDynamic
-    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action) {
-        ConfigureUtil.configure(action, repository)
-    }
-
-    @Override
-    @CompileDynamic
-    void commitAuthor(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommitAuthor) Closure<Void> action) {
-        ConfigureUtil.configure(action, commitAuthor)
-    }
-
-    @Override
-    @CompileDynamic
-    void wingetPackage(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Package) Closure<Void> action) {
-        ConfigureUtil.configure(action, wingetPackage)
-    }
-
-    @Override
-    @CompileDynamic
-    void publisher(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Publisher) Closure<Void> action) {
-        ConfigureUtil.configure(action, publisher)
-    }
-
-    @Override
-    @CompileDynamic
-    void installer(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Installer) Closure<Void> action) {
-        ConfigureUtil.configure(action, installer)
     }
 
     org.jreleaser.model.internal.packagers.WingetPackager toModel() {
@@ -280,12 +249,6 @@ class WingetPackagerImpl extends AbstractRepositoryPackager implements WingetPac
         }
 
         @Override
-        @CompileDynamic
-        void dependencies(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Dependencies) Closure<Void> action) {
-            ConfigureUtil.configure(action, dependencies)
-        }
-
-        @Override
         void mode(String str) {
             if (isNotBlank(str)) {
                 modes.add(org.jreleaser.model.api.packagers.WingetPackager.Installer.Mode.of(str.trim()))
@@ -367,12 +330,6 @@ class WingetPackagerImpl extends AbstractRepositoryPackager implements WingetPac
         @Override
         void packageDependency(Action<? super PackageDependency> action) {
             action.execute(packageDependencies.maybeCreate("packageDependency-${packageDependencies.size()}".toString()))
-        }
-
-        @Override
-        @CompileDynamic
-        void packageDependency(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = PackageDependency) Closure<Void> action) {
-            ConfigureUtil.configure(action, packageDependencies.maybeCreate("packageDependency-${packageDependencies.size()}".toString()))
         }
 
         org.jreleaser.model.internal.packagers.WingetPackager.Dependencies toModel() {

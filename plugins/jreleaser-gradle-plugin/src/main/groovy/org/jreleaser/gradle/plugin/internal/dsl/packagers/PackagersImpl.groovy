@@ -17,7 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.packagers
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.model.ObjectFactory
@@ -37,7 +37,6 @@ import org.jreleaser.gradle.plugin.dsl.packagers.SdkmanPackager
 import org.jreleaser.gradle.plugin.dsl.packagers.SnapPackager
 import org.jreleaser.gradle.plugin.dsl.packagers.SpecPackager
 import org.jreleaser.gradle.plugin.dsl.packagers.WingetPackager
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -156,96 +155,6 @@ class PackagersImpl implements Packagers {
     @Override
     void winget(Action<? super WingetPackager> action) {
         action.execute(winget)
-    }
-
-    @Override
-    @CompileDynamic
-    void appImage(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = AppImagePackager) Closure<Void> action) {
-        ConfigureUtil.configure(action, appImage)
-    }
-
-    @Override
-    @CompileDynamic
-    void asdf(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = AsdfPackager) Closure<Void> action) {
-        ConfigureUtil.configure(action, asdf)
-    }
-
-    @Override
-    @CompileDynamic
-    void brew(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = BrewPackager) Closure<Void> action) {
-        ConfigureUtil.configure(action, brew)
-    }
-
-    @Override
-    @CompileDynamic
-    void chocolatey(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ChocolateyPackager) Closure<Void> action) {
-        ConfigureUtil.configure(action, chocolatey)
-    }
-
-    @Override
-    @CompileDynamic
-    void docker(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DockerPackager) Closure<Void> action) {
-        ConfigureUtil.configure(action, docker)
-    }
-
-    @Override
-    @CompileDynamic
-    void flatpak(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = FlatpakPackager) Closure<Void> action) {
-        ConfigureUtil.configure(action, flatpak)
-    }
-
-    @Override
-    @CompileDynamic
-    void gofish(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = GofishPackager) Closure<Void> action) {
-        ConfigureUtil.configure(action, gofish)
-    }
-
-    @Override
-    @CompileDynamic
-    void jbang(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JbangPackager) Closure<Void> action) {
-        ConfigureUtil.configure(action, jbang)
-    }
-
-    @Override
-    @CompileDynamic
-    void jib(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JibPackager) Closure<Void> action) {
-        ConfigureUtil.configure(action, jib)
-    }
-
-    @Override
-    @CompileDynamic
-    void macports(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = MacportsPackager) Closure<Void> action) {
-        ConfigureUtil.configure(action, macports)
-    }
-
-    @Override
-    @CompileDynamic
-    void scoop(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ScoopPackager) Closure<Void> action) {
-        ConfigureUtil.configure(action, scoop)
-    }
-
-    @Override
-    @CompileDynamic
-    void sdkman(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SdkmanPackager) Closure<Void> action) {
-        ConfigureUtil.configure(action, sdkman)
-    }
-
-    @Override
-    @CompileDynamic
-    void snap(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SnapPackager) Closure<Void> action) {
-        ConfigureUtil.configure(action, snap)
-    }
-
-    @Override
-    @CompileDynamic
-    void spec(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SpecPackager) Closure<Void> action) {
-        ConfigureUtil.configure(action, spec)
-    }
-
-    @Override
-    @CompileDynamic
-    void winget(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = WingetPackager) Closure<Void> action) {
-        ConfigureUtil.configure(action, winget)
     }
 
     org.jreleaser.model.internal.packagers.Packagers toModel() {

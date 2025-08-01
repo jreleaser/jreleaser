@@ -17,7 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.release
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
@@ -31,12 +31,10 @@ import org.jreleaser.gradle.plugin.dsl.release.Changelog
 import org.jreleaser.model.Active
 import org.jreleaser.model.UpdateSection
 import org.jreleaser.model.api.common.Apply
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
 import static org.jreleaser.util.StringUtils.isNotBlank
-
 /**
  *
  * @author Andres Almiray
@@ -188,36 +186,6 @@ abstract class BaseReleaserImpl implements BaseReleaser {
     @Override
     void issues(Action<? super Issues> action) {
         action.execute(issues)
-    }
-
-    @Override
-    @CompileDynamic
-    void changelog(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Changelog) Closure<Void> action) {
-        ConfigureUtil.configure(action, changelog)
-    }
-
-    @Override
-    @CompileDynamic
-    void milestone(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Milestone) Closure<Void> action) {
-        ConfigureUtil.configure(action, milestone)
-    }
-
-    @Override
-    @CompileDynamic
-    void commitAuthor(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommitAuthor) Closure<Void> action) {
-        ConfigureUtil.configure(action, commitAuthor)
-    }
-
-    @Override
-    @CompileDynamic
-    void update(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Update) Closure<Void> action) {
-        ConfigureUtil.configure(action, update)
-    }
-
-    @Override
-    @CompileDynamic
-    void issues(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Issues) Closure<Void> action) {
-        ConfigureUtil.configure(action, issues)
     }
 
     protected void toModel(org.jreleaser.model.internal.release.BaseReleaser service) {
@@ -372,12 +340,6 @@ abstract class BaseReleaserImpl implements BaseReleaser {
         @Override
         void label(Action<? super Label> action) {
             action.execute(label)
-        }
-
-        @Override
-        @CompileDynamic
-        void label(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Label) Closure<Void> action) {
-            ConfigureUtil.configure(action, label)
         }
 
         org.jreleaser.model.internal.release.BaseReleaser.Issues toModel() {

@@ -30,6 +30,4 @@ interface SwidTagAware {
     SwidTag getSwid()
 
     void swid(Action<? super SwidTag> action)
-
-    void swid(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SwidTag) Closure<Void> action)
 }

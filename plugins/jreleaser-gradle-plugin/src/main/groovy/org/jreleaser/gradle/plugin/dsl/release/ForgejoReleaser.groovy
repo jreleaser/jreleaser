@@ -33,6 +33,4 @@ interface ForgejoReleaser extends BaseReleaser {
     Prerelease getPrerelease()
 
     void prerelease(Action<? super Prerelease> action)
-
-    void prerelease(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Prerelease) Closure<Void> action)
 }

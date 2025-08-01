@@ -37,8 +37,6 @@ interface SbomCataloger extends Cataloger {
 
     void pack(Action<? super Pack> action)
 
-    void pack(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Pack) Closure<Void> action)
-
     interface Pack {
         Property<Boolean> getEnabled()
 

@@ -17,7 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.release
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
@@ -26,7 +26,6 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.release.GithubReleaser
 import org.jreleaser.gradle.plugin.internal.dsl.common.CommitAuthorImpl
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -91,18 +90,6 @@ class GithubReleaserImpl extends BaseReleaserImpl implements GithubReleaser {
     @Override
     void releaseNotes(Action<? super ReleaseNotes> action) {
         action.execute(releaseNotes)
-    }
-
-    @Override
-    @CompileDynamic
-    void prerelease(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Prerelease) Closure<Void> action) {
-        ConfigureUtil.configure(action, prerelease)
-    }
-
-    @Override
-    @CompileDynamic
-    void releaseNotes(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ReleaseNotes) Closure<Void> action) {
-        ConfigureUtil.configure(action, releaseNotes)
     }
 
     org.jreleaser.model.internal.release.GithubReleaser toModel() {

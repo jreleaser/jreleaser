@@ -32,6 +32,4 @@ interface Deploy extends Activatable {
     Maven getMaven()
 
     void maven(Action<? super Maven> action)
-
-    void maven(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Maven) Closure<Void> action)
 }

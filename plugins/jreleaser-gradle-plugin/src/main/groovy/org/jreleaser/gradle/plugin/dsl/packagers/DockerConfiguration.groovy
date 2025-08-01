@@ -81,10 +81,6 @@ interface DockerConfiguration extends Activatable, ExtraProperties {
 
     void buildx(Action<? super Buildx> action)
 
-    void registries(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
-
-    void buildx(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Buildx) Closure<Void> action)
-
     @CompileStatic
     interface Registry extends Activatable {
         Property<String> getServer()

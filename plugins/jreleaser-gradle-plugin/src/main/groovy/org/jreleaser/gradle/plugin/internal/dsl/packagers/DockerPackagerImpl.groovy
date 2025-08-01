@@ -32,7 +32,6 @@ import org.jreleaser.gradle.plugin.dsl.packagers.DockerPackager
 import org.jreleaser.gradle.plugin.dsl.packagers.DockerSpec
 import org.jreleaser.gradle.plugin.internal.dsl.common.CommitAuthorImpl
 import org.jreleaser.model.Active
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -93,24 +92,6 @@ class DockerPackagerImpl extends AbstractDockerConfiguration implements DockerPa
     @Override
     void commitAuthor(Action<? super CommitAuthor> action) {
         action.execute(commitAuthor)
-    }
-
-    @Override
-    @CompileDynamic
-    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DockerRepository) Closure<Void> action) {
-        ConfigureUtil.configure(action, repository)
-    }
-
-    @Override
-    @CompileDynamic
-    void specs(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, specs)
-    }
-
-    @Override
-    @CompileDynamic
-    void commitAuthor(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommitAuthor) Closure<Void> action) {
-        ConfigureUtil.configure(action, commitAuthor)
     }
 
     @CompileDynamic

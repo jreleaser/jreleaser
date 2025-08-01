@@ -31,6 +31,4 @@ interface RepositoryPackager extends TemplatePackager {
     CommitAuthor getCommitAuthor()
 
     void commitAuthor(Action<? super CommitAuthor> action)
-
-    void commitAuthor(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommitAuthor) Closure<Void> action)
 }

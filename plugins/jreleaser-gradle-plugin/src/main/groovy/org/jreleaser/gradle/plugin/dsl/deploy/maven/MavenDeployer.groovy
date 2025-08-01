@@ -68,8 +68,6 @@ interface MavenDeployer extends Deployer {
 
     void artifactOverride(Action<? super ArtifactOverride> action)
 
-    void artifactOverride(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArtifactOverride) Closure<Void> action)
-
     interface ArtifactOverride {
         Property<String> getGroupId()
 

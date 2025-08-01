@@ -31,6 +31,4 @@ interface Languages {
     Java getJava()
 
     void java(Action<? super Java> action)
-
-    void java(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Java) Closure<Void> action)
 }

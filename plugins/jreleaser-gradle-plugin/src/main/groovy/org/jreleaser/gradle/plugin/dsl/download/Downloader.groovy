@@ -36,8 +36,6 @@ interface Downloader extends Activatable, ExtraProperties {
 
     void asset(Action<? super Asset> action)
 
-    void asset(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Asset) Closure<Void> action)
-
     interface Unpack {
         Property<Boolean> getEnabled()
 
@@ -52,7 +50,5 @@ interface Downloader extends Activatable, ExtraProperties {
         Unpack getUnpack()
 
         void unpack(Action<? super Unpack> action)
-
-        void unpack(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Unpack) Closure<Void> action)
     }
 }

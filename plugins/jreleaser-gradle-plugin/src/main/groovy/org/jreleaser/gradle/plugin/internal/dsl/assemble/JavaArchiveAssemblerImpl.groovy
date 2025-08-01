@@ -17,7 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.assemble
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
@@ -44,7 +44,6 @@ import org.jreleaser.gradle.plugin.internal.dsl.common.GlobImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.JvmOptionsImpl
 import org.jreleaser.gradle.plugin.internal.dsl.platform.PlatformImpl
 import org.jreleaser.model.Archive
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -141,42 +140,6 @@ class JavaArchiveAssemblerImpl extends AbstractAssembler implements JavaArchiveA
         action.execute(swid)
     }
 
-    @Override
-    @CompileDynamic
-    void java(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JavaArchiveAssembler.Java) Closure<Void> action) {
-        ConfigureUtil.configure(action, java)
-    }
-
-    @Override
-    @CompileDynamic
-    void mainJar(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
-        ConfigureUtil.configure(action, mainJar)
-    }
-
-    @Override
-    @CompileDynamic
-    void executable(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Executable) Closure<Void> action) {
-        ConfigureUtil.configure(action, executable)
-    }
-
-    @Override
-    @CompileDynamic
-    void jars(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Glob) Closure<Void> action) {
-        ConfigureUtil.configure(action, jars.maybeCreate("jars-${jars.size()}".toString()))
-    }
-
-    @Override
-    @CompileDynamic
-    void options(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArchiveOptions) Closure<Void> action) {
-        ConfigureUtil.configure(action, options)
-    }
-
-    @Override
-    @CompileDynamic
-    void swid(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SwidTag) Closure<Void> action) {
-        ConfigureUtil.configure(action, swid)
-    }
-
     org.jreleaser.model.internal.assemble.JavaArchiveAssembler toModel() {
         org.jreleaser.model.internal.assemble.JavaArchiveAssembler assembler = new org.jreleaser.model.internal.assemble.JavaArchiveAssembler()
         assembler.name = name
@@ -228,18 +191,6 @@ class JavaArchiveAssemblerImpl extends AbstractAssembler implements JavaArchiveA
         @Override
         void environmentVariables(Action<? super EnvironmentVariables> action) {
             action.execute(environmentVariables)
-        }
-
-        @Override
-        @CompileDynamic
-        void jvmOptions(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JvmOptions) Closure<Void> action) {
-            ConfigureUtil.configure(action, jvmOptions)
-        }
-
-        @Override
-        @CompileDynamic
-        void environmentVariables(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = EnvironmentVariables) Closure<Void> action) {
-            ConfigureUtil.configure(action, environmentVariables)
         }
 
         org.jreleaser.model.internal.assemble.JavaArchiveAssembler.Java toModel() {

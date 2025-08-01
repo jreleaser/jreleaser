@@ -17,7 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.packagers
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
@@ -37,7 +37,6 @@ import org.jreleaser.gradle.plugin.internal.dsl.common.CommitAuthorImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.IconImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.ScreenshotImpl
 import org.jreleaser.model.Flatpak
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -161,37 +160,13 @@ class FlatpakPackagerImpl extends AbstractRepositoryPackager implements FlatpakP
     }
 
     @Override
-    @CompileDynamic
-    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action) {
-        ConfigureUtil.configure(action, repository)
-    }
-
-    @Override
-    @CompileDynamic
-    void commitAuthor(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommitAuthor) Closure<Void> action) {
-        ConfigureUtil.configure(action, commitAuthor)
-    }
-
-    @Override
     void screenshot(Action<? super Screenshot> action) {
         action.execute(screenshots.maybeCreate("screenshot-${screenshots.size()}".toString()))
     }
 
     @Override
-    @CompileDynamic
-    void screenshot(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Screenshot) Closure<Void> action) {
-        ConfigureUtil.configure(action, screenshots.maybeCreate("screenshot-${screenshots.size()}".toString()))
-    }
-
-    @Override
     void icon(Action<? super Icon> action) {
         action.execute(icons.maybeCreate("icons-${icons.size()}".toString()))
-    }
-
-    @Override
-    @CompileDynamic
-    void icon(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Icon) Closure<Void> action) {
-        ConfigureUtil.configure(action, icons.maybeCreate("icons-${icons.size()}".toString()))
     }
 
     org.jreleaser.model.internal.packagers.FlatpakPackager toModel() {

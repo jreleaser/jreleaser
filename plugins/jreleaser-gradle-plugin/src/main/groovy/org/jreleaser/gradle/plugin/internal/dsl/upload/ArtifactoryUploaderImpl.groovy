@@ -17,7 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.upload
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
@@ -31,7 +31,6 @@ import org.jreleaser.gradle.plugin.dsl.upload.ArtifactoryUploader
 import org.jreleaser.model.Active
 import org.jreleaser.model.Http
 import org.jreleaser.util.FileType
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -88,12 +87,6 @@ class ArtifactoryUploaderImpl extends AbstractWebUploader implements Artifactory
     @Override
     void repository(Action<? super ArtifactoryRepository> action) {
         action.execute(repositories.maybeCreate("repository-${repositories.size()}".toString()))
-    }
-
-    @Override
-    @CompileDynamic
-    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArtifactoryRepository) Closure<Void> action) {
-        ConfigureUtil.configure(action, repositories.maybeCreate("repository-${repositories.size()}".toString()))
     }
 
     org.jreleaser.model.internal.upload.ArtifactoryUploader toModel() {

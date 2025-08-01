@@ -32,7 +32,6 @@ import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.deploy.maven.MavenDeployer
 import org.jreleaser.model.Active
 import org.jreleaser.model.Http
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -149,12 +148,6 @@ abstract class AbstractMavenDeployer implements MavenDeployer {
     @Override
     void artifactOverride(Action<? super ArtifactOverride> action) {
         action.execute(artifactOverrides.maybeCreate("artifact-${artifactOverrides.size()}".toString()))
-    }
-
-    @Override
-    @CompileDynamic
-    void artifactOverride(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArtifactOverride) Closure<Void> action) {
-        ConfigureUtil.configure(action, artifactOverrides.maybeCreate("artifact-${artifactOverrides.size()}".toString()))
     }
 
     protected <D extends org.jreleaser.model.internal.deploy.maven.MavenDeployer> void fillProperties(D deployer) {

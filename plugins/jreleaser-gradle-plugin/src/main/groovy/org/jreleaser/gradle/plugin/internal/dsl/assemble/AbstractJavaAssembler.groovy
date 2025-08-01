@@ -17,7 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.assemble
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
@@ -32,7 +32,6 @@ import org.jreleaser.gradle.plugin.dsl.common.Glob
 import org.jreleaser.gradle.plugin.dsl.common.Java
 import org.jreleaser.gradle.plugin.internal.dsl.common.ArtifactImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.GlobImpl
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -86,24 +85,6 @@ abstract class AbstractJavaAssembler extends AbstractAssembler implements JavaAs
     @Override
     void jars(Action<? super Glob> action) {
         action.execute(jars.maybeCreate("jars-${jars.size()}".toString()))
-    }
-
-    @Override
-    @CompileDynamic
-    void java(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Java) Closure<Void> action) {
-        ConfigureUtil.configure(action, java)
-    }
-
-    @Override
-    @CompileDynamic
-    void mainJar(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
-        ConfigureUtil.configure(action, mainJar)
-    }
-
-    @Override
-    @CompileDynamic
-    void jars(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Glob) Closure<Void> action) {
-        ConfigureUtil.configure(action, jars.maybeCreate("jars-${jars.size()}".toString()))
     }
 
     protected <A extends org.jreleaser.model.internal.assemble.JavaAssembler> void fillProperties(A assembler) {

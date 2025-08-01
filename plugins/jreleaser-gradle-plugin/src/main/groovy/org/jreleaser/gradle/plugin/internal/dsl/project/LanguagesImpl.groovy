@@ -17,14 +17,13 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.project
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.model.ObjectFactory
 import org.jreleaser.gradle.plugin.dsl.common.Java
 import org.jreleaser.gradle.plugin.dsl.project.Languages
 import org.jreleaser.gradle.plugin.internal.dsl.common.JavaImpl
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -46,13 +45,6 @@ class LanguagesImpl implements Languages {
     void java(Action<? super Java> action) {
         action.execute(java)
     }
-
-    @Override
-    @CompileDynamic
-    void java(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Java) Closure<Void> action) {
-        ConfigureUtil.configure(action, java)
-    }
-
 
     org.jreleaser.model.internal.project.Languages toModel() {
         org.jreleaser.model.internal.project.Languages languages = new org.jreleaser.model.internal.project.Languages()

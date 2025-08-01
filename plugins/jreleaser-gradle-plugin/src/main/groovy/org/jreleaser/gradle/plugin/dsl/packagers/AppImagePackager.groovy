@@ -52,13 +52,7 @@ interface AppImagePackager extends RepositoryPackager {
 
     void repository(Action<? super Tap> action)
 
-    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action)
-
     void screenshot(Action<? super Screenshot> action)
 
-    void screenshot(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Screenshot) Closure<Void> action)
-
     void icon(Action<? super Icon> action)
-
-    void icon(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Icon) Closure<Void> action)
 }

@@ -88,29 +88,16 @@ interface Project extends ExtraProperties {
 
     void links(Action<? super Links> action)
 
-    void links(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Links) Closure<Void> action)
-
     void languages(Action<? super Languages> action)
-
-    void languages(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Languages) Closure<Void> action)
 
     @Deprecated
     void java(Action<? super Java> action)
 
-    @Deprecated
-    void java(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Java) Closure<Void> action)
-
     void snapshot(Action<? super Snapshot> action)
-
-    void snapshot(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Snapshot) Closure<Void> action)
 
     void screenshot(Action<? super Screenshot> action)
 
-    void screenshot(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Screenshot) Closure<Void> action)
-
     void icon(Action<? super Icon> action)
-
-    void icon(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Icon) Closure<Void> action)
 
     interface Snapshot {
         Property<String> getPattern()

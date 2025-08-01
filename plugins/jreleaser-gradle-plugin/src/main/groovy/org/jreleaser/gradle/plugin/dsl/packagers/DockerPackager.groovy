@@ -37,10 +37,6 @@ interface DockerPackager extends DockerConfiguration, RepositoryPackager {
 
     void specs(Action<? super NamedDomainObjectContainer<DockerSpec>> action)
 
-    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DockerRepository) Closure<Void> action)
-
-    void specs(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
-
     @CompileStatic
     interface DockerRepository extends Tap {
         Property<Boolean> getVersionedSubfolders()

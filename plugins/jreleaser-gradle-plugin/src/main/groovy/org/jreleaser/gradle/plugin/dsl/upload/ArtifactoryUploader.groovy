@@ -44,8 +44,6 @@ interface ArtifactoryUploader extends WebUploader {
 
     void repository(Action<? super ArtifactoryRepository> action)
 
-    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArtifactoryRepository) Closure<Void> action)
-
     @CompileStatic
     interface ArtifactoryRepository extends Activatable {
         Property<String> getPath()

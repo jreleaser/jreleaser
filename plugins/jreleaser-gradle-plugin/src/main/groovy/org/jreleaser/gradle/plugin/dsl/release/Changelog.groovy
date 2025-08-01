@@ -78,12 +78,6 @@ interface Changelog extends ExtraProperties {
 
     void replacer(Action<? super Replacer> action)
 
-    void category(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Category) Closure<Void> action)
-
-    void labeler(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Labeler) Closure<Void> action)
-
-    void replacer(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Replacer) Closure<Void> action)
-
     Hide getHide()
 
     Contributors getContributors()
@@ -95,12 +89,6 @@ interface Changelog extends ExtraProperties {
     void contributors(Action<? super Contributors> action)
 
     void append(Action<? super Append> action)
-
-    void hide(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Hide) Closure<Void> action)
-
-    void contributors(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Contributors) Closure<Void> action)
-
-    void append(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Append) Closure<Void> action)
 
     interface Append {
         Property<Boolean> getEnabled()

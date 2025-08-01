@@ -17,7 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.project
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
@@ -37,7 +37,6 @@ import org.jreleaser.gradle.plugin.dsl.project.Project
 import org.jreleaser.gradle.plugin.internal.dsl.common.IconImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.ScreenshotImpl
 import org.jreleaser.model.Stereotype
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -159,20 +158,8 @@ class ProjectImpl implements Project {
     }
 
     @Override
-    @CompileDynamic
-    void links(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Links) Closure<Void> action) {
-        ConfigureUtil.configure(action, links)
-    }
-
-    @Override
     void languages(Action<? super Languages> action) {
         action.execute(languages)
-    }
-
-    @Override
-    @CompileDynamic
-    void languages(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Languages) Closure<Void> action) {
-        ConfigureUtil.configure(action, languages)
     }
 
     @Override
@@ -182,21 +169,8 @@ class ProjectImpl implements Project {
     }
 
     @Override
-    @Deprecated
-    @CompileDynamic
-    void java(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Java) Closure<Void> action) {
-        ConfigureUtil.configure(action, languages.java)
-    }
-
-    @Override
     void snapshot(Action<? super Snapshot> action) {
         action.execute(snapshot)
-    }
-
-    @Override
-    @CompileDynamic
-    void snapshot(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Snapshot) Closure<Void> action) {
-        ConfigureUtil.configure(action, snapshot)
     }
 
     @Override
@@ -205,20 +179,8 @@ class ProjectImpl implements Project {
     }
 
     @Override
-    @CompileDynamic
-    void screenshot(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Screenshot) Closure<Void> action) {
-        ConfigureUtil.configure(action, screenshots.maybeCreate("screenshot-${screenshots.size()}".toString()))
-    }
-
-    @Override
     void icon(Action<? super Icon> action) {
         action.execute(icons.maybeCreate("icons-${icons.size()}".toString()))
-    }
-
-    @Override
-    @CompileDynamic
-    void icon(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Icon) Closure<Void> action) {
-        ConfigureUtil.configure(action, icons.maybeCreate("icons-${icons.size()}".toString()))
     }
 
     org.jreleaser.model.internal.project.Project toModel() {

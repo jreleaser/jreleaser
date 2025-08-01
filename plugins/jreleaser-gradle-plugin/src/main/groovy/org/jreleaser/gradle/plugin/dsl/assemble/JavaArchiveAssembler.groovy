@@ -57,16 +57,6 @@ interface JavaArchiveAssembler extends Assembler, SwidTagAware {
 
     void options(Action<? super ArchiveOptions> action)
 
-    void java(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Java) Closure<Void> action)
-
-    void mainJar(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
-
-    void executable(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Executable) Closure<Void> action)
-
-    void jars(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Glob) Closure<Void> action)
-
-    void options(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArchiveOptions) Closure<Void> action)
-
     interface Java {
         Property<String> getMainModule()
 
@@ -82,9 +72,5 @@ interface JavaArchiveAssembler extends Assembler, SwidTagAware {
         void jvmOptions(Action<? super JvmOptions> action)
 
         void environmentVariables(Action<? super EnvironmentVariables> action)
-
-        void jvmOptions(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JvmOptions) Closure<Void> action)
-
-        void environmentVariables(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = EnvironmentVariables) Closure<Void> action)
     }
 }

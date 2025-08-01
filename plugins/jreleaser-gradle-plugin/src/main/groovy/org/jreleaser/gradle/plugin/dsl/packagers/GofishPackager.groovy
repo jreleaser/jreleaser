@@ -30,6 +30,4 @@ interface GofishPackager extends RepositoryPackager {
     Tap getRepository()
 
     void repository(Action<? super Tap> action)
-
-    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action)
 }

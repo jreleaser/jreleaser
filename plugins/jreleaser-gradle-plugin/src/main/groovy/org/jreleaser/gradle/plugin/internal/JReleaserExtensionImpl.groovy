@@ -68,7 +68,6 @@ import org.jreleaser.gradle.plugin.internal.dsl.upload.UploadImpl
 import org.jreleaser.logging.JReleaserLogger
 import org.jreleaser.model.internal.JReleaserModel
 import org.jreleaser.util.Env
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -262,115 +261,6 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     @Override
     void extensions(Action<? super NamedDomainObjectContainer<Extension>> action) {
         action.execute(extensions)
-    }
-
-    @Override
-    @CompileDynamic
-    void environment(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Environment) Closure<Void> action) {
-        ConfigureUtil.configure(action, environment)
-    }
-
-
-    @Override
-    @CompileDynamic
-    void matrix(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Matrix) Closure<Void> action) {
-        ConfigureUtil.configure(action, matrix)
-    }
-
-    @Override
-    @CompileDynamic
-    void hooks(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Hooks) Closure<Void> action) {
-        ConfigureUtil.configure(action, hooks)
-    }
-
-    @Override
-    @CompileDynamic
-    void project(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Project) Closure<Void> action) {
-        ConfigureUtil.configure(action, project)
-    }
-
-    @Override
-    @CompileDynamic
-    void platform(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Platform) Closure<Void> action) {
-        ConfigureUtil.configure(action, platform)
-    }
-
-    @Override
-    @CompileDynamic
-    void files(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Files) Closure<Void> action) {
-        ConfigureUtil.configure(action, files)
-    }
-
-    @Override
-    @CompileDynamic
-    void release(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Release) Closure<Void> action) {
-        ConfigureUtil.configure(action, release)
-    }
-
-    @Override
-    @CompileDynamic
-    void catalog(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Catalog) Closure<Void> action) {
-        ConfigureUtil.configure(action, catalog)
-    }
-
-    @Override
-    @CompileDynamic
-    void deploy(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Deploy) Closure<Void> action) {
-        ConfigureUtil.configure(action, deploy)
-    }
-
-    @Override
-    @CompileDynamic
-    void upload(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Upload) Closure<Void> action) {
-        ConfigureUtil.configure(action, upload)
-    }
-
-    @Override
-    @CompileDynamic
-    void download(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Download) Closure<Void> action) {
-        ConfigureUtil.configure(action, download)
-    }
-
-    @Override
-    @CompileDynamic
-    void packagers(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Packagers) Closure<Void> action) {
-        ConfigureUtil.configure(action, packagers)
-    }
-
-    @Override
-    @CompileDynamic
-    void announce(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Announce) Closure<Void> action) {
-        ConfigureUtil.configure(action, announce)
-    }
-
-    @Override
-    @CompileDynamic
-    void assemble(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Assemble) Closure<Void> action) {
-        ConfigureUtil.configure(action, assemble)
-    }
-
-    @Override
-    @CompileDynamic
-    void signing(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Signing) Closure<Void> action) {
-        ConfigureUtil.configure(action, signing)
-    }
-
-    @Override
-    @CompileDynamic
-    void checksum(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Checksum) Closure<Void> action) {
-        ConfigureUtil.configure(action, checksum)
-    }
-
-    @Override
-    @CompileDynamic
-    void distributions(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, distributions)
-    }
-
-    @Override
-    @CompileDynamic
-    void extensions(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, extensions)
     }
 
     @CompileDynamic

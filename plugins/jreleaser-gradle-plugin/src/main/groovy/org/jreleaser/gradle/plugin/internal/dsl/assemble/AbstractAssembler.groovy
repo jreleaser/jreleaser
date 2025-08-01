@@ -17,7 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.assemble
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
@@ -39,7 +39,6 @@ import org.jreleaser.gradle.plugin.internal.dsl.common.FileSetImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.GlobImpl
 import org.jreleaser.model.Active
 import org.jreleaser.model.Stereotype
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -155,30 +154,6 @@ abstract class AbstractAssembler implements Assembler {
     @Override
     void platform(Action<? super Platform> action) {
         action.execute(platform)
-    }
-
-    @Override
-    @CompileDynamic
-    void artifact(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
-        ConfigureUtil.configure(action, artifacts.maybeCreate("artifact-${artifacts.size()}".toString()))
-    }
-
-    @Override
-    @CompileDynamic
-    void files(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Glob) Closure<Void> action) {
-        ConfigureUtil.configure(action, files.maybeCreate("files-${files.size()}".toString()))
-    }
-
-    @Override
-    @CompileDynamic
-    void fileSet(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = FileSet) Closure<Void> action) {
-        ConfigureUtil.configure(action, fileSets.maybeCreate("fileSet-${fileSets.size()}".toString()))
-    }
-
-    @Override
-    @CompileDynamic
-    void platform(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Platform) Closure<Void> action) {
-        ConfigureUtil.configure(action, platform)
     }
 
     protected <A extends org.jreleaser.model.internal.assemble.Assembler> void fillProperties(A assembler) {

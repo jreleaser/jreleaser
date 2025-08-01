@@ -54,10 +54,6 @@ interface Hook extends Activatable {
 
     void matrix(Action<? super Matrix> action)
 
-    void filter(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Filter) Closure<Void> action)
-
-    void matrix(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Matrix) Closure<Void> action)
-
     interface Filter {
         SetProperty<String> getIncludes()
 

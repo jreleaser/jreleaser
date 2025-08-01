@@ -46,12 +46,4 @@ interface NamedScriptHooks extends Activatable {
     void failure(Action<? super ScriptHook> action)
 
     void matrix(Action<? super Matrix> action)
-
-    void before(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ScriptHook) Closure<Void> action)
-
-    void success(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ScriptHook) Closure<Void> action)
-
-    void failure(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ScriptHook) Closure<Void> action)
-
-    void matrix(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Matrix) Closure<Void> action)
 }

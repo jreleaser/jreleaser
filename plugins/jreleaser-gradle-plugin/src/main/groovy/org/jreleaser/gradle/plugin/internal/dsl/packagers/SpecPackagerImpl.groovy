@@ -17,7 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.packagers
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
@@ -29,7 +29,6 @@ import org.jreleaser.gradle.plugin.dsl.common.CommitAuthor
 import org.jreleaser.gradle.plugin.dsl.packagers.SpecPackager
 import org.jreleaser.gradle.plugin.dsl.packagers.Tap
 import org.jreleaser.gradle.plugin.internal.dsl.common.CommitAuthorImpl
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -75,18 +74,6 @@ class SpecPackagerImpl extends AbstractRepositoryPackager implements SpecPackage
     @Override
     void commitAuthor(Action<? super CommitAuthor> action) {
         action.execute(commitAuthor)
-    }
-
-    @Override
-    @CompileDynamic
-    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action) {
-        ConfigureUtil.configure(action, repository)
-    }
-
-    @Override
-    @CompileDynamic
-    void commitAuthor(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommitAuthor) Closure<Void> action) {
-        ConfigureUtil.configure(action, commitAuthor)
     }
 
     org.jreleaser.model.internal.packagers.SpecPackager toModel() {

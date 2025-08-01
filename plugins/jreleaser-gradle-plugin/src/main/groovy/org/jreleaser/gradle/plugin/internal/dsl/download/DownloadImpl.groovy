@@ -31,7 +31,6 @@ import org.jreleaser.gradle.plugin.dsl.download.HttpDownloader
 import org.jreleaser.gradle.plugin.dsl.download.ScpDownloader
 import org.jreleaser.gradle.plugin.dsl.download.SftpDownloader
 import org.jreleaser.model.Active
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -116,30 +115,6 @@ class DownloadImpl implements Download {
     @Override
     void sftp(Action<? super NamedDomainObjectContainer<SftpDownloader>> action) {
         action.execute(sftp)
-    }
-
-    @Override
-    @CompileDynamic
-    void ftp(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, ftp)
-    }
-
-    @Override
-    @CompileDynamic
-    void http(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, http)
-    }
-
-    @Override
-    @CompileDynamic
-    void scp(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, scp)
-    }
-
-    @Override
-    @CompileDynamic
-    void sftp(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, sftp)
     }
 
     @CompileDynamic

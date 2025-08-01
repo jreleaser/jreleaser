@@ -67,8 +67,6 @@ interface JibConfiguration extends Activatable, ExtraProperties {
 
     void registries(Action<? super NamedDomainObjectContainer<? extends Registry>> action)
 
-    void registries(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
-
     void environment(String key, String value)
 
     void label(String key, String value)

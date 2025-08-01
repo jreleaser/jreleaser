@@ -17,7 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.deploy
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
@@ -27,7 +27,6 @@ import org.jreleaser.gradle.plugin.dsl.deploy.Deploy
 import org.jreleaser.gradle.plugin.dsl.deploy.maven.Maven
 import org.jreleaser.gradle.plugin.internal.dsl.deploy.maven.MavenImpl
 import org.jreleaser.model.Active
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -59,12 +58,6 @@ class DeployImpl implements Deploy {
     @Override
     void maven(Action<? super Maven> action) {
         action.execute(maven)
-    }
-
-    @Override
-    @CompileDynamic
-    void maven(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Maven) Closure<Void> action) {
-        ConfigureUtil.configure(action, maven)
     }
 
     org.jreleaser.model.internal.deploy.Deploy toModel() {

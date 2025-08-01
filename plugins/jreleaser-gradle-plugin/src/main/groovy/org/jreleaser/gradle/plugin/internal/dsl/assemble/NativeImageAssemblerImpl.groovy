@@ -17,7 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.assemble
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
@@ -41,7 +41,6 @@ import org.jreleaser.gradle.plugin.internal.dsl.common.MatrixImpl
 import org.jreleaser.gradle.plugin.internal.dsl.platform.PlatformImpl
 import org.jreleaser.model.Active
 import org.jreleaser.model.Archive
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -241,105 +240,6 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
     @Override
     void graalJdkPattern(Action<? super Artifact> action) {
         action.execute(graalJdkPattern)
-    }
-
-    @Override
-    @CompileDynamic
-    void graal(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
-        ConfigureUtil.configure(action, graal)
-    }
-
-    @Override
-    @CompileDynamic
-    void archiving(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Archiving) Closure<Void> action) {
-        ConfigureUtil.configure(action, archiving)
-    }
-
-    @Override
-    @CompileDynamic
-    void upx(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Upx) Closure<Void> action) {
-        ConfigureUtil.configure(action, upx)
-    }
-
-    @Override
-    @CompileDynamic
-    @Deprecated
-    void linux(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Upx) Closure<Void> action) {
-        ConfigureUtil.configure(action, linuxX86)
-    }
-
-    @Override
-    @CompileDynamic
-    @Deprecated
-    void windows(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Upx) Closure<Void> action) {
-        ConfigureUtil.configure(action, windowsX86)
-    }
-
-    @Override
-    @CompileDynamic
-    @Deprecated
-    void osx(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Upx) Closure<Void> action) {
-        ConfigureUtil.configure(action, macosX86)
-    }
-
-    @Override
-    @CompileDynamic
-    void linuxX86(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Upx) Closure<Void> action) {
-        ConfigureUtil.configure(action, linuxX86)
-    }
-
-    @Override
-    @CompileDynamic
-    void windowsX86(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Upx) Closure<Void> action) {
-        ConfigureUtil.configure(action, windowsX86)
-    }
-
-    @Override
-    @CompileDynamic
-    void macosX86(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Upx) Closure<Void> action) {
-        ConfigureUtil.configure(action, macosX86)
-    }
-
-    @Override
-    @CompileDynamic
-    void linuxArm(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Upx) Closure<Void> action) {
-        ConfigureUtil.configure(action, linuxArm)
-    }
-
-    @Override
-    @CompileDynamic
-    void macosArm(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Upx) Closure<Void> action) {
-        ConfigureUtil.configure(action, macosArm)
-    }
-
-    @Override
-    @CompileDynamic
-    void graalJdk(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
-        ConfigureUtil.configure(action, graalJdks.maybeCreate("graalJdk-${graalJdks.size()}".toString()))
-    }
-
-    @Override
-    @CompileDynamic
-    void options(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArchiveOptions) Closure<Void> action) {
-        ConfigureUtil.configure(action, options)
-    }
-
-    @Override
-    @CompileDynamic
-    void swid(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SwidTag) Closure<Void> action) {
-        ConfigureUtil.configure(action, swid)
-    }
-
-    @Override
-    @CompileDynamic
-    void matrix(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Matrix) Closure<Void> action) {
-        ConfigureUtil.configure(action, matrix)
-    }
-
-    @Override
-    @CompileDynamic
-    void graalJdkPattern(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
-        ConfigureUtil.configure(action, graalJdkPattern)
     }
 
     @Override

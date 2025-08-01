@@ -36,7 +36,6 @@ import org.jreleaser.gradle.plugin.dsl.deploy.maven.MavenCentralMavenDeployer
 import org.jreleaser.gradle.plugin.dsl.deploy.maven.Nexus2MavenDeployer
 import org.jreleaser.gradle.plugin.dsl.deploy.maven.Nexus3MavenDeployer
 import org.jreleaser.model.Active
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -204,66 +203,6 @@ class MavenImpl implements Maven {
     @Override
     void pomchecker(Action<? super Pomchecker> action) {
         action.execute(pomchecker)
-    }
-
-    @Override
-    @CompileDynamic
-    void artifactory(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, artifactory)
-    }
-
-    @Override
-    @CompileDynamic
-    void azure(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, azure)
-    }
-
-    @Override
-    @CompileDynamic
-    void forgejo(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, forgejo)
-    }
-
-    @Override
-    @CompileDynamic
-    void gitea(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, gitea)
-    }
-
-    @Override
-    @CompileDynamic
-    void github(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, github)
-    }
-
-    @Override
-    @CompileDynamic
-    void gitlab(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, gitlab)
-    }
-
-    @Override
-    @CompileDynamic
-    void nexus2(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, nexus2)
-    }
-
-    @Override
-    @CompileDynamic
-    void nexus3(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, nexus3)
-    }
-
-    @Override
-    @CompileDynamic
-    void mavenCentral(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, mavenCentral)
-    }
-
-    @Override
-    @CompileDynamic
-    void pomchecker(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Pomchecker) Closure<Void> action) {
-        ConfigureUtil.configure(action, pomchecker)
     }
 
     @CompileDynamic

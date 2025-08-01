@@ -17,7 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.hooks
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
@@ -30,7 +30,6 @@ import org.jreleaser.gradle.plugin.dsl.common.Matrix
 import org.jreleaser.gradle.plugin.dsl.hooks.Hook
 import org.jreleaser.gradle.plugin.internal.dsl.common.MatrixImpl
 import org.jreleaser.model.Active
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -89,18 +88,6 @@ abstract class AbstractHook implements Hook {
     @Override
     void matrix(Action<? super Matrix> action) {
         action.execute(matrix)
-    }
-
-    @Override
-    @CompileDynamic
-    void filter(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Filter) Closure<Void> action) {
-        ConfigureUtil.configure(action, filter)
-    }
-
-    @Override
-    @CompileDynamic
-    void matrix(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Matrix) Closure<Void> action) {
-        ConfigureUtil.configure(action, matrix)
     }
 
     @Override

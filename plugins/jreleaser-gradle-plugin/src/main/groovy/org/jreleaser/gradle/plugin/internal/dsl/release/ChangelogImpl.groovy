@@ -17,7 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.release
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.file.RegularFileProperty
@@ -29,7 +29,6 @@ import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.release.Changelog
 import org.jreleaser.model.Active
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -186,48 +185,6 @@ class ChangelogImpl implements Changelog {
     @Override
     void append(Action<? super Append> action) {
         action.execute(append)
-    }
-
-    @Override
-    @CompileDynamic
-    void category(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Category) Closure<Void> action) {
-        CategoryImpl category = objects.newInstance(CategoryImpl, objects)
-        ConfigureUtil.configure(action, category)
-        categories.add(category)
-    }
-
-    @Override
-    @CompileDynamic
-    void labeler(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Labeler) Closure<Void> action) {
-        LabelerImpl labeler = objects.newInstance(LabelerImpl, objects)
-        ConfigureUtil.configure(action, labeler)
-        labelers.add(labeler)
-    }
-
-    @Override
-    @CompileDynamic
-    void replacer(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Replacer) Closure<Void> action) {
-        ReplacerImpl replacer = objects.newInstance(ReplacerImpl, objects)
-        ConfigureUtil.configure(action, replacer)
-        replacers.add(replacer)
-    }
-
-    @Override
-    @CompileDynamic
-    void hide(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Hide) Closure<Void> action) {
-        ConfigureUtil.configure(action, hide)
-    }
-
-    @Override
-    @CompileDynamic
-    void contributors(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Contributors) Closure<Void> action) {
-        ConfigureUtil.configure(action, contributors)
-    }
-
-    @Override
-    @CompileDynamic
-    void append(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Append) Closure<Void> action) {
-        ConfigureUtil.configure(action, append)
     }
 
     org.jreleaser.model.internal.release.Changelog toModel() {

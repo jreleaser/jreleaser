@@ -51,8 +51,4 @@ interface Java extends ExtraProperties {
     void jvmOptions(Action<? super JvmOptions> action)
 
     void environmentVariables(Action<? super EnvironmentVariables> action)
-
-    void jvmOptions(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JvmOptions) Closure<Void> action)
-
-    void environmentVariables(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = EnvironmentVariables) Closure<Void> action)
 }

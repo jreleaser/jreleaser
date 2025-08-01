@@ -41,13 +41,7 @@ interface ArticleAnnouncer extends Announcer {
 
     void commitAuthor(Action<? super CommitAuthor> action)
 
-    void commitAuthor(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommitAuthor) Closure<Void> action)
-
     void file(Action<? super Artifact> action)
 
-    void file(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
-
     void repository(Action<? super Tap> repository)
-
-    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action)
 }

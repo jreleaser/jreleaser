@@ -43,10 +43,6 @@ interface Extension {
 
     void jbang(Action<? super Jbang> action)
 
-    void provider(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Provider) Closure<Void> action)
-
-    void jbang(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Jbang) Closure<Void> action)
-
     interface Provider {
         Property<String> getType()
 

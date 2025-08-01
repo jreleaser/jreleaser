@@ -58,14 +58,6 @@ interface WingetPackager extends RepositoryPackager {
 
     void installer(Action<? super Installer> action)
 
-    void repository(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Tap) Closure<Void> action)
-
-    void wingetPackage(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Package) Closure<Void> action)
-
-    void publisher(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Publisher) Closure<Void> action)
-
-    void installer(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Installer) Closure<Void> action)
-
     void tag(String tag)
 
     interface Package {
@@ -106,8 +98,6 @@ interface WingetPackager extends RepositoryPackager {
         void setUpgradeBehavior(String str)
 
         void dependencies(Action<? super Dependencies> action)
-
-        void dependencies(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Dependencies) Closure<Void> action)
     }
 
     interface Dependencies {
@@ -124,8 +114,6 @@ interface WingetPackager extends RepositoryPackager {
         void externalDependency(String str)
 
         void packageDependency(Action<? super PackageDependency> action)
-
-        void packageDependency(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = PackageDependency) Closure<Void> action)
     }
 
     interface PackageDependency {

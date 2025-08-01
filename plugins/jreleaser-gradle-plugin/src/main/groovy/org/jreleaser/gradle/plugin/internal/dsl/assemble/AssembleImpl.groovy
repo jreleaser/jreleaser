@@ -33,7 +33,6 @@ import org.jreleaser.gradle.plugin.dsl.assemble.JlinkAssembler
 import org.jreleaser.gradle.plugin.dsl.assemble.JpackageAssembler
 import org.jreleaser.gradle.plugin.dsl.assemble.NativeImageAssembler
 import org.jreleaser.model.Active
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -148,42 +147,6 @@ class AssembleImpl implements Assemble {
     @Override
     void nativeImage(Action<? super NamedDomainObjectContainer<NativeImageAssembler>> action) {
         action.execute(nativeImage)
-    }
-
-    @Override
-    @CompileDynamic
-    void archive(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, archive)
-    }
-
-    @Override
-    @CompileDynamic
-    void deb(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, deb)
-    }
-
-    @Override
-    @CompileDynamic
-    void javaArchive(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, javaArchive)
-    }
-
-    @Override
-    @CompileDynamic
-    void jlink(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, jlink)
-    }
-
-    @Override
-    @CompileDynamic
-    void jpackage(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, jpackage)
-    }
-
-    @Override
-    @CompileDynamic
-    void nativeImage(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, nativeImage)
     }
 
     @CompileDynamic

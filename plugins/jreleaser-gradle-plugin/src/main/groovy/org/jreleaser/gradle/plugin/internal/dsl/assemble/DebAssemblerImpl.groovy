@@ -17,7 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.assemble
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
@@ -27,12 +27,10 @@ import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.assemble.DebAssembler
 import org.jreleaser.gradle.plugin.internal.dsl.platform.PlatformImpl
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
 import static org.jreleaser.util.StringUtils.isNotBlank
-
 /**
  *
  * @author Andres Almiray
@@ -72,12 +70,6 @@ class DebAssemblerImpl extends AbstractAssembler implements DebAssembler {
     @Override
     void control(Action<? super DebAssembler.Control> action) {
         action.execute(control)
-    }
-
-    @Override
-    @CompileDynamic
-    void control(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = DebAssembler.Control) Closure<Void> action) {
-        ConfigureUtil.configure(action, control)
     }
 
     org.jreleaser.model.internal.assemble.DebAssembler toModel() {

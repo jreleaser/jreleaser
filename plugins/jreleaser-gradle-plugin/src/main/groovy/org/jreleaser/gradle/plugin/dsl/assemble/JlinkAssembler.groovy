@@ -69,20 +69,6 @@ interface JlinkAssembler extends JavaAssembler, SwidTagAware {
 
     void targetJdkPattern(Action<? super Artifact> action)
 
-    void jdeps(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Jdeps) Closure<Void> action)
-
-    void jdk(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
-
-    void targetJdk(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
-
-    void options(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArchiveOptions) Closure<Void> action)
-
-    void javaArchive(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JavaArchive) Closure<Void> action)
-
-    void matrix(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Matrix) Closure<Void> action)
-
-    void targetJdkPattern(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
-
     @CompileStatic
     interface Jdeps {
         Property<Boolean> getEnabled()

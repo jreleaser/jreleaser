@@ -27,7 +27,6 @@ import org.jreleaser.gradle.plugin.dsl.catalog.sbom.CyclonedxSbomCataloger
 import org.jreleaser.gradle.plugin.dsl.catalog.sbom.Sbom
 import org.jreleaser.gradle.plugin.dsl.catalog.sbom.SyftSbomCataloger
 import org.jreleaser.model.Active
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -66,18 +65,6 @@ class SbomImpl implements Sbom {
     @Override
     void syft(Action<? super SyftSbomCataloger> action) {
         action.execute(syft)
-    }
-
-    @Override
-    @CompileDynamic
-    void cyclonedx(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CyclonedxSbomCataloger) Closure<Void> action) {
-        ConfigureUtil.configure(action, cyclonedx)
-    }
-
-    @Override
-    @CompileDynamic
-    void syft(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SyftSbomCataloger) Closure<Void> action) {
-        ConfigureUtil.configure(action, syft)
     }
 
     @CompileDynamic

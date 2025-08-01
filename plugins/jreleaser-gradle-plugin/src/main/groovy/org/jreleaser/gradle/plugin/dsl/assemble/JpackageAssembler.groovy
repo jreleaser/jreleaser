@@ -49,18 +49,6 @@ interface JpackageAssembler extends JavaAssembler {
 
     void osx(Action<? super Osx> action)
 
-    void runtimeImage(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
-
-    void applicationPackage(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ApplicationPackage) Closure<Void> action)
-
-    void launcher(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Launcher) Closure<Void> action)
-
-    void linux(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Linux) Closure<Void> action)
-
-    void windows(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Windows) Closure<Void> action)
-
-    void osx(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Osx) Closure<Void> action)
-
     @CompileStatic
     interface ApplicationPackage {
         ListProperty<String> getFileAssociations()
@@ -102,8 +90,6 @@ interface JpackageAssembler extends JavaAssembler {
         Property<Boolean> getLauncherAsService()
 
         void jdk(Action<? super Artifact> action)
-
-        void jdk(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action)
     }
 
     @CompileStatic

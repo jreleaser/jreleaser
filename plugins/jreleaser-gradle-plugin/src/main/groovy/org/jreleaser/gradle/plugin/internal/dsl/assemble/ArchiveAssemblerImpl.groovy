@@ -17,7 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.assemble
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.internal.provider.Providers
@@ -35,7 +35,6 @@ import org.jreleaser.gradle.plugin.internal.dsl.common.MatrixImpl
 import org.jreleaser.gradle.plugin.internal.dsl.platform.PlatformImpl
 import org.jreleaser.model.Archive
 import org.jreleaser.model.Distribution.DistributionType
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -103,31 +102,13 @@ class ArchiveAssemblerImpl extends AbstractAssembler implements ArchiveAssembler
     }
 
     @Override
-    @CompileDynamic
-    void options(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ArchiveOptions) Closure<Void> action) {
-        ConfigureUtil.configure(action, options)
-    }
-
-    @Override
     void matrix(Action<? super Matrix> action) {
         action.execute(matrix)
     }
 
     @Override
-    @CompileDynamic
-    void matrix(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Matrix) Closure<Void> action) {
-        ConfigureUtil.configure(action, matrix)
-    }
-
-    @Override
     void swid(Action<? super SwidTag> action) {
         action.execute(swid)
-    }
-
-    @Override
-    @CompileDynamic
-    void swid(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = SwidTag) Closure<Void> action) {
-        ConfigureUtil.configure(action, swid)
     }
 
     org.jreleaser.model.internal.assemble.ArchiveAssembler toModel() {

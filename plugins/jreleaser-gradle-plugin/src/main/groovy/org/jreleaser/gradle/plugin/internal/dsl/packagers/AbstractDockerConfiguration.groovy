@@ -17,7 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.packagers
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
@@ -31,7 +31,6 @@ import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Internal
 import org.jreleaser.gradle.plugin.dsl.packagers.DockerConfiguration
 import org.jreleaser.model.Active
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -145,18 +144,6 @@ abstract class AbstractDockerConfiguration implements DockerConfiguration {
     @Override
     void buildx(Action<? super Buildx> action) {
         action.execute(buildx)
-    }
-
-    @Override
-    @CompileDynamic
-    void registries(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action) {
-        ConfigureUtil.configure(action, registries)
-    }
-
-    @Override
-    @CompileDynamic
-    void buildx(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Buildx) Closure<Void> action) {
-        ConfigureUtil.configure(action, buildx)
     }
 
     @Internal

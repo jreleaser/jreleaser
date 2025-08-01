@@ -41,8 +41,6 @@ interface DebAssembler extends Assembler {
 
     void control(Action<? super Control> action)
 
-    void control(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Control) Closure<Void> action)
-
     @CompileStatic
     interface Control {
         Property<String> getPackageName()

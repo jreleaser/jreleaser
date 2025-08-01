@@ -50,16 +50,4 @@ interface Release {
     void codeberg(Action<? super CodebergReleaser> action)
 
     void generic(Action<? super GenericGitReleaser> action)
-
-    void github(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = GithubReleaser) Closure<Void> action)
-
-    void gitlab(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = GitlabReleaser) Closure<Void> action)
-
-    void gitea(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = GiteaReleaser) Closure<Void> action)
-
-    void forgejo(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ForgejoReleaser) Closure<Void> action)
-
-    void codeberg(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CodebergReleaser) Closure<Void> action)
-
-    void generic(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = GenericGitReleaser) Closure<Void> action)
 }

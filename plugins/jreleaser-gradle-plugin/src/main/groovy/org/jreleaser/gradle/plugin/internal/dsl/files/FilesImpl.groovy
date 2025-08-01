@@ -17,7 +17,7 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.files
 
-import groovy.transform.CompileDynamic
+
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
@@ -31,7 +31,6 @@ import org.jreleaser.gradle.plugin.dsl.files.Files
 import org.jreleaser.gradle.plugin.internal.dsl.common.ArtifactImpl
 import org.jreleaser.gradle.plugin.internal.dsl.common.GlobImpl
 import org.jreleaser.model.Active
-import org.kordamp.gradle.util.ConfigureUtil
 
 import javax.inject.Inject
 
@@ -85,18 +84,6 @@ class FilesImpl implements Files {
     @Override
     void glob(Action<? super Glob> action) {
         action.execute(globs.maybeCreate("glob-${globs.size()}".toString()))
-    }
-
-    @Override
-    @CompileDynamic
-    void artifact(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Artifact) Closure<Void> action) {
-        ConfigureUtil.configure(action, artifacts.maybeCreate("artifact-${artifacts.size()}".toString()))
-    }
-
-    @Override
-    @CompileDynamic
-    void glob(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Glob) Closure<Void> action) {
-        ConfigureUtil.configure(action, globs.maybeCreate("glob-${globs.size()}".toString()))
     }
 
     org.jreleaser.model.internal.files.Files toModel() {
