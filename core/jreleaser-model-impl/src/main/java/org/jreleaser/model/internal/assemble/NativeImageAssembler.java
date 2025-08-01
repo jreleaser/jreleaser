@@ -32,6 +32,7 @@ import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.common.FileSet;
 import org.jreleaser.model.internal.common.Glob;
 import org.jreleaser.model.internal.common.Matrix;
+import org.jreleaser.model.internal.common.MatrixAware;
 import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.util.PlatformUtils;
 
@@ -57,8 +58,8 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImageAssembler, org.jreleaser.model.api.assemble.NativeImageAssembler> implements SwidTagAware {
-    private static final long serialVersionUID = -6941740718518870981L;
+public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImageAssembler, org.jreleaser.model.api.assemble.NativeImageAssembler> implements SwidTagAware, MatrixAware {
+    private static final long serialVersionUID = 629659372890762847L;
 
     private final List<String> args = new ArrayList<>();
     private final Set<String> components = new LinkedHashSet<>();
@@ -472,22 +473,27 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
         }
     }
 
+    @Override
     public boolean isApplyDefaultMatrixSet() {
         return null != applyDefaultMatrix;
     }
 
+    @Override
     public boolean isApplyDefaultMatrix() {
         return null != applyDefaultMatrix && applyDefaultMatrix;
     }
 
+    @Override
     public void setApplyDefaultMatrix(Boolean applyDefaultMatrix) {
         this.applyDefaultMatrix = applyDefaultMatrix;
     }
 
+    @Override
     public Matrix getMatrix() {
         return matrix;
     }
 
+    @Override
     public void setMatrix(Matrix matrix) {
         this.matrix.merge(matrix);
     }

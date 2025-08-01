@@ -29,6 +29,7 @@ import org.jreleaser.model.internal.common.Executable;
 import org.jreleaser.model.internal.common.ExtraProperties;
 import org.jreleaser.model.internal.common.Java;
 import org.jreleaser.model.internal.common.Matrix;
+import org.jreleaser.model.internal.common.MatrixAware;
 import org.jreleaser.model.internal.packagers.Packager;
 import org.jreleaser.model.internal.packagers.Packagers;
 import org.jreleaser.model.internal.platform.Platform;
@@ -75,8 +76,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.1.0
  */
-public final class Distribution extends Packagers<Distribution> implements Domain, Activatable, ExtraProperties {
-    private static final long serialVersionUID = 4193247619396188350L;
+public final class Distribution extends Packagers<Distribution> implements Domain, Activatable, ExtraProperties, MatrixAware {
+    private static final long serialVersionUID = -1239565519596341310L;
 
     private final List<String> tags = new ArrayList<>();
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
@@ -421,22 +422,27 @@ public final class Distribution extends Packagers<Distribution> implements Domai
         this.java.merge(java);
     }
 
+    @Override
     public boolean isApplyDefaultMatrixSet() {
         return null != applyDefaultMatrix;
     }
 
+    @Override
     public boolean isApplyDefaultMatrix() {
         return null != applyDefaultMatrix && applyDefaultMatrix;
     }
 
+    @Override
     public void setApplyDefaultMatrix(Boolean applyDefaultMatrix) {
         this.applyDefaultMatrix = applyDefaultMatrix;
     }
 
+    @Override
     public Matrix getMatrix() {
         return matrix;
     }
 
+    @Override
     public void setMatrix(Matrix matrix) {
         this.matrix.merge(matrix);
     }

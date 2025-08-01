@@ -22,6 +22,7 @@ import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.common.AbstractActivatable;
 import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.common.Matrix;
+import org.jreleaser.model.internal.common.MatrixAware;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,8 +37,8 @@ import static java.util.stream.Collectors.toList;
  * @author Andres Almiray
  * @since 1.6.0
  */
-public final class NamedScriptHooks extends AbstractActivatable<NamedScriptHooks> implements Domain {
-    private static final long serialVersionUID = -6502126145832381920L;
+public final class NamedScriptHooks extends AbstractActivatable<NamedScriptHooks> implements Domain, ScriptHookProvider, MatrixAware {
+    private static final long serialVersionUID = -7117692922004936206L;
 
     private final List<ScriptHook> before = new ArrayList<>();
     private final List<ScriptHook> success = new ArrayList<>();
@@ -226,22 +227,27 @@ public final class NamedScriptHooks extends AbstractActivatable<NamedScriptHooks
         this.environment.putAll(environment);
     }
 
+    @Override
     public boolean isApplyDefaultMatrixSet() {
         return null != applyDefaultMatrix;
     }
 
+    @Override
     public boolean isApplyDefaultMatrix() {
         return null != applyDefaultMatrix && applyDefaultMatrix;
     }
 
+    @Override
     public void setApplyDefaultMatrix(Boolean applyDefaultMatrix) {
         this.applyDefaultMatrix = applyDefaultMatrix;
     }
 
+    @Override
     public Matrix getMatrix() {
         return matrix;
     }
 
+    @Override
     public void setMatrix(Matrix matrix) {
         this.matrix.merge(matrix);
     }

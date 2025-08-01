@@ -32,6 +32,7 @@ import org.jreleaser.model.internal.common.EnabledAware;
 import org.jreleaser.model.internal.common.FileSet;
 import org.jreleaser.model.internal.common.Glob;
 import org.jreleaser.model.internal.common.Matrix;
+import org.jreleaser.model.internal.common.MatrixAware;
 import org.jreleaser.mustache.TemplateContext;
 
 import java.util.ArrayList;
@@ -55,8 +56,8 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @author Andres Almiray
  * @since 0.2.0
  */
-public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, org.jreleaser.model.api.assemble.JlinkAssembler> implements SwidTagAware {
-    private static final long serialVersionUID = 723923403162010924L;
+public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, org.jreleaser.model.api.assemble.JlinkAssembler> implements SwidTagAware, MatrixAware {
+    private static final long serialVersionUID = -2723965471823676369L;
 
     private final Set<Artifact> targetJdks = new LinkedHashSet<>();
     private final Set<String> moduleNames = new LinkedHashSet<>();
@@ -411,22 +412,27 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
         }
     }
 
+    @Override
     public boolean isApplyDefaultMatrixSet() {
         return null != applyDefaultMatrix;
     }
 
+    @Override
     public boolean isApplyDefaultMatrix() {
         return null != applyDefaultMatrix && applyDefaultMatrix;
     }
 
+    @Override
     public void setApplyDefaultMatrix(Boolean applyDefaultMatrix) {
         this.applyDefaultMatrix = applyDefaultMatrix;
     }
 
+    @Override
     public Matrix getMatrix() {
         return matrix;
     }
 
+    @Override
     public void setMatrix(Matrix matrix) {
         this.matrix.merge(matrix);
     }

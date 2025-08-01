@@ -22,6 +22,7 @@ import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.common.AbstractActivatable;
 import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.common.Matrix;
+import org.jreleaser.model.internal.common.MatrixAware;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,8 +37,8 @@ import static java.util.stream.Collectors.toList;
  * @author Andres Almiray
  * @since 1.2.0
  */
-public final class NamedCommandHooks extends AbstractActivatable<NamedCommandHooks> implements Domain {
-    private static final long serialVersionUID = -5644580395019320416L;
+public final class NamedCommandHooks extends AbstractActivatable<NamedCommandHooks> implements Domain, CommandHookProvider, MatrixAware {
+    private static final long serialVersionUID = -2922193324820421707L;
 
     private final List<CommandHook> before = new ArrayList<>();
     private final List<CommandHook> success = new ArrayList<>();
@@ -226,22 +227,27 @@ public final class NamedCommandHooks extends AbstractActivatable<NamedCommandHoo
         this.environment.putAll(environment);
     }
 
+    @Override
     public boolean isApplyDefaultMatrixSet() {
         return null != applyDefaultMatrix;
     }
 
+    @Override
     public boolean isApplyDefaultMatrix() {
         return null != applyDefaultMatrix && applyDefaultMatrix;
     }
 
+    @Override
     public void setApplyDefaultMatrix(Boolean applyDefaultMatrix) {
         this.applyDefaultMatrix = applyDefaultMatrix;
     }
 
+    @Override
     public Matrix getMatrix() {
         return matrix;
     }
 
+    @Override
     public void setMatrix(Matrix matrix) {
         this.matrix.merge(matrix);
     }

@@ -23,10 +23,14 @@ import org.jreleaser.model.api.hooks.ExecutionEvent;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Matrix;
 import org.jreleaser.model.internal.hooks.CommandHook;
+import org.jreleaser.model.internal.hooks.CommandHookProvider;
 import org.jreleaser.model.internal.hooks.CommandHooks;
 import org.jreleaser.model.internal.hooks.Hook;
 import org.jreleaser.model.internal.hooks.Hooks;
+import org.jreleaser.model.internal.hooks.NamedCommandHooks;
+import org.jreleaser.model.internal.hooks.NamedScriptHooks;
 import org.jreleaser.model.internal.hooks.ScriptHook;
+import org.jreleaser.model.internal.hooks.ScriptHookProvider;
 import org.jreleaser.model.internal.hooks.ScriptHooks;
 import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.command.Command;
@@ -106,44 +110,23 @@ public final class HookExecutor {
         return env;
     }
 
+    private Map<String, String> mergeEnvironment(Map<String, String> src, Map<String, String>... others) {
+        Map<String, String> tmp = new LinkedHashMap<>(src);
+        if (null != others && others.length > 0) {
+            for (Map<String, String> env : others) {
+                tmp.putAll(env);
+            }
+        }
+        return tmp;
+    }
+
     private void executeScriptHooks(ExecutionEvent event, Map<String, String> rootEnv) {
         ScriptHooks scriptHooks = context.getModel().getHooks().getScript();
         if (!scriptHooks.isEnabled() || evaluateCondition(scriptHooks.getCondition())) {
             return;
         }
 
-        final List<ScriptHook> hooks = new ArrayList<>();
-
-        switch (event.getType()) {
-            case BEFORE:
-                hooks.addAll((Collection<ScriptHook>) filter(scriptHooks.getBefore(), event));
-                scriptHooks.getGroups().values().forEach(group -> {
-                    if (!group.isEnabled() || evaluateCondition(group.getCondition())) {
-                        return;
-                    }
-                    hooks.addAll((Collection<ScriptHook>) filter(group.getBefore(), event));
-                });
-                break;
-            case SUCCESS:
-                hooks.addAll((Collection<ScriptHook>) filter(scriptHooks.getSuccess(), event));
-                scriptHooks.getGroups().values().forEach(group -> {
-                    if (!group.isEnabled() || evaluateCondition(group.getCondition())) {
-                        return;
-                    }
-                    hooks.addAll((Collection<ScriptHook>) filter(group.getSuccess(), event));
-                });
-                break;
-            case FAILURE:
-                hooks.addAll((Collection<ScriptHook>) filter(scriptHooks.getFailure(), event));
-                scriptHooks.getGroups().values().forEach(group -> {
-                    if (!group.isEnabled() || evaluateCondition(group.getCondition())) {
-                        return;
-                    }
-                    hooks.addAll((Collection<ScriptHook>) filter(group.getFailure(), event));
-                });
-                break;
-        }
-
+        final List<ScriptHook> hooks = collectScriptHooks(event, scriptHooks);
         if (!hooks.isEmpty()) {
             context.getLogger().info(RB.$("hooks.script.execution"), event.getType().name().toLowerCase(Locale.ENGLISH), hooks.size());
         }
@@ -168,41 +151,99 @@ public final class HookExecutor {
                             }
                         }
 
-                        TemplateContext additionalContext = Matrix.asTemplateContext(matrixRow);
-                        Map<String, String> localEnv = new LinkedHashMap<>(rootEnv);
-                        localEnv.putAll(scriptHooks.getEnvironment());
-                        localEnv = resolveEnvironment(localEnv, additionalContext);
-                        Path scriptFile = null;
-
-                        try {
-                            scriptFile = createScriptFile(context, hook, additionalContext, event);
-                        } catch (IOException e) {
-                            throw new JReleaserException(RB.$("ERROR_script_hook_create_error"), e);
-                        }
-
-                        String resolvedCmd = hook.getShell().expression().replace("{{script}}", scriptFile.toAbsolutePath().toString());
-                        executeCommandLine(localEnv, additionalContext, hook, resolvedCmd, resolvedCmd, "ERROR_script_hook_unexpected_error");
+                        executeScriptHook(event, hook, mergeEnvironment(rootEnv, scriptHooks.getEnvironment()), matrixRow);
                     }
                 } else {
-                    Map<String, String> localEnv = new LinkedHashMap<>(rootEnv);
-                    localEnv.putAll(scriptHooks.getEnvironment());
-                    localEnv = resolveEnvironment(localEnv);
-                    Path scriptFile = null;
-
-                    try {
-                        scriptFile = createScriptFile(context, hook, null, event);
-                    } catch (IOException e) {
-                        throw new JReleaserException(RB.$("ERROR_script_hook_create_error"), e);
-                    }
-
-                    String resolvedCmd = hook.getShell().expression().replace("{{script}}", scriptFile.toAbsolutePath().toString());
-                    executeCommandLine(localEnv, null, hook, resolvedCmd, resolvedCmd, "ERROR_script_hook_unexpected_error");
+                    executeScriptHook(event, hook, mergeEnvironment(rootEnv, scriptHooks.getEnvironment()), null);
                 }
             }
         } finally {
             context.getLogger().decreaseIndent();
             context.getLogger().restorePrefix();
         }
+
+        executeNamedScriptHooks(event, rootEnv, scriptHooks);
+    }
+
+    private void executeNamedScriptHooks(ExecutionEvent event, Map<String, String> rootEnv, ScriptHooks scriptHooks) {
+        if (!scriptHooks.isEnabled() || evaluateCondition(scriptHooks.getCondition())) {
+            return;
+        }
+
+        for (NamedScriptHooks group : scriptHooks.getGroups().values()) {
+            if (!group.isEnabled() || evaluateCondition(group.getCondition())) {
+                continue;
+            }
+
+            final List<ScriptHook> hooks = collectScriptHooks(event, group);
+            if (!hooks.isEmpty()) {
+                context.getLogger().info(RB.$("hooks.script.execution"), event.getType().name().toLowerCase(Locale.ENGLISH), hooks.size());
+            }
+
+            context.getLogger().setPrefix("hooks");
+            context.getLogger().increaseIndent();
+
+            try {
+                for (ScriptHook hook : hooks) {
+                    String prefix = "hooks";
+                    if (isNotBlank(hook.getName())) {
+                        prefix += "." + hook.getName();
+                    }
+                    context.getLogger().replacePrefix(prefix);
+
+                    if (!hook.getMatrix().isEmpty()) {
+                        for (Map<String, String> matrixRow : hook.getMatrix().resolve()) {
+                            if (matrixRow.containsKey(KEY_PLATFORM)) {
+                                String srcPlatform = matrixRow.get(KEY_PLATFORM);
+                                if (!context.isPlatformSelected(srcPlatform)) {
+                                    continue;
+                                }
+                            }
+
+                            executeScriptHook(event, hook, mergeEnvironment(rootEnv, scriptHooks.getEnvironment(), group.getEnvironment()), matrixRow);
+                        }
+                    } else {
+                        executeScriptHook(event, hook, mergeEnvironment(rootEnv, scriptHooks.getEnvironment(), group.getEnvironment()), null);
+                    }
+                }
+            } finally {
+                context.getLogger().decreaseIndent();
+                context.getLogger().restorePrefix();
+            }
+        }
+    }
+
+    private List<ScriptHook> collectScriptHooks(ExecutionEvent event, ScriptHookProvider scriptHookProvider) {
+        final List<ScriptHook> hooks = new ArrayList<>();
+
+        switch (event.getType()) {
+            case BEFORE:
+                hooks.addAll((Collection<ScriptHook>) filter(scriptHookProvider.getBefore(), event));
+                break;
+            case SUCCESS:
+                hooks.addAll((Collection<ScriptHook>) filter(scriptHookProvider.getSuccess(), event));
+                break;
+            case FAILURE:
+                hooks.addAll((Collection<ScriptHook>) filter(scriptHookProvider.getFailure(), event));
+                break;
+        }
+        return hooks;
+    }
+
+    private void executeScriptHook(ExecutionEvent event, ScriptHook hook, Map<String, String> env, Map<String, String> matrixRow) {
+        TemplateContext additionalContext = Matrix.asTemplateContext(matrixRow);
+        Map<String, String> localEnv = new LinkedHashMap<>(env);
+        localEnv = resolveEnvironment(localEnv, additionalContext);
+        Path scriptFile = null;
+
+        try {
+            scriptFile = createScriptFile(context, hook, additionalContext, event);
+        } catch (IOException e) {
+            throw new JReleaserException(RB.$("ERROR_script_hook_create_error"), e);
+        }
+
+        String resolvedCmd = hook.getShell().expression().replace("{{script}}", scriptFile.toAbsolutePath().toString());
+        executeCommandLine(localEnv, additionalContext, hook, resolvedCmd, resolvedCmd, "ERROR_script_hook_unexpected_error");
     }
 
     private Path createScriptFile(JReleaserContext context, ScriptHook hook, TemplateContext additionalContext, ExecutionEvent event) throws IOException {
@@ -225,38 +266,7 @@ public final class HookExecutor {
             return;
         }
 
-        final List<CommandHook> hooks = new ArrayList<>();
-
-        switch (event.getType()) {
-            case BEFORE:
-                hooks.addAll((Collection<CommandHook>) filter(commandHooks.getBefore(), event));
-                commandHooks.getGroups().values().forEach(group -> {
-                    if (!group.isEnabled() || evaluateCondition(group.getCondition())) {
-                        return;
-                    }
-                    hooks.addAll((Collection<CommandHook>) filter(group.getBefore(), event));
-                });
-                break;
-            case SUCCESS:
-                hooks.addAll((Collection<CommandHook>) filter(commandHooks.getSuccess(), event));
-                commandHooks.getGroups().values().forEach(group -> {
-                    if (!group.isEnabled() || evaluateCondition(group.getCondition())) {
-                        return;
-                    }
-                    hooks.addAll((Collection<CommandHook>) filter(group.getSuccess(), event));
-                });
-                break;
-            case FAILURE:
-                hooks.addAll((Collection<CommandHook>) filter(commandHooks.getFailure(), event));
-                commandHooks.getGroups().values().forEach(group -> {
-                    if (!group.isEnabled() || evaluateCondition(group.getCondition())) {
-                        return;
-                    }
-                    hooks.addAll((Collection<CommandHook>) filter(group.getFailure(), event));
-                });
-                break;
-        }
-
+        final List<CommandHook> hooks = collectCommandHooks(event, commandHooks);
         if (!hooks.isEmpty()) {
             context.getLogger().info(RB.$("hooks.command.execution"), event.getType().name().toLowerCase(Locale.ENGLISH), hooks.size());
         }
@@ -281,25 +291,91 @@ public final class HookExecutor {
                             }
                         }
 
-                        TemplateContext additionalContext = Matrix.asTemplateContext(matrixRow);
-                        Map<String, String> localEnv = new LinkedHashMap<>(rootEnv);
-                        localEnv.putAll(commandHooks.getEnvironment());
-                        localEnv = resolveEnvironment(localEnv, additionalContext);
-                        String resolvedCmd = hook.getResolvedCmd(context, additionalContext, event);
-                        executeCommandLine(localEnv, additionalContext, hook, hook.getCmd(), resolvedCmd, "ERROR_command_hook_unexpected_error");
+                        executeCommandHook(event, hook, mergeEnvironment(rootEnv, commandHooks.getEnvironment()), matrixRow);
                     }
                 } else {
-                    Map<String, String> localEnv = new LinkedHashMap<>(rootEnv);
-                    localEnv.putAll(commandHooks.getEnvironment());
-                    localEnv = resolveEnvironment(localEnv);
-                    String resolvedCmd = hook.getResolvedCmd(context, null, event);
-                    executeCommandLine(localEnv, null, hook, hook.getCmd(), resolvedCmd, "ERROR_command_hook_unexpected_error");
+                    executeCommandHook(event, hook, mergeEnvironment(rootEnv, commandHooks.getEnvironment()), null);
                 }
             }
         } finally {
             context.getLogger().decreaseIndent();
             context.getLogger().restorePrefix();
         }
+
+        executeNamedCommandHooks(event, rootEnv, commandHooks);
+    }
+
+    private void executeNamedCommandHooks(ExecutionEvent event, Map<String, String> rootEnv, CommandHooks commandHooks) {
+        if (!commandHooks.isEnabled() || evaluateCondition(commandHooks.getCondition())) {
+            return;
+        }
+
+        for (NamedCommandHooks group : commandHooks.getGroups().values()) {
+            if (!group.isEnabled() || evaluateCondition(group.getCondition())) {
+                continue;
+            }
+
+            final List<CommandHook> hooks = collectCommandHooks(event, group);
+            if (!hooks.isEmpty()) {
+                context.getLogger().info(RB.$("hooks.command.execution"), event.getType().name().toLowerCase(Locale.ENGLISH), hooks.size());
+            }
+
+            context.getLogger().setPrefix("hooks");
+            context.getLogger().increaseIndent();
+
+            try {
+                for (CommandHook hook : hooks) {
+                    String prefix = "hooks";
+                    if (isNotBlank(hook.getName())) {
+                        prefix += "." + hook.getName();
+                    }
+                    context.getLogger().replacePrefix(prefix);
+
+                    if (!hook.getMatrix().isEmpty()) {
+                        for (Map<String, String> matrixRow : hook.getMatrix().resolve()) {
+                            if (matrixRow.containsKey(KEY_PLATFORM)) {
+                                String srcPlatform = matrixRow.get(KEY_PLATFORM);
+                                if (!context.isPlatformSelected(srcPlatform)) {
+                                    continue;
+                                }
+                            }
+
+                            executeCommandHook(event, hook, mergeEnvironment(rootEnv, commandHooks.getEnvironment(), group.getEnvironment()), matrixRow);
+                        }
+                    } else {
+                        executeCommandHook(event, hook, mergeEnvironment(rootEnv, commandHooks.getEnvironment(), group.getEnvironment()), null);
+                    }
+                }
+            } finally {
+                context.getLogger().decreaseIndent();
+                context.getLogger().restorePrefix();
+            }
+        }
+    }
+
+    private List<CommandHook> collectCommandHooks(ExecutionEvent event, CommandHookProvider commandHookProvider) {
+        final List<CommandHook> hooks = new ArrayList<>();
+
+        switch (event.getType()) {
+            case BEFORE:
+                hooks.addAll((Collection<CommandHook>) filter(commandHookProvider.getBefore(), event));
+                break;
+            case SUCCESS:
+                hooks.addAll((Collection<CommandHook>) filter(commandHookProvider.getSuccess(), event));
+                break;
+            case FAILURE:
+                hooks.addAll((Collection<CommandHook>) filter(commandHookProvider.getFailure(), event));
+                break;
+        }
+        return hooks;
+    }
+
+    private void executeCommandHook(ExecutionEvent event, CommandHook hook, Map<String, String> env, Map<String, String> matrixRow) {
+        TemplateContext additionalContext = Matrix.asTemplateContext(matrixRow);
+        Map<String, String> localEnv = new LinkedHashMap<>(env);
+        localEnv = resolveEnvironment(localEnv, additionalContext);
+        String resolvedCmd = hook.getResolvedCmd(context, additionalContext, event);
+        executeCommandLine(localEnv, additionalContext, hook, hook.getCmd(), resolvedCmd, "ERROR_command_hook_unexpected_error");
     }
 
     private void executeCommandLine(Map<String, String> localEnv, TemplateContext additionalContext, Hook hook, String cmd, String resolvedCmd, String errorKey) {

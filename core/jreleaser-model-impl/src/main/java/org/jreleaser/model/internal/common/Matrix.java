@@ -170,7 +170,9 @@ public final class Matrix extends AbstractModelObject<Matrix> implements Domain 
 
     public static TemplateContext asTemplateContext(Map<String, String> matrix) {
         TemplateContext props = new TemplateContext();
-        props.setAll(mapOf("matrix", matrix));
+        if (null != matrix) {
+            props.setAll(mapOf("matrix", matrix));
+        }
         return props;
     }
 

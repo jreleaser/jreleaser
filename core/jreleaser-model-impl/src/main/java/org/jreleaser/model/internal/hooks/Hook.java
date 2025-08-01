@@ -21,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.common.Activatable;
 import org.jreleaser.model.internal.common.Domain;
-import org.jreleaser.model.internal.common.Matrix;
+import org.jreleaser.model.internal.common.MatrixAware;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -36,7 +36,7 @@ import static java.util.stream.Collectors.toSet;
  * @author Andres Almiray
  * @since 1.2.0
  */
-public interface Hook extends Domain, Activatable {
+public interface Hook extends Domain, Activatable, MatrixAware {
     Filter getFilter();
 
     void setFilter(Filter filter);
@@ -70,16 +70,6 @@ public interface Hook extends Domain, Activatable {
     void setEnvironment(Map<String, String> environment);
 
     void addEnvironment(Map<String, String> environment);
-
-    boolean isApplyDefaultMatrixSet();
-
-    boolean isApplyDefaultMatrix();
-
-    void setApplyDefaultMatrix(Boolean applyDefaultMatrix);
-
-    Matrix getMatrix();
-
-    void setMatrix(Matrix matrix);
 
     class Filter extends AbstractModelObject<Filter> implements Domain {
         private static final long serialVersionUID = 8811064830998012126L;

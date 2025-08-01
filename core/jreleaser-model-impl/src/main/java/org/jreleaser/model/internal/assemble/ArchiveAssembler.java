@@ -29,6 +29,7 @@ import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.FileSet;
 import org.jreleaser.model.internal.common.Glob;
 import org.jreleaser.model.internal.common.Matrix;
+import org.jreleaser.model.internal.common.MatrixAware;
 import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.util.PlatformUtils;
 
@@ -49,8 +50,8 @@ import static org.jreleaser.util.CollectionUtils.mapOf;
  * @author Andres Almiray
  * @since 0.8.0
  */
-public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, org.jreleaser.model.api.assemble.ArchiveAssembler> implements SwidTagAware {
-    private static final long serialVersionUID = 7763149116887864287L;
+public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, org.jreleaser.model.api.assemble.ArchiveAssembler> implements SwidTagAware, MatrixAware {
+    private static final long serialVersionUID = -2986681943336636474L;
 
     private final Set<Archive.Format> formats = new LinkedHashSet<>();
     private final ArchiveOptions options = new ArchiveOptions();
@@ -266,14 +267,17 @@ public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, 
         this.archiveName = archiveName;
     }
 
+    @Override
     public boolean isApplyDefaultMatrixSet() {
         return null != applyDefaultMatrix;
     }
 
+    @Override
     public boolean isApplyDefaultMatrix() {
         return null != applyDefaultMatrix && applyDefaultMatrix;
     }
 
+    @Override
     public void setApplyDefaultMatrix(Boolean applyDefaultMatrix) {
         this.applyDefaultMatrix = applyDefaultMatrix;
     }
@@ -315,10 +319,12 @@ public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, 
         this.options.merge(options);
     }
 
+    @Override
     public Matrix getMatrix() {
         return matrix;
     }
 
+    @Override
     public void setMatrix(Matrix matrix) {
         this.matrix.merge(matrix);
     }

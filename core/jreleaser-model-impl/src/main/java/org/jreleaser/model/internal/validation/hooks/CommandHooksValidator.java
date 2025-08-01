@@ -19,6 +19,7 @@ package org.jreleaser.model.internal.validation.hooks;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.internal.JReleaserContext;
+import org.jreleaser.model.internal.common.MatrixAware;
 import org.jreleaser.model.internal.hooks.CommandHook;
 import org.jreleaser.model.internal.hooks.CommandHooks;
 import org.jreleaser.model.internal.hooks.NamedCommandHooks;
@@ -57,18 +58,18 @@ public final class CommandHooksValidator {
         validateMatrix(context, hooks.getMatrix(), "hooks.command.matrix", errors);
 
         for (int i = 0; i < hooks.getBefore().size(); i++) {
-            validateCommandHook(context, hooks.getBefore().get(i), "before", i, errors);
+            validateCommandHook(context, hooks, hooks.getBefore().get(i), "before", i, errors);
         }
         for (int i = 0; i < hooks.getSuccess().size(); i++) {
-            validateCommandHook(context, hooks.getSuccess().get(i), "success", i, errors);
+            validateCommandHook(context, hooks, hooks.getSuccess().get(i), "success", i, errors);
         }
         for (int i = 0; i < hooks.getFailure().size(); i++) {
-            validateCommandHook(context, hooks.getFailure().get(i), "failure", i, errors);
+            validateCommandHook(context, hooks, hooks.getFailure().get(i), "failure", i, errors);
         }
 
         for (Map.Entry<String, NamedCommandHooks> e : hooks.getGroups().entrySet()) {
             e.getValue().setName(e.getKey());
-            validateNamedCommandHooks(context, e.getValue(), errors);
+            validateNamedCommandHooks(context, hooks, e.getValue(), errors);
         }
 
         if (hooks.isEnabled()) {
@@ -84,7 +85,7 @@ public final class CommandHooksValidator {
         }
     }
 
-    private static void validateNamedCommandHooks(JReleaserContext context, NamedCommandHooks hooks, Errors errors) {
+    private static void validateNamedCommandHooks(JReleaserContext context, CommandHooks parentHooks, NamedCommandHooks hooks, Errors errors) {
         context.getLogger().debug("hooks.command." + hooks.getName());
 
         boolean activeSet = hooks.isActiveSet();
@@ -92,7 +93,7 @@ public final class CommandHooksValidator {
         hooks.resolveEnabled(context.getModel().getProject());
 
         if (hooks.getMatrix().isEmpty()) {
-            hooks.setMatrix(context.getModel().getHooks().getMatrix());
+            hooks.setMatrix(parentHooks.getMatrix());
         }
         if (hooks.isApplyDefaultMatrix()) {
             hooks.setMatrix(context.getModel().getMatrix());
@@ -102,15 +103,15 @@ public final class CommandHooksValidator {
 
         for (int i = 0; i < hooks.getBefore().size(); i++) {
             hooks.getBefore().get(i).setName(hooks.getName());
-            validateCommandHook(context, hooks.getBefore().get(i), hooks.getName() + ".before", i, errors);
+            validateCommandHook(context, hooks, hooks.getBefore().get(i), hooks.getName() + ".before", i, errors);
         }
         for (int i = 0; i < hooks.getSuccess().size(); i++) {
             hooks.getSuccess().get(i).setName(hooks.getName());
-            validateCommandHook(context, hooks.getSuccess().get(i), hooks.getName() + ".success", i, errors);
+            validateCommandHook(context, hooks, hooks.getSuccess().get(i), hooks.getName() + ".success", i, errors);
         }
         for (int i = 0; i < hooks.getFailure().size(); i++) {
             hooks.getFailure().get(i).setName(hooks.getName());
-            validateCommandHook(context, hooks.getFailure().get(i), hooks.getName() + ".failure", i, errors);
+            validateCommandHook(context, hooks, hooks.getFailure().get(i), hooks.getName() + ".failure", i, errors);
         }
 
         if (hooks.isEnabled()) {
@@ -125,7 +126,7 @@ public final class CommandHooksValidator {
         }
     }
 
-    private static void validateCommandHook(JReleaserContext context, CommandHook hook, String type, int index, Errors errors) {
+    private static void validateCommandHook(JReleaserContext context, MatrixAware matrixProvider, CommandHook hook, String type, int index, Errors errors) {
         context.getLogger().debug("hooks.command.{}[{}]", type, index);
 
         resolveActivatable(context, hook, "hooks.command." + type + "." + index, "ALWAYS");
@@ -135,7 +136,7 @@ public final class CommandHooksValidator {
         }
 
         if (hook.getMatrix().isEmpty()) {
-            hook.setMatrix(context.getModel().getHooks().getCommand().getMatrix());
+            hook.setMatrix(matrixProvider.getMatrix());
         }
         if (hook.isApplyDefaultMatrix()) {
             hook.setMatrix(context.getModel().getMatrix());
