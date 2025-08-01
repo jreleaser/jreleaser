@@ -15,31 +15,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.internal.tools;
+package org.jreleaser.model.internal.hooks;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.jreleaser.model.Active;
 import org.jreleaser.model.internal.JReleaserContext;
-import org.jreleaser.model.internal.common.AbstractModelObject;
-import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.mustache.TemplateContext;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
+import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toList;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
-import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
  * @since 1.20.0
  */
-public final class Jbang extends AbstractModelObject<Jbang> implements Domain {
-    private static final long serialVersionUID = -5302165340574693085L;
+public final class JbangHook extends AbstractHook<JbangHook> {
+    private static final long serialVersionUID = 1424105110415449550L;
 
     private final List<String> args = new ArrayList<>();
     private final List<String> jbangArgs = new ArrayList<>();
@@ -48,8 +47,8 @@ public final class Jbang extends AbstractModelObject<Jbang> implements Domain {
     private String script;
 
     @JsonIgnore
-    private final org.jreleaser.model.api.tools.Jbang immutable = new org.jreleaser.model.api.tools.Jbang() {
-        private static final long serialVersionUID = -684610546142494357L;
+    private final org.jreleaser.model.api.hooks.JbangHook immutable = new org.jreleaser.model.api.hooks.JbangHook() {
+        private static final long serialVersionUID = 3117507984015002700L;
 
         @Override
         public String getVersion() {
@@ -77,26 +76,73 @@ public final class Jbang extends AbstractModelObject<Jbang> implements Domain {
         }
 
         @Override
+        public Map<String, String> getEnvironment() {
+            return unmodifiableMap(JbangHook.this.getEnvironment());
+        }
+
+        @Override
+        public boolean isApplyDefaultMatrix() {
+            return JbangHook.this.isApplyDefaultMatrix();
+        }
+
+        @Override
+        public org.jreleaser.model.api.common.Matrix getMatrix() {
+            return matrix.asImmutable();
+        }
+
+        @Override
+        public Set<String> getPlatforms() {
+            return unmodifiableSet(JbangHook.this.getPlatforms());
+        }
+
+        @Override
+        public Filter getFilter() {
+            return JbangHook.this.getFilter().asImmutable();
+        }
+
+        @Override
+        public boolean isContinueOnError() {
+            return JbangHook.this.isContinueOnError();
+        }
+
+        @Override
+        public boolean isVerbose() {
+            return JbangHook.this.isVerbose();
+        }
+
+        @Override
+        public String getCondition() {
+            return JbangHook.this.getCondition();
+        }
+
+        @Override
+        public Active getActive() {
+            return JbangHook.this.getActive();
+        }
+
+        @Override
+        public boolean isEnabled() {
+            return JbangHook.this.isEnabled();
+        }
+
+        @Override
         public Map<String, Object> asMap(boolean full) {
-            return unmodifiableMap(Jbang.this.asMap(full));
+            return unmodifiableMap(JbangHook.this.asMap(full));
         }
     };
 
-    public org.jreleaser.model.api.tools.Jbang asImmutable() {
+    public org.jreleaser.model.api.hooks.JbangHook asImmutable() {
         return immutable;
     }
 
     @Override
-    public void merge(Jbang source) {
+    public void merge(JbangHook source) {
+        super.merge(source);
         this.version = merge(this.version, source.version);
         this.script = merge(this.script, source.script);
         setArgs(merge(this.args, source.args));
         setJbangArgs(merge(this.jbangArgs, source.jbangArgs));
         setTrusts(merge(this.trusts, source.trusts));
-    }
-
-    public boolean isSet() {
-        return isNotBlank(script);
     }
 
     public String getResolvedScript(JReleaserContext context) {
@@ -173,13 +219,11 @@ public final class Jbang extends AbstractModelObject<Jbang> implements Domain {
     }
 
     @Override
-    public Map<String, Object> asMap(boolean full) {
-        Map<String, Object> props = new LinkedHashMap<>();
-        props.put("version", version);
-        props.put("script", script);
-        props.put("args", args);
-        props.put("jbangArgs", jbangArgs);
-        props.put("trusts", trusts);
-        return props;
+    public void asMap(boolean full, Map<String, Object> map) {
+        map.put("version", version);
+        map.put("script", script);
+        map.put("args", args);
+        map.put("jbangArgs", jbangArgs);
+        map.put("trusts", trusts);
     }
 }

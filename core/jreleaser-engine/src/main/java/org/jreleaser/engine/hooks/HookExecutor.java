@@ -27,7 +27,11 @@ import org.jreleaser.model.internal.hooks.CommandHookProvider;
 import org.jreleaser.model.internal.hooks.CommandHooks;
 import org.jreleaser.model.internal.hooks.Hook;
 import org.jreleaser.model.internal.hooks.Hooks;
+import org.jreleaser.model.internal.hooks.JbangHook;
+import org.jreleaser.model.internal.hooks.JbangHookProvider;
+import org.jreleaser.model.internal.hooks.JbangHooks;
 import org.jreleaser.model.internal.hooks.NamedCommandHooks;
+import org.jreleaser.model.internal.hooks.NamedJbangHooks;
 import org.jreleaser.model.internal.hooks.NamedScriptHooks;
 import org.jreleaser.model.internal.hooks.ScriptHook;
 import org.jreleaser.model.internal.hooks.ScriptHookProvider;
@@ -36,6 +40,9 @@ import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.command.Command;
 import org.jreleaser.sdk.command.CommandException;
 import org.jreleaser.sdk.command.CommandExecutor;
+import org.jreleaser.sdk.tool.JBang;
+import org.jreleaser.sdk.tool.ToolException;
+import org.jreleaser.util.DefaultVersions;
 import org.jreleaser.util.PlatformUtils;
 
 import java.io.IOException;
@@ -90,6 +97,7 @@ public final class HookExecutor {
         Map<String, String> rootEnv = resolveEnvironment(hooks.getEnvironment());
         executeScriptHooks(event, rootEnv);
         executeCommandHooks(event, rootEnv);
+        executeJbangHooks(event, rootEnv);
     }
 
     private boolean evaluateCondition(String condition) {
@@ -417,6 +425,148 @@ public final class HookExecutor {
             String key = line.substring(0, p);
             String value = line.substring(p + 1);
             context.getModel().getEnvironment().getProperties().put(key, value);
+        }
+    }
+
+    private void executeJbangHooks(ExecutionEvent event, Map<String, String> rootEnv) {
+        JbangHooks jbangHooks = context.getModel().getHooks().getJbang();
+        if (!jbangHooks.isEnabled() || evaluateCondition(jbangHooks.getCondition())) {
+            return;
+        }
+
+        final List<JbangHook> hooks = collectJbangHooks(event, jbangHooks);
+        if (!hooks.isEmpty()) {
+            context.getLogger().info(RB.$("hooks.jbang.execution"), event.getType().name().toLowerCase(Locale.ENGLISH), hooks.size());
+        }
+
+        context.getLogger().setPrefix("hooks");
+        context.getLogger().increaseIndent();
+
+        try {
+            for (JbangHook hook : hooks) {
+                String prefix = "hooks";
+                if (isNotBlank(hook.getName())) {
+                    prefix += "." + hook.getName();
+                }
+                context.getLogger().replacePrefix(prefix);
+
+                if (!hook.getMatrix().isEmpty()) {
+                    for (Map<String, String> matrixRow : hook.getMatrix().resolve()) {
+                        if (matrixRow.containsKey(KEY_PLATFORM)) {
+                            String srcPlatform = matrixRow.get(KEY_PLATFORM);
+                            if (!context.isPlatformSelected(srcPlatform)) {
+                                continue;
+                            }
+                        }
+
+                        executeJbangHook(event, hook, mergeEnvironment(rootEnv, jbangHooks.getEnvironment()), matrixRow);
+                    }
+                } else {
+                    executeJbangHook(event, hook, mergeEnvironment(rootEnv, jbangHooks.getEnvironment()), null);
+                }
+            }
+        } finally {
+            context.getLogger().decreaseIndent();
+            context.getLogger().restorePrefix();
+        }
+
+        executeNamedJbangHooks(event, rootEnv, jbangHooks);
+    }
+
+    private void executeNamedJbangHooks(ExecutionEvent event, Map<String, String> rootEnv, JbangHooks jbangHooks) {
+        if (!jbangHooks.isEnabled() || evaluateCondition(jbangHooks.getCondition())) {
+            return;
+        }
+
+        for (NamedJbangHooks group : jbangHooks.getGroups().values()) {
+            if (!group.isEnabled() || evaluateCondition(group.getCondition())) {
+                continue;
+            }
+
+            final List<JbangHook> hooks = collectJbangHooks(event, group);
+            if (!hooks.isEmpty()) {
+                context.getLogger().info(RB.$("hooks.jbang.execution"), event.getType().name().toLowerCase(Locale.ENGLISH), hooks.size());
+            }
+
+            context.getLogger().setPrefix("hooks");
+            context.getLogger().increaseIndent();
+
+            try {
+                for (JbangHook hook : hooks) {
+                    String prefix = "hooks";
+                    if (isNotBlank(hook.getName())) {
+                        prefix += "." + hook.getName();
+                    }
+                    context.getLogger().replacePrefix(prefix);
+
+                    if (!hook.getMatrix().isEmpty()) {
+                        for (Map<String, String> matrixRow : hook.getMatrix().resolve()) {
+                            if (matrixRow.containsKey(KEY_PLATFORM)) {
+                                String srcPlatform = matrixRow.get(KEY_PLATFORM);
+                                if (!context.isPlatformSelected(srcPlatform)) {
+                                    continue;
+                                }
+                            }
+
+                            executeJbangHook(event, hook, mergeEnvironment(rootEnv, jbangHooks.getEnvironment(), group.getEnvironment()), matrixRow);
+                        }
+                    } else {
+                        executeJbangHook(event, hook, mergeEnvironment(rootEnv, jbangHooks.getEnvironment(), group.getEnvironment()), null);
+                    }
+                }
+            } finally {
+                context.getLogger().decreaseIndent();
+                context.getLogger().restorePrefix();
+            }
+        }
+    }
+
+    private List<JbangHook> collectJbangHooks(ExecutionEvent event, JbangHookProvider jbangHookProvider) {
+        final List<JbangHook> hooks = new ArrayList<>();
+
+        switch (event.getType()) {
+            case BEFORE:
+                hooks.addAll((Collection<JbangHook>) filter(jbangHookProvider.getBefore(), event));
+                break;
+            case SUCCESS:
+                hooks.addAll((Collection<JbangHook>) filter(jbangHookProvider.getSuccess(), event));
+                break;
+            case FAILURE:
+                hooks.addAll((Collection<JbangHook>) filter(jbangHookProvider.getFailure(), event));
+                break;
+        }
+        return hooks;
+    }
+
+    private void executeJbangHook(ExecutionEvent event, JbangHook hook, Map<String, String> env, Map<String, String> matrixRow) {
+        TemplateContext additionalContext = Matrix.asTemplateContext(matrixRow);
+        Map<String, String> localEnv = new LinkedHashMap<>(env);
+        localEnv = resolveEnvironment(localEnv, additionalContext);
+
+        String jbangVersion = DefaultVersions.getInstance().getJbangVersion();
+        if (isNotBlank(hook.getVersion())) {
+            jbangVersion = hook.getVersion();
+        }
+        JBang jbang = new JBang(context.asImmutable(), jbangVersion);
+
+        try {
+            if (!jbang.setup()) {
+                throw new JReleaserException(RB.$("tool_unavailable", "jbang"));
+            }
+        } catch (ToolException e) {
+            throw new JReleaserException(RB.$("tool_unavailable", "jbang"), e);
+        }
+
+        try {
+            List<String> args = new ArrayList<>();
+            args.add("run");
+            args.addAll(hook.getResolvedJbangArgs(context));
+            args.add(hook.getResolvedScript(context));
+            args.addAll(hook.getResolvedArgs(context));
+
+            jbang.invokeVerbose(context.getBasedir(), args);
+        } catch (CommandException e) {
+            throw new JReleaserException(RB.$("ERROR_jbang_hook_unexpected_error"), e);
         }
     }
 

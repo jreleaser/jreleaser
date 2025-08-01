@@ -27,15 +27,13 @@ import org.jreleaser.gradle.plugin.dsl.common.Matrix
 /**
  *
  * @author Andres Almiray
- * @since 1.2.0
+ * @since 1.20.0
  */
 @CompileStatic
-interface Hooks extends Activatable {
-    CommandHooks getCommand()
+interface NamedJbangHooks extends Activatable {
+    Property<String> getVersion()
 
-    ScriptHooks getScript()
-
-    JbangHooks getJbang()
+    Property<String> getScript()
 
     Property<String> getCondition()
 
@@ -45,19 +43,19 @@ interface Hooks extends Activatable {
 
     void environment(String key, String value)
 
-    void command(Action<? super CommandHooks> action)
+    void before(Action<? super JbangHook> action)
 
-    void script(Action<? super ScriptHooks> action)
+    void success(Action<? super JbangHook> action)
 
-    void jbang(Action<? super JbangHooks> action)
+    void failure(Action<? super JbangHook> action)
 
     void matrix(Action<? super Matrix> action)
 
-    void command(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommandHooks) Closure<Void> action)
+    void before(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JbangHook) Closure<Void> action)
 
-    void script(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ScriptHooks) Closure<Void> action)
+    void success(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JbangHook) Closure<Void> action)
 
-    void jbang(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JbangHooks) Closure<Void> action)
+    void failure(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JbangHook) Closure<Void> action)
 
     void matrix(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Matrix) Closure<Void> action)
 }

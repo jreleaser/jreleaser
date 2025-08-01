@@ -19,6 +19,7 @@ package org.jreleaser.gradle.plugin.dsl.hooks
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.common.Activatable
@@ -27,15 +28,13 @@ import org.jreleaser.gradle.plugin.dsl.common.Matrix
 /**
  *
  * @author Andres Almiray
- * @since 1.2.0
+ * @since 1.20.0
  */
 @CompileStatic
-interface Hooks extends Activatable {
-    CommandHooks getCommand()
+interface JbangHooks extends Activatable {
+    NamedDomainObjectContainer<NamedJbangHooks> getGroups()
 
-    ScriptHooks getScript()
-
-    JbangHooks getJbang()
+    Property<String> getVersion()
 
     Property<String> getCondition()
 
@@ -43,21 +42,25 @@ interface Hooks extends Activatable {
 
     Property<Boolean> getApplyDefaultMatrix()
 
+    void group(Action<? super NamedDomainObjectContainer<NamedJbangHooks>> action)
+
     void environment(String key, String value)
 
-    void command(Action<? super CommandHooks> action)
+    void before(Action<? super JbangHook> action)
 
-    void script(Action<? super ScriptHooks> action)
+    void success(Action<? super JbangHook> action)
 
-    void jbang(Action<? super JbangHooks> action)
+    void failure(Action<? super JbangHook> action)
 
     void matrix(Action<? super Matrix> action)
 
-    void command(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = CommandHooks) Closure<Void> action)
+    void group(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = NamedDomainObjectContainer) Closure<Void> action)
 
-    void script(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = ScriptHooks) Closure<Void> action)
+    void before(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JbangHook) Closure<Void> action)
 
-    void jbang(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JbangHooks) Closure<Void> action)
+    void success(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JbangHook) Closure<Void> action)
+
+    void failure(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JbangHook) Closure<Void> action)
 
     void matrix(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Matrix) Closure<Void> action)
 }

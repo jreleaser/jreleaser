@@ -15,30 +15,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.api.hooks;
+package org.jreleaser.gradle.plugin.dsl.hooks
 
-import org.jreleaser.model.api.common.Activatable;
-import org.jreleaser.model.api.common.Domain;
-import org.jreleaser.model.api.common.Matrix;
-
-import java.util.Map;
+import groovy.transform.CompileStatic
+import org.jreleaser.gradle.plugin.dsl.tools.Jbang
 
 /**
+ *
  * @author Andres Almiray
- * @since 1.2.0
+ * @since 1.20.0
  */
-public interface Hooks extends Domain, Activatable {
-    CommandHooks getCommand();
+@CompileStatic
+interface JbangHook extends Hook, Jbang {
 
-    ScriptHooks getScript();
-
-    JbangHooks getJbang();
-
-    Map<String, String> getEnvironment();
-
-    String getCondition();
-
-    boolean isApplyDefaultMatrix();
-
-    Matrix getMatrix();
 }

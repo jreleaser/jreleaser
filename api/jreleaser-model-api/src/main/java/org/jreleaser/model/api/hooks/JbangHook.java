@@ -17,28 +17,12 @@
  */
 package org.jreleaser.model.api.hooks;
 
-import org.jreleaser.model.api.common.Activatable;
-import org.jreleaser.model.api.common.Domain;
-import org.jreleaser.model.api.common.Matrix;
-
-import java.util.Map;
+import org.jreleaser.model.api.tools.Jbang;
 
 /**
  * @author Andres Almiray
  * @since 1.2.0
  */
-public interface Hooks extends Domain, Activatable {
-    CommandHooks getCommand();
+public interface JbangHook extends Hook, Jbang {
 
-    ScriptHooks getScript();
-
-    JbangHooks getJbang();
-
-    Map<String, String> getEnvironment();
-
-    String getCondition();
-
-    boolean isApplyDefaultMatrix();
-
-    Matrix getMatrix();
 }

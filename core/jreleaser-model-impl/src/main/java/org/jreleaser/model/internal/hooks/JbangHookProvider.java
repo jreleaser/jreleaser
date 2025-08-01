@@ -15,30 +15,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model.api.hooks;
+package org.jreleaser.model.internal.hooks;
 
-import org.jreleaser.model.api.common.Activatable;
-import org.jreleaser.model.api.common.Domain;
-import org.jreleaser.model.api.common.Matrix;
-
-import java.util.Map;
+import java.util.List;
 
 /**
  * @author Andres Almiray
- * @since 1.2.0
+ * @since 1.20.0
  */
-public interface Hooks extends Domain, Activatable {
-    CommandHooks getCommand();
+public interface JbangHookProvider {
+    List<JbangHook> getBefore();
 
-    ScriptHooks getScript();
+    List<JbangHook> getSuccess();
 
-    JbangHooks getJbang();
-
-    Map<String, String> getEnvironment();
-
-    String getCondition();
-
-    boolean isApplyDefaultMatrix();
-
-    Matrix getMatrix();
+    List<JbangHook> getFailure();
 }

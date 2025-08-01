@@ -21,18 +21,21 @@ import org.jreleaser.model.api.common.Activatable;
 import org.jreleaser.model.api.common.Domain;
 import org.jreleaser.model.api.common.Matrix;
 
+import java.util.List;
 import java.util.Map;
 
 /**
  * @author Andres Almiray
- * @since 1.2.0
+ * @since 1.20.0
  */
-public interface Hooks extends Domain, Activatable {
-    CommandHooks getCommand();
+public interface JbangHooks extends Domain, Activatable {
+    Map<String, ? extends NamedJbangHooks> getGroups();
 
-    ScriptHooks getScript();
+    List<? extends JbangHook> getBefore();
 
-    JbangHooks getJbang();
+    List<? extends JbangHook> getSuccess();
+
+    List<? extends JbangHook> getFailure();
 
     Map<String, String> getEnvironment();
 
@@ -41,4 +44,6 @@ public interface Hooks extends Domain, Activatable {
     boolean isApplyDefaultMatrix();
 
     Matrix getMatrix();
+
+    String getVersion();
 }

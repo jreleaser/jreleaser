@@ -34,11 +34,12 @@ import static java.util.Collections.unmodifiableMap;
  * @since 1.2.0
  */
 public final class Hooks extends AbstractActivatable<Hooks> implements Domain, MatrixAware {
-    private static final long serialVersionUID = -2990079008583738341L;
+    private static final long serialVersionUID = -2685043052339525443L;
 
     private final Map<String, String> environment = new LinkedHashMap<>();
     private final CommandHooks command = new CommandHooks();
     private final ScriptHooks script = new ScriptHooks();
+    private final JbangHooks jbang = new JbangHooks();
     private final Matrix matrix = new Matrix();
 
     private String condition;
@@ -46,7 +47,7 @@ public final class Hooks extends AbstractActivatable<Hooks> implements Domain, M
 
     @JsonIgnore
     private final org.jreleaser.model.api.hooks.Hooks immutable = new org.jreleaser.model.api.hooks.Hooks() {
-        private static final long serialVersionUID = -4757423955700050484L;
+        private static final long serialVersionUID = -2830918236394905261L;
 
         @Override
         public org.jreleaser.model.api.hooks.CommandHooks getCommand() {
@@ -56,6 +57,11 @@ public final class Hooks extends AbstractActivatable<Hooks> implements Domain, M
         @Override
         public org.jreleaser.model.api.hooks.ScriptHooks getScript() {
             return script.asImmutable();
+        }
+
+        @Override
+        public org.jreleaser.model.api.hooks.JbangHooks getJbang() {
+            return jbang.asImmutable();
         }
 
         @Override
@@ -108,6 +114,7 @@ public final class Hooks extends AbstractActivatable<Hooks> implements Domain, M
         this.condition = merge(this.condition, source.condition);
         setCommand(source.command);
         setScript(source.script);
+        setJbang(source.jbang);
         setEnvironment(merge(this.environment, source.getEnvironment()));
         setMatrix(source.matrix);
     }
@@ -116,6 +123,7 @@ public final class Hooks extends AbstractActivatable<Hooks> implements Domain, M
     public boolean isSet() {
         return super.isSet() ||
             command.isSet() ||
+            script.isSet() ||
             script.isSet();
     }
 
@@ -133,6 +141,14 @@ public final class Hooks extends AbstractActivatable<Hooks> implements Domain, M
 
     public void setScript(ScriptHooks script) {
         this.script.merge(script);
+    }
+
+    public JbangHooks getJbang() {
+        return jbang;
+    }
+
+    public void setJbang(JbangHooks jbang) {
+        this.jbang.merge(jbang);
     }
 
     public String getCondition() {
@@ -186,6 +202,7 @@ public final class Hooks extends AbstractActivatable<Hooks> implements Domain, M
         map.put("environment", environment);
         matrix.asMap(map);
         map.put("command", command.asMap(full));
+        map.put("jbang", jbang.asMap(full));
         map.put("script", script.asMap(full));
         return map;
     }

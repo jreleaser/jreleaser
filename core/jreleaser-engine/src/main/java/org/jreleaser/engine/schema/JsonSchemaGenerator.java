@@ -107,6 +107,7 @@ public final class JsonSchemaGenerator {
         mappings.put("Map<String, SwidTag>", "SwidTagMap");
         mappings.put("Map<String, NamedCommandHooks>", "NamedCommandHooksMap");
         mappings.put("Map<String, NamedScriptHooks>", "NamedScriptHooksMap");
+        mappings.put("Map<String, NamedJbangHooks>", "NamedJbangHooksMap");
 
         try {
             SchemaGeneratorConfigBuilder configBuilder = new SchemaGeneratorConfigBuilder(SchemaVersion.DRAFT_7, OptionPreset.PLAIN_JSON);

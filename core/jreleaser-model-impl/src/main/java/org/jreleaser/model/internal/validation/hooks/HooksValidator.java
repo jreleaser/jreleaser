@@ -25,6 +25,7 @@ import org.jreleaser.util.Errors;
 import static org.jreleaser.model.internal.validation.common.MatrixValidator.validateMatrix;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.hooks.CommandHooksValidator.validateCommandHooks;
+import static org.jreleaser.model.internal.validation.hooks.JbangHooksValidator.validateJbangHooks;
 import static org.jreleaser.model.internal.validation.hooks.ScriptHooksValidator.validateScriptHooks;
 
 /**
@@ -47,6 +48,7 @@ public final class HooksValidator {
         validateMatrix(context, hooks.getMatrix(), "hooks.matrix", errors);
         validateCommandHooks(context, errors);
         validateScriptHooks(context, errors);
+        validateJbangHooks(context, errors);
 
         boolean activeSet = hooks.isActiveSet();
         resolveActivatable(context, hooks, "hooks", "ALWAYS");
@@ -54,7 +56,8 @@ public final class HooksValidator {
 
         if (hooks.isEnabled()) {
             boolean enabled = hooks.getCommand().isEnabled() ||
-                hooks.getScript().isEnabled();
+                hooks.getScript().isEnabled() ||
+                hooks.getJbang().isEnabled();
 
             if (!activeSet && !enabled) {
                 context.getLogger().debug(RB.$("validation.disabled"));

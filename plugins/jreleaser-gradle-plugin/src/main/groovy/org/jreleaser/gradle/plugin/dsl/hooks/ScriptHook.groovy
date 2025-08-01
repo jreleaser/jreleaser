@@ -19,7 +19,6 @@ package org.jreleaser.gradle.plugin.dsl.hooks
 
 import groovy.transform.CompileStatic
 import org.gradle.api.provider.Property
-import org.jreleaser.gradle.plugin.dsl.common.Activatable
 
 /**
  *
@@ -27,7 +26,7 @@ import org.jreleaser.gradle.plugin.dsl.common.Activatable
  * @since 1.6.0
  */
 @CompileStatic
-interface ScriptHook extends Hook, Activatable {
+interface ScriptHook extends Hook {
     Property<String> getRun()
 
     Property<org.jreleaser.model.api.hooks.ScriptHook.Shell> getShell()

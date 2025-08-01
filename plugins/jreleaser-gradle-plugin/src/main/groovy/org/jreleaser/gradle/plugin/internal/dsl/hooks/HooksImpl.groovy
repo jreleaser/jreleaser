@@ -27,6 +27,7 @@ import org.gradle.api.provider.Property
 import org.jreleaser.gradle.plugin.dsl.common.Matrix
 import org.jreleaser.gradle.plugin.dsl.hooks.CommandHooks
 import org.jreleaser.gradle.plugin.dsl.hooks.Hooks
+import org.jreleaser.gradle.plugin.dsl.hooks.JbangHooks
 import org.jreleaser.gradle.plugin.dsl.hooks.ScriptHooks
 import org.jreleaser.gradle.plugin.internal.dsl.common.MatrixImpl
 import org.jreleaser.model.Active
@@ -46,6 +47,7 @@ class HooksImpl implements Hooks {
     final Property<Active> active
     final CommandHooksImpl command
     final ScriptHooksImpl script
+    final JbangHooksImpl jbang
     final Property<String> condition
     final MapProperty<String, String> environment
     final Property<Boolean> applyDefaultMatrix
@@ -56,6 +58,7 @@ class HooksImpl implements Hooks {
         active = objects.property(Active).convention(Providers.<Active> notDefined())
         command = objects.newInstance(CommandHooksImpl, objects)
         script = objects.newInstance(ScriptHooksImpl, objects)
+        jbang = objects.newInstance(JbangHooksImpl, objects)
         condition = objects.property(String).convention(Providers.<String> notDefined())
         environment = objects.mapProperty(String, String).convention(Providers.notDefined())
         applyDefaultMatrix = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
@@ -87,6 +90,11 @@ class HooksImpl implements Hooks {
     }
 
     @Override
+    void jbang(Action<? super JbangHooks> action) {
+        action.execute(jbang)
+    }
+
+    @Override
     void matrix(Action<? super Matrix> action) {
         action.execute(matrix)
     }
@@ -105,6 +113,12 @@ class HooksImpl implements Hooks {
 
     @Override
     @CompileDynamic
+    void jbang(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = JbangHooks) Closure<Void> action) {
+        ConfigureUtil.configure(action, jbang)
+    }
+
+    @Override
+    @CompileDynamic
     void matrix(@DelegatesTo(strategy = Closure.DELEGATE_FIRST, value = Matrix) Closure<Void> action) {
         ConfigureUtil.configure(action, matrix)
     }
@@ -118,6 +132,7 @@ class HooksImpl implements Hooks {
         if (matrix.isSet()) hooks.setMatrix(matrix.toModel())
         hooks.command = command.toModel()
         hooks.script = script.toModel()
+        hooks.jbang = jbang.toModel()
         hooks
     }
 }
