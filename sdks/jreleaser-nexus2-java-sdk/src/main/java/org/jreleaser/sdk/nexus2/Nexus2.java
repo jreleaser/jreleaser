@@ -241,7 +241,7 @@ public class Nexus2 {
         return messages;
     }
 
-    private StagingProfileRepository getStagingRepository(String stagingRepositoryId) {
+    public StagingProfileRepository getStagingRepository(String stagingRepositoryId) {
         context.getLogger().debug(RB.$("nexus.get.staging.repository", stagingRepositoryId));
 
         try {
@@ -498,5 +498,8 @@ public class Nexus2 {
 
             return new NexusAPIException(response.status(), response.reason(), response.headers());
         }
+    }
+    public String getApiHost() {
+        return apiHost;
     }
 }
