@@ -123,12 +123,11 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
     }
 
     protected Set<Deployable> collectDeployables() {
-        return collectDeployables(true, true);
+        return collectDeployables(true);
     }
 
-    protected Set<Deployable> collectDeployables(boolean sign, boolean checksum) {
+    protected Set<Deployable> collectDeployables(boolean checksum) {
         Set<Deployable> deployables = collectDeployableArtifacts().stream()
-            .filter(deployable -> sign || !deployable.isSignature())
             .filter(deployable -> checksum || !deployable.isChecksum())
             .collect(toSet());
 
@@ -141,7 +140,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
             throw new JReleaserException(RB.$("ERROR_deployer_maven_central_rules"));
         }
 
-        if (sign) signDeployables(deployablesMap, deployables);
+        signDeployables(deployablesMap, deployables);
         if (checksum) checksumDeployables(deployablesMap, deployables);
 
         return deployables;

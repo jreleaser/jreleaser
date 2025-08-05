@@ -123,9 +123,10 @@ public class Deployable implements Comparable<Deployable> {
                 this.classifier = "";
             }
 
-            int dot = filename.lastIndexOf('.');
-            if (dot > -1) {
-                this.extension = filename.substring(dot + 1);
+            int ll = artifactId.length() + 1 + l;
+            if (isNotBlank(classifier)) ll += classifier.length() + 1;
+            if (filename.length() > ll+1) {
+                this.extension = filename.substring(ll+1);
             } else {
                 this.extension = "";
             }

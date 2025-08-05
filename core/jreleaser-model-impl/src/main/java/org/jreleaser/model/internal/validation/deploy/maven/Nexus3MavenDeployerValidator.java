@@ -60,7 +60,6 @@ public final class Nexus3MavenDeployerValidator {
             errors.configuration(RB.$("validation_must_not_be_blank", "project.java.groupId"));
         }
 
-        mavenDeployer.setSign(false);
         mavenDeployer.setChecksums(false);
     }
 }
