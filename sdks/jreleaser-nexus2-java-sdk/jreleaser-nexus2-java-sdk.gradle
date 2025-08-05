@@ -24,8 +24,4 @@ dependencies {
     api "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:$jacksonVersion"
     api "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion"
     api "dev.failsafe:failsafe:$failsafeVersion"
-
-    // Test dependencies
-    testImplementation "org.mockito:mockito-core:$mockitoVersion"
-    testImplementation "org.mockito:mockito-junit-jupiter:$mockitoVersion"
 }
