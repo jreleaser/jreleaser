@@ -45,6 +45,7 @@ import static org.jreleaser.model.internal.validation.common.Validator.checkProp
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateCommitAuthor;
 import static org.jreleaser.model.internal.validation.common.Validator.validateContinueOnError;
+import static org.jreleaser.model.internal.validation.common.Validator.validateSkipPublishing;
 import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.util.CollectionUtils.listOf;
@@ -101,6 +102,7 @@ public final class ChocolateyPackagerValidator {
         validateTemplate(context, distribution, packager, parentPackager, errors);
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);
+        validateSkipPublishing(packager, parentPackager);
         if (isBlank(packager.getDownloadUrl())) {
             packager.setDownloadUrl(parentPackager.getDownloadUrl());
         }

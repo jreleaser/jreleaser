@@ -80,7 +80,7 @@ public final class AsdfPackager extends AbstractRepositoryPackager<org.jreleaser
 
     @JsonIgnore
     private final org.jreleaser.model.api.packagers.AsdfPackager immutable = new org.jreleaser.model.api.packagers.AsdfPackager() {
-        private static final long serialVersionUID = 2602907890530867272L;
+        private static final long serialVersionUID = -926519633025986175L;
 
         @Override
         public String getToolCheck() {
@@ -150,6 +150,11 @@ public final class AsdfPackager extends AbstractRepositoryPackager<org.jreleaser
         @Override
         public boolean isContinueOnError() {
             return AsdfPackager.this.isContinueOnError();
+        }
+
+        @Override
+        public boolean isSkipPublishing() {
+            return AsdfPackager.this.isSkipPublishing();
         }
 
         @Override

@@ -46,6 +46,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 class JibPackagerImpl extends AbstractJibConfiguration implements JibPackager {
     final NamedDomainObjectContainer<JibSpec> specs
     final Property<Boolean> continueOnError
+    final Property<Boolean> skipPublishing
     final Property<String> downloadUrl
     final Property<String> version
     final JibRepositoryImpl repository
@@ -55,6 +56,7 @@ class JibPackagerImpl extends AbstractJibConfiguration implements JibPackager {
     JibPackagerImpl(ObjectFactory objects) {
         super(objects)
         continueOnError = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+        skipPublishing = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         downloadUrl = objects.property(String).convention(Providers.<String> notDefined())
         version = objects.property(String).convention(Providers.<String> notDefined())
         repository = objects.newInstance(JibRepositoryImpl, objects)
@@ -75,6 +77,7 @@ class JibPackagerImpl extends AbstractJibConfiguration implements JibPackager {
     boolean isSet() {
         super.isSet() ||
             continueOnError.present ||
+            skipPublishing.present ||
             downloadUrl.present ||
             version.present ||
             !specs.isEmpty() ||
@@ -102,6 +105,7 @@ class JibPackagerImpl extends AbstractJibConfiguration implements JibPackager {
         org.jreleaser.model.internal.packagers.JibPackager packager = new org.jreleaser.model.internal.packagers.JibPackager()
         toModel(packager)
         if (continueOnError.present) packager.continueOnError = continueOnError.get()
+        if (skipPublishing.present) packager.skipPublishing = skipPublishing.get()
         if (downloadUrl.present) packager.downloadUrl = downloadUrl.get()
         if (version.present) packager.version = version.get()
         if (repository.isSet()) packager.repository = repository.toModel()

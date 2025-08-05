@@ -38,6 +38,7 @@ import static org.jreleaser.model.internal.validation.common.TemplateValidator.v
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateCommitAuthor;
 import static org.jreleaser.model.internal.validation.common.Validator.validateContinueOnError;
+import static org.jreleaser.model.internal.validation.common.Validator.validateSkipPublishing;
 import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.isGraalVMDistribution;
 import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -121,6 +122,7 @@ public final class MacportsPackagerValidator {
         validateTemplate(context, distribution, packager, parentPackager, errors);
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);
+        validateSkipPublishing(packager, parentPackager);
 
         if (isBlank(packager.getPackageName())) {
             packager.setPackageName(parentPackager.getPackageName());

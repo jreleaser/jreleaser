@@ -37,6 +37,7 @@ import static org.jreleaser.model.internal.validation.common.Validator.resolveAc
 import static org.jreleaser.model.internal.validation.common.Validator.validateCommitAuthor;
 import static org.jreleaser.model.internal.validation.common.Validator.validateContinueOnError;
 import static org.jreleaser.model.internal.validation.common.Validator.validateRepository;
+import static org.jreleaser.model.internal.validation.common.Validator.validateSkipPublishing;
 import static org.jreleaser.util.StringUtils.isBlank;
 
 /**
@@ -71,6 +72,7 @@ public final class JbangPackagerValidator {
         validateTemplate(context, distribution, packager, parentPackager, errors);
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);
+        validateSkipPublishing(packager, parentPackager);
         if (isBlank(packager.getDownloadUrl())) {
             packager.setDownloadUrl(parentPackager.getDownloadUrl());
         }

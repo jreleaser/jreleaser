@@ -71,7 +71,7 @@ public final class SdkmanPackager extends AbstractPackager<org.jreleaser.model.a
 
     @JsonIgnore
     private final org.jreleaser.model.api.packagers.SdkmanPackager immutable = new org.jreleaser.model.api.packagers.SdkmanPackager() {
-        private static final long serialVersionUID = 3123151880557373320L;
+        private static final long serialVersionUID = 6417525554199862450L;
 
         @Override
         public String getCandidate() {
@@ -151,6 +151,11 @@ public final class SdkmanPackager extends AbstractPackager<org.jreleaser.model.a
         @Override
         public boolean isContinueOnError() {
             return SdkmanPackager.this.isContinueOnError();
+        }
+
+        @Override
+        public boolean isSkipPublishing() {
+            return SdkmanPackager.this.isSkipPublishing();
         }
 
         @Override

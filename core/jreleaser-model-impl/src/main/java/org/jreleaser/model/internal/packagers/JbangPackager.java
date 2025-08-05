@@ -58,7 +58,7 @@ public final class JbangPackager extends AbstractRepositoryPackager<org.jrelease
 
     @JsonIgnore
     private final org.jreleaser.model.api.packagers.JbangPackager immutable = new org.jreleaser.model.api.packagers.JbangPackager() {
-        private static final long serialVersionUID = -1240188702088587276L;
+        private static final long serialVersionUID = -5837545495467382897L;
 
         @Override
         public String getAlias() {
@@ -133,6 +133,11 @@ public final class JbangPackager extends AbstractRepositoryPackager<org.jrelease
         @Override
         public boolean isContinueOnError() {
             return JbangPackager.this.isContinueOnError();
+        }
+
+        @Override
+        public boolean isSkipPublishing() {
+            return JbangPackager.this.isSkipPublishing();
         }
 
         @Override

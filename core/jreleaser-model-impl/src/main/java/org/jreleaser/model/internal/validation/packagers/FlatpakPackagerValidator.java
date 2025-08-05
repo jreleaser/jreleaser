@@ -41,6 +41,7 @@ import static org.jreleaser.model.internal.validation.common.Validator.validateC
 import static org.jreleaser.model.internal.validation.common.Validator.validateContinueOnError;
 import static org.jreleaser.model.internal.validation.common.Validator.validateIcons;
 import static org.jreleaser.model.internal.validation.common.Validator.validateScreenshots;
+import static org.jreleaser.model.internal.validation.common.Validator.validateSkipPublishing;
 import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -191,6 +192,7 @@ public final class FlatpakPackagerValidator {
         validateTemplate(context, distribution, packager, parentPackager, errors);
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);
+        validateSkipPublishing(packager, parentPackager);
         if (isBlank(packager.getDownloadUrl())) {
             packager.setDownloadUrl(parentPackager.getDownloadUrl());
         }

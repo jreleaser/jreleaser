@@ -97,6 +97,10 @@ public class ChocolateyPackagerProcessor extends AbstractRepositoryPackagerProce
             return;
         }
 
+        if (packager.isSkipPublishing()) {
+            context.getLogger().info(RB.$("packager.skip.publishing"));
+            return;
+        }
         publishChocolateyPackage(distribution, props);
     }
 

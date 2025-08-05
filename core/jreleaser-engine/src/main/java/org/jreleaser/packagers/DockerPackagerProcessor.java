@@ -368,6 +368,11 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
             return;
         }
 
+        if (packager.isSkipPublishing()) {
+            context.getLogger().info(RB.$("packager.skip.publishing"));
+            return;
+        }
+
         for (DockerConfiguration.Registry registry : docker.getRegistries()) {
             if (registry.isEnabled()) {
                 login(docker, registry);

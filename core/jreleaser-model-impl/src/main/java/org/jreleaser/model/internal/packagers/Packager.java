@@ -60,6 +60,12 @@ public interface Packager<A extends org.jreleaser.model.api.packagers.Packager> 
 
     boolean isContinueOnErrorSet();
 
+    boolean isSkipPublishing();
+
+    void setSkipPublishing(Boolean skipPublishing);
+
+    boolean isSkipPublishingSet();
+
     boolean isFailed();
 
     void fail();

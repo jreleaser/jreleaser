@@ -189,6 +189,12 @@ public final class Validator {
         }
     }
 
+    public static void validateSkipPublishing(Packager<?> self, Packager<?> other) {
+        if (!self.isSkipPublishingSet()) {
+            self.setSkipPublishing(other.isSkipPublishing());
+        }
+    }
+
     public static void validateCommitAuthor(CommitAuthorAware self, CommitAuthorAware other) {
         CommitAuthor author = new CommitAuthor();
         author.setName(self.getCommitAuthor().getName());

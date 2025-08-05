@@ -43,12 +43,13 @@ import static org.jreleaser.model.Distribution.DistributionType.FLAT_BINARY;
  * @since 0.1.0
  */
 public abstract class AbstractPackager<A extends org.jreleaser.model.api.packagers.Packager, S extends AbstractPackager<A, S>> extends AbstractActivatable<S> implements Packager<A> {
-    private static final long serialVersionUID = 7585826887268273790L;
+    private static final long serialVersionUID = -3020589805301222195L;
 
     @JsonIgnore
     private final String type;
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     protected Boolean continueOnError;
+    protected Boolean skipPublishing;
     private String downloadUrl;
     @JsonIgnore
     private boolean failed;
@@ -61,6 +62,7 @@ public abstract class AbstractPackager<A extends org.jreleaser.model.api.package
     public void merge(S source) {
         super.merge(source);
         this.continueOnError = merge(this.continueOnError, source.continueOnError);
+        this.skipPublishing = merge(this.skipPublishing, source.skipPublishing);
         this.downloadUrl = merge(this.downloadUrl, source.getDownloadUrl());
         this.failed = source.isFailed();
         setExtraProperties(merge(this.extraProperties, source.getExtraProperties()));
@@ -142,6 +144,21 @@ public abstract class AbstractPackager<A extends org.jreleaser.model.api.package
     }
 
     @Override
+    public boolean isSkipPublishing() {
+        return null != skipPublishing && skipPublishing;
+    }
+
+    @Override
+    public void setSkipPublishing(Boolean skipPublishing) {
+        this.skipPublishing = skipPublishing;
+    }
+
+    @Override
+    public boolean isSkipPublishingSet() {
+        return null != skipPublishing;
+    }
+
+    @Override
     public boolean resolveEnabled(Project project, Distribution distribution) {
         resolveEnabled(project);
         if (!supportsDistribution(distribution.getType())) {
@@ -189,6 +206,7 @@ public abstract class AbstractPackager<A extends org.jreleaser.model.api.package
         props.put("enabled", isEnabled());
         props.put("active", getActive());
         props.put("continueOnError", isContinueOnError());
+        props.put("skipPublishing", isSkipPublishing());
         props.put("downloadUrl", downloadUrl);
         asMap(full, props);
         props.put("extraProperties", getExtraProperties());

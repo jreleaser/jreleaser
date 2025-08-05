@@ -45,4 +45,6 @@ public interface Packager extends Domain, ExtraProperties, Activatable {
     boolean isSnapshotSupported();
 
     boolean isContinueOnError();
+
+    boolean isSkipPublishing();
 }

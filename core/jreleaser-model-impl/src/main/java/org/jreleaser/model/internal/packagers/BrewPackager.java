@@ -96,7 +96,7 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
 
     @JsonIgnore
     private final org.jreleaser.model.api.packagers.BrewPackager immutable = new org.jreleaser.model.api.packagers.BrewPackager() {
-        private static final long serialVersionUID = -5776275819147353630L;
+        private static final long serialVersionUID = -4959973991768535895L;
 
         @Override
         public String getFormulaName() {
@@ -196,6 +196,11 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
         @Override
         public boolean isContinueOnError() {
             return BrewPackager.this.isContinueOnError();
+        }
+
+        @Override
+        public boolean isSkipPublishing() {
+            return BrewPackager.this.isSkipPublishing();
         }
 
         @Override

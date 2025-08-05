@@ -67,7 +67,7 @@ import static org.jreleaser.util.StringUtils.isFalse;
  */
 public final class JibPackager extends AbstractJibConfiguration<JibPackager> implements RepositoryPackager<org.jreleaser.model.api.packagers.JibPackager>, CommitAuthorAware {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
-    private static final long serialVersionUID = -5161609035832200577L;
+    //private static final long serialVersionUID = -5161609035832200577L;
 
     static {
         Set<String> extensions = setOf(ZIP.extension());
@@ -84,12 +84,13 @@ public final class JibPackager extends AbstractJibConfiguration<JibPackager> imp
     private final JibRepository repository = new JibRepository();
 
     private Boolean continueOnError;
+    private Boolean skipPublishing;
     private String downloadUrl;
     private String version;
 
     @JsonIgnore
     private final org.jreleaser.model.api.packagers.JibPackager immutable = new org.jreleaser.model.api.packagers.JibPackager() {
-        private static final long serialVersionUID = -1607794151817682330L;
+        private static final long serialVersionUID = -7342134381722104328L;
 
         private Set<? extends org.jreleaser.model.api.packagers.JibConfiguration.Registry> registries;
         private Map<String, ? extends org.jreleaser.model.api.packagers.JibSpec> specs;
@@ -235,6 +236,11 @@ public final class JibPackager extends AbstractJibConfiguration<JibPackager> imp
         }
 
         @Override
+        public boolean isSkipPublishing() {
+            return JibPackager.this.isSkipPublishing();
+        }
+
+        @Override
         public Active getActive() {
             return JibPackager.this.getActive();
         }
@@ -272,6 +278,7 @@ public final class JibPackager extends AbstractJibConfiguration<JibPackager> imp
     public void merge(JibPackager source) {
         super.merge(source);
         this.continueOnError = merge(this.continueOnError, source.continueOnError);
+        this.skipPublishing = merge(this.skipPublishing, source.skipPublishing);
         this.downloadUrl = merge(this.downloadUrl, source.downloadUrl);
         this.version = merge(this.version, source.version);
         this.failed = source.failed;
@@ -312,6 +319,21 @@ public final class JibPackager extends AbstractJibConfiguration<JibPackager> imp
     @Override
     public boolean isContinueOnErrorSet() {
         return null != continueOnError;
+    }
+
+    @Override
+    public boolean isSkipPublishing() {
+        return null != skipPublishing && skipPublishing;
+    }
+
+    @Override
+    public void setSkipPublishing(Boolean skipPublishing) {
+        this.skipPublishing = skipPublishing;
+    }
+
+    @Override
+    public boolean isSkipPublishingSet() {
+        return null != skipPublishing;
     }
 
     @Override
@@ -448,6 +470,7 @@ public final class JibPackager extends AbstractJibConfiguration<JibPackager> imp
         props.put("repository", repository.asMap(full));
         props.put("downloadUrl", downloadUrl);
         props.put("continueOnError", isContinueOnError());
+        props.put("skipPublishing", isSkipPublishing());
         List<Map<String, Object>> specs = this.specs.values()
             .stream()
             .filter(d -> full || d.isEnabled())

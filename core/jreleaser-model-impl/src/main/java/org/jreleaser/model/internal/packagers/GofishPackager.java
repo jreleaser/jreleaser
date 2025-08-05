@@ -74,7 +74,7 @@ public final class GofishPackager extends AbstractRepositoryPackager<org.jreleas
 
     @JsonIgnore
     private final org.jreleaser.model.api.packagers.GofishPackager immutable = new org.jreleaser.model.api.packagers.GofishPackager() {
-        private static final long serialVersionUID = 7575986906210858224L;
+        private static final long serialVersionUID = 5164825472096915255L;
 
         @Override
         public org.jreleaser.model.api.packagers.PackagerRepository getRepository() {
@@ -139,6 +139,11 @@ public final class GofishPackager extends AbstractRepositoryPackager<org.jreleas
         @Override
         public boolean isContinueOnError() {
             return GofishPackager.this.isContinueOnError();
+        }
+
+        @Override
+        public boolean isSkipPublishing() {
+            return GofishPackager.this.isSkipPublishing();
         }
 
         @Override

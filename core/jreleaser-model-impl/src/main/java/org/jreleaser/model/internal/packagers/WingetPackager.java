@@ -91,7 +91,7 @@ public final class WingetPackager extends AbstractRepositoryPackager<org.jreleas
 
     @JsonIgnore
     private final org.jreleaser.model.api.packagers.WingetPackager immutable = new org.jreleaser.model.api.packagers.WingetPackager() {
-        private static final long serialVersionUID = 4117704008560830372L;
+        private static final long serialVersionUID = -6514405944610257520L;
 
         @Override
         public Package getPackage() {
@@ -201,6 +201,11 @@ public final class WingetPackager extends AbstractRepositoryPackager<org.jreleas
         @Override
         public boolean isContinueOnError() {
             return WingetPackager.this.isContinueOnError();
+        }
+
+        @Override
+        public boolean isSkipPublishing() {
+            return WingetPackager.this.isSkipPublishing();
         }
 
         @Override

@@ -67,7 +67,7 @@ import static org.jreleaser.util.StringUtils.isFalse;
  */
 public final class DockerPackager extends AbstractDockerConfiguration<DockerPackager> implements RepositoryPackager<org.jreleaser.model.api.packagers.DockerPackager>, CommitAuthorAware {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
-    private static final long serialVersionUID = -8293471753814007950L;
+    //private static final long serialVersionUID = -8293471753814007950L;
 
     static {
         Set<String> extensions = setOf(ZIP.extension());
@@ -84,11 +84,12 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
     private final DockerRepository repository = new DockerRepository();
 
     private Boolean continueOnError;
+    private Boolean skipPublishing;
     private String downloadUrl;
 
     @JsonIgnore
     private final org.jreleaser.model.api.packagers.DockerPackager immutable = new org.jreleaser.model.api.packagers.DockerPackager() {
-        private static final long serialVersionUID = -3217813295313251223L;
+        private static final long serialVersionUID = -4589365903340650890L;
 
         private Set<? extends org.jreleaser.model.api.packagers.DockerConfiguration.Registry> registries;
         private Map<String, ? extends org.jreleaser.model.api.packagers.DockerSpec> specs;
@@ -229,6 +230,11 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
         }
 
         @Override
+        public boolean isSkipPublishing() {
+            return DockerPackager.this.isSkipPublishing();
+        }
+
+        @Override
         public Active getActive() {
             return DockerPackager.this.getActive();
         }
@@ -271,6 +277,7 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
     public void merge(DockerPackager source) {
         super.merge(source);
         this.continueOnError = merge(this.continueOnError, source.continueOnError);
+        this.skipPublishing = merge(this.skipPublishing, source.skipPublishing);
         this.downloadUrl = merge(this.downloadUrl, source.downloadUrl);
         this.failed = source.failed;
         setSpecs(mergeModel(this.specs, source.specs));
@@ -310,6 +317,21 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
     @Override
     public boolean isContinueOnErrorSet() {
         return null != continueOnError;
+    }
+
+    @Override
+    public boolean isSkipPublishing() {
+        return null != skipPublishing && skipPublishing;
+    }
+
+    @Override
+    public void setSkipPublishing(Boolean skipPublishing) {
+        this.skipPublishing = skipPublishing;
+    }
+
+    @Override
+    public boolean isSkipPublishingSet() {
+        return null != skipPublishing;
     }
 
     @Override
@@ -437,6 +459,7 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
         props.put("repository", repository.asMap(full));
         props.put("downloadUrl", downloadUrl);
         props.put("continueOnError", isContinueOnError());
+        props.put("skipPublishing", isSkipPublishing());
         List<Map<String, Object>> specs = this.specs.values()
             .stream()
             .filter(d -> full || d.isEnabled())

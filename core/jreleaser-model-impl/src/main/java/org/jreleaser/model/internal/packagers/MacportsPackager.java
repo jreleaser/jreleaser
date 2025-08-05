@@ -81,7 +81,7 @@ public final class MacportsPackager extends AbstractRepositoryPackager<org.jrele
 
     @JsonIgnore
     private final org.jreleaser.model.api.packagers.MacportsPackager immutable = new org.jreleaser.model.api.packagers.MacportsPackager() {
-        private static final long serialVersionUID = 1625817436978161466L;
+        private static final long serialVersionUID = -2959458200101998826L;
 
         @Override
         public String getPackageName() {
@@ -166,6 +166,11 @@ public final class MacportsPackager extends AbstractRepositoryPackager<org.jrele
         @Override
         public boolean isContinueOnError() {
             return MacportsPackager.this.isContinueOnError();
+        }
+
+        @Override
+        public boolean isSkipPublishing() {
+            return MacportsPackager.this.isSkipPublishing();
         }
 
         @Override

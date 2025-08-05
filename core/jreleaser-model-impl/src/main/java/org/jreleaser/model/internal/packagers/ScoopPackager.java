@@ -80,7 +80,7 @@ public final class ScoopPackager extends AbstractRepositoryPackager<org.jrelease
 
     @JsonIgnore
     private final org.jreleaser.model.api.packagers.ScoopPackager immutable = new org.jreleaser.model.api.packagers.ScoopPackager() {
-        private static final long serialVersionUID = -3131943938630790438L;
+        private static final long serialVersionUID = -6453585021321457904L;
 
         @Override
         public String getPackageName() {
@@ -165,6 +165,11 @@ public final class ScoopPackager extends AbstractRepositoryPackager<org.jrelease
         @Override
         public boolean isContinueOnError() {
             return ScoopPackager.this.isContinueOnError();
+        }
+
+        @Override
+        public boolean isSkipPublishing() {
+            return ScoopPackager.this.isSkipPublishing();
         }
 
         @Override

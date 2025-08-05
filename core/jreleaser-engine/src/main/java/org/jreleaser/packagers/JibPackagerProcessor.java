@@ -220,6 +220,11 @@ public class JibPackagerProcessor extends AbstractRepositoryPackagerProcessor<Ji
             return;
         }
 
+        if (packager.isSkipPublishing()) {
+            context.getLogger().info(RB.$("packager.skip.publishing"));
+            return;
+        }
+
         Jib jib = new Jib(context.asImmutable(), packager.getVersion());
         try {
             if (!jib.setup()) {

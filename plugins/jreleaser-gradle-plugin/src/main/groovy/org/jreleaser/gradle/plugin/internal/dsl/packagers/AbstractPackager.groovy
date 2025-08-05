@@ -39,6 +39,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 abstract class AbstractPackager implements Packager {
     final Property<Active> active
     final Property<Boolean> continueOnError
+    final Property<Boolean> skipPublishing
     final Property<String> downloadUrl
     final MapProperty<String, Object> extraProperties
 
@@ -46,6 +47,7 @@ abstract class AbstractPackager implements Packager {
     AbstractPackager(ObjectFactory objects) {
         active = objects.property(Active).convention(Providers.<Active> notDefined())
         continueOnError = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+        skipPublishing = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         downloadUrl = objects.property(String).convention(Providers.<String> notDefined())
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
     }
@@ -54,6 +56,7 @@ abstract class AbstractPackager implements Packager {
     boolean isSet() {
         active.present ||
             continueOnError.present ||
+            skipPublishing.present ||
             downloadUrl.present ||
             extraProperties.present
     }
@@ -68,6 +71,7 @@ abstract class AbstractPackager implements Packager {
     protected <T extends org.jreleaser.model.internal.packagers.Packager> void fillPackagerProperties(T packager) {
         if (active.present) packager.active = active.get()
         if (continueOnError.present) packager.continueOnError = continueOnError.get()
+        if (skipPublishing.present) packager.skipPublishing = skipPublishing.get()
         if (downloadUrl.present) packager.downloadUrl = downloadUrl.get()
         if (extraProperties.present) packager.extraProperties.putAll(extraProperties.get())
     }

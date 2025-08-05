@@ -58,6 +58,11 @@ public class SdkmanPackagerProcessor extends AbstractPackagerProcessor<SdkmanPac
 
     @Override
     protected void doPublishDistribution(Distribution distribution, TemplateContext props) throws PackagerProcessingException {
+        if (packager.isSkipPublishing()) {
+            context.getLogger().info(RB.$("packager.skip.publishing"));
+            return;
+        }
+
         SdkmanPackager sdkman = distribution.getSdkman();
 
         Map<String, String> platforms = new LinkedHashMap<>();

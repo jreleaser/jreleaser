@@ -87,7 +87,7 @@ public final class SpecPackager extends AbstractRepositoryPackager<org.jreleaser
 
     @JsonIgnore
     private final org.jreleaser.model.api.packagers.SpecPackager immutable = new org.jreleaser.model.api.packagers.SpecPackager() {
-        private static final long serialVersionUID = -3139422195483595734L;
+        private static final long serialVersionUID = -457526873236886772L;
 
         @Override
         public String getPackageName() {
@@ -167,6 +167,11 @@ public final class SpecPackager extends AbstractRepositoryPackager<org.jreleaser
         @Override
         public boolean isContinueOnError() {
             return SpecPackager.this.isContinueOnError();
+        }
+
+        @Override
+        public boolean isSkipPublishing() {
+            return SpecPackager.this.isSkipPublishing();
         }
 
         @Override

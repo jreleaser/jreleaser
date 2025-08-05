@@ -87,7 +87,7 @@ public final class FlatpakPackager extends AbstractAppdataPackager<org.jreleaser
 
     @JsonIgnore
     private final org.jreleaser.model.api.packagers.FlatpakPackager immutable = new org.jreleaser.model.api.packagers.FlatpakPackager() {
-        private static final long serialVersionUID = -7925187932243488062L;
+        private static final long serialVersionUID = 157728126284625211L;
 
         private List<? extends org.jreleaser.model.api.common.Screenshot> screenshots;
         private List<? extends org.jreleaser.model.api.common.Icon> icons;
@@ -215,6 +215,11 @@ public final class FlatpakPackager extends AbstractAppdataPackager<org.jreleaser
         @Override
         public boolean isContinueOnError() {
             return FlatpakPackager.this.isContinueOnError();
+        }
+
+        @Override
+        public boolean isSkipPublishing() {
+            return FlatpakPackager.this.isSkipPublishing();
         }
 
         @Override

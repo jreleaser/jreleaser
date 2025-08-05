@@ -56,6 +56,7 @@ import static org.jreleaser.model.internal.validation.common.Validator.checkProp
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateCommitAuthor;
 import static org.jreleaser.model.internal.validation.common.Validator.validateContinueOnError;
+import static org.jreleaser.model.internal.validation.common.Validator.validateSkipPublishing;
 import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.isGraalVMDistribution;
 import static org.jreleaser.model.internal.validation.distributions.DistributionsValidator.validateArtifactPlatforms;
 import static org.jreleaser.util.CollectionUtils.listOf;
@@ -131,6 +132,7 @@ public final class JibPackagerValidator {
 
         mergeExtraProperties(packager, parentPackager);
         validateContinueOnError(packager, parentPackager);
+        validateSkipPublishing(packager, parentPackager);
         if (isBlank(packager.getDownloadUrl())) {
             packager.setDownloadUrl(parentPackager.getDownloadUrl());
         }

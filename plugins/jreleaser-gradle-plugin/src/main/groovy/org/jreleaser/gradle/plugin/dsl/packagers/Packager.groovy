@@ -31,5 +31,7 @@ import org.jreleaser.gradle.plugin.dsl.common.ExtraProperties
 interface Packager extends Activatable, ExtraProperties {
     Property<Boolean> getContinueOnError()
 
+    Property<Boolean> getSkipPublishing()
+
     Property<String> getDownloadUrl()
 }

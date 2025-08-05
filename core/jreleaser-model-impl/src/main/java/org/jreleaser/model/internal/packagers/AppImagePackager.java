@@ -85,7 +85,7 @@ public final class AppImagePackager extends AbstractAppdataPackager<org.jrelease
 
     @JsonIgnore
     private final org.jreleaser.model.api.packagers.AppImagePackager immutable = new org.jreleaser.model.api.packagers.AppImagePackager() {
-        private static final long serialVersionUID = 7697953400665709071L;
+        private static final long serialVersionUID = 6612331654842386512L;
 
         private List<? extends org.jreleaser.model.api.common.Screenshot> screenshots;
         private List<? extends org.jreleaser.model.api.common.Icon> icons;
@@ -203,6 +203,11 @@ public final class AppImagePackager extends AbstractAppdataPackager<org.jrelease
         @Override
         public boolean isContinueOnError() {
             return AppImagePackager.this.isContinueOnError();
+        }
+
+        @Override
+        public boolean isSkipPublishing() {
+            return AppImagePackager.this.isSkipPublishing();
         }
 
         @Override

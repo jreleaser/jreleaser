@@ -100,6 +100,11 @@ public class SnapPackagerProcessor extends AbstractRepositoryPackagerProcessor<S
             return;
         }
 
+        if (packager.isSkipPublishing()) {
+            context.getLogger().info(RB.$("packager.skip.publishing"));
+            return;
+        }
+
         login(distribution);
         push(props);
     }

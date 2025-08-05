@@ -81,7 +81,7 @@ public final class ChocolateyPackager extends AbstractRepositoryPackager<org.jre
 
     @JsonIgnore
     private final org.jreleaser.model.api.packagers.ChocolateyPackager immutable = new org.jreleaser.model.api.packagers.ChocolateyPackager() {
-        private static final long serialVersionUID = 288367150761378503L;
+        private static final long serialVersionUID = 6811156789407977432L;
 
         @Override
         public String getPackageName() {
@@ -191,6 +191,11 @@ public final class ChocolateyPackager extends AbstractRepositoryPackager<org.jre
         @Override
         public boolean isContinueOnError() {
             return ChocolateyPackager.this.isContinueOnError();
+        }
+
+        @Override
+        public boolean isSkipPublishing() {
+            return ChocolateyPackager.this.isSkipPublishing();
         }
 
         @Override

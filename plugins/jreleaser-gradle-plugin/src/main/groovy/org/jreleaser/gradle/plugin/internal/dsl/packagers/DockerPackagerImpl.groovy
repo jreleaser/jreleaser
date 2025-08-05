@@ -46,6 +46,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 class DockerPackagerImpl extends AbstractDockerConfiguration implements DockerPackager {
     final NamedDomainObjectContainer<DockerSpec> specs
     final Property<Boolean> continueOnError
+    final Property<Boolean> skipPublishing
     final Property<String> downloadUrl
     final DockerRepositoryImpl repository
     final CommitAuthorImpl commitAuthor
@@ -54,6 +55,7 @@ class DockerPackagerImpl extends AbstractDockerConfiguration implements DockerPa
     DockerPackagerImpl(ObjectFactory objects) {
         super(objects)
         continueOnError = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+        skipPublishing = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         downloadUrl = objects.property(String).convention(Providers.<String> notDefined())
         repository = objects.newInstance(DockerRepositoryImpl, objects)
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
@@ -73,6 +75,7 @@ class DockerPackagerImpl extends AbstractDockerConfiguration implements DockerPa
     boolean isSet() {
         super.isSet() ||
             continueOnError.present ||
+            skipPublishing.present ||
             downloadUrl.present ||
             !specs.isEmpty() ||
             repository.isSet() ||
@@ -99,6 +102,7 @@ class DockerPackagerImpl extends AbstractDockerConfiguration implements DockerPa
         org.jreleaser.model.internal.packagers.DockerPackager packager = new org.jreleaser.model.internal.packagers.DockerPackager()
         toModel(packager)
         if (continueOnError.present) packager.continueOnError = continueOnError.get()
+        if (skipPublishing.present) packager.skipPublishing = skipPublishing.get()
         if (downloadUrl.present) packager.downloadUrl = downloadUrl.get()
         if (repository.isSet()) packager.repository = repository.toModel()
         if (commitAuthor.isSet()) packager.commitAuthor = commitAuthor.toModel()
