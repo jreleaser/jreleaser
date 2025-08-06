@@ -17,14 +17,7 @@
  */
 package org.jreleaser.mustache;
 
-import com.github.mustachejava.DefaultMustacheFactory;
-import com.github.mustachejava.Mustache;
-import com.github.mustachejava.MustacheException;
-import com.github.mustachejava.MustacheFactory;
-import com.github.mustachejava.TemplateFunction;
-import org.jreleaser.bundle.RB;
-import org.jreleaser.extensions.api.ExtensionManagerHolder;
-import org.jreleaser.extensions.api.mustache.MustacheExtensionPoint;
+import static org.jreleaser.util.StringUtils.isNotBlank;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -33,10 +26,27 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Logger;
 
-import static org.jreleaser.util.StringUtils.isNotBlank;
+import org.jreleaser.bundle.RB;
+import org.jreleaser.extensions.api.ExtensionManagerHolder;
+import org.jreleaser.extensions.api.mustache.MustacheExtensionPoint;
+import org.jreleaser.logging.JReleaserLogger;
+
+import com.github.mustachejava.Binding;
+import com.github.mustachejava.Code;
+import com.github.mustachejava.DefaultMustacheFactory;
+import com.github.mustachejava.Mustache;
+import com.github.mustachejava.MustacheException;
+import com.github.mustachejava.MustacheFactory;
+import com.github.mustachejava.TemplateFunction;
+import com.github.mustachejava.reflect.GuardedBinding;
+import com.github.mustachejava.reflect.MissingWrapper;
+import com.github.mustachejava.reflect.ReflectionObjectHandler;
+import com.github.mustachejava.util.Wrapper;
 
 /**
  * @author Andres Almiray
@@ -58,15 +68,20 @@ public final class MustacheUtils {
         return vars;
     }
 
-    public static String applyTemplate(Reader reader, TemplateContext context, String templateName) {
+    public static String applyTemplate(Reader reader, TemplateContext context, String templateName, JReleaserLogger logger) {
+
         StringWriter input = new StringWriter();
-        MustacheFactory mf = new MyMustacheFactory();
+        MustacheFactory mf = new MyMustacheFactory(logger);
         Mustache mustache = mf.compile(reader, templateName);
         context.setAll(envVars());
         applyFunctions(context);
         mustache.execute(input, decorate(context.asMap()));
         input.flush();
         return input.toString();
+    }
+
+    public static String applyTemplate(Reader reader, TemplateContext context, String templateName) {
+        return applyTemplate(reader, context, templateName, null);
     }
 
     private static Map<String, Object> decorate(Map<String, Object> context) {
@@ -138,7 +153,38 @@ public final class MustacheUtils {
             .forEach(ep -> ep.apply(props));
     }
 
+
+    private static class MyReflectionObjectHandler extends ReflectionObjectHandler {
+
+        private static Logger logger = Logger.getLogger("mustache.jreleaser");
+
+       @Override
+       public Binding createBinding(String name, com.github.mustachejava.TemplateContext tc, Code code) {
+        return new GuardedBinding(this, name, tc, code) {
+            @Override
+            protected synchronized Wrapper getWrapper(String name, List<Object> scopes) {
+                final Wrapper wrapper = super.getWrapper(name, scopes);
+
+                if (wrapper instanceof MissingWrapper) {
+                    
+                    //TODO: log via JReleaserLogger instead?
+                    //logWarning does not work here because there is no context in the "file" field
+                    //logWarning("Missing variable: " + name, name, scopes, tc);
+                    logger.warning(RB.$("ERROR_mustache_missing_variable", name));
+                }
+                return wrapper;
+            }
+        };
+    }
+}
+
     private static class MyMustacheFactory extends DefaultMustacheFactory {
+
+        public MyMustacheFactory(JReleaserLogger logger) {
+            super();
+            setObjectHandler(new MyReflectionObjectHandler());
+        }
+        
         @Override
         public void encode(String value, Writer writer) {
             if (value.startsWith("!!") && value.endsWith("!!")) {
