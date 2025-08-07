@@ -15,31 +15,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.jreleaser.model;
+package org.jreleaser.model.api.signing;
 
-import java.util.Locale;
+import org.jreleaser.model.api.common.Domain;
 
-import static org.jreleaser.util.StringUtils.isBlank;
+import java.io.Serializable;
 
-/**
- * @author Andres Almiray
- * @since 0.1.0
- */
-public class Signing {
-    public enum Mode {
-        MEMORY,
-        FILE,
-        COMMAND,
-        COSIGN,
-        SIGNTOOL;
-
-        public String formatted() {
-            return name().toLowerCase(Locale.ENGLISH);
-        }
-
-        public static Mode of(String str) {
-            if (isBlank(str)) return null;
-            return Mode.valueOf(str.toUpperCase(Locale.ENGLISH).trim());
-        }
-    }
+public interface SignTool extends Domain, Serializable {
+    String getCertificateFile();
+    String getPassword();
+    String getTimestampUrl();
+    String getAlgorithm();
+    String getDescription();
+    String getExecutable();
 }
