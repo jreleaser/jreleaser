@@ -63,6 +63,8 @@ public interface Signing extends Domain, Activatable {
 
     Cosign getCosign();
 
+    SignTool getSignTool();
+
     interface Command extends Domain {
         String getExecutable();
 

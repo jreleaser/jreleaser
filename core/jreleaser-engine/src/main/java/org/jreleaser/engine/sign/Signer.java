@@ -82,6 +82,8 @@ public final class Signer {
                 cmdSign(context);
             } else if (context.getModel().getSigning().getMode() == org.jreleaser.model.Signing.Mode.COSIGN) {
                 cosignSign(context);
+            } else if (context.getModel().getSigning().getMode() == org.jreleaser.model.Signing.Mode.SIGNTOOL) {
+                signToolSign(context);
             } else {
                 bcSign(context);
             }
@@ -166,6 +168,38 @@ public final class Signer {
 
         sign(context, files, cosign, privateKeyFile, password);
         verify(context, files, cosign, publicKeyFile);
+    }
+
+    private static void signToolSign(JReleaserContext context) throws SigningException {
+        Signing signing = context.getModel().getSigning();
+
+        org.jreleaser.sdk.tool.SignTool signTool = new org.jreleaser.sdk.tool.SignTool(context.asImmutable(), 
+            signing.getSignTool().getExecutable());
+        
+        if (!signTool.isAvailable()) {
+            context.getLogger().warn(RB.$("tool_unavailable", "signtool"));
+            return;
+        }
+
+        List<SigningUtils.FilePair> files = collectArtifacts(context, pair -> isValidSignTool(context, signTool, pair));
+        if (files.isEmpty()) {
+            context.getLogger().info(RB.$("signing.no.match"));
+            return;
+        }
+
+        files = files.stream()
+            .filter(SigningUtils.FilePair::isInvalid)
+            .collect(toList());
+
+        if (files.isEmpty()) {
+            context.getLogger().info(RB.$("signing.up.to.date"));
+            return;
+        }
+
+        sign(context, files, signTool, signing);
+        if (context.getModel().getSigning().isVerify()) {
+            verify(context, files, signTool);
+        }
     }
 
     private static void bcSign(JReleaserContext context) throws SigningException {
@@ -356,7 +390,9 @@ public final class Signer {
         Path signaturesDirectory = context.getSignaturesDirectory();
 
         String extension = ".sig";
-        if (signing.getMode() != org.jreleaser.model.Signing.Mode.COSIGN) {
+        if (signing.getMode() == org.jreleaser.model.Signing.Mode.SIGNTOOL) {
+            extension = "";
+        } else if (signing.getMode() != org.jreleaser.model.Signing.Mode.COSIGN) {
             extension = signing.isArmored() ? ".asc" : ".sig";
         }
 
@@ -365,7 +401,7 @@ public final class Signer {
                 if (!artifact.isActiveAndSelected() || artifact.extraPropertyIsTrue(KEY_SKIP_SIGNING) ||
                     artifact.isOptional(context) && !artifact.resolvedPathExists()) continue;
                 Path input = artifact.getEffectivePath(context);
-                Path output = signaturesDirectory.resolve(input.getFileName().toString().concat(extension));
+                Path output = extension.isEmpty() ? input : signaturesDirectory.resolve(input.getFileName().toString().concat(extension));
                 SigningUtils.FilePair pair = new SigningUtils.FilePair(input, output);
                 if (!forceSign) pair.setValid(validator.test(pair));
                 files.add(pair);
@@ -379,7 +415,7 @@ public final class Signer {
                     if (!artifact.isActiveAndSelected() || artifact.extraPropertyIsTrue(KEY_SKIP_SIGNING)) continue;
                     Path input = artifact.getEffectivePath(context, distribution);
                     if (artifact.isOptional(context) && !artifact.resolvedPathExists()) continue;
-                    Path output = signaturesDirectory.resolve(input.getFileName().toString().concat(extension));
+                    Path output = extension.isEmpty() ? input : signaturesDirectory.resolve(input.getFileName().toString().concat(extension));
                     SigningUtils.FilePair pair = new SigningUtils.FilePair(input, output);
                     if (!forceSign) pair.setValid(validator.test(pair));
                     files.add(pair);
@@ -406,7 +442,7 @@ public final class Signer {
                 Path checksums = context.getChecksumsDirectory()
                     .resolve(context.getModel().getChecksum().getResolvedName(context, algorithm));
                 if (Files.exists(checksums)) {
-                    Path output = signaturesDirectory.resolve(checksums.getFileName().toString().concat(extension));
+                    Path output = extension.isEmpty() ? checksums : signaturesDirectory.resolve(checksums.getFileName().toString().concat(extension));
                     SigningUtils.FilePair pair = new SigningUtils.FilePair(checksums, output);
                     if (!forceSign) pair.setValid(validator.test(pair));
                     files.add(pair);
@@ -435,6 +471,54 @@ public final class Signer {
             cosign.verifyBlob(publicKeyFile, pair.getSignatureFile(), pair.getInputFile());
             return true;
         } catch (SigningException e) {
+            return false;
+        }
+    }
+
+    private static void sign(JReleaserContext context, List<SigningUtils.FilePair> files,
+                             org.jreleaser.sdk.tool.SignTool signTool, Signing signing) throws SigningException {
+        context.getLogger().debug("Signing {} files with SignTool", files.size());
+
+        String certificateFile = signing.getSignTool().getCertificateFile();
+        String password = signing.getSignTool().getPassword();
+        String timestampUrl = signing.getSignTool().getTimestampUrl();
+        String algorithm = signing.getSignTool().getAlgorithm();
+        String description = signing.getSignTool().getDescription();
+
+        for (SigningUtils.FilePair pair : files) {
+            signTool.signFile(pair.getInputFile(), certificateFile, password, 
+                timestampUrl, algorithm, description);
+        }
+    }
+
+    private static void verify(JReleaserContext context, List<SigningUtils.FilePair> files,
+                               org.jreleaser.sdk.tool.SignTool signTool) throws SigningException {
+        context.getLogger().debug(RB.$("signing.verify.signatures"), files.size());
+
+        context.getLogger().setPrefix("verify");
+        try {
+            for (SigningUtils.FilePair pair : files) {
+                boolean isValid = signTool.verifyFile(pair.getInputFile());
+                pair.setValid(isValid);
+
+                if (!pair.isValid()) {
+                    throw new SigningException(RB.$("ERROR_signing_verify_file",
+                        context.relativizeToBasedir(pair.getInputFile()),
+                        context.relativizeToBasedir(pair.getSignatureFile())));
+                }
+            }
+        } finally {
+            context.getLogger().restorePrefix();
+        }
+    }
+
+    private static boolean isValidSignTool(JReleaserContext context, org.jreleaser.sdk.tool.SignTool signTool, 
+                                          SigningUtils.FilePair pair) {
+        try {
+            return signTool.verifyFile(pair.getInputFile());
+        } catch (SigningException e) {
+            context.getLogger().debug("File not signed or signature invalid: " + 
+                context.relativizeToBasedir(pair.getInputFile()));
             return false;
         }
     }

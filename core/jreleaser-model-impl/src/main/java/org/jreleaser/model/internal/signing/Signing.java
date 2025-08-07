@@ -48,6 +48,7 @@ public final class Signing extends AbstractActivatable<Signing> implements Domai
 
     private final Command command = new Command();
     private final Cosign cosign = new Cosign();
+    private final SignTool signTool = new SignTool();
 
     private Boolean armored;
     private Boolean verify;
@@ -125,6 +126,11 @@ public final class Signing extends AbstractActivatable<Signing> implements Domai
         }
 
         @Override
+        public SignTool getSignTool() {
+            return signTool.asImmutable();
+        }
+
+        @Override
         public Active getActive() {
             return Signing.this.getActive();
         }
@@ -159,6 +165,7 @@ public final class Signing extends AbstractActivatable<Signing> implements Domai
         this.catalogs = merge(this.catalogs, source.catalogs);
         setCommand(source.command);
         setCosign(source.cosign);
+        setSignTool(source.signTool);
     }
 
     public org.jreleaser.model.Signing.Mode resolveMode() {
@@ -292,6 +299,14 @@ public final class Signing extends AbstractActivatable<Signing> implements Domai
         this.cosign.merge(cosign);
     }
 
+    public SignTool getSignTool() {
+        return signTool;
+    }
+
+    public void setSignTool(SignTool signTool) {
+        this.signTool.merge(signTool);
+    }
+
     @Override
     public Map<String, Object> asMap(boolean full) {
         if (!full && !isEnabled()) return Collections.emptyMap();
@@ -312,6 +327,8 @@ public final class Signing extends AbstractActivatable<Signing> implements Domai
             props.put("command", command.asMap(full));
         } else if (mode == org.jreleaser.model.Signing.Mode.COSIGN) {
             props.put("cosign", cosign.asMap(full));
+        } else if (mode == org.jreleaser.model.Signing.Mode.SIGNTOOL) {
+            props.put("signTool", signTool.asMap(full));
         } else {
             props.put("publicKey", isNotBlank(publicKey) ? HIDE : UNSET);
             props.put("secretKey", isNotBlank(secretKey) ? HIDE : UNSET);
@@ -322,7 +339,9 @@ public final class Signing extends AbstractActivatable<Signing> implements Domai
 
     public String getSignatureExtension() {
         String extension = ".sig";
-        if (mode != org.jreleaser.model.Signing.Mode.COSIGN) {
+        if (mode == org.jreleaser.model.Signing.Mode.SIGNTOOL) {
+            extension = "";
+        } else if (mode != org.jreleaser.model.Signing.Mode.COSIGN) {
             extension = isArmored() ? ".asc" : ".sig";
         }
 
