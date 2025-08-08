@@ -73,16 +73,16 @@ public final class ModelValidator {
                     }
                     break;
             }
+
+            if (!context.getMode().validateStandalone()) {
+                context.setReleaser(Releasers.releaserFor(context));
+            }
         } catch (JReleaserException e) {
             context.getLogger().trace(e);
             throw e;
         } catch (Exception e) {
             context.getLogger().trace(e);
             throw new JReleaserException(RB.$("ERROR_context_configurer_jreleaser_misconfigured"), e);
-        }
-
-        if (!context.getMode().validateStandalone()) {
-            context.setReleaser(Releasers.releaserFor(context));
         }
 
         report(context);

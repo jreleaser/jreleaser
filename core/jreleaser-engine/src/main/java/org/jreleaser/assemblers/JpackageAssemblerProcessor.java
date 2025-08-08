@@ -94,10 +94,11 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
             if (isNotBlank(assembler.getJlink())) {
                 JlinkAssembler jlink = context.getModel().getAssemble().findJlink(assembler.getJlink());
                 if (jlink.getJavaArchive().isSet()) {
-                    String archiveFile = resolveTemplate(jlink.getJavaArchive().getPath(), props);
+                    String configuredPath = jlink.getJavaArchive().getPath();
+                    String archiveFile = resolveTemplate(configuredPath, props);
                     Path archivePath = context.getBasedir().resolve(Paths.get(archiveFile));
                     if (!Files.exists(archivePath)) {
-                        throw new AssemblerProcessingException(RB.$("ERROR_path_does_not_exist", archivePath));
+                        throw new AssemblerProcessingException(RB.$("ERROR_path_does_not_exist_2", configuredPath, archivePath));
                     }
 
                     Path archiveDirectory = inputsDirectory.resolve(ARCHIVE_DIRECTORY);

@@ -155,10 +155,11 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
         boolean hasJavaArchive = assembler.getJavaArchive().isSet();
 
         if (hasJavaArchive) {
-            String archiveFile = resolveTemplate(assembler.getJavaArchive().getPath(), props);
+            String configuredPath = assembler.getJavaArchive().getPath();
+            String archiveFile = resolveTemplate(configuredPath, props);
             Path archivePath = context.getBasedir().resolve(Paths.get(archiveFile));
             if (!Files.exists(archivePath)) {
-                throw new AssemblerProcessingException(RB.$("ERROR_path_does_not_exist", archivePath));
+                throw new AssemblerProcessingException(RB.$("ERROR_path_does_not_exist_2", configuredPath, archivePath));
             }
 
             Path archiveDirectory = inputsDirectory.resolve(ARCHIVE_DIRECTORY);

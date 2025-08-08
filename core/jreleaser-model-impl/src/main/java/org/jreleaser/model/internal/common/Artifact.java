@@ -307,10 +307,11 @@ public final class Artifact extends AbstractArtifact<Artifact> implements Domain
 
     public Path getResolvedPath(JReleaserContext context, TemplateContext additionalContext, Path basedir, boolean checkIfExists) {
         if (null == resolvedPath) {
+            String configuredPath = path;
             path = resolveForArtifact(path, context, additionalContext, this);
             resolvedPath = basedir.resolve(Paths.get(path)).normalize();
             if (checkIfExists && !isOptional(context) && !exists(resolvedPath)) {
-                throw new JReleaserException(RB.$("ERROR_path_does_not_exist", context.relativizeToBasedir(resolvedPath)));
+                throw new JReleaserException(RB.$("ERROR_path_does_not_exist_2", configuredPath, context.relativizeToBasedir(resolvedPath)));
             }
         }
         return resolvedPath;
@@ -330,10 +331,11 @@ public final class Artifact extends AbstractArtifact<Artifact> implements Domain
 
     public Path getResolvedPath(JReleaserContext context, TemplateContext additionalContext, Distribution distribution) {
         if (null == resolvedPath) {
+            String configuredPath = path;
             path = Artifacts.resolveForArtifact(path, context, additionalContext, this, distribution);
             resolvedPath = context.getBasedir().resolve(Paths.get(path)).normalize();
             if (context.getMode().validatePaths() && !isOptional(context) && !exists(resolvedPath)) {
-                throw new JReleaserException(RB.$("ERROR_path_does_not_exist", context.relativizeToBasedir(resolvedPath)));
+                throw new JReleaserException(RB.$("ERROR_path_does_not_exist_2", configuredPath, context.relativizeToBasedir(resolvedPath)));
             }
         }
         return resolvedPath;
@@ -345,10 +347,11 @@ public final class Artifact extends AbstractArtifact<Artifact> implements Domain
 
     public Path getResolvedPath(JReleaserContext context, TemplateContext additionalContext, Assembler<?> assembler) {
         if (null == resolvedPath) {
+            String configuredPath = path;
             path = Artifacts.resolveForArtifact(path, context, additionalContext, this, assembler);
             resolvedPath = context.getBasedir().resolve(Paths.get(path)).normalize();
             if (context.getMode().validatePaths() && !isOptional(context) && !exists(resolvedPath)) {
-                throw new JReleaserException(RB.$("ERROR_path_does_not_exist", context.relativizeToBasedir(resolvedPath)));
+                throw new JReleaserException(RB.$("ERROR_path_does_not_exist_2", configuredPath, context.relativizeToBasedir(resolvedPath)));
             }
         }
         return resolvedPath;
