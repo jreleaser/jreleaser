@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-95-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-96-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -133,6 +133,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://marcphilipp.de"><img src="https://avatars.githubusercontent.com/u/214207?v=4?s=100" width="100px;" alt="Marc Philipp"/><br /><sub><b>Marc Philipp</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=marcphilipp" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/ramanathan1504"><img src="https://avatars.githubusercontent.com/u/139941171?v=4?s=100" width="100px;" alt="Ramanathan"/><br /><sub><b>Ramanathan</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=ramanathan1504" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/dorianm"><img src="https://avatars.githubusercontent.com/u/4815363?v=4?s=100" width="100px;" alt="Dorian Monnier"/><br /><sub><b>Dorian Monnier</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=dorianm" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://www.anamihalceanu.com/"><img src="https://avatars.githubusercontent.com/u/9703337?v=4?s=100" width="100px;" alt="Ana Maria Mihalceanu"/><br /><sub><b>Ana Maria Mihalceanu</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=ammbra" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
