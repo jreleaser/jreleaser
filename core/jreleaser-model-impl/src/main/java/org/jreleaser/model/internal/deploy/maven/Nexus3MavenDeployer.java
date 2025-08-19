@@ -182,14 +182,14 @@ public final class Nexus3MavenDeployer extends AbstractMavenDeployer<Nexus3Maven
     /**
      * The {@link org.jreleaser.model.internal.validation.deploy.maven.MavenDeployersValidator}
      * removes the trailing slash (if any) from any Maven URL property.
-     * We have to re-introduce it for Nexus3 or else the "deploy" operation will fail.
-     * That's why we normalize the URL here.
+     * Unlike Nexus2 which requires a trailing slash, Nexus3 doesn't work if it's present.
+     * That's why we don't normalize the URL here.
      */
     @Override
     public String getResolvedUrl(TemplateContext props) {
         props.set("username", getUsername());
         props.set("owner", getUsername());
         props.setAll(getExtraProperties());
-        return normalizeUrl(resolveTemplate(getUrl(), props));
+        return resolveTemplate(getUrl(), props);
     }
 }
