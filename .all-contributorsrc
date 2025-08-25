@@ -903,6 +903,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "lauzadis",
+      "name": "Matas",
+      "avatar_url": "https://avatars.githubusercontent.com/u/30608308?v=4",
+      "profile": "http://wetmars.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
