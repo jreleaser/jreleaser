@@ -57,6 +57,9 @@ abstract class JReleaserEnvTask extends DefaultTask {
         jlogger = objects.property(JReleaserLogger)
         basedir = objects.directoryProperty()
         settings = objects.fileProperty()
+        
+        // Disable up-to-date checks: jreleaser/issues/1972
+        this.outputs.upToDateWhen { false }
     }
 
     @TaskAction
