@@ -120,6 +120,7 @@ enforce {
         r.exclude("com.github.spotbugs:spotbugs:$spotbugsVersion")
         r.exclude("com.github.spotbugs:spotbugs-annotations:$spotbugsVersion")
         r.exclude("org.eclipse.angus:jakarta.mail:$angusVersion")
+        r.exclude("org.dom4j:dom4j")
     }
 
     rule(enforcer.rules.ForceDependencies) { r ->
