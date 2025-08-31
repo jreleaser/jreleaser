@@ -99,7 +99,7 @@ public class MavenCentral {
 
         TokenAuthRequestInterceptor authRequestInterceptor = new TokenAuthRequestInterceptor(password);
         if (authorization == Http.Authorization.BASIC) {
-            new TokenAuthRequestInterceptor(TokenAuthRequestInterceptor.BEARER, username, password);
+            authRequestInterceptor = new TokenAuthRequestInterceptor(TokenAuthRequestInterceptor.BEARER, username, password);
         }
 
         this.api = ClientUtils.builder(context, connectTimeout, readTimeout)
