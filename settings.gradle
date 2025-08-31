@@ -125,7 +125,7 @@ enforce {
 
     rule(enforcer.rules.ForceDependencies) { r ->
         r.dependencies.addAll "com.fasterxml:classmate:$classmateVersion",
-            "com.fasterxml.jackson.core:jackson-annotations:$jacksonVersion",
+            "com.fasterxml.jackson.core:jackson-annotations:$jackson2Version",
             "com.fasterxml.jackson.core:jackson-core:$jacksonVersion",
             "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion",
             "com.fasterxml.jackson.dataformat:jackson-dataformat-cbor:$jacksonVersion",
