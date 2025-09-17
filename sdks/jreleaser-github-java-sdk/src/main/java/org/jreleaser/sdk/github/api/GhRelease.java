@@ -36,6 +36,7 @@ public class GhRelease {
     private String body;
     private boolean prerelease;
     private boolean draft;
+    private boolean immutableRelease;
     private String targetCommitish;
     private Date createdAt;
     private Date publishedAt;
@@ -112,6 +113,14 @@ public class GhRelease {
 
     public void setDraft(boolean draft) {
         this.draft = draft;
+    }
+
+    public boolean isImmutableRelease() {
+        return immutableRelease;
+    }
+
+    public void setImmutableRelease(boolean immutableRelease) {
+        this.immutableRelease = immutableRelease;
     }
 
     public String getTargetCommitish() {
