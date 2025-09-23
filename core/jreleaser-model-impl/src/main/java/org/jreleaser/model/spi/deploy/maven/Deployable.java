@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.spi.deploy.maven;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.mustache.TemplateContext;
 
 import java.nio.file.Path;
@@ -107,6 +108,10 @@ public class Deployable implements Comparable<Deployable> {
             String v = version;
             int l = version.length();
             if (snapshot) {
+                // Maven requires snapshot versions to contain the literal "-SNAPSHOT" suffix
+                if (!version.contains("SNAPSHOT")) {
+                    throw new IllegalArgumentException(RB.$("ERROR_snapshot_version_missing_suffix", version));
+                }
                 // SNAPSHOT replaced with YYYYMMDD.HHmmSS-#
                 v = version.substring(0, version.length() - "SNAPSHOT".length());
                 l = v.length() + 17;
