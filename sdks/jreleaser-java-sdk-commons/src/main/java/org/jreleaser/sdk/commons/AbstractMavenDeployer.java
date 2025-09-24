@@ -463,27 +463,45 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
     }
 
     private void verifyKeyIsValid() {
-        Optional<String> publicKeyID = Optional.empty();
-        Optional<String> fingerprint = Optional.empty();
+        Optional<String> publicKeyID;
+        Optional<String> fingerprint;
+
+        boolean verify = context.getModel().getSigning().isVerify();
 
         try {
             publicKeyID = SigningUtils.getPublicKeyID(context.asImmutable());
         } catch (SigningException e) {
-            throw new JReleaserException(RB.$("ERROR_public_key_not_found"));
+            if (verify) {
+                throw new JReleaserException(RB.$("ERROR_public_key_not_found"));
+            }
+            context.getLogger().warn(RB.$("ERROR_public_key_not_found"));
+            return;
         }
 
         if (!publicKeyID.isPresent()) {
-            throw new JReleaserException(RB.$("ERROR_public_key_not_found"));
+            if (verify) {
+                throw new JReleaserException(RB.$("ERROR_public_key_not_found"));
+            }
+            context.getLogger().warn(RB.$("ERROR_public_key_not_found"));
+            return;
         }
 
         try {
             fingerprint = SigningUtils.getFingerprint(context.asImmutable());
         } catch (SigningException e) {
-            throw new JReleaserException(RB.$("ERROR_public_key_not_found"));
+            if (verify) {
+                throw new JReleaserException(RB.$("ERROR_public_key_not_found"));
+            }
+            context.getLogger().warn(RB.$("ERROR_public_key_not_found"));
+            return;
         }
 
         if (!fingerprint.isPresent()) {
-            throw new JReleaserException(RB.$("ERROR_public_key_not_found"));
+            if (verify) {
+                throw new JReleaserException(RB.$("ERROR_public_key_not_found"));
+            }
+            context.getLogger().warn(RB.$("ERROR_public_key_not_found"));
+            return;
         }
 
         String keyID = publicKeyID.get().toUpperCase(Locale.ENGLISH);
@@ -498,13 +516,23 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
                     context.getLogger().warn(RB.$("signing.public.key.no.expiration.date", keyID));
 
                 } else if (Instant.now().isAfter(ed)) {
-                        throw new JReleaserException(RB.$("ERROR_public_key_expired", keyID, LocalDateTime.ofInstant(ed, ZoneId.systemDefault())));
+                    LocalDateTime ldt = LocalDateTime.ofInstant(ed, ZoneId.systemDefault());
+                    if (verify) {
+                        throw new JReleaserException(RB.$("ERROR_public_key_expired", keyID, ldt));
+                    } else {
+                        context.getLogger().warn(RB.$("ERROR_public_key_expired", keyID, ldt));
+                    }
                 } else {
                     context.getLogger().info(RB.$("signing.public.key.expiration.date", keyID, LocalDateTime.ofInstant(ed, ZoneId.systemDefault())));
                 }
             }
         } catch (SigningException e) {
-            throw new JReleaserException(RB.$("ERROR_public_key_not_found"));
+            if (verify) {
+                throw new JReleaserException(RB.$("ERROR_public_key_not_found"));
+            } else {
+                context.getLogger().warn(RB.$("ERROR_public_key_not_found"));
+                return;
+            }
         }
 
         boolean published = false;
