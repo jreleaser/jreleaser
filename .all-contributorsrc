@@ -930,6 +930,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "LogFlames",
+      "name": "Elias Lundell",
+      "avatar_url": "https://avatars.githubusercontent.com/u/36220731?v=4",
+      "profile": "http://eliaslundell.se",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
