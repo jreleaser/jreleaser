@@ -921,6 +921,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "adutra",
+      "name": "Alexandre Dutra",
+      "avatar_url": "https://avatars.githubusercontent.com/u/463876?v=4",
+      "profile": "http://www.dremio.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
