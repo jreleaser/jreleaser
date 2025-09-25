@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-98-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-99-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -136,6 +136,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://www.anamihalceanu.com/"><img src="https://avatars.githubusercontent.com/u/9703337?v=4?s=100" width="100px;" alt="Ana Maria Mihalceanu"/><br /><sub><b>Ana Maria Mihalceanu</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=ammbra" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://wetmars.com"><img src="https://avatars.githubusercontent.com/u/30608308?v=4?s=100" width="100px;" alt="Matas"/><br /><sub><b>Matas</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=lauzadis" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/shaikhu"><img src="https://avatars.githubusercontent.com/u/38332365?v=4?s=100" width="100px;" alt="Usman Shaikh"/><br /><sub><b>Usman Shaikh</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=shaikhu" title="Code">💻</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="http://www.dremio.com"><img src="https://avatars.githubusercontent.com/u/463876?v=4?s=100" width="100px;" alt="Alexandre Dutra"/><br /><sub><b>Alexandre Dutra</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=adutra" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
