@@ -38,6 +38,7 @@ public final class GithubReleaser extends BaseReleaser<org.jreleaser.model.api.r
     private final ReleaseNotes releaseNotes = new ReleaseNotes();
 
     private Boolean draft;
+    private Boolean immutableRelease;
     private String discussionCategoryName;
     private org.jreleaser.model.api.release.GithubReleaser.MakeLatest makeLatest;
 
@@ -53,6 +54,11 @@ public final class GithubReleaser extends BaseReleaser<org.jreleaser.model.api.r
         @Override
         public boolean isDraft() {
             return GithubReleaser.this.isDraft();
+        }
+
+        @Override
+        public boolean isImmutableRelease() {
+            return GithubReleaser.this.isImmutableRelease();
         }
 
         @Override
@@ -345,6 +351,18 @@ public final class GithubReleaser extends BaseReleaser<org.jreleaser.model.api.r
         return null != draft;
     }
 
+    public boolean isImmutableRelease() {
+        return null != immutableRelease && immutableRelease;
+    }
+
+    public void setImmutableRelease(Boolean immutableRelease) {
+        this.immutableRelease = immutableRelease;
+    }
+
+    public boolean isImmutableReleaseSet() {
+        return null != immutableRelease;
+    }
+
     public String getDiscussionCategoryName() {
         return discussionCategoryName;
     }
@@ -370,6 +388,7 @@ public final class GithubReleaser extends BaseReleaser<org.jreleaser.model.api.r
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = super.asMap(full);
         map.put("draft", isDraft());
+        map.put("immutableRelease", isImmutableRelease());
         map.put("discussionCategoryName", discussionCategoryName);
         map.put("releaseNotes", releaseNotes.asMap(full));
         map.put("makeLatest", null != makeLatest ? makeLatest.formatted() : null);

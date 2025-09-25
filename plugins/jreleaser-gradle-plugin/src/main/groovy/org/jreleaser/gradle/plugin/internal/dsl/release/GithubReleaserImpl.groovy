@@ -39,6 +39,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 @CompileStatic
 class GithubReleaserImpl extends BaseReleaserImpl implements GithubReleaser {
     final Property<Boolean> draft
+    final Property<Boolean> immutableRelease
     final Property<org.jreleaser.model.api.release.GithubReleaser.MakeLatest> makeLatest
     final Property<String> discussionCategoryName
     final ChangelogImpl changelog
@@ -96,6 +97,7 @@ class GithubReleaserImpl extends BaseReleaserImpl implements GithubReleaser {
         org.jreleaser.model.internal.release.GithubReleaser service = new org.jreleaser.model.internal.release.GithubReleaser()
         toModel(service)
         if (draft.present) service.draft = draft.get()
+        if (immutableRelease.present) service.immutableRelease = immutableRelease.get()
         if (makeLatest.present) service.makeLatest = makeLatest.get()
         service.prerelease = prerelease.toModel()
         service.releaseNotes = releaseNotes.toModel()

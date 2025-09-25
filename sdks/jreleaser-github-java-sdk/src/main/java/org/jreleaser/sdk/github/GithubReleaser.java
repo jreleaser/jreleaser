@@ -355,6 +355,10 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
         if (github.isDraftSet()) {
             release.setDraft(github.isDraft());
         }
+        if (github.isImmutableReleaseSet()) {
+            // If immutable, create as draft first, upload assets, then publish
+            release.setDraft(github.isDraft() || github.isImmutableRelease());
+        }
 
         boolean isDraftBefore = release.isDraft();
         release = api.createRelease(github.getOwner(), github.getName(), release);
@@ -377,7 +381,9 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
         GhRelease newRelease = api.findReleaseById(github.getOwner(), github.getName(), release.getId());
         boolean isDraftAfter = newRelease.isDraft();
 
-        if (!isDraftBefore && isDraftAfter) {
+        boolean shouldUndraftImmutableRelease = github.isImmutableReleaseSet() && github.isImmutableRelease() && !(github.isDraftSet() && github.isDraft());
+
+        if (!isDraftBefore && isDraftAfter || shouldUndraftImmutableRelease) {
             GhRelease updater = new GhRelease();
             updater.setPrerelease(release.isPrerelease());
             updater.setDraft(false);

@@ -30,6 +30,8 @@ import org.gradle.api.provider.Property
 interface GithubReleaser extends BaseReleaser {
     Property<Boolean> getDraft()
 
+    Property<Boolean> getImmutableRelease()
+
     Property<org.jreleaser.model.api.release.GithubReleaser.MakeLatest> getMakeLatest()
 
     Property<String> getDiscussionCategoryName()

@@ -33,6 +33,8 @@ public interface GithubReleaser extends Releaser {
 
     boolean isDraft();
 
+    boolean isImmutableRelease();
+
     String getDiscussionCategoryName();
 
     ReleaseNotes getReleaseNotes();
