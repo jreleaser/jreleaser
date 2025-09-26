@@ -76,4 +76,4 @@ image:https://img.shields.io/librariesio/github/{project-owner}/{project-name}?l
 
 == Build from source
 
-See link:CONTRIBUTING.adoc[Contributing].
+See link:https://github.com/jreleaser/.github/blob/main/CONTRIBUTING.adoc[Contributing].
