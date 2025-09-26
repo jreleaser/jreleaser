@@ -33,7 +33,7 @@ import static java.util.Collections.unmodifiableMap;
  * @since 0.1.0
  */
 public final class GithubReleaser extends BaseReleaser<org.jreleaser.model.api.release.GithubReleaser, GithubReleaser> {
-    private static final long serialVersionUID = 8444833889157237176L;
+    private static final long serialVersionUID = 7615236950788484735L;
 
     private final ReleaseNotes releaseNotes = new ReleaseNotes();
 
@@ -44,7 +44,7 @@ public final class GithubReleaser extends BaseReleaser<org.jreleaser.model.api.r
 
     @JsonIgnore
     private final org.jreleaser.model.api.release.GithubReleaser immutable = new org.jreleaser.model.api.release.GithubReleaser() {
-        private static final long serialVersionUID = -9123016069637288447L;
+        private static final long serialVersionUID = -2456215520686557091L;
 
         @Override
         public boolean isPrerelease() {
