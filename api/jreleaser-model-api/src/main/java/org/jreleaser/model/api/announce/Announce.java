@@ -53,6 +53,8 @@ public interface Announce extends Domain, Activatable {
 
     MattermostAnnouncer getMattermost();
 
+    RedditAnnouncer getReddit();
+
     OpenCollectiveAnnouncer getOpenCollective();
 
     SdkmanAnnouncer getSdkman();
