@@ -56,37 +56,37 @@ jobs:
       attestations: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: artifacts
           path: plugins
 
       - name: Download java-archive
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: java-archive
           path: out/jreleaser/assemble/jreleaser/java-archive
 
       - name: Download jlink
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: jlink
           path: out/jreleaser/assemble/jreleaser-standalone/jlink
 
       - name: Download jpackage
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           pattern: jpackage-*
           merge-multiple: true
           path: out/jreleaser/assemble/jreleaser-installer/jpackage
 
       - name: Download native-image
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           pattern: native-image-*
           merge-multiple: true

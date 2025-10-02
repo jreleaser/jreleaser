@@ -19,7 +19,7 @@ jobs:
       version: ${{ steps.vars.outputs.VERSION }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Cancel previous run
         uses: styfle/cancel-workflow-action@0.12.1

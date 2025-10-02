@@ -28,18 +28,18 @@ jobs:
     runs-on: ${{ matrix.job.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: main
 
       - name: Download artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: artifacts
           path: plugins
 
       - name: Download jlink
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: jlink
           path: out/jreleaser/assemble/jreleaser-standalone/jlink
@@ -52,7 +52,7 @@ jobs:
           unzip -q -d work-${{ matrix.job.platform }} jreleaser-standalone-${{ inputs.project-effective-version }}-${{ matrix.job.platformReplaced }}.zip
 
       - name: Setup Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           java-version: ${{ vars.JAVA_VERSION }}
           distribution: ${{ vars.JAVA_DISTRO }}
