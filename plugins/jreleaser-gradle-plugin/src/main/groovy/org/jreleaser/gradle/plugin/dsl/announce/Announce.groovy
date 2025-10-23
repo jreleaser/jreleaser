@@ -56,6 +56,8 @@ interface Announce extends Activatable {
 
     OpenCollectiveAnnouncer getOpenCollective()
 
+    RedditAnnouncer getReddit()
+
     SdkmanAnnouncer getSdkman()
 
     SlackAnnouncer getSlack()
@@ -99,6 +101,8 @@ interface Announce extends Activatable {
     void mattermost(Action<? super MattermostAnnouncer> action)
 
     void openCollective(Action<? super OpenCollectiveAnnouncer> action)
+
+    void reddit(Action<? super RedditAnnouncer> action)
 
     void sdkman(Action<? super SdkmanAnnouncer> action)
 

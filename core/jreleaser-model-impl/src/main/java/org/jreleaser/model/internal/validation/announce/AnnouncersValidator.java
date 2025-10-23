@@ -35,6 +35,7 @@ import static org.jreleaser.model.internal.validation.announce.LinkedinAnnouncer
 import static org.jreleaser.model.internal.validation.announce.MastodonAnnouncerValidator.validateMastodon;
 import static org.jreleaser.model.internal.validation.announce.MattermostAnnouncerValidator.validateMattermost;
 import static org.jreleaser.model.internal.validation.announce.OpenCollectiveAnnouncerValidator.validateOpenCollective;
+import static org.jreleaser.model.internal.validation.announce.RedditAnnouncerValidator.validateReddit;
 import static org.jreleaser.model.internal.validation.announce.SdkmanAnnouncerValidator.validateSdkmanAnnouncer;
 import static org.jreleaser.model.internal.validation.announce.SlackAnnouncerValidator.validateSlack;
 import static org.jreleaser.model.internal.validation.announce.SmtpAnnouncerValidator.validateSmtp;
@@ -89,6 +90,8 @@ public final class AnnouncersValidator {
         mergeErrors(context, errors, incoming, announce.getMastodon());
         validateMattermost(context, announce.getMattermost(), incoming);
         mergeErrors(context, errors, incoming, announce.getMattermost());
+        validateReddit(context, announce.getReddit(), incoming);
+        mergeErrors(context, errors, incoming, announce.getReddit());
         validateOpenCollective(context, announce.getOpenCollective(), incoming);
         mergeErrors(context, errors, incoming, announce.getOpenCollective());
         validateSdkmanAnnouncer(context, announce.getSdkman(), incoming);
@@ -124,6 +127,7 @@ public final class AnnouncersValidator {
                 announce.getMastodon().isEnabled() ||
                 announce.getMattermost().isEnabled() ||
                 announce.getOpenCollective().isEnabled() ||
+                announce.getReddit().isEnabled() ||
                 announce.getSdkman().isEnabled() ||
                 announce.getSlack().isEnabled() ||
                 announce.getTeams().isEnabled() ||

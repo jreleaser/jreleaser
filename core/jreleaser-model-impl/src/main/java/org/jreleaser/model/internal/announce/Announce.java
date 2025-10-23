@@ -38,7 +38,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.1.0
  */
 public final class Announce extends AbstractActivatable<Announce> implements Domain {
-    private static final long serialVersionUID = 8244852443096292765L;
+    private static final long serialVersionUID = 8244852443096292766L;
 
     private final ArticleAnnouncer article = new ArticleAnnouncer();
     private final BlueskyAnnouncer bluesky = new BlueskyAnnouncer();
@@ -51,6 +51,7 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
     private final SmtpAnnouncer smtp = new SmtpAnnouncer();
     private final MastodonAnnouncer mastodon = new MastodonAnnouncer();
     private final MattermostAnnouncer mattermost = new MattermostAnnouncer();
+    private final RedditAnnouncer reddit = new RedditAnnouncer();
     private final OpenCollectiveAnnouncer openCollective = new OpenCollectiveAnnouncer();
     private final SdkmanAnnouncer sdkman = new SdkmanAnnouncer();
     private final SlackAnnouncer slack = new SlackAnnouncer();
@@ -125,6 +126,11 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         @Override
         public org.jreleaser.model.api.announce.MattermostAnnouncer getMattermost() {
             return mattermost.asImmutable();
+        }
+
+        @Override
+        public org.jreleaser.model.api.announce.RedditAnnouncer getReddit() {
+            return reddit.asImmutable();
         }
 
         @Override
@@ -210,6 +216,7 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         setSmtp(source.smtp);
         setMastodon(source.mastodon);
         setMattermost(source.mattermost);
+        setReddit(source.reddit);
         setOpenCollective(source.openCollective);
         setSdkman(source.sdkman);
         setSlack(source.slack);
@@ -345,6 +352,14 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         return mattermost;
     }
 
+    public RedditAnnouncer getReddit() {
+        return reddit;
+    }
+
+    public void setReddit(RedditAnnouncer reddit) {
+        this.reddit.merge(reddit);
+    }
+
     @Deprecated
     @JsonPropertyDescription("announce.mattermost is deprecated since 1.4.0 and will be removed in 2.0.0")
     public void setMattermost(MattermostAnnouncer mattermost) {
@@ -474,6 +489,7 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         map.putAll(smtp.asMap(full));
         map.putAll(mastodon.asMap(full));
         map.putAll(mattermost.asMap(full));
+        map.putAll(reddit.asMap(full));
         map.putAll(openCollective.asMap(full));
         map.putAll(sdkman.asMap(full));
         map.putAll(slack.asMap(full));
@@ -520,6 +536,8 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
                 return (A) getMastodon();
             case org.jreleaser.model.api.announce.MattermostAnnouncer.TYPE:
                 return (A) getMattermost();
+            case org.jreleaser.model.api.announce.RedditAnnouncer.TYPE:
+                return (A) getReddit();
             case org.jreleaser.model.api.announce.OpenCollectiveAnnouncer.TYPE:
                 return (A) getOpenCollective();
             case org.jreleaser.model.api.announce.SdkmanAnnouncer.TYPE:

@@ -45,6 +45,7 @@ dependencies {
     api project(':jreleaser-mastodon-java-sdk')
     api project(':jreleaser-mattermost-java-sdk')
     api project(':jreleaser-opencollective-java-sdk')
+    api project(':jreleaser-reddit-java-sdk')
     api project(':jreleaser-sdkman-java-sdk')
     api project(':jreleaser-slack-java-sdk')
     api project(':jreleaser-teams-java-sdk')
