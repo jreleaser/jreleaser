@@ -125,30 +125,30 @@ jdks {
         url = 'https://cdn.azul.com/zulu/bin/zulu21.38.21-ca-jdk21.0.5-macosx_aarch64.zip'
         checksum = 'd5c289ce2c8c67f414ede3b170dea72ca9a1322520498325a51d83bbaa94d1f0'
     }
-    graal24Osx {
+    graal25Osx {
         platform = 'osx-x86_64'
-        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-24.0.1/graalvm-community-jdk-24.0.1_macos-x64_bin.tar.gz'
-        checksum = '452615d870ac9a6bf0fac09ff859d6c1a78e14d6f2a1937d610e7c6e470359e2'
+        url = 'https://download.oracle.com/graalvm/25/archive/graalvm-jdk-25.0.1_macos-x64_bin.tar.gz'
+        checksum = 'a762ca1d9a163e32790b9286f3af4c16369729ff27999d8dbab60d7be16cff2f'
     }
-    graal24OsxArm {
+    graal25OsxArm {
         platform = 'osx-aarch64'
-        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-24.0.1/graalvm-community-jdk-24.0.1_macos-aarch64_bin.tar.gz'
-        checksum = '0e18661fb350d76c7d4905484b72b90ecda38a0910b3a9a2856573086678cead'
+        url = 'https://download.oracle.com/graalvm/25/archive/graalvm-jdk-25.0.1_macos-aarch64_bin.tar.gz'
+        checksum = '19dfd49ad112e6e6c2bdedc507c6859bf21294fa4c164f1be670d469c65b7993'
     }
-    graal24Linux {
+    graal25Linux {
         platform = 'linux-x86_64'
-        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-24.0.1/graalvm-community-jdk-24.0.1_linux-x64_bin.tar.gz'
-        checksum = 'd2c544de672e400476a09c8f1da79ecc6b774a9441e234948542c3b3e6a84bde'
+        url = 'https://download.oracle.com/graalvm/25/archive/graalvm-jdk-25.0.1_linux-x64_bin.tar.gz'
+        checksum = 'd4ab02ba1029e639f03374fdf91c242e1d0d49079880e1af1932ea7b7c431837'
     }
-    graal24LinuxArm {
+    graal25LinuxArm {
         platform = 'linux-aarch64'
-        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-24.0.1/graalvm-community-jdk-24.0.1_linux-aarch64_bin.tar.gz'
-        checksum = 'a3d1be8fadfb0d3df632252301f79a9b02b47e523da66539d370c62e683d762e'
+        url = 'https://download.oracle.com/graalvm/25/archive/graalvm-jdk-25.0.1_linux-aarch64_bin.tar.gz'
+        checksum = 'edd77565c76570a6df5f38e53d54524102f2c1b1cf74eebd9f51e7fc19f667cd'
     }
-    graal24Windows {
+    graal25Windows {
         platform = 'windows-x86_64'
-        url = 'https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-24.0.1/graalvm-community-jdk-24.0.1_windows-x64_bin.zip'
-        checksum = '27895bd51d39acaa6fe4b8c78fda02ccaad6e8c92404abf60aa052c07e5cb4fc'
+        url = 'https://download.oracle.com/graalvm/25/archive/graalvm-jdk-25.0.1_windows-x64_bin.zip'
+        checksum = '5398592ecdf8f47f4b481896e1e63cbfff4cb8e0ba61538526e3b3795b1a85e5'
     }
 }
 
@@ -167,7 +167,7 @@ afterEvaluate {
     def copyJdksToCache = project.tasks.findByName('copyJdksToCache')
     ['zulu21Linux', 'zulu21LinuxArm', 'zulu21LinuxMusl', 'zulu21LinuxMuslArm',
      'zulu21Windows', 'zulu21WindowsArm', 'zulu21Osx', 'zulu21OsxArm',
-     'graal24Osx', 'graal24OsxArm', 'graal24Linux', 'graal24LinuxArm', 'graal24Windows'].each { jdk ->
+     'graal25Osx', 'graal25OsxArm', 'graal25Linux', 'graal25LinuxArm', 'graal25Windows'].each { jdk ->
         def copyTask = project.tasks.findByName('copyJdkFromCache' + jdk.capitalize())
         if (copyJdksToCache && copyTask) copyTask.dependsOn(copyJdksToCache)
     }

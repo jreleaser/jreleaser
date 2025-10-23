@@ -38,7 +38,7 @@ jobs:
         with:
           java-version: ${{ vars.GRAAL_JAVA_VERSION }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          distribution: graalvm-community
+          distribution: graalvm
 
       - name: Setup Java
         uses: actions/setup-java@v5
