@@ -33,6 +33,10 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+/**
+ * @author Usman Shaikh
+ * @since 1.21.0
+ */
 class RedditSdkTest {
 
     private static final String ACCESS_TOKEN_ENDPOINT = "/api/v1/access_token";

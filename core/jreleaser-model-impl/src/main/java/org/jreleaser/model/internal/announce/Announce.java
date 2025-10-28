@@ -38,7 +38,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.1.0
  */
 public final class Announce extends AbstractActivatable<Announce> implements Domain {
-    private static final long serialVersionUID = 8244852443096292766L;
+    private static final long serialVersionUID = -2945770875328891983L;
 
     private final ArticleAnnouncer article = new ArticleAnnouncer();
     private final BlueskyAnnouncer bluesky = new BlueskyAnnouncer();
@@ -66,7 +66,7 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
 
     @JsonIgnore
     private final org.jreleaser.model.api.announce.Announce immutable = new org.jreleaser.model.api.announce.Announce() {
-        private static final long serialVersionUID = 2116386621001490270L;
+        private static final long serialVersionUID = -2082810056468887381L;
 
         @Override
         public org.jreleaser.model.api.announce.ArticleAnnouncer getArticle() {

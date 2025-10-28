@@ -24,8 +24,8 @@ import org.jreleaser.model.spi.announce.Announcer;
 import org.jreleaser.mustache.MustacheUtils;
 import org.jreleaser.mustache.TemplateContext;
 
-import static org.jreleaser.model.Constants.KEY_REDDIT_TITLE;
 import static org.jreleaser.model.Constants.KEY_REDDIT_SUBREDDIT;
+import static org.jreleaser.model.Constants.KEY_REDDIT_TITLE;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 

@@ -45,7 +45,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 1.21.0
  */
 public final class RedditAnnouncer extends AbstractAnnouncer<RedditAnnouncer, org.jreleaser.model.api.announce.RedditAnnouncer> {
-    private static final long serialVersionUID = 8152609285615015647L;
+    private static final long serialVersionUID = 4379635430074452143L;
 
     private String clientId;
     private String clientSecret;
@@ -56,12 +56,12 @@ public final class RedditAnnouncer extends AbstractAnnouncer<RedditAnnouncer, or
     private String text;
     private String textTemplate;
     private String url;
-    private org.jreleaser.model.api.announce.RedditAnnouncer.SubmissionType submissionType = 
+    private org.jreleaser.model.api.announce.RedditAnnouncer.SubmissionType submissionType =
         org.jreleaser.model.api.announce.RedditAnnouncer.SubmissionType.SELF;
 
     @JsonIgnore
     private final org.jreleaser.model.api.announce.RedditAnnouncer immutable = new org.jreleaser.model.api.announce.RedditAnnouncer() {
-        private static final long serialVersionUID = -8926470689255000598L;
+        private static final long serialVersionUID = -1316280067796370506L;
 
         @Override
         public String getType() {
@@ -193,7 +193,6 @@ public final class RedditAnnouncer extends AbstractAnnouncer<RedditAnnouncer, or
         applyTemplates(props, resolvedExtraProperties());
         return resolveTemplate(title, props);
     }
-
 
     public String getResolvedText(JReleaserContext context) {
         TemplateContext props = context.fullProps();
