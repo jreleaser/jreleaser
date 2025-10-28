@@ -477,6 +477,10 @@ public interface Constants {
     String KEY_LINKEDIN_OWNER = "linkedinOwner";
     String KEY_LINKEDIN_SUBJECT = "linkedinSubject";
 
+    // Reddit
+    String KEY_REDDIT_TITLE = "redditTitle";
+    String KEY_REDDIT_SUBREDDIT = "redditSubreddit";
+
     // Gofish
     String KEY_GOFISH_PACKAGES = "gofishPackages";
 

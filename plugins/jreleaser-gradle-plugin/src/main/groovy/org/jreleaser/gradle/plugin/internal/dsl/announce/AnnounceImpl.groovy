@@ -38,6 +38,7 @@ import org.jreleaser.gradle.plugin.dsl.announce.LinkedinAnnouncer
 import org.jreleaser.gradle.plugin.dsl.announce.MastodonAnnouncer
 import org.jreleaser.gradle.plugin.dsl.announce.MattermostAnnouncer
 import org.jreleaser.gradle.plugin.dsl.announce.OpenCollectiveAnnouncer
+import org.jreleaser.gradle.plugin.dsl.announce.RedditAnnouncer
 import org.jreleaser.gradle.plugin.dsl.announce.SdkmanAnnouncer
 import org.jreleaser.gradle.plugin.dsl.announce.SlackAnnouncer
 import org.jreleaser.gradle.plugin.dsl.announce.SmtpAnnouncer
@@ -72,6 +73,7 @@ class AnnounceImpl implements Announce {
     final MastodonAnnouncerImpl mastodon
     final MattermostAnnouncerImpl mattermost
     final OpenCollectiveAnnouncerImpl openCollective
+    final RedditAnnouncerImpl reddit
     final SdkmanAnnouncerImpl sdkman
     final SlackAnnouncerImpl slack
     final TeamsAnnouncerImpl teams
@@ -96,6 +98,7 @@ class AnnounceImpl implements Announce {
         mastodon = objects.newInstance(MastodonAnnouncerImpl, objects)
         openCollective = objects.newInstance(OpenCollectiveAnnouncerImpl, objects)
         mattermost = objects.newInstance(MattermostAnnouncerImpl, objects)
+        reddit = objects.newInstance(RedditAnnouncerImpl, objects)
         sdkman = objects.newInstance(SdkmanAnnouncerImpl, objects)
         slack = objects.newInstance(SlackAnnouncerImpl, objects)
         teams = objects.newInstance(TeamsAnnouncerImpl, objects)
@@ -205,6 +208,11 @@ class AnnounceImpl implements Announce {
     }
 
     @Override
+    void reddit(Action<? super RedditAnnouncer> action) {
+        action.execute(reddit)
+    }
+
+    @Override
     void sdkman(Action<? super SdkmanAnnouncer> action) {
         action.execute(sdkman)
     }
@@ -254,6 +262,7 @@ class AnnounceImpl implements Announce {
         if (mastodon.isSet()) announce.mastodon = mastodon.toModel()
         if (openCollective.isSet()) announce.openCollective = openCollective.toModel()
         if (mattermost.isSet()) announce.mattermost = mattermost.toModel()
+        if (reddit.isSet()) announce.reddit = reddit.toModel()
         if (sdkman.isSet()) announce.sdkman = sdkman.toModel()
         if (slack.isSet()) announce.slack = slack.toModel()
         if (teams.isSet()) announce.teams = teams.toModel()
