@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.validation.release;
 
+import org.jreleaser.bundle.RB;
 import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.release.GithubReleaser;
@@ -81,6 +82,14 @@ public final class GithubReleaserValidator {
 
         if (service.isDraft()) {
             service.getMilestone().setClose(false);
+        }
+
+        if (service.isImmutableRelease() && service.isOverwrite()) {
+            errors.configuration(RB.$("validation_github_immutable_and_overwrite"));
+        }
+
+        if (service.isImmutableRelease() && context.getModel().getProject().isSnapshot()) {
+            errors.configuration(RB.$("validation_github_immutable_and_snapshot"));
         }
 
         return service.isEnabled();
