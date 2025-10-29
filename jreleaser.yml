@@ -283,7 +283,7 @@ assemble:
       args:
         - '-Duser.language=en'
         - '-H:IncludeLocales=en,ca,de,es,fr,hi,it,ja,nl,pt_BR,zh_TW,ru,ko'
-        - '-H:Optimize=2'
+        - '-H:Optimize=s'
         - '-H:+RemoveUnusedSymbols'
       swid:
         tagRef: swid-tag
