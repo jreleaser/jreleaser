@@ -90,9 +90,11 @@ public final class GpgCommandSigner {
             .arg(output.toAbsolutePath().toString())
             .arg(input.toAbsolutePath().toString());
 
+        final ByteArrayInputStream stdin = isNotBlank(passphrase)
+            ? new ByteArrayInputStream(passphrase.getBytes(UTF_8))
+            : new ByteArrayInputStream(new byte[]{});
         Command.Result result = new CommandExecutor(logger)
-            .executeCommand(cmd,
-                new ByteArrayInputStream(passphrase.getBytes(UTF_8)));
+            .executeCommand(cmd, stdin);
         if (result.getExitValue() != 0) {
             throw new CommandException(RB.$("ERROR_command_execution_exit_value", result.getExitValue()));
         }
@@ -137,11 +139,14 @@ public final class GpgCommandSigner {
         cmd.arg("--armor")
             .arg("--detach-sign")
             .arg("--batch")
-            .arg("--no-tty")
-            .arg("--pinentry-mode")
-            .arg("loopback")
-            .arg("--passphrase-fd")
-            .arg("0");
+            .arg("--no-tty");
+
+        if (isNotBlank(passphrase)) {
+            cmd.arg("--pinentry-mode")
+                .arg("loopback")
+                .arg("--passphrase-fd")
+                .arg("0");
+        }
 
         if (!defaultKeyring) {
             cmd.arg("--no-default-keyring");
