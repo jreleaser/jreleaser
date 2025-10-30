@@ -112,11 +112,6 @@ def reproducibleTimestamp = tasks.register('reproducibleTimestamp', org.jrelease
 shadowJar.finalizedBy(reproducibleTimestamp)
 assemble.dependsOn(reproducibleTimestamp)
 
-tasks.withType(JavaCompile) { JavaCompile c ->
-    c.sourceCompatibility = JavaVersion.VERSION_11
-    c.targetCompatibility = JavaVersion.VERSION_11
-}
-
 classes.dependsOn(tasks.register('version') {t ->
     t.inputs.property('version', project.version)
     t.outputs.file(project.layout.buildDirectory.file('VERSION'))

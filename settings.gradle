@@ -108,6 +108,13 @@ enforce {
         r.exclude("org.jreleaser:jreleaser-test-support")
         // check & tests
         r.exclude("org.junit-pioneer:junit-pioneer:$junitPioneerVersion")
+        r.exclude("org.junit.jupiter:junit-jupiter:$junit5Version")
+        r.exclude("org.junit.jupiter:junit-jupiter-params:$junit5Version")
+        r.exclude("org.junit.jupiter:junit-jupiter-api:$junit5Version")
+        r.exclude("org.junit.platform:junit-platform-commons:$junit5Version")
+        r.exclude("org.junit.jupiter:junit-jupiter-engine:$junit5Version")
+        r.exclude("org.junit.platform:junit-platform-engine:$junit5Version")
+        r.exclude("org.junit.platform:junit-platform-launcher:$junit5Version")
         r.exclude("com.puppycrawl.tools:checkstyle")
         r.exclude("com.google.errorprone:error_prone_core:$errorproneVersion")
         r.exclude("com.google.errorprone:error_prone_annotation:$errorproneVersion")
