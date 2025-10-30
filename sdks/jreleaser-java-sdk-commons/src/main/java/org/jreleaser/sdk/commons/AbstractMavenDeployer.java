@@ -21,6 +21,7 @@ import feign.form.FormData;
 import org.apache.commons.io.IOUtils;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserException;
+import org.jreleaser.model.Signing;
 import org.jreleaser.model.api.signing.SigningException;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.deploy.maven.Maven;
@@ -463,6 +464,11 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
     }
 
     private void verifyKeyIsValid() {
+        if (context.getModel().getSigning().getMode() == Signing.Mode.COMMAND ||
+            context.getModel().getSigning().getMode() == Signing.Mode.COSIGN) {
+            return;
+        }
+
         Optional<String> publicKeyID;
         Optional<String> fingerprint;
 
