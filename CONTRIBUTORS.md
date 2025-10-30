@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-100-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-101-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -140,6 +140,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="http://www.dremio.com"><img src="https://avatars.githubusercontent.com/u/463876?v=4?s=100" width="100px;" alt="Alexandre Dutra"/><br /><sub><b>Alexandre Dutra</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=adutra" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://eliaslundell.se"><img src="https://avatars.githubusercontent.com/u/36220731?v=4?s=100" width="100px;" alt="Elias Lundell"/><br /><sub><b>Elias Lundell</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=LogFlames" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://emlun.se"><img src="https://avatars.githubusercontent.com/u/1367758?v=4?s=100" width="100px;" alt="Emil Lundberg"/><br /><sub><b>Emil Lundberg</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=emlun" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
