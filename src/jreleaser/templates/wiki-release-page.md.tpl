@@ -85,7 +85,7 @@ PASSED: Verified SLSA provenance
 
 ### PGP
 
-1. Download the [public key](http://keyserver.ubuntu.com/pks/lookup?op=get&search=0xf1d5f6a91c86b0702cd0734bccc55c5167419adb)
+1. Download the [public key](https://keyserver.ubuntu.com/pks/lookup?op=get&search=0xf1d5f6a91c86b0702cd0734bccc55c5167419adb)
 2. Verify the fingerprint matches the following:
 ```sh
 $ gpg --show-keys aalmiray.asc
