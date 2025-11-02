@@ -71,10 +71,6 @@ jobs:
         if: runner.os == 'Windows'
         uses: microsoft/setup-msbuild@v2
 
-      - name: Install WiX
-        if: runner.os == 'Windows'
-        run: dotnet tool install --global wix
-
       - name: Jpackage
         uses: jreleaser/release-action@v2
         with:
