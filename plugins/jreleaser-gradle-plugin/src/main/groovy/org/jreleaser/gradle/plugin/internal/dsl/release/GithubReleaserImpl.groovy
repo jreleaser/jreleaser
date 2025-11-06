@@ -60,6 +60,7 @@ class GithubReleaserImpl extends BaseReleaserImpl implements GithubReleaser {
         commitAuthor = objects.newInstance(CommitAuthorImpl, objects)
         prerelease = objects.newInstance(PrereleaseImpl, objects)
         releaseNotes = objects.newInstance(ReleaseNotesImpl, objects)
+        immutableRelease = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
     }
 
     @Override
@@ -67,6 +68,7 @@ class GithubReleaserImpl extends BaseReleaserImpl implements GithubReleaser {
     boolean isSet() {
         super.isSet() ||
             draft.present ||
+            immutableRelease.present ||
             makeLatest.present ||
             prerelease.isSet() ||
             releaseNotes.isSet() ||
