@@ -332,12 +332,9 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
             return;
         }
 
-        if (deleteTags) {
-            deleteTags(api, github.getOwner(), github.getName(), tagName);
-        }
-
         // local tag
-        if (deleteTags || !github.isSkipTag()) {
+        if (deleteTags && !github.isSkipTag()) {
+            deleteTags(api, github.getOwner(), github.getName(), tagName);
             context.getLogger().debug(RB.$("git.releaser.repository.tag"), tagName, context.getModel().getCommit().getShortHash());
             GitSdk.of(context).tag(tagName, true, context);
         }
