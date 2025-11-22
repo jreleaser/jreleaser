@@ -97,7 +97,7 @@ class JdksPlugin implements Plugin<Project> {
         if (cacheDir.exists()) {
             for (File jdkArchive : cacheDir.listFiles()) {
                 JdkImpl candidateJdk = jdks.find { it.archiveFileName == jdkArchive.name }
-                if (!candidateJdk || jdksDir.get().file(jdkArchive.name).asFile.exists()) continue
+                if (!candidateJdk) continue
 
                 JdkImpl copy = candidateJdk.copyOf()
                 copy.archive.set(jdkArchive)
@@ -223,26 +223,24 @@ class JdksPlugin implements Plugin<Project> {
         })
 
         List<TaskProvider<UnpackTask>> copyFromCacheTasks = []
-        if (jdksToBeCopied) {
-            jdksToBeCopied.each { candidateJdk ->
-                String normalizedName = candidateJdk.normalizedName
-                Provider<Directory> jdkDirectory = jdksDir.map({ d -> d.dir(normalizedName) })
+        jdksToBeCopied.each { candidateJdk ->
+            String normalizedName = candidateJdk.normalizedName
+            Provider<Directory> jdkDirectory = jdksDir.map({ d -> d.dir(normalizedName) })
 
-                copyFromCacheTasks << project.tasks.register('copyJdkFromCache' + normalizedName.capitalize(),
-                    UnpackTask, new Action<UnpackTask>() {
-                    @Override
-                    void execute(UnpackTask t) {
-                        t.group = JDKS_GROUP
-                        t.description = "Copy JDK ${candidateJdk.name} from cache".toString()
-                        t.inputFile.set(candidateJdk.archive)
-                        t.outputDirectory.set(jdkDirectory)
-                        // Otherwise Gradle 8+ complains about task dependencies
-                        t.dependsOn(copyJdksToCache)
-                        // Not ideal but must nuke the directory to avoid copy errors
-                        t.doFirst { jdkDirectory.get().asFile.deleteDir() }
-                    }
-                })
-            }
+            copyFromCacheTasks << project.tasks.register('copyJdkFromCache' + normalizedName.capitalize(),
+                UnpackTask, new Action<UnpackTask>() {
+                @Override
+                void execute(UnpackTask t) {
+                    t.group = JDKS_GROUP
+                    t.description = "Copy JDK ${candidateJdk.name} from cache".toString()
+                    t.inputFile.set(candidateJdk.archive)
+                    t.outputDirectory.set(jdkDirectory)
+                    // Otherwise Gradle 8+ complains about task dependencies
+                    t.dependsOn(copyJdksToCache)
+                    // Not ideal but must nuke the directory to avoid copy errors
+                    t.doFirst { jdkDirectory.get().asFile.deleteDir() }
+                }
+            })
         }
 
         TaskProvider<DefaultTask> copyJdksFromCache = project.tasks.register('copyJdksFromCache',
@@ -257,20 +255,18 @@ class JdksPlugin implements Plugin<Project> {
         })
 
         List<TaskProvider<Delete>> deleteFromCacheTasks = []
-        if (jdksToBeCopied) {
-            jdksToBeCopied.each { candidateJdk ->
-                String normalizedName = candidateJdk.normalizedName
+        jdksToBeCopied.each { candidateJdk ->
+            String normalizedName = candidateJdk.normalizedName
 
-                deleteFromCacheTasks << project.tasks.register('deleteJdkFromCache' + normalizedName.capitalize(),
-                    Delete, new Action<Delete>() {
-                    @Override
-                    void execute(Delete t) {
-                        t.group = JDKS_GROUP
-                        t.description = "Delete JDK ${candidateJdk.name} from cache".toString()
-                        t.delete(candidateJdk.archive)
-                    }
-                })
-            }
+            deleteFromCacheTasks << project.tasks.register('deleteJdkFromCache' + normalizedName.capitalize(),
+                Delete, new Action<Delete>() {
+                @Override
+                void execute(Delete t) {
+                    t.group = JDKS_GROUP
+                    t.description = "Delete JDK ${candidateJdk.name} from cache".toString()
+                    t.delete(candidateJdk.archive)
+                }
+            })
         }
 
         project.tasks.register('deleteJdksFromCache',
