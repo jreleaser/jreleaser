@@ -118,7 +118,7 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
                         api.deleteRelease(gitlab.getOwner(), gitlab.getName(), gitlab.getProjectIdentifier(), tagName);
                     }
                     context.getLogger().debug(RB.$("git.releaser.release.create"), tagName);
-                    createRelease(api, tagName, changelog, gitlab.isMatch());
+                    createRelease(api, tagName, changelog, snapshot && gitlab.isMatch());
                 } else if (gitlab.getUpdate().isEnabled()) {
                     context.getLogger().debug(RB.$("git.releaser.release.update"), tagName);
                     if (!context.isDryrun()) {

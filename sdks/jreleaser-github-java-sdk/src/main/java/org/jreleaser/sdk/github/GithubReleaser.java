@@ -187,7 +187,7 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
                         api.deleteRelease(github.getOwner(), github.getName(), tagName, release.getId());
                     }
                     context.getLogger().debug(RB.$("git.releaser.release.create"), tagName);
-                    createRelease(api, tagName, changelog, github.isMatch());
+                    createRelease(api, tagName, changelog, snapshot && github.isMatch());
                 } else if (github.getUpdate().isEnabled()) {
                     context.getLogger().debug(RB.$("git.releaser.release.update"), tagName);
                     if (!context.isDryrun()) {

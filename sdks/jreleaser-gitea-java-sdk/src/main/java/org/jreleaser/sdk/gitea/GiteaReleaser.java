@@ -107,7 +107,7 @@ public class GiteaReleaser extends AbstractReleaser<org.jreleaser.model.api.rele
                         api.deleteRelease(gitea.getOwner(), gitea.getName(), tagName, release.getId());
                     }
                     context.getLogger().debug(RB.$("git.releaser.release.create"), tagName);
-                    createRelease(api, tagName, changelog, gitea.isMatch());
+                    createRelease(api, tagName, changelog, snapshot && gitea.isMatch());
                 } else if (gitea.getUpdate().isEnabled()) {
                     context.getLogger().debug(RB.$("git.releaser.release.update"), tagName);
                     if (!context.isDryrun()) {

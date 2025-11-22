@@ -105,7 +105,7 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
                         api.deleteRelease(codeberg.getOwner(), codeberg.getName(), tagName, release.getId());
                     }
                     context.getLogger().debug(RB.$("git.releaser.release.create"), tagName);
-                    createRelease(api, tagName, changelog, codeberg.isMatch());
+                    createRelease(api, tagName, changelog, snapshot && codeberg.isMatch());
                 } else if (codeberg.getUpdate().isEnabled()) {
                     context.getLogger().debug(RB.$("git.releaser.release.update"), tagName);
                     if (!context.isDryrun()) {

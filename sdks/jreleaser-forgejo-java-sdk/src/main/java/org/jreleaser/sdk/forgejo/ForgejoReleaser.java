@@ -104,7 +104,7 @@ public class ForgejoReleaser extends AbstractReleaser<org.jreleaser.model.api.re
                         api.deleteRelease(forgejo.getOwner(), forgejo.getName(), tagName, release.getId());
                     }
                     context.getLogger().debug(RB.$("git.releaser.release.create"), tagName);
-                    createRelease(api, tagName, changelog, forgejo.isMatch());
+                    createRelease(api, tagName, changelog, snapshot && forgejo.isMatch());
                 } else if (forgejo.getUpdate().isEnabled()) {
                     context.getLogger().debug(RB.$("git.releaser.release.update"), tagName);
                     if (!context.isDryrun()) {
