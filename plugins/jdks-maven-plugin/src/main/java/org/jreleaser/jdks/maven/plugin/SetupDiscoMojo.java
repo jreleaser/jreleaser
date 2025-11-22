@@ -50,7 +50,7 @@ public class SetupDiscoMojo extends AbstractDiscoMojo {
 
         for (Pkg pkg : pkgs) {
             Jdk jdk = resolvePkg(pkg, disco);
-            if (null != jdk) {
+            if (null != jdk && isPlatformSelected(jdk.getPlatform())) {
                 jdkHelper.setupJdk(jdk, unpack);
             }
         }

@@ -18,13 +18,11 @@
 package org.jreleaser.jdks.maven.plugin;
 
 import org.apache.maven.execution.MavenSession;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.BuildPluginManager;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.MavenProject;
 import org.jreleaser.sdk.disco.Disco;
 import org.jreleaser.util.Errors;
 
@@ -37,10 +35,7 @@ import java.util.List;
  * @author Andres Almiray
  * @since 1.5.0
  */
-abstract class AbstractDiscoMojo extends AbstractMojo {
-    @Parameter(defaultValue = "${project}", readonly = true, required = true)
-    protected MavenProject project;
-
+abstract class AbstractDiscoMojo extends AbstractSetupMojo {
     @Parameter(required = true)
     protected List<Pkg> pkgs;
 

@@ -75,10 +75,14 @@ public class SetupJdksMojo extends AbstractJdksMojo {
                 .filter(j -> j.getName().equals(jdkName))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Jdk " + jdkName + " was not found"));
-            jdkHelper.setupJdk(jdk, unpack);
+            if (isPlatformSelected(jdk.getPlatform())) {
+                jdkHelper.setupJdk(jdk, unpack);
+            }
         } else {
             for (Jdk jdk : jdks) {
-                jdkHelper.setupJdk(jdk, unpack);
+                if (isPlatformSelected(jdk.getPlatform())) {
+                    jdkHelper.setupJdk(jdk, unpack);
+                }
             }
         }
     }
