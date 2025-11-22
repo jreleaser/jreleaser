@@ -35,7 +35,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 1.12.0
  */
 public final class MavenCentralMavenDeployer extends AbstractMavenDeployer<MavenCentralMavenDeployer, org.jreleaser.model.api.deploy.maven.MavenCentralMavenDeployer> {
-    private static final long serialVersionUID = -7077345304257049811L;
+    private static final long serialVersionUID = 7510014196259262048L;
 
     private org.jreleaser.model.api.deploy.maven.MavenCentralMavenDeployer.Stage stage;
     private String namespace;
@@ -43,10 +43,11 @@ public final class MavenCentralMavenDeployer extends AbstractMavenDeployer<Maven
     private int retryDelay;
     private int maxRetries;
     private String verifyUrl;
+    private Boolean skipPublicationCheck;
 
     @JsonIgnore
     private final org.jreleaser.model.api.deploy.maven.MavenCentralMavenDeployer immutable = new org.jreleaser.model.api.deploy.maven.MavenCentralMavenDeployer() {
-        private static final long serialVersionUID = 2746737103966334955L;
+        private static final long serialVersionUID = -5348879392691714059L;
 
         private Set<? extends ArtifactOverride> artifactOverrides;
 
@@ -78,6 +79,11 @@ public final class MavenCentralMavenDeployer extends AbstractMavenDeployer<Maven
         @Override
         public String getVerifyUrl() {
             return verifyUrl;
+        }
+
+        @Override
+        public Boolean isSkipPublicationCheck() {
+            return MavenCentralMavenDeployer.this.isSkipPublicationCheck();
         }
 
         @Override
@@ -214,6 +220,7 @@ public final class MavenCentralMavenDeployer extends AbstractMavenDeployer<Maven
         this.retryDelay = merge(this.retryDelay, source.retryDelay);
         this.maxRetries = merge(this.maxRetries, source.maxRetries);
         this.verifyUrl = merge(this.verifyUrl, source.verifyUrl);
+        this.skipPublicationCheck = merge(this.skipPublicationCheck, source.skipPublicationCheck);
     }
 
     public String getVerifyUrl() {
@@ -270,6 +277,18 @@ public final class MavenCentralMavenDeployer extends AbstractMavenDeployer<Maven
         this.maxRetries = maxRetries;
     }
 
+    public Boolean isSkipPublicationCheck() {
+        return null != skipPublicationCheck && skipPublicationCheck;
+    }
+
+    public void setSkipPublicationCheck(Boolean skipPublicationCheck) {
+        this.skipPublicationCheck = skipPublicationCheck;
+    }
+
+    public boolean isSkipPublicationCheckSet() {
+        return null != skipPublicationCheck;
+    }
+
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("stage", stage);
@@ -278,5 +297,6 @@ public final class MavenCentralMavenDeployer extends AbstractMavenDeployer<Maven
         props.put("verifyUrl", verifyUrl);
         props.put("retryDelay", retryDelay);
         props.put("maxRetries", maxRetries);
+        props.put("skipPublicationCheck", isSkipPublicationCheck());
     }
 }

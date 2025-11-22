@@ -41,6 +41,7 @@ class MavenCentralMavenDeployerImpl extends AbstractMavenDeployer implements Mav
     final Property<String> verifyUrl
     final Property<Integer> retryDelay
     final Property<Integer> maxRetries
+    final Property<Boolean> skipPublicationCheck
 
     @Inject
     MavenCentralMavenDeployerImpl(ObjectFactory objects) {
@@ -51,6 +52,7 @@ class MavenCentralMavenDeployerImpl extends AbstractMavenDeployer implements Mav
         verifyUrl = objects.property(String).convention(Providers.<String> notDefined())
         retryDelay = objects.property(Integer).convention(Providers.<Integer> notDefined())
         maxRetries = objects.property(Integer).convention(Providers.<Integer> notDefined())
+        skipPublicationCheck = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
     }
 
     @Internal
@@ -61,7 +63,8 @@ class MavenCentralMavenDeployerImpl extends AbstractMavenDeployer implements Mav
             deploymentId.present ||
             verifyUrl.present ||
             retryDelay.present ||
-            maxRetries.present
+            maxRetries.present ||
+            skipPublicationCheck.present
     }
 
     @Override
@@ -80,6 +83,7 @@ class MavenCentralMavenDeployerImpl extends AbstractMavenDeployer implements Mav
         if (verifyUrl.present) deployer.verifyUrl = verifyUrl.get()
         if (retryDelay.present) deployer.retryDelay = retryDelay.get()
         if (maxRetries.present) deployer.maxRetries = maxRetries.get()
+        if (skipPublicationCheck.present) deployer.skipPublicationCheck = skipPublicationCheck.get()
         deployer
     }
 }

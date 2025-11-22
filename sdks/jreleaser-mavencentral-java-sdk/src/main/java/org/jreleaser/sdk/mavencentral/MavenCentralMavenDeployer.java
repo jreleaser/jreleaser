@@ -119,7 +119,7 @@ public class MavenCentralMavenDeployer extends AbstractMavenDeployer<org.jreleas
             checkDeploymentIsValid(deploymentId, deployment);
             try {
                 context.getLogger().info(RB.$("maven.central.publish.deployment", deploymentId));
-                mavenCentral.publish(deploymentId);
+                mavenCentral.publish(deploymentId, deployer.isSkipPublicationCheck());
             } catch (MavenCentralException e) {
                 throw new DeployException(RB.$("ERROR_maven_central_publish_deployment", deploymentId), e);
             }

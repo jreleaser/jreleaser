@@ -132,10 +132,14 @@ public class MavenCentral {
         });
     }
 
-    public void publish(String deploymentId) throws MavenCentralException {
+    public void publish(String deploymentId, boolean skipPublicationCheck) throws MavenCentralException {
         wrap(() -> {
             api.publish(deploymentId);
-            waitForState(deploymentId, true, State.PUBLISHED, State.FAILED);
+            if (skipPublicationCheck) {
+                waitForState(deploymentId, true, State.PUBLISHING, State.PUBLISHED, State.FAILED);
+            } else {
+                waitForState(deploymentId, true, State.PUBLISHED, State.FAILED);
+            }
         });
     }
 
@@ -306,7 +310,7 @@ public class MavenCentral {
             if (response.status() == 401) {
                 return new MavenCentralAPIException(401, RB.$("ERROR_maven_central_unauthorized", "deploy.maven." + deployerName), response.headers());
             }
-            
+
             // Handle Forbidden error
             if (response.status() == 403) {
                 return new MavenCentralAPIException(403, RB.$("ERROR_maven_central_forbidden"), response.headers());

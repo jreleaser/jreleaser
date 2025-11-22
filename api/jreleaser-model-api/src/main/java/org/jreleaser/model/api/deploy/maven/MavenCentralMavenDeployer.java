@@ -41,6 +41,8 @@ public interface MavenCentralMavenDeployer extends MavenDeployer {
 
     String getVerifyUrl();
 
+    Boolean isSkipPublicationCheck();
+
     enum Stage {
         UPLOAD,
         PUBLISH,

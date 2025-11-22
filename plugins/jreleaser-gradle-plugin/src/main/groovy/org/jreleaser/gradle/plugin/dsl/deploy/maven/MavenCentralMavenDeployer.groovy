@@ -40,4 +40,6 @@ interface MavenCentralMavenDeployer extends MavenDeployer {
     Property<Integer> getRetryDelay()
 
     Property<Integer> getMaxRetries()
+
+    Property<Boolean> getSkipPublicationCheck()
 }
