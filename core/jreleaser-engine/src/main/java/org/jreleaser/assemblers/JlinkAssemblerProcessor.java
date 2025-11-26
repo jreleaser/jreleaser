@@ -44,6 +44,7 @@ import java.util.stream.Stream;
 
 import static java.lang.String.join;
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.jreleaser.assemblers.AssemblerUtils.copyJars;
 import static org.jreleaser.assemblers.AssemblerUtils.readJavaVersion;
@@ -212,9 +213,12 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
             if (moduleNames.isEmpty()) {
                 throw new AssemblerProcessingException(RB.$("ERROR_assembler_no_module_names"));
             }
-            moduleNames.addAll(assembler.getAdditionalModuleNames());
-            if (isNotBlank(assembler.getJava().getMainModule())) {
-                moduleNames.add(assembler.getJava().getMainModule());
+            moduleNames.addAll(assembler.getAdditionalModuleNames().stream()
+                .map(arg -> resolveTemplate(arg, props))
+                .collect(toList()));
+            String moduleName = resolveTemplate(assembler.getJava().getMainModule(), props);
+            if (isNotBlank(moduleName)) {
+                moduleNames.add(moduleName);
             }
             context.getLogger().debug(RB.$("assembler.module.names"), moduleNames);
 
@@ -246,7 +250,8 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
         }
 
         // jlink it
-        String moduleName = assembler.getJava().getMainModule();
+        String moduleName = resolveTemplate(assembler.getJava().getMainModule(), props);
+        String mainClass = resolveTemplate(assembler.getJava().getMainClass(), props);
         String modulePath = maybeQuote(targetJdk.getEffectivePath(context, assembler).resolve("jmods").toAbsolutePath().toString());
         if (isNotBlank(moduleName) || assembler.isCopyJars()) {
             modulePath += File.pathSeparator + maybeQuote(jarsDirectory
@@ -269,14 +274,16 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
             .toAbsolutePath();
 
         Command cmd = new Command(jlinkExecutable.toString(), true)
-            .args(assembler.getArgs())
+            .args(assembler.getArgs().stream()
+                .map(arg -> resolveTemplate(arg, props))
+                .collect(toList()))
             .arg("--module-path")
             .arg(modulePath)
             .arg("--add-modules")
             .arg(String.join(",", moduleNames));
         if (isNotBlank(moduleName)) {
             cmd.arg("--launcher")
-                .arg(assembler.getExecutable() + "=" + moduleName + "/" + assembler.getJava().getMainClass());
+                .arg(assembler.getExecutable() + "=" + moduleName + "/" + mainClass);
         }
         cmd.arg("--output")
             .arg(maybeQuote(imageDirectory.toString()));
@@ -369,7 +376,9 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
 
     private Set<String> resolveModuleNames(JReleaserContext context, Path jdkPath, Path jarsDirectory, String platform, TemplateContext props) throws AssemblerProcessingException {
         if (!assembler.getModuleNames().isEmpty()) {
-            return assembler.getModuleNames();
+            return assembler.getModuleNames().stream()
+                .map(arg -> resolveTemplate(arg, props))
+                .collect(toSet());
         }
 
         Path jdepsExecutable = jdkPath

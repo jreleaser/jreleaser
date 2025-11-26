@@ -26,6 +26,7 @@ import org.jreleaser.model.internal.assemble.JpackageAssembler;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.spi.assemble.AssemblerProcessingException;
 import org.jreleaser.mustache.TemplateContext;
+import org.jreleaser.mustache.Templates;
 import org.jreleaser.sdk.command.Command;
 import org.jreleaser.templates.TemplateResource;
 import org.jreleaser.templates.TemplateUtils;
@@ -38,6 +39,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 import static org.jreleaser.assemblers.AssemblerUtils.copyJars;
@@ -214,11 +216,12 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
             throw new AssemblerProcessingException(RB.$("ERROR_jpackage_runtime_image_not_found", platform));
         }
 
-        String moduleName = assembler.getJava().getMainModule();
+        String moduleName = resolveTemplate(assembler.getJava().getMainModule(), props);
+        String mainClass = resolveTemplate(assembler.getJava().getMainClass(), props);
         String appName = packager.getResolvedAppName(context, assembler);
         String appVersion = assembler.getApplicationPackage().getResolvedAppVersion(context, assembler);
-        String vendor = assembler.getApplicationPackage().getVendor();
-        String copyright = assembler.getApplicationPackage().getCopyright();
+        String vendor = resolveTemplate(assembler.getApplicationPackage().getVendor(), props);
+        String copyright = resolveTemplate(assembler.getApplicationPackage().getCopyright(), props);
 
         Path jpackageExecutable = jdkPath
             .resolve(BIN_DIRECTORY)
@@ -251,7 +254,7 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
 
         if (isNotBlank(moduleName)) {
             cmd.arg("--module")
-                .arg(moduleName + "/" + assembler.getJava().getMainClass());
+                .arg(moduleName + "/" + mainClass);
         } else {
             String mainJarPath = "";
 
@@ -269,7 +272,7 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
             }
 
             cmd.arg("--main-class")
-                .arg(assembler.getJava().getMainClass())
+                .arg(mainClass)
                 .arg("--main-jar")
                 .arg(maybeQuote(mainJarPath));
         }
@@ -277,15 +280,15 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
         // Launcher
         for (String argument : assembler.getLauncher().getArguments()) {
             cmd.arg("--arguments")
-                .arg(maybeQuote(argument));
+                .arg(maybeQuote(resolveTemplate(argument, props)));
         }
         for (String javaOption : assembler.getLauncher().getJavaOptions()) {
             cmd.arg("--java-options")
-                .arg(maybeQuote(javaOption));
+                .arg(maybeQuote(resolveTemplate(javaOption, props)));
         }
         for (String launcher : assembler.getLauncher().getLaunchers()) {
             cmd.arg("--add-launcher")
-                .arg(maybeQuote(launcher));
+                .arg(maybeQuote(resolveTemplate(launcher, props)));
         }
 
         // ApplicationPackage
@@ -355,7 +358,7 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
         if (packager instanceof JpackageAssembler.Osx) {
             customizeOsx((JpackageAssembler.Osx) packager, inputsDirectory, cmd, props);
         } else if (packager instanceof JpackageAssembler.Linux) {
-            customizeLinux(type, (JpackageAssembler.Linux) packager, inputsDirectory, cmd);
+            customizeLinux(type, (JpackageAssembler.Linux) packager, inputsDirectory, cmd, props);
         } else if (packager instanceof JpackageAssembler.Windows) {
             customizeWindows((JpackageAssembler.Windows) packager, inputsDirectory, cmd, props);
         }
@@ -364,11 +367,15 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
     private void customizeOsx(JpackageAssembler.Osx packager, Path inputsDirectory, Command cmd, TemplateContext props) {
         if (isNotBlank(packager.getPackageName())) {
             cmd.arg("--mac-package-name")
-                .arg(packager.getPackageName());
+                .arg(resolveTemplate(packager.getPackageName(), props));
+        }
+        if (isNotBlank(packager.getPackageIdentifier())) {
+            cmd.arg("--mac-package-identifier")
+                .arg(resolveTemplate(packager.getPackageIdentifier(), props));
         }
         if (isNotBlank(packager.getPackageSigningPrefix())) {
             cmd.arg("--mac-package-signing-prefix")
-                .arg(packager.getPackageSigningPrefix());
+                .arg(resolveTemplate(packager.getPackageSigningPrefix(), props));
         }
         if (packager.isSign()) {
             cmd.arg("--mac-sign");
@@ -384,47 +391,49 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
         }
         if (isNotBlank(packager.getSigningKeyUsername())) {
             cmd.arg("--mac-signing-key-user-name")
-                .arg(packager.getSigningKeyUsername());
+                .arg(resolveTemplate(packager.getSigningKeyUsername(), props));
         }
 
         cmd.arg("--icon")
             .arg(inputsDirectory.resolve(assembler.getName() + ".icns").toAbsolutePath().toString());
     }
 
-    private void customizeLinux(String type, JpackageAssembler.Linux packager, Path inputsDirectory, Command cmd) {
+    private void customizeLinux(String type, JpackageAssembler.Linux packager, Path inputsDirectory, Command cmd, TemplateContext props) {
         if (isNotBlank(packager.getPackageName())) {
             cmd.arg("--linux-package-name")
-                .arg(packager.getPackageName());
+                .arg(resolveTemplate(packager.getPackageName(), props));
         }
         if (isNotBlank(packager.getMenuGroup())) {
             cmd.arg("--linux-menu-group")
-                .arg(packager.getMenuGroup());
+                .arg(resolveTemplate(packager.getMenuGroup(), props));
         }
         if (isNotBlank(packager.getAppRelease())) {
             cmd.arg("--linux-app-release")
-                .arg(packager.getAppRelease());
+                .arg(resolveTemplate(packager.getAppRelease(), props));
         }
         if (isNotBlank(packager.getAppCategory())) {
             cmd.arg("--linux-app-category")
-                .arg(packager.getAppCategory());
+                .arg(resolveTemplate(packager.getAppCategory(), props));
         }
         if (packager.isShortcut()) {
             cmd.arg("--linux-shortcut");
         }
         if (!packager.getPackageDeps().isEmpty()) {
             cmd.arg("--linux-package-deps")
-                .arg(String.join(",", packager.getPackageDeps()));
+                .arg(packager.getPackageDeps().stream()
+                    .map(arg -> Templates.resolveTemplate(arg, props))
+                    .collect(Collectors.joining(",")));
         }
 
         if ("deb".equals(type)) {
             if (isNotBlank(packager.getMaintainer())) {
                 cmd.arg("--linux-deb-maintainer")
-                    .arg(packager.getMaintainer());
+                    .arg(resolveTemplate(packager.getMaintainer(), props));
             }
         } else if ("rpm".equals(type)) {
             if (isNotBlank(packager.getLicense())) {
                 cmd.arg("--linux-rpm-license-type")
-                    .arg(packager.getLicense());
+                    .arg(resolveTemplate(packager.getLicense(), props));
             }
         }
 
@@ -453,11 +462,11 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
         }
         if (isNotBlank(packager.getMenuGroup())) {
             cmd.arg("--win-menu-group")
-                .arg(maybeQuote(packager.getMenuGroup()));
+                .arg(maybeQuote(resolveTemplate(packager.getMenuGroup(), props)));
         }
         if (isNotBlank(packager.getUpgradeUuid())) {
             cmd.arg("--win-upgrade-uuid")
-                .arg(packager.getUpgradeUuid());
+                .arg(resolveTemplate(packager.getUpgradeUuid(), props));
         }
         if (isNotBlank(packager.getHelpUrl())) {
             cmd.arg("--win-help-url")

@@ -256,7 +256,9 @@ public final class JpackageAssemblerValidator {
     }
 
     private static void validateOsx(JReleaserContext context, JpackageAssembler jpackage, JpackageAssembler.Osx packager, Errors errors) {
-        if (isNotBlank(packager.getPackageIdentifier()) && !MAC_IDENTIFIER_PATTERN.matcher(packager.getPackageIdentifier()).matches()) {
+        if (isNotBlank(packager.getPackageIdentifier())
+            && !packager.getPackageIdentifier().contains("{{")
+            && !MAC_IDENTIFIER_PATTERN.matcher(packager.getPackageIdentifier()).matches()) {
             errors.configuration(RB.$("validation_jpackage_invalid_mac_package_identifier",
                 packager.getPackageIdentifier(), MAC_IDENTIFIER));
         }

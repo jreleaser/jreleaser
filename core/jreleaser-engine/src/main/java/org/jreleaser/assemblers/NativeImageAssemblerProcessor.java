@@ -43,9 +43,11 @@ import java.util.Properties;
 import java.util.Set;
 
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 import static org.jreleaser.assemblers.AssemblerUtils.copyJars;
 import static org.jreleaser.assemblers.AssemblerUtils.readJavaVersion;
 import static org.jreleaser.model.Constants.KEY_ARCHIVE_FORMAT;
+import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.util.FileType.EXE;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -169,14 +171,18 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<or
             .toAbsolutePath();
 
         Command cmd = new Command(nativeImageExecutable.toString(), true)
-            .args(assembler.getArgs());
+            .args(assembler.getArgs().stream()
+                .map(arg -> resolveTemplate(arg, props))
+                .collect(toList()));
 
         NativeImageAssembler.PlatformCustomizer customizer = assembler.getResolvedPlatformCustomizer();
-        cmd.args(customizer.getArgs());
+        cmd.args(customizer.getArgs().stream()
+            .map(arg -> resolveTemplate(arg, props))
+            .collect(toList()));
 
         if (isNotBlank(assembler.getJava().getMainModule())) {
             cmd.arg("--module")
-                .arg(assembler.getJava().getMainModule() + "/" + assembler.getJava().getMainClass());
+                .arg(resolveTemplate(assembler.getJava().getMainModule(), props) + "/" + resolveTemplate(assembler.getJava().getMainClass(), props));
 
             cmd.arg("--module-path")
                 .arg(jars.stream()

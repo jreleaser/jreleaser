@@ -76,6 +76,7 @@ import static org.jreleaser.model.internal.validation.assemble.JavaArchiveAssemb
 import static org.jreleaser.model.internal.validation.assemble.JlinkAssemblerResolver.resolveJlinkOutputs;
 import static org.jreleaser.model.internal.validation.assemble.NativeImageAssemblerResolver.resolveNativeImageOutputs;
 import static org.jreleaser.mustache.MustacheUtils.passThrough;
+import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -233,8 +234,8 @@ public class DebAssemblerProcessor extends AbstractAssemblerProcessor<org.jrelea
         }
 
         Path debianPackage = assembleDirectory.resolve(
-            assembler.getControl().getPackageName() + "-" +
-                assembler.getControl().getPackageVersion() + "-" +
+            resolveTemplate(assembler.getControl().getPackageName(), props) + "-" +
+                resolveTemplate(assembler.getControl().getPackageVersion(), props) + "-" +
                 assembler.getControl().getPackageRevision() + "_" +
                 props.get(KEY_DEB_CONTROL_ARCHITECTURE) + ".deb");
 
