@@ -51,9 +51,9 @@ image:https://img.shields.io/gradle-plugin-portal/v/{plugin-id}?logo=gradle["Gra
 
 == Code of Conduct
 
-This project adheres to a link:https://github.com/{project-owner}/{project-name}/blob/main/CODE_OF_CONDUCT.md[code of conduct].
+This project adheres to a link:https://github.com/jreleaser/.github/blob/main/CODE_OF_CONDUCT.md[code of conduct].
 By participating, you are expected to uphold this code. We appreciate your contribution. Please refer to our
-link:https://github.com/{project-owner}/{project-name}/blob/main/CONTRIBUTING.adoc[contributing guidelines] for further information.
+link:https://github.com/jreleaser/.github/blob/main/CONTRIBUTING.adoc[contributing guidelines] for further information.
 
 == Downloads
 
