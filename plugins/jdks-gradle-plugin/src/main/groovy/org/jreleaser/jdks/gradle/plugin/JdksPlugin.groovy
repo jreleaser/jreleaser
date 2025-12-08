@@ -172,6 +172,17 @@ class JdksPlugin implements Plugin<Project> {
                     t.onlyIf { !jdkDirectory.get().file(jdkArchiveName).asFile.exists() && jdk.verifyTask.get().didWork }
                 }
             })
+
+            jdk.setupTask = project.tasks.register('setupJdk' + normalizedName.capitalize(),
+                DefaultTask, new Action<DefaultTask>() {
+                @Override
+                @CompileDynamic
+                void execute(DefaultTask t) {
+                    t.group = JDKS_GROUP
+                    t.description = "Setups JDK ${jdk.name}".toString()
+                    t.dependsOn jdk.downloadTask, jdk.verifyTask, jdk.unpackTask
+                }
+            })
         }
 
         // register aggregating tasks

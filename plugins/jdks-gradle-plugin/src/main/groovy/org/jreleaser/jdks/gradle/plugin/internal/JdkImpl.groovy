@@ -20,6 +20,7 @@ package org.jreleaser.jdks.gradle.plugin.internal
 import de.undercouch.gradle.tasks.download.Download
 import de.undercouch.gradle.tasks.download.Verify
 import groovy.transform.CompileStatic
+import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
@@ -52,6 +53,7 @@ class JdkImpl implements Jdk {
     TaskProvider<Download> downloadTask
     TaskProvider<Verify> verifyTask
     TaskProvider<UnpackTask> unpackTask
+    TaskProvider<DefaultTask> setupTask
 
     @Inject
     JdkImpl(ObjectFactory objects) {
