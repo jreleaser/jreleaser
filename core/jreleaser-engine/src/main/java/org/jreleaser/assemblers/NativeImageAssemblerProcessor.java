@@ -172,17 +172,17 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<or
 
         Command cmd = new Command(nativeImageExecutable.toString(), true)
             .args(assembler.getArgs().stream()
-                .map(arg -> resolveTemplate(arg, props))
+                .map(arg -> resolveTemplate(context.getLogger(), arg, props))
                 .collect(toList()));
 
         NativeImageAssembler.PlatformCustomizer customizer = assembler.getResolvedPlatformCustomizer();
         cmd.args(customizer.getArgs().stream()
-            .map(arg -> resolveTemplate(arg, props))
+            .map(arg -> resolveTemplate(context.getLogger(), arg, props))
             .collect(toList()));
 
         if (isNotBlank(assembler.getJava().getMainModule())) {
             cmd.arg("--module")
-                .arg(resolveTemplate(assembler.getJava().getMainModule(), props) + "/" + resolveTemplate(assembler.getJava().getMainClass(), props));
+                .arg(resolveTemplate(context.getLogger(), assembler.getJava().getMainModule(), props) + "/" + resolveTemplate(context.getLogger(), assembler.getJava().getMainClass(), props));
 
             cmd.arg("--module-path")
                 .arg(jars.stream()

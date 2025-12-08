@@ -22,7 +22,7 @@ import org.jreleaser.model.Active;
 import org.jreleaser.model.Constants;
 import org.jreleaser.model.UpdateSection;
 import org.jreleaser.model.api.common.Apply;
-import org.jreleaser.model.internal.JReleaserModel;
+import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.common.CommitAuthor;
 import org.jreleaser.model.internal.common.Domain;
@@ -51,7 +51,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Releaser, S extends BaseReleaser<A, S>> extends AbstractModelObject<S> implements Releaser<A> {
-    private static final long serialVersionUID = 1051555604419029072L;
+    private static final long serialVersionUID = 4910061043685377223L;
 
     @JsonIgnore
     private final String serviceName;
@@ -184,52 +184,52 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
         return name;
     }
 
-    public String getResolvedBranchPush(JReleaserModel model) {
+    public String getResolvedBranchPush(JReleaserContext context) {
         if (isBlank(cachedBranchPush)) {
-            cachedBranchPush = resolveTemplate(branchPush, props(model));
+            cachedBranchPush = resolveTemplate(context.getLogger(), branchPush, props(context));
         }
         if (isNotBlank(cachedBranchPush) && cachedBranchPush.contains("{{")) {
-            cachedBranchPush = resolveTemplate(cachedBranchPush, props(model));
+            cachedBranchPush = resolveTemplate(context.getLogger(), cachedBranchPush, props(context));
         }
 
         return cachedBranchPush;
     }
 
-    public String getResolvedPreviousTagName(JReleaserModel model) {
+    public String getResolvedPreviousTagName(JReleaserContext context) {
         if (isBlank(cachedPreviousTagName) && isNotBlank(previousTagName)) {
-            cachedPreviousTagName = resolveTemplate(previousTagName, props(model));
+            cachedPreviousTagName = resolveTemplate(context.getLogger(), previousTagName, props(context));
         }
         if (isNotBlank(cachedPreviousTagName) && cachedPreviousTagName.contains("{{")) {
-            cachedPreviousTagName = resolveTemplate(cachedPreviousTagName, props(model));
+            cachedPreviousTagName = resolveTemplate(context.getLogger(), cachedPreviousTagName, props(context));
         }
 
         return cachedPreviousTagName;
     }
 
-    public String getResolvedTagName(JReleaserModel model) {
+    public String getResolvedTagName(JReleaserContext context) {
         if (isBlank(cachedTagName)) {
-            cachedTagName = resolveTemplate(tagName, props(model));
+            cachedTagName = resolveTemplate(context.getLogger(), tagName, props(context));
         }
         if (isNotBlank(cachedTagName) && cachedTagName.contains("{{")) {
-            cachedTagName = resolveTemplate(cachedTagName, props(model));
+            cachedTagName = resolveTemplate(context.getLogger(), cachedTagName, props(context));
         }
 
         return cachedTagName;
     }
 
-    public String getEffectiveTagName(JReleaserModel model) {
-        if (model.getProject().isSnapshot()) {
-            return model.getProject().getSnapshot().getResolvedLabel(model);
+    public String getEffectiveTagName(JReleaserContext context) {
+        if (context.getModel().getProject().isSnapshot()) {
+            return context.getModel().getProject().getSnapshot().getResolvedLabel(context);
         }
         return cachedTagName;
     }
 
-    public String getResolvedReleaseName(JReleaserModel model) {
+    public String getResolvedReleaseName(JReleaserContext context) {
         if (isBlank(cachedReleaseName)) {
-            cachedReleaseName = resolveTemplate(releaseName, props(model));
+            cachedReleaseName = resolveTemplate(context.getLogger(), releaseName, props(context));
         }
         if (isNotBlank(cachedReleaseName) && cachedReleaseName.contains("{{")) {
-            cachedReleaseName = resolveTemplate(cachedReleaseName, props(model));
+            cachedReleaseName = resolveTemplate(context.getLogger(), cachedReleaseName, props(context));
         }
 
         return cachedReleaseName;
@@ -239,60 +239,60 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
         return cachedReleaseName;
     }
 
-    public String getResolvedRepoUrl(JReleaserModel model) {
+    public String getResolvedRepoUrl(JReleaserContext context) {
         if (!releaseSupported) return "";
-        return resolveTemplate(repoUrl, props(model));
+        return resolveTemplate(context.getLogger(), repoUrl, props(context));
     }
 
-    public String getResolvedRepoCloneUrl(JReleaserModel model) {
+    public String getResolvedRepoCloneUrl(JReleaserContext context) {
         if (!releaseSupported) return "";
-        return resolveTemplate(repoCloneUrl, props(model));
+        return resolveTemplate(context.getLogger(), repoCloneUrl, props(context));
     }
 
-    public String getResolvedRepoUrl(JReleaserModel model, String repoOwner, String repoName) {
+    public String getResolvedRepoUrl(JReleaserContext context, String repoOwner, String repoName) {
         if (!releaseSupported) return "";
-        TemplateContext props = props(model);
+        TemplateContext props = props(context);
         props.set(Constants.KEY_REPO_OWNER, repoOwner);
         props.set(Constants.KEY_REPO_NAME, repoName);
-        return resolveTemplate(repoUrl, props);
+        return resolveTemplate(context.getLogger(), repoUrl, props);
     }
 
-    public String getResolvedRepoCloneUrl(JReleaserModel model, String repoOwner, String repoName) {
+    public String getResolvedRepoCloneUrl(JReleaserContext context, String repoOwner, String repoName) {
         if (!releaseSupported) return "";
-        TemplateContext props = props(model);
+        TemplateContext props = props(context);
         props.set(Constants.KEY_REPO_OWNER, repoOwner);
         props.set(Constants.KEY_REPO_NAME, repoName);
-        return resolveTemplate(repoCloneUrl, props);
+        return resolveTemplate(context.getLogger(), repoCloneUrl, props);
     }
 
-    public String getResolvedCommitUrl(JReleaserModel model) {
+    public String getResolvedCommitUrl(JReleaserContext context) {
         if (!releaseSupported) return "";
-        return resolveTemplate(commitUrl, props(model));
+        return resolveTemplate(context.getLogger(), commitUrl, props(context));
     }
 
-    public String getResolvedSrcUrl(JReleaserModel model) {
+    public String getResolvedSrcUrl(JReleaserContext context) {
         if (!releaseSupported) return "";
-        return resolveTemplate(srcUrl, props(model));
+        return resolveTemplate(context.getLogger(), srcUrl, props(context));
     }
 
-    public String getResolvedDownloadUrl(JReleaserModel model) {
+    public String getResolvedDownloadUrl(JReleaserContext context) {
         if (!releaseSupported) return "";
-        return resolveTemplate(downloadUrl, props(model));
+        return resolveTemplate(context.getLogger(), downloadUrl, props(context));
     }
 
-    public String getResolvedReleaseNotesUrl(JReleaserModel model) {
+    public String getResolvedReleaseNotesUrl(JReleaserContext context) {
         if (!releaseSupported) return "";
-        return resolveTemplate(releaseNotesUrl, props(model));
+        return resolveTemplate(context.getLogger(), releaseNotesUrl, props(context));
     }
 
-    public String getResolvedLatestReleaseUrl(JReleaserModel model) {
+    public String getResolvedLatestReleaseUrl(JReleaserContext context) {
         if (!releaseSupported) return "";
-        return resolveTemplate(latestReleaseUrl, props(model));
+        return resolveTemplate(context.getLogger(), latestReleaseUrl, props(context));
     }
 
-    public String getResolvedIssueTrackerUrl(JReleaserModel model, boolean appendSlash) {
+    public String getResolvedIssueTrackerUrl(JReleaserContext context, boolean appendSlash) {
         if (!releaseSupported) return "";
-        String issueTracker = resolveTemplate(issueTrackerUrl, props(model));
+        String issueTracker = resolveTemplate(context.getLogger(), issueTrackerUrl, props(context));
         if (appendSlash && isNotBlank(issueTracker) && !issueTracker.endsWith("/")) {
             issueTracker += "/";
         }
@@ -729,12 +729,12 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
         return map;
     }
 
-    public TemplateContext props(JReleaserModel model) {
+    public TemplateContext props(JReleaserContext context) {
         // duplicate from JReleaserModel to avoid endless recursion
         TemplateContext props = new TemplateContext();
-        Project project = model.getProject();
-        props.setAll(model.getEnvironment().getProperties());
-        props.setAll(model.getEnvironment().getSourcedProperties());
+        Project project = context.getModel().getProject();
+        props.setAll(context.getModel().getEnvironment().getProperties());
+        props.setAll(context.getModel().getEnvironment().getSourcedProperties());
         props.set(Constants.KEY_PROJECT_NAME, project.getName());
         props.set(Constants.KEY_PROJECT_NAME_CAPITALIZED, getCapitalizedName(project.getName()));
         props.set(Constants.KEY_PROJECT_VERSION, project.getVersion());
@@ -772,7 +772,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
         props.set(Constants.KEY_OS_ARCH, osArch);
         props.set(Constants.KEY_OS_VERSION, PlatformUtils.getDetectedVersion());
         props.set(Constants.KEY_OS_PLATFORM, PlatformUtils.getCurrentFull());
-        props.set(Constants.KEY_OS_PLATFORM_REPLACED, model.getPlatform().applyReplacements(PlatformUtils.getCurrentFull()));
+        props.set(Constants.KEY_OS_PLATFORM_REPLACED, context.getModel().getPlatform().applyReplacements(PlatformUtils.getCurrentFull()));
 
         props.set(Constants.KEY_REPO_HOST, host);
         props.set(Constants.KEY_REPO_OWNER, owner);
@@ -781,36 +781,36 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
         props.set(Constants.KEY_REPO_BRANCH_PUSH, cachedBranchPush);
         props.set(Constants.KEY_REVERSE_REPO_HOST, getReverseRepoHost());
         props.set(Constants.KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
-        props.set(Constants.KEY_TAG_NAME, project.isSnapshot() ? project.getSnapshot().getResolvedLabel(model) : cachedTagName);
+        props.set(Constants.KEY_TAG_NAME, project.isSnapshot() ? project.getSnapshot().getResolvedLabel(context) : cachedTagName);
         props.set(Constants.KEY_PREVIOUS_TAG_NAME, cachedPreviousTagName);
         props.set(Constants.KEY_RELEASE_NAME, cachedReleaseName);
         props.set(Constants.KEY_MILESTONE_NAME, milestone.getEffectiveName());
 
-        applyTemplates(props, project.resolvedExtraProperties());
-        props.set(Constants.KEY_ZONED_DATE_TIME_NOW, model.getNow());
+        applyTemplates(context.getLogger(), props, project.resolvedExtraProperties());
+        props.set(Constants.KEY_ZONED_DATE_TIME_NOW, context.getModel().getNow());
 
         return props;
     }
 
-    public void fillProps(TemplateContext props, JReleaserModel model) {
+    public void fillProps(TemplateContext props, JReleaserContext context) {
         props.set(Constants.KEY_REPO_HOST, host);
         props.set(Constants.KEY_REPO_OWNER, owner);
         props.set(Constants.KEY_REPO_NAME, name);
         props.set(Constants.KEY_REPO_BRANCH, branch);
-        props.set(Constants.KEY_REPO_BRANCH_PUSH, getResolvedBranchPush(model));
+        props.set(Constants.KEY_REPO_BRANCH_PUSH, getResolvedBranchPush(context));
         props.set(Constants.KEY_REVERSE_REPO_HOST, getReverseRepoHost());
         props.set(Constants.KEY_CANONICAL_REPO_NAME, getCanonicalRepoName());
-        props.set(Constants.KEY_TAG_NAME, getEffectiveTagName(model));
-        props.set(Constants.KEY_PREVIOUS_TAG_NAME, getResolvedPreviousTagName(model));
+        props.set(Constants.KEY_TAG_NAME, getEffectiveTagName(context));
+        props.set(Constants.KEY_PREVIOUS_TAG_NAME, getResolvedPreviousTagName(context));
         props.set(Constants.KEY_RELEASE_NAME, getEffectiveReleaseName());
         props.set(Constants.KEY_MILESTONE_NAME, milestone.getEffectiveName());
-        props.set(Constants.KEY_REPO_URL, getResolvedRepoUrl(model));
-        props.set(Constants.KEY_REPO_CLONE_URL, getResolvedRepoCloneUrl(model));
-        props.set(Constants.KEY_COMMIT_URL, getResolvedCommitUrl(model));
-        props.set(Constants.KEY_SRC_URL, getResolvedSrcUrl(model));
-        props.set(Constants.KEY_RELEASE_NOTES_URL, getResolvedReleaseNotesUrl(model));
-        props.set(Constants.KEY_LATEST_RELEASE_URL, getResolvedLatestReleaseUrl(model));
-        props.set(Constants.KEY_ISSUE_TRACKER_URL, getResolvedIssueTrackerUrl(model, false));
+        props.set(Constants.KEY_REPO_URL, getResolvedRepoUrl(context));
+        props.set(Constants.KEY_REPO_CLONE_URL, getResolvedRepoCloneUrl(context));
+        props.set(Constants.KEY_COMMIT_URL, getResolvedCommitUrl(context));
+        props.set(Constants.KEY_SRC_URL, getResolvedSrcUrl(context));
+        props.set(Constants.KEY_RELEASE_NOTES_URL, getResolvedReleaseNotesUrl(context));
+        props.set(Constants.KEY_LATEST_RELEASE_URL, getResolvedLatestReleaseUrl(context));
+        props.set(Constants.KEY_ISSUE_TRACKER_URL, getResolvedIssueTrackerUrl(context, false));
     }
 
     public static final class Update extends AbstractModelObject<Update> implements Domain, EnabledAware {
@@ -1019,15 +1019,15 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
             return Env.env(org.jreleaser.model.api.release.Releaser.MILESTONE_NAME, cachedName);
         }
 
-        public String getResolvedName(TemplateContext props) {
+        public String getResolvedName(JReleaserContext context, TemplateContext props) {
             if (isBlank(cachedName)) {
                 cachedName = getConfiguredName();
             }
 
             if (isBlank(cachedName)) {
-                cachedName = resolveTemplate(name, props);
+                cachedName = resolveTemplate(context.getLogger(), name, props);
             } else if (cachedName.contains("{{")) {
-                cachedName = resolveTemplate(cachedName, props);
+                cachedName = resolveTemplate(context.getLogger(), cachedName, props);
             }
 
             return cachedName;

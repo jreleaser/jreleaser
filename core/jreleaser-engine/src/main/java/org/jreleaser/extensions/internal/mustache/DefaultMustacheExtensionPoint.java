@@ -26,6 +26,8 @@ import org.commonmark.renderer.html.HtmlRenderer;
 import org.commonmark.renderer.text.TextContentRenderer;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.extensions.api.mustache.MustacheExtensionPoint;
+import org.jreleaser.logging.JReleaserLogger;
+import org.jreleaser.logging.SimpleJReleaserLoggerAdapter;
 import org.jreleaser.model.Constants;
 import org.jreleaser.mustache.MustacheUtils;
 import org.jreleaser.mustache.TemplateContext;
@@ -294,6 +296,7 @@ public final class DefaultMustacheExtensionPoint implements MustacheExtensionPoi
 
     private static class RecursiveEvalFunction implements UnaryOperator<String> {
         private final TemplateContext context;
+        private final JReleaserLogger logger = new SimpleJReleaserLoggerAdapter();
 
         public RecursiveEvalFunction(TemplateContext context) {
             this.context = context;
@@ -301,7 +304,7 @@ public final class DefaultMustacheExtensionPoint implements MustacheExtensionPoi
 
         @Override
         public String apply(String input) {
-            return MustacheUtils.applyTemplate(input, context);
+            return MustacheUtils.applyTemplate(logger, input, context);
         }
     }
 }

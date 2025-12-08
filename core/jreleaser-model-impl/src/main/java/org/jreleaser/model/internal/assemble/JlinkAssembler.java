@@ -333,16 +333,16 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
     }
 
     public String getResolvedImageName(JReleaserContext context) {
-        TemplateContext props = context.getModel().props();
-        props.setAll(props());
-        return resolveTemplate(imageName, props);
+        TemplateContext props = context.getModel().props(context);
+        props.setAll(props(context));
+        return resolveTemplate(context.getLogger(), imageName, props);
     }
 
     public String getResolvedImageNameTransform(JReleaserContext context) {
         if (isBlank(imageNameTransform)) return null;
-        TemplateContext props = context.getModel().props();
-        props.setAll(props());
-        return resolveTemplate(imageNameTransform, props);
+        TemplateContext props = context.getModel().props(context);
+        props.setAll(props(context));
+        return resolveTemplate(context.getLogger(), imageNameTransform, props);
     }
 
     public Jdeps getJdeps() {

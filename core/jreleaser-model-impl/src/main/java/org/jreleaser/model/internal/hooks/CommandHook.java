@@ -118,7 +118,7 @@ public final class CommandHook extends AbstractHook<CommandHook> {
         TemplateContext props = context.fullProps().setAll(additionalContext);
         props.set("event", event);
         props.set("jreleaser", context.getModel().asImmutable());
-        return resolveTemplate(cmd, props);
+        return resolveTemplate(context.getLogger(), cmd, props);
     }
 
     public String getCmd() {

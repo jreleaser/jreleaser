@@ -191,7 +191,7 @@ public final class CyclonedxSbomCataloger extends AbstractSbomCataloger<Cycloned
         String archiveName = getPack().getName();
         TemplateContext props = context.fullProps();
         props.setAll(resolvedExtraProperties());
-        return resolveTemplate(archiveName, props) + ZIP.extension();
+        return resolveTemplate(context.getLogger(), archiveName, props) + ZIP.extension();
     }
 
     private Set<Artifact> doResolveArtifacts(JReleaserContext context, Set<Artifact> candidates) {

@@ -290,7 +290,7 @@ public final class BrewPackagerValidator {
 
         map = context.getModel().getActiveDistributions().stream()
             .filter(d -> d.getBrew().getCask().isEnabled())
-            .collect(groupingBy(d -> d.getBrew().getCask().getResolvedCaskName(context.props())));
+            .collect(groupingBy(d -> d.getBrew().getCask().getResolvedCaskName(context, context.props())));
 
         map.forEach((caskName, distributions) -> {
             if (distributions.size() > 1) {

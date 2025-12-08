@@ -134,16 +134,16 @@ public abstract class AbstractAssemblerProcessor<A extends org.jreleaser.model.a
         context.getLogger().debug(RB.$("packager.fill.git.properties"));
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
         if (null != releaser) {
-            releaser.fillProps(newProps, context.getModel());
+            releaser.fillProps(newProps, context);
         }
         context.getLogger().debug(RB.$("assembler.fill.assembler.properties"));
         fillAssemblerProperties(newProps);
-        applyTemplates(props, props);
+        applyTemplates(context.getLogger(), props, props);
         return newProps;
     }
 
     protected void fillAssemblerProperties(TemplateContext props) {
-        props.setAll(assembler.props());
+        props.setAll(assembler.props(context));
     }
 
     protected Command.Result executeCommand(Path directory, Command command) throws AssemblerProcessingException {
@@ -194,7 +194,7 @@ public abstract class AbstractAssemblerProcessor<A extends org.jreleaser.model.a
 
                 if (value.isReader()) {
                     context.getLogger().debug(RB.$("packager.evaluate.template"), filename, assembler.getName(), assembler.getType());
-                    String content = applyTemplate(value.getReader(), props, filename);
+                    String content = applyTemplate(context.getLogger(), value.getReader(), props, filename);
                     context.getLogger().debug(RB.$("packager.write.template"), filename, assembler.getName(), assembler.getType());
                     writeFile(content, props, targetDirectory, filename);
                 } else {

@@ -54,7 +54,7 @@ public final class JReleaserScriptEvaluator {
 
     public Object eval(JReleaserContext context, String scriptText) {
         try {
-            scriptText = Templates.resolveTemplate(scriptText, context.props());
+            scriptText = Templates.resolveTemplate(context.getLogger(), scriptText, context.props());
             JexlScript script = jexl.createScript(new JexlInfo("script", 0, 0), scriptText);
             JexlContext ctxt = new MapContext();
             ctxt.set("context", context.asImmutable());

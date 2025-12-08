@@ -70,7 +70,7 @@ public class LinkedinAnnouncer implements Announcer<org.jreleaser.model.api.anno
             message = Message.of(subject, text);
         } else {
             TemplateContext props = new TemplateContext();
-            context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
+            context.getModel().getRelease().getReleaser().fillProps(props, context);
             text = linkedin.getResolvedMessageTemplate(context, props);
         }
 
@@ -87,8 +87,8 @@ public class LinkedinAnnouncer implements Announcer<org.jreleaser.model.api.anno
                 TemplateContext props = context.fullProps();
                 props.set(KEY_LINKEDIN_SUBJECT, subject);
                 props.set(KEY_LINKEDIN_OWNER, MustacheUtils.passThrough("{{" + KEY_LINKEDIN_OWNER + "}}"));
-                applyTemplates(props, linkedin.resolvedExtraProperties());
-                text = MustacheUtils.applyTemplate(text, props);
+                applyTemplates(context.getLogger(), props, linkedin.resolvedExtraProperties());
+                text = MustacheUtils.applyTemplate(context.getLogger(), text, props);
                 sdk.share(owner, subject, text);
             }
         } catch (LinkedinException e) {

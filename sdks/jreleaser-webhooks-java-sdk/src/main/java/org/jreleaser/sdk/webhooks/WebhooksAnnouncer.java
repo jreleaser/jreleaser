@@ -97,7 +97,7 @@ public class WebhooksAnnouncer implements Announcer<org.jreleaser.model.api.anno
                 props.set(KEY_CHANGELOG_CHANGES, passThrough(convertLineEndings(context.getChangelog().getFormattedChanges())));
                 props.set(KEY_CHANGELOG_CONTRIBUTORS, passThrough(convertLineEndings(context.getChangelog().getFormattedContributors())));
             }
-            context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
+            context.getModel().getRelease().getReleaser().fillProps(props, context);
             message = webhook.getResolvedMessageTemplate(context, props);
         }
 

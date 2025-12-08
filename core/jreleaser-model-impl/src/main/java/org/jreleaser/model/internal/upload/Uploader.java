@@ -80,5 +80,5 @@ public interface Uploader<A extends org.jreleaser.model.api.upload.Uploader> ext
 
     String getResolvedDownloadUrl(JReleaserContext context, Artifact artifact);
 
-    String getResolvedDownloadUrl(TemplateContext props, Artifact artifact);
+    String getResolvedDownloadUrl(JReleaserContext context, TemplateContext props, Artifact artifact);
 }

@@ -142,8 +142,8 @@ public final class LinkedinAnnouncer extends AbstractMessageAnnouncer<LinkedinAn
 
     public String getResolvedTitle(JReleaserContext context) {
         TemplateContext props = context.fullProps();
-        applyTemplates(props, resolvedExtraProperties());
-        return resolveTemplate(subject, props);
+        applyTemplates(context.getLogger(), props, resolvedExtraProperties());
+        return resolveTemplate(context.getLogger(), subject, props);
     }
 
     public String getOwner() {

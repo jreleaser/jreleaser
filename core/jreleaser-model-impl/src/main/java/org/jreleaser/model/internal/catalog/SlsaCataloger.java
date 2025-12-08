@@ -151,8 +151,8 @@ public final class SlsaCataloger extends AbstractCataloger<SlsaCataloger, org.jr
     public String getResolvedAttestationName(JReleaserContext context) {
         TemplateContext props = context.fullProps();
         context.getChangelog().apply(props);
-        applyTemplates(props, resolvedExtraProperties());
-        String name = resolveTemplate(attestationName, props);
+        applyTemplates(context.getLogger(), props, resolvedExtraProperties());
+        String name = resolveTemplate(context.getLogger(), attestationName, props);
         if (!name.endsWith(ATTESTATION_INTOTO)) {
             name += ATTESTATION_INTOTO;
         }

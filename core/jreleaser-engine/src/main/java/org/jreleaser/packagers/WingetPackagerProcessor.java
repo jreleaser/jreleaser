@@ -110,18 +110,18 @@ public class WingetPackagerProcessor extends AbstractRepositoryPackagerProcessor
 
         props.set(KEY_WINGET_DEFAULT_LOCALE, packager.getDefaultLocale());
         props.set(KEY_WINGET_AUTHOR, packager.getAuthor());
-        props.set(KEY_WINGET_MONIKER, resolveTemplate(packager.getMoniker(), props));
+        props.set(KEY_WINGET_MONIKER, resolveTemplate(context.getLogger(), packager.getMoniker(), props));
         props.set(KEY_WINGET_MINIMUM_OS_VERSION, packager.getMinimumOsVersion());
-        props.set(KEY_WINGET_PRODUCT_CODE, resolveTemplate(packager.getProductCode(), props));
+        props.set(KEY_WINGET_PRODUCT_CODE, resolveTemplate(context.getLogger(), packager.getProductCode(), props));
         props.set(KEY_WINGET_HAS_TAGS, !packager.getTags().isEmpty());
         props.set(KEY_WINGET_TAGS, packager.getTags());
-        props.set(KEY_WINGET_PACKAGE_IDENTIFIER, resolveTemplate(packager.getPackage().getIdentifier(), props));
-        props.set(KEY_WINGET_PACKAGE_NAME, resolveTemplate(packager.getPackage().getName(), props));
-        props.set(KEY_WINGET_PACKAGE_VERSION, resolveTemplate(packager.getPackage().getVersion(), props));
-        props.set(KEY_WINGET_PACKAGE_URL, resolveTemplate(packager.getPackage().getUrl(), props));
-        props.set(KEY_WINGET_PUBLISHER_NAME, resolveTemplate(packager.getPublisher().getName(), props));
-        props.set(KEY_WINGET_PUBLISHER_URL, resolveTemplate(packager.getPublisher().getUrl(), props));
-        props.set(KEY_WINGET_PUBLISHER_SUPPORT_URL, resolveTemplate(packager.getPublisher().getSupportUrl(), props));
+        props.set(KEY_WINGET_PACKAGE_IDENTIFIER, resolveTemplate(context.getLogger(), packager.getPackage().getIdentifier(), props));
+        props.set(KEY_WINGET_PACKAGE_NAME, resolveTemplate(context.getLogger(), packager.getPackage().getName(), props));
+        props.set(KEY_WINGET_PACKAGE_VERSION, resolveTemplate(context.getLogger(), packager.getPackage().getVersion(), props));
+        props.set(KEY_WINGET_PACKAGE_URL, resolveTemplate(context.getLogger(), packager.getPackage().getUrl(), props));
+        props.set(KEY_WINGET_PUBLISHER_NAME, resolveTemplate(context.getLogger(), packager.getPublisher().getName(), props));
+        props.set(KEY_WINGET_PUBLISHER_URL, resolveTemplate(context.getLogger(), packager.getPublisher().getUrl(), props));
+        props.set(KEY_WINGET_PUBLISHER_SUPPORT_URL, resolveTemplate(context.getLogger(), packager.getPublisher().getSupportUrl(), props));
         props.set(KEY_WINGET_INSTALLER_TYPE, packager.getInstaller().getType().formatted());
         if (null != packager.getInstaller().getScope()) {
             props.set(KEY_WINGET_SCOPE, packager.getInstaller().getScope().formatted());

@@ -158,7 +158,7 @@ public final class Artifact extends AbstractArtifact<Artifact> implements Domain
         Object value = getExtraProperties().get(OPTIONAL);
 
         if (value instanceof CharSequence && value.toString().contains("{{")) {
-            value = resolveTemplate(value.toString(), context.fullProps());
+            value = resolveTemplate(context.getLogger(), value.toString(), context.fullProps());
             getExtraProperties().put(OPTIONAL, value);
         }
 

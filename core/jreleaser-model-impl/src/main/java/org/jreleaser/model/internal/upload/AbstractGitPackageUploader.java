@@ -93,7 +93,7 @@ public abstract class AbstractGitPackageUploader<A extends org.jreleaser.model.a
 
     @Override
     public String getResolvedDownloadUrl(JReleaserContext context, Artifact artifact) {
-        return getResolvedDownloadUrl(context.fullProps(), artifact);
+        return getResolvedDownloadUrl(context, context.fullProps(), artifact);
     }
 
     public String getResolvedUploadUrl(JReleaserContext context, Artifact artifact) {

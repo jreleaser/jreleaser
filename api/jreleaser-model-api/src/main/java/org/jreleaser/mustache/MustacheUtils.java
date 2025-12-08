@@ -17,14 +17,21 @@
  */
 package org.jreleaser.mustache;
 
+import com.github.mustachejava.Binding;
+import com.github.mustachejava.Code;
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheException;
 import com.github.mustachejava.MustacheFactory;
 import com.github.mustachejava.TemplateFunction;
+import com.github.mustachejava.reflect.GuardedBinding;
+import com.github.mustachejava.reflect.MissingWrapper;
+import com.github.mustachejava.reflect.ReflectionObjectHandler;
+import com.github.mustachejava.util.Wrapper;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.extensions.api.ExtensionManagerHolder;
 import org.jreleaser.extensions.api.mustache.MustacheExtensionPoint;
+import org.jreleaser.logging.JReleaserLogger;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -33,6 +40,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -58,9 +66,9 @@ public final class MustacheUtils {
         return vars;
     }
 
-    public static String applyTemplate(Reader reader, TemplateContext context, String templateName) {
+    public static String applyTemplate(JReleaserLogger logger, Reader reader, TemplateContext context, String templateName) {
         StringWriter input = new StringWriter();
-        MustacheFactory mf = new MyMustacheFactory();
+        MustacheFactory mf = new MyMustacheFactory(logger);
         Mustache mustache = mf.compile(reader, templateName);
         context.setAll(envVars());
         applyFunctions(context);
@@ -83,30 +91,30 @@ public final class MustacheUtils {
         return context;
     }
 
-    public static String applyTemplate(Reader reader, TemplateContext context) {
-        return applyTemplate(reader, context, UUID.randomUUID().toString()).trim();
+    public static String applyTemplate(JReleaserLogger logger, Reader reader, TemplateContext context) {
+        return applyTemplate(logger, reader, context, UUID.randomUUID().toString()).trim();
     }
 
-    public static String applyTemplate(String template, TemplateContext context, String templateName) {
-        return applyTemplate(new StringReader(template), context, templateName);
+    public static String applyTemplate(JReleaserLogger logger, String template, TemplateContext context, String templateName) {
+        return applyTemplate(logger, new StringReader(template), context, templateName);
     }
 
-    public static String applyTemplate(String template, TemplateContext context) {
-        return applyTemplate(new StringReader(template), context, UUID.randomUUID().toString()).trim();
+    public static String applyTemplate(JReleaserLogger logger, String template, TemplateContext context) {
+        return applyTemplate(logger, new StringReader(template), context, UUID.randomUUID().toString()).trim();
     }
 
-    public static void applyTemplates(Map<String, Object> props, TemplateContext templates) {
-        applyTemplates(new TemplateContext(props), templates);
+    public static void applyTemplates(JReleaserLogger logger, Map<String, Object> props, TemplateContext templates) {
+        applyTemplates(logger, new TemplateContext(props), templates);
     }
 
-    public static void applyTemplates(TemplateContext props, Map<String, Object> templates) {
+    public static void applyTemplates(JReleaserLogger logger, TemplateContext props, Map<String, Object> templates) {
         for (Map.Entry<String, Object> e : new LinkedHashSet<>(templates.entrySet())) {
             Object value = e.getValue();
 
             if (value instanceof CharSequence) {
                 String val = String.valueOf(value);
                 if (val.contains("{{") && val.contains("}}")) {
-                    value = applyTemplate(val, props);
+                    value = applyTemplate(logger, val, props);
                 }
             }
 
@@ -114,14 +122,14 @@ public final class MustacheUtils {
         }
     }
 
-    public static void applyTemplates(TemplateContext props, TemplateContext templates) {
+    public static void applyTemplates(JReleaserLogger logger, TemplateContext props, TemplateContext templates) {
         for (Map.Entry<String, Object> e : new LinkedHashSet<>(templates.entries())) {
             Object value = e.getValue();
 
             if (value instanceof CharSequence) {
                 String val = String.valueOf(value);
                 if (val.contains("{{") && val.contains("}}")) {
-                    value = applyTemplate(val, props);
+                    value = applyTemplate(logger, val, props);
                 }
             }
 
@@ -139,6 +147,10 @@ public final class MustacheUtils {
     }
 
     private static class MyMustacheFactory extends DefaultMustacheFactory {
+        public MyMustacheFactory(JReleaserLogger logger) {
+            setObjectHandler(new MyReflectionObjectHandler(logger));
+        }
+
         @Override
         public void encode(String value, Writer writer) {
             if (value.startsWith("!!") && value.endsWith("!!")) {
@@ -150,6 +162,29 @@ public final class MustacheUtils {
             } else {
                 super.encode(value, writer);
             }
+        }
+    }
+
+    private static class MyReflectionObjectHandler extends ReflectionObjectHandler {
+        private final JReleaserLogger logger;
+
+        public MyReflectionObjectHandler(JReleaserLogger logger) {
+            this.logger = logger;
+        }
+
+        @Override
+        public Binding createBinding(String name, com.github.mustachejava.TemplateContext tc, Code code) {
+            return new GuardedBinding(this, name, tc, code) {
+                @Override
+                protected synchronized Wrapper getWrapper(String name, List<Object> scopes) {
+                    final Wrapper wrapper = super.getWrapper(name, scopes);
+
+                    if (wrapper instanceof MissingWrapper) {
+                        logger.warn(RB.$("ERROR_mustache_missing_variable", name));
+                    }
+                    return wrapper;
+                }
+            };
         }
     }
 }

@@ -18,6 +18,7 @@
 package org.jreleaser.model.internal.packagers;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.AbstractActivatable;
 import org.jreleaser.mustache.TemplateContext;
 
@@ -96,13 +97,13 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
     }
 
     @Override
-    public String getResolvedCommitMessage(TemplateContext props) {
-        return resolveTemplate(commitMessage, props);
+    public String getResolvedCommitMessage(JReleaserContext context, TemplateContext props) {
+        return resolveTemplate(context.getLogger(), commitMessage, props);
     }
 
     @Override
-    public String getResolvedTagName(TemplateContext props) {
-        return resolveTemplate(tagName, props);
+    public String getResolvedTagName(JReleaserContext context, TemplateContext props) {
+        return resolveTemplate(context.getLogger(), tagName, props);
     }
 
     @Override

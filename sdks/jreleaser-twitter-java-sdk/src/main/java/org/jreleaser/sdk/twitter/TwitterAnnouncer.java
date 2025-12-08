@@ -69,7 +69,7 @@ public class TwitterAnnouncer implements Announcer<org.jreleaser.model.api.annou
 
         if (isNotBlank(twitter.getStatusTemplate())) {
             TemplateContext props = new TemplateContext();
-            context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
+            context.getModel().getRelease().getReleaser().fillProps(props, context);
             Arrays.stream(twitter.getResolvedStatusTemplate(context, props)
                     .split(System.lineSeparator()))
                 .filter(StringUtils::isNotBlank)
@@ -112,9 +112,9 @@ public class TwitterAnnouncer implements Announcer<org.jreleaser.model.api.annou
 
     private String getResolvedMessage(JReleaserContext context, String message) {
         TemplateContext props = context.fullProps();
-        applyTemplates(props, context.getModel().getAnnounce().getTwitter().resolvedExtraProperties());
-        props.set(KEY_TAG_NAME, context.getModel().getRelease().getReleaser().getEffectiveTagName(context.getModel()));
-        props.set(KEY_PREVIOUS_TAG_NAME, context.getModel().getRelease().getReleaser().getResolvedPreviousTagName(context.getModel()));
-        return resolveTemplate(message, props);
+        applyTemplates(context.getLogger(), props, context.getModel().getAnnounce().getTwitter().resolvedExtraProperties());
+        props.set(KEY_TAG_NAME, context.getModel().getRelease().getReleaser().getEffectiveTagName(context));
+        props.set(KEY_PREVIOUS_TAG_NAME, context.getModel().getRelease().getReleaser().getResolvedPreviousTagName(context));
+        return resolveTemplate(context.getLogger(), message, props);
     }
 }

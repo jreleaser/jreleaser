@@ -65,13 +65,13 @@ public class ChangelogResolver {
         Append append = releaser.getChangelog().getAppend();
 
         TemplateContext props = context.fullProps();
-        String resolvedTitle = applyTemplate(append.getTitle(), props);
+        String resolvedTitle = applyTemplate(context.getLogger(), append.getTitle(), props);
 
         props.set(Constants.KEY_CHANGELOG_TITLE, passThrough(resolvedTitle));
         props.set(Constants.KEY_CHANGELOG_CONTENT, passThrough(resolvedChangelog));
         props.set(Constants.KEY_CHANGELOG_CHANGES, passThrough(context.getChangelog().getFormattedChanges()));
         props.set(Constants.KEY_CHANGELOG_CONTRIBUTORS, passThrough(context.getChangelog().getFormattedContributors()));
-        String appendableChangelog = stripMargin(applyTemplate(append.getResolvedContentTemplate(context), props));
+        String appendableChangelog = stripMargin(applyTemplate(context.getLogger(), append.getResolvedContentTemplate(context), props));
 
         Path target = context.getBasedir().resolve(append.getTarget());
         String fullChangelog = null;

@@ -125,7 +125,7 @@ public final class ScriptHook extends AbstractHook<ScriptHook> {
         TemplateContext props = context.fullProps().setAll(additionalContext);
         props.set("event", event);
         props.set("jreleaser", context.getModel().asImmutable());
-        return resolveTemplate(run, props);
+        return resolveTemplate(context.getLogger(), run, props);
     }
 
     public String getRun() {

@@ -19,6 +19,7 @@ package org.jreleaser.model.internal.deploy.maven;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Http;
+import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.common.TimeoutAware;
@@ -103,13 +104,13 @@ public interface MavenDeployer<A extends org.jreleaser.model.api.deploy.maven.Ma
 
     Http.Authorization resolveAuthorization();
 
-    String getResolvedUrl(TemplateContext props);
+    String getResolvedUrl(JReleaserContext context, TemplateContext props);
 
     List<String> keysFor(String property);
 
     void setSnapshotSupported(Boolean snapshotSupported);
 
-    public final class ArtifactOverride extends AbstractModelObject<ArtifactOverride> implements Domain {
+    final class ArtifactOverride extends AbstractModelObject<ArtifactOverride> implements Domain {
         private static final long serialVersionUID = 8057060716591206147L;
 
         private String groupId;
@@ -122,6 +123,7 @@ public interface MavenDeployer<A extends org.jreleaser.model.api.deploy.maven.Ma
         @JsonIgnore
         private final org.jreleaser.model.api.deploy.maven.MavenDeployer.ArtifactOverride immutable = new org.jreleaser.model.api.deploy.maven.MavenDeployer.ArtifactOverride() {
             private static final long serialVersionUID = -7937881029176143227L;
+
             @Override
             public String getGroupId() {
                 return groupId;

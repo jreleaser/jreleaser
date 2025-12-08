@@ -61,7 +61,7 @@ public class Nexus3MavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
     public void deploy(String name) throws DeployException {
         Set<Deployable> deployables = collectDeployables(false);
 
-        String baseUrl = deployer.getResolvedUrl(context.fullProps());
+        String baseUrl = deployer.getResolvedUrl(context, context.fullProps());
         String username = deployer.getUsername();
         String password = deployer.getPassword();
 

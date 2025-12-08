@@ -18,6 +18,7 @@
 package org.jreleaser.model.internal.assemble;
 
 import org.jreleaser.model.Constants;
+import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.Glob;
 import org.jreleaser.model.internal.common.Java;
@@ -58,8 +59,8 @@ public abstract class AbstractJavaAssembler<S extends AbstractJavaAssembler<S, A
     }
 
     @Override
-    public TemplateContext props() {
-        TemplateContext props = super.props();
+    public TemplateContext props(JReleaserContext context) {
+        TemplateContext props = super.props(context);
         props.set(Constants.KEY_DISTRIBUTION_EXECUTABLE, executable);
         props.setAll(java.resolvedExtraProperties());
         props.set(Constants.KEY_DISTRIBUTION_JAVA_GROUP_ID, java.getGroupId(), "");

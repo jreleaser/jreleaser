@@ -135,7 +135,7 @@ public class DownloadableTool {
         try {
             String verify = properties.getProperty(K_COMMAND_VERIFY).trim();
             TemplateContext props = props();
-            verify = resolveTemplate(verify, props);
+            verify = resolveTemplate(logger, verify, props);
 
             Pattern pattern = Pattern.compile(verify);
 
@@ -176,8 +176,8 @@ public class DownloadableTool {
         String exec = properties.getProperty(platformKey(K_EXECUTABLE));
 
         TemplateContext props = props();
-        filename = resolveTemplate(filename, props);
-        if (isNotBlank(executablePath)) executablePath = resolveTemplate(executablePath, props);
+        filename = resolveTemplate(logger, filename, props);
+        if (isNotBlank(executablePath)) executablePath = resolveTemplate(logger, executablePath, props);
 
         Path test = dest;
         if (unpack && isNotBlank(executablePath)) {
@@ -191,7 +191,7 @@ public class DownloadableTool {
             return;
         }
 
-        downloadUrl = resolveTemplate(downloadUrl, props) + filename;
+        downloadUrl = resolveTemplate(logger, downloadUrl, props) + filename;
 
         try {
             URLConnection connection = new URI(downloadUrl).toURL().openConnection();

@@ -96,8 +96,8 @@ public final class Checksum extends AbstractModelObject<Checksum> implements Dom
 
     public String getResolvedName(JReleaserContext context) {
         TemplateContext props = context.fullProps();
-        context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
-        return resolveTemplate(name, props);
+        context.getModel().getRelease().getReleaser().fillProps(props, context);
+        return resolveTemplate(context.getLogger(), name, props);
     }
 
     public String getResolvedName(JReleaserContext context, Algorithm algorithm) {

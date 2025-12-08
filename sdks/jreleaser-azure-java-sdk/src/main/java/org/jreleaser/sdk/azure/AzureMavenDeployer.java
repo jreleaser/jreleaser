@@ -70,7 +70,7 @@ public class AzureMavenDeployer extends AbstractMavenDeployer<org.jreleaser.mode
             context.getLogger().info(RB.$("artifacts.no.match"));
         }
 
-        String baseUrl = deployer.getResolvedUrl(context.fullProps());
+        String baseUrl = deployer.getResolvedUrl(context, context.fullProps());
         String username = deployer.getUsername();
         String password = deployer.getPassword();
 

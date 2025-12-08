@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model.internal.packagers;
 
+import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Activatable;
 import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.common.ExtraProperties;
@@ -62,9 +63,9 @@ public interface RepositoryTap extends Domain, OwnerAware, Activatable, ExtraPro
 
     void setCommitMessage(String commitMessage);
 
-    String getResolvedCommitMessage(TemplateContext props);
+    String getResolvedCommitMessage(JReleaserContext context, TemplateContext props);
 
-    String getResolvedTagName(TemplateContext props);
+    String getResolvedTagName(JReleaserContext context, TemplateContext props);
 
     <T extends org.jreleaser.model.api.packagers.PackagerRepository> T asImmutable();
 }

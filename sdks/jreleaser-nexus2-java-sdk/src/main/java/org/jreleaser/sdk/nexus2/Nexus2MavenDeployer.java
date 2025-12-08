@@ -102,9 +102,9 @@ public class Nexus2MavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
         }
 
         boolean isSnapshot = context.getModel().getProject().isSnapshot();
-        String baseUrl = deployer.getResolvedUrl(context.fullProps());
+        String baseUrl = deployer.getResolvedUrl(context, context.fullProps());
         if (isSnapshot) {
-            baseUrl = deployer.getResolvedSnapshotUrl(context.fullProps());
+            baseUrl = deployer.getResolvedSnapshotUrl(context, context.fullProps());
         }
         String username = deployer.getUsername();
         String password = deployer.getPassword();

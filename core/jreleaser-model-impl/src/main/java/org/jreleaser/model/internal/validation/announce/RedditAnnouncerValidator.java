@@ -26,8 +26,8 @@ import java.nio.file.Files;
 
 import static org.jreleaser.model.api.announce.RedditAnnouncer.REDDIT_CLIENT_ID;
 import static org.jreleaser.model.api.announce.RedditAnnouncer.REDDIT_CLIENT_SECRET;
-import static org.jreleaser.model.api.announce.RedditAnnouncer.REDDIT_USERNAME;
 import static org.jreleaser.model.api.announce.RedditAnnouncer.REDDIT_PASSWORD;
+import static org.jreleaser.model.api.announce.RedditAnnouncer.REDDIT_USERNAME;
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.model.internal.validation.common.Validator.validateTimeout;

@@ -218,10 +218,10 @@ public final class SmtpAnnouncer extends AbstractMessageAnnouncer<SmtpAnnouncer,
 
     public String getResolvedSubject(JReleaserContext context) {
         TemplateContext props = context.fullProps();
-        applyTemplates(props, resolvedExtraProperties());
-        props.set(KEY_TAG_NAME, context.getModel().getRelease().getReleaser().getEffectiveTagName(context.getModel()));
-        props.set(KEY_PREVIOUS_TAG_NAME, context.getModel().getRelease().getReleaser().getResolvedPreviousTagName(context.getModel()));
-        return resolveTemplate(subject, props);
+        applyTemplates(context.getLogger(), props, resolvedExtraProperties());
+        props.set(KEY_TAG_NAME, context.getModel().getRelease().getReleaser().getEffectiveTagName(context));
+        props.set(KEY_PREVIOUS_TAG_NAME, context.getModel().getRelease().getReleaser().getResolvedPreviousTagName(context));
+        return resolveTemplate(context.getLogger(), subject, props);
     }
 
     public Mail.Transport getTransport() {

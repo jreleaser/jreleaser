@@ -95,8 +95,8 @@ public class SdkmanAnnouncer implements Announcer<org.jreleaser.model.api.announ
 
             SdkmanPackager sdkman = distribution.getSdkman();
             TemplateContext props = context.fullProps();
-            props.setAll(distribution.props());
-            String releaseNotesUrl = resolveTemplate(sdkman.getReleaseNotesUrl(), props);
+            props.setAll(distribution.props(context));
+            String releaseNotesUrl = resolveTemplate(context.getLogger(), sdkman.getReleaseNotesUrl(), props);
             String command = sdkman.getCommand().name().toLowerCase(Locale.ENGLISH);
 
             context.getLogger().info(RB.$("sdkman.release.announce"), command, candidate);
@@ -140,7 +140,7 @@ public class SdkmanAnnouncer implements Announcer<org.jreleaser.model.api.announ
 
         try {
             String candidate = isNotBlank(sdkman.getCandidate()) ? sdkman.getCandidate().trim() : context.getModel().getProject().getName();
-            String releaseNotesUrl = resolveTemplate(sdkman.getReleaseNotesUrl(), context.fullProps());
+            String releaseNotesUrl = resolveTemplate(context.getLogger(), sdkman.getReleaseNotesUrl(), context.fullProps());
 
             if (sdkman.isMajor()) {
                 context.getLogger().info(RB.$("sdkman.release.announce.major"), candidate);

@@ -368,7 +368,7 @@ public final class JibPackagerValidator {
         if (!self.getLabels().containsKey(LABEL_OCI_IMAGE_SOURCE)) {
             BaseReleaser<?, ?> service = context.getModel().getRelease().getReleaser();
             self.getLabels().put(LABEL_OCI_IMAGE_SOURCE,
-                service.getResolvedRepoUrl(context.getModel(), repository.getOwner(), repository.getResolvedName()));
+                service.getResolvedRepoUrl(context, repository.getOwner(), repository.getResolvedName()));
         }
     }
 

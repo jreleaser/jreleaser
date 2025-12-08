@@ -624,7 +624,7 @@ class Gitlab {
                 throw new IOException(RB.$("ERROR_gitlab_invalid_upload_link", link.getUrl()));
             }
 
-            String payload = resolveTemplate(GRAPQL_DELETE_PAYLOAD, props);
+            String payload = resolveTemplate(context.getLogger(), GRAPQL_DELETE_PAYLOAD, props);
 
             FormData data = ClientUtils.toFormData(
                 "payload",

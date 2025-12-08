@@ -71,7 +71,7 @@ public class SdkmanPackagerProcessor extends AbstractPackagerProcessor<SdkmanPac
 
         try {
             String candidate = isNotBlank(sdkman.getCandidate()) ? sdkman.getCandidate().trim() : context.getModel().getProject().getName();
-            String releaseNotesUrl = resolveTemplate(sdkman.getReleaseNotesUrl(), props);
+            String releaseNotesUrl = resolveTemplate(context.getLogger(), sdkman.getReleaseNotesUrl(), props);
 
             if (sdkman.getCommand() == Sdkman.Command.MAJOR) {
                 context.getLogger().info(RB.$("sdkman.publish.major"), candidate);
@@ -114,6 +114,6 @@ public class SdkmanPackagerProcessor extends AbstractPackagerProcessor<SdkmanPac
     @Override
     protected void fillPackagerProperties(TemplateContext props, Distribution distribution) {
         props.set(KEY_SDKMAN_CANDIDATE, packager.getCandidate());
-        props.set(KEY_SDKMAN_RELEASE_NOTES_URL, resolveTemplate(packager.getReleaseNotesUrl(), props));
+        props.set(KEY_SDKMAN_RELEASE_NOTES_URL, resolveTemplate(context.getLogger(), packager.getReleaseNotesUrl(), props));
     }
 }

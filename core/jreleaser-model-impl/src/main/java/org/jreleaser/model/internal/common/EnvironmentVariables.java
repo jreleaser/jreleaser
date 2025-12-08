@@ -147,35 +147,35 @@ public final class EnvironmentVariables extends AbstractModelObject<EnvironmentV
         TemplateContext props = context.fullProps();
 
         return universal.entrySet().stream()
-            .collect(toMap(Map.Entry::getKey, e -> resolveTemplate(e.getValue(), props)));
+            .collect(toMap(Map.Entry::getKey, e -> resolveTemplate(context.getLogger(), e.getValue(), props)));
     }
 
     public Map<String, String> getResolvedUnix(JReleaserContext context) {
         TemplateContext props = context.fullProps();
 
         return unix.entrySet().stream()
-            .collect(toMap(Map.Entry::getKey, e -> resolveTemplate(e.getValue(), props)));
+            .collect(toMap(Map.Entry::getKey, e -> resolveTemplate(context.getLogger(), e.getValue(), props)));
     }
 
     public Map<String, String> getResolvedLinux(JReleaserContext context) {
         TemplateContext props = context.fullProps();
 
         return linux.entrySet().stream()
-            .collect(toMap(Map.Entry::getKey, e -> resolveTemplate(e.getValue(), props)));
+            .collect(toMap(Map.Entry::getKey, e -> resolveTemplate(context.getLogger(), e.getValue(), props)));
     }
 
     public Map<String, String> getResolvedOsx(JReleaserContext context) {
         TemplateContext props = context.fullProps();
 
         return osx.entrySet().stream()
-            .collect(toMap(Map.Entry::getKey, e -> resolveTemplate(e.getValue(), props)));
+            .collect(toMap(Map.Entry::getKey, e -> resolveTemplate(context.getLogger(), e.getValue(), props)));
     }
 
     public Map<String, String> getResolvedWindows(JReleaserContext context) {
         TemplateContext props = context.fullProps();
 
         return windows.entrySet().stream()
-            .collect(toMap(Map.Entry::getKey, e -> resolveTemplate(e.getValue(), props)));
+            .collect(toMap(Map.Entry::getKey, e -> resolveTemplate(context.getLogger(), e.getValue(), props)));
     }
 
     @Override

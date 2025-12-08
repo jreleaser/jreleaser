@@ -71,13 +71,13 @@ public class ScoopPackagerProcessor extends AbstractRepositoryPackagerProcessor<
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
 
         props.set(KEY_SCOOP_BUCKET_REPO_URL,
-            releaser.getResolvedRepoUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
+            releaser.getResolvedRepoUrl(context, packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
         props.set(KEY_SCOOP_BUCKET_REPO_CLONE_URL,
-            releaser.getResolvedRepoCloneUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
+            releaser.getResolvedRepoCloneUrl(context, packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
         props.set(KEY_SCOOP_REPOSITORY_URL,
-            releaser.getResolvedRepoUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
+            releaser.getResolvedRepoUrl(context, packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
         props.set(KEY_SCOOP_REPOSITORY_CLONE_URL,
-            releaser.getResolvedRepoCloneUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
+            releaser.getResolvedRepoCloneUrl(context, packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
 
         props.set(KEY_SCOOP_PACKAGE_NAME, packager.getPackageName());
         props.set(KEY_SCOOP_CHECKVER_URL, resolveCheckverUrl(props));
@@ -91,7 +91,7 @@ public class ScoopPackagerProcessor extends AbstractRepositoryPackagerProcessor<
         if (!getPackager().getCheckverUrl().contains("{{")) {
             return getPackager().getCheckverUrl();
         }
-        return resolveTemplate(getPackager().getCheckverUrl(), props);
+        return resolveTemplate(context.getLogger(), getPackager().getCheckverUrl(), props);
     }
 
     private Object resolveAutoupdateUrl(TemplateContext props, Distribution distribution) {
@@ -113,7 +113,7 @@ public class ScoopPackagerProcessor extends AbstractRepositoryPackagerProcessor<
         copy.set(KEY_PROJECT_EFFECTIVE_VERSION, "$version");
         copy.set(KEY_TAG_NAME, tagName);
         copy.set(KEY_ARTIFACT_FILE, artifactFile);
-        return resolveTemplate(url, copy);
+        return resolveTemplate(context.getLogger(), url, copy);
     }
 
     @Override

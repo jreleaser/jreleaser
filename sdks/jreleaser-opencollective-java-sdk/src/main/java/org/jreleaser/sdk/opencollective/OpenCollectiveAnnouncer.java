@@ -60,7 +60,7 @@ public class OpenCollectiveAnnouncer implements Announcer<org.jreleaser.model.ap
             message = openCollective.getResolvedMessage(context);
         } else {
             TemplateContext props = new TemplateContext();
-            context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
+            context.getModel().getRelease().getReleaser().fillProps(props, context);
             message = openCollective.getResolvedMessageTemplate(context, props);
         }
 

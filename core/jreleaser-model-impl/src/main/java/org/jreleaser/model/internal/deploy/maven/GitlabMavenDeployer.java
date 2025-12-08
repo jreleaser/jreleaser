@@ -20,6 +20,7 @@ package org.jreleaser.model.internal.deploy.maven;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Http;
+import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.mustache.TemplateContext;
 
 import java.util.List;
@@ -196,12 +197,12 @@ public final class GitlabMavenDeployer extends AbstractMavenDeployer<GitlabMaven
     }
 
     @Override
-    public String getResolvedUrl(TemplateContext props) {
+    public String getResolvedUrl(JReleaserContext context, TemplateContext props) {
         props.set("username", getUsername());
         props.set("owner", getUsername());
         props.set("projectIdentifier", projectIdentifier);
         props.setAll(getExtraProperties());
-        return normalizeUrl(resolveTemplate(getUrl(), props));
+        return normalizeUrl(resolveTemplate(context.getLogger(), getUrl(), props));
     }
 
     @Override

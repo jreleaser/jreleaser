@@ -268,19 +268,19 @@ public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.mo
 
     @Override
     public String getResolvedDownloadUrl(JReleaserContext context, Artifact artifact) {
-        return resolveUrl(context.fullProps(), artifact);
+        return resolveUrl(context, context.fullProps(), artifact);
     }
 
     @Override
-    public String getResolvedDownloadUrl(TemplateContext props, Artifact artifact) {
-        return resolveUrl(props, artifact);
+    public String getResolvedDownloadUrl(JReleaserContext context, TemplateContext props, Artifact artifact) {
+        return resolveUrl(context, props, artifact);
     }
 
     public String getResolvedUploadUrl(JReleaserContext context, Artifact artifact) {
-        return resolveUrl(context.fullProps(), artifact);
+        return resolveUrl(context, context.fullProps(), artifact);
     }
 
-    private String resolveUrl(TemplateContext props, Artifact artifact) {
+    private String resolveUrl(JReleaserContext context, TemplateContext props, Artifact artifact) {
         TemplateContext p = new TemplateContext(artifactProps(props, artifact));
         p.set("artifactoryHost", host);
 
@@ -291,7 +291,7 @@ public final class ArtifactoryUploader extends AbstractUploader<org.jreleaser.mo
         if (repository.isPresent()) {
             p.set("repositoryPath", repository.get().getPath());
             String url = "{{artifactoryHost}}/{{repositoryPath}}";
-            return Templates.resolveTemplate(url, p);
+            return Templates.resolveTemplate(context.getLogger(), url, p);
         }
 
         return "";

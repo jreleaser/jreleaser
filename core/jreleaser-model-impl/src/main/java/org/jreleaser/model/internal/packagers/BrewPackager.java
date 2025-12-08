@@ -254,18 +254,18 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
 
     public String getResolvedFormulaName(JReleaserContext context) {
         if (isBlank(cachedFormulaName)) {
-            cachedFormulaName = resolveTemplate(formulaName, context.fullProps());
+            cachedFormulaName = resolveTemplate(context.getLogger(), formulaName, context.fullProps());
             cachedFormulaName = getClassNameForLowerCaseHyphenSeparatedName(cachedFormulaName);
         }
         return cachedFormulaName;
     }
 
-    public String getResolvedFormulaName(TemplateContext props) {
+    public String getResolvedFormulaName(JReleaserContext context, TemplateContext props) {
         if (isBlank(cachedFormulaName)) {
-            cachedFormulaName = resolveTemplate(formulaName, props);
+            cachedFormulaName = resolveTemplate(context.getLogger(), formulaName, props);
             cachedFormulaName = getClassNameForLowerCaseHyphenSeparatedName(cachedFormulaName);
         } else if (cachedFormulaName.contains("{{")) {
-            cachedFormulaName = resolveTemplate(cachedFormulaName, props);
+            cachedFormulaName = resolveTemplate(context.getLogger(), cachedFormulaName, props);
             cachedFormulaName = getClassNameForLowerCaseHyphenSeparatedName(cachedFormulaName);
         }
         return cachedFormulaName;
@@ -631,30 +631,30 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
             return null != enabled;
         }
 
-        public String getResolvedAppcast(TemplateContext props) {
+        public String getResolvedAppcast(JReleaserContext context, TemplateContext props) {
             if (isNotBlank(appcast)) {
-                return resolveTemplate(appcast, props);
+                return resolveTemplate(context.getLogger(), appcast, props);
             }
             return appcast;
         }
 
-        public String getResolvedCaskName(TemplateContext props) {
+        public String getResolvedCaskName(JReleaserContext context, TemplateContext props) {
             if (isBlank(cachedCaskName)) {
-                cachedCaskName = resolveTemplate(name, props);
+                cachedCaskName = resolveTemplate(context.getLogger(), name, props);
             } else if (cachedCaskName.contains("{{")) {
-                cachedCaskName = resolveTemplate(cachedCaskName, props);
+                cachedCaskName = resolveTemplate(context.getLogger(), cachedCaskName, props);
             }
             return cachedCaskName;
         }
 
-        public String getResolvedDisplayName(TemplateContext props) {
+        public String getResolvedDisplayName(JReleaserContext context, TemplateContext props) {
             if (isBlank(cachedDisplayName)) {
-                cachedDisplayName = resolveTemplate(displayName, props);
+                cachedDisplayName = resolveTemplate(context.getLogger(), displayName, props);
                 if (isFalse(owner.getExtraProperty(SKIP_CASK_DISPLAY_NAME_TRANSFORM))) {
                     cachedDisplayName = getNaturalName(getClassNameForLowerCaseHyphenSeparatedName(cachedDisplayName));
                 }
             } else if (cachedDisplayName.contains("{{")) {
-                cachedDisplayName = resolveTemplate(cachedDisplayName, props);
+                cachedDisplayName = resolveTemplate(context.getLogger(), cachedDisplayName, props);
                 if (isFalse(owner.getExtraProperty(SKIP_CASK_DISPLAY_NAME_TRANSFORM))) {
                     cachedDisplayName = getNaturalName(getClassNameForLowerCaseHyphenSeparatedName(cachedDisplayName));
                 }
@@ -662,20 +662,20 @@ public final class BrewPackager extends AbstractRepositoryPackager<org.jreleaser
             return cachedDisplayName;
         }
 
-        public String getResolvedAppName(TemplateContext props) {
+        public String getResolvedAppName(JReleaserContext context, TemplateContext props) {
             if (isBlank(cachedAppName)) {
-                cachedAppName = resolveTemplate(appName, props);
+                cachedAppName = resolveTemplate(context.getLogger(), appName, props);
             } else if (cachedAppName.contains("{{")) {
-                cachedAppName = resolveTemplate(cachedAppName, props);
+                cachedAppName = resolveTemplate(context.getLogger(), cachedAppName, props);
             }
             return cachedAppName;
         }
 
-        public String getResolvedPkgName(TemplateContext props) {
+        public String getResolvedPkgName(JReleaserContext context, TemplateContext props) {
             if (isBlank(cachedPkgName)) {
-                cachedPkgName = resolveTemplate(pkgName, props);
+                cachedPkgName = resolveTemplate(context.getLogger(), pkgName, props);
             } else if (cachedPkgName.contains("{{")) {
-                cachedPkgName = resolveTemplate(cachedPkgName, props);
+                cachedPkgName = resolveTemplate(context.getLogger(), cachedPkgName, props);
             }
             return cachedPkgName;
         }

@@ -77,14 +77,14 @@ public class MacportsPackagerProcessor extends AbstractRepositoryPackagerProcess
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
 
         props.set(KEY_MACPORTS_REPOSITORY_REPO_URL,
-            releaser.getResolvedRepoUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
+            releaser.getResolvedRepoUrl(context, packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
         props.set(KEY_MACPORTS_REPOSITORY_REPO_CLONE_URL,
-            releaser.getResolvedRepoCloneUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
+            releaser.getResolvedRepoCloneUrl(context, packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
 
         props.set(KEY_MACPORTS_REPOSITORY_URL,
-            releaser.getResolvedRepoUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
+            releaser.getResolvedRepoUrl(context, packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
         props.set(KEY_MACPORTS_REPOSITORY_CLONE_URL,
-            releaser.getResolvedRepoCloneUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
+            releaser.getResolvedRepoCloneUrl(context, packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
 
         List<String> longDescription = Arrays.asList(context.getModel().getProject().getLongDescription().split("\\n"));
 
@@ -98,7 +98,7 @@ public class MacportsPackagerProcessor extends AbstractRepositoryPackagerProcess
             props.set(KEY_MACPORTS_JAVA_VERSION, resolveJavaVersion(distribution));
         }
         if (packager.getExtraProperties().containsKey(APP_NAME)) {
-            props.set(KEY_MACPORTS_APP_NAME, resolveTemplate(packager.getExtraProperty(APP_NAME), props));
+            props.set(KEY_MACPORTS_APP_NAME, resolveTemplate(context.getLogger(), packager.getExtraProperty(APP_NAME), props));
         }
 
         String distributionUrl = props.get(KEY_DISTRIBUTION_URL);

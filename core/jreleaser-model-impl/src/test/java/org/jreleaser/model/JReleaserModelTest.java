@@ -17,6 +17,7 @@
  */
 package org.jreleaser.model;
 
+import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.JReleaserModel;
 import org.jreleaser.model.internal.release.GithubReleaser;
 import org.jreleaser.mustache.TemplateContext;
@@ -36,7 +37,7 @@ class JReleaserModelTest {
         JReleaserModel model = new JReleaserModel();
         model.getProject().setName("quarkiverse-parent");
         model.getRelease().setGithub(new GithubReleaser());
-        TemplateContext props = model.props();
+        TemplateContext props = model.props(JReleaserContext.empty());
         assertEquals("Quarkiverse Parent", props.get(Constants.KEY_PROJECT_NAME_CAPITALIZED));
     }
 }

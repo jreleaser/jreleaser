@@ -200,7 +200,7 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
         context.getLogger().debug(RB.$("packager.fill.distribution.properties"));
         fillDistributionProperties(newProps, distribution);
         context.getLogger().debug(RB.$("packager.fill.git.properties"));
-        context.getModel().getRelease().getReleaser().fillProps(newProps, context.getModel());
+        context.getModel().getRelease().getReleaser().fillProps(newProps, context);
         context.getLogger().debug(RB.$("packager.fill.artifact.properties"));
         if (!verifyAndAddArtifacts(newProps, distribution)) {
             // we can't continue with this packager
@@ -208,17 +208,17 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
         }
         context.getLogger().debug(RB.$("packager.fill.packager.properties"));
         fillPackagerProperties(newProps, distribution);
-        applyTemplates(newProps, packager.resolvedExtraProperties());
+        applyTemplates(context.getLogger(), newProps, packager.resolvedExtraProperties());
         if (isBlank(context.getModel().getRelease().getReleaser().getReverseRepoHost())) {
             newProps.set(KEY_REVERSE_REPO_HOST,
                 packager.getExtraProperties().get(KEY_REVERSE_REPO_HOST));
         }
-        applyTemplates(newProps, newProps);
+        applyTemplates(context.getLogger(), newProps, newProps);
         return newProps;
     }
 
     protected void fillDistributionProperties(TemplateContext props, Distribution distribution) {
-        props.setAll(distribution.props());
+        props.setAll(distribution.props(context));
     }
 
     protected abstract void fillPackagerProperties(TemplateContext props, Distribution distribution);
@@ -443,7 +443,7 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
                 // add extra properties without clobbering existing keys
                 Map<String, Object> aprops = artifact.resolvedExtraProperties();
                 TemplateContext bprops = new TemplateContext(aprops);
-                applyTemplates(aprops, bprops);
+                applyTemplates(context.getLogger(), aprops, bprops);
                 aprops.keySet().stream()
                     .filter(k -> !props.contains(k))
                     .forEach(k -> props.set(k, aprops.get(k)));

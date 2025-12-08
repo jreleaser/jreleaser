@@ -79,7 +79,7 @@ public class TemplateEvaluator {
             Path targetTemplate = targetDirectory.resolve(trimTplExtension(key));
             if (template.isReader()) {
                 context.getLogger().info(RB.$("templates.evaluate"), key);
-                String content = applyTemplate(template.getReader(), props, key);
+                String content = applyTemplate(context.getLogger(), template.getReader(), props, key);
                 context.getLogger().info(RB.$("templates.writing.file"), targetTemplate);
                 writeFile(context.getLogger(), content, targetTemplate, overwrite);
             } else {
@@ -123,7 +123,7 @@ public class TemplateEvaluator {
                 Path targetTemplate = targetDirectory.resolve(trimTplExtension(key));
                 if (value.isReader()) {
                     context.getLogger().info(RB.$("templates.evaluate"), key);
-                    String content = applyTemplate(value.getReader(), props, key);
+                    String content = applyTemplate(context.getLogger(), value.getReader(), props, key);
                     context.getLogger().info(RB.$("templates.writing.file"), targetTemplate);
                     writeFile(context.getLogger(), content, targetTemplate, overwrite);
                 } else {

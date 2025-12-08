@@ -74,14 +74,14 @@ public class JbangPackagerProcessor extends AbstractRepositoryPackagerProcessor<
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
 
         props.set(KEY_JBANG_CATALOG_REPO_URL,
-            releaser.getResolvedRepoUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
+            releaser.getResolvedRepoUrl(context, packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
         props.set(KEY_JBANG_CATALOG_REPO_CLONE_URL,
-            releaser.getResolvedRepoCloneUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
+            releaser.getResolvedRepoCloneUrl(context, packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
 
         props.set(KEY_JBANG_REPOSITORY_URL,
-            releaser.getResolvedRepoUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
+            releaser.getResolvedRepoUrl(context, packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
         props.set(KEY_JBANG_REPOSITORY_CLONE_URL,
-            releaser.getResolvedRepoCloneUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
+            releaser.getResolvedRepoCloneUrl(context, packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
 
         String aliasName = sanitizeAlias(packager.getAlias());
         String scriptName = aliasName;

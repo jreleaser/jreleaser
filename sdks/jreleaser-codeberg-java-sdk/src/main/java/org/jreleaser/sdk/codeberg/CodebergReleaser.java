@@ -75,10 +75,10 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
     @Override
     protected void createRelease() throws ReleaseException {
         String pullBranch = codeberg.getBranch();
-        String pushBranch = codeberg.getResolvedBranchPush(context.getModel());
+        String pushBranch = codeberg.getResolvedBranchPush(context);
         boolean mustCheckoutBranch = !pushBranch.equals(pullBranch);
-        context.getLogger().info(RB.$("git.releaser.releasing"), codeberg.getResolvedRepoUrl(context.getModel()), pushBranch);
-        String tagName = codeberg.getEffectiveTagName(context.getModel());
+        context.getLogger().info(RB.$("git.releaser.releasing"), codeberg.getResolvedRepoUrl(context), pushBranch);
+        String tagName = codeberg.getEffectiveTagName(context);
 
         try {
             Forgejo api = new Forgejo(context.asImmutable(),
@@ -260,7 +260,7 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
         Release release = new Release();
         release.setName(codeberg.getEffectiveReleaseName());
         release.setTagName(tagName);
-        release.setTargetCommitish(codeberg.getResolvedBranchPush(context.getModel()));
+        release.setTargetCommitish(codeberg.getResolvedBranchPush(context));
         release.setBody(changelog);
         if (codeberg.getPrerelease().isEnabledSet()) {
             release.setPrerelease(codeberg.getPrerelease().isEnabled());
@@ -301,12 +301,12 @@ public class CodebergReleaser extends AbstractReleaser<org.jreleaser.model.api.r
             return;
         }
 
-        String tagName = codeberg.getEffectiveTagName(context.getModel());
+        String tagName = codeberg.getEffectiveTagName(context);
         String labelName = codeberg.getIssues().getLabel().getName();
         String labelColor = codeberg.getIssues().getLabel().getColor();
-        TemplateContext props = codeberg.props(context.getModel());
-        codeberg.fillProps(props, context.getModel());
-        String comment = resolveTemplate(codeberg.getIssues().getComment(), props);
+        TemplateContext props = codeberg.props(context);
+        codeberg.fillProps(props, context);
+        String comment = resolveTemplate(context.getLogger(), codeberg.getIssues().getComment(), props);
 
         if (labelColor.startsWith("#")) {
             labelColor = labelColor.substring(1);

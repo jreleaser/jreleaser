@@ -127,7 +127,7 @@ public class HttpArtifactUploader extends AbstractArtifactUploader<org.jreleaser
     private void resolveHeaders(Artifact artifact, Map<String, String> headers) {
         TemplateContext props = uploader.artifactProps(context, artifact);
         uploader.getHeaders().forEach((k, v) -> {
-            String value = resolveTemplate(v, props);
+            String value = resolveTemplate(context.getLogger(), v, props);
             if (isNotBlank(value)) headers.put(k, value);
         });
     }

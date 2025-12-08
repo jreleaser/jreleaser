@@ -156,8 +156,8 @@ public final class DiscourseAnnouncer extends AbstractMessageAnnouncer<Discourse
 
     public String getResolvedTitle(JReleaserContext context) {
         TemplateContext props = context.fullProps();
-        applyTemplates(props, resolvedExtraProperties());
-        return resolveTemplate(title, props);
+        applyTemplates(context.getLogger(), props, resolvedExtraProperties());
+        return resolveTemplate(context.getLogger(), title, props);
     }
 
     public String getHost() {

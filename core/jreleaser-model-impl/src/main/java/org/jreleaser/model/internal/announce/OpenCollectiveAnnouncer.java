@@ -38,7 +38,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  */
 public final class OpenCollectiveAnnouncer extends AbstractMessageAnnouncer<OpenCollectiveAnnouncer, org.jreleaser.model.api.announce.OpenCollectiveAnnouncer> {
     private static final long serialVersionUID = -815384178159843616L;
-    
+
     private String host;
     private String token;
     private String slug;
@@ -149,8 +149,8 @@ public final class OpenCollectiveAnnouncer extends AbstractMessageAnnouncer<Open
 
     public String getResolvedTitle(JReleaserContext context) {
         TemplateContext props = context.fullProps();
-        applyTemplates(props, resolvedExtraProperties());
-        return resolveTemplate(title, props);
+        applyTemplates(context.getLogger(), props, resolvedExtraProperties());
+        return resolveTemplate(context.getLogger(), title, props);
     }
 
     public String getHost() {

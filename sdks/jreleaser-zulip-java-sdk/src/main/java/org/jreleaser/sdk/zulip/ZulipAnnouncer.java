@@ -60,7 +60,7 @@ public class ZulipAnnouncer implements Announcer<org.jreleaser.model.api.announc
             message = zulip.getResolvedMessage(context);
         } else {
             TemplateContext props = new TemplateContext();
-            context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
+            context.getModel().getRelease().getReleaser().fillProps(props, context);
             message = zulip.getResolvedMessageTemplate(context, props);
         }
 

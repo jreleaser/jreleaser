@@ -40,7 +40,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.8.0
  */
 public final class S3Uploader extends AbstractUploader<org.jreleaser.model.api.upload.S3Uploader, S3Uploader> {
-    private static final long serialVersionUID = 2634650056338097232L;
+    private static final long serialVersionUID = -747298261100208723L;
 
     private final Map<String, String> headers = new LinkedHashMap<>();
 
@@ -203,17 +203,17 @@ public final class S3Uploader extends AbstractUploader<org.jreleaser.model.api.u
 
     @Override
     public String getResolvedDownloadUrl(JReleaserContext context, Artifact artifact) {
-        return getResolvedDownloadUrl(context.fullProps(), artifact);
+        return getResolvedDownloadUrl(context, context.fullProps(), artifact);
     }
 
     @Override
-    public String getResolvedDownloadUrl(TemplateContext props, Artifact artifact) {
+    public String getResolvedDownloadUrl(JReleaserContext context, TemplateContext props, Artifact artifact) {
         if (isNotBlank(getDownloadUrl())) {
             TemplateContext p = new TemplateContext(artifactProps(props, artifact));
             p.setAll(resolvedExtraProperties());
             p.set("bucket", bucket);
             p.set("region", region);
-            return resolveTemplate(getDownloadUrl(), p);
+            return resolveTemplate(context.getLogger(), getDownloadUrl(), p);
         }
 
         if (isBlank(getEndpoint())) {
@@ -222,7 +222,7 @@ public final class S3Uploader extends AbstractUploader<org.jreleaser.model.api.u
             p.setAll(resolvedExtraProperties());
             p.set("bucket", bucket);
             p.set("region", region);
-            return resolveTemplate(url, p);
+            return resolveTemplate(context.getLogger(), url, p);
         }
 
         return "";
@@ -324,6 +324,6 @@ public final class S3Uploader extends AbstractUploader<org.jreleaser.model.api.u
 
         TemplateContext p = new TemplateContext(artifactProps(context, artifact));
         p.setAll(resolvedExtraProperties());
-        return resolveTemplate(artifactPath, p);
+        return resolveTemplate(context.getLogger(), artifactPath, p);
     }
 }

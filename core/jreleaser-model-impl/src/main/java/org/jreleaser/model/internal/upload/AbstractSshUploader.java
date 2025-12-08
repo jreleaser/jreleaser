@@ -57,19 +57,19 @@ public abstract class AbstractSshUploader<A extends org.jreleaser.model.api.uplo
     public String getResolvedPath(JReleaserContext context, Artifact artifact) {
         TemplateContext p = artifactProps(context.fullProps(), artifact);
         p.setAll(resolvedExtraProperties());
-        return resolveTemplate(path, p);
+        return resolveTemplate(context.getLogger(), path, p);
     }
 
     @Override
     public String getResolvedDownloadUrl(JReleaserContext context, Artifact artifact) {
-        return getResolvedDownloadUrl(context.fullProps(), artifact);
+        return getResolvedDownloadUrl(context, context.fullProps(), artifact);
     }
 
     @Override
-    public String getResolvedDownloadUrl(TemplateContext props, Artifact artifact) {
+    public String getResolvedDownloadUrl(JReleaserContext context, TemplateContext props, Artifact artifact) {
         TemplateContext p = new TemplateContext(artifactProps(props, artifact));
         p.setAll(resolvedExtraProperties());
-        return resolveTemplate(downloadUrl, p);
+        return resolveTemplate(context.getLogger(), downloadUrl, p);
     }
 
     @Override

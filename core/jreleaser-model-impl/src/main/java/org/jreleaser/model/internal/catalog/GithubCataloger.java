@@ -150,8 +150,8 @@ public final class GithubCataloger extends AbstractCataloger<GithubCataloger, or
     public String getResolvedAttestationName(JReleaserContext context) {
         TemplateContext props = context.fullProps();
         context.getChangelog().apply(props);
-        applyTemplates(props, resolvedExtraProperties());
-        return resolveTemplate(attestationName, props);
+        applyTemplates(context.getLogger(), props, resolvedExtraProperties());
+        return resolveTemplate(context.getLogger(), attestationName, props);
     }
 
     public String getAttestationName() {

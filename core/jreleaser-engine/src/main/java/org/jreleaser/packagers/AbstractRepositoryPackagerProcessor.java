@@ -92,7 +92,7 @@ public abstract class AbstractRepositoryPackagerProcessor<T extends RepositoryPa
             context.getLogger().debug(RB.$("repository.clone"), repository.getHttpUrl());
 
             String pullBranch = tap.getBranch();
-            String pushBranch = resolveTemplate(tap.getBranchPush(), props);
+            String pushBranch = resolveTemplate(context.getLogger(), tap.getBranchPush(), props);
 
             Git git = Git.cloneRepository()
                 .setCredentialsProvider(credentialsProvider)
@@ -127,14 +127,14 @@ public abstract class AbstractRepositoryPackagerProcessor<T extends RepositoryPa
                 .addFilepattern(".")
                 .call();
 
-            props.setAll(distribution.props());
-            context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
+            props.setAll(distribution.props(context));
+            context.getModel().getRelease().getReleaser().fillProps(props, context);
 
             // setup commit
             context.getLogger().debug(RB.$("repository.commit.setup"));
             CommitCommand commitCommand = git.commit()
                 .setAll(true)
-                .setMessage(packager.getRepositoryTap().getResolvedCommitMessage(props))
+                .setMessage(packager.getRepositoryTap().getResolvedCommitMessage(context, props))
                 .setAuthor(packager.getCommitAuthor().getName(), packager.getCommitAuthor().getEmail());
             commitCommand.setCredentialsProvider(credentialsProvider);
 
@@ -157,7 +157,7 @@ public abstract class AbstractRepositoryPackagerProcessor<T extends RepositoryPa
                     .call();
             }
 
-            String tagName = tap.getResolvedTagName(props);
+            String tagName = tap.getResolvedTagName(context, props);
             context.getLogger().debug(RB.$("git.releaser.repository.tag"), tagName, tagName);
             git.tag()
                 .setSigned(signingEnabled)

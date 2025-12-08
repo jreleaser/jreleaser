@@ -64,7 +64,7 @@ public class DiscussionsAnnouncer implements Announcer<org.jreleaser.model.api.a
             message = discussions.getResolvedMessage(context);
         } else {
             TemplateContext props = new TemplateContext();
-            context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
+            context.getModel().getRelease().getReleaser().fillProps(props, context);
             message = discussions.getResolvedMessageTemplate(context, props);
         }
 

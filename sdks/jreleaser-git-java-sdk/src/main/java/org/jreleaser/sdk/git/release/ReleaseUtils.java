@@ -46,7 +46,7 @@ public final class ReleaseUtils {
             Repository repository = git.getRemote();
 
             context.getLogger().info(RB.$("git.tag"), repository.getHttpUrl());
-            String tagName = service.getEffectiveTagName(context.getModel());
+            String tagName = service.getEffectiveTagName(context);
 
             context.getLogger().debug(RB.$("git.tag.lookup"), tagName);
             boolean tagged = git.findTag(tagName);

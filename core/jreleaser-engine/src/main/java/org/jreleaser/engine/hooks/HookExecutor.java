@@ -112,7 +112,7 @@ public final class HookExecutor {
         Map<String, String> env = new LinkedHashMap<>();
         TemplateContext props = context.props().setAll(additionalContext);
         src.forEach((k, v) -> {
-            String value = resolveTemplate(v, props);
+            String value = resolveTemplate(context.getLogger(), v, props);
             if (isNotBlank(value)) env.put(k, value);
         });
         return env;

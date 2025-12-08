@@ -18,6 +18,7 @@
 package org.jreleaser.mustache;
 
 import org.jreleaser.bundle.RB;
+import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.JReleaserException;
 
 import static org.jreleaser.mustache.MustacheUtils.applyTemplate;
@@ -32,13 +33,13 @@ public final class Templates {
         // noop
     }
 
-    public static String resolveTemplate(String input, TemplateContext props) {
+    public static String resolveTemplate(JReleaserLogger logger, String input, TemplateContext props) {
         if (isBlank(input)) return input;
 
         int count = 0;
 
         while (input.contains("{{")) {
-            input = applyTemplate(input, props);
+            input = applyTemplate(logger, input, props);
             count++;
 
             if (input.contains("{{") && count >= 10) {

@@ -25,7 +25,7 @@ import org.jreleaser.model.Active;
 import org.jreleaser.model.Constants;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.Stereotype;
-import org.jreleaser.model.internal.JReleaserModel;
+import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.common.Domain;
 import org.jreleaser.model.internal.common.ExtraProperties;
@@ -735,7 +735,7 @@ public final class Project extends AbstractModelObject<Project> implements Domai
     }
 
     public static class Snapshot extends AbstractModelObject<Snapshot> implements Domain {
-        private static final long serialVersionUID = -4157019875957411109L;
+        private static final long serialVersionUID = 505258495859356548L;
 
         private Boolean enabled;
         private String pattern;
@@ -804,15 +804,15 @@ public final class Project extends AbstractModelObject<Project> implements Domai
             return Env.env(PROJECT_SNAPSHOT_LABEL, label);
         }
 
-        public String getResolvedLabel(JReleaserModel model) {
+        public String getResolvedLabel(JReleaserContext context) {
             if (isBlank(cachedLabel)) {
                 cachedLabel = getConfiguredLabel();
             }
 
             if (isBlank(cachedLabel)) {
-                cachedLabel = resolveTemplate(label, props(model));
+                cachedLabel = resolveTemplate(context.getLogger(), label, props(context));
             } else if (cachedLabel.contains("{{")) {
-                cachedLabel = resolveTemplate(cachedLabel, props(model));
+                cachedLabel = resolveTemplate(context.getLogger(), cachedLabel, props(context));
             }
 
             return cachedLabel;
@@ -864,12 +864,12 @@ public final class Project extends AbstractModelObject<Project> implements Domai
             return map;
         }
 
-        public TemplateContext props(JReleaserModel model) {
+        public TemplateContext props(JReleaserContext context) {
             // duplicate from JReleaserModel to avoid endless recursion
             TemplateContext props = new TemplateContext();
-            Project project = model.getProject();
-            props.setAll(model.getEnvironment().getProperties());
-            props.setAll(model.getEnvironment().getSourcedProperties());
+            Project project = context.getModel().getProject();
+            props.setAll(context.getModel().getEnvironment().getProperties());
+            props.setAll(context.getModel().getEnvironment().getSourcedProperties());
             props.set(Constants.KEY_PROJECT_NAME, project.getName());
             props.set(Constants.KEY_PROJECT_NAME_CAPITALIZED, getCapitalizedName(project.getName()));
             props.set(Constants.KEY_PROJECT_STEREOTYPE, project.getStereotype());
@@ -898,18 +898,18 @@ public final class Project extends AbstractModelObject<Project> implements Domai
             props.set(Constants.KEY_OS_ARCH, osArch);
             props.set(Constants.KEY_OS_VERSION, PlatformUtils.getDetectedVersion());
             props.set(Constants.KEY_OS_PLATFORM, PlatformUtils.getCurrentFull());
-            props.set(Constants.KEY_OS_PLATFORM_REPLACED, model.getPlatform().applyReplacements(PlatformUtils.getCurrentFull()));
+            props.set(Constants.KEY_OS_PLATFORM_REPLACED, context.getModel().getPlatform().applyReplacements(PlatformUtils.getCurrentFull()));
 
-            applyTemplates(props, project.resolvedExtraProperties());
-            props.set(Constants.KEY_ZONED_DATE_TIME_NOW, model.getNow());
+            applyTemplates(context.getLogger(), props, project.resolvedExtraProperties());
+            props.set(Constants.KEY_ZONED_DATE_TIME_NOW, context.getModel().getNow());
 
             return props;
         }
     }
 
     public static class Links extends AbstractModelObject<Links> implements Domain {
+        private static final long serialVersionUID = 6565958050416900198L;
         private static final String PROJECT_LINK = "projectLink";
-        private static final long serialVersionUID = 1574571238759859477L;
 
         private String homepage;
         private String documentation;

@@ -533,9 +533,9 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
         }
 
         public String getResolvedAppVersion(JReleaserContext context, JpackageAssembler jpackage) {
-            TemplateContext props = context.getModel().props();
-            props.setAll(jpackage.props());
-            return resolveTemplate(appVersion, props);
+            TemplateContext props = context.getModel().props(context);
+            props.setAll(jpackage.props(context));
+            return resolveTemplate(context.getLogger(), appVersion, props);
         }
 
         public String getAppName() {
@@ -733,9 +733,9 @@ public final class JpackageAssembler extends AbstractJavaAssembler<JpackageAssem
 
         @Override
         public String getResolvedAppName(JReleaserContext context, JpackageAssembler jpackage) {
-            TemplateContext props = context.getModel().props();
-            props.setAll(jpackage.props());
-            return resolveTemplate(appName, props);
+            TemplateContext props = context.getModel().props(context);
+            props.setAll(jpackage.props(context));
+            return resolveTemplate(context.getLogger(), appName, props);
         }
 
         @Override

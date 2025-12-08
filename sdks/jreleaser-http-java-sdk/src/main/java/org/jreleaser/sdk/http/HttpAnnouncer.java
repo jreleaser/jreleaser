@@ -92,7 +92,7 @@ public class HttpAnnouncer implements Announcer<org.jreleaser.model.api.announce
             payload = announcer.getResolvedPayload(context);
         } else {
             TemplateContext props = context.props();
-            context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
+            context.getModel().getRelease().getReleaser().fillProps(props, context);
             payload = announcer.getResolvedPayloadTemplate(context, props);
         }
 
@@ -158,7 +158,7 @@ public class HttpAnnouncer implements Announcer<org.jreleaser.model.api.announce
     private void resolveHeaders(org.jreleaser.model.internal.announce.HttpAnnouncer announcer, Map<String, String> headers) {
         TemplateContext props = context.props();
         announcer.getHeaders().forEach((k, v) -> {
-            String value = resolveTemplate(v, props);
+            String value = resolveTemplate(context.getLogger(), v, props);
             if (isNotBlank(value)) headers.put(k, value);
         });
     }

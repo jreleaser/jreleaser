@@ -248,11 +248,11 @@ public final class ArchiveAssembler extends AbstractAssembler<ArchiveAssembler, 
 
     public String getResolvedArchiveName(JReleaserContext context, Map<String, String> matrix) {
         TemplateContext props = context.fullProps();
-        props.setAll(props());
+        props.setAll(props(context));
         if (null != matrix) {
             props.setAll(mapOf("matrix", matrix));
         }
-        String result = resolveTemplate(archiveName, props);
+        String result = resolveTemplate(context.getLogger(), archiveName, props);
         if (isAttachPlatform()) {
             result += "-" + getPlatform().applyReplacements(PlatformUtils.getCurrentFull());
         }

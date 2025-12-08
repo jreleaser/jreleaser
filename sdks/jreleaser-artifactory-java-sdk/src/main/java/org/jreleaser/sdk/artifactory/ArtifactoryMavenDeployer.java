@@ -71,7 +71,7 @@ public class ArtifactoryMavenDeployer extends AbstractMavenDeployer<org.jrelease
             context.getLogger().info(RB.$("artifacts.no.match"));
         }
 
-        String baseUrl = deployer.getResolvedUrl(context.fullProps());
+        String baseUrl = deployer.getResolvedUrl(context, context.fullProps());
         String username = deployer.getUsername();
         String password = deployer.getPassword();
 

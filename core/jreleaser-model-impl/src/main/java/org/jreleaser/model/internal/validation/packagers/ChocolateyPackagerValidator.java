@@ -167,7 +167,7 @@ public final class ChocolateyPackagerValidator {
         // packageVersion must be #, #.#, #.#.#, #.#.#.#, #.#.#.yyyyMMdd
         // tag is allowed but only if separated by -
         try {
-            String packageVersion = resolveTemplate(packager.getPackageVersion(), context.getModel().props());
+            String packageVersion = resolveTemplate(context.getLogger(), packager.getPackageVersion(), context.getModel().props(context));
             switch (project.versionPattern().getType()) {
                 case SEMVER:
                     checkSemver(SemanticVersion.of(packageVersion));

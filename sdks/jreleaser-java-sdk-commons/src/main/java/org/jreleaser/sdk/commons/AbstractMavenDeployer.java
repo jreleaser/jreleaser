@@ -633,7 +633,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
         }
 
         D deployer = getDeployer();
-        String baseUrl = deployer.getResolvedUrl(context.fullProps());
+        String baseUrl = deployer.getResolvedUrl(context, context.fullProps());
         String token = deployer.getPassword();
 
         if (!baseUrl.endsWith("/")) {

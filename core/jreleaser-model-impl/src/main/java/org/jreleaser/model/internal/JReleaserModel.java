@@ -467,7 +467,7 @@ public class JReleaserModel {
         return map;
     }
 
-    public TemplateContext props() {
+    public TemplateContext props(JReleaserContext context) {
         TemplateContext props = new TemplateContext();
         props.set("Model", this.asImmutable());
 
@@ -475,8 +475,8 @@ public class JReleaserModel {
             JReleaserVersion.getPlainVersion(), timestamp);
         props.set("jreleaserCreationStamp", jreleaserCreationStamp);
 
-        fillProjectProperties(props, project);
-        fillReleaserProperties(props, release);
+        fillProjectProperties(context, props, project);
+        fillReleaserProperties(context, props, release);
 
         String osName = PlatformUtils.getDetectedOs();
         String osArch = PlatformUtils.getDetectedArch();
@@ -486,14 +486,14 @@ public class JReleaserModel {
         props.set(Constants.KEY_OS_PLATFORM, PlatformUtils.getCurrentFull());
         props.set(Constants.KEY_OS_PLATFORM_REPLACED, getPlatform().applyReplacements(PlatformUtils.getCurrentFull()));
 
-        applyTemplates(props, project.resolvedExtraProperties());
+        applyTemplates(context.getLogger(), props, project.resolvedExtraProperties());
         props.set(Constants.KEY_ZONED_DATE_TIME_NOW, now);
         props.set(ReleaserDownloadUrl.NAME, new ReleaserDownloadUrl());
 
         return props;
     }
 
-    private void fillProjectProperties(TemplateContext props, Project project) {
+    private void fillProjectProperties(JReleaserContext context, TemplateContext props, Project project) {
         props.setAll(environment.getProperties());
         props.setAll(environment.getSourcedProperties());
         props.set(Constants.KEY_TIMESTAMP, timestamp);
@@ -537,27 +537,27 @@ public class JReleaserModel {
         props.setAll(project.resolvedExtraProperties());
     }
 
-    private void fillReleaserProperties(TemplateContext props, Release release) {
+    private void fillReleaserProperties(JReleaserContext context, TemplateContext props, Release release) {
         BaseReleaser<?, ?> service = release.getReleaser();
         if (null == service) return;
         props.set(Constants.KEY_REPO_HOST, service.getHost());
         props.set(Constants.KEY_REPO_OWNER, service.getOwner());
         props.set(Constants.KEY_REPO_NAME, service.getName());
         props.set(Constants.KEY_REPO_BRANCH, service.getBranch());
-        props.set(Constants.KEY_REPO_BRANCH_PUSH, service.getResolvedBranchPush(this));
+        props.set(Constants.KEY_REPO_BRANCH_PUSH, service.getResolvedBranchPush(context));
         props.set(Constants.KEY_REVERSE_REPO_HOST, service.getReverseRepoHost());
         props.set(Constants.KEY_CANONICAL_REPO_NAME, service.getCanonicalRepoName());
-        props.set(Constants.KEY_TAG_NAME, service.getEffectiveTagName(this));
-        props.set(Constants.KEY_PREVIOUS_TAG_NAME, service.getResolvedPreviousTagName(this));
+        props.set(Constants.KEY_TAG_NAME, service.getEffectiveTagName(context));
+        props.set(Constants.KEY_PREVIOUS_TAG_NAME, service.getResolvedPreviousTagName(context));
         props.set(Constants.KEY_RELEASE_NAME, service.getEffectiveReleaseName());
         props.set(Constants.KEY_MILESTONE_NAME, service.getMilestone().getEffectiveName());
-        props.set(Constants.KEY_REPO_URL, service.getResolvedRepoUrl(this));
-        props.set(Constants.KEY_REPO_CLONE_URL, service.getResolvedRepoCloneUrl(this));
-        props.set(Constants.KEY_COMMIT_URL, service.getResolvedCommitUrl(this));
-        props.set(Constants.KEY_SRC_URL, service.getResolvedSrcUrl(this));
-        props.set(Constants.KEY_RELEASE_NOTES_URL, service.getResolvedReleaseNotesUrl(this));
-        props.set(Constants.KEY_LATEST_RELEASE_URL, service.getResolvedLatestReleaseUrl(this));
-        props.set(Constants.KEY_ISSUE_TRACKER_URL, service.getResolvedIssueTrackerUrl(this, false));
+        props.set(Constants.KEY_REPO_URL, service.getResolvedRepoUrl(context));
+        props.set(Constants.KEY_REPO_CLONE_URL, service.getResolvedRepoCloneUrl(context));
+        props.set(Constants.KEY_COMMIT_URL, service.getResolvedCommitUrl(context));
+        props.set(Constants.KEY_SRC_URL, service.getResolvedSrcUrl(context));
+        props.set(Constants.KEY_RELEASE_NOTES_URL, service.getResolvedReleaseNotesUrl(context));
+        props.set(Constants.KEY_LATEST_RELEASE_URL, service.getResolvedLatestReleaseUrl(context));
+        props.set(Constants.KEY_ISSUE_TRACKER_URL, service.getResolvedIssueTrackerUrl(context, false));
     }
 
     private final class ReleaserDownloadUrl implements TemplateFunction {

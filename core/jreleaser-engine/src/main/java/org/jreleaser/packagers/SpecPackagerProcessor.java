@@ -102,9 +102,9 @@ public class SpecPackagerProcessor extends AbstractRepositoryPackagerProcessor<S
 
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
         props.set(KEY_SPEC_REPOSITORY_URL,
-            releaser.getResolvedRepoUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
+            releaser.getResolvedRepoUrl(context, packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
         props.set(KEY_SPEC_REPOSITORY_CLONE_URL,
-            releaser.getResolvedRepoCloneUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
+            releaser.getResolvedRepoCloneUrl(context, packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
     }
 
     @Override

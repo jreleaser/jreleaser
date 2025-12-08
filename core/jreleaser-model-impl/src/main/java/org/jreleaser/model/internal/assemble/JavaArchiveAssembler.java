@@ -257,8 +257,8 @@ public final class JavaArchiveAssembler extends AbstractAssembler<JavaArchiveAss
 
     public String getResolvedArchiveName(JReleaserContext context) {
         TemplateContext props = context.fullProps();
-        props.setAll(props());
-        return resolveTemplate(archiveName, props);
+        props.setAll(props(context));
+        return resolveTemplate(context.getLogger(), archiveName, props);
     }
 
     public String getArchiveName() {

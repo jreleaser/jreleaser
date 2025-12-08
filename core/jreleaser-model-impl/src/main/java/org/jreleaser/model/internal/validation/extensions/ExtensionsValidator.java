@@ -80,7 +80,7 @@ public final class ExtensionsValidator {
         count += isNotBlank(extension.getGav()) ? 1 : 0;
         count += isNotBlank(extension.getDirectory()) ? 1 : 0;
         count += extension.getJbang().isSet() ? 1 : 0;
-        if(count == 0) {
+        if (count == 0) {
             errors.configuration(RB.$("validation_extension_inputs", "extension." + extension.getName()));
             extension.setEnabled(false);
         } else if (count > 1) {

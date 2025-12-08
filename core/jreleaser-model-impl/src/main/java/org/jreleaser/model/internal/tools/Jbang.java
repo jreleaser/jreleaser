@@ -101,32 +101,32 @@ public final class Jbang extends AbstractModelObject<Jbang> implements Domain {
 
     public String getResolvedScript(JReleaserContext context) {
         TemplateContext props = context.fullProps();
-        context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
-        return resolveTemplate(script, props);
+        context.getModel().getRelease().getReleaser().fillProps(props, context);
+        return resolveTemplate(context.getLogger(), script, props);
     }
 
     public List<String> getResolvedArgs(JReleaserContext context) {
         TemplateContext props = context.fullProps();
-        context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
+        context.getModel().getRelease().getReleaser().fillProps(props, context);
         return args.stream()
-                .map(s -> resolveTemplate(s, props))
-                .collect(toList());
+            .map(s -> resolveTemplate(context.getLogger(), s, props))
+            .collect(toList());
     }
 
     public List<String> getResolvedJbangArgs(JReleaserContext context) {
         TemplateContext props = context.fullProps();
-        context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
+        context.getModel().getRelease().getReleaser().fillProps(props, context);
         return jbangArgs.stream()
-                .map(s -> resolveTemplate(s, props))
-                .collect(toList());
+            .map(s -> resolveTemplate(context.getLogger(), s, props))
+            .collect(toList());
     }
 
     public List<String> getResolvedTrusts(JReleaserContext context) {
         TemplateContext props = context.fullProps();
-        context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
+        context.getModel().getRelease().getReleaser().fillProps(props, context);
         return trusts.stream()
-                .map(s -> resolveTemplate(s, props))
-                .collect(toList());
+            .map(s -> resolveTemplate(context.getLogger(), s, props))
+            .collect(toList());
     }
 
     public String getVersion() {

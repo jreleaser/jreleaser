@@ -157,7 +157,7 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
 
         if (hasJavaArchive) {
             String configuredPath = assembler.getJavaArchive().getPath();
-            String archiveFile = resolveTemplate(configuredPath, props);
+            String archiveFile = resolveTemplate(context.getLogger(), configuredPath, props);
             Path archivePath = context.getBasedir().resolve(Paths.get(archiveFile));
             if (!Files.exists(archivePath)) {
                 throw new AssemblerProcessingException(RB.$("ERROR_path_does_not_exist_2", configuredPath, archivePath));
@@ -176,7 +176,7 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
         Path universalJarsDirectory = jarsDirectory.resolve(UNIVERSAL_DIRECTORY);
 
         if (hasJavaArchive) {
-            String libDirectoryName = resolveTemplate(assembler.getJavaArchive().getLibDirectoryName(), props);
+            String libDirectoryName = resolveTemplate(context.getLogger(), assembler.getJavaArchive().getLibDirectoryName(), props);
             Path libPath = inputsDirectory.resolve(ARCHIVE_DIRECTORY).resolve(libDirectoryName);
             try {
                 FileUtils.copyFiles(context.getLogger(), libPath, universalJarsDirectory);
@@ -214,9 +214,9 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
                 throw new AssemblerProcessingException(RB.$("ERROR_assembler_no_module_names"));
             }
             moduleNames.addAll(assembler.getAdditionalModuleNames().stream()
-                .map(arg -> resolveTemplate(arg, props))
+                .map(arg -> resolveTemplate(context.getLogger(), arg, props))
                 .collect(toList()));
-            String moduleName = resolveTemplate(assembler.getJava().getMainModule(), props);
+            String moduleName = resolveTemplate(context.getLogger(), assembler.getJava().getMainModule(), props);
             if (isNotBlank(moduleName)) {
                 moduleNames.add(moduleName);
             }
@@ -250,8 +250,8 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
         }
 
         // jlink it
-        String moduleName = resolveTemplate(assembler.getJava().getMainModule(), props);
-        String mainClass = resolveTemplate(assembler.getJava().getMainClass(), props);
+        String moduleName = resolveTemplate(context.getLogger(), assembler.getJava().getMainModule(), props);
+        String mainClass = resolveTemplate(context.getLogger(), assembler.getJava().getMainClass(), props);
         String modulePath = maybeQuote(targetJdk.getEffectivePath(context, assembler).resolve("jmods").toAbsolutePath().toString());
         if (isNotBlank(moduleName) || assembler.isCopyJars()) {
             modulePath += File.pathSeparator + maybeQuote(jarsDirectory
@@ -275,7 +275,7 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
 
         Command cmd = new Command(jlinkExecutable.toString(), true)
             .args(assembler.getArgs().stream()
-                .map(arg -> resolveTemplate(arg, props))
+                .map(arg -> resolveTemplate(context.getLogger(), arg, props))
                 .collect(toList()))
             .arg("--module-path")
             .arg(modulePath)
@@ -348,7 +348,7 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
             });
 
             if (hasJavaArchive) {
-                String libDirectory = resolveTemplate(assembler.getJavaArchive().getLibDirectoryName(), props);
+                String libDirectory = resolveTemplate(context.getLogger(), assembler.getJavaArchive().getLibDirectoryName(), props);
                 String archivePathName = archiveDirectory.toString();
                 FileUtils.copyFiles(context.getLogger(),
                     archiveDirectory,
@@ -377,7 +377,7 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
     private Set<String> resolveModuleNames(JReleaserContext context, Path jdkPath, Path jarsDirectory, String platform, TemplateContext props) throws AssemblerProcessingException {
         if (!assembler.getModuleNames().isEmpty()) {
             return assembler.getModuleNames().stream()
-                .map(arg -> resolveTemplate(arg, props))
+                .map(arg -> resolveTemplate(context.getLogger(), arg, props))
                 .collect(toSet());
         }
 
@@ -416,7 +416,7 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
             }
 
             assembler.getJdeps().getTargets().stream()
-                .map(target -> resolveTemplate(target, props))
+                .map(target -> resolveTemplate(context.getLogger(), target, props))
                 .filter(StringUtils::isNotBlank)
                 .map(AssemblerUtils::maybeAdjust)
                 .map(context::relativizeToBasedir)

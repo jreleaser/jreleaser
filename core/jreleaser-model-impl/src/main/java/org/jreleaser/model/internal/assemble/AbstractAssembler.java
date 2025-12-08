@@ -19,6 +19,7 @@ package org.jreleaser.model.internal.assemble;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Stereotype;
+import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.catalog.swid.SwidTag;
 import org.jreleaser.model.internal.catalog.swid.SwidTagAware;
 import org.jreleaser.model.internal.common.AbstractActivatable;
@@ -88,9 +89,9 @@ public abstract class AbstractAssembler<S extends AbstractAssembler<S, A>, A ext
     }
 
     @Override
-    public TemplateContext props() {
+    public TemplateContext props(JReleaserContext context) {
         TemplateContext props = new TemplateContext();
-        applyTemplates(props, resolvedExtraProperties());
+        applyTemplates(context.getLogger(), props, resolvedExtraProperties());
         props.set(KEY_DISTRIBUTION_NAME, name);
         props.set(KEY_DISTRIBUTION_STEREOTYPE, getStereotype());
         return props;

@@ -190,28 +190,28 @@ public final class RedditAnnouncer extends AbstractAnnouncer<RedditAnnouncer, or
 
     public String getResolvedTitle(JReleaserContext context) {
         TemplateContext props = context.fullProps();
-        applyTemplates(props, resolvedExtraProperties());
-        return resolveTemplate(title, props);
+        applyTemplates(context.getLogger(), props, resolvedExtraProperties());
+        return resolveTemplate(context.getLogger(), title, props);
     }
 
     public String getResolvedText(JReleaserContext context) {
         TemplateContext props = context.fullProps();
-        applyTemplates(props, resolvedExtraProperties());
-        return resolveTemplate(text, props);
+        applyTemplates(context.getLogger(), props, resolvedExtraProperties());
+        return resolveTemplate(context.getLogger(), text, props);
     }
 
     public String getResolvedTextTemplate(JReleaserContext context, TemplateContext extraProps) {
         TemplateContext props = context.fullProps();
         context.getChangelog().apply(props);
-        applyTemplates(props, resolvedExtraProperties());
-        props.set(KEY_TAG_NAME, context.getModel().getRelease().getReleaser().getEffectiveTagName(context.getModel()));
-        props.set(KEY_PREVIOUS_TAG_NAME, context.getModel().getRelease().getReleaser().getResolvedPreviousTagName(context.getModel()));
+        applyTemplates(context.getLogger(), props, resolvedExtraProperties());
+        props.set(KEY_TAG_NAME, context.getModel().getRelease().getReleaser().getEffectiveTagName(context));
+        props.set(KEY_PREVIOUS_TAG_NAME, context.getModel().getRelease().getReleaser().getResolvedPreviousTagName(context));
         props.setAll(extraProps);
 
         Path templatePath = context.getBasedir().resolve(textTemplate);
         try {
             Reader reader = java.nio.file.Files.newBufferedReader(templatePath);
-            return applyTemplate(reader, props);
+            return applyTemplate(context.getLogger(), reader, props);
         } catch (IOException e) {
             throw new JReleaserException(RB.$("ERROR_unexpected_error_reading_template",
                 context.relativizeToBasedir(templatePath)));
@@ -220,8 +220,8 @@ public final class RedditAnnouncer extends AbstractAnnouncer<RedditAnnouncer, or
 
     public String getResolvedUrl(JReleaserContext context) {
         TemplateContext props = context.fullProps();
-        applyTemplates(props, resolvedExtraProperties());
-        return resolveTemplate(url, props);
+        applyTemplates(context.getLogger(), props, resolvedExtraProperties());
+        return resolveTemplate(context.getLogger(), url, props);
     }
 
 

@@ -127,7 +127,7 @@ public class ChangelogGenerator {
                 return formatChangelog(context, changelog, commitList, revCommitComparator, commitSeparator);
             }
 
-            String commitsUrl = releaser.getResolvedCommitUrl(context.getModel());
+            String commitsUrl = releaser.getResolvedCommitUrl(context);
 
             return "## Changelog" +
                 lineSeparator() +
@@ -178,7 +178,7 @@ public class ChangelogGenerator {
         List<Ref> tags = git.tagList().call();
 
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
-        String effectiveTagName = releaser.getEffectiveTagName(context.getModel());
+        String effectiveTagName = releaser.getEffectiveTagName(context);
         String tagName = releaser.getTagName();
         String tagPattern = tagName.replaceAll("\\{\\{.*}}", "\\.\\*");
 
@@ -197,7 +197,7 @@ public class ChangelogGenerator {
             .findFirst();
 
         Optional<Ref> previousTag = Optional.empty();
-        String previousTagName = releaser.getResolvedPreviousTagName(context.getModel());
+        String previousTagName = releaser.getResolvedPreviousTagName(context);
         if (isNotBlank(previousTagName)) {
             context.getLogger().debug(RB.$("changelog.generator.lookup.previous.tag"), previousTagName);
             previousTag = tags.stream()
@@ -314,7 +314,7 @@ public class ChangelogGenerator {
         if (context.getModel().getProject().isSnapshot()) {
             Project.Snapshot snapshot = context.getModel().getProject().getSnapshot();
             String effectiveLabel = snapshot.getEffectiveLabel();
-            if (effectiveLabel.equals(releaser.getEffectiveTagName(context.getModel()))) {
+            if (effectiveLabel.equals(releaser.getEffectiveTagName(context))) {
                 if (tags.getPrevious().isPresent()) {
                     Ref fromRef = tags.getPrevious().get();
                     return git.log().addRange(getObjectId(git, fromRef), head).call();
@@ -382,8 +382,8 @@ public class ChangelogGenerator {
                 .add(commit));
 
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
-        String commitsUrl = releaser.getResolvedCommitUrl(context.getModel());
-        String issueTracker = releaser.getResolvedIssueTrackerUrl(context.getModel(), true);
+        String commitsUrl = releaser.getResolvedCommitUrl(context);
+        String issueTracker = releaser.getResolvedIssueTrackerUrl(context, true);
 
         TemplateContext props = context.fullProps();
         props.setAll(changelog.resolvedExtraProperties());
@@ -393,7 +393,7 @@ public class ChangelogGenerator {
             if (!categories.containsKey(categoryKey) || changelog.getHide().containsCategory(categoryKey)) continue;
 
             props.set("categoryTitle", category.getTitle());
-            changes.append(applyTemplate(changelog.getCategoryTitleFormat(), props))
+            changes.append(applyTemplate(context.getLogger(), changelog.getCategoryTitleFormat(), props))
                 .append(lineSeparator);
 
             final String categoryFormat = resolveCommitFormat(changelog, category);
@@ -417,7 +417,7 @@ public class ChangelogGenerator {
                         .append(scopes.get(scope).stream()
                             .map(c -> {
                                 ((ConventionalCommit) c).ccScope = ""; // clear scope
-                                return resolveTemplate(categoryFormat, c.asContext(changelog.isLinks(), commitsUrl, issueTracker));
+                                return resolveTemplate(context.getLogger(), categoryFormat, c.asContext(changelog.isLinks(), commitsUrl, issueTracker));
                             })
                             .collect(joining(lineSeparator)))
                         .append(lineSeparator)
@@ -427,14 +427,14 @@ public class ChangelogGenerator {
                     // add unscoped header only if there are more than one uncategorized commits
                     if (scopes.size() > 1) changes.append("**unscoped**");
                     changes.append(lineSeparator).append(scopes.get(UNCATEGORIZED).stream()
-                            .map(c -> resolveTemplate(categoryFormat, c.asContext(changelog.isLinks(), commitsUrl, issueTracker)))
+                            .map(c -> resolveTemplate(context.getLogger(), categoryFormat, c.asContext(changelog.isLinks(), commitsUrl, issueTracker)))
                             .collect(joining(lineSeparator)))
                         .append(lineSeparator)
                         .append(lineSeparator());
                 }
             } else {
                 changes.append(categories.get(categoryKey).stream()
-                        .map(c -> resolveTemplate(categoryFormat, c.asContext(changelog.isLinks(), commitsUrl, issueTracker)))
+                        .map(c -> resolveTemplate(context.getLogger(), categoryFormat, c.asContext(changelog.isLinks(), commitsUrl, issueTracker)))
                         .collect(joining(lineSeparator)))
                     .append(lineSeparator)
                     .append(lineSeparator());
@@ -448,7 +448,7 @@ public class ChangelogGenerator {
             }
 
             changes.append(categories.get(UNCATEGORIZED).stream()
-                    .map(c -> resolveTemplate(changelog.getFormat(), c.asContext(changelog.isLinks(), commitsUrl, issueTracker)))
+                    .map(c -> resolveTemplate(context.getLogger(), changelog.getFormat(), c.asContext(changelog.isLinks(), commitsUrl, issueTracker)))
                     .collect(joining(lineSeparator)))
                 .append(lineSeparator)
                 .append(lineSeparator());
@@ -456,7 +456,7 @@ public class ChangelogGenerator {
 
         StringBuilder formattedContributors = new StringBuilder();
         if (changelog.getContributors().isEnabled() && !contributors.isEmpty()) {
-            formattedContributors.append(applyTemplate(changelog.getContributorsTitleFormat(), props))
+            formattedContributors.append(applyTemplate(context.getLogger(), changelog.getContributorsTitleFormat(), props))
                 .append(lineSeparator)
                 .append("We'd like to thank the following people for their contributions:")
                 .append(lineSeparator)
@@ -469,7 +469,7 @@ public class ChangelogGenerator {
         context.getChangelog().setFormattedChanges(changes.toString());
         context.getChangelog().setFormattedContributors(formattedContributors.toString());
 
-        return applyReplacers(context, changelog, stripMargin(applyTemplate(changelog.getResolvedContentTemplate(context), props)));
+        return applyReplacers(context, changelog, stripMargin(applyTemplate(context.getLogger(), changelog.getResolvedContentTemplate(context), props)));
     }
 
     private boolean isConventionalCommits(Changelog changelog) {
@@ -512,9 +512,9 @@ public class ChangelogGenerator {
                 .filter(c -> null != c.getUser())
                 .findFirst();
             if (contributor.isPresent()) {
-                list.add(resolveTemplate(contributorFormat, contributor.get().asContext()));
+                list.add(resolveTemplate(context.getLogger(), contributorFormat, contributor.get().asContext()));
             } else {
-                list.add(resolveTemplate(contributorFormat, cs.get(0).asContext()));
+                list.add(resolveTemplate(context.getLogger(), contributorFormat, cs.get(0).asContext()));
             }
         });
 
@@ -523,11 +523,11 @@ public class ChangelogGenerator {
     }
 
     private String applyReplacers(JReleaserContext context, Changelog changelog, String text) {
-        TemplateContext props = context.getModel().props();
-        context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
+        TemplateContext props = context.getModel().props(context);
+        context.getModel().getRelease().getReleaser().fillProps(props, context);
         for (Changelog.Replacer replacer : changelog.getReplacers()) {
-            String search = resolveTemplate(replacer.getSearch(), props);
-            String replace = resolveTemplate(replacer.getReplace(), props);
+            String search = resolveTemplate(context.getLogger(), replacer.getSearch(), props);
+            String replace = resolveTemplate(context.getLogger(), replacer.getReplace(), props);
             text = text.replaceAll(search, replace);
         }
 
@@ -699,6 +699,7 @@ public class ChangelogGenerator {
 
         TemplateContext asContext(boolean links, String commitsUrl, String issueTrackerUrl) {
             TemplateContext context = new TemplateContext();
+            context.set("commitIsConventional", false);
             if (links) {
                 context.set("commitShortHash", passThrough("[" + shortHash + "](" + commitsUrl + "/" + shortHash + ")"));
             } else {

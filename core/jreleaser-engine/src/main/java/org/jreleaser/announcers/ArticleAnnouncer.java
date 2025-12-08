@@ -99,7 +99,7 @@ public class ArticleAnnouncer implements Announcer<org.jreleaser.model.api.annou
 
         TemplateContext props = context.fullProps();
         context.getChangelog().apply(props);
-        context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
+        context.getModel().getRelease().getReleaser().fillProps(props, context);
         props.setAll(article.resolvedExtraProperties());
 
         try {
@@ -112,7 +112,7 @@ public class ArticleAnnouncer implements Announcer<org.jreleaser.model.api.annou
 
                 try (Reader reader = Files.newBufferedReader(input)) {
                     context.getLogger().debug(RB.$("announcer.article.eval.template"), context.relativizeToBasedir(input));
-                    String content = applyTemplate(reader, props);
+                    String content = applyTemplate(context.getLogger(), reader, props);
                     context.getLogger().debug(RB.$("announcer.article.write.template"), context.relativizeToBasedir(input));
                     writeFile(content, output);
                 }
@@ -155,7 +155,7 @@ public class ArticleAnnouncer implements Announcer<org.jreleaser.model.api.annou
             Path directory = Files.createTempDirectory("jreleaser-" + article.getRepository().getResolvedName());
 
             String pullBranch = article.getRepository().getBranch();
-            String pushBranch = resolveTemplate(article.getRepository().getBranchPush(), props);
+            String pushBranch = resolveTemplate(context.getLogger(), article.getRepository().getBranchPush(), props);
 
             Git git = Git.cloneRepository()
                 .setCredentialsProvider(credentialsProvider)
@@ -194,7 +194,7 @@ public class ArticleAnnouncer implements Announcer<org.jreleaser.model.api.annou
             context.getLogger().debug(RB.$("repository.commit.setup"));
             CommitCommand commitCommand = git.commit()
                 .setAll(true)
-                .setMessage(article.getRepository().getResolvedCommitMessage(props))
+                .setMessage(article.getRepository().getResolvedCommitMessage(context, props))
                 .setAuthor(article.getCommitAuthor().getName(), article.getCommitAuthor().getEmail());
             commitCommand.setCredentialsProvider(credentialsProvider);
             commitCommand = commitCommand

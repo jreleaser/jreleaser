@@ -99,7 +99,7 @@ public final class Artifacts {
     }
 
     public static String resolveForArtifact(String input, JReleaserContext context, TemplateContext additionalContext) {
-        return resolveTemplate(input, context.fullProps().setAll(additionalContext));
+        return resolveTemplate(context.getLogger(), input, context.fullProps().setAll(additionalContext));
     }
 
     public static String resolveForArtifact(String input, JReleaserContext context, Artifact artifact) {
@@ -107,7 +107,7 @@ public final class Artifacts {
     }
 
     public static String resolveForArtifact(String input, JReleaserContext context, TemplateContext additionalContext, Artifact artifact) {
-        return resolveTemplate(input, artifactProps(artifact, context.fullProps().setAll(additionalContext)));
+        return resolveTemplate(context.getLogger(), input, artifactProps(artifact, context.fullProps().setAll(additionalContext)));
     }
 
     public static String resolveForGlob(String input, JReleaserContext context, Glob glob) {
@@ -115,7 +115,7 @@ public final class Artifacts {
     }
 
     public static String resolveForGlob(String input, JReleaserContext context, TemplateContext additionalContext, Glob glob) {
-        return resolveTemplate(input, globProps(glob, context.fullProps().setAll(additionalContext)));
+        return resolveTemplate(context.getLogger(), input, globProps(glob, context.fullProps().setAll(additionalContext)));
     }
 
     public static String resolveForFileSet(String input, JReleaserContext context, FileSet fileSet) {
@@ -123,7 +123,7 @@ public final class Artifacts {
     }
 
     public static String resolveForFileSet(String input, JReleaserContext context, TemplateContext additionalContext, FileSet fileSet) {
-        return resolveTemplate(input, fileSetProps(fileSet, context.fullProps().setAll(additionalContext)));
+        return resolveTemplate(context.getLogger(), input, fileSetProps(fileSet, context.fullProps().setAll(additionalContext)));
     }
 
     public static String resolveForArtifact(String input, JReleaserContext context, Artifact artifact, Distribution distribution) {
@@ -133,9 +133,9 @@ public final class Artifacts {
     public static String resolveForArtifact(String input, JReleaserContext context, TemplateContext additionalContext, Artifact artifact, Distribution distribution) {
         TemplateContext props = context.fullProps()
             .setAll(additionalContext)
-            .setAll(distribution.props());
+            .setAll(distribution.props(context));
         artifactProps(artifact, props);
-        return resolveTemplate(input, props);
+        return resolveTemplate(context.getLogger(), input, props);
     }
 
     public static String resolveForArtifact(String input, JReleaserContext context, Artifact artifact, Assembler<?> assembler) {
@@ -145,9 +145,9 @@ public final class Artifacts {
     public static String resolveForArtifact(String input, JReleaserContext context, TemplateContext additionalContext, Artifact artifact, Assembler<?> assembler) {
         TemplateContext props = context.fullProps()
             .setAll(additionalContext)
-            .setAll(assembler.props());
+            .setAll(assembler.props(context));
         artifactProps(artifact, props);
-        return resolveTemplate(input, props);
+        return resolveTemplate(context.getLogger(), input, props);
     }
 
     public static TemplateContext artifactProps(Artifact artifact, TemplateContext props) {
@@ -303,10 +303,10 @@ public final class Artifacts {
 
         TemplateContext props = context.fullProps();
         props.setAll(packager.resolvedExtraProperties());
-        props.setAll(distribution.props());
+        props.setAll(distribution.props(context));
         artifactProps(artifact, distribution, props);
 
-        return resolveTemplate(downloadUrl, props);
+        return resolveTemplate(context.getLogger(), downloadUrl, props);
     }
 
     public static String resolveDownloadUrl(JReleaserContext context, SdkmanAnnouncer announcer, Distribution distribution, Artifact artifact) {
@@ -355,10 +355,10 @@ public final class Artifacts {
 
         TemplateContext props = context.fullProps();
         props.setAll(announcer.resolvedExtraProperties());
-        props.setAll(distribution.props());
+        props.setAll(distribution.props(context));
         artifactProps(artifact, distribution, props);
 
-        return resolveTemplate(downloadUrl, props);
+        return resolveTemplate(context.getLogger(), downloadUrl, props);
     }
 
     private static String resolveDownloadUrlFromUploader(JReleaserContext context, ExtraProperties props, Artifact artifact) {
@@ -495,7 +495,7 @@ public final class Artifacts {
         FileSystem fileSystem = FileSystems.getDefault();
         List<PathMatcher> matchers = new ArrayList<>();
         for (String glob : globs) {
-            matchers.add(fileSystem.getPathMatcher(resolveTemplate(glob, props)));
+            matchers.add(fileSystem.getPathMatcher(resolveTemplate(logger, glob, props)));
         }
 
         return resolveArtifacts(logger, basedir, matchers);

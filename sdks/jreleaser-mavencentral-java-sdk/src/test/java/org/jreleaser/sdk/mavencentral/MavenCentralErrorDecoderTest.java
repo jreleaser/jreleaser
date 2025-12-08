@@ -17,19 +17,18 @@
  */
 package org.jreleaser.sdk.mavencentral;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.Collections;
-
+import feign.Request;
+import feign.RequestTemplate;
+import feign.Response;
+import feign.RetryableException;
 import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.logging.SimpleJReleaserLoggerAdapter;
 import org.jreleaser.sdk.mavencentral.api.MavenCentralAPIException;
 import org.junit.jupiter.api.Test;
 
-import feign.Request;
-import feign.RequestTemplate;
-import feign.Response;
-import feign.RetryableException;
+import java.util.Collections;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class MavenCentralErrorDecoderTest {
     private final JReleaserLogger logger = new SimpleJReleaserLoggerAdapter();

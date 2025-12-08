@@ -99,7 +99,7 @@ public class DebAssemblerProcessor extends AbstractAssemblerProcessor<org.jrelea
     protected void fillAssemblerProperties(TemplateContext props) {
         super.fillAssemblerProperties(props);
         props.set(KEY_DISTRIBUTION_EXECUTABLE_UNIX, assembler.getExecutable());
-        props.set(KEY_DEB_INSTALLATION_PATH, assembler.getResolvedInstallationPath(props));
+        props.set(KEY_DEB_INSTALLATION_PATH, assembler.getResolvedInstallationPath(context, props));
         props.set(KEY_DEB_CONTROL_PACKAGE, assembler.getControl().getPackageName());
         props.set(KEY_DEB_CONTROL_VERSION, assembler.getControl().getPackageVersion());
         props.set(KEY_DEB_CONTROL_REVISION, assembler.getControl().getPackageRevision());
@@ -214,7 +214,7 @@ public class DebAssemblerProcessor extends AbstractAssemblerProcessor<org.jrelea
             FileUtils.packArchive(dataDirectory, architectureDirectory.resolve(DATA_TAR_ZST),
                 new FileUtils.ArchiveOptions()
                     .withTimestamp(context.getModel().resolveArchiveTimestamp())
-                    .withRootEntryName(assembler.getResolvedInstallationPath(props))
+                    .withRootEntryName(assembler.getResolvedInstallationPath(context, props))
                     .withCreateIntermediateDirs(true));
         } catch (IOException e) {
             throw new AssemblerProcessingException(e);
@@ -234,8 +234,8 @@ public class DebAssemblerProcessor extends AbstractAssemblerProcessor<org.jrelea
         }
 
         Path debianPackage = assembleDirectory.resolve(
-            resolveTemplate(assembler.getControl().getPackageName(), props) + "-" +
-                resolveTemplate(assembler.getControl().getPackageVersion(), props) + "-" +
+            resolveTemplate(context.getLogger(), assembler.getControl().getPackageName(), props) + "-" +
+                resolveTemplate(context.getLogger(), assembler.getControl().getPackageVersion(), props) + "-" +
                 assembler.getControl().getPackageRevision() + "_" +
                 props.get(KEY_DEB_CONTROL_ARCHITECTURE) + ".deb");
 

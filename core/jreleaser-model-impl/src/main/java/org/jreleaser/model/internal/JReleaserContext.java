@@ -711,11 +711,7 @@ public class JReleaserContext {
             return true;
         } else if (!getExcludedDistributions().isEmpty() && !getExcludedDistributions().contains(distributionName)) {
             return true;
-        } else if (getIncludedDistributions().isEmpty() && getExcludedDistributions().isEmpty()) {
-            return true;
-        }
-
-        return false;
+        } else return getIncludedDistributions().isEmpty() && getExcludedDistributions().isEmpty();
     }
 
     public boolean isPlatformSelected(Artifact artifact) {
@@ -1079,7 +1075,7 @@ public class JReleaserContext {
     }
 
     public TemplateContext props() {
-        TemplateContext props = new TemplateContext(model.props());
+        TemplateContext props = new TemplateContext(model.props(this));
         props.set(Constants.KEY_BASEDIR, getBasedir());
         props.set(Constants.KEY_BASE_OUTPUT_DIRECTORY, getOutputDirectory().getParent());
         props.set(Constants.KEY_OUTPUT_DIRECTORY, getOutputDirectory());
@@ -1099,7 +1095,7 @@ public class JReleaserContext {
 
     public TemplateContext fullProps() {
         TemplateContext props = new TemplateContext(props());
-        props.setAll(model.props());
+        props.setAll(model.props(this));
         return props;
     }
 
@@ -1137,8 +1133,8 @@ public class JReleaserContext {
         if (null != model.getCommit()) {
             BaseReleaser<?, ?> releaser = model.getRelease().getReleaser();
             if (null != releaser) {
-                safePut(KEY_TAG_NAME, releaser.getEffectiveTagName(model), props);
-                String previousTagName = releaser.getResolvedPreviousTagName(model);
+                safePut(KEY_TAG_NAME, releaser.getEffectiveTagName(this), props);
+                String previousTagName = releaser.getResolvedPreviousTagName(this);
                 safePut(KEY_PREVIOUS_TAG_NAME, previousTagName, props);
                 safePut("releaseBranch", releaser.getBranch(), props);
                 if (releaser.isReleaseSupported()) {

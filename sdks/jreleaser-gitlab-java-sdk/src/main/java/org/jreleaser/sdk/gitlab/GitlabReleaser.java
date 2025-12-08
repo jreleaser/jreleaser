@@ -88,10 +88,10 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
     @Override
     protected void createRelease() throws ReleaseException {
         String pullBranch = gitlab.getBranch();
-        String pushBranch = gitlab.getResolvedBranchPush(context.getModel());
+        String pushBranch = gitlab.getResolvedBranchPush(context);
         boolean mustCheckoutBranch = !pushBranch.equals(pullBranch);
-        context.getLogger().info(RB.$("git.releaser.releasing"), gitlab.getResolvedRepoUrl(context.getModel()), pushBranch);
-        String tagName = gitlab.getEffectiveTagName(context.getModel());
+        context.getLogger().info(RB.$("git.releaser.releasing"), gitlab.getResolvedRepoUrl(context), pushBranch);
+        String tagName = gitlab.getEffectiveTagName(context);
 
         try {
             Gitlab api = new Gitlab(context.asImmutable(),
@@ -280,7 +280,7 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
         GlRelease release = new GlRelease();
         release.setName(gitlab.getEffectiveReleaseName());
         release.setTagName(tagName);
-        release.setRef(gitlab.getResolvedBranchPush(context.getModel()));
+        release.setRef(gitlab.getResolvedBranchPush(context));
         release.setDescription(changelog);
 
         Optional<GlMilestone> milestone = api.findMilestoneByName(
@@ -319,7 +319,7 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
         Set<Asset> assetsToBeUploaded = new TreeSet<>();
 
         Integer projectIdentifier = api.findProject(gitlab.getName(), gitlab.getProjectIdentifier()).getId();
-        String tagName = gitlab.getEffectiveTagName(context.getModel());
+        String tagName = gitlab.getEffectiveTagName(context);
         Map<String, GlLink> existingAssets = api.listLinks(projectIdentifier, tagName);
 
         Map<String, Asset> assetsToBePublished = new LinkedHashMap<>();
@@ -377,12 +377,12 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
         }
 
         Integer projectIdentifier = api.findProject(gitlab.getName(), gitlab.getProjectIdentifier()).getId();
-        String tagName = gitlab.getEffectiveTagName(context.getModel());
+        String tagName = gitlab.getEffectiveTagName(context);
         String labelName = gitlab.getIssues().getLabel().getName();
         String labelColor = gitlab.getIssues().getLabel().getColor();
-        TemplateContext props = gitlab.props(context.getModel());
-        gitlab.fillProps(props, context.getModel());
-        String comment = resolveTemplate(gitlab.getIssues().getComment(), props);
+        TemplateContext props = gitlab.props(context);
+        gitlab.fillProps(props, context);
+        String comment = resolveTemplate(context.getLogger(), gitlab.getIssues().getComment(), props);
 
         if (!labelColor.startsWith("#")) {
             try {

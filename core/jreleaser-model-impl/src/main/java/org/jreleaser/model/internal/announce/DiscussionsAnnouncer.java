@@ -139,8 +139,8 @@ public final class DiscussionsAnnouncer extends AbstractMessageAnnouncer<Discuss
 
     public String getResolvedTitle(JReleaserContext context) {
         TemplateContext props = context.fullProps();
-        applyTemplates(props, resolvedExtraProperties());
-        return resolveTemplate(title, props);
+        applyTemplates(context.getLogger(), props, resolvedExtraProperties());
+        return resolveTemplate(context.getLogger(), title, props);
     }
 
     public String getOrganization() {

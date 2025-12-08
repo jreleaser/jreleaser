@@ -156,8 +156,8 @@ public final class ZulipAnnouncer extends AbstractMessageAnnouncer<ZulipAnnounce
 
     public String getResolvedSubject(JReleaserContext context) {
         TemplateContext props = context.fullProps();
-        applyTemplates(props, resolvedExtraProperties());
-        return resolveTemplate(subject, props);
+        applyTemplates(context.getLogger(), props, resolvedExtraProperties());
+        return resolveTemplate(context.getLogger(), subject, props);
     }
 
     public String getAccount() {

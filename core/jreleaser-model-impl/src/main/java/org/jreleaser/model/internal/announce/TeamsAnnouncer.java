@@ -145,18 +145,18 @@ public final class TeamsAnnouncer extends AbstractAnnouncer<TeamsAnnouncer, org.
 
     public String getResolvedMessageTemplate(JReleaserContext context, TemplateContext extraProps) {
         TemplateContext props = context.fullProps();
-        applyTemplates(props, resolvedExtraProperties());
+        applyTemplates(context.getLogger(), props, resolvedExtraProperties());
         props.set(KEY_TAG_NAME, context.getModel().getRelease().getReleaser()
-            .getEffectiveTagName(context.getModel()));
+            .getEffectiveTagName(context));
         props.set(Constants.KEY_PREVIOUS_TAG_NAME,
             context.getModel().getRelease().getReleaser()
-                .getResolvedPreviousTagName(context.getModel()));
+                .getResolvedPreviousTagName(context));
         props.setAll(extraProps);
 
         Path templatePath = context.getBasedir().resolve(messageTemplate);
         try {
             Reader reader = java.nio.file.Files.newBufferedReader(templatePath);
-            return applyTemplate(reader, props);
+            return applyTemplate(context.getLogger(), reader, props);
         } catch (IOException e) {
             throw new JReleaserException(RB.$("ERROR_unexpected_error_reading_template",
                 context.relativizeToBasedir(templatePath)));

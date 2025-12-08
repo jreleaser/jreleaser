@@ -97,7 +97,7 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
                 JlinkAssembler jlink = context.getModel().getAssemble().findJlink(assembler.getJlink());
                 if (jlink.getJavaArchive().isSet()) {
                     String configuredPath = jlink.getJavaArchive().getPath();
-                    String archiveFile = resolveTemplate(configuredPath, props);
+                    String archiveFile = resolveTemplate(context.getLogger(), configuredPath, props);
                     Path archivePath = context.getBasedir().resolve(Paths.get(archiveFile));
                     if (!Files.exists(archivePath)) {
                         throw new AssemblerProcessingException(RB.$("ERROR_path_does_not_exist_2", configuredPath, archivePath));
@@ -110,7 +110,7 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
                         throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
                     }
 
-                    String libDirectoryName = resolveTemplate(jlink.getJavaArchive().getLibDirectoryName(), props);
+                    String libDirectoryName = resolveTemplate(context.getLogger(), jlink.getJavaArchive().getLibDirectoryName(), props);
                     Path libPath = inputsDirectory.resolve(ARCHIVE_DIRECTORY).resolve(libDirectoryName);
                     try {
                         FileUtils.copyFiles(context.getLogger(), libPath, filesDirectory);
@@ -152,7 +152,7 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
             ext = ".icns";
         }
 
-        String icon = resolveTemplate(packager.getIcon(), props);
+        String icon = resolveTemplate(context.getLogger(), packager.getIcon(), props);
         try {
             if (isNotBlank(icon) && Files.exists(context.getBasedir().resolve(icon)) && icon.endsWith(ext)) {
                 Path iconPath = context.getBasedir().resolve(icon);
@@ -216,12 +216,12 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
             throw new AssemblerProcessingException(RB.$("ERROR_jpackage_runtime_image_not_found", platform));
         }
 
-        String moduleName = resolveTemplate(assembler.getJava().getMainModule(), props);
-        String mainClass = resolveTemplate(assembler.getJava().getMainClass(), props);
+        String moduleName = resolveTemplate(context.getLogger(), assembler.getJava().getMainModule(), props);
+        String mainClass = resolveTemplate(context.getLogger(), assembler.getJava().getMainClass(), props);
         String appName = packager.getResolvedAppName(context, assembler);
         String appVersion = assembler.getApplicationPackage().getResolvedAppVersion(context, assembler);
-        String vendor = resolveTemplate(assembler.getApplicationPackage().getVendor(), props);
-        String copyright = resolveTemplate(assembler.getApplicationPackage().getCopyright(), props);
+        String vendor = resolveTemplate(context.getLogger(), assembler.getApplicationPackage().getVendor(), props);
+        String copyright = resolveTemplate(context.getLogger(), assembler.getApplicationPackage().getCopyright(), props);
 
         Path jpackageExecutable = jdkPath
             .resolve(BIN_DIRECTORY)
@@ -265,7 +265,7 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
             if (isNotBlank(assembler.getJlink())) {
                 JlinkAssembler jlink = context.getModel().getAssemble().findJlink(assembler.getJlink());
                 if (jlink.getJavaArchive().isSet()) {
-                    String mainJarName = resolveTemplate(jlink.getJavaArchive().getMainJarName(), props);
+                    String mainJarName = resolveTemplate(context.getLogger(), jlink.getJavaArchive().getMainJarName(), props);
                     Path filesDirectory = inputsDirectory.resolve(FILES_DIRECTORY);
                     mainJarPath = filesDirectory.resolve(mainJarName).getFileName().toString();
                 }
@@ -280,19 +280,19 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
         // Launcher
         for (String argument : assembler.getLauncher().getArguments()) {
             cmd.arg("--arguments")
-                .arg(maybeQuote(resolveTemplate(argument, props)));
+                .arg(maybeQuote(resolveTemplate(context.getLogger(), argument, props)));
         }
         for (String javaOption : assembler.getLauncher().getJavaOptions()) {
             cmd.arg("--java-options")
-                .arg(maybeQuote(resolveTemplate(javaOption, props)));
+                .arg(maybeQuote(resolveTemplate(context.getLogger(), javaOption, props)));
         }
         for (String launcher : assembler.getLauncher().getLaunchers()) {
             cmd.arg("--add-launcher")
-                .arg(maybeQuote(resolveTemplate(launcher, props)));
+                .arg(maybeQuote(resolveTemplate(context.getLogger(), launcher, props)));
         }
 
         // ApplicationPackage
-        String licenseFile = resolveTemplate(assembler.getApplicationPackage().getLicenseFile(), props);
+        String licenseFile = resolveTemplate(context.getLogger(), assembler.getApplicationPackage().getLicenseFile(), props);
         if (isNotBlank(licenseFile)) {
             Path licenseFilePath = context.getBasedir().resolve(licenseFile);
             if (Files.exists(licenseFilePath)) {
@@ -303,7 +303,7 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
 
         if (!assembler.getApplicationPackage().getFileAssociations().isEmpty()) {
             for (String filename : assembler.getApplicationPackage().getFileAssociations()) {
-                Path path = context.getBasedir().resolve(resolveTemplate(filename, props));
+                Path path = context.getBasedir().resolve(resolveTemplate(context.getLogger(), filename, props));
                 if (Files.exists(path)) {
                     cmd.arg("--file-associations")
                         .arg(maybeQuote(path.toAbsolutePath().toString()));
@@ -340,13 +340,13 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
     }
 
     private void customize(String type, JpackageAssembler.PlatformPackager packager, Path inputsDirectory, Command cmd, TemplateContext props) {
-        String installDir = resolveTemplate(packager.getInstallDir(), props);
+        String installDir = resolveTemplate(context.getLogger(), packager.getInstallDir(), props);
         if (isNotBlank(installDir)) {
             cmd.arg("--install-dir")
                 .arg(maybeQuote(installDir));
         }
 
-        String resourceDir = resolveTemplate(packager.getResourceDir(), props);
+        String resourceDir = resolveTemplate(context.getLogger(), packager.getResourceDir(), props);
         if (isNotBlank(resourceDir)) {
             Path resourceDirPath = context.getBasedir().resolve(resourceDir);
             if (Files.exists(resourceDirPath)) {
@@ -367,23 +367,23 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
     private void customizeOsx(JpackageAssembler.Osx packager, Path inputsDirectory, Command cmd, TemplateContext props) {
         if (isNotBlank(packager.getPackageName())) {
             cmd.arg("--mac-package-name")
-                .arg(resolveTemplate(packager.getPackageName(), props));
+                .arg(resolveTemplate(context.getLogger(), packager.getPackageName(), props));
         }
         if (isNotBlank(packager.getPackageIdentifier())) {
             cmd.arg("--mac-package-identifier")
-                .arg(resolveTemplate(packager.getPackageIdentifier(), props));
+                .arg(resolveTemplate(context.getLogger(), packager.getPackageIdentifier(), props));
         }
         if (isNotBlank(packager.getPackageSigningPrefix())) {
             cmd.arg("--mac-package-signing-prefix")
-                .arg(resolveTemplate(packager.getPackageSigningPrefix(), props));
+                .arg(resolveTemplate(context.getLogger(), packager.getPackageSigningPrefix(), props));
         }
         if (packager.isSign()) {
             cmd.arg("--mac-sign");
         }
 
-        String signingKeychain = resolveTemplate(packager.getSigningKeychain(), props);
+        String signingKeychain = resolveTemplate(context.getLogger(), packager.getSigningKeychain(), props);
         if (isNotBlank(signingKeychain)) {
-            Path path = context.getBasedir().resolve(resolveTemplate(signingKeychain, props));
+            Path path = context.getBasedir().resolve(resolveTemplate(context.getLogger(), signingKeychain, props));
             if (Files.exists(path)) {
                 cmd.arg("--mac-signing-keychain")
                     .arg(path.toAbsolutePath().toString());
@@ -391,7 +391,7 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
         }
         if (isNotBlank(packager.getSigningKeyUsername())) {
             cmd.arg("--mac-signing-key-user-name")
-                .arg(resolveTemplate(packager.getSigningKeyUsername(), props));
+                .arg(resolveTemplate(context.getLogger(), packager.getSigningKeyUsername(), props));
         }
 
         cmd.arg("--icon")
@@ -401,19 +401,19 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
     private void customizeLinux(String type, JpackageAssembler.Linux packager, Path inputsDirectory, Command cmd, TemplateContext props) {
         if (isNotBlank(packager.getPackageName())) {
             cmd.arg("--linux-package-name")
-                .arg(resolveTemplate(packager.getPackageName(), props));
+                .arg(resolveTemplate(context.getLogger(), packager.getPackageName(), props));
         }
         if (isNotBlank(packager.getMenuGroup())) {
             cmd.arg("--linux-menu-group")
-                .arg(resolveTemplate(packager.getMenuGroup(), props));
+                .arg(resolveTemplate(context.getLogger(), packager.getMenuGroup(), props));
         }
         if (isNotBlank(packager.getAppRelease())) {
             cmd.arg("--linux-app-release")
-                .arg(resolveTemplate(packager.getAppRelease(), props));
+                .arg(resolveTemplate(context.getLogger(), packager.getAppRelease(), props));
         }
         if (isNotBlank(packager.getAppCategory())) {
             cmd.arg("--linux-app-category")
-                .arg(resolveTemplate(packager.getAppCategory(), props));
+                .arg(resolveTemplate(context.getLogger(), packager.getAppCategory(), props));
         }
         if (packager.isShortcut()) {
             cmd.arg("--linux-shortcut");
@@ -421,19 +421,19 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
         if (!packager.getPackageDeps().isEmpty()) {
             cmd.arg("--linux-package-deps")
                 .arg(packager.getPackageDeps().stream()
-                    .map(arg -> Templates.resolveTemplate(arg, props))
+                    .map(arg -> Templates.resolveTemplate(context.getLogger(), arg, props))
                     .collect(Collectors.joining(",")));
         }
 
         if ("deb".equals(type)) {
             if (isNotBlank(packager.getMaintainer())) {
                 cmd.arg("--linux-deb-maintainer")
-                    .arg(resolveTemplate(packager.getMaintainer(), props));
+                    .arg(resolveTemplate(context.getLogger(), packager.getMaintainer(), props));
             }
         } else if ("rpm".equals(type)) {
             if (isNotBlank(packager.getLicense())) {
                 cmd.arg("--linux-rpm-license-type")
-                    .arg(resolveTemplate(packager.getLicense(), props));
+                    .arg(resolveTemplate(context.getLogger(), packager.getLicense(), props));
             }
         }
 
@@ -462,19 +462,19 @@ public class JpackageAssemblerProcessor extends AbstractAssemblerProcessor<org.j
         }
         if (isNotBlank(packager.getMenuGroup())) {
             cmd.arg("--win-menu-group")
-                .arg(maybeQuote(resolveTemplate(packager.getMenuGroup(), props)));
+                .arg(maybeQuote(resolveTemplate(context.getLogger(), packager.getMenuGroup(), props)));
         }
         if (isNotBlank(packager.getUpgradeUuid())) {
             cmd.arg("--win-upgrade-uuid")
-                .arg(resolveTemplate(packager.getUpgradeUuid(), props));
+                .arg(resolveTemplate(context.getLogger(), packager.getUpgradeUuid(), props));
         }
         if (isNotBlank(packager.getHelpUrl())) {
             cmd.arg("--win-help-url")
-                .arg(resolveTemplate(packager.getHelpUrl(), props));
+                .arg(resolveTemplate(context.getLogger(), packager.getHelpUrl(), props));
         }
         if (isNotBlank(packager.getUpdateUrl())) {
             cmd.arg("--win-update-url")
-                .arg(resolveTemplate(packager.getUpdateUrl(), props));
+                .arg(resolveTemplate(context.getLogger(), packager.getUpdateUrl(), props));
         }
 
         cmd.arg("--icon")

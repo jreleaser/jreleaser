@@ -53,7 +53,7 @@ public final class AppdataUtils {
                                     Distribution distribution, TemplateContext props, List<Icon> icons) throws PackagerProcessingException {
         for (Icon icon : icons) {
             // check if exists
-            String iconUrl = resolveTemplate(icon.getUrl(), props);
+            String iconUrl = resolveTemplate(context.getLogger(), icon.getUrl(), props);
             String iconExt = getFilenameExtension(iconUrl);
             Path iconPath = Paths.get(packager.getTemplateDirectory(), "icons",
                 icon.getWidth() + "x" + icon.getHeight(),

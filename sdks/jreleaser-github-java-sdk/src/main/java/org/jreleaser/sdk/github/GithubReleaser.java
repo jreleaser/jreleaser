@@ -109,7 +109,7 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
 
     private String generateReleaseNotesByAPI() throws JReleaserException {
         org.jreleaser.model.internal.release.GithubReleaser github = context.getModel().getRelease().getGithub();
-        String tagName = github.getEffectiveTagName(context.getModel());
+        String tagName = github.getEffectiveTagName(context);
 
         try {
             Git git = GitSdk.of(context).open();
@@ -156,11 +156,11 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
     @Override
     protected void createRelease() throws ReleaseException {
         String pullBranch = github.getBranch();
-        String pushBranch = github.getResolvedBranchPush(context.getModel());
+        String pushBranch = github.getResolvedBranchPush(context);
         boolean mustCheckoutBranch = !pushBranch.equals(pullBranch);
 
-        context.getLogger().info(RB.$("git.releaser.releasing"), github.getResolvedRepoUrl(context.getModel()), pushBranch);
-        String tagName = github.getEffectiveTagName(context.getModel());
+        context.getLogger().info(RB.$("git.releaser.releasing"), github.getResolvedRepoUrl(context), pushBranch);
+        String tagName = github.getEffectiveTagName(context);
 
         try {
             Github api = new Github(context.asImmutable(),
@@ -346,7 +346,7 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
         GhRelease release = new GhRelease();
         release.setName(github.getEffectiveReleaseName());
         release.setTagName(tagName);
-        release.setTargetCommitish(github.getResolvedBranchPush(context.getModel()));
+        release.setTargetCommitish(github.getResolvedBranchPush(context));
         release.setBody(changelog);
         release.setMakeLatest(github.getMakeLatest().formatted());
         if (github.getPrerelease().isEnabledSet()) {
@@ -408,12 +408,12 @@ public class GithubReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
             return;
         }
 
-        String tagName = github.getEffectiveTagName(context.getModel());
+        String tagName = github.getEffectiveTagName(context);
         String labelName = github.getIssues().getLabel().getName();
         String labelColor = github.getIssues().getLabel().getColor();
-        TemplateContext props = github.props(context.getModel());
-        github.fillProps(props, context.getModel());
-        String comment = resolveTemplate(github.getIssues().getComment(), props);
+        TemplateContext props = github.props(context);
+        github.fillProps(props, context);
+        String comment = resolveTemplate(context.getLogger(), github.getIssues().getComment(), props);
         if (labelColor.startsWith("#")) {
             labelColor = labelColor.substring(1);
         }

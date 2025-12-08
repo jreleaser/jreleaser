@@ -19,6 +19,7 @@ package org.jreleaser.model.internal.upload;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
+import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.mustache.TemplateContext;
 
@@ -173,13 +174,13 @@ public final class GiteaUploader extends AbstractGitPackageUploader<org.jrelease
     }
 
     @Override
-    public String getResolvedDownloadUrl(TemplateContext props, Artifact artifact) {
+    public String getResolvedDownloadUrl(JReleaserContext context, TemplateContext props, Artifact artifact) {
         TemplateContext p = new TemplateContext(artifactProps(props, artifact));
         p.setAll(resolvedExtraProperties());
         p.set("host", getHost());
         p.set("owner", getOwner());
         p.set("packageName", getPackageName());
         p.set("packageVersion", getPackageVersion());
-        return resolveTemplate(DOWNLOAD_URL, p);
+        return resolveTemplate(context.getLogger(), DOWNLOAD_URL, p);
     }
 }

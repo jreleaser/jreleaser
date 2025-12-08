@@ -74,10 +74,10 @@ public class ForgejoReleaser extends AbstractReleaser<org.jreleaser.model.api.re
     @Override
     protected void createRelease() throws ReleaseException {
         String pullBranch = forgejo.getBranch();
-        String pushBranch = forgejo.getResolvedBranchPush(context.getModel());
+        String pushBranch = forgejo.getResolvedBranchPush(context);
         boolean mustCheckoutBranch = !pushBranch.equals(pullBranch);
-        context.getLogger().info(RB.$("git.releaser.releasing"), forgejo.getResolvedRepoUrl(context.getModel()), pushBranch);
-        String tagName = forgejo.getEffectiveTagName(context.getModel());
+        context.getLogger().info(RB.$("git.releaser.releasing"), forgejo.getResolvedRepoUrl(context), pushBranch);
+        String tagName = forgejo.getEffectiveTagName(context);
 
         try {
             Forgejo api = new Forgejo(context.asImmutable(),
@@ -259,7 +259,7 @@ public class ForgejoReleaser extends AbstractReleaser<org.jreleaser.model.api.re
         Release release = new Release();
         release.setName(forgejo.getEffectiveReleaseName());
         release.setTagName(tagName);
-        release.setTargetCommitish(forgejo.getResolvedBranchPush(context.getModel()));
+        release.setTargetCommitish(forgejo.getResolvedBranchPush(context));
         release.setBody(changelog);
         if (forgejo.getPrerelease().isEnabledSet()) {
             release.setPrerelease(forgejo.getPrerelease().isEnabled());
@@ -300,12 +300,12 @@ public class ForgejoReleaser extends AbstractReleaser<org.jreleaser.model.api.re
             return;
         }
 
-        String tagName = forgejo.getEffectiveTagName(context.getModel());
+        String tagName = forgejo.getEffectiveTagName(context);
         String labelName = forgejo.getIssues().getLabel().getName();
         String labelColor = forgejo.getIssues().getLabel().getColor();
-        TemplateContext props = forgejo.props(context.getModel());
-        forgejo.fillProps(props, context.getModel());
-        String comment = resolveTemplate(forgejo.getIssues().getComment(), props);
+        TemplateContext props = forgejo.props(context);
+        forgejo.fillProps(props, context);
+        String comment = resolveTemplate(context.getLogger(), forgejo.getIssues().getComment(), props);
 
         if (labelColor.startsWith("#")) {
             labelColor = labelColor.substring(1);

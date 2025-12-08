@@ -213,7 +213,7 @@ public class JibPackagerProcessor extends AbstractRepositoryPackagerProcessor<Ji
         if (context.isDryrun()) {
             for (JibConfiguration.Registry registry : jibc.getRegistries()) {
                 for (String imageName : jibc.getImageNames()) {
-                    imageName = registry.getServer() + "/" + resolveTemplate(imageName, props);
+                    imageName = registry.getServer() + "/" + resolveTemplate(context.getLogger(), imageName, props);
                     context.getLogger().info(" - {}", imageName);
                 }
             }
@@ -269,7 +269,7 @@ public class JibPackagerProcessor extends AbstractRepositoryPackagerProcessor<Ji
             }
 
             for (String imageName : jibc.getImageNames()) {
-                imageName = registry.getServer() + "/" + resolveTemplate(imageName, props);
+                imageName = registry.getServer() + "/" + resolveTemplate(context.getLogger(), imageName, props);
                 List<String> argsCopy = new ArrayList<>(args);
                 argsCopy.add("-t");
                 argsCopy.add(imageName);
@@ -305,12 +305,12 @@ public class JibPackagerProcessor extends AbstractRepositoryPackagerProcessor<Ji
 
         Set<String> env = new TreeSet<>();
         jib.getEnvironment().forEach((key, value) -> env.add(passThrough("\"" + key + "\": \"" +
-            resolveTemplate(value, props) + "\"")));
+            resolveTemplate(context.getLogger(), value, props) + "\"")));
         props.set(KEY_JIB_ENVIRONMENT, env);
 
         Set<String> labels = new TreeSet<>();
         jib.getLabels().forEach((key, value) -> labels.add(passThrough("\"" + key + "\": \"" +
-            resolveTemplate(value, props) + "\"")));
+            resolveTemplate(context.getLogger(), value, props) + "\"")));
         props.set(KEY_JIB_LABELS, labels);
     }
 
@@ -337,7 +337,7 @@ public class JibPackagerProcessor extends AbstractRepositoryPackagerProcessor<Ji
 
         if (activeSpecs.isEmpty()) {
             for (String imageName : packager.getImageNames()) {
-                copyJibfiles(packageDirectory, resolveTemplate(imageName, props), directory, false);
+                copyJibfiles(packageDirectory, resolveTemplate(context.getLogger(), imageName, props), directory, false);
             }
         } else {
             // copy files that do not belong to specs
@@ -346,7 +346,7 @@ public class JibPackagerProcessor extends AbstractRepositoryPackagerProcessor<Ji
             for (JibSpec spec : activeSpecs) {
                 TemplateContext newProps = fillSpecProps(distribution, props, spec);
                 for (String imageName : spec.getImageNames()) {
-                    copyJibfiles(packageDirectory.resolve(spec.getName()), resolveTemplate(imageName, newProps), directory, true);
+                    copyJibfiles(packageDirectory.resolve(spec.getName()), resolveTemplate(context.getLogger(), imageName, newProps), directory, true);
                 }
             }
         }

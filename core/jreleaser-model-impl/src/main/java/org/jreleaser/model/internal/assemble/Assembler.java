@@ -19,6 +19,7 @@ package org.jreleaser.model.internal.assemble;
 
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Stereotype;
+import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.catalog.swid.SwidTag;
 import org.jreleaser.model.internal.common.Activatable;
 import org.jreleaser.model.internal.common.Artifact;
@@ -65,7 +66,7 @@ public interface Assembler<A extends org.jreleaser.model.api.assemble.Assembler>
 
     void addOutput(Artifact artifact);
 
-    TemplateContext props();
+    TemplateContext props(JReleaserContext context);
 
     String getTemplateDirectory();
 

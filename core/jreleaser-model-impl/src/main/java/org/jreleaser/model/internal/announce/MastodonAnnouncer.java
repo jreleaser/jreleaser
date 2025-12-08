@@ -156,15 +156,15 @@ public final class MastodonAnnouncer extends AbstractAnnouncer<MastodonAnnouncer
     public String getResolvedStatusTemplate(JReleaserContext context, TemplateContext extraProps) {
         TemplateContext props = context.fullProps();
         context.getChangelog().apply(props);
-        applyTemplates(props, resolvedExtraProperties());
-        props.set(KEY_TAG_NAME, context.getModel().getRelease().getReleaser().getEffectiveTagName(context.getModel()));
-        props.set(KEY_PREVIOUS_TAG_NAME, context.getModel().getRelease().getReleaser().getResolvedPreviousTagName(context.getModel()));
+        applyTemplates(context.getLogger(), props, resolvedExtraProperties());
+        props.set(KEY_TAG_NAME, context.getModel().getRelease().getReleaser().getEffectiveTagName(context));
+        props.set(KEY_PREVIOUS_TAG_NAME, context.getModel().getRelease().getReleaser().getResolvedPreviousTagName(context));
         props.setAll(extraProps);
 
         Path templatePath = context.getBasedir().resolve(statusTemplate);
         try {
             Reader reader = java.nio.file.Files.newBufferedReader(templatePath);
-            return applyTemplate(reader, props);
+            return applyTemplate(context.getLogger(), reader, props);
         } catch (IOException e) {
             throw new JReleaserException(RB.$("ERROR_unexpected_error_reading_template",
                 context.relativizeToBasedir(templatePath)));

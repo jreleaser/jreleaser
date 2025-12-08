@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.Distribution;
 import org.jreleaser.model.Stereotype;
+import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.AbstractModelObject;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.Domain;
@@ -269,12 +270,12 @@ public final class DebAssembler extends AbstractAssembler<org.jreleaser.model.in
         props.put("control", control.asMap(full));
     }
 
-    public String getResolvedInstallationPath(TemplateContext props) {
+    public String getResolvedInstallationPath(JReleaserContext context, TemplateContext props) {
         TemplateContext newProps = new TemplateContext(props);
         newProps.set("packageName", control.getPackageName());
         newProps.set("packageVersion", control.getPackageVersion());
         newProps.set("packageRevision", control.getPackageRevision());
-        return resolveTemplate(installationPath, newProps);
+        return resolveTemplate(context.getLogger(), installationPath, newProps);
     }
 
     public static final class Control extends AbstractModelObject<DebAssembler.Control> implements Domain {

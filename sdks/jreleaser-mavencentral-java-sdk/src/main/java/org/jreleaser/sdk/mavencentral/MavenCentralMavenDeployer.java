@@ -93,7 +93,7 @@ public class MavenCentralMavenDeployer extends AbstractMavenDeployer<org.jreleas
         }
 
         MavenCentral mavenCentral = new MavenCentral(context.asImmutable(),
-            deployer.getResolvedUrl(context.fullProps()),
+            deployer.getResolvedUrl(context, context.fullProps()),
             deployer.getAuthorization(),
             deployer.getUsername(), deployer.getPassword(),
             deployer.getConnectTimeout(), deployer.getReadTimeout(), context.isDryrun(),

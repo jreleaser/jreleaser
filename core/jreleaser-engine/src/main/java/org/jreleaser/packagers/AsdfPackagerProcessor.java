@@ -66,11 +66,11 @@ public class AsdfPackagerProcessor extends AbstractRepositoryPackagerProcessor<A
         props.set(KEY_DISTRIBUTION_JAVA_MAIN_MODULE, distribution.getJava().getMainModule());
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
 
-        String repoUrl = releaser.getResolvedRepoUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName());
+        String repoUrl = releaser.getResolvedRepoUrl(context, packager.getRepository().getOwner(), packager.getRepository().getResolvedName());
 
         props.set(KEY_ASDF_PLUGIN_REPO_URL, repoUrl);
         props.set(KEY_ASDF_PLUGIN_REPOSITORY_URL, repoUrl);
-        props.set(KEY_ASDF_PLUGIN_TOOL_CHECK, resolveTemplate(packager.getToolCheck(), props));
+        props.set(KEY_ASDF_PLUGIN_TOOL_CHECK, resolveTemplate(context.getLogger(), packager.getToolCheck(), props));
 
         String str = props.get(KEY_DISTRIBUTION_ARTIFACT_FILE);
         str = str.replace(context.getModel().getProject().getEffectiveVersion(), "$ASDF_INSTALL_VERSION");

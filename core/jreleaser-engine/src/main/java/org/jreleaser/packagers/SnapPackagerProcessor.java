@@ -123,14 +123,14 @@ public class SnapPackagerProcessor extends AbstractRepositoryPackagerProcessor<S
             MustacheUtils.passThrough("|" + System.lineSeparator() + desc));
 
         props.set(KEY_SNAP_REPO_URL,
-            releaser.getResolvedRepoUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
+            releaser.getResolvedRepoUrl(context, packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
         props.set(KEY_SNAP_REPO_CLONE_URL,
-            releaser.getResolvedRepoCloneUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
+            releaser.getResolvedRepoCloneUrl(context, packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
 
         props.set(KEY_SNAP_REPOSITORY_URL,
-            releaser.getResolvedRepoUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
+            releaser.getResolvedRepoUrl(context, packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
         props.set(KEY_SNAP_REPOSITORY_CLONE_URL,
-            releaser.getResolvedRepoCloneUrl(context.getModel(), packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
+            releaser.getResolvedRepoCloneUrl(context, packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
 
         props.set(KEY_SNAP_PACKAGE_NAME, packager.getPackageName());
         props.set(KEY_SNAP_BASE, packager.getBase());

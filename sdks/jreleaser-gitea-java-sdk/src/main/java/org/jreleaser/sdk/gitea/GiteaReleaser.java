@@ -77,10 +77,10 @@ public class GiteaReleaser extends AbstractReleaser<org.jreleaser.model.api.rele
     @Override
     protected void createRelease() throws ReleaseException {
         String pullBranch = gitea.getBranch();
-        String pushBranch = gitea.getResolvedBranchPush(context.getModel());
+        String pushBranch = gitea.getResolvedBranchPush(context);
         boolean mustCheckoutBranch = !pushBranch.equals(pullBranch);
-        context.getLogger().info(RB.$("git.releaser.releasing"), gitea.getResolvedRepoUrl(context.getModel()), pushBranch);
-        String tagName = gitea.getEffectiveTagName(context.getModel());
+        context.getLogger().info(RB.$("git.releaser.releasing"), gitea.getResolvedRepoUrl(context), pushBranch);
+        String tagName = gitea.getEffectiveTagName(context);
 
         try {
             Gitea api = new Gitea(context.asImmutable(),
@@ -262,7 +262,7 @@ public class GiteaReleaser extends AbstractReleaser<org.jreleaser.model.api.rele
         GtRelease release = new GtRelease();
         release.setName(gitea.getEffectiveReleaseName());
         release.setTagName(tagName);
-        release.setTargetCommitish(gitea.getResolvedBranchPush(context.getModel()));
+        release.setTargetCommitish(gitea.getResolvedBranchPush(context));
         release.setBody(changelog);
         if (gitea.getPrerelease().isEnabledSet()) {
             release.setPrerelease(gitea.getPrerelease().isEnabled());
@@ -303,12 +303,12 @@ public class GiteaReleaser extends AbstractReleaser<org.jreleaser.model.api.rele
             return;
         }
 
-        String tagName = gitea.getEffectiveTagName(context.getModel());
+        String tagName = gitea.getEffectiveTagName(context);
         String labelName = gitea.getIssues().getLabel().getName();
         String labelColor = gitea.getIssues().getLabel().getColor();
-        TemplateContext props = gitea.props(context.getModel());
-        gitea.fillProps(props, context.getModel());
-        String comment = resolveTemplate(gitea.getIssues().getComment(), props);
+        TemplateContext props = gitea.props(context);
+        gitea.fillProps(props, context);
+        String comment = resolveTemplate(context.getLogger(), gitea.getIssues().getComment(), props);
 
         if (labelColor.startsWith("#")) {
             labelColor = labelColor.substring(1);

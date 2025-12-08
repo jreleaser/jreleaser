@@ -123,7 +123,7 @@ public final class ChangelogProvider {
 
     public static Set<Integer> extractIssues(JReleaserContext context, String content) {
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
-        String issueTracker = releaser.getResolvedIssueTrackerUrl(context.getModel(), true);
+        String issueTracker = releaser.getResolvedIssueTrackerUrl(context, true);
 
         String p1 = StringUtils.escapeRegexChars(issueTracker);
         String p2 = StringUtils.escapeRegexChars(releaser.getCanonicalRepoName());

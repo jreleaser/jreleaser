@@ -132,7 +132,7 @@ public class AppImagePackagerProcessor extends AbstractRepositoryPackagerProcess
         str = str.replace(context.getModel().getProject().getEffectiveVersion(), "${DISTRIBUTION_VERSION}");
         props.set(KEY_APPIMAGE_DISTRIBUTION_ARTIFACT_FILE_NAME, str);
         str = props.get(KEY_DISTRIBUTION_URL);
-        str = str.replace(releaser.getEffectiveTagName(context.getModel()), "${DISTRIBUTION_TAG}")
+        str = str.replace(releaser.getEffectiveTagName(context), "${DISTRIBUTION_TAG}")
             .replace(props.get(KEY_DISTRIBUTION_ARTIFACT_FILE), "${DISTRIBUTION_FILE}");
         props.set(KEY_APPIMAGE_DISTRIBUTION_URL, str);
     }

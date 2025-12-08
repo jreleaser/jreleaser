@@ -22,6 +22,7 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.model.Active;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.Stereotype;
+import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Activatable;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.Domain;
@@ -282,9 +283,9 @@ public final class Distribution extends Packagers<Distribution> implements Domai
         setArtifactPattern(source.artifactPattern);
     }
 
-    public TemplateContext props() {
+    public TemplateContext props(JReleaserContext context) {
         TemplateContext props = new TemplateContext();
-        applyTemplates(props, resolvedExtraProperties());
+        applyTemplates(context.getLogger(), props, resolvedExtraProperties());
         props.set(KEY_DISTRIBUTION_NAME, name);
         props.set(KEY_DISTRIBUTION_STEREOTYPE, getStereotype());
         props.set(KEY_DISTRIBUTION_EXECUTABLE, executable.getName());

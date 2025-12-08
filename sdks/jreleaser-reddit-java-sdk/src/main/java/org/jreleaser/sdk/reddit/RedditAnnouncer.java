@@ -72,7 +72,7 @@ public class RedditAnnouncer implements Announcer<org.jreleaser.model.api.announ
                 text = reddit.getResolvedText(context);
             } else {
                 TemplateContext props = new TemplateContext();
-                context.getModel().getRelease().getReleaser().fillProps(props, context.getModel());
+                context.getModel().getRelease().getReleaser().fillProps(props, context);
                 text = reddit.getResolvedTextTemplate(context, props);
             }
         } else {
@@ -103,15 +103,15 @@ public class RedditAnnouncer implements Announcer<org.jreleaser.model.api.announ
             TemplateContext props = context.fullProps();
             props.set(KEY_REDDIT_TITLE, title);
             props.set(KEY_REDDIT_SUBREDDIT, MustacheUtils.passThrough("{{" + KEY_REDDIT_SUBREDDIT + "}}"));
-            applyTemplates(props, reddit.resolvedExtraProperties());
+            applyTemplates(context.getLogger(), props, reddit.resolvedExtraProperties());
             
-            title = MustacheUtils.applyTemplate(title, props);
+            title = MustacheUtils.applyTemplate(context.getLogger(), title, props);
             
             if (reddit.getSubmissionType() == org.jreleaser.model.api.announce.RedditAnnouncer.SubmissionType.SELF) {
-                text = MustacheUtils.applyTemplate(text, props);
+                text = MustacheUtils.applyTemplate(context.getLogger(), text, props);
                 sdk.submitTextPost(subreddit, title, text);
             } else {
-                url = MustacheUtils.applyTemplate(url, props);
+                url = MustacheUtils.applyTemplate(context.getLogger(), url, props);
                 sdk.submitLinkPost(subreddit, title, url);
             }
         } catch (RedditSdkException e) {

@@ -19,6 +19,7 @@ package org.jreleaser.model.internal.deploy.maven;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Http;
+import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.AbstractActivatable;
 import org.jreleaser.model.internal.common.ExtraProperties;
 import org.jreleaser.mustache.TemplateContext;
@@ -364,11 +365,11 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
     protected abstract void asMap(boolean full, Map<String, Object> props);
 
     @Override
-    public String getResolvedUrl(TemplateContext props) {
+    public String getResolvedUrl(JReleaserContext context, TemplateContext props) {
         props.set("username", username);
         props.set("owner", username);
         props.setAll(getExtraProperties());
-        return normalizeUrl(resolveTemplate(url, props));
+        return normalizeUrl(resolveTemplate(context.getLogger(), url, props));
     }
 
     protected String normalizeUrl(String url) {

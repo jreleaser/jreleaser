@@ -142,8 +142,8 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         newProps.set(KEY_DOCKER_SPEC_NAME, spec.getName());
         fillDockerProperties(newProps, spec);
         verifyAndAddArtifacts(newProps, distribution, artifacts);
-        newProps.set(KEY_DOCKER_ENTRYPOINT, passThrough(resolveTemplate(spec.getEntrypoint(), newProps)));
-        newProps.set(KEY_DOCKER_CMD, passThrough(resolveTemplate(spec.getCmd(), newProps)));
+        newProps.set(KEY_DOCKER_ENTRYPOINT, passThrough(resolveTemplate(context.getLogger(), spec.getEntrypoint(), newProps)));
+        newProps.set(KEY_DOCKER_CMD, passThrough(resolveTemplate(context.getLogger(), spec.getCmd(), newProps)));
         Path prepareDirectory = newProps.get(KEY_DISTRIBUTION_PREPARE_DIRECTORY);
         newProps.set(KEY_DISTRIBUTION_PREPARE_DIRECTORY, prepareDirectory.resolve(spec.getName()));
         Path packageDirectory = newProps.get(KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
@@ -272,7 +272,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         for (int i = 0; i < docker.getBuildArgs().size(); i++) {
             String arg = docker.getBuildArgs().get(i);
             if (arg.contains("{{")) {
-                cmd.arg(resolveTemplate(arg, props).trim());
+                cmd.arg(resolveTemplate(context.getLogger(), arg, props).trim());
             } else {
                 cmd.arg(arg.trim());
             }
@@ -288,7 +288,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         for (int i = 0; i < docker.getBuildx().getPlatforms().size(); i++) {
             String arg = docker.getBuildx().getPlatforms().get(i);
             if (arg.contains("{{")) {
-                platforms.add(resolveTemplate(arg, props).trim());
+                platforms.add(resolveTemplate(context.getLogger(), arg, props).trim());
             } else {
                 platforms.add(arg.trim());
             }
@@ -299,7 +299,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         for (int i = 0; i < docker.getBuildArgs().size(); i++) {
             String arg = docker.getBuildArgs().get(i);
             if (arg.contains("{{")) {
-                cmd.arg(resolveTemplate(arg, props).trim());
+                cmd.arg(resolveTemplate(context.getLogger(), arg, props).trim());
             } else {
                 cmd.arg(arg.trim());
             }
@@ -313,7 +313,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         for (int i = 0; i < docker.getBuildx().getCreateBuilderFlags().size(); i++) {
             String arg = docker.getBuildx().getCreateBuilderFlags().get(i);
             if (arg.contains("{{")) {
-                cmd.arg(resolveTemplate(arg, props).trim());
+                cmd.arg(resolveTemplate(context.getLogger(), arg, props).trim());
             } else {
                 cmd.arg(arg.trim());
             }
@@ -430,7 +430,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
             String builderName = docker.getBuildx().getCreateBuilderFlags().get(i + 1);
             Command cmd = createCommand(docker, "buildx")
                 .arg("rm")
-                .arg(resolveTemplate(builderName, props).trim());
+                .arg(resolveTemplate(context.getLogger(), builderName, props).trim());
 
             executeCommand(cmd);
         }
@@ -448,7 +448,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         for (String builderName : builderNames) {
             Command cmd = createCommand(packager, "buildx")
                 .arg("rm")
-                .arg(resolveTemplate(builderName, props).trim());
+                .arg(resolveTemplate(context.getLogger(), builderName, props).trim());
 
             executeCommand(cmd);
         }
@@ -479,7 +479,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
 
         for (DockerConfiguration.Registry registry : docker.getRegistries()) {
             for (String imageName : docker.getImageNames()) {
-                imageName = resolveTemplate(imageName, props).toLowerCase(Locale.ENGLISH);
+                imageName = resolveTemplate(context.getLogger(), imageName, props).toLowerCase(Locale.ENGLISH);
 
                 String tag = imageName;
                 String serverName = registry.getServerName();
@@ -553,19 +553,19 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
 
     protected void fillDockerProperties(TemplateContext props, DockerConfiguration docker) {
         props.set(KEY_DOCKER_BASE_IMAGE,
-            resolveTemplate(docker.getBaseImage(), props));
-        props.set(KEY_DOCKER_ENTRYPOINT, passThrough(resolveTemplate(docker.getEntrypoint(), props)));
-        props.set(KEY_DOCKER_CMD, passThrough(resolveTemplate(docker.getCmd(), props)));
+            resolveTemplate(context.getLogger(), docker.getBaseImage(), props));
+        props.set(KEY_DOCKER_ENTRYPOINT, passThrough(resolveTemplate(context.getLogger(), docker.getEntrypoint(), props)));
+        props.set(KEY_DOCKER_CMD, passThrough(resolveTemplate(context.getLogger(), docker.getCmd(), props)));
 
         List<String> labels = new ArrayList<>();
         docker.getLabels().forEach((label, value) -> labels.add(passThrough("\"" + label + "\"=\"" +
-            resolveTemplate(value, props) + "\"")));
+            resolveTemplate(context.getLogger(), value, props) + "\"")));
         props.set(KEY_DOCKER_LABELS, labels);
         props.set(KEY_DOCKER_PRE_COMMANDS, docker.getPreCommands().stream()
-            .map(c -> passThrough(resolveTemplate(c, props)))
+            .map(c -> passThrough(resolveTemplate(context.getLogger(), c, props)))
             .collect(toList()));
         props.set(KEY_DOCKER_POST_COMMANDS, docker.getPostCommands().stream()
-            .map(c -> passThrough(resolveTemplate(c, props)))
+            .map(c -> passThrough(resolveTemplate(context.getLogger(), c, props)))
             .collect(toList()));
     }
 
@@ -592,7 +592,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
 
         if (activeSpecs.isEmpty()) {
             for (String imageName : packager.getImageNames()) {
-                copyDockerfiles(packageDirectory, resolveTemplate(imageName, props), directory, packager, false);
+                copyDockerfiles(packageDirectory, resolveTemplate(context.getLogger(), imageName, props), directory, packager, false);
             }
         } else {
             // copy files that do not belong to specs
@@ -601,7 +601,7 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
             for (DockerSpec spec : activeSpecs) {
                 TemplateContext newProps = fillSpecProps(distribution, props, spec);
                 for (String imageName : spec.getImageNames()) {
-                    copyDockerfiles(packageDirectory.resolve(spec.getName()), resolveTemplate(imageName, newProps), directory, spec, true);
+                    copyDockerfiles(packageDirectory.resolve(spec.getName()), resolveTemplate(context.getLogger(), imageName, newProps), directory, spec, true);
                 }
             }
         }

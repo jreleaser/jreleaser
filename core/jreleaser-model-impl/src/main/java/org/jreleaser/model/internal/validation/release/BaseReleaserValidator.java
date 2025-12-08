@@ -68,6 +68,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
 public final class BaseReleaserValidator {
     private static final String DEFAULT_CHANGELOG_TPL = "src/jreleaser/templates/changelog.tpl";
     private static final String DEFAULT_APPEND_CHANGELOG_TPL = "src/jreleaser/templates/append-changelog.tpl";
+
     private BaseReleaserValidator() {
         // noop
     }
@@ -229,11 +230,11 @@ public final class BaseReleaserValidator {
 
         // FIXME: extension
         // eager resolve
-        service.getResolvedTagName(context.getModel());
-        service.getResolvedBranchPush(context.getModel());
+        service.getResolvedTagName(context);
+        service.getResolvedBranchPush(context);
         if (service.isReleaseSupported()) {
-            service.getResolvedReleaseName(context.getModel());
-            service.getMilestone().getResolvedName(service.props(context.getModel()));
+            service.getResolvedReleaseName(context);
+            service.getMilestone().getResolvedName(context, service.props(context));
         }
 
         if (project.isSnapshot()) {

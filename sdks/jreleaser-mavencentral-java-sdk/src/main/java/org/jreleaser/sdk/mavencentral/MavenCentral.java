@@ -111,7 +111,7 @@ public class MavenCentral {
 
     public boolean artifactExists(Deployable deployable, String verifyUrl) {
         if (isNotBlank(verifyUrl)) {
-            verifyUrl = Templates.resolveTemplate(verifyUrl, deployable.props());
+            verifyUrl = Templates.resolveTemplate(context.getLogger(), verifyUrl, deployable.props());
             if (ClientUtils.head(context.getLogger(), verifyUrl, connectTimeout, readTimeout)) {
                 context.getLogger().warn(" ! " + RB.$("nexus.deploy.artifact.exists",
                     deployable.getDeployPath(),

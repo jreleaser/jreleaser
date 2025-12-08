@@ -116,7 +116,7 @@ public abstract class AbstractTemplatePackagerProcessor<T extends TemplatePackag
     }
 
     protected String applyTemplate(String fileName, Reader reader, TemplateContext props) {
-        return MustacheUtils.applyTemplate(reader, props);
+        return MustacheUtils.applyTemplate(context.getLogger(), reader, props);
     }
 
     public boolean isSkipped(String filename) {

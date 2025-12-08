@@ -93,7 +93,7 @@ public final class ProjectValidator {
                 project.getSnapshot().getLabel(),
                 DEFAULT_SNAPSHOT_LABEL));
         // eager resolve
-        project.getSnapshot().getResolvedLabel(context.getModel());
+        project.getSnapshot().getResolvedLabel(context);
 
         project.getSnapshot().setFullChangelog(
             checkProperty(context,
@@ -153,7 +153,7 @@ public final class ProjectValidator {
             null != releaser) {
             findLicenseFile(context.getBasedir())
                 .ifPresent(path -> {
-                    String srcUrl = releaser.getResolvedSrcUrl(context.getModel());
+                    String srcUrl = releaser.getResolvedSrcUrl(context);
                     if (!srcUrl.endsWith("/")) srcUrl += "/";
                     srcUrl += path.getFileName().toString();
                     project.getLinks().setLicense(srcUrl);

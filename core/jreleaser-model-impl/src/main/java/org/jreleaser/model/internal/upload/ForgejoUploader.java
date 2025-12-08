@@ -19,6 +19,7 @@ package org.jreleaser.model.internal.upload;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jreleaser.model.Active;
+import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.mustache.TemplateContext;
 
@@ -34,7 +35,7 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
  */
 public final class ForgejoUploader extends AbstractGitPackageUploader<org.jreleaser.model.api.upload.ForgejoUploader, ForgejoUploader> {
     private static final String DOWNLOAD_URL = "https://{{host}}/api/packages/{{owner}}/generic/{{packageName}}/{{packageVersion}}/{{artifactFile}}";
-    private static final long serialVersionUID = 8395262149348335087L;
+    private static final long serialVersionUID = 8828515929395436628L;
 
     private String owner;
 
@@ -173,13 +174,13 @@ public final class ForgejoUploader extends AbstractGitPackageUploader<org.jrelea
     }
 
     @Override
-    public String getResolvedDownloadUrl(TemplateContext props, Artifact artifact) {
+    public String getResolvedDownloadUrl(JReleaserContext context, TemplateContext props, Artifact artifact) {
         TemplateContext p = new TemplateContext(artifactProps(props, artifact));
         p.setAll(resolvedExtraProperties());
         p.set("host", getHost());
         p.set("owner", getOwner());
         p.set("packageName", getPackageName());
         p.set("packageVersion", getPackageVersion());
-        return resolveTemplate(DOWNLOAD_URL, p);
+        return resolveTemplate(context.getLogger(), DOWNLOAD_URL, p);
     }
 }

@@ -156,7 +156,7 @@ public final class JvmOptions extends AbstractModelObject<JvmOptions> implements
         TemplateContext props = context.fullProps();
 
         return universal.stream()
-            .map(option -> resolveTemplate(option, props))
+            .map(option -> resolveTemplate(context.getLogger(), option, props))
             .map(option -> option.replace(lineSeparator(), ""))
             .collect(toList());
     }
@@ -165,7 +165,7 @@ public final class JvmOptions extends AbstractModelObject<JvmOptions> implements
         TemplateContext props = context.fullProps();
 
         return unix.stream()
-            .map(option -> resolveTemplate(option, props))
+            .map(option -> resolveTemplate(context.getLogger(), option, props))
             .collect(toList());
     }
 
@@ -173,7 +173,7 @@ public final class JvmOptions extends AbstractModelObject<JvmOptions> implements
         TemplateContext props = context.fullProps();
 
         return linux.stream()
-            .map(option -> resolveTemplate(option, props))
+            .map(option -> resolveTemplate(context.getLogger(), option, props))
             .collect(toList());
     }
 
@@ -181,7 +181,7 @@ public final class JvmOptions extends AbstractModelObject<JvmOptions> implements
         TemplateContext props = context.fullProps();
 
         return osx.stream()
-            .map(option -> resolveTemplate(option, props))
+            .map(option -> resolveTemplate(context.getLogger(), option, props))
             .collect(toList());
     }
 
@@ -189,7 +189,7 @@ public final class JvmOptions extends AbstractModelObject<JvmOptions> implements
         TemplateContext props = context.fullProps();
 
         return windows.stream()
-            .map(option -> resolveTemplate(option, props))
+            .map(option -> resolveTemplate(context.getLogger(), option, props))
             .collect(toList());
     }
 
