@@ -23,12 +23,12 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           ref: main
 
       - name: Download artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: artifacts
           path: plugins
@@ -67,7 +67,7 @@ jobs:
 
       - name: JReleaser output
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: jreleaser-native-image-${{ runner.os }}-${{ runner.arch }}
           path: |
@@ -75,7 +75,7 @@ jobs:
             out/jreleaser/output.properties
 
       - name: Upload native-image
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           retention-days: 1
           name: native-image-${{ runner.os }}-${{ runner.arch }}

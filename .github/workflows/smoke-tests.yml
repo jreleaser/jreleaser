@@ -30,7 +30,7 @@ jobs:
     runs-on: ${{ matrix.job.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -57,7 +57,7 @@ jobs:
         run: ./gradlew -PreproducibleBuild=true build publishToMavenLocal -S
 
       - name: Checkout smoketests repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: jreleaser/smoketests-jreleaser
           path: smoketests-jreleaser
@@ -167,7 +167,7 @@ jobs:
 
       - name: JReleaser output
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           retention-days: 7
           name: 'jreleaser-cli-${{ runner.os }}'
@@ -179,7 +179,7 @@ jobs:
 
       - name: JaCoCo upload
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           retention-days: 1
           name: 'jacoco-cli-${{ runner.os }}'
@@ -208,7 +208,7 @@ jobs:
     runs-on: ${{ matrix.job.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -235,7 +235,7 @@ jobs:
         run: ./gradlew -PreproducibleBuild=true build publishToMavenLocal -S
 
       - name: Checkout smoketests repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: jreleaser/smoketests-jreleaser
           path: smoketests-jreleaser
@@ -345,7 +345,7 @@ jobs:
 
       - name: JReleaser output
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           retention-days: 7
           name: 'jreleaser-tool-${{ runner.os }}'
@@ -357,7 +357,7 @@ jobs:
 
       - name: JaCoCo upload
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           retention-days: 1
           name: 'jacoco-tool-${{ runner.os }}'
@@ -386,7 +386,7 @@ jobs:
     runs-on: ${{ matrix.job.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -413,7 +413,7 @@ jobs:
         run: ./gradlew -PreproducibleBuild=true build publishToMavenLocal -S
 
       - name: Checkout smoketests repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: jreleaser/smoketests-jreleaser
           path: smoketests-jreleaser
@@ -521,7 +521,7 @@ jobs:
 
       - name: JReleaser output
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           retention-days: 7
           name: 'jreleaser-ant-${{ runner.os }}'
@@ -533,7 +533,7 @@ jobs:
 
       - name: JaCoCo upload
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           retention-days: 1
           name: 'jacoco-ant-${{ runner.os }}'
@@ -562,7 +562,7 @@ jobs:
     runs-on: ${{ matrix.job.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -589,7 +589,7 @@ jobs:
         run: ./gradlew -PreproducibleBuild=true build publishToMavenLocal -S
 
       - name: Checkout smoketests repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: jreleaser/smoketests-jreleaser
           path: smoketests-jreleaser
@@ -696,7 +696,7 @@ jobs:
 
       - name: JReleaser output
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           retention-days: 7
           name: 'jreleaser-gradle-${{ runner.os }}'
@@ -708,7 +708,7 @@ jobs:
 
       - name: JaCoCo upload
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           retention-days: 1
           name: 'jacoco-gradle-${{ runner.os }}'
@@ -750,7 +750,7 @@ jobs:
     runs-on: ${{ matrix.job.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -777,7 +777,7 @@ jobs:
         run: ./gradlew -PreproducibleBuild=true build publishToMavenLocal -S
 
       - name: Checkout smoketests repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: jreleaser/smoketests-jreleaser
           path: smoketests-jreleaser
@@ -886,7 +886,7 @@ jobs:
 
       - name: JReleaser output
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           retention-days: 7
           name: 'jreleaser-maven-${{ runner.os }}'
@@ -898,7 +898,7 @@ jobs:
 
       - name: JaCoCo upload
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           retention-days: 1
           name: 'jacoco-maven-${{ runner.os }}'
@@ -923,7 +923,7 @@ jobs:
         os: [ubuntu-latest, macos-15-intel, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Decrypt secrets
         shell: bash
@@ -956,7 +956,7 @@ jobs:
 
       - name: JaCoCo upload
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           retention-days: 1
           name: 'jacoco-${{ runner.os }}'
@@ -977,7 +977,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -996,7 +996,7 @@ jobs:
         run: ./gradlew classes
         
       - name: Download JaCoCo execution data
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           pattern: jacoco-*
           merge-multiple: true
@@ -1028,7 +1028,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -1047,7 +1047,7 @@ jobs:
         run: ./gradlew classes
 
       - name: Download JaCoCo execution data
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           pattern: jacoco-*
           merge-multiple: true
@@ -1084,7 +1084,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -1103,7 +1103,7 @@ jobs:
         run: ./gradlew check -PspotbugsEnabled=true
 
       - name: Download JaCoCo execution data
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           pattern: jacoco-*
           merge-multiple: true

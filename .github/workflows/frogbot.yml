@@ -25,7 +25,7 @@ jobs:
     if: endsWith(${{ needs.precheck.outputs.version }}, '-SNAPSHOT')
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Decrypt secrets
         shell: bash

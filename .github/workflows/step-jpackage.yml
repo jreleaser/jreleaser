@@ -28,18 +28,18 @@ jobs:
     runs-on: ${{ matrix.job.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           ref: main
 
       - name: Download artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: artifacts
           path: plugins
 
       - name: Download jlink
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: jlink
           path: out/jreleaser/assemble/jreleaser-standalone/jlink
@@ -82,7 +82,7 @@ jobs:
 
       - name: JReleaser output
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: jreleaser-jpackage-${{ runner.os }}-${{ runner.arch }}
           path: |
@@ -90,7 +90,7 @@ jobs:
             out/jreleaser/output.properties
 
       - name: Upload jpackage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           retention-days: 1
           name: jpackage-${{ runner.os }}-${{ runner.arch }}
