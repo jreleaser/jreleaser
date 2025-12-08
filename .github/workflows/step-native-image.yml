@@ -15,12 +15,17 @@ permissions:
 
 jobs:
   native-image:
-    name: '${{ matrix.os }}'
+    name: '${{ matrix.job.jdkOs }}'
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, ubuntu-22.04-arm, macos-15-intel, windows-latest, macos-15]
-    runs-on: ${{ matrix.os }}
+        job:
+          - { runner: ubuntu-latest,    jdkOs: Linux }
+          - { runner: ubuntu-22.04-arm, jdkOs: LinuxArm }
+          - { runner: macos-15-intel,   jdkOs: Osx }
+          - { runner: macos-15,         jdkOs: OsxArm }
+          - { runner: windows-latest,   jdkOs: Windows }
+    runs-on: ${{ matrix.job.runner }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -54,7 +59,7 @@ jobs:
 
       - name: Jdks
         shell: bash
-        run: ./gradlew :jreleaser:copyJdksFromCache :jreleaser:setupJdks
+        run: ./gradlew :jreleaser:downloadJdkGraal25${{ matrix.job.jdkOs }} :jreleaser:verifyJdkGraal25${{ matrix.job.jdkOs }} :jreleaser:unpackJdkGraal25${{ matrix.job.jdkOs }}
 
       - name: NativeImage
         uses: jreleaser/release-action@v2

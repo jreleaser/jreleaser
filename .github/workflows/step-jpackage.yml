@@ -15,17 +15,17 @@ permissions:
 
 jobs:
   jpackage:
-    name: '${{ matrix.job.os }}'
+    name: '${{ matrix.job.jdkOs }}'
     strategy:
       fail-fast: false
       matrix:
         job:
-          - { os: ubuntu-latest,    platform: linux-x86_64,   platformReplaced: linux-x86_64   }
-          - { os: ubuntu-22.04-arm, platform: linux-aarch_64, platformReplaced: linux-aarch64  }
-          - { os: macos-15-intel,   platform: osx-x86_64,     platformReplaced: osx-x86_64     }
-          - { os: macos-15,         platform: osx-aarch_64,   platformReplaced: osx-aarch64    }
-          - { os: windows-latest,   platform: windows-x86_64, platformReplaced: windows-x86_64 }
-    runs-on: ${{ matrix.job.os }}
+          - { runner: ubuntu-latest,    platform: linux-x86_64,   platformReplaced: linux-x86_64,   jdkOs: Linux }
+          - { runner: ubuntu-22.04-arm, platform: linux-aarch_64, platformReplaced: linux-aarch64,  jdkOs: LinuxArm }
+          - { runner: macos-15-intel,   platform: osx-x86_64,     platformReplaced: osx-x86_64,     jdkOs: Osx }
+          - { runner: macos-15,         platform: osx-aarch_64,   platformReplaced: osx-aarch64,    jdkOs: OsxArm }
+          - { runner: windows-latest,   platform: windows-x86_64, platformReplaced: windows-x86_64, jdkOs: Windows }
+    runs-on: ${{ matrix.job.runner }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -65,7 +65,7 @@ jobs:
 
       - name: Jdks
         shell: bash
-        run: ./gradlew :jreleaser:copyJdksFromCache :jreleaser:setupJdks
+        run: ./gradlew :jreleaser:downloadJdkZulu25${{ matrix.job.jdkOs }} :jreleaser:verifyJdkZulu25${{ matrix.job.jdkOs }} :jreleaser:unpackJdkZulu25${{ matrix.job.jdkOs }}
 
       - name: Add msbuild to PATH
         if: runner.os == 'Windows'
