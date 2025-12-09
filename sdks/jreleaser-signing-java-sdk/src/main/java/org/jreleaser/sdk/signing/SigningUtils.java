@@ -78,8 +78,8 @@ public final class SigningUtils {
     }
 
     public static Optional<String> getPublicKeyID(JReleaserContext context) throws SigningException {
-        if (context.getModel().getSigning().getMode() != org.jreleaser.model.Signing.Mode.COMMAND &&
-            context.getModel().getSigning().getMode() != org.jreleaser.model.Signing.Mode.COSIGN) {
+        if (context.getModel().getSigning().getMode() == org.jreleaser.model.Signing.Mode.MEMORY ||
+            context.getModel().getSigning().getMode() == org.jreleaser.model.Signing.Mode.FILE) {
             Keyring keyring = context.createKeyring();
             return Optional.of(Long.toHexString(keyring.readPublicKey().getKeyID()));
         }
@@ -88,8 +88,8 @@ public final class SigningUtils {
     }
 
     public static Optional<String> getFingerprint(JReleaserContext context) throws SigningException {
-        if (context.getModel().getSigning().getMode() != org.jreleaser.model.Signing.Mode.COMMAND &&
-            context.getModel().getSigning().getMode() != org.jreleaser.model.Signing.Mode.COSIGN) {
+        if (context.getModel().getSigning().getMode() == org.jreleaser.model.Signing.Mode.MEMORY ||
+            context.getModel().getSigning().getMode() == org.jreleaser.model.Signing.Mode.FILE) {
             Keyring keyring = context.createKeyring();
             return Optional.of(Hex.toHexString(keyring.readPublicKey().getFingerprint()));
         }
@@ -98,8 +98,8 @@ public final class SigningUtils {
     }
 
     public static Optional<Instant> getExpirationDateOfPublicKey(JReleaserContext context) throws SigningException {
-        if (context.getModel().getSigning().getMode() != org.jreleaser.model.Signing.Mode.COMMAND &&
-            context.getModel().getSigning().getMode() != org.jreleaser.model.Signing.Mode.COSIGN) {
+        if (context.getModel().getSigning().getMode() == org.jreleaser.model.Signing.Mode.MEMORY ||
+            context.getModel().getSigning().getMode() == org.jreleaser.model.Signing.Mode.FILE) {
             PGPPublicKey publicKey = context.createKeyring().readPublicKey();
             if (publicKey.getValidSeconds() <= 0) {
                 return Optional.of(Instant.EPOCH);
@@ -113,7 +113,8 @@ public final class SigningUtils {
     public static void sign(JReleaserContext context, Path file) throws SigningException {
         if (context.getModel().getSigning().getMode() == org.jreleaser.model.Signing.Mode.COMMAND) {
             cmdSign(context, file);
-        } else if (context.getModel().getSigning().getMode() != org.jreleaser.model.Signing.Mode.COSIGN) {
+        } else if (context.getModel().getSigning().getMode() == org.jreleaser.model.Signing.Mode.MEMORY ||
+            context.getModel().getSigning().getMode() == org.jreleaser.model.Signing.Mode.FILE) {
             bcSign(context, file);
         }
     }
@@ -154,7 +155,9 @@ public final class SigningUtils {
         Signing signing = context.getModel().getSigning();
 
         String extension = ".sig";
-        if (signing.getMode() != org.jreleaser.model.Signing.Mode.COSIGN) {
+        if (signing.getMode() == org.jreleaser.model.Signing.Mode.MINISIGN) {
+            extension = ".minisig";
+        } else if (signing.getMode() != org.jreleaser.model.Signing.Mode.COSIGN) {
             extension = signing.isArmored() ? ".asc" : ".sig";
         }
 

@@ -146,6 +146,10 @@ public abstract class AbstractArtifactUploader<A extends org.jreleaser.model.api
                 Path publicKeyFile = signing.getCosign().getResolvedPublicKeyFilePath(context);
                 signatures.add(Artifact.of(publicKeyFile));
             }
+            if (!signatures.isEmpty() && signing.getMode() == org.jreleaser.model.Signing.Mode.MINISIGN) {
+                Path publicKeyFile = signing.getMinisign().getResolvedPublicKeyFilePath(context);
+                signatures.add(Artifact.of(publicKeyFile));
+            }
 
             artifacts.addAll(signatures);
         }

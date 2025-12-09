@@ -57,9 +57,13 @@ interface Signing extends Activatable {
 
     Cosign getCosign()
 
+    Minisign getMinisign()
+
     void command(Action<? super Command> action)
 
     void cosign(Action<? super Cosign> action)
+
+    void minisign(Action<? super Minisign> action)
 
     interface Command {
         Property<String> getExecutable()
@@ -85,6 +89,18 @@ interface Signing extends Activatable {
         RegularFileProperty getPublicKeyFile()
 
         void setPrivateKeyFile(String privateKeyFile)
+
+        void setPublicKeyFile(String publicKeyFile)
+    }
+
+    interface Minisign {
+        Property<String> getVersion()
+
+        RegularFileProperty getSecretKeyFile()
+
+        RegularFileProperty getPublicKeyFile()
+
+        void setSecretKeyFile(String secretKeyFile)
 
         void setPublicKeyFile(String publicKeyFile)
     }

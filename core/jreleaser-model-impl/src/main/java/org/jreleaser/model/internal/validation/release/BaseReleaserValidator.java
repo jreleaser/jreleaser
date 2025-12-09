@@ -287,7 +287,8 @@ public final class BaseReleaserValidator {
         }
 
         if (mode.validateConfig()) {
-            if (service.isSign() && model.getSigning().getMode() == org.jreleaser.model.Signing.Mode.COSIGN) {
+            if (service.isSign() && model.getSigning().getMode() == org.jreleaser.model.Signing.Mode.COSIGN ||
+                model.getSigning().getMode() == org.jreleaser.model.Signing.Mode.MINISIGN) {
                 service.setSign(false);
                 errors.warning(RB.$("validation_git_signing_cosign", service.getServiceName()));
                 return;

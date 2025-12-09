@@ -28,6 +28,7 @@ public final class DefaultVersions {
 
     private final ResourceBundle bundle = ResourceBundle.getBundle("org.jreleaser.default_versions");
     private final String cosignVersion = bundle.getString("cosign.version");
+    private final String minisignVersion = bundle.getString("minisign.version");
     private final String jibVersion = bundle.getString("jib.version");
     private final String mvnVersion = bundle.getString("mvn.version");
     private final String pomcheckerVersion = bundle.getString("pomchecker.version");
@@ -37,6 +38,10 @@ public final class DefaultVersions {
 
     public String getCosignVersion() {
         return cosignVersion;
+    }
+
+    public String getMinisignVersion() {
+        return minisignVersion;
     }
 
     public String getJibVersion() {

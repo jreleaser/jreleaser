@@ -39,6 +39,7 @@ import org.jreleaser.model.spi.catalog.sbom.SbomCatalogerProcessorHelper;
 import org.jreleaser.sdk.signing.GpgCommandSigner;
 import org.jreleaser.sdk.signing.SigningUtils;
 import org.jreleaser.sdk.tool.Cosign;
+import org.jreleaser.sdk.tool.Minisign;
 import org.jreleaser.sdk.tool.ToolException;
 import org.jreleaser.util.Algorithm;
 
@@ -82,6 +83,8 @@ public final class Signer {
                 cmdSign(context);
             } else if (context.getModel().getSigning().getMode() == org.jreleaser.model.Signing.Mode.COSIGN) {
                 cosignSign(context);
+            } else if (context.getModel().getSigning().getMode() == org.jreleaser.model.Signing.Mode.MINISIGN) {
+                minisignSign(context);
             } else {
                 bcSign(context);
             }
@@ -168,6 +171,42 @@ public final class Signer {
         verify(context, files, cosign, publicKeyFile);
     }
 
+    private static void minisignSign(JReleaserContext context) throws SigningException {
+        Signing signing = context.getModel().getSigning();
+
+        Minisign minisign = new Minisign(context.asImmutable(), signing.getMinisign().getVersion());
+        try {
+            if (!minisign.setup()) {
+                context.getLogger().warn(RB.$("tool_unavailable", "minisign"));
+                return;
+            }
+        } catch (ToolException e) {
+            throw new SigningException(e.getMessage(), e);
+        }
+
+        Path secretKeyFile = signing.getMinisign().getResolvedSecretKeyFilePath(context);
+        Path publicKeyFile = signing.getMinisign().getResolvedPublicKeyFilePath(context);
+        String password = signing.getPassphrase();
+
+        List<SigningUtils.FilePair> files = collectArtifacts(context, pair -> isValid(context, minisign, publicKeyFile, pair));
+        if (files.isEmpty()) {
+            context.getLogger().info(RB.$("signing.no.match"));
+            return;
+        }
+
+        files = files.stream()
+            .filter(SigningUtils.FilePair::isInvalid)
+            .collect(toList());
+
+        if (files.isEmpty()) {
+            context.getLogger().info(RB.$("signing.up.to.date"));
+            return;
+        }
+
+        sign(context, files, minisign, secretKeyFile, password);
+        verify(context, files, minisign, publicKeyFile);
+    }
+
     private static void bcSign(JReleaserContext context) throws SigningException {
         Keyring keyring = context.createKeyring();
 
@@ -191,7 +230,6 @@ public final class Signer {
             verify(context, keyring, files);
         }
     }
-
 
     private static void verify(JReleaserContext context, Keyring keyring, List<SigningUtils.FilePair> files) throws SigningException {
         if (null == keyring) {
@@ -307,6 +345,45 @@ public final class Signer {
         }
     }
 
+    private static void sign(JReleaserContext context, List<SigningUtils.FilePair> files,
+                             Minisign minisign, Path privateKeyFile, String password) throws SigningException {
+        Path signaturesDirectory = context.getSignaturesDirectory();
+
+        try {
+            Files.createDirectories(signaturesDirectory);
+        } catch (IOException e) {
+            throw new SigningException(RB.$("ERROR_signing_create_signature_dir"), e);
+        }
+
+        context.getLogger().debug(RB.$("signing.signing.files"),
+            files.size(), context.relativizeToBasedir(signaturesDirectory));
+
+        for (SigningUtils.FilePair pair : files) {
+            minisign.sign(privateKeyFile, password, pair.getInputFile(), signaturesDirectory);
+        }
+    }
+
+    private static void verify(JReleaserContext context, List<SigningUtils.FilePair> files,
+                               Minisign minisign, Path publicKeyFile) throws SigningException {
+        context.getLogger().debug(RB.$("signing.verify.signatures"), files.size());
+
+        context.getLogger().setPrefix("verify");
+        try {
+            for (SigningUtils.FilePair pair : files) {
+                minisign.verify(publicKeyFile, pair.getSignatureFile(), pair.getInputFile());
+                pair.setValid(true);
+
+                if (!pair.isValid()) {
+                    throw new SigningException(RB.$("ERROR_signing_verify_file",
+                        context.relativizeToBasedir(pair.getInputFile()),
+                        context.relativizeToBasedir(pair.getSignatureFile())));
+                }
+            }
+        } finally {
+            context.getLogger().restorePrefix();
+        }
+    }
+
     private static void sign(JReleaserContext context, List<SigningUtils.FilePair> files) throws SigningException {
         Path signaturesDirectory = context.getSignaturesDirectory();
 
@@ -356,7 +433,9 @@ public final class Signer {
         Path signaturesDirectory = context.getSignaturesDirectory();
 
         String extension = ".sig";
-        if (signing.getMode() != org.jreleaser.model.Signing.Mode.COSIGN) {
+        if (signing.getMode() == org.jreleaser.model.Signing.Mode.MINISIGN) {
+            extension = ".minisig";
+        } else if (signing.getMode() != org.jreleaser.model.Signing.Mode.COSIGN) {
             extension = signing.isArmored() ? ".asc" : ".sig";
         }
 
@@ -433,6 +512,28 @@ public final class Signer {
 
         try {
             cosign.verifyBlob(publicKeyFile, pair.getSignatureFile(), pair.getInputFile());
+            return true;
+        } catch (SigningException e) {
+            return false;
+        }
+    }
+
+    private static boolean isValid(JReleaserContext context, Minisign minisign, Path publicKeyFile, SigningUtils.FilePair pair) {
+        if (Files.notExists(pair.getSignatureFile())) {
+            context.getLogger().debug(RB.$("signing.signature.not.exist"),
+                context.relativizeToBasedir(pair.getSignatureFile()));
+            return false;
+        }
+
+        if (pair.getInputFile().toFile().lastModified() > pair.getSignatureFile().toFile().lastModified()) {
+            context.getLogger().debug(RB.$("signing.file.newer"),
+                context.relativizeToBasedir(pair.getInputFile()),
+                context.relativizeToBasedir(pair.getSignatureFile()));
+            return false;
+        }
+
+        try {
+            minisign.verify(publicKeyFile, pair.getSignatureFile(), pair.getInputFile());
             return true;
         } catch (SigningException e) {
             return false;

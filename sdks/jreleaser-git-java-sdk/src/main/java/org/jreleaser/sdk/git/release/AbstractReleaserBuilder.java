@@ -178,6 +178,10 @@ public abstract class AbstractReleaserBuilder<R extends Releaser<?>> implements 
                 Path publicKeyFile = signing.getCosign().getResolvedPublicKeyFilePath(context);
                 assets.add(Asset.signature(Artifact.of(publicKeyFile)));
             }
+            if (signaturesAdded && signing.getMode() == org.jreleaser.model.Signing.Mode.MINISIGN) {
+                Path publicKeyFile = signing.getMinisign().getResolvedPublicKeyFilePath(context);
+                assets.add(Asset.signature(Artifact.of(publicKeyFile)));
+            }
         }
 
         if (service.isCatalogs()) {

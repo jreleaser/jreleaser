@@ -31,6 +31,9 @@ public interface Signing extends Domain, Activatable {
     String COSIGN_PASSWORD = "COSIGN_PASSWORD";
     String COSIGN_PRIVATE_KEY = "COSIGN_PRIVATE_KEY";
     String COSIGN_PUBLIC_KEY = "COSIGN_PUBLIC_KEY";
+    String MINISIGN_PASSWORD = "MINISIGN_PASSWORD";
+    String MINISIGN_SECRET_KEY = "MINISIGN_SECRET_KEY";
+    String MINISIGN_PUBLIC_KEY = "MINISIGN_PUBLIC_KEY";
     String GPG_PASSPHRASE = "GPG_PASSPHRASE";
     String GPG_PUBLIC_KEY = "GPG_PUBLIC_KEY";
     String GPG_SECRET_KEY = "GPG_SECRET_KEY";
@@ -63,6 +66,8 @@ public interface Signing extends Domain, Activatable {
 
     Cosign getCosign();
 
+    Minisign getMinisign();
+
     interface Command extends Domain {
         String getExecutable();
 
@@ -81,6 +86,14 @@ public interface Signing extends Domain, Activatable {
         String getVersion();
 
         String getPrivateKeyFile();
+
+        String getPublicKeyFile();
+    }
+
+    interface Minisign extends Domain {
+        String getVersion();
+
+        String getSecretKeyFile();
 
         String getPublicKeyFile();
     }

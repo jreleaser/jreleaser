@@ -465,7 +465,8 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
 
     private void verifyKeyIsValid() {
         if (context.getModel().getSigning().getMode() == Signing.Mode.COMMAND ||
-            context.getModel().getSigning().getMode() == Signing.Mode.COSIGN) {
+            context.getModel().getSigning().getMode() == Signing.Mode.COSIGN ||
+            context.getModel().getSigning().getMode() == Signing.Mode.MINISIGN) {
             return;
         }
 

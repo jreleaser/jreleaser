@@ -48,6 +48,7 @@ processResources {
     filesMatching(['**/*.properties']) {
         expand(
             cosignVersion: cosignVersion,
+            minisignVersion: minisignVersion,
             jibVersion: jibVersion,
             mvnVersion: mavenVersion,
             pomcheckerVersion: pomcheckerVersion,

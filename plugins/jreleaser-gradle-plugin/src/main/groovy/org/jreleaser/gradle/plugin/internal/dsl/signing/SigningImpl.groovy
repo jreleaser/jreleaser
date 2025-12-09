@@ -53,6 +53,7 @@ class SigningImpl implements Signing {
     final Property<Boolean> catalogs
     final Command command
     final Cosign cosign
+    final Minisign minisign
 
     @Inject
     SigningImpl(ObjectFactory objects) {
@@ -69,6 +70,7 @@ class SigningImpl implements Signing {
         catalogs = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         command = objects.newInstance(CommandImpl, objects)
         cosign = objects.newInstance(CosignImpl, objects)
+        minisign = objects.newInstance(MinisignImpl, objects)
     }
 
     @Internal
@@ -84,7 +86,8 @@ class SigningImpl implements Signing {
             catalogs.present ||
             secretKey.present ||
             ((CommandImpl) command).isSet() ||
-            ((CosignImpl) cosign).isSet()
+            ((CosignImpl) cosign).isSet() ||
+            ((MinisignImpl) minisign).isSet()
     }
 
     @Override
@@ -111,6 +114,11 @@ class SigningImpl implements Signing {
         action.execute(cosign)
     }
 
+    @Override
+    void minisign(Action<? super Minisign> action) {
+        action.execute(minisign)
+    }
+
     org.jreleaser.model.internal.signing.Signing toModel() {
         org.jreleaser.model.internal.signing.Signing signing = new org.jreleaser.model.internal.signing.Signing()
         if (active.present) signing.active = active.get()
@@ -126,6 +134,7 @@ class SigningImpl implements Signing {
         if (catalogs.present) signing.catalogs = catalogs.get()
         signing.command = ((CommandImpl) command).toModel()
         signing.cosign = ((CosignImpl) cosign).toModel()
+        signing.minisign = ((MinisignImpl) minisign).toModel()
         signing
     }
 
@@ -211,6 +220,44 @@ class SigningImpl implements Signing {
             if (privateKeyFile.present) cosign.privateKeyFile = privateKeyFile.get().asFile.toPath().toString()
             if (publicKeyFile.present) cosign.publicKeyFile = publicKeyFile.get().asFile.toPath().toString()
             cosign
+        }
+    }
+
+    static class MinisignImpl implements Minisign {
+        final Property<String> version
+        final RegularFileProperty secretKeyFile
+        final RegularFileProperty publicKeyFile
+
+        @Inject
+        MinisignImpl(ObjectFactory objects) {
+            version = objects.property(String).convention(Providers.<String> notDefined())
+            secretKeyFile = objects.fileProperty().convention(Providers.notDefined())
+            publicKeyFile = objects.fileProperty().convention(Providers.notDefined())
+        }
+
+        @Override
+        void setSecretKeyFile(String secretKeyFile) {
+            this.secretKeyFile.set(new File(secretKeyFile))
+        }
+
+        @Override
+        void setPublicKeyFile(String publicKeyFile) {
+            this.publicKeyFile.set(new File(publicKeyFile))
+        }
+
+        @Internal
+        boolean isSet() {
+            return version.present ||
+                secretKeyFile.present ||
+                publicKeyFile.present
+        }
+
+        org.jreleaser.model.internal.signing.Signing.Minisign toModel() {
+            org.jreleaser.model.internal.signing.Signing.Minisign minisign = new org.jreleaser.model.internal.signing.Signing.Minisign()
+            if (version.present) minisign.version = version.get()
+            if (secretKeyFile.present) minisign.secretKeyFile = secretKeyFile.get().asFile.toPath().toString()
+            if (publicKeyFile.present) minisign.publicKeyFile = publicKeyFile.get().asFile.toPath().toString()
+            minisign
         }
     }
 }

@@ -50,7 +50,7 @@ public class AbstractTool {
         this.name = requireNonBlank(name, "'name' must not be blank");
         this.context = context;
         this.verifyErrorOutput = verifyErrorOutput;
-        this.tool = new DownloadableTool(context.getLogger(), name, version, PlatformUtils.getCurrentFull(), true);
+        this.tool = new DownloadableTool(context.getLogger(), name, version, PlatformUtils.getCurrentFull(), verifyErrorOutput);
     }
 
     public String getName() {

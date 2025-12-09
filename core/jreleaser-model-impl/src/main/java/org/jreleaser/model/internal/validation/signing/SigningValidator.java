@@ -37,6 +37,9 @@ import static org.jreleaser.model.api.signing.Signing.GPG_PASSPHRASE;
 import static org.jreleaser.model.api.signing.Signing.GPG_PUBLIC_KEY;
 import static org.jreleaser.model.api.signing.Signing.GPG_PUBLIC_KEYRING;
 import static org.jreleaser.model.api.signing.Signing.GPG_SECRET_KEY;
+import static org.jreleaser.model.api.signing.Signing.MINISIGN_PASSWORD;
+import static org.jreleaser.model.api.signing.Signing.MINISIGN_PUBLIC_KEY;
+import static org.jreleaser.model.api.signing.Signing.MINISIGN_SECRET_KEY;
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.util.Env.envKey;
@@ -71,23 +74,28 @@ public final class SigningValidator {
         }
 
         boolean cosign = signing.resolveMode() == org.jreleaser.model.Signing.Mode.COSIGN;
+        boolean minisign = signing.resolveMode() == org.jreleaser.model.Signing.Mode.MINISIGN;
+        String passphraseKey = cosign ? COSIGN_PASSWORD : minisign ? MINISIGN_PASSWORD : GPG_PASSPHRASE;
 
         String passphrase = checkProperty(context,
-            cosign ? COSIGN_PASSWORD : GPG_PASSPHRASE,
+            passphraseKey,
             "signing.passphrase",
             signing.getPassphrase(),
             new Errors(),
             false);
 
         if (isBlank(passphrase)) {
-            String key = cosign ? COSIGN_PASSWORD : GPG_PASSPHRASE;
             Environment environment = context.getModel().getEnvironment();
             String dsl = context.getConfigurer().toString();
             String configFilePath = environment.getPropertiesFile().toAbsolutePath().normalize().toString();
-            String value = environment.resolve(key);
-            String envKey = envKey(key);
-            String sysKey = sysKey(key);
-            context.getLogger().warn(RB.$("signing.passphrase.blank", dsl, sysKey, envKey, configFilePath, key));
+            String envKey = envKey(passphraseKey);
+            String sysKey = sysKey(passphraseKey);
+            if (minisign) {
+                context.getLogger().error(RB.$("signing.passphrase.blank", dsl, sysKey, envKey, configFilePath, passphraseKey));
+                context.getModel().getSigning().disable();
+            } else {
+                context.getLogger().warn(RB.$("signing.passphrase.blank", dsl, sysKey, envKey, configFilePath, passphraseKey));
+            }
             passphrase = "";
         }
 
@@ -141,6 +149,24 @@ public final class SigningValidator {
                     "signing.cosign.publicKeyFile",
                     signing.getCosign().getPublicKeyFile(),
                     ""));
+        } else if (signing.resolveMode() == org.jreleaser.model.Signing.Mode.MINISIGN) {
+            if (isBlank(signing.getMinisign().getVersion())) {
+                signing.getMinisign().setVersion(DefaultVersions.getInstance().getMinisignVersion());
+            }
+
+            signing.getMinisign().setSecretKeyFile(
+                checkProperty(context,
+                    MINISIGN_SECRET_KEY,
+                    "signing.minisign.secretKeyFile",
+                    signing.getMinisign().getSecretKeyFile(),
+                    ""));
+
+            signing.getMinisign().setPublicKeyFile(
+                checkProperty(context,
+                    MINISIGN_PUBLIC_KEY,
+                    "signing.minisign.publicKeyFile",
+                    signing.getMinisign().getPublicKeyFile(),
+                    ""));
         } else {
             if (signing.isVerify()) {
                 signing.setPublicKey(
@@ -186,7 +212,8 @@ public final class SigningValidator {
                         signing.getCommand().getPublicKeyring(),
                         ""));
             }
-        } else if (signing.resolveMode() != org.jreleaser.model.Signing.Mode.COSIGN) {
+        } else if (signing.resolveMode() == org.jreleaser.model.Signing.Mode.MEMORY ||
+            signing.resolveMode() == org.jreleaser.model.Signing.Mode.FILE) {
             if (signing.isVerify()) {
                 signing.setPublicKey(
                     checkProperty(context,

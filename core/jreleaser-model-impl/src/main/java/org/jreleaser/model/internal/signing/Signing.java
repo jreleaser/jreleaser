@@ -44,10 +44,11 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public final class Signing extends AbstractActivatable<Signing> implements Domain {
-    private static final long serialVersionUID = -7440879442726925285L;
+    private static final long serialVersionUID = -6665149288495285643L;
 
     private final Command command = new Command();
     private final Cosign cosign = new Cosign();
+    private final Minisign minisign = new Minisign();
 
     private Boolean armored;
     private Boolean verify;
@@ -62,7 +63,7 @@ public final class Signing extends AbstractActivatable<Signing> implements Domai
 
     @JsonIgnore
     private final org.jreleaser.model.api.signing.Signing immutable = new org.jreleaser.model.api.signing.Signing() {
-        private static final long serialVersionUID = -3565614952776622685L;
+        private static final long serialVersionUID = 8742477251381742415L;
 
         @Override
         public boolean isArmored() {
@@ -125,6 +126,11 @@ public final class Signing extends AbstractActivatable<Signing> implements Domai
         }
 
         @Override
+        public Minisign getMinisign() {
+            return minisign.asImmutable();
+        }
+
+        @Override
         public Active getActive() {
             return Signing.this.getActive();
         }
@@ -159,6 +165,7 @@ public final class Signing extends AbstractActivatable<Signing> implements Domai
         this.catalogs = merge(this.catalogs, source.catalogs);
         setCommand(source.command);
         setCosign(source.cosign);
+        setMinisign(source.minisign);
     }
 
     public org.jreleaser.model.Signing.Mode resolveMode() {
@@ -292,6 +299,14 @@ public final class Signing extends AbstractActivatable<Signing> implements Domai
         this.cosign.merge(cosign);
     }
 
+    public Minisign getMinisign() {
+        return minisign;
+    }
+
+    public void setMinisign(Minisign minisign) {
+        this.minisign.merge(minisign);
+    }
+
     @Override
     public Map<String, Object> asMap(boolean full) {
         if (!full && !isEnabled()) return Collections.emptyMap();
@@ -312,6 +327,8 @@ public final class Signing extends AbstractActivatable<Signing> implements Domai
             props.put("command", command.asMap(full));
         } else if (mode == org.jreleaser.model.Signing.Mode.COSIGN) {
             props.put("cosign", cosign.asMap(full));
+        } else if (mode == org.jreleaser.model.Signing.Mode.MINISIGN) {
+            props.put("minisign", minisign.asMap(full));
         } else {
             props.put("publicKey", isNotBlank(publicKey) ? HIDE : UNSET);
             props.put("secretKey", isNotBlank(secretKey) ? HIDE : UNSET);
@@ -321,12 +338,13 @@ public final class Signing extends AbstractActivatable<Signing> implements Domai
     }
 
     public String getSignatureExtension() {
-        String extension = ".sig";
-        if (mode != org.jreleaser.model.Signing.Mode.COSIGN) {
-            extension = isArmored() ? ".asc" : ".sig";
+        if (mode == org.jreleaser.model.Signing.Mode.MINISIGN) {
+            return ".minisig";
+        } else if (mode != org.jreleaser.model.Signing.Mode.COSIGN) {
+            return isArmored() ? ".asc" : ".sig";
         }
 
-        return extension;
+        return ".sig";
     }
 
     public static class Command extends AbstractModelObject<Command> implements Domain {
@@ -567,6 +585,109 @@ public final class Signing extends AbstractActivatable<Signing> implements Domai
             }
 
             return Paths.get(home);
+        }
+    }
+
+    public static class Minisign extends AbstractModelObject<Minisign> implements Domain {
+        private static final long serialVersionUID = -492077969254793097L;
+
+        private String version;
+        private String secretKeyFile;
+        private String publicKeyFile;
+
+        @JsonIgnore
+        private final org.jreleaser.model.api.signing.Signing.Minisign immutable = new org.jreleaser.model.api.signing.Signing.Minisign() {
+            private static final long serialVersionUID = -3730418264257749560L;
+
+            @Override
+            public String getVersion() {
+                return version;
+            }
+
+            @Override
+            public String getSecretKeyFile() {
+                return secretKeyFile;
+            }
+
+            @Override
+            public String getPublicKeyFile() {
+                return publicKeyFile;
+            }
+
+            @Override
+            public Map<String, Object> asMap(boolean full) {
+                return Minisign.this.asMap(full);
+            }
+        };
+
+        public org.jreleaser.model.api.signing.Signing.Minisign asImmutable() {
+            return immutable;
+        }
+
+        @Override
+        public void merge(Minisign source) {
+            this.version = merge(this.version, source.version);
+            this.secretKeyFile = merge(this.secretKeyFile, source.secretKeyFile);
+            this.publicKeyFile = merge(this.publicKeyFile, source.publicKeyFile);
+        }
+
+        public String getVersion() {
+            return version;
+        }
+
+        public void setVersion(String version) {
+            this.version = version;
+        }
+
+        public String getSecretKeyFile() {
+            return secretKeyFile;
+        }
+
+        public void setSecretKeyFile(String secretKeyFile) {
+            this.secretKeyFile = secretKeyFile;
+        }
+
+        public String getPublicKeyFile() {
+            return publicKeyFile;
+        }
+
+        public void setPublicKeyFile(String publicKeyFile) {
+            this.publicKeyFile = publicKeyFile;
+        }
+
+        @Override
+        public Map<String, Object> asMap(boolean full) {
+            Map<String, Object> props = new LinkedHashMap<>();
+
+            props.put("version", version);
+            props.put("secretKeyFile", null != secretKeyFile ? HIDE : UNSET);
+            props.put("publicKeyFile", publicKeyFile);
+
+            return props;
+        }
+
+        public Path getResolvedSecretKeyFilePath(JReleaserContext context) {
+            String secretKey = getSecretKeyFile();
+
+            if (isNotBlank(secretKey)) {
+                return context.getBasedir().resolve(secretKey);
+            }
+
+            return resolveMinisigHomeDir().resolve("minisign.key");
+        }
+
+        public Path getResolvedPublicKeyFilePath(JReleaserContext context) {
+            String publicKey = getPublicKeyFile();
+
+            if (isNotBlank(publicKey)) {
+                return context.getBasedir().resolve(publicKey);
+            }
+
+            return context.getBasedir().resolve("minisign.pub");
+        }
+
+        private Path resolveMinisigHomeDir() {
+            return Paths.get(System.getProperty("user.home") + File.separator + ".minisign");
         }
     }
 }
