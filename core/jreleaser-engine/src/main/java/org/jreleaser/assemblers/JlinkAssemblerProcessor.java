@@ -389,6 +389,7 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
         Command cmd = new Command(jdepsExecutable.toAbsolutePath().toString());
         String multiRelease = assembler.getJdeps().getMultiRelease();
         if (isNotBlank(multiRelease)) {
+            multiRelease = resolveTemplate(context.getLogger(), multiRelease, props);
             cmd.arg("--multi-release")
                 .arg(multiRelease);
         }
