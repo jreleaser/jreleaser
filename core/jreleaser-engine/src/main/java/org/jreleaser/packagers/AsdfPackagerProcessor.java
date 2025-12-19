@@ -62,8 +62,8 @@ public class AsdfPackagerProcessor extends AbstractRepositoryPackagerProcessor<A
 
     @Override
     protected void fillPackagerProperties(TemplateContext props, Distribution distribution) {
-        props.set(KEY_DISTRIBUTION_JAVA_MAIN_CLASS, distribution.getJava().getMainClass());
-        props.set(KEY_DISTRIBUTION_JAVA_MAIN_MODULE, distribution.getJava().getMainModule());
+        props.setOrEmpty(KEY_DISTRIBUTION_JAVA_MAIN_CLASS, distribution.getJava().getMainClass());
+        props.setOrEmpty(KEY_DISTRIBUTION_JAVA_MAIN_MODULE, distribution.getJava().getMainModule());
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
 
         String repoUrl = releaser.getResolvedRepoUrl(context, packager.getRepository().getOwner(), packager.getRepository().getResolvedName());

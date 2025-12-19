@@ -299,7 +299,7 @@ public final class Distribution extends Packagers<Distribution> implements Domai
         props.setAll(java.resolvedExtraProperties());
         props.set(KEY_DISTRIBUTION_JAVA_GROUP_ID, java.getGroupId(), "");
         props.set(KEY_DISTRIBUTION_JAVA_ARTIFACT_ID, java.getArtifactId(), "");
-        props.set(KEY_DISTRIBUTION_JAVA_MAIN_CLASS, java.getMainClass(), "");
+        props.setOrEmpty(KEY_DISTRIBUTION_JAVA_MAIN_CLASS, java.getMainClass());
         if (isNotBlank(java.getVersion())) {
             props.set(KEY_DISTRIBUTION_JAVA_VERSION, java.getVersion());
             SemanticVersion jv = SemanticVersion.of(java.getVersion());

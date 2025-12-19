@@ -99,8 +99,8 @@ public class WingetPackagerProcessor extends AbstractRepositoryPackagerProcessor
 
     @Override
     protected void fillPackagerProperties(TemplateContext props, Distribution distribution) {
-        props.set(KEY_DISTRIBUTION_JAVA_MAIN_CLASS, distribution.getJava().getMainClass());
-        props.set(KEY_DISTRIBUTION_JAVA_MAIN_MODULE, distribution.getJava().getMainModule());
+        props.setOrEmpty(KEY_DISTRIBUTION_JAVA_MAIN_CLASS, distribution.getJava().getMainClass());
+        props.setOrEmpty(KEY_DISTRIBUTION_JAVA_MAIN_MODULE, distribution.getJava().getMainModule());
         String desc = context.getModel().getProject().getLongDescription();
         desc = Arrays.stream(desc.split(System.lineSeparator()))
             .map(line -> "  " + line)

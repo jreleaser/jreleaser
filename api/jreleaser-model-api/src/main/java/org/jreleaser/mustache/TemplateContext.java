@@ -87,6 +87,12 @@ public final class TemplateContext {
         return previousValue;
     }
 
+    public String setOrEmpty(String key, String value) {
+        String previousValue = (String) properties.get(key);
+        properties.put(key, null == value ? "" : value);
+        return previousValue;
+    }
+
     public <V> V set(String key, V value, V defaultValue) {
         V previousValue = (V) properties.get(key);
         if (null != value && null != defaultValue) properties.put(key, value);

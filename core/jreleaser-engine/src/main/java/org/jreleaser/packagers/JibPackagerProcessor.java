@@ -286,8 +286,8 @@ public class JibPackagerProcessor extends AbstractRepositoryPackagerProcessor<Ji
 
     @Override
     protected void fillPackagerProperties(TemplateContext props, Distribution distribution) {
-        props.set(KEY_DISTRIBUTION_JAVA_MAIN_CLASS, distribution.getJava().getMainClass());
-        props.set(KEY_DISTRIBUTION_JAVA_MAIN_MODULE, distribution.getJava().getMainModule());
+        props.setOrEmpty(KEY_DISTRIBUTION_JAVA_MAIN_CLASS, distribution.getJava().getMainClass());
+        props.setOrEmpty(KEY_DISTRIBUTION_JAVA_MAIN_MODULE, distribution.getJava().getMainModule());
         fillJibProperties(props, getPackager());
     }
 

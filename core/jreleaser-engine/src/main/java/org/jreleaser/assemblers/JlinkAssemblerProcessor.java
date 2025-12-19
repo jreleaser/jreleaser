@@ -91,8 +91,8 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
         } else {
             props.set(KEY_DISTRIBUTION_JAVA_MAIN_JAR, "");
         }
-        props.set(KEY_DISTRIBUTION_JAVA_MAIN_CLASS, assembler.getJava().getMainClass());
-        props.set(KEY_DISTRIBUTION_JAVA_MAIN_MODULE, assembler.getJava().getMainModule());
+        props.setOrEmpty(KEY_DISTRIBUTION_JAVA_MAIN_CLASS, assembler.getJava().getMainClass());
+        props.setOrEmpty(KEY_DISTRIBUTION_JAVA_MAIN_MODULE, assembler.getJava().getMainModule());
         JvmOptions jvmOptions = assembler.getJava().getJvmOptions();
         props.set(KEY_DISTRIBUTION_EXECUTABLE, assembler.getExecutable());
         props.set(KEY_DISTRIBUTION_JAVA_JVM_OPTIONS_UNIVERSAL,

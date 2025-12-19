@@ -164,8 +164,8 @@ BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> 
 
     @Override
     protected void fillPackagerProperties(TemplateContext props, Distribution distribution) {
-        props.set(KEY_DISTRIBUTION_JAVA_MAIN_CLASS, distribution.getJava().getMainClass());
-        props.set(KEY_DISTRIBUTION_JAVA_MAIN_MODULE, distribution.getJava().getMainModule());
+        props.setOrEmpty(KEY_DISTRIBUTION_JAVA_MAIN_CLASS, distribution.getJava().getMainClass());
+        props.setOrEmpty(KEY_DISTRIBUTION_JAVA_MAIN_MODULE, distribution.getJava().getMainModule());
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
 
         props.set(KEY_BREW_FORMULA_NAME, packager.getResolvedFormulaName(context, props));
