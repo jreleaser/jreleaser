@@ -50,6 +50,9 @@ jobs:
         env:
           JRELEASER_OCI_COMPARTMENTID: ${{ secrets.oci-compartment-id }}
 
+      - name: Clear space
+        run: rm -rf plugins/jreleaser/build/jdks/graal*
+
       - name: Java Archive
         uses: jreleaser/release-action@v2
         with:
