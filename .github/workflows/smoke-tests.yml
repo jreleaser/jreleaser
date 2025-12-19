@@ -167,7 +167,7 @@ jobs:
 
       - name: JReleaser output
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           retention-days: 7
           name: 'jreleaser-cli-${{ runner.os }}'
@@ -179,7 +179,7 @@ jobs:
 
       - name: JaCoCo upload
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           retention-days: 1
           name: 'jacoco-cli-${{ runner.os }}'
@@ -345,7 +345,7 @@ jobs:
 
       - name: JReleaser output
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           retention-days: 7
           name: 'jreleaser-tool-${{ runner.os }}'
@@ -357,7 +357,7 @@ jobs:
 
       - name: JaCoCo upload
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           retention-days: 1
           name: 'jacoco-tool-${{ runner.os }}'
@@ -521,7 +521,7 @@ jobs:
 
       - name: JReleaser output
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           retention-days: 7
           name: 'jreleaser-ant-${{ runner.os }}'
@@ -533,7 +533,7 @@ jobs:
 
       - name: JaCoCo upload
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           retention-days: 1
           name: 'jacoco-ant-${{ runner.os }}'
@@ -696,7 +696,7 @@ jobs:
 
       - name: JReleaser output
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           retention-days: 7
           name: 'jreleaser-gradle-${{ runner.os }}'
@@ -708,7 +708,7 @@ jobs:
 
       - name: JaCoCo upload
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           retention-days: 1
           name: 'jacoco-gradle-${{ runner.os }}'
@@ -886,7 +886,7 @@ jobs:
 
       - name: JReleaser output
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           retention-days: 7
           name: 'jreleaser-maven-${{ runner.os }}'
@@ -898,7 +898,7 @@ jobs:
 
       - name: JaCoCo upload
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           retention-days: 1
           name: 'jacoco-maven-${{ runner.os }}'
@@ -956,7 +956,7 @@ jobs:
 
       - name: JaCoCo upload
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           retention-days: 1
           name: 'jacoco-${{ runner.os }}'
@@ -996,7 +996,7 @@ jobs:
         run: ./gradlew classes
         
       - name: Download JaCoCo execution data
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           pattern: jacoco-*
           merge-multiple: true
@@ -1047,7 +1047,7 @@ jobs:
         run: ./gradlew classes
 
       - name: Download JaCoCo execution data
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           pattern: jacoco-*
           merge-multiple: true
@@ -1103,7 +1103,7 @@ jobs:
         run: ./gradlew check -PspotbugsEnabled=true
 
       - name: Download JaCoCo execution data
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           pattern: jacoco-*
           merge-multiple: true

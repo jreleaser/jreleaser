@@ -70,7 +70,7 @@ jobs:
 
       - name: JReleaser output
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: jreleaser-jlink
           path: |
@@ -83,7 +83,7 @@ jobs:
           ls -l plugins/jreleaser/build/dependencies/graalvm
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           retention-days: 1
           name: artifacts
@@ -95,7 +95,7 @@ jobs:
             plugins/jreleaser-ant-tasks/build/distributions/*.zip
 
       - name: Upload java-archive
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           retention-days: 1
           name: java-archive
@@ -104,7 +104,7 @@ jobs:
             out/jreleaser/assemble/jreleaser/java-archive/*.tar
 
       - name: Upload jlink
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           retention-days: 1
           name: jlink

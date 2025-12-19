@@ -33,13 +33,13 @@ jobs:
           ref: main
 
       - name: Download artifacts
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: artifacts
           path: plugins
 
       - name: Download jlink
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: jlink
           path: out/jreleaser/assemble/jreleaser-standalone/jlink
@@ -82,7 +82,7 @@ jobs:
 
       - name: JReleaser output
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: jreleaser-jpackage-${{ runner.os }}-${{ runner.arch }}
           path: |
@@ -90,7 +90,7 @@ jobs:
             out/jreleaser/output.properties
 
       - name: Upload jpackage
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           retention-days: 1
           name: jpackage-${{ runner.os }}-${{ runner.arch }}
