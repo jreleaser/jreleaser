@@ -22,6 +22,7 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectFactory
+import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFile
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
@@ -61,6 +62,7 @@ abstract class AbstractMavenDeployer implements MavenDeployer {
     final Property<Http.Authorization> authorization
     final ListProperty<String> stagingRepositories
     final ListProperty<RegularFile> stagingRepositories2
+    final ListProperty<Directory> stagingRepositories3
     final MapProperty<String, Object> extraProperties
 
     private final NamedDomainObjectContainer<ArtifactOverrideImpl> artifactOverrides
@@ -82,6 +84,7 @@ abstract class AbstractMavenDeployer implements MavenDeployer {
         authorization = objects.property(Http.Authorization).convention(Providers.<Http.Authorization> notDefined())
         stagingRepositories = objects.listProperty(String).convention(Providers.<List<String>> notDefined())
         stagingRepositories2 = objects.listProperty(RegularFile).convention(Providers.<List<RegularFile>> notDefined())
+        stagingRepositories3 = objects.listProperty(Directory).convention(Providers.<List<Directory>> notDefined())
         extraProperties = objects.mapProperty(String, Object).convention(Providers.notDefined())
         snapshotSupported = objects.property(Boolean).convention(false)
         artifactOverrides = objects.domainObjectContainer(ArtifactOverrideImpl, new NamedDomainObjectFactory<ArtifactOverrideImpl>() {
@@ -112,6 +115,7 @@ abstract class AbstractMavenDeployer implements MavenDeployer {
             authorization.present ||
             stagingRepositories.present ||
             stagingRepositories2.present ||
+            stagingRepositories3.present ||
             !artifactOverrides.isEmpty()
     }
 
@@ -146,6 +150,14 @@ abstract class AbstractMavenDeployer implements MavenDeployer {
     }
 
     @Override
+    @CompileDynamic
+    void stagingRepository(Directory directory) {
+        if (directory) {
+            stagingRepositories3.add(directory)
+        }
+    }
+
+    @Override
     void artifactOverride(Action<? super ArtifactOverride> action) {
         action.execute(artifactOverrides.maybeCreate("artifact-${artifactOverrides.size()}".toString()))
     }
@@ -170,6 +182,7 @@ abstract class AbstractMavenDeployer implements MavenDeployer {
         Set<String> temp = new TreeSet<>()
         temp.addAll((List<String>) stagingRepositories.getOrElse([]))
         stagingRepositories2.getOrElse([]).each { RegularFile file -> temp.add(file.asFile.absolutePath) }
+        stagingRepositories3.getOrElse([]).each { Directory file -> temp.add(file.asFile.absolutePath) }
         deployer.stagingRepositories = temp.toList()
         for (ArtifactOverrideImpl artifact : artifactOverrides) {
             deployer.addArtifactOverride(artifact.toModel())

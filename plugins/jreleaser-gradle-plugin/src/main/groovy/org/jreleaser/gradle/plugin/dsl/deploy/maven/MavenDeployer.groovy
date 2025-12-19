@@ -19,6 +19,7 @@ package org.jreleaser.gradle.plugin.dsl.deploy.maven
 
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
+import org.gradle.api.file.Directory
 import org.gradle.api.file.RegularFile
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -49,6 +50,8 @@ interface MavenDeployer extends Deployer {
     void stagingRepository(String str)
 
     void stagingRepository(RegularFile regularFile)
+
+    void stagingRepository(Directory directory)
 
     Property<Boolean> getSign()
 
