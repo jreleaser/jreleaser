@@ -30,8 +30,7 @@ public class Signing {
         MEMORY,
         FILE,
         COMMAND,
-        COSIGN,
-        MINISIGN;
+        COSIGN;
 
         public String formatted() {
             return name().toLowerCase(Locale.ENGLISH);

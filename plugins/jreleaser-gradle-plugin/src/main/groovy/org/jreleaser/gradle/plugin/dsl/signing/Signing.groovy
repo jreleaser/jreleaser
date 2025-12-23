@@ -31,34 +31,51 @@ import org.jreleaser.gradle.plugin.dsl.common.Activatable
  */
 @CompileStatic
 interface Signing extends Activatable {
+    @Deprecated
     Property<Boolean> getArmored()
 
+    @Deprecated
     Property<Boolean> getVerify()
 
+    @Deprecated
     Property<String> getPassphrase()
 
+    @Deprecated
     Property<String> getPublicKey()
 
+    @Deprecated
     Property<String> getSecretKey()
 
+    @Deprecated
     Property<org.jreleaser.model.Signing.Mode> getMode()
 
+    @Deprecated
     void setMode(String mode)
 
+    @Deprecated
     Property<Boolean> getArtifacts()
 
+    @Deprecated
     Property<Boolean> getFiles()
 
+    @Deprecated
     Property<Boolean> getChecksums()
 
+    @Deprecated
     Property<Boolean> getCatalogs()
 
+    Pgp getPgp()
+
+    @Deprecated
     Command getCommand()
 
     Cosign getCosign()
 
     Minisign getMinisign()
 
+    void pgp(Action<? super Pgp> action)
+
+    @Deprecated
     void command(Action<? super Command> action)
 
     void cosign(Action<? super Cosign> action)
@@ -81,19 +98,55 @@ interface Signing extends Activatable {
         void arg(String arg)
     }
 
-    interface Cosign {
+    interface SigningTool extends Activatable {
+        Property<Boolean> getVerify()
+
+        Property<String> getPassphrase()
+
+        Property<Boolean> getArtifacts()
+
+        Property<Boolean> getFiles()
+
+        Property<Boolean> getChecksums()
+
+        Property<Boolean> getCatalogs()
+    }
+
+    interface Pgp extends SigningTool {
+        Property<Boolean> getArmored()
+
+        Property<String> getPublicKey()
+
+        Property<String> getSecretKey()
+
+        Property<org.jreleaser.model.Signing.Mode> getMode()
+
+        void setMode(String mode)
+
+        Command getCommand()
+
+        void command(Action<? super Command> action)
+    }
+
+    interface Cosign extends SigningTool {
         Property<String> getVersion()
 
+        @Deprecated
         RegularFileProperty getPrivateKeyFile()
+
+        RegularFileProperty getSecretKeyFile()
 
         RegularFileProperty getPublicKeyFile()
 
+        @Deprecated
         void setPrivateKeyFile(String privateKeyFile)
+
+        void setSecretKeyFile(String secretKeyFile)
 
         void setPublicKeyFile(String publicKeyFile)
     }
 
-    interface Minisign {
+    interface Minisign extends SigningTool {
         Property<String> getVersion()
 
         RegularFileProperty getSecretKeyFile()

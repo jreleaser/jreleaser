@@ -23,12 +23,15 @@ import org.jreleaser.model.api.signing.SigningException;
 import org.jreleaser.sdk.command.Command;
 import org.jreleaser.sdk.command.CommandException;
 import org.jreleaser.sdk.command.CommandExecutor;
+import org.jreleaser.version.SemanticVersion;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -89,12 +92,24 @@ public class Cosign extends AbstractTool {
     public void signBlob(Path keyFile, String password, Path input, Path destinationDir) throws SigningException {
         context.getLogger().info("{}", context.relativizeToBasedir(input));
 
+        boolean cosign3 = SemanticVersion.of(context.getModel().getSigning().getCosign().getVersion()).getMajor() >= 3;
+
+        List<String> extraArgs = new ArrayList<>();
+        if (cosign3) {
+            extraArgs.add("--use-signing-config=true");
+            extraArgs.add("--bundle");
+            extraArgs.add(destinationDir.resolve(input.getFileName() + ".cosign").toAbsolutePath().toString());
+        } else {
+            extraArgs.add(input.toAbsolutePath().toString());
+        }
+
         Command command = tool.asCommand()
             .arg("sign-blob")
             .arg("--yes")
             .arg("--key")
             .arg(keyFile.toAbsolutePath().toString())
-            .arg(input.toAbsolutePath().toString());
+            .arg(input.toAbsolutePath().toString())
+            .args(extraArgs);
 
         try {
             Command.Result result = executeCommand(() -> new CommandExecutor(context.getLogger(), CommandExecutor.Output.QUIET)
@@ -104,11 +119,13 @@ public class Cosign extends AbstractTool {
                 throw new CommandException(RB.$("ERROR_command_execution_exit_value", result.getExitValue()));
             }
 
-            try {
-                Path signature = destinationDir.resolve(input.getFileName() + ".sig");
-                Files.write(signature, result.getOut().getBytes(UTF_8));
-            } catch (IOException e) {
-                throw new SigningException(RB.$("ERROR_unexpected_error_signing", input), e);
+            if (!cosign3) {
+                try {
+                    Path signature = destinationDir.resolve(input.getFileName() + ".cosign");
+                    Files.write(signature, result.getOut().getBytes(UTF_8));
+                } catch (IOException e) {
+                    throw new SigningException(RB.$("ERROR_unexpected_error_signing", input), e);
+                }
             }
         } catch (CommandException e) {
             throw new SigningException(RB.$("ERROR_unexpected_error_signing", input.toAbsolutePath()), e);
@@ -117,11 +134,14 @@ public class Cosign extends AbstractTool {
 
     public void verifyBlob(Path keyFile, Path signature, Path input) throws SigningException {
         context.getLogger().debug("{}", context.relativizeToBasedir(signature));
+
+        boolean cosign3 = SemanticVersion.of(context.getModel().getSigning().getCosign().getVersion()).getMajor() >= 3;
+
         Command command = tool.asCommand()
             .arg("verify-blob")
             .arg("--key")
             .arg(keyFile.toAbsolutePath().toString())
-            .arg("--signature")
+            .arg(cosign3 ? "--bundle" : "--signature")
             .arg(signature.toAbsolutePath().toString())
             .arg(input.toAbsolutePath().toString());
 

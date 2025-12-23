@@ -24,6 +24,7 @@ import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.common.Artifact;
 import org.jreleaser.model.internal.common.ExtraProperties;
 import org.jreleaser.model.internal.distributions.Distribution;
+import org.jreleaser.model.internal.signing.Signing;
 import org.jreleaser.model.internal.upload.Uploader;
 import org.jreleaser.model.internal.util.Artifacts;
 import org.jreleaser.model.internal.util.VersionUtils;
@@ -45,6 +46,7 @@ import org.jreleaser.sdk.gitlab.api.GlLinkRequest;
 import org.jreleaser.sdk.gitlab.api.GlMilestone;
 import org.jreleaser.sdk.gitlab.api.GlProject;
 import org.jreleaser.sdk.gitlab.api.GlRelease;
+import org.jreleaser.util.CollectionUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -527,16 +529,26 @@ public class GitlabReleaser extends AbstractReleaser<org.jreleaser.model.api.rel
             }
         }
 
-        if (uploader.isSignatures() && context.getModel().getSigning().isEnabled()) {
-            String extension = context.getModel().getSigning().isArmored() ? ".asc" : ".sig";
-
+        Signing signing = context.getModel().getSigning();
+        if (uploader.isSignatures() && signing.isEnabled()) {
             List<Artifact> signatures = new ArrayList<>();
+
+            Map<String, Boolean> signingTools = CollectionUtils.<String, Boolean>mapOf(
+                signing.getPgp().getSignatureExtension(), signing.getPgp().isEnabled(),
+                signing.getCosign().getSignatureExtension(), signing.getCosign().isEnabled(),
+                signing.getMinisign().getSignatureExtension(), signing.getMinisign().isEnabled()
+            );
+
             for (Artifact artifact : artifacts) {
                 if (artifact.extraPropertyIsTrue(KEY_SKIP_SIGNING)) continue;
-                Path signaturePath = context.getSignaturesDirectory()
-                    .resolve(artifact.getEffectivePath(context).getFileName() + extension);
-                if (Files.exists(signaturePath) && 0 != signaturePath.toFile().length()) {
-                    signatures.add(Artifact.of(signaturePath));
+                for (Map.Entry<String, Boolean> entry : signingTools.entrySet()) {
+                    if (entry.getValue()) {
+                        Path signaturePath = context.getSignaturesDirectory()
+                            .resolve(artifact.getEffectivePath(context).getFileName() + entry.getKey());
+                        if (Files.exists(signaturePath) && 0 != signaturePath.toFile().length()) {
+                            signatures.add(Artifact.of(signaturePath));
+                        }
+                    }
                 }
             }
 

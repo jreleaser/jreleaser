@@ -30,6 +30,7 @@ import org.jreleaser.model.spi.release.Asset;
 import org.jreleaser.model.spi.release.Releaser;
 import org.jreleaser.model.spi.release.ReleaserBuilder;
 import org.jreleaser.util.Algorithm;
+import org.jreleaser.util.CollectionUtils;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -37,6 +38,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -164,21 +166,33 @@ public abstract class AbstractReleaserBuilder<R extends Releaser<?>> implements 
         if (signing.isEnabled() && service.isSignatures()) {
             boolean signaturesAdded = false;
             List<Asset> assetsCopy = new ArrayList<>(assets);
+
+            Map<String, Boolean> signingTools = CollectionUtils.<String, Boolean>mapOf(
+                signing.getPgp().getSignatureExtension(), signing.getPgp().isEnabled(),
+                signing.getCosign().getSignatureExtension(), signing.getCosign().isEnabled(),
+                signing.getMinisign().getSignatureExtension(), signing.getMinisign().isEnabled()
+            );
+
             for (Asset asset : assetsCopy) {
                 if (asset.getArtifact().extraPropertyIsTrue(KEY_SKIP_SIGNING) ||
                     asset.getArtifact().extraPropertyIsTrue(KEY_SKIP_RELEASE_SIGNATURES)) continue;
-                Path signature = context.getSignaturesDirectory()
-                    .resolve(asset.getFilename() + (signing.getSignatureExtension()));
-                if (Files.exists(signature)) {
-                    assets.add(Asset.signature(Artifact.of(signature)));
-                    signaturesAdded = true;
+
+                for (Map.Entry<String, Boolean> entry : signingTools.entrySet()) {
+                    if (entry.getValue()) {
+                        Path signature = context.getSignaturesDirectory()
+                            .resolve(asset.getFilename() + (entry.getKey()));
+                        if (Files.exists(signature)) {
+                            assets.add(Asset.signature(Artifact.of(signature)));
+                            signaturesAdded = true;
+                        }
+                    }
                 }
             }
-            if (signaturesAdded && signing.getMode() == org.jreleaser.model.Signing.Mode.COSIGN) {
+            if (signaturesAdded && signing.getCosign().isEnabled()) {
                 Path publicKeyFile = signing.getCosign().getResolvedPublicKeyFilePath(context);
                 assets.add(Asset.signature(Artifact.of(publicKeyFile)));
             }
-            if (signaturesAdded && signing.getMode() == org.jreleaser.model.Signing.Mode.MINISIGN) {
+            if (signaturesAdded && signing.getMinisign().isEnabled()) {
                 Path publicKeyFile = signing.getMinisign().getResolvedPublicKeyFilePath(context);
                 assets.add(Asset.signature(Artifact.of(publicKeyFile)));
             }

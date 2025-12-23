@@ -30,6 +30,7 @@ public interface Signing extends Domain, Activatable {
     String KEY_SKIP_SIGNING = "skipSigning";
     String COSIGN_PASSWORD = "COSIGN_PASSWORD";
     String COSIGN_PRIVATE_KEY = "COSIGN_PRIVATE_KEY";
+    String COSIGN_SECRET_KEY = "COSIGN_SECRET_KEY";
     String COSIGN_PUBLIC_KEY = "COSIGN_PUBLIC_KEY";
     String MINISIGN_PASSWORD = "MINISIGN_PASSWORD";
     String MINISIGN_SECRET_KEY = "MINISIGN_SECRET_KEY";
@@ -42,31 +43,70 @@ public interface Signing extends Domain, Activatable {
     String GPG_HOMEDIR = "GPG_HOMEDIR";
     String GPG_PUBLIC_KEYRING = "GPG_PUBLIC_KEYRING";
 
+    @Deprecated
     boolean isArmored();
 
+    @Deprecated
     boolean isVerify();
 
+    @Deprecated
     String getPublicKey();
 
+    @Deprecated
     String getSecretKey();
 
+    @Deprecated
     String getPassphrase();
 
+    @Deprecated
     org.jreleaser.model.Signing.Mode getMode();
 
+    @Deprecated
     boolean isArtifacts();
 
+    @Deprecated
     boolean isFiles();
 
+    @Deprecated
     boolean isChecksums();
 
+    @Deprecated
     boolean isCatalogs();
 
+    @Deprecated
     Command getCommand();
+
+    Pgp getPgp();
 
     Cosign getCosign();
 
     Minisign getMinisign();
+
+    interface SigningTool extends Domain, Activatable {
+        boolean isVerify();
+
+        boolean isArtifacts();
+
+        boolean isFiles();
+
+        boolean isChecksums();
+
+        boolean isCatalogs();
+    }
+
+    interface Pgp extends SigningTool {
+        boolean isArmored();
+
+        String getPublicKey();
+
+        String getSecretKey();
+
+        String getPassphrase();
+
+        org.jreleaser.model.Signing.Mode getMode();
+
+        Command getCommand();
+    }
 
     interface Command extends Domain {
         String getExecutable();
@@ -82,16 +122,23 @@ public interface Signing extends Domain, Activatable {
         List<String> getArgs();
     }
 
-    interface Cosign extends Domain {
+    interface Cosign extends SigningTool {
         String getVersion();
 
+        String getPassphrase();
+
+        @Deprecated
         String getPrivateKeyFile();
+
+        String getSecretKeyFile();
 
         String getPublicKeyFile();
     }
 
-    interface Minisign extends Domain {
+    interface Minisign extends SigningTool {
         String getVersion();
+
+        String getPassphrase();
 
         String getSecretKeyFile();
 

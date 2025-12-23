@@ -30,12 +30,14 @@ import org.jreleaser.model.internal.util.Artifacts;
 import org.jreleaser.model.spi.catalog.sbom.SbomCatalogerProcessorHelper;
 import org.jreleaser.model.spi.upload.ArtifactUploader;
 import org.jreleaser.util.Algorithm;
+import org.jreleaser.util.CollectionUtils;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.jreleaser.model.Constants.KEY_PLATFORM_REPLACED;
@@ -131,22 +133,32 @@ public abstract class AbstractArtifactUploader<A extends org.jreleaser.model.api
 
         Signing signing = context.getModel().getSigning();
         if (getUploader().isSignatures() && signing.isEnabled()) {
-            String extension = signing.getSignatureExtension();
-
             List<Artifact> signatures = new ArrayList<>();
+
+            Map<String, Boolean> signingTools = CollectionUtils.<String, Boolean>mapOf(
+                signing.getPgp().getSignatureExtension(), signing.getPgp().isEnabled(),
+                signing.getCosign().getSignatureExtension(), signing.getCosign().isEnabled(),
+                signing.getMinisign().getSignatureExtension(), signing.getMinisign().isEnabled()
+            );
+
             for (Artifact artifact : artifacts) {
                 if (artifact.extraPropertyIsTrue(KEY_SKIP_SIGNING)) continue;
-                Path signaturePath = context.getSignaturesDirectory()
-                    .resolve(artifact.getEffectivePath(context).getFileName() + extension);
-                if (Files.exists(signaturePath) && 0 != signaturePath.toFile().length()) {
-                    signatures.add(Artifact.of(signaturePath, artifact.getExtraProperties()));
+
+                for (Map.Entry<String, Boolean> entry : signingTools.entrySet()) {
+                    if (entry.getValue()) {
+                        Path signaturePath = context.getSignaturesDirectory()
+                            .resolve(artifact.getEffectivePath(context).getFileName() + entry.getKey());
+                        if (Files.exists(signaturePath) && 0 != signaturePath.toFile().length()) {
+                            signatures.add(Artifact.of(signaturePath, artifact.getExtraProperties()));
+                        }
+                    }
                 }
             }
-            if (!signatures.isEmpty() && signing.getMode() == org.jreleaser.model.Signing.Mode.COSIGN) {
+            if (!signatures.isEmpty() && signing.getCosign().isEnabled()) {
                 Path publicKeyFile = signing.getCosign().getResolvedPublicKeyFilePath(context);
                 signatures.add(Artifact.of(publicKeyFile));
             }
-            if (!signatures.isEmpty() && signing.getMode() == org.jreleaser.model.Signing.Mode.MINISIGN) {
+            if (!signatures.isEmpty() && signing.getMinisign().isEnabled()) {
                 Path publicKeyFile = signing.getMinisign().getResolvedPublicKeyFilePath(context);
                 signatures.add(Artifact.of(publicKeyFile));
             }

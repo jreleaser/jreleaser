@@ -464,16 +464,17 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
     }
 
     private void verifyKeyIsValid() {
-        if (context.getModel().getSigning().getMode() == Signing.Mode.COMMAND ||
-            context.getModel().getSigning().getMode() == Signing.Mode.COSIGN ||
-            context.getModel().getSigning().getMode() == Signing.Mode.MINISIGN) {
+        org.jreleaser.model.internal.signing.Signing signing = context.getModel().getSigning();
+        if (signing.getPgp().isEnabled() && signing.getPgp().getMode() == Signing.Mode.COMMAND ||
+            signing.getCosign().isEnabled() ||
+            signing.getMinisign().isEnabled()) {
             return;
         }
 
         Optional<String> publicKeyID;
         Optional<String> fingerprint;
 
-        boolean verify = context.getModel().getSigning().isVerify();
+        boolean verify = signing.getPgp().isVerify();
 
         try {
             publicKeyID = SigningUtils.getPublicKeyID(context.asImmutable());

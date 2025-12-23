@@ -78,8 +78,9 @@ public final class SigningUtils {
     }
 
     public static Optional<String> getPublicKeyID(JReleaserContext context) throws SigningException {
-        if (context.getModel().getSigning().getMode() == org.jreleaser.model.Signing.Mode.MEMORY ||
-            context.getModel().getSigning().getMode() == org.jreleaser.model.Signing.Mode.FILE) {
+        Signing.Pgp pgp = context.getModel().getSigning().getPgp();
+        if (pgp.getMode() == org.jreleaser.model.Signing.Mode.MEMORY ||
+            pgp.getMode() == org.jreleaser.model.Signing.Mode.FILE) {
             Keyring keyring = context.createKeyring();
             return Optional.of(Long.toHexString(keyring.readPublicKey().getKeyID()));
         }
@@ -88,8 +89,9 @@ public final class SigningUtils {
     }
 
     public static Optional<String> getFingerprint(JReleaserContext context) throws SigningException {
-        if (context.getModel().getSigning().getMode() == org.jreleaser.model.Signing.Mode.MEMORY ||
-            context.getModel().getSigning().getMode() == org.jreleaser.model.Signing.Mode.FILE) {
+        Signing.Pgp pgp = context.getModel().getSigning().getPgp();
+        if (pgp.getMode() == org.jreleaser.model.Signing.Mode.MEMORY ||
+            pgp.getMode() == org.jreleaser.model.Signing.Mode.FILE) {
             Keyring keyring = context.createKeyring();
             return Optional.of(Hex.toHexString(keyring.readPublicKey().getFingerprint()));
         }
@@ -98,8 +100,9 @@ public final class SigningUtils {
     }
 
     public static Optional<Instant> getExpirationDateOfPublicKey(JReleaserContext context) throws SigningException {
-        if (context.getModel().getSigning().getMode() == org.jreleaser.model.Signing.Mode.MEMORY ||
-            context.getModel().getSigning().getMode() == org.jreleaser.model.Signing.Mode.FILE) {
+        Signing.Pgp pgp = context.getModel().getSigning().getPgp();
+        if (pgp.getMode() == org.jreleaser.model.Signing.Mode.MEMORY ||
+            pgp.getMode() == org.jreleaser.model.Signing.Mode.FILE) {
             PGPPublicKey publicKey = context.createKeyring().readPublicKey();
             if (publicKey.getValidSeconds() <= 0) {
                 return Optional.of(Instant.EPOCH);
@@ -111,10 +114,11 @@ public final class SigningUtils {
     }
 
     public static void sign(JReleaserContext context, Path file) throws SigningException {
-        if (context.getModel().getSigning().getMode() == org.jreleaser.model.Signing.Mode.COMMAND) {
+        Signing.Pgp pgp = context.getModel().getSigning().getPgp();
+        if (pgp.getMode() == org.jreleaser.model.Signing.Mode.COMMAND) {
             cmdSign(context, file);
-        } else if (context.getModel().getSigning().getMode() == org.jreleaser.model.Signing.Mode.MEMORY ||
-            context.getModel().getSigning().getMode() == org.jreleaser.model.Signing.Mode.FILE) {
+        } else if (pgp.getMode() == org.jreleaser.model.Signing.Mode.MEMORY ||
+            pgp.getMode() == org.jreleaser.model.Signing.Mode.FILE) {
             bcSign(context, file);
         }
     }
@@ -127,7 +131,7 @@ public final class SigningUtils {
         }
 
         sign(context, pair);
-        if (context.getModel().getSigning().isVerify()) {
+        if (context.getModel().getSigning().getPgp().isVerify()) {
             verify(context, pair);
         } else {
             context.getLogger().debug(RB.$("signing.verify.disabled"));
@@ -144,7 +148,7 @@ public final class SigningUtils {
         }
 
         sign(context, keyring, pair);
-        if (context.getModel().getSigning().isVerify()) {
+        if (context.getModel().getSigning().getPgp().isVerify()) {
             verify(context, keyring, pair);
         } else {
             context.getLogger().debug(RB.$("signing.verify.disabled"));
@@ -152,14 +156,9 @@ public final class SigningUtils {
     }
 
     private static FilePair checkInput(JReleaserContext context, Path input) {
-        Signing signing = context.getModel().getSigning();
+        Signing.Pgp pgp = context.getModel().getSigning().getPgp();
 
-        String extension = ".sig";
-        if (signing.getMode() == org.jreleaser.model.Signing.Mode.MINISIGN) {
-            extension = ".minisig";
-        } else if (signing.getMode() != org.jreleaser.model.Signing.Mode.COSIGN) {
-            extension = signing.isArmored() ? ".asc" : ".sig";
-        }
+        String extension = pgp.isArmored() ? ".asc" : ".sig";
 
         Path output = input.getParent().resolve(input.getFileName().toString().concat(extension));
         FilePair pair = new FilePair(input, output);
@@ -236,14 +235,14 @@ public final class SigningUtils {
 
     public static GpgCommandSigner initCommandSigner(JReleaserContext context) {
         GpgCommandSigner cmd = new GpgCommandSigner(context.getLogger());
-        Signing signing = context.getModel().getSigning();
-        cmd.setExecutable(signing.getCommand().getExecutable());
-        cmd.setPassphrase(signing.getPassphrase());
-        cmd.setHomeDir(signing.getCommand().getHomeDir());
-        cmd.setKeyName(signing.getCommand().getKeyName());
-        cmd.setPublicKeyring(signing.getCommand().getPublicKeyring());
-        cmd.setDefaultKeyring(signing.getCommand().isDefaultKeyring());
-        cmd.setArgs(signing.getCommand().getArgs());
+        Signing.Pgp pgp = context.getModel().getSigning().getPgp();
+        cmd.setExecutable(pgp.getCommand().getExecutable());
+        cmd.setPassphrase(pgp.getPassphrase());
+        cmd.setHomeDir(pgp.getCommand().getHomeDir());
+        cmd.setKeyName(pgp.getCommand().getKeyName());
+        cmd.setPublicKeyring(pgp.getCommand().getPublicKeyring());
+        cmd.setDefaultKeyring(pgp.getCommand().isDefaultKeyring());
+        cmd.setArgs(pgp.getCommand().getArgs());
         return cmd;
     }
 
@@ -264,8 +263,8 @@ public final class SigningUtils {
     }
 
     public static PGPSignatureGenerator initSignatureGenerator(JReleaserContext context, Keyring keyring) throws SigningException {
-        Signing signing = context.getModel().getSigning();
-        if (context.isDryrun() && isBlank(signing.getPassphrase())) {
+        Signing.Pgp pgp = context.getModel().getSigning().getPgp();
+        if (context.isDryrun() && isBlank(pgp.getPassphrase())) {
             return null;
         }
 
@@ -275,7 +274,7 @@ public final class SigningUtils {
             PGPPrivateKey pgpPrivKey = pgpSecretKey.extractPrivateKey(
                 new JcePBESecretKeyDecryptorBuilder()
                     .setProvider(BouncyCastleProvider.PROVIDER_NAME)
-                    .build(signing.getPassphrase().toCharArray()));
+                    .build(pgp.getPassphrase().toCharArray()));
 
             PGPSignatureGenerator signatureGenerator = new PGPSignatureGenerator(
                 new JcaPGPContentSignerBuilder(pgpSecretKey.getPublicKey().getAlgorithm(), HashAlgorithmTags.SHA1)
@@ -314,7 +313,7 @@ public final class SigningUtils {
 
     private static OutputStream createOutputStream(JReleaserContext context, Path output) throws IOException {
         OutputStream out = new BufferedOutputStream(newOutputStream(output.toFile().toPath()));
-        if (context.getModel().getSigning().isArmored()) {
+        if (context.getModel().getSigning().getPgp().isArmored()) {
             out = new ArmoredOutputStream(out);
         }
         return out;
@@ -335,7 +334,7 @@ public final class SigningUtils {
         }
 
         try {
-            if (context.getModel().getSigning().isVerify()) {
+            if (context.getModel().getSigning().getPgp().isVerify()) {
                 return verify(context, pair);
             } else {
                 // force signing as we can't verify
@@ -365,7 +364,7 @@ public final class SigningUtils {
         }
 
         try {
-            if (context.getModel().getSigning().isVerify()) {
+            if (context.getModel().getSigning().getPgp().isVerify()) {
                 return verify(context, keyring, pair);
             } else {
                 // force signing as we can't verify

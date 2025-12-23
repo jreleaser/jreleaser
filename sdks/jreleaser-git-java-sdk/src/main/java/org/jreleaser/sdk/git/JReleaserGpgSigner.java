@@ -109,7 +109,7 @@ public class JReleaserGpgSigner extends GpgSigner implements GpgObjectSigner {
         if (!enabled) return;
 
         try {
-            if (context.getModel().getSigning().resolveMode() == org.jreleaser.model.Signing.Mode.COMMAND) {
+            if (context.getModel().getSigning().getPgp().resolveMode() == org.jreleaser.model.Signing.Mode.COMMAND) {
                 new CommandSigner(context).sign(object);
             } else {
                 new BCSigner(context, committer).sign(object);
@@ -139,15 +139,15 @@ public class JReleaserGpgSigner extends GpgSigner implements GpgObjectSigner {
         @Override
         public void sign(ObjectBuilder object) throws SigningException {
             try {
-                Signing signing = context.getModel().getSigning();
+                Signing.Pgp pgp = context.getModel().getSigning().getPgp();
                 GpgCommandSigner cmd = new GpgCommandSigner(context.getLogger());
-                cmd.setExecutable(signing.getCommand().getExecutable());
-                cmd.setPassphrase(signing.getPassphrase());
-                cmd.setHomeDir(signing.getCommand().getHomeDir());
-                cmd.setKeyName(signing.getCommand().getKeyName());
-                cmd.setPublicKeyring(signing.getCommand().getPublicKeyring());
-                cmd.setDefaultKeyring(signing.getCommand().isDefaultKeyring());
-                cmd.setArgs(signing.getCommand().getArgs());
+                cmd.setExecutable(pgp.getCommand().getExecutable());
+                cmd.setPassphrase(pgp.getPassphrase());
+                cmd.setHomeDir(pgp.getCommand().getHomeDir());
+                cmd.setKeyName(pgp.getCommand().getKeyName());
+                cmd.setPublicKeyring(pgp.getCommand().getPublicKeyring());
+                cmd.setDefaultKeyring(pgp.getCommand().isDefaultKeyring());
+                cmd.setArgs(pgp.getCommand().getArgs());
                 object.setGpgSignature(new GpgSignature(cmd.sign(object.build())));
             } catch (IOException | CommandException e) {
                 throw new SigningException(e.getMessage(), e);
@@ -178,7 +178,7 @@ public class JReleaserGpgSigner extends GpgSigner implements GpgObjectSigner {
                 PGPPrivateKey privateKey = secretKey.extractPrivateKey(
                     new JcePBESecretKeyDecryptorBuilder()
                         .setProvider(BouncyCastleProvider.PROVIDER_NAME)
-                        .build(signing.getPassphrase().toCharArray()));
+                        .build(signing.getPgp().getPassphrase().toCharArray()));
 
                 PGPSignatureGenerator signatureGenerator = new PGPSignatureGenerator(
                     new JcaPGPContentSignerBuilder(secretKey.getPublicKey().getAlgorithm(), HashAlgorithmTags.SHA256)

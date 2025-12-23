@@ -41,34 +41,14 @@ import static org.jreleaser.util.StringUtils.isNotBlank
 @CompileStatic
 class SigningImpl implements Signing {
     final Property<Active> active
-    final Property<Boolean> armored
-    final Property<Boolean> verify
-    final Property<String> passphrase
-    final Property<String> publicKey
-    final Property<String> secretKey
-    final Property<org.jreleaser.model.Signing.Mode> mode
-    final Property<Boolean> artifacts
-    final Property<Boolean> files
-    final Property<Boolean> checksums
-    final Property<Boolean> catalogs
-    final Command command
+    final Pgp pgp
     final Cosign cosign
     final Minisign minisign
 
     @Inject
     SigningImpl(ObjectFactory objects) {
         active = objects.property(Active).convention(Providers.<Active> notDefined())
-        armored = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
-        verify = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
-        passphrase = objects.property(String).convention(Providers.<String> notDefined())
-        publicKey = objects.property(String).convention(Providers.<String> notDefined())
-        secretKey = objects.property(String).convention(Providers.<String> notDefined())
-        mode = objects.property(org.jreleaser.model.Signing.Mode).convention(org.jreleaser.model.Signing.Mode.MEMORY)
-        artifacts = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
-        files = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
-        checksums = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
-        catalogs = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
-        command = objects.newInstance(CommandImpl, objects)
+        pgp = objects.newInstance(PgpImpl, objects)
         cosign = objects.newInstance(CosignImpl, objects)
         minisign = objects.newInstance(MinisignImpl, objects)
     }
@@ -76,16 +56,7 @@ class SigningImpl implements Signing {
     @Internal
     boolean isSet() {
         return active.present ||
-            armored.present ||
-            verify.present ||
-            passphrase.present ||
-            publicKey.present ||
-            artifacts.present ||
-            files.present ||
-            checksums.present ||
-            catalogs.present ||
-            secretKey.present ||
-            ((CommandImpl) command).isSet() ||
+            ((PgpImpl) pgp).isSet() ||
             ((CosignImpl) cosign).isSet() ||
             ((MinisignImpl) minisign).isSet()
     }
@@ -98,15 +69,73 @@ class SigningImpl implements Signing {
     }
 
     @Override
+    Property<Boolean> getArmored() {
+        pgp.armored
+    }
+
+    @Override
+    Property<Boolean> getVerify() {
+        pgp.verify
+    }
+
+    @Override
+    Property<String> getPassphrase() {
+        pgp.passphrase
+    }
+
+    @Override
+    Property<String> getPublicKey() {
+        pgp.publicKey
+    }
+
+    @Override
+    Property<String> getSecretKey() {
+        pgp.secretKey
+    }
+
+    @Override
+    Property<org.jreleaser.model.Signing.Mode> getMode() {
+        pgp.mode
+    }
+
+    @Override
     void setMode(String str) {
-        if (isNotBlank(str)) {
-            mode.set(org.jreleaser.model.Signing.Mode.of(str.trim()))
-        }
+        pgp.setMode(str)
+    }
+
+    @Override
+    Property<Boolean> getArtifacts() {
+        pgp.artifacts
+    }
+
+    @Override
+    Property<Boolean> getFiles() {
+        pgp.files
+    }
+
+    @Override
+    Property<Boolean> getChecksums() {
+        pgp.checksums
+    }
+
+    @Override
+    Property<Boolean> getCatalogs() {
+        pgp.catalogs
+    }
+
+    @Override
+    Command getCommand() {
+        pgp.command
     }
 
     @Override
     void command(Action<? super Command> action) {
-        action.execute(command)
+        pgp.command(action)
+    }
+
+    @Override
+    void pgp(Action<? super Pgp> action) {
+        action.execute(pgp)
     }
 
     @Override
@@ -122,20 +151,59 @@ class SigningImpl implements Signing {
     org.jreleaser.model.internal.signing.Signing toModel() {
         org.jreleaser.model.internal.signing.Signing signing = new org.jreleaser.model.internal.signing.Signing()
         if (active.present) signing.active = active.get()
-        if (armored.present) signing.armored = armored.get()
-        if (verify.present) signing.verify = verify.get()
-        if (passphrase.present) signing.passphrase = passphrase.get()
-        if (publicKey.present) signing.publicKey = publicKey.get()
-        if (secretKey.present) signing.secretKey = secretKey.get()
-        if (mode.present) signing.mode = mode.get()
-        if (artifacts.present) signing.artifacts = artifacts.get()
-        if (files.present) signing.files = files.get()
-        if (checksums.present) signing.checksums = checksums.get()
-        if (catalogs.present) signing.catalogs = catalogs.get()
-        signing.command = ((CommandImpl) command).toModel()
+        signing.pgp = ((PgpImpl) pgp).toModel()
         signing.cosign = ((CosignImpl) cosign).toModel()
         signing.minisign = ((MinisignImpl) minisign).toModel()
         signing
+    }
+
+    static abstract class SigningToolImpl implements SigningTool {
+        final Property<Active> active
+        final Property<Boolean> verify
+        final Property<String> passphrase
+        final Property<Boolean> artifacts
+        final Property<Boolean> files
+        final Property<Boolean> checksums
+        final Property<Boolean> catalogs
+
+        @Inject
+        SigningToolImpl(ObjectFactory objects) {
+            active = objects.property(Active).convention(Providers.<Active> notDefined())
+            verify = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+            passphrase = objects.property(String).convention(Providers.<String> notDefined())
+            artifacts = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+            files = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+            checksums = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+            catalogs = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+        }
+
+        @Internal
+        boolean isSet() {
+            return active.present ||
+                verify.present ||
+                passphrase.present ||
+                artifacts.present ||
+                files.present ||
+                checksums.present ||
+                catalogs.present
+        }
+
+        @Override
+        void setActive(String str) {
+            if (isNotBlank(str)) {
+                active.set(Active.of(str.trim()))
+            }
+        }
+
+        void toModel(org.jreleaser.model.internal.signing.SigningTool tool) {
+            if (active.present) tool.active = active.get()
+            if (verify.present) tool.verify = verify.get()
+            if (passphrase.present) tool.passphrase = passphrase.get()
+            if (artifacts.present) tool.artifacts = artifacts.get()
+            if (files.present) tool.files = files.get()
+            if (checksums.present) tool.checksums = checksums.get()
+            if (catalogs.present) tool.catalogs = catalogs.get()
+        }
     }
 
     static class CommandImpl implements Command {
@@ -185,21 +253,81 @@ class SigningImpl implements Signing {
         }
     }
 
-    static class CosignImpl implements Cosign {
+    static class PgpImpl extends SigningToolImpl implements Pgp {
+        final Property<Boolean> armored
+        final Property<String> publicKey
+        final Property<String> secretKey
+        final Property<org.jreleaser.model.Signing.Mode> mode
+        final Command command
+
+        @Inject
+        PgpImpl(ObjectFactory objects) {
+            super(objects)
+            armored = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
+            publicKey = objects.property(String).convention(Providers.<String> notDefined())
+            secretKey = objects.property(String).convention(Providers.<String> notDefined())
+            mode = objects.property(org.jreleaser.model.Signing.Mode).convention(org.jreleaser.model.Signing.Mode.MEMORY)
+            command = objects.newInstance(CommandImpl, objects)
+        }
+
+        @Override
+        void setMode(String str) {
+            if (isNotBlank(str)) {
+                mode.set(org.jreleaser.model.Signing.Mode.of(str.trim()))
+            }
+        }
+
+        @Override
+        void command(Action<? super Command> action) {
+            action.execute(command)
+        }
+
+        @Internal
+        boolean isSet() {
+            return super.isSet() ||
+                armored.present ||
+                publicKey.present ||
+                secretKey.present ||
+                ((CommandImpl) command).isSet()
+        }
+
+        org.jreleaser.model.internal.signing.Signing.Pgp toModel() {
+            org.jreleaser.model.internal.signing.Signing.Pgp pgp = new org.jreleaser.model.internal.signing.Signing.Pgp()
+            toModel(pgp)
+            if (armored.present) pgp.armored = armored.get()
+            if (publicKey.present) pgp.publicKey = publicKey.get()
+            if (secretKey.present) pgp.secretKey = secretKey.get()
+            if (mode.present) pgp.mode = mode.get()
+            pgp.command = ((CommandImpl) command).toModel()
+            pgp
+        }
+    }
+
+    static class CosignImpl extends SigningToolImpl implements Cosign {
         final Property<String> version
-        final RegularFileProperty privateKeyFile
+        final RegularFileProperty secretKeyFile
         final RegularFileProperty publicKeyFile
 
         @Inject
         CosignImpl(ObjectFactory objects) {
+            super(objects)
             version = objects.property(String).convention(Providers.<String> notDefined())
-            privateKeyFile = objects.fileProperty().convention(Providers.notDefined())
+            secretKeyFile = objects.fileProperty().convention(Providers.notDefined())
             publicKeyFile = objects.fileProperty().convention(Providers.notDefined())
         }
 
+        RegularFileProperty getPrivateKeyFile() {
+            secretKeyFile
+        }
+
         @Override
-        void setPrivateKeyFile(String privateKeyFile) {
-            this.privateKeyFile.set(new File(privateKeyFile))
+        void setPrivateKeyFile(String secretKeyFile) {
+            setSecretKeyFile(secretKeyFile)
+        }
+
+        @Override
+        void setSecretKeyFile(String secretKeyFile) {
+            this.secretKeyFile.set(new File(secretKeyFile))
         }
 
         @Override
@@ -209,27 +337,30 @@ class SigningImpl implements Signing {
 
         @Internal
         boolean isSet() {
-            return version.present ||
-                privateKeyFile.present ||
+            return super.isSet() ||
+                version.present ||
+                secretKeyFile.present ||
                 publicKeyFile.present
         }
 
         org.jreleaser.model.internal.signing.Signing.Cosign toModel() {
             org.jreleaser.model.internal.signing.Signing.Cosign cosign = new org.jreleaser.model.internal.signing.Signing.Cosign()
+            toModel(cosign)
             if (version.present) cosign.version = version.get()
-            if (privateKeyFile.present) cosign.privateKeyFile = privateKeyFile.get().asFile.toPath().toString()
+            if (secretKeyFile.present) cosign.secretKeyFile = privateKeyFile.get().asFile.toPath().toString()
             if (publicKeyFile.present) cosign.publicKeyFile = publicKeyFile.get().asFile.toPath().toString()
             cosign
         }
     }
 
-    static class MinisignImpl implements Minisign {
+    static class MinisignImpl extends SigningToolImpl implements Minisign {
         final Property<String> version
         final RegularFileProperty secretKeyFile
         final RegularFileProperty publicKeyFile
 
         @Inject
         MinisignImpl(ObjectFactory objects) {
+            super(objects)
             version = objects.property(String).convention(Providers.<String> notDefined())
             secretKeyFile = objects.fileProperty().convention(Providers.notDefined())
             publicKeyFile = objects.fileProperty().convention(Providers.notDefined())
@@ -247,13 +378,15 @@ class SigningImpl implements Signing {
 
         @Internal
         boolean isSet() {
-            return version.present ||
+            return super.isSet() ||
+                version.present ||
                 secretKeyFile.present ||
                 publicKeyFile.present
         }
 
         org.jreleaser.model.internal.signing.Signing.Minisign toModel() {
             org.jreleaser.model.internal.signing.Signing.Minisign minisign = new org.jreleaser.model.internal.signing.Signing.Minisign()
+            toModel(minisign)
             if (version.present) minisign.version = version.get()
             if (secretKeyFile.present) minisign.secretKeyFile = secretKeyFile.get().asFile.toPath().toString()
             if (publicKeyFile.present) minisign.publicKeyFile = publicKeyFile.get().asFile.toPath().toString()

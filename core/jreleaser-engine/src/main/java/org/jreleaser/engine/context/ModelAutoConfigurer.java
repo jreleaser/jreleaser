@@ -555,12 +555,14 @@ public final class ModelAutoConfigurer {
         if (skipChecksums) {
             model.getChecksum().setArtifacts(false);
             model.getChecksum().setFiles(false);
-            model.getSigning().setChecksums(false);
+            model.getSigning().getPgp().setChecksums(false);
+            model.getSigning().getCosign().setChecksums(false);
+            model.getSigning().getMinisign().setChecksums(false);
         }
 
         if (signing) {
-            model.getSigning().setActive(Active.ALWAYS);
-            model.getSigning().setArmored(armored);
+            model.getSigning().getPgp().setActive(Active.ALWAYS);
+            model.getSigning().getPgp().setArmored(armored);
         }
 
         if (!files.isEmpty()) {

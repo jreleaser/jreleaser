@@ -1183,23 +1183,23 @@ public class JReleaserContext {
 
     public Keyring createKeyring() throws SigningException {
         try {
-            org.jreleaser.model.internal.signing.Signing signing = model.getSigning();
+            org.jreleaser.model.internal.signing.Signing.Pgp pgp = model.getSigning().getPgp();
 
-            if (!signing.isEnabled()) {
+            if (!pgp.isEnabled()) {
                 throw new SigningException(RB.$("ERROR_signing_disabled"));
             }
 
-            if (signing.getMode() == Signing.Mode.FILE) {
+            if (pgp.getMode() == Signing.Mode.FILE) {
                 return new FilesKeyring(
-                    signing.isVerify() ? basedir.resolve(signing.getPublicKey()) : null,
-                    basedir.resolve(signing.getSecretKey())
-                ).initialize(signing.isArmored());
+                    pgp.isVerify() ? basedir.resolve(pgp.getPublicKey()) : null,
+                    basedir.resolve(pgp.getSecretKey())
+                ).initialize(pgp.isArmored());
             }
 
             return new InMemoryKeyring(
-                signing.isVerify() ? signing.getPublicKey().getBytes(UTF_8) : null,
-                signing.getSecretKey().getBytes(UTF_8)
-            ).initialize(signing.isArmored());
+                pgp.isVerify() ? pgp.getPublicKey().getBytes(UTF_8) : null,
+                pgp.getSecretKey().getBytes(UTF_8)
+            ).initialize(pgp.isArmored());
         } catch (IOException | PGPException e) {
             throw new SigningException(RB.$("ERROR_signing_init_keyring"), e);
         }
