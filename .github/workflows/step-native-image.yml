@@ -60,7 +60,8 @@ jobs:
       - name: Jdks
         shell: bash
         run: |
-          rm -rf plugins/jreleaser/build/jdks
+          rm -rf ~/.gradle/caches/jdks/
+          rm -rf plugins/jreleaser/build/jdks/
           ./gradlew :jreleaser:downloadJdkGraal25${{ matrix.job.jdkOs }} :jreleaser:verifyJdkGraal25${{ matrix.job.jdkOs }} :jreleaser:unpackJdkGraal25${{ matrix.job.jdkOs }}
 
       - name: NativeImage
