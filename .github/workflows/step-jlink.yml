@@ -117,3 +117,7 @@ jobs:
       - name: Stop Gradle daemon
         shell: bash
         run: ./gradlew -stop
+
+      - name: Delete JDK caches
+        shell: bash
+        run: rm -rf ~/.gradle/caches/jreleaser/jdks/
