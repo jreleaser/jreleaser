@@ -59,7 +59,9 @@ jobs:
 
       - name: Jdks
         shell: bash
-        run: ./gradlew :jreleaser:downloadJdkGraal25${{ matrix.job.jdkOs }} :jreleaser:verifyJdkGraal25${{ matrix.job.jdkOs }} :jreleaser:unpackJdkGraal25${{ matrix.job.jdkOs }}
+        run: |
+          rm -rf plugins/jreleaser/build/jdks
+          ./gradlew :jreleaser:downloadJdkGraal25${{ matrix.job.jdkOs }} :jreleaser:verifyJdkGraal25${{ matrix.job.jdkOs }} :jreleaser:unpackJdkGraal25${{ matrix.job.jdkOs }}
 
       - name: NativeImage
         uses: jreleaser/release-action@v2

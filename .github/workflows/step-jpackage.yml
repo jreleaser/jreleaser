@@ -65,7 +65,9 @@ jobs:
 
       - name: Jdks
         shell: bash
-        run: ./gradlew :jreleaser:downloadJdkZulu25${{ matrix.job.jdkOs }} :jreleaser:verifyJdkZulu25${{ matrix.job.jdkOs }} :jreleaser:unpackJdkZulu25${{ matrix.job.jdkOs }}
+        run: |
+          rm -rf plugins/jreleaser/build/jdks
+          ./gradlew :jreleaser:downloadJdkZulu25${{ matrix.job.jdkOs }} :jreleaser:verifyJdkZulu25${{ matrix.job.jdkOs }} :jreleaser:unpackJdkZulu25${{ matrix.job.jdkOs }}
 
       - name: Add msbuild to PATH
         if: runner.os == 'Windows'
