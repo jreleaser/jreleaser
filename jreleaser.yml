@@ -112,8 +112,9 @@ release:
         - search: 'deps: '
 
 signing:
-  active: ALWAYS
-  armored: true
+  pgp:
+    active: ALWAYS
+    armored: true
 
 catalog:
   sbom:
