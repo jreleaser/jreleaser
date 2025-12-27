@@ -28,6 +28,9 @@ import org.jreleaser.util.DefaultVersions;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.PlatformUtils;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import static org.jreleaser.model.api.signing.Signing.COSIGN_PASSWORD;
 import static org.jreleaser.model.api.signing.Signing.COSIGN_PRIVATE_KEY;
 import static org.jreleaser.model.api.signing.Signing.COSIGN_PUBLIC_KEY;
@@ -230,6 +233,16 @@ public final class SigningValidator {
                 ""));
 
         minisign.setPublicKeyFile(minisign.getResolvedPublicKeyFilePath(context).toString());
+
+        Path secretKeyFile = signing.getMinisign().getResolvedSecretKeyFilePath(context);
+        Path publicKeyFile = signing.getMinisign().getResolvedPublicKeyFilePath(context);
+
+        if (!Files.exists(secretKeyFile)) {
+            errors.configuration(RB.$("validation_directory_not_exist", "minisign.secretKeyFile", secretKeyFile));
+        }
+        if (!Files.exists(publicKeyFile)) {
+            errors.configuration(RB.$("validation_directory_not_exist", "minisign.publicKeyFile", publicKeyFile));
+        }
     }
 
     private static String validatePassphrase(JReleaserContext context, String passphraseKey, String value, String propertyKey) {
