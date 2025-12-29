@@ -111,7 +111,7 @@ public class BlueskyAnnouncer implements Announcer<org.jreleaser.model.api.annou
 
     private String getResolvedMessage(JReleaserContext context, String message) {
         TemplateContext props = context.fullProps();
-        applyTemplates(context.getLogger(), props, context.getModel().getAnnounce().getTwitter().resolvedExtraProperties());
+        applyTemplates(context.getLogger(), props, context.getModel().getAnnounce().getBluesky().resolvedExtraProperties());
         props.set(KEY_TAG_NAME, context.getModel().getRelease().getReleaser().getEffectiveTagName(context));
         props.set(KEY_PREVIOUS_TAG_NAME, context.getModel().getRelease().getReleaser().getResolvedPreviousTagName(context));
         return resolveTemplate(context.getLogger(), message, props);
