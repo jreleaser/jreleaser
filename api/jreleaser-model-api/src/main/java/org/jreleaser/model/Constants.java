@@ -481,6 +481,10 @@ public interface Constants {
     String KEY_REDDIT_TITLE = "redditTitle";
     String KEY_REDDIT_SUBREDDIT = "redditSubreddit";
 
+    // Twist
+    String KEY_TWIST_TITLE = "twistTitle";
+    String KEY_TWIST_MESSAGE = "twistMessage";
+
     // Gofish
     String KEY_GOFISH_PACKAGES = "gofishPackages";
 
