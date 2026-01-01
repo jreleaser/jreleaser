@@ -63,6 +63,7 @@ public final class JReleaserSupport {
         set.add(org.jreleaser.model.api.announce.SlackAnnouncer.TYPE);
         set.add(org.jreleaser.model.api.announce.TeamsAnnouncer.TYPE);
         set.add(org.jreleaser.model.api.announce.TelegramAnnouncer.TYPE);
+        set.add(org.jreleaser.model.api.announce.TwistAnnouncer.TYPE);
         set.add(org.jreleaser.model.api.announce.TwitterAnnouncer.TYPE);
         set.add(org.jreleaser.model.api.announce.WebhooksAnnouncer.TYPE);
         set.add(org.jreleaser.model.api.announce.ZulipAnnouncer.TYPE);

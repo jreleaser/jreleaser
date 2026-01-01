@@ -41,6 +41,7 @@ import static org.jreleaser.model.internal.validation.announce.SlackAnnouncerVal
 import static org.jreleaser.model.internal.validation.announce.SmtpAnnouncerValidator.validateSmtp;
 import static org.jreleaser.model.internal.validation.announce.TeamsAnnouncerValidator.validateTeams;
 import static org.jreleaser.model.internal.validation.announce.TelegramAnnouncerValidator.validateTelegram;
+import static org.jreleaser.model.internal.validation.announce.TwistAnnouncerValidator.validateTwist;
 import static org.jreleaser.model.internal.validation.announce.TwitterAnnouncerValidator.validateTwitter;
 import static org.jreleaser.model.internal.validation.announce.WebhooksAnnouncerValidator.validateWebhooks;
 import static org.jreleaser.model.internal.validation.announce.ZulipAnnouncerValidator.validateZulip;
@@ -102,6 +103,8 @@ public final class AnnouncersValidator {
         mergeErrors(context, errors, incoming, announce.getTeams());
         validateTelegram(context, announce.getTelegram(), incoming);
         mergeErrors(context, errors, incoming, announce.getTelegram());
+        validateTwist(context, announce.getTwist(), incoming);
+        mergeErrors(context, errors, incoming, announce.getTwist());
         validateTwitter(context, announce.getTwitter(), incoming);
         mergeErrors(context, errors, incoming, announce.getTwitter());
         validateWebhooks(context, mode, announce.getConfiguredWebhooks(), incoming);
@@ -132,6 +135,7 @@ public final class AnnouncersValidator {
                 announce.getSlack().isEnabled() ||
                 announce.getTeams().isEnabled() ||
                 announce.getTelegram().isEnabled() ||
+                announce.getTwist().isEnabled() ||
                 announce.getTwitter().isEnabled() ||
                 announce.getConfiguredWebhooks().isEnabled() ||
                 announce.getZulip().isEnabled();

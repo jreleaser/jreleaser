@@ -50,6 +50,7 @@ dependencies {
     api project(':jreleaser-slack-java-sdk')
     api project(':jreleaser-teams-java-sdk')
     api project(':jreleaser-telegram-java-sdk')
+    api project(':jreleaser-twist-java-sdk')
     api project(':jreleaser-twitter-java-sdk')
     api project(':jreleaser-webhooks-java-sdk')
     api project(':jreleaser-zulip-java-sdk')
