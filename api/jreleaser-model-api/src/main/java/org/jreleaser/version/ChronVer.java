@@ -34,7 +34,7 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @since 1.0.0
  */
 public class ChronVer implements Version<ChronVer> {
-    private static final Pattern VERSION_PATTERN = Pattern.compile("^([2-9]\\d{3})\\.(0[1-9]|1[0-2])\\.(0[1-9]|[1-2]\\d|3[0-1])(?:\\.((?:[1-9]\\d*)(?:(?:-[a-zA-Z0-9]+)+(?:\\.[1-9]\\d*)?)?))?(?:-[a-zA-Z0-9]+)?$");
+    private static final Pattern VERSION_PATTERN = Pattern.compile("^(([2-9]\\d{3})\\.(0[1-9]|1[0-2])\\.(0[1-9]|[1-2]\\d|3[0-1])|([2-9]\\d{3})(0[1-9]|1[0-2])(0[1-9]|[1-2]\\d|3[0-1]))(?:\\.((?:[1-9]\\d*)(?:(?:-[a-zA-Z0-9]+)+(?:\\.[1-9]\\d*)?)?))?(?:-[a-zA-Z0-9]+)?$");
     private static final Pattern CHANGESET_PATTERN = Pattern.compile("^(?:((?:[1-9]\\d*))(?:-([a-zA-Z0-9-]+[a-zA-Z0-9]?)(?:\\.([1-9]\\d*))?)?)?$");
 
     private final int year;
@@ -137,12 +137,19 @@ public class ChronVer implements Version<ChronVer> {
         Matcher m = VERSION_PATTERN.matcher(version.trim());
 
         if (m.matches()) {
-            int year = Integer.parseInt(m.group(1));
-            String s = m.group(2);
+            String y1 = m.group(2);
+            String y2 = m.group(5);
+            String m1 = m.group(3);
+            String m2 = m.group(6);
+            String d1 = m.group(4);
+            String d2 = m.group(7);
+
+            int year = Integer.parseInt(isNotBlank(y2) ? y2 : y1);
+            String s = isNotBlank(m2) ? m2 : m1;
             int month = Integer.parseInt(s.startsWith("0") ? s.substring(1) : s);
-            s = m.group(3);
+            s = isNotBlank(d2) ? d2 : d1;
             int day = Integer.parseInt(s.startsWith("0") ? s.substring(1) : s);
-            String changeset = m.group(4);
+            String changeset = m.group(8);
 
             // validate num of days per month
             if (day > YearMonth.of(year, month).lengthOfMonth()) {

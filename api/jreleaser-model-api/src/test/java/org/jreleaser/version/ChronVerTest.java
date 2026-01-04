@@ -80,6 +80,11 @@ class ChronVerTest {
 
     private static Stream<Arguments> version_parsing() {
         return Stream.of(
+            Arguments.of("20220102", 2022, 1, 2, null, 0, null, 0),
+            Arguments.of("20220102.1", 2022, 1, 2, "1", 1, null, 0),
+            Arguments.of("20220102.1-break", 2022, 1, 2, "1-break", 1, "break", 0),
+            Arguments.of("20220102.1-break.2", 2022, 1, 2, "1-break.2", 1, "break", 2),
+            Arguments.of("20220102-tag", 2022, 1, 2, null, 0, "tag", 0),
             Arguments.of("2022.01.02", 2022, 1, 2, null, 0, null, 0),
             Arguments.of("2022.01.02.1", 2022, 1, 2, "1", 1, null, 0),
             Arguments.of("2022.01.02.1-break", 2022, 1, 2, "1-break", 1, "break", 0),
