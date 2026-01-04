@@ -37,7 +37,7 @@ public class JReleaserChangelogMojo extends AbstractJReleaserMojo {
      * Skip execution.
      */
     @Parameter(property = "jreleaser.changelog.skip")
-    private boolean skip;
+    private boolean skipChangelog;
 
     @Override
     protected void doExecute() throws MojoExecutionException, MojoFailureException {
@@ -51,7 +51,7 @@ public class JReleaserChangelogMojo extends AbstractJReleaserMojo {
 
     @Override
     protected boolean isSkip() {
-        return skip;
+        return skip || skipChangelog;
     }
 
     @Override

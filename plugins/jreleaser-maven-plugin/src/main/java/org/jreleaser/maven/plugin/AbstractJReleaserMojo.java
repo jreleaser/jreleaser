@@ -97,6 +97,12 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
     protected Boolean gitRootSearch;
 
     /**
+     * Skip execution.
+     */
+    @Parameter(property = "jreleaser.skip")
+    protected boolean skip;
+
+    /**
      * Enable strict mode.
      */
     @Parameter(property = "jreleaser.strict")
@@ -119,7 +125,9 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
         doExecute();
     }
 
-    protected abstract boolean isSkip();
+    protected boolean isSkip() {
+        return skip;
+    }
 
     protected abstract void doExecute() throws MojoExecutionException, MojoFailureException;
 

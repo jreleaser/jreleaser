@@ -35,7 +35,7 @@ public class JReleaserPrepareMojo extends AbstractPackagerMojo {
      * Skip execution.
      */
     @Parameter(property = "jreleaser.prepare.skip")
-    private boolean skip;
+    private boolean skipPrepare;
 
     @Override
     protected void doExecute(JReleaserContext context) {
@@ -44,7 +44,7 @@ public class JReleaserPrepareMojo extends AbstractPackagerMojo {
 
     @Override
     protected boolean isSkip() {
-        return skip;
+        return skip || skipPrepare;
     }
 
     @Override

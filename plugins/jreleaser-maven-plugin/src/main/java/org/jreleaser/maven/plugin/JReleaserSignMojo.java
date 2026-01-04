@@ -35,7 +35,7 @@ public class JReleaserSignMojo extends AbstractDistributionMojo {
      * Skip execution.
      */
     @Parameter(property = "jreleaser.sign.skip")
-    private boolean skip;
+    private boolean skipSign;
 
     @Override
     protected void doExecute(JReleaserContext context) {
@@ -44,7 +44,7 @@ public class JReleaserSignMojo extends AbstractDistributionMojo {
 
     @Override
     protected boolean isSkip() {
-        return skip;
+        return skip || skipSign;
     }
 
     @Override

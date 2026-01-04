@@ -41,7 +41,7 @@ public class JReleaserConfigMojo extends AbstractPlatformAwareMojo {
      * Skip execution.
      */
     @Parameter(property = "jreleaser.config.skip")
-    private boolean skip;
+    private boolean skipConfig;
     /**
      * Display full configuration.
      */
@@ -94,7 +94,7 @@ public class JReleaserConfigMojo extends AbstractPlatformAwareMojo {
 
     @Override
     protected boolean isSkip() {
-        return skip;
+        return skip || skipConfig;
     }
 
     @Override

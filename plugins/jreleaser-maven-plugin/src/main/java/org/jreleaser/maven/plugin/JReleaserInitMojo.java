@@ -54,8 +54,13 @@ public class JReleaserInitMojo extends AbstractMojo {
     /**
      * Skip execution.
      */
-    @Parameter(property = "jreleaser.init.skip")
+    @Parameter(property = "jreleaser.skip")
     private boolean skip;
+    /**
+     * Skip execution.
+     */
+    @Parameter(property = "jreleaser.init.skip")
+    private boolean skipInit;
     /**
      * Configuration file format.
      */
@@ -70,7 +75,7 @@ public class JReleaserInitMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         Banner.display(project, getLog());
-        if (skip) {
+        if (skip || skipInit) {
             getLog().info("Execution has been explicitly skipped.");
             return;
         }

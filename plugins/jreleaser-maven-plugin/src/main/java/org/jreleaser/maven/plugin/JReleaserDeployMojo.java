@@ -64,7 +64,7 @@ public class JReleaserDeployMojo extends AbstractJReleaserMojo {
      * Skip execution.
      */
     @Parameter(property = "jreleaser.deploy.skip")
-    private boolean skip;
+    private boolean skipDeploy;
 
     @Override
     protected void doExecute() throws MojoExecutionException, MojoFailureException {
@@ -83,7 +83,7 @@ public class JReleaserDeployMojo extends AbstractJReleaserMojo {
 
     @Override
     protected boolean isSkip() {
-        return skip;
+        return skip || skipDeploy;
     }
 
     @Override

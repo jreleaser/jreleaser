@@ -42,13 +42,18 @@ public class JReleaserJsonSchemaMojo extends AbstractMojo {
     /**
      * Skip execution.
      */
-    @Parameter(property = "jreleaser.json.schema.skip")
+    @Parameter(property = "jreleaser.skip")
     private boolean skip;
+    /**
+     * Skip execution.
+     */
+    @Parameter(property = "jreleaser.json.schema.skip")
+    private boolean skipJsonSchema;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         Banner.display(project, getLog());
-        if (skip) {
+        if (skip || skipJsonSchema) {
             getLog().info("Execution has been explicitly skipped.");
             return;
         }

@@ -62,7 +62,7 @@ public class JReleaserAssembleMojo extends AbstractPlatformAwareMojo {
      * Skip execution.
      */
     @Parameter(property = "jreleaser.assemble.skip")
-    private boolean skip;
+    private boolean skipAssemble;
 
     @Override
     protected void doExecute() throws MojoExecutionException, MojoFailureException {
@@ -81,7 +81,7 @@ public class JReleaserAssembleMojo extends AbstractPlatformAwareMojo {
 
     @Override
     protected boolean isSkip() {
-        return skip;
+        return skip || skipAssemble;
     }
 
     @Override

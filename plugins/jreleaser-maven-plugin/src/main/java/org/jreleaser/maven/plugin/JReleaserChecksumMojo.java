@@ -35,7 +35,7 @@ public class JReleaserChecksumMojo extends AbstractDistributionMojo {
      * Skip execution.
      */
     @Parameter(property = "jreleaser.checksum.skip")
-    private boolean skip;
+    private boolean skipChecksum;
 
     @Override
     protected void doExecute(JReleaserContext context) {
@@ -44,7 +44,7 @@ public class JReleaserChecksumMojo extends AbstractDistributionMojo {
 
     @Override
     protected boolean isSkip() {
-        return skip;
+        return skip || skipChecksum;
     }
 
     @Override

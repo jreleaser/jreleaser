@@ -40,8 +40,8 @@ public class JReleaserTemplateEvalMojo extends AbstractPlatformAwareMojo {
     /**
      * Skip execution.
      */
-    @Parameter(property = "jreleaser.template.skip")
-    private boolean skip;
+    @Parameter(property = "jreleaser.template.eval.skip")
+    private boolean skipTemplateEval;
     /**
      * Eval model in full configuration.
      */
@@ -115,7 +115,7 @@ public class JReleaserTemplateEvalMojo extends AbstractPlatformAwareMojo {
 
     @Override
     protected boolean isSkip() {
-        return skip;
+        return skip || skipTemplateEval;
     }
 
     @Override

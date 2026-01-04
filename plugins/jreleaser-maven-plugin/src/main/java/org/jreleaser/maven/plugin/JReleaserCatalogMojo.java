@@ -71,7 +71,7 @@ public class JReleaserCatalogMojo extends AbstractDistributionMojo {
      * Skip execution.
      */
     @Parameter(property = "jreleaser.catalog.skip")
-    private boolean skip;
+    private boolean skipCatalog;
 
     @Override
     protected void doExecute(JReleaserContext context) {
@@ -86,7 +86,7 @@ public class JReleaserCatalogMojo extends AbstractDistributionMojo {
 
     @Override
     protected boolean isSkip() {
-        return skip;
+        return skip || skipCatalog;
     }
 
     @Override

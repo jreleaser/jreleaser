@@ -54,8 +54,14 @@ public class JReleaserTemplateGenerateMojo extends AbstractMojo {
     /**
      * Skip execution.
      */
-    @Parameter(property = "jreleaser.template.skip")
+    @Parameter(property = "jreleaser.skip")
     private boolean skip;
+
+    /**
+     * Skip execution.
+     */
+    @Parameter(property = "jreleaser.template.generate.skip")
+    private boolean skipTemplateGenerate;
 
     /**
      * The name of the distribution.
@@ -111,7 +117,7 @@ public class JReleaserTemplateGenerateMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         Banner.display(project, getLog());
-        if (skip) {
+        if (skip || skipTemplateGenerate) {
             getLog().info("Execution has been explicitly skipped.");
             return;
         }

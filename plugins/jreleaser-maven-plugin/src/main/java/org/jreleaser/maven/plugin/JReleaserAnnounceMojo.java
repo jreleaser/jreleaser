@@ -50,7 +50,7 @@ public class JReleaserAnnounceMojo extends AbstractJReleaserMojo {
      * Skip execution.
      */
     @Parameter(property = "jreleaser.announce.skip")
-    private boolean skip;
+    private boolean skipAnnounce;
 
     @Override
     protected void doExecute() throws MojoExecutionException, MojoFailureException {
@@ -67,7 +67,7 @@ public class JReleaserAnnounceMojo extends AbstractJReleaserMojo {
 
     @Override
     protected boolean isSkip() {
-        return skip;
+        return skip || skipAnnounce;
     }
 
     @Override

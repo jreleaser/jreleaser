@@ -85,7 +85,7 @@ public class JReleaserUploadMojo extends AbstractPlatformAwareMojo {
      * Skip execution.
      */
     @Parameter(property = "jreleaser.upload.skip")
-    private boolean skip;
+    private boolean skipUpload;
 
     @Override
     protected void doExecute() throws MojoExecutionException, MojoFailureException {
@@ -103,7 +103,7 @@ public class JReleaserUploadMojo extends AbstractPlatformAwareMojo {
 
     @Override
     protected boolean isSkip() {
-        return skip;
+        return skip || skipUpload;
     }
 
     @Override

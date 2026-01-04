@@ -47,11 +47,18 @@ public class JReleaserEnvMojo extends AbstractMojo {
      */
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     protected MavenProject project;
+
+    /**
+     * Skip execution.
+     */
+    @Parameter(property = "jreleaser.skip")
+    private boolean skip;
+
     /**
      * Skip execution.
      */
     @Parameter(property = "jreleaser.env.skip")
-    private boolean skip;
+    private boolean skipEnv;
 
     @Parameter(property = "jreleaser.settings.file")
     protected File settingsFile;
@@ -59,7 +66,7 @@ public class JReleaserEnvMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         Banner.display(project, getLog());
-        if (skip) {
+        if (skip || skipEnv) {
             getLog().info("Execution has been explicitly skipped.");
             return;
         }

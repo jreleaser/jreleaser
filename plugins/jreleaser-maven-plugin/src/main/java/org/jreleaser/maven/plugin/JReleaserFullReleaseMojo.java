@@ -133,7 +133,7 @@ public class JReleaserFullReleaseMojo extends AbstractPlatformAwareMojo {
      * Skip execution.
      */
     @Parameter(property = "jreleaser.full.release.skip")
-    private boolean skip;
+    private boolean skipFullRelease;
 
     @Override
     protected void doExecute() throws MojoExecutionException, MojoFailureException {
@@ -159,7 +159,7 @@ public class JReleaserFullReleaseMojo extends AbstractPlatformAwareMojo {
 
     @Override
     protected boolean isSkip() {
-        return skip;
+        return skip || skipFullRelease;
     }
 
     @Override

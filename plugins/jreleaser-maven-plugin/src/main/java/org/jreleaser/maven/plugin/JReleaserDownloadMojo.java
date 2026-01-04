@@ -62,7 +62,7 @@ public class JReleaserDownloadMojo extends AbstractJReleaserMojo {
      * Skip execution.
      */
     @Parameter(property = "jreleaser.download.skip")
-    private boolean skip;
+    private boolean skipDownload;
 
     @Override
     protected void doExecute() throws MojoExecutionException, MojoFailureException {
@@ -81,7 +81,7 @@ public class JReleaserDownloadMojo extends AbstractJReleaserMojo {
 
     @Override
     protected boolean isSkip() {
-        return skip;
+        return skip || skipDownload;
     }
 
     @Override
