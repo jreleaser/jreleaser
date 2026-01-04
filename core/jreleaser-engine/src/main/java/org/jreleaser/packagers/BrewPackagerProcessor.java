@@ -344,13 +344,13 @@ BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> 
             if (CASK_RB.equals(fileName) || FORMULA_RB.equals(fileName)) return;
             writeFile(content, FORMULA_MULTI_RB.equals(fileName) ?
                 outputDirectory.resolve(FORMULA)
-                    .resolve(getHyphenatedName(packager.getFormulaName()).concat(RB)) :
+                    .resolve(getHyphenatedName(packager.getResolvedFormulaName(context, props)).concat(RB)) :
                 outputDirectory.resolve(fileName));
         } else {
             if (CASK_RB.equals(fileName) || FORMULA_MULTI_RB.equals(fileName)) return;
             writeFile(content, FORMULA_RB.equals(fileName) ?
                 outputDirectory.resolve(FORMULA)
-                    .resolve(getHyphenatedName(packager.getFormulaName()).concat(RB)) :
+                    .resolve(getHyphenatedName(packager.getResolvedFormulaName(context, props)).concat(RB)) :
                 outputDirectory.resolve(fileName));
         }
     }
