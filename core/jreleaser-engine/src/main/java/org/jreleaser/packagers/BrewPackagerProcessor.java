@@ -36,6 +36,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.Collections.emptyList;
 import static org.jreleaser.model.Constants.KEY_BREW_CASK_APP;
 import static org.jreleaser.model.Constants.KEY_BREW_CASK_APPCAST;
 import static org.jreleaser.model.Constants.KEY_BREW_CASK_DISPLAY_NAME;
@@ -169,7 +170,7 @@ BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> 
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
 
         props.set(KEY_BREW_FORMULA_NAME, packager.getResolvedFormulaName(context, props));
-        props.set(KEY_BREW_DOWNLOAD_STRATEGY, packager.getDownloadStrategy());
+        props.setOrEmpty(KEY_BREW_DOWNLOAD_STRATEGY, packager.getDownloadStrategy());
         props.set(KEY_BREW_REQUIRE_RELATIVE, packager.getRequireRelative());
 
         props.set(KEY_HOMEBREW_TAP_REPO_OWNER, packager.getRepository().getOwner());
@@ -177,7 +178,7 @@ BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> 
         props.set(KEY_HOMEBREW_TAP_NAME, packager.getRepository().getResolvedName().substring("homebrew-".length()));
         props.set(KEY_HOMEBREW_TAP_REPO_URL,
             releaser.getResolvedRepoUrl(context, packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
-        props.set(KEY_HOMEBREW_TAP_REPO_CLONE_URL,
+        props.setOrEmpty(KEY_HOMEBREW_TAP_REPO_CLONE_URL,
             releaser.getResolvedRepoCloneUrl(context, packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
 
         props.set(KEY_HOMEBREW_REPOSITORY_OWNER, packager.getRepository().getOwner());
@@ -185,7 +186,7 @@ BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> 
         props.set(KEY_HOMEBREW_REPOSITORY_ALIAS, packager.getRepository().getResolvedName().substring("homebrew-".length()));
         props.set(KEY_HOMEBREW_REPOSITORY_URL,
             releaser.getResolvedRepoUrl(context, packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
-        props.set(KEY_HOMEBREW_REPOSITORY_CLONE_URL,
+        props.setOrEmpty(KEY_HOMEBREW_REPOSITORY_CLONE_URL,
             releaser.getResolvedRepoCloneUrl(context, packager.getRepository().getOwner(), packager.getRepository().getResolvedName()));
 
         props.set(KEY_BREW_HAS_LIVECHECK, packager.hasLivecheck());
@@ -197,6 +198,16 @@ BrewPackagerProcessor extends AbstractRepositoryPackagerProcessor<BrewPackager> 
         }
 
         BrewPackager.Cask cask = packager.getCask();
+        props.set(KEY_BREW_CASK_NAME, "");
+        props.set(KEY_BREW_CASK_DISPLAY_NAME, "");
+        props.set(KEY_BREW_CASK_HAS_UNINSTALL, false);
+        props.set(KEY_BREW_CASK_HAS_PKG, false);
+        props.set(KEY_BREW_CASK_HAS_APP, false);
+        props.set(KEY_BREW_CASK_UNINSTALL, emptyList());
+        props.set(KEY_BREW_CASK_HAS_ZAP, false);
+        props.set(KEY_BREW_CASK_HAS_APPCAST, false);
+        props.set(KEY_BREW_CASK_HAS_BINARY, false);
+
         if (cask.isEnabled()) {
             boolean hasPkg = isNotBlank(cask.getPkgName());
             boolean hasApp = isNotBlank(cask.getAppName());

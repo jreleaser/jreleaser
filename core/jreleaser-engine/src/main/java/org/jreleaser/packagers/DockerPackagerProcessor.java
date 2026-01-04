@@ -142,8 +142,8 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
         newProps.set(KEY_DOCKER_SPEC_NAME, spec.getName());
         fillDockerProperties(newProps, spec);
         verifyAndAddArtifacts(newProps, distribution, artifacts);
-        newProps.set(KEY_DOCKER_ENTRYPOINT, passThrough(resolveTemplate(context.getLogger(), spec.getEntrypoint(), newProps)));
-        newProps.set(KEY_DOCKER_CMD, passThrough(resolveTemplate(context.getLogger(), spec.getCmd(), newProps)));
+        newProps.setOrEmpty(KEY_DOCKER_ENTRYPOINT, passThrough(resolveTemplate(context.getLogger(), spec.getEntrypoint(), newProps)));
+        newProps.setOrEmpty(KEY_DOCKER_CMD, passThrough(resolveTemplate(context.getLogger(), spec.getCmd(), newProps)));
         Path prepareDirectory = newProps.get(KEY_DISTRIBUTION_PREPARE_DIRECTORY);
         newProps.set(KEY_DISTRIBUTION_PREPARE_DIRECTORY, prepareDirectory.resolve(spec.getName()));
         Path packageDirectory = newProps.get(KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
@@ -554,8 +554,8 @@ public class DockerPackagerProcessor extends AbstractRepositoryPackagerProcessor
     protected void fillDockerProperties(TemplateContext props, DockerConfiguration docker) {
         props.set(KEY_DOCKER_BASE_IMAGE,
             resolveTemplate(context.getLogger(), docker.getBaseImage(), props));
-        props.set(KEY_DOCKER_ENTRYPOINT, passThrough(resolveTemplate(context.getLogger(), docker.getEntrypoint(), props)));
-        props.set(KEY_DOCKER_CMD, passThrough(resolveTemplate(context.getLogger(), docker.getCmd(), props)));
+        props.setOrEmpty(KEY_DOCKER_ENTRYPOINT, passThrough(resolveTemplate(context.getLogger(), docker.getEntrypoint(), props)));
+        props.setOrEmpty(KEY_DOCKER_CMD, passThrough(resolveTemplate(context.getLogger(), docker.getCmd(), props)));
 
         List<String> labels = new ArrayList<>();
         docker.getLabels().forEach((label, value) -> labels.add(passThrough("\"" + label + "\"=\"" +

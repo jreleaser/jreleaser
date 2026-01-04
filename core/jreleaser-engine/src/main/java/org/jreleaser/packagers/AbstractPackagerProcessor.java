@@ -305,6 +305,19 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
             return false;
         }
 
+        safePut(props, KEY_DISTRIBUTION_ARTIFACT_PLATFORM, "");
+        safePut(props, KEY_DISTRIBUTION_ARTIFACT_PLATFORM_REPLACED, "");
+        safePut(props, KEY_DISTRIBUTION_ARTIFACT_NAME, "");
+        safePut(props, KEY_DISTRIBUTION_ARTIFACT_VERSION, "");
+        safePut(props, KEY_DISTRIBUTION_ARTIFACT_OS, "");
+        safePut(props, KEY_DISTRIBUTION_ARTIFACT_ARCH, "");
+        safePut(props, KEY_DISTRIBUTION_ARTIFACT_SIZE, "");
+        safePut(props, KEY_DISTRIBUTION_ARTIFACT_FILE, "");
+        safePut(props, KEY_DISTRIBUTION_ARTIFACT_FILE_NAME, "");
+        safePut(props, KEY_DISTRIBUTION_ARTIFACT_ROOT_ENTRY_NAME, "");
+        safePut(props, KEY_DISTRIBUTION_ARTIFACT_FILE_EXTENSION, "");
+        safePut(props, KEY_DISTRIBUTION_ARTIFACT_FILE_FORMAT, "");
+
         int count = 0;
         for (Artifact artifact : activeArtifacts) {
             String artifactUrl = Artifacts.resolveDownloadUrl(context, packager.getType(), distribution, artifact);
