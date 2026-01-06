@@ -440,6 +440,16 @@ distributions:
             platform: 'linux_musl-x86_64'
           preCommands:
             - 'RUN apk add unzip binutils fakeroot rpm bash git'
+        jreleaser-ubi:
+          baseImage: 'registry.access.redhat.com/ubi10/ubi:latest'
+          imageNames:
+            - 'jreleaser/{{dockerSpecName}}:{{tagName}}'
+            - 'jreleaser/{{dockerSpecName}}:latest'
+          matchers:
+            platform: 'linux-x86_64'
+          preCommands:
+            - 'ENV TZ=Europe/Zurich'
+            - 'RUN dnf update -y && dnf install -y unzip git && dnf clean all && rm -rf /var/cache/dnf /var/cache/microdnf'
 
   jreleaser-installer:
     type: NATIVE_PACKAGE
