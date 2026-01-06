@@ -294,6 +294,35 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
     protected boolean verifyAndAddArtifacts(TemplateContext props,
                                             Distribution distribution,
                                             List<Artifact> artifacts) {
+        safePut(props, KEY_DISTRIBUTION_ARTIFACT, "");
+        safePut(props, KEY_DISTRIBUTION_URL, "");
+        safePut(props, KEY_DISTRIBUTION_SIZE, 0);
+        safePut(props, KEY_DISTRIBUTION_ARTIFACT_PLATFORM, "");
+        safePut(props, KEY_DISTRIBUTION_ARTIFACT_PLATFORM_REPLACED, "");
+        safePut(props, KEY_DISTRIBUTION_ARTIFACT_NAME, "");
+        safePut(props, KEY_DISTRIBUTION_ARTIFACT_VERSION, "");
+        safePut(props, KEY_DISTRIBUTION_ARTIFACT_OS, "");
+        safePut(props, KEY_DISTRIBUTION_ARTIFACT_ARCH, "");
+        safePut(props, KEY_DISTRIBUTION_ARTIFACT_SIZE, 0);
+        safePut(props, KEY_DISTRIBUTION_ARTIFACT_FILE, "");
+        safePut(props, KEY_DISTRIBUTION_ARTIFACT_FILE_NAME, "");
+        safePut(props, KEY_DISTRIBUTION_ARTIFACT_ROOT_ENTRY_NAME, "");
+        safePut(props, KEY_DISTRIBUTION_ARTIFACT_FILE_EXTENSION, "");
+        safePut(props, KEY_DISTRIBUTION_ARTIFACT_FILE_FORMAT, "");
+
+        safePut(props, KEY_ARTIFACT_PLATFORM, "");
+        safePut(props, KEY_ARTIFACT_PLATFORM_REPLACED, "");
+        safePut(props, KEY_ARTIFACT_NAME, "");
+        safePut(props, KEY_ARTIFACT_VERSION, "");
+        safePut(props, KEY_ARTIFACT_OS, "");
+        safePut(props, KEY_ARTIFACT_ARCH, "");
+        safePut(props, KEY_ARTIFACT_SIZE, 0);
+        safePut(props, KEY_ARTIFACT_FILE, "");
+        safePut(props, KEY_ARTIFACT_FILE_NAME, "");
+        safePut(props, KEY_ARTIFACT_ROOT_ENTRY_NAME, "");
+        safePut(props, KEY_ARTIFACT_FILE_EXTENSION, "");
+        safePut(props, KEY_ARTIFACT_FILE_FORMAT, "");
+
         List<Artifact> activeArtifacts = artifacts.stream()
             .filter(Artifact::isActiveAndSelected)
             .collect(toList());
@@ -304,19 +333,6 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
                 distribution.getName(), capitalize(packager.getType()));
             return false;
         }
-
-        safePut(props, KEY_DISTRIBUTION_ARTIFACT_PLATFORM, "");
-        safePut(props, KEY_DISTRIBUTION_ARTIFACT_PLATFORM_REPLACED, "");
-        safePut(props, KEY_DISTRIBUTION_ARTIFACT_NAME, "");
-        safePut(props, KEY_DISTRIBUTION_ARTIFACT_VERSION, "");
-        safePut(props, KEY_DISTRIBUTION_ARTIFACT_OS, "");
-        safePut(props, KEY_DISTRIBUTION_ARTIFACT_ARCH, "");
-        safePut(props, KEY_DISTRIBUTION_ARTIFACT_SIZE, "");
-        safePut(props, KEY_DISTRIBUTION_ARTIFACT_FILE, "");
-        safePut(props, KEY_DISTRIBUTION_ARTIFACT_FILE_NAME, "");
-        safePut(props, KEY_DISTRIBUTION_ARTIFACT_ROOT_ENTRY_NAME, "");
-        safePut(props, KEY_DISTRIBUTION_ARTIFACT_FILE_EXTENSION, "");
-        safePut(props, KEY_DISTRIBUTION_ARTIFACT_FILE_FORMAT, "");
 
         int count = 0;
         for (Artifact artifact : activeArtifacts) {
@@ -499,7 +515,9 @@ public abstract class AbstractPackagerProcessor<T extends Packager<?>> implement
     }
 
     protected void safePut(TemplateContext dest, String key, Object value) {
-        if (value instanceof CharSequence && isNotBlank(String.valueOf(value)) || null != value) {
+        if (null == value) {
+            dest.set(key, "");
+        } else {
             dest.set(key, value);
         }
     }
