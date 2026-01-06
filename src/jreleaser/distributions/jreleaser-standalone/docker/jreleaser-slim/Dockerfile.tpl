@@ -26,4 +26,3 @@ ENV PATH="${PATH}:/{{distributionExecutableName}}/bin"
 {{/dockerPostCommands}}
 
 ENTRYPOINT ["/{{distributionExecutableName}}/bin/{{distributionExecutableName}}-entrypoint.sh"]
-CMD ["--help"]
