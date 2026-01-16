@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-102-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-103-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -142,6 +142,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="http://eliaslundell.se"><img src="https://avatars.githubusercontent.com/u/36220731?v=4?s=100" width="100px;" alt="Elias Lundell"/><br /><sub><b>Elias Lundell</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=LogFlames" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://emlun.se"><img src="https://avatars.githubusercontent.com/u/1367758?v=4?s=100" width="100px;" alt="Emil Lundberg"/><br /><sub><b>Emil Lundberg</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=emlun" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/HarshMehta112"><img src="https://avatars.githubusercontent.com/u/103989095?v=4?s=100" width="100px;" alt="Harsh Mehta"/><br /><sub><b>Harsh Mehta</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=HarshMehta112" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/jjh030325"><img src="https://avatars.githubusercontent.com/u/117177784?v=4?s=100" width="100px;" alt="jjh030325"/><br /><sub><b>jjh030325</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=jjh030325" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
