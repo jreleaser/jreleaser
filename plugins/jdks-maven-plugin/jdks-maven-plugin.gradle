@@ -43,7 +43,7 @@ dependencies {
     api project(':jreleaser-disco-java-sdk')
     api "org.twdata.maven:mojo-executor:$mojoExecutorVersion"
     api "org.codehaus.plexus:plexus-archiver:$plexusArchiverVersion"
-    api "org.codehaus.plexus:plexus-utils:3.5.1"
+    api "org.codehaus.plexus:plexus-utils:$plexusUtilsVersion"
 
     compileOnly "org.apache.maven:maven-core:$mavenVersion"
     compileOnly "org.apache.maven:maven-plugin-api:$mavenVersion"
