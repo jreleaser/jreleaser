@@ -26,7 +26,7 @@ mkdir -p %{_appdir}/bin
 
 cat > %{buildroot}%{_bindir}/{{distributionExecutableName}} <<-EOF
 #!/bin/sh
-%{_datadir}/%{name}/bin/{{distributionExecutableUnix}} "$@"
+%{_datadir}/%{name}/bin/{{distributionExecutableUnix}} "\$@"
 EOF
 chmod 0755 %{buildroot}%{_bindir}/{{distributionExecutableName}}
 
