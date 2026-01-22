@@ -133,6 +133,8 @@ class WorkflowImpl implements Workflow {
                     failure = true;
                     stepException = e;
 
+
+
                     try {
                         context.fireWorkflowEvent(ExecutionEvent.failure(item.getCommand().toStep(), e));
                         break;
@@ -227,6 +229,7 @@ class WorkflowImpl implements Workflow {
                 }
 
                 context.getLogger().error(RB.$("workflow.failure"), formatDuration(duration));
+                context.getLogger().error(RB.$("workflow.failure.hint"), context.getOutputDirectory());
                 context.getLogger().trace(stepException);
                 throw stepException;
             }

@@ -61,6 +61,7 @@ public final class ModelValidator {
                 case ASSEMBLE:
                 case DEPLOY:
                     if (errors.hasConfigurationErrors()) {
+                        context.getLogger().error(RB.$("workflow.failure.hint"), context.getOutputDirectory());
                         throw new JReleaserException(RB.$("ERROR_context_configurer_jreleaser_misconfigured") +
                             System.lineSeparator() + errors.asString());
                     }
@@ -68,6 +69,7 @@ public final class ModelValidator {
                 case FULL:
                 default:
                     if (errors.hasErrors()) {
+                        context.getLogger().error(RB.$("workflow.failure.hint"), context.getOutputDirectory());
                         throw new JReleaserException(RB.$("ERROR_context_configurer_jreleaser_misconfigured") +
                             System.lineSeparator() + errors.asString());
                     }
@@ -82,6 +84,7 @@ public final class ModelValidator {
             throw e;
         } catch (Exception e) {
             context.getLogger().trace(e);
+            context.getLogger().error(RB.$("workflow.failure.hint"), context.getOutputDirectory());
             throw new JReleaserException(RB.$("ERROR_context_configurer_jreleaser_misconfigured"), e);
         }
 
