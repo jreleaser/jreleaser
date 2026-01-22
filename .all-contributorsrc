@@ -975,6 +975,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "barbulescu",
+      "name": "Marius Barbulescu",
+      "avatar_url": "https://avatars.githubusercontent.com/u/277662?v=4",
+      "profile": "https://github.com/barbulescu",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
