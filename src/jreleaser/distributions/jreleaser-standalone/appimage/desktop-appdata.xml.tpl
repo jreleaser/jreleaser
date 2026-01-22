@@ -25,7 +25,7 @@
     {{/appImageReleases}}
   </releases>
   <developer>
-    <id>{{appImageDeveloperId}</id>
+    <id>{{appImageDeveloperId}}</id>
     <name>{{appImageDeveloperName}}</name>
   </developer>
   <launchable type="desktop-id">{{distributionExecutableName}}.desktop</launchable>
