@@ -179,7 +179,8 @@ public abstract class AbstractRepositoryPackagerProcessor<T extends RepositoryPa
                     .call();
             }
         } catch (Exception e) {
-            throw new PackagerProcessingException(RB.$("ERROR_unexpected_repository_update", target), e);
+            // FIXME: find out if this must be guarded with a flag to retain old behavior throwing an exception
+            context.getLogger().warn(RB.$("ERROR_unexpected_repository_update", target), e);
         }
     }
 
