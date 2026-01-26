@@ -183,8 +183,10 @@ public class MavenCentral {
     private void waitForState(String deploymentId, boolean checkTimeout, State... states) throws MavenCentralException {
         context.getLogger().debug(RB.$("maven.central.wait.deployment.state", deploymentId, Arrays.asList(states)));
 
+        Set<State> acceptableStates = new LinkedHashSet<>(Arrays.asList(states));
         Boolean[] timeout = new Boolean[]{false};
-        Optional<Deployment> deployment = retrier.retry(o -> o.map(Deployment::isTransitioning).orElse(false),
+        Optional<Deployment> deployment = retrier.retry(
+            o -> o.map(d -> d.isTransitioning(acceptableStates)).orElse(false),
             () -> status(deploymentId),
             states[0] != State.PUBLISHED? () -> {}: () -> {
                 context.getLogger().warn(RB.$("WARN_maven_central_publication_timeout", deploymentId));

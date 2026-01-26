@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Andres Almiray
@@ -99,5 +100,20 @@ public class Deployment {
         return deploymentState == State.PENDING ||
             deploymentState == State.VALIDATING ||
             deploymentState == State.PUBLISHING;
+    }
+
+    /**
+     * Checks if deployment is still transitioning, considering acceptable terminal states.
+     * If the current state is in the acceptable states set, it's not considered transitioning.
+     *
+     * @param acceptableStates states that should be considered as terminal (not transitioning)
+     * @return true if still transitioning, false if reached an acceptable state
+     * @since 1.23.0
+     */
+    public boolean isTransitioning(Set<State> acceptableStates) {
+        if (acceptableStates.contains(deploymentState)) {
+            return false;
+        }
+        return isTransitioning();
     }
 }
