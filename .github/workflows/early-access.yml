@@ -18,7 +18,7 @@ jobs:
   jlink:
     name: Jlink
     needs: [precheck]
-    if: endsWith(${{ needs.precheck.outputs.version }}, '-SNAPSHOT')
+    if: ${{ endsWith(needs.precheck.outputs.version, '-SNAPSHOT') }}
     uses: jreleaser/jreleaser/.github/workflows/step-jlink.yml@main
     with:
       project-version: ${{ needs.precheck.outputs.version }}

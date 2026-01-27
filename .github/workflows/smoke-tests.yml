@@ -18,7 +18,7 @@ jobs:
   build-cli:
     name: 'CLI ${{ matrix.job.os }}'
     needs: [ precheck ]
-    if: endsWith(${{ needs.precheck.outputs.version }}, '-SNAPSHOT')
+    if: ${{ endsWith(needs.precheck.outputs.version, '-SNAPSHOT') }}
     continue-on-error: true
     strategy:
       fail-fast: false
@@ -196,7 +196,7 @@ jobs:
   build-tool:
     name: 'Tool ${{ matrix.job.os }}'
     needs: [ precheck ]
-    if: endsWith(${{ needs.precheck.outputs.version }}, '-SNAPSHOT')
+    if: ${{ endsWith(needs.precheck.outputs.version, '-SNAPSHOT') }}
     continue-on-error: true
     strategy:
       fail-fast: false
@@ -374,7 +374,7 @@ jobs:
   build-ant:
     name: 'Ant ${{ matrix.job.os }}'
     needs: [ precheck ]
-    if: endsWith(${{ needs.precheck.outputs.version }}, '-SNAPSHOT')
+    if: ${{ endsWith(needs.precheck.outputs.version, '-SNAPSHOT') }}
     continue-on-error: true
     strategy:
       fail-fast: false
@@ -550,7 +550,7 @@ jobs:
   build-gradle:
     name: 'Gradle ${{ matrix.job.os }}'
     needs: [ precheck ]
-    if: endsWith(${{ needs.precheck.outputs.version }}, '-SNAPSHOT')
+    if: ${{ endsWith(needs.precheck.outputs.version, '-SNAPSHOT') }}
     continue-on-error: true
     strategy:
       fail-fast: false
@@ -738,7 +738,7 @@ jobs:
   build-maven:
     name: 'Maven ${{ matrix.job.os }}'
     needs: [ precheck ]
-    if: endsWith(${{ needs.precheck.outputs.version }}, '-SNAPSHOT')
+    if: ${{ endsWith(needs.precheck.outputs.version, '-SNAPSHOT') }}
     continue-on-error: true
     strategy:
       fail-fast: false
@@ -915,7 +915,7 @@ jobs:
   unit-tests:
     name: 'Unit Test ${{ matrix.os }}'
     needs: [ precheck ]
-    if: endsWith(${{ needs.precheck.outputs.version }}, '-SNAPSHOT')
+    if: ${{ endsWith(needs.precheck.outputs.version, '-SNAPSHOT') }}
     continue-on-error: true
     strategy:
       fail-fast: true
@@ -972,7 +972,7 @@ jobs:
   coveralls:
     name: Coveralls
     needs: [ precheck, build-cli, build-tool, build-ant, build-gradle, build-maven, unit-tests ]
-    if: endsWith(${{ needs.precheck.outputs.version }}, '-SNAPSHOT')
+    if: ${{ endsWith(needs.precheck.outputs.version, '-SNAPSHOT') }}
     continue-on-error: true
     runs-on: ubuntu-latest
     steps:
@@ -1023,7 +1023,7 @@ jobs:
   codecov:
     name: Codecov
     needs: [ precheck, build-cli, build-tool, build-ant, build-gradle, build-maven, unit-tests ]
-    if: endsWith(${{ needs.precheck.outputs.version }}, '-SNAPSHOT')
+    if: ${{ endsWith(needs.precheck.outputs.version, '-SNAPSHOT') }}
     continue-on-error: true
     runs-on: ubuntu-latest
     steps:
@@ -1079,7 +1079,7 @@ jobs:
   sonar:
     name: Sonar
     needs: [ precheck, build-cli, build-tool, build-ant, build-gradle, build-maven, unit-tests ]
-    if: endsWith(${{ needs.precheck.outputs.version }}, '-SNAPSHOT')
+    if: ${{ endsWith(needs.precheck.outputs.version, '-SNAPSHOT') }}
     continue-on-error: true
     runs-on: ubuntu-latest
     steps:

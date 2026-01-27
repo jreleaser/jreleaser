@@ -22,7 +22,7 @@ jobs:
   frogbot:
     name: Frogbot
     needs: [precheck]
-    if: endsWith(${{ needs.precheck.outputs.version }}, '-SNAPSHOT')
+    if: ${{ endsWith(needs.precheck.outputs.version, '-SNAPSHOT') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6

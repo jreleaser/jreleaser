@@ -21,7 +21,7 @@ jobs:
   analysis:
     name: Scorecards analysis
     needs: [precheck]
-    if: endsWith(${{ needs.precheck.outputs.version }}, '-SNAPSHOT')
+    if: ${{ endsWith(needs.precheck.outputs.version, '-SNAPSHOT') }}
     runs-on: ubuntu-latest
     permissions:
       # Needed to upload the results to code-scanning dashboard.

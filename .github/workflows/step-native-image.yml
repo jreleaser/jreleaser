@@ -53,7 +53,7 @@ jobs:
           cache: gradle
 
       - name: Version
-        if: endsWith(${{ inputs.project-version }}, '-SNAPSHOT') != true
+        if: ${{ endsWith(inputs.project-version, '-SNAPSHOT') != true }}
         run: |
           echo ${{ inputs.project-version }} > VERSION
 

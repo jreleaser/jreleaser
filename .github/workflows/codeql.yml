@@ -21,7 +21,7 @@ jobs:
   codeql:
     name: CodeQL
     needs: [precheck]
-    if: endsWith(${{ needs.precheck.outputs.version }}, '-SNAPSHOT')
+    if: ${{ endsWith(needs.precheck.outputs.version, '-SNAPSHOT') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
