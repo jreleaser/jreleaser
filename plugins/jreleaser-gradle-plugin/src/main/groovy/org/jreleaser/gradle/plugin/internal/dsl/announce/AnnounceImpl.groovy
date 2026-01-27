@@ -44,6 +44,7 @@ import org.jreleaser.gradle.plugin.dsl.announce.SlackAnnouncer
 import org.jreleaser.gradle.plugin.dsl.announce.SmtpAnnouncer
 import org.jreleaser.gradle.plugin.dsl.announce.TeamsAnnouncer
 import org.jreleaser.gradle.plugin.dsl.announce.TelegramAnnouncer
+import org.jreleaser.gradle.plugin.dsl.announce.TwistAnnouncer
 import org.jreleaser.gradle.plugin.dsl.announce.TwitterAnnouncer
 import org.jreleaser.gradle.plugin.dsl.announce.WebhookAnnouncer
 import org.jreleaser.gradle.plugin.dsl.announce.ZulipAnnouncer
@@ -78,6 +79,7 @@ class AnnounceImpl implements Announce {
     final SlackAnnouncerImpl slack
     final TeamsAnnouncerImpl teams
     final TelegramAnnouncerImpl telegram
+    final TwistAnnouncerImpl twist
     final TwitterAnnouncerImpl twitter
     final ZulipAnnouncerImpl zulip
     final NamedDomainObjectContainer<HttpAnnouncer> http
@@ -103,6 +105,7 @@ class AnnounceImpl implements Announce {
         slack = objects.newInstance(SlackAnnouncerImpl, objects)
         teams = objects.newInstance(TeamsAnnouncerImpl, objects)
         telegram = objects.newInstance(TelegramAnnouncerImpl, objects)
+        twist = objects.newInstance(TwistAnnouncerImpl, objects)
         twitter = objects.newInstance(TwitterAnnouncerImpl, objects)
         zulip = objects.newInstance(ZulipAnnouncerImpl, objects)
 
@@ -233,6 +236,11 @@ class AnnounceImpl implements Announce {
     }
 
     @Override
+    void twist(Action<? super TwistAnnouncer> action) {
+        action.execute(twist)
+    }
+
+    @Override
     void twitter(Action<? super TwitterAnnouncer> action) {
         action.execute(twitter)
     }
@@ -267,6 +275,7 @@ class AnnounceImpl implements Announce {
         if (slack.isSet()) announce.slack = slack.toModel()
         if (teams.isSet()) announce.teams = teams.toModel()
         if (telegram.isSet()) announce.telegram = telegram.toModel()
+        if (twist.isSet()) announce.twist = twist.toModel()
         if (twitter.isSet()) announce.twitter = twitter.toModel()
         if (zulip.isSet()) announce.zulip = zulip.toModel()
 

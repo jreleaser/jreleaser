@@ -66,6 +66,8 @@ interface Announce extends Activatable {
 
     TelegramAnnouncer getTelegram()
 
+    TwistAnnouncer getTwist()
+
     TwitterAnnouncer getTwitter()
 
     ZulipAnnouncer getZulip()
@@ -111,6 +113,8 @@ interface Announce extends Activatable {
     void teams(Action<? super TeamsAnnouncer> action)
 
     void telegram(Action<? super TelegramAnnouncer> action)
+
+    void twist(Action<? super TwistAnnouncer> action)
 
     void twitter(Action<? super TwitterAnnouncer> action)
 

@@ -38,7 +38,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.1.0
  */
 public final class Announce extends AbstractActivatable<Announce> implements Domain {
-    private static final long serialVersionUID = -2945770875328891983L;
+    private static final long serialVersionUID = 3822217256168802121L;
 
     private final ArticleAnnouncer article = new ArticleAnnouncer();
     private final BlueskyAnnouncer bluesky = new BlueskyAnnouncer();
@@ -57,6 +57,7 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
     private final SlackAnnouncer slack = new SlackAnnouncer();
     private final TeamsAnnouncer teams = new TeamsAnnouncer();
     private final TelegramAnnouncer telegram = new TelegramAnnouncer();
+    private final TwistAnnouncer twist = new TwistAnnouncer();
     private final TwitterAnnouncer twitter = new TwitterAnnouncer();
     private final ZulipAnnouncer zulip = new ZulipAnnouncer();
     @JsonIgnore
@@ -159,6 +160,11 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         }
 
         @Override
+        public org.jreleaser.model.api.announce.TwistAnnouncer getTwist() {
+            return twist.asImmutable();
+        }
+
+        @Override
         public org.jreleaser.model.api.announce.TwitterAnnouncer getTwitter() {
             return twitter.asImmutable();
         }
@@ -222,6 +228,7 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         setSlack(source.slack);
         setTeams(source.teams);
         setTelegram(source.telegram);
+        setTwist(source.twist);
         setTwitter(source.twitter);
         setZulip(source.zulip);
         setConfiguredHttp(source.httpAnnouncers);
@@ -410,6 +417,14 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         this.telegram.merge(telegram);
     }
 
+    public TwistAnnouncer getTwist() {
+        return twist;
+    }
+
+    public void setTwist(TwistAnnouncer twist) {
+        this.twist.merge(twist);
+    }
+
     @Deprecated
     @JsonPropertyDescription("announce.twitter is deprecated since 1.17.0 and will be removed in 2.0.0")
     public TwitterAnnouncer getTwitter() {
@@ -495,6 +510,7 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         map.putAll(slack.asMap(full));
         map.putAll(teams.asMap(full));
         map.putAll(telegram.asMap(full));
+        map.putAll(twist.asMap(full));
         map.putAll(twitter.asMap(full));
         map.putAll(webhooksAnnouncer.asMap(full));
         map.putAll(zulip.asMap(full));
@@ -550,6 +566,8 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
                 return (A) getTelegram();
             case org.jreleaser.model.api.announce.TwitterAnnouncer.TYPE:
                 return (A) getTwitter();
+            case org.jreleaser.model.api.announce.TwistAnnouncer.TYPE:
+                return (A) getTwist();
             case org.jreleaser.model.api.announce.WebhooksAnnouncer.TYPE:
                 return (A) getConfiguredWebhooks();
             case org.jreleaser.model.api.announce.ZulipAnnouncer.TYPE:
