@@ -81,7 +81,8 @@ public final class PlatformUtils {
             "ppcle_64",
             "s390_32",
             "s390_64",
-            "riscv"));
+            "riscv",
+            "riscv_64"));
         OS_ARCHS.sort(Comparator.naturalOrder());
     }
 
