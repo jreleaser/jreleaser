@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-105-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-106-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -145,6 +145,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/jjh030325"><img src="https://avatars.githubusercontent.com/u/117177784?v=4?s=100" width="100px;" alt="jjh030325"/><br /><sub><b>jjh030325</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=jjh030325" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/LunchTimeCode"><img src="https://avatars.githubusercontent.com/u/171926148?v=4?s=100" width="100px;" alt="LunchTimeCode"/><br /><sub><b>LunchTimeCode</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=LunchTimeCode" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/barbulescu"><img src="https://avatars.githubusercontent.com/u/277662?v=4?s=100" width="100px;" alt="Marius Barbulescu"/><br /><sub><b>Marius Barbulescu</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=barbulescu" title="Code">💻</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://bruno.verachten.fr"><img src="https://avatars.githubusercontent.com/u/116569?v=4?s=100" width="100px;" alt="Bruno Verachten"/><br /><sub><b>Bruno Verachten</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=gounthar" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
