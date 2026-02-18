@@ -56,6 +56,7 @@ class ChangelogImpl implements Changelog {
     final RegularFileProperty contentTemplate
     final SetProperty<String> includeLabels
     final SetProperty<String> excludeLabels
+    final SetProperty<String> paths
     final HideImpl hide
     final ContributorsImpl contributors
     final AppendImpl append
@@ -84,6 +85,7 @@ class ChangelogImpl implements Changelog {
         contentTemplate = objects.fileProperty().convention(Providers.notDefined())
         includeLabels = objects.setProperty(String).convention(Providers.<Set<String>> notDefined())
         excludeLabels = objects.setProperty(String).convention(Providers.<Set<String>> notDefined())
+        paths = objects.setProperty(String).convention(Providers.<Set<String>> notDefined())
         hide = objects.newInstance(HideImpl, objects)
         contributors = objects.newInstance(ContributorsImpl, objects)
         append = objects.newInstance(AppendImpl, objects)
@@ -123,6 +125,7 @@ class ChangelogImpl implements Changelog {
             contentTemplate.present ||
             includeLabels.present ||
             excludeLabels.present ||
+            paths.present ||
             !categories.isEmpty() ||
             !labelers.isEmpty() ||
             !replacers.isEmpty() ||
@@ -148,6 +151,13 @@ class ChangelogImpl implements Changelog {
     void excludeLabel(String label) {
         if (isNotBlank(label)) {
             excludeLabels.add(label.trim())
+        }
+    }
+
+    @Override
+    void path(String path) {
+        if (isNotBlank(path)) {
+            paths.add(path.trim())
         }
     }
 
@@ -213,6 +223,7 @@ class ChangelogImpl implements Changelog {
         }
         changelog.includeLabels = (Set<String>) includeLabels.getOrElse([] as Set)
         changelog.excludeLabels = (Set<String>) excludeLabels.getOrElse([] as Set)
+        changelog.paths = (Set<String>) paths.getOrElse([] as Set)
         changelog.setCategories(categories.collect([]) { CategoryImpl category ->
             category.toModel()
         } as Set<org.jreleaser.model.internal.release.Changelog.Category>)

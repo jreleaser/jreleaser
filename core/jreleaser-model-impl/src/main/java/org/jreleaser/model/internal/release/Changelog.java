@@ -58,7 +58,7 @@ import static org.jreleaser.util.StringUtils.normalizeRegexPattern;
  * @since 0.1.0
  */
 public final class Changelog extends AbstractModelObject<Changelog> implements Domain, EnabledAware, ExtraProperties {
-    private static final long serialVersionUID = -2693712593082430980L;
+    private static final long serialVersionUID = -2693712593082430981L;
 
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     private final Set<String> includeLabels = new LinkedHashSet<>();
@@ -69,6 +69,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
     private final Hide hide = new Hide();
     private final Contributors contributors = new Contributors();
     private final Append append = new Append();
+    private final Set<String> paths = new LinkedHashSet<>();
 
     private Boolean enabled;
     private Boolean links;
@@ -212,6 +213,11 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
         }
 
         @Override
+        public Set<String> getPaths() {
+            return unmodifiableSet(paths);
+        }
+
+        @Override
         public Map<String, Object> asMap(boolean full) {
             return unmodifiableMap(Changelog.this.asMap(full));
         }
@@ -232,6 +238,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
             !categories.isEmpty() ||
             !replacers.isEmpty() ||
             !labelers.isEmpty() ||
+            !paths.isEmpty() ||
             hide.isSet() ||
             contributors.isSet() ||
             append.isSet() ||
@@ -268,6 +275,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
         setCategories(merge(this.categories, source.categories));
         setReplacers(merge(this.replacers, source.replacers));
         setLabelers(merge(this.labelers, source.labelers));
+        setPaths(merge(this.paths, source.paths));
         setHide(source.hide);
         setContributors(source.contributors);
         setAppend(source.append);
@@ -414,6 +422,15 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
         this.labelers.addAll(labelers);
     }
 
+    public Set<String> getPaths() {
+        return paths;
+    }
+
+    public void setPaths(Set<String> paths) {
+        this.paths.clear();
+        this.paths.addAll(paths.stream().map(String::trim).collect(toSet()));
+    }
+
     public String getFormat() {
         return format;
     }
@@ -522,6 +539,7 @@ public final class Changelog extends AbstractModelObject<Changelog> implements D
         map.put("contentTemplate", contentTemplate);
         map.put("includeLabels", includeLabels);
         map.put("excludeLabels", excludeLabels);
+        map.put("paths", paths);
         map.put("hide", hide.asMap(full));
         map.put("contributors", contributors.asMap(full));
 
