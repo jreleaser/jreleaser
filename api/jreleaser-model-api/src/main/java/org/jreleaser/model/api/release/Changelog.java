@@ -63,6 +63,8 @@ public interface Changelog extends Domain, EnabledAware, ExtraProperties {
 
     String getPreset();
 
+    Set<String> getPaths();
+
     Hide getHide();
 
     Contributors getContributors();

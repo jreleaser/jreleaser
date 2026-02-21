@@ -68,9 +68,13 @@ interface Changelog extends ExtraProperties {
 
     SetProperty<String> getExcludeLabels()
 
+    SetProperty<String> getPaths()
+
     void includeLabel(String label)
 
     void excludeLabel(String label)
+
+    void path(String path)
 
     void category(Action<? super Category> action)
 

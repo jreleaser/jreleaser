@@ -18,6 +18,7 @@
 package org.jreleaser.sdk.git;
 
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.LogCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.ObjectId;
@@ -307,6 +308,7 @@ public class ChangelogGenerator {
     protected Iterable<RevCommit> resolveCommits(Git git, JReleaserContext context) throws GitAPIException, IOException {
         Tags tags = resolveTags(git, context);
         BaseReleaser<?, ?> releaser = context.getModel().getRelease().getReleaser();
+        Set<String> paths = releaser.getChangelog().getPaths();
 
         ObjectId head = git.getRepository().resolve(Constants.HEAD);
 
@@ -317,9 +319,9 @@ public class ChangelogGenerator {
             if (effectiveLabel.equals(releaser.getEffectiveTagName(context))) {
                 if (tags.getPrevious().isPresent()) {
                     Ref fromRef = tags.getPrevious().get();
-                    return git.log().addRange(getObjectId(git, fromRef), head).call();
+                    return applyPaths(git.log().addRange(getObjectId(git, fromRef), head), paths).call();
                 } else {
-                    return git.log().add(head).call();
+                    return applyPaths(git.log().add(head), paths).call();
                 }
             }
         }
@@ -328,9 +330,9 @@ public class ChangelogGenerator {
         if (!tags.getCurrent().isPresent()) {
             if (tags.getPrevious().isPresent()) {
                 Ref fromRef = tags.getPrevious().get();
-                return git.log().addRange(getObjectId(git, fromRef), head).call();
+                return applyPaths(git.log().addRange(getObjectId(git, fromRef), head), paths).call();
             } else {
-                return git.log().add(head).call();
+                return applyPaths(git.log().add(head), paths).call();
             }
         }
 
@@ -338,11 +340,18 @@ public class ChangelogGenerator {
         if (tags.getPrevious().isPresent()) {
             ObjectId fromRef = getObjectId(git, tags.getPrevious().get());
             ObjectId toRef = getObjectId(git, tags.getCurrent().get());
-            return git.log().addRange(fromRef, toRef).call();
+            return applyPaths(git.log().addRange(fromRef, toRef), paths).call();
         }
 
         ObjectId toRef = getObjectId(git, tags.getCurrent().get());
-        return git.log().add(toRef).call();
+        return applyPaths(git.log().add(toRef), paths).call();
+    }
+
+    private LogCommand applyPaths(LogCommand logCommand, Set<String> paths) {
+        for (String path : paths) {
+            logCommand.addPath(path);
+        }
+        return logCommand;
     }
 
     private ObjectId getObjectId(Git git, Ref ref) throws IOException {
