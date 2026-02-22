@@ -19,7 +19,6 @@ package org.jreleaser.mustache;
 
 import org.jreleaser.bundle.RB;
 import org.jreleaser.logging.JReleaserLogger;
-import org.jreleaser.model.JReleaserException;
 
 import static org.jreleaser.mustache.MustacheUtils.applyTemplate;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -35,18 +34,11 @@ public final class Templates {
 
     public static String resolveTemplate(JReleaserLogger logger, String input, TemplateContext props) {
         if (isBlank(input)) return input;
-
-        int count = 0;
-
-        while (input.contains("{{")) {
-            input = applyTemplate(logger, input, props);
-            count++;
-
-            if (input.contains("{{") && count >= 10) {
-                throw new JReleaserException(RB.$("ERROR_input_can_not_resolve", input));
-            }
+        input = applyTemplate(logger, input, props);
+        if (input.contains("{{")) {
+            // TODO: print which template placeholders are unresolved
+            logger.debug(RB.$("ERROR_input_can_not_resolve"));
         }
-
         return input;
     }
 }
