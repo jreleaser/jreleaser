@@ -180,7 +180,7 @@ public final class MustacheUtils {
                     final Wrapper wrapper = super.getWrapper(name, scopes);
 
                     if (wrapper instanceof MissingWrapper) {
-                        logger.warn(RB.$("ERROR_mustache_missing_variable", name));
+                        logger.debug(RB.$("ERROR_mustache_missing_variable", name));
                     }
                     return wrapper;
                 }
