@@ -634,19 +634,32 @@ public class JReleaserContext {
             if (!distribution.getMatrix().isEmpty() && isNotBlank(distribution.getArtifactPattern().getPath())) {
                 List<Artifact> artifacts = new ArrayList<>();
                 for (Map<String, String> matrixRow : distribution.getMatrix().resolve()) {
-                    artifacts.add(createArtifact(distribution.getArtifactPattern(), matrixRow));
+                    artifacts.add(createArtifact(distribution, matrixRow));
                 }
                 mergeArtifacts(artifacts, distribution);
             }
         }
     }
 
-    private Artifact createArtifact(Artifact artifactPattern, Map<String, String> matrix) {
+    private Artifact createArtifact(org.jreleaser.model.internal.distributions.Distribution distribution, Map<String, String> matrix) {
         Artifact artifact = new Artifact();
-        artifact.setPlatform(matrix.get(KEY_PLATFORM));
+        String platform = matrix.get(KEY_PLATFORM);
+        artifact.setPlatform(platform);
 
+        Artifact artifactPattern = distribution.getArtifactPattern();
         artifact.setPath(replaceWithMatrix(artifactPattern.getPath(), matrix));
         artifact.setTransform(replaceWithMatrix(artifactPattern.getTransform(), matrix));
+
+        if (isNotBlank(platform) && PlatformUtils.isWindows(platform) &&
+            distribution.getType() == org.jreleaser.model.Distribution.DistributionType.FLAT_BINARY) {
+            String extension = distribution.getExecutable().getWindowsExtension();
+            if (!artifact.getPath().endsWith(extension)) {
+                artifact.setPath(artifact.getPath().concat(".").concat(extension));
+            }
+            if (!artifact.getTransform().endsWith(extension)) {
+                artifact.setTransform(artifact.getTransform().concat(".").concat(extension));
+            }
+        }
 
         for (Map.Entry<String, Object> property : artifactPattern.getExtraProperties().entrySet()) {
             artifact.addExtraProperty(property.getKey(), replaceWithMatrix(property.getValue(), matrix));
