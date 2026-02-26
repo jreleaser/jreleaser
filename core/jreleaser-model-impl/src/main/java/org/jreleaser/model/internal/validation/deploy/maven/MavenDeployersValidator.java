@@ -122,7 +122,7 @@ public final class MavenDeployersValidator {
                 "deploy.maven." + mavenDeployer.getType()),
             "NEVER");
         if (!mavenDeployer.resolveEnabledWithSnapshot(context.getModel().getProject())) {
-            context.getLogger().warn(RB.$("deployer.disabled", mavenDeployer.getType(), mavenDeployer.getName()));
+            context.getLogger().warn(RB.$("deployers.deployer.disabled", mavenDeployer.getType(), mavenDeployer.getName()));
             context.getLogger().debug(RB.$("validation.disabled"));
             return;
         }
