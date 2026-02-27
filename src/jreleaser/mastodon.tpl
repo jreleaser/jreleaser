@@ -1,8 +1,8 @@
 🚀 JReleaser {{projectVersion}} has been released! {{releaseNotesUrl}}
-🦉 Publication to Maven Central may now skip verifying for PUBLISHED status, enabling faster deployment cycles
-📦 Allow name templates in more places such as assemblers
-🔐 Add Minisign as a signing tool for artifacts, checksums, and catalogs
-🔐 Refactor the signing section to allow multiple signing methods at the same time (PGP, Cosign, Minisign, etc)
-☕️ Several updates to JDK plugins to make them more flexible
-📝 Full list of changes available at the {{milestoneName}} milestone {{projectLinkVcsBrowser}}/milestone/42?closed=1
+🗒️ CHRONVER now accepts a lenient format. Time elements may or may not use a separator
+🦉 All Maven MOJOs now accept a generic `jreleaser.skip` property to skip their behavior, useful in multi-module builds
+📦 Homebrew formula name fixes when the name had more than one word, space, or hyphen
+🏗️ Resolving a matrix in a FLAT_BINARY distribution will automatically append the configured Windows extension to the binary, if missing
+🪵 Filter changelog entries by path, useful in a Git monorepo setup
+📝 Full list of changes available at the {{milestoneName}} milestone {{projectLinkVcsBrowser}}/milestone/43?closed=1
 🙏 As always, feedback is welcome. Feel free to raise a ticket at {{projectLinkBugTracker}}
