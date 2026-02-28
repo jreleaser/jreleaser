@@ -6,6 +6,9 @@ on:
       version:
         description: 'Release version'
         required: true
+      next-version:
+        description: 'Next version'
+        required: true
 
 permissions:
   actions: write
@@ -170,6 +173,16 @@ jobs:
           echo "HASHES=$(cat out/jreleaser/checksums/checksums_sha256.txt | base64 -w0)" >> "$GITHUB_OUTPUT"
           echo "TAGNAME=$(grep tagName out/jreleaser/output.properties | awk -F'=' '{print $2}')" >> "$GITHUB_OUTPUT"
 
+      - name: Bump version
+        shell: bash
+        run: |
+          echo ${{ github.event.inputs.next-version }} > VERSION
+          git add VERSION
+          git config --global user.email "${{ secrets.COMMIT_EMAIL }}"
+          git config --global user.name "Andres Almiray"
+          git commit -a -m "Bump for next development cycle"
+          git push origin main
+
   provenance:
     name: Provenance
     needs: [precheck, release]
@@ -233,7 +246,8 @@ jobs:
         shell: bash
         env:
           TAG: ${{ needs.release.outputs.tagname }}
-          VERSION: ${{ needs.precheck.outputs.version }}
+          VERSION: ${{ github.event.inputs.version }}
+          NEXT_VERSION: ${{ github.event.inputs.next-version }}
           GH_BOT_EMAIL: ${{ vars.GH_BOT_EMAIL }}
         run: |
           chmod +x update-website.sh

@@ -2,6 +2,7 @@
 
 # env vars:
 # VERSION
+# NEXT_VERSION
 # GH_BOT_EMAIL
 
 set -e
@@ -72,3 +73,13 @@ git config --global user.email "${GH_BOT_EMAIL}"
 git config --global user.name "GitHub Action"
 git commit -a -m "Releasing version ${VERSION}"
 git push origin main
+
+echo "📝 Refresh development branch"
+git checkout development
+git rebase main
+sed -i -e "s/^version\:\ latest.*/version: early-access/g" docs/antora.yml
+sed -i -e "s/jreleaser-version\:\ .*/jreleaser-version: ${NEXT_VERSION}/g" docs/antora.yml
+sed -i -e "s/jreleaser-effective-version\:\ .*/jreleaser-effective-version: ${NEXT_VERSION}/g" docs/antora.yml
+sed -i -e "s/jreleaser-tag\:\ .*/jreleaser-tag: early-access/g" docs/antora.yml
+git commit -a -m "Bump for next development cycle"
+git push origin development
