@@ -35,8 +35,7 @@ cat << EOF > "${PAGE}"
 ${HEAD}
 | $(date +%F)
 | ${VERSION}
-| link:https://jreleaser.noticeable.news/publications/release-${ATAG}[announcement],
-  link:https://github.com/jreleaser/jreleaser/releases/tag/${TAG}[release notes],
+| link:https://github.com/jreleaser/jreleaser/releases/tag/${TAG}[release notes],
   link:https://github.com/jreleaser/jreleaser/wiki/Release-${TAG}[binaries]
 // ${ANCHOR_END}
 

@@ -52,11 +52,11 @@ These binaries provide their own Java runtime.
 
 | Platform             | Artifact |
 | -------------------- | -------- |
-| MacOS x86_64         | {{#f_release_download_url}}jreleaser-native-{{projectEffectiveVersion}}-osx-aarch64.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-native-{{projectEffectiveVersion}}-osx-x86_64.zip.asc{{/f_release_download_url}})<br/>sha256:jreleaser-native-{{projectEffectiveVersion}}-osx-aarch64.zip |
-| MacOS Arm64          | {{#f_release_download_url}}jreleaser-native-{{projectEffectiveVersion}}-osx-x86_64.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-native-{{projectEffectiveVersion}}-osx-x86_64.zip.asc{{/f_release_download_url}})<br/>sha256:jreleaser-native-{{projectEffectiveVersion}}-osx-x86_64.zip |
+| MacOS x86_64         | {{#f_release_download_url}}jreleaser-native-{{projectEffectiveVersion}}-osx-x86.64.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-native-{{projectEffectiveVersion}}-osx-x86_64.zip.asc{{/f_release_download_url}})<br/>sha256:jreleaser-native-{{projectEffectiveVersion}}-osx-x86_64.zip |
+| MacOS Arm64          | {{#f_release_download_url}}jreleaser-native-{{projectEffectiveVersion}}-osx-aarch64.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-native-{{projectEffectiveVersion}}-osx-aarch64.zip.asc{{/f_release_download_url}})<br/>sha256:jreleaser-native-{{projectEffectiveVersion}}-osx-aarch64.zip |
 | Linux x86_64 (glibc) | {{#f_release_download_url}}jreleaser-native-{{projectEffectiveVersion}}-linux-x86_64.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-native-{{projectEffectiveVersion}}-linux-x86_64.zip.asc{{/f_release_download_url}})<br/>sha256:jreleaser-native-{{projectEffectiveVersion}}-linux-x86_64.zip |
 | Linux Arm64          | {{#f_release_download_url}}jreleaser-native-{{projectEffectiveVersion}}-linux-aarch64.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-native-{{projectEffectiveVersion}}-linux-aarch64.zip.asc{{/f_release_download_url}})<br/>sha256:jreleaser-native-{{projectEffectiveVersion}}-linux-aarch64.zip |
-| Windows x86_64       | {{#f_release_download_url}}jreleaser-native-{{projectEffectiveVersion}}-windows-x86_64.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-native-{{projectEffectiveVersion}}-linux-x86_64.zip.asc{{/f_release_download_url}})<br/>sha256:jreleaser-native-{{projectEffectiveVersion}}-windows-x86_64.zip |
+| Windows x86_64       | {{#f_release_download_url}}jreleaser-native-{{projectEffectiveVersion}}-windows-x86_64.zip{{/f_release_download_url}} ({{#f_release_download_url}}asc:jreleaser-native-{{projectEffectiveVersion}}-windows-x86_64.zip.asc{{/f_release_download_url}})<br/>sha256:jreleaser-native-{{projectEffectiveVersion}}-windows-x86_64.zip |
 
 ## Verify Provenance
 {{#includeSboms}}
