@@ -14,7 +14,7 @@ image::src/media/banner.png[JReleaser]
 
 Release Java and non-Java projects quickly and easily with link:https://jreleaser.org[JReleaser]!
 
-JReleaser is a release automation tool for Java and non-Java projects (Rust, Elixir, C#, etc). Its goal is to simplify
+JReleaser is a release automation tool for Java and non-Java projects (Go, Rust, Elixir, C#, etc). Its goal is to simplify
 creating releases and publishing artifacts to multiple package managers while providing customizable options.
 
 For questions, support and general discussion, please use link:https://github.com/jreleaser/jreleaser/discussions[GitHub Discussions].
@@ -60,6 +60,7 @@ link:https://github.com/jreleaser/.github/blob/main/CONTRIBUTING.adoc[contributi
 image:https://img.shields.io/github/downloads/{project-owner}/{project-name}/total?logo=github["GitHub all releases", link="https://github.com/{project-owner}/{project-name}/releases"]
 image:https://img.shields.io/docker/pulls/{project-owner}/{project-owner}-slim?label={project-owner}-slim&logo=docker&logoColor=white["Docker Pulls {project-owner}-slim", link="https://hub.docker.com/r/{project-owner}/jreleaser-slim"]
 image:https://img.shields.io/docker/pulls/{project-owner}/{project-owner}-alpine?label={project-owner}-alpine&logo=docker&logoColor=white["Docker Pulls {project-owner}-alpine", link="https://hub.docker.com/r/{project-owner}/jreleaser-alpine"]
+image:https://img.shields.io/docker/pulls/{project-owner}/{project-owner}-ubi?label={project-owner}-ubi&logo=docker&logoColor=white["Docker Pulls {project-owner}-ubi", link="https://hub.docker.com/r/{project-owner}/jreleaser-ubi"]
 image:https://img.shields.io/flathub/downloads/org.jreleaser.cli?label=flathub&logo=flathub&logoColor=white[Flathub, link="https://github.com/flathub/org.jreleaser.cli"]
 image:https://img.shields.io/chocolatey/dt/{project-owner}?label=chocolatey&logo=chocolatey&logoColor=white[Chocolatey, link="https://community.chocolatey.org/packages/{project-owner}"]
 image:https://img.shields.io/github/downloads/{project-owner}/{project-name}-appimage/total?label=appimage&logo=linux&logoColor=white[AppImage, link="https://github.com/{project-owner}/{project-name}-appimage"]
@@ -68,7 +69,6 @@ image:https://img.shields.io/visual-studio-marketplace/azure-devops/installs/tot
 
 == Code Health
 
-image:http://img.shields.io/github/actions/workflow/status/{project-owner}/{project-name}/codeql.yml?branch=main&logo=github&label=CodeQL["CodeQL", link="https://github.com/{project-owner}/{project-name}/actions"]
 image:https://img.shields.io/coverallsCoverage/github/{project-owner}/{project-name}?label=coveralls&logo=coveralls["Coveralls", link="https://coveralls.io/github/{project-owner}/{project-name}?branch=main"]
 image:https://img.shields.io/codecov/c/github/{project-owner}/{project-name}?label=codecov&logo=codecov&logoColor=white["Codecov", link="https://app.codecov.io/gh/{project-owner}/{project-name}"]
 image:https://sonarcloud.io/api/project_badges/measure?project=org_jreleaser_jreleaser&metric=security_rating[link="https://sonarcloud.io/summary/new_code?id=org_jreleaser_jreleaser"]
