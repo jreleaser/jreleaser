@@ -18,18 +18,15 @@
 package org.jreleaser.gradle.plugin.tasks
 
 import groovy.transform.CompileStatic
-import org.gradle.api.DefaultTask
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.options.Option
 import org.jreleaser.engine.environment.Environment
-import org.jreleaser.logging.JReleaserLogger
 
 import javax.inject.Inject
 
@@ -39,14 +36,11 @@ import javax.inject.Inject
  * @since 1.5.0
  */
 @CompileStatic
-abstract class JReleaserEnvTask extends DefaultTask {
+abstract class JReleaserEnvTask extends AbstractJReleaserDefaultTask {
     static final String NAME = 'jreleaserEnv'
 
     @Input
-    final Property<JReleaserLogger> jlogger
-
-    @InputDirectory
-    final DirectoryProperty basedir
+    final Property<Boolean> logClasspath
 
     @InputFile
     @Optional
@@ -54,17 +48,25 @@ abstract class JReleaserEnvTask extends DefaultTask {
 
     @Inject
     JReleaserEnvTask(ObjectFactory objects) {
-        jlogger = objects.property(JReleaserLogger)
-        basedir = objects.directoryProperty()
+        super(objects)
+        logClasspath = objects.property(Boolean).convention(false)
         settings = objects.fileProperty()
         
         // Disable up-to-date checks: jreleaser/issues/1972
         this.outputs.upToDateWhen { false }
     }
 
+    @Option(option = 'logClasspath', description = 'Log actual classpath at task execution time on info level (OPTIONAL).')
+    void setLogClasspath(boolean logClasspath) {
+        this.logClasspath.set(logClasspath)
+    }
+
     @TaskAction
     void performAction() {
-        Environment.display(jlogger.get(), basedir.get().asFile.toPath(),
+        if (logClasspath.getOrElse(false)) {
+            logClassLoaderURLs()
+        }
+        Environment.display(jlogger.get().logger, projectDirectory.get().asFile.toPath(),
             settings.present ? settings.get().asFile.toPath() : null)
     }
 }

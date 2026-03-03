@@ -51,11 +51,9 @@ import static org.jreleaser.util.StringUtils.isNotBlank
  * @since 0.3.0
  */
 @CompileStatic
-abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
+abstract class JReleaseAutoConfigReleaseTask extends AbstractJReleaserDefaultTask {
     static final String NAME = 'jreleaserAutoConfigRelease'
 
-    @OutputDirectory
-    final DirectoryProperty outputDirectory
     @Input
     @Optional
     final Property<Boolean> yolo
@@ -175,8 +173,6 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
     @Input
     @Optional
     final ListProperty<String> rejectPlatforms
-    @Internal
-    final Property<JReleaserLoggerService> jlogger
 
     @Option(option = 'project-name', description = 'The project name (OPTIONAL).')
     void setProjectName(String projectName) {
@@ -386,12 +382,11 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
 
     @Inject
     JReleaseAutoConfigReleaseTask(ObjectFactory objects) {
-        yolo = objects.property(Boolean)
-        dryrun = objects.property(Boolean)
-        gitRootSearch = objects.property(Boolean)
-        strict = objects.property(Boolean)
-        outputDirectory = objects.directoryProperty().convention(project.layout.buildDirectory.dir('jreleaser'))
-        jlogger = objects.property(JReleaserLoggerService)
+        super(objects)
+        yolo = objects.property(Boolean).convention(extension.get().yolo)
+        dryrun = objects.property(Boolean).convention(extension.get().dryrun)
+        gitRootSearch = objects.property(Boolean).convention(extension.get().gitRootSearch)
+        strict = objects.property(Boolean).convention(extension.get().strict)
 
         projectName = objects.property(String).convention(project.name)
         projectVersion = objects.property(String).convention(String.valueOf(project.version))
@@ -435,7 +430,7 @@ abstract class JReleaseAutoConfigReleaseTask extends DefaultTask {
     void performAction() {
         JReleaserContext context = ModelAutoConfigurer.builder()
             .logger(jlogger.get().logger)
-            .basedir(project.projectDir.toPath())
+            .basedir(projectDirectory.get().asFile.toPath())
             .outputDirectory(outputDirectory.get().asFile.toPath())
             .yolo(yolo.getOrElse(false))
             .dryrun(dryrun.getOrElse(false))

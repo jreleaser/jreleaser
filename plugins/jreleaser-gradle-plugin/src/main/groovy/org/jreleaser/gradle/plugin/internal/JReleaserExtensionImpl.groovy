@@ -264,19 +264,20 @@ class JReleaserExtensionImpl implements JReleaserExtension {
     }
 
     @CompileDynamic
-    JReleaserModel toModel(org.gradle.api.Project gradleProject, JReleaserLogger logger) {
+    @Override
+    JReleaserModel toModel(JReleaserGradleProjectCapture gradleProjectCapture, JReleaserLogger logger) {
         if (configFile.present) {
             JReleaserModel jreleaser = ContextCreator.resolveModel(logger, configFile.asFile.get().toPath())
-            if (isBlank(jreleaser.project.name)) jreleaser.project.name = gradleProject.name
-            if (isBlank(jreleaser.project.version)) jreleaser.project.version = gradleProject.version
-            if (isBlank(jreleaser.project.description)) jreleaser.project.description = gradleProject.description
+            if (isBlank(jreleaser.project.name)) jreleaser.project.name = gradleProjectCapture.name
+            if (isBlank(jreleaser.project.version)) jreleaser.project.version = gradleProjectCapture.version
+            if (isBlank(jreleaser.project.description)) jreleaser.project.description = gradleProjectCapture.description
             jreleaser.environment.propertiesSource = new org.jreleaser.model.internal.environment.Environment.MapPropertiesSource(
-                filterProperties(gradleProject.properties))
+                filterProperties(gradleProjectCapture.properties))
             return jreleaser
         }
 
         JReleaserModel jreleaser = new JReleaserModel()
-        jreleaser.environment = environment.toModel(gradleProject)
+        jreleaser.environment = environment.toModel(gradleProjectCapture)
         jreleaser.setMatrix(matrix.toModel())
         jreleaser.hooks = hooks.toModel()
         jreleaser.project = project.toModel()

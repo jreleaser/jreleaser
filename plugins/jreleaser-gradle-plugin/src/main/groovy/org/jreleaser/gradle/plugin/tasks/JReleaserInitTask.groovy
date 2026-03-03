@@ -46,29 +46,21 @@ import static org.jreleaser.bundle.RB.$
  */
 @CompileStatic
 @UntrackedTask(because = 'writes to project.basedir')
-abstract class JReleaserInitTask extends DefaultTask {
+abstract class JReleaserInitTask extends AbstractJReleaserDefaultTask {
     static final String NAME = 'jreleaserInit'
 
     @Input
     @Optional
     final Property<String> format
 
-    @OutputDirectory
-    final DirectoryProperty outputDirectory
-
     @Input
     final Property<Boolean> overwrite
 
-    @Internal
-    final Property<JReleaserLoggerService> jlogger
-
     @Inject
     JReleaserInitTask(ObjectFactory objects) {
-        jlogger = objects.property(JReleaserLoggerService)
+        super(objects)
         format = objects.property(String).convention(Providers.<String> notDefined())
         overwrite = objects.property(Boolean).convention(false)
-
-        outputDirectory = objects.directoryProperty()
     }
 
     @Option(option = 'overwrite', description = 'Overwrite existing files (OPTIONAL).')

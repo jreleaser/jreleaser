@@ -38,6 +38,7 @@ abstract class JReleaserPrepareTask extends AbstractJReleaserPackagerTask {
     JReleaserPrepareTask(ObjectFactory objects) {
         super(objects)
         command = JReleaserCommand.PREPARE
+        dependOnAssembleDistIfDistributionPluginIsApplied()
     }
 
     @TaskAction

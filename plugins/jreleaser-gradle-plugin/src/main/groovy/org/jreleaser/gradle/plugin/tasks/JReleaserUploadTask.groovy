@@ -73,6 +73,7 @@ abstract class JReleaserUploadTask extends AbstractJReleaserDistributionTask {
         catalogers = objects.listProperty(String).convention([])
         excludedCatalogers = objects.listProperty(String).convention([])
         command = JReleaserCommand.UPLOAD
+        dependOnAssembleDistIfDistributionPluginIsApplied()
     }
 
     @Option(option = 'uploader', description = 'Include an uploader by type (OPTIONAL).')
