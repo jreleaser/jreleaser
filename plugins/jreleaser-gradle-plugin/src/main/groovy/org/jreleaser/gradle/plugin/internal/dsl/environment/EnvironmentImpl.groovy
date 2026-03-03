@@ -18,13 +18,13 @@
 package org.jreleaser.gradle.plugin.internal.dsl.environment
 
 import groovy.transform.CompileStatic
-import org.gradle.api.Project
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Provider
 import org.jreleaser.gradle.plugin.dsl.environment.Environment
+import org.jreleaser.gradle.plugin.internal.JReleaserGradleProjectCapture
 
 import javax.inject.Inject
 
@@ -49,10 +49,10 @@ class EnvironmentImpl implements Environment {
         this.variables.set(new File(variables))
     }
 
-    org.jreleaser.model.internal.environment.Environment toModel(Project project) {
+    org.jreleaser.model.internal.environment.Environment toModel(JReleaserGradleProjectCapture gradleProjectCapture) {
         org.jreleaser.model.internal.environment.Environment environment = new org.jreleaser.model.internal.environment.Environment()
         environment.propertiesSource = new org.jreleaser.model.internal.environment.Environment.MapPropertiesSource(
-            filterProperties(project.properties))
+            filterProperties(gradleProjectCapture.properties))
         if (variables.present) environment.variables = variables.asFile.get().absolutePath
         if (properties.present) environment.properties.putAll(properties.get())
         environment

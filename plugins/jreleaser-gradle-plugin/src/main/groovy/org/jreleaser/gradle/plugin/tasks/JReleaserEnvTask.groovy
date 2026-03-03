@@ -26,6 +26,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.jreleaser.engine.environment.Environment
@@ -39,14 +40,8 @@ import javax.inject.Inject
  * @since 1.5.0
  */
 @CompileStatic
-abstract class JReleaserEnvTask extends DefaultTask {
+abstract class JReleaserEnvTask extends AbstractJReleaserDefaultTask {
     static final String NAME = 'jreleaserEnv'
-
-    @Input
-    final Property<JReleaserLogger> jlogger
-
-    @InputDirectory
-    final DirectoryProperty basedir
 
     @InputFile
     @Optional
@@ -54,8 +49,7 @@ abstract class JReleaserEnvTask extends DefaultTask {
 
     @Inject
     JReleaserEnvTask(ObjectFactory objects) {
-        jlogger = objects.property(JReleaserLogger)
-        basedir = objects.directoryProperty()
+        super(objects)
         settings = objects.fileProperty()
         
         // Disable up-to-date checks: jreleaser/issues/1972
@@ -64,7 +58,7 @@ abstract class JReleaserEnvTask extends DefaultTask {
 
     @TaskAction
     void performAction() {
-        Environment.display(jlogger.get(), basedir.get().asFile.toPath(),
+        Environment.display(jlogger.get().logger, projectDirectory.get().asFile.toPath(),
             settings.present ? settings.get().asFile.toPath() : null)
     }
 }
