@@ -2,13 +2,6 @@ name: Release
 
 on:
   workflow_dispatch:
-    inputs:
-      version:
-        description: 'Release version'
-        required: true
-      next-version:
-        description: 'Next version'
-        required: true
 
 permissions:
   actions: write
@@ -20,22 +13,37 @@ jobs:
     name: Precheck
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.vars.outputs.VERSION }}
+      version: ${{ steps.version.outputs.version }}
+      release-version: ${{ steps.version.outputs.release_version }}
+      next-version: ${{ steps.version.outputs.next_version }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
 
       - name: Version
-        id: vars
+        id: version
         shell: bash
         run: |
-          echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
-          echo ${{ github.event.inputs.version }} > VERSION
+          version=$(cat VERSION)
+          IFS="."
+          read -r major minor patch <<< "$version"
+          IFS="-"
+          read -r patch tag <<< "$patch"
+          release_version="${major}.${minor}.${patch}"
+          next_version="${major}.$((minor + 1)).0-SNAPSHOT"
+          echo "version=${version}" >> $GITHUB_OUTPUT
+          echo "release_version=${release_version}" >> $GITHUB_OUTPUT
+          echo "next_version=${next_version}" >> $GITHUB_OUTPUT
+
+      - name: Commit version
+        shell: bash
+        run: |
+          echo ${{ steps.version.outputs.release_version }} > VERSION
           git add VERSION
-          sed -i -e "s/^\:project-version\:\ .*/:project-version: ${{ github.event.inputs.version }}/g" README.adoc
+          sed -i -e "s/^\:project-version\:\ .*/:project-version: ${{ steps.version.outputs.release_version }}/g" README.adoc
           git config --global user.email "${{ secrets.COMMIT_EMAIL }}"
           git config --global user.name "Andres Almiray"
-          git commit -a -m "Releasing version ${{ github.event.inputs.version }}"
+          git commit -a -m "Releasing version ${{ steps.version.outputs.release_version }}"
           git push origin main
 
   jlink:
@@ -43,7 +51,7 @@ jobs:
     needs: [precheck]
     uses: jreleaser/jreleaser/.github/workflows/step-jlink.yml@main
     with:
-      project-version: ${{ needs.precheck.outputs.version }}
+      project-version: ${{ needs.precheck.outputs.release-version }}
     secrets:
       gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
       oci-compartment-id: ${{ secrets.JRELEASER_OCI_COMPARTMENTID }}
@@ -53,15 +61,15 @@ jobs:
     needs: [precheck, jlink]
     uses: jreleaser/jreleaser/.github/workflows/step-jpackage.yml@main
     with:
-      project-version: ${{ needs.precheck.outputs.version }}
-      project-effective-version: ${{ needs.precheck.outputs.version }}
+      project-version: ${{ needs.precheck.outputs.release-version }}
+      project-effective-version: ${{ needs.precheck.outputs.release-version }}
 
   native-image:
     name: Native Image
     needs: [precheck, jlink]
     uses: jreleaser/jreleaser/.github/workflows/step-native-image.yml@main
     with:
-      project-version: ${{ needs.precheck.outputs.version }}
+      project-version: ${{ needs.precheck.outputs.release-version }}
     secrets:
       gh-access-token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
@@ -140,7 +148,7 @@ jobs:
           version: early-access
           arguments: full-release
         env:
-          JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.version }}
+          JRELEASER_PROJECT_VERSION: ${{ needs.precheck.outputs.release-version }}
           JRELEASER_GITHUB_TOKEN: ${{ secrets.GIT_ACCESS_TOKEN }}
           JRELEASER_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           JRELEASER_GPG_PUBLIC_KEY: ${{ secrets.GPG_PUBLIC_KEY }}
@@ -176,7 +184,7 @@ jobs:
       - name: Bump version
         shell: bash
         run: |
-          echo ${{ github.event.inputs.next-version }} > VERSION
+          echo ${{ needs.precheck.outputs.next-version }} > VERSION
           git add VERSION
           git config --global user.email "${{ secrets.COMMIT_EMAIL }}"
           git config --global user.name "Andres Almiray"
@@ -191,14 +199,14 @@ jobs:
       base64-subjects: ${{ needs.release.outputs.hashes }}
       upload-assets: true
       upload-tag-name: ${{ needs.release.outputs.tagname }}
-      provenance-name: jreleaser-all-${{ needs.precheck.outputs.version }}.intoto.jsonl
+      provenance-name: jreleaser-all-${{ needs.precheck.outputs.release-version }}.intoto.jsonl
 
   update-wiki:
     name: Update Wiki
     needs: [precheck, release]
     uses: jreleaser/jreleaser/.github/workflows/step-update-wiki.yml@main
     with:
-      project-version: ${{ needs.precheck.outputs.version }}
+      project-version: ${{ needs.precheck.outputs.release-version }}
       project-tag: ${{ needs.release.outputs.tagname }}
       template-params: '-PincludeSboms'
     secrets:
@@ -209,7 +217,7 @@ jobs:
 #    needs: [precheck, release]
 #    uses: jreleaser/jreleaser/.github/workflows/step-update-bach-info.yml@main
 #    with:
-#      project-version: ${{ needs.precheck.outputs.version }}
+#      project-version: ${{ needs.precheck.outputs.release-version }}
 #      project-tag: ${{ needs.release.outputs.tagname }}
 #    secrets:
 #      gh-access-token: ${{ secrets.GIT_ACCESS_TOKEN }}
@@ -237,17 +245,17 @@ jobs:
         shell: bash
         run: |
           curl -sL https://raw.githubusercontent.com/jreleaser/jreleaser/main/.github/scripts/update-website.sh --output update-website.sh
-          curl -sL "https://github.com/jreleaser/jreleaser/releases/download/${TAG}/jreleaser-tool-provider-${VERSION}.jar" --output jreleaser-cli.jar
+          curl -sL "https://github.com/jreleaser/jreleaser/releases/download/${TAG}/jreleaser-tool-provider-${RELEASE_VERSION}.jar" --output jreleaser-cli.jar
         env:
           TAG: ${{ needs.release.outputs.tagname }}
-          VERSION: ${{ needs.precheck.outputs.version }}
+          RELEASE_VERSION: ${{ needs.precheck.outputs.release-version }}
 
       - name: Commit
         shell: bash
         env:
           TAG: ${{ needs.release.outputs.tagname }}
-          VERSION: ${{ github.event.inputs.version }}
-          NEXT_VERSION: ${{ github.event.inputs.next-version }}
+          RELEASE_VERSION: ${{ needs.precheck.outputs.release-version }}
+          NEXT_VERSION: ${{ needs.precheck.outputs.next-version }}
           GH_BOT_EMAIL: ${{ vars.GH_BOT_EMAIL }}
         run: |
           chmod +x update-website.sh

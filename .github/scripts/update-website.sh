@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # env vars:
-# VERSION
+# RELEASE_VERSION
 # NEXT_VERSION
 # GH_BOT_EMAIL
 
@@ -12,10 +12,10 @@ git merge origin/development
 
 echo "📝 Updating versions"
 sed -i -e "s/^version\:\ early-access.*/version: latest/g" docs/antora.yml
-sed -i -e "s/jreleaser-version\:\ .*/jreleaser-version: ${VERSION}/g" docs/antora.yml
-sed -i -e "s/jreleaser-effective-version\:\ .*/jreleaser-effective-version: ${VERSION}/g" docs/antora.yml
+sed -i -e "s/jreleaser-version\:\ .*/jreleaser-version: ${RELEASE_VERSION}/g" docs/antora.yml
+sed -i -e "s/jreleaser-effective-version\:\ .*/jreleaser-effective-version: ${RELEASE_VERSION}/g" docs/antora.yml
 sed -i -e "s/jreleaser-tag\:\ .*/jreleaser-tag: ${TAG}/g" docs/antora.yml
-echo "${VERSION}" > VERSION
+echo "${RELEASE_VERSION}" > VERSION
 
 echo "📝 Updating release history"
 ANCHOR_START="RELEASE-ANCHOR-START"
@@ -34,7 +34,7 @@ ATAG="${TAG//\./-}"
 cat << EOF > "${PAGE}"
 ${HEAD}
 | $(date +%F)
-| ${VERSION}
+| ${RELEASE_VERSION}
 | link:https://github.com/jreleaser/jreleaser/releases/tag/${TAG}[release notes],
   link:https://github.com/jreleaser/jreleaser/wiki/Release-${TAG}[binaries]
 // ${ANCHOR_END}
@@ -45,7 +45,7 @@ EOF
 
 echo "📝 Updating schema"
 java -jar jreleaser-cli.jar json-schema
-cp "jreleaser-schema-${VERSION}.json" schema/
+cp "jreleaser-schema-${RELEASE_VERSION}.json" schema/
 git add schema
 
 PAGE="docs/modules/ROOT/pages/schema.adoc"
@@ -60,7 +60,7 @@ TAIL=$(tail -n +"${AE}" "${PAGE}")
 
 cat << EOF > "${PAGE}"
 ${HEAD}
- - link:https://jreleaser.org/schema/jreleaser-schema-${VERSION}.json[jreleaser-schema-${VERSION}.json]
+ - link:https://jreleaser.org/schema/jreleaser-schema-${RELEASE_VERSION}.json[jreleaser-schema-${RELEASE_VERSION}.json]
 // ${ANCHOR_END}
 ${PREVIOUS_RELEASE}
 ${TAIL}
@@ -70,7 +70,7 @@ echo "⬆️  Updating website"
 git add VERSION
 git config --global user.email "${GH_BOT_EMAIL}"
 git config --global user.name "GitHub Action"
-git commit -a -m "Releasing version ${VERSION}"
+git commit -a -m "Releasing version ${RELEASE_VERSION}"
 git push origin main
 
 echo "📝 Refresh development branch"
