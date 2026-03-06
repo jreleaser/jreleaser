@@ -1,16 +1,7 @@
 # {{jreleaserCreationStamp}}
-# Multi-stage build to avoid duplicate layers
-
-FROM alpine:latest AS extractor
-
-COPY assembly/ /tmp/
-
-RUN mkdir -p /opt/{{distributionName}}-{{projectVersion}}/bin && \
-    mkdir -p /opt/{{distributionName}}-{{projectVersion}}/lib && \
-    mv /tmp/{{distributionExecutableUnix}} /opt/{{distributionName}}-{{projectVersion}}/bin && \
-    chmod +x /opt/{{distributionName}}-{{projectVersion}}/bin/{{distributionExecutableUnix}} && \
-    mv /tmp/{{distributionArtifactFile}} /opt/{{distributionName}}-{{projectVersion}}/lib
-
+# For Docker, we copy the JAR directly without the bin/lib directory structure.
+# The launcher script is useful for bare-metal deployments but unnecessary in containers
+# where the ENTRYPOINT defines how to run the application.
 FROM {{dockerBaseImage}}
 
 {{#dockerLabels}}
@@ -21,15 +12,13 @@ LABEL {{.}}
 {{.}}
 {{/dockerPreCommands}}
 
-COPY --from=extractor /opt/{{distributionName}}-{{projectVersion}} /{{distributionName}}-{{projectVersion}}
-
-ENV PATH="${PATH}:/{{distributionName}}-{{projectVersion}}/bin"
+COPY assembly/{{distributionArtifactFile}} /app/{{distributionArtifactFile}}
 
 {{#dockerPostCommands}}
 {{.}}
 {{/dockerPostCommands}}
 
-ENTRYPOINT ["/{{distributionName}}-{{projectVersion}}/bin/{{distributionExecutableUnix}}"]
+ENTRYPOINT {{dockerEntrypoint}}
 {{#dockerCmd}}
 CMD {{dockerCmd}}
 {{/dockerCmd}}
