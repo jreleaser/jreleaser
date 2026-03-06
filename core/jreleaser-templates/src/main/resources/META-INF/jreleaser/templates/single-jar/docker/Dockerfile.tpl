@@ -1,7 +1,7 @@
 # {{jreleaserCreationStamp}}
 # Multi-stage build to avoid duplicate layers
 
-FROM alpine:3.21 AS extractor
+FROM alpine:latest AS extractor
 
 COPY assembly/ /tmp/
 
