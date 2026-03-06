@@ -1,4 +1,15 @@
 # {{jreleaserCreationStamp}}
+# Multi-stage build to avoid duplicate layers
+
+FROM alpine:latest AS extractor
+
+RUN apk add --no-cache unzip
+
+COPY assembly/ /tmp/
+
+RUN unzip /tmp/{{distributionArtifactFile}} -d /opt && \
+    chmod +x /opt/{{distributionArtifactRootEntryName}}/bin/{{distributionExecutableUnix}}
+
 FROM {{dockerBaseImage}}
 
 {{#dockerLabels}}
@@ -9,11 +20,7 @@ LABEL {{.}}
 {{.}}
 {{/dockerPreCommands}}
 
-COPY assembly/ /
-
-RUN unzip {{distributionArtifactFile}} && \
-    rm {{distributionArtifactFile}} && \
-    chmod +x {{distributionArtifactRootEntryName}}/bin/{{distributionExecutableUnix}}
+COPY --from=extractor /opt/{{distributionArtifactRootEntryName}} /{{distributionArtifactRootEntryName}}
 
 {{#dockerPostCommands}}
 {{.}}

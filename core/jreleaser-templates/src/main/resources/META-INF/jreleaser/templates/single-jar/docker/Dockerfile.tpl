@@ -1,4 +1,7 @@
 # {{jreleaserCreationStamp}}
+# For Docker, we copy the JAR directly without the bin/lib directory structure.
+# The launcher script is useful for bare-metal deployments but unnecessary in containers
+# where the ENTRYPOINT defines how to run the application.
 FROM {{dockerBaseImage}}
 
 {{#dockerLabels}}
@@ -9,21 +12,13 @@ LABEL {{.}}
 {{.}}
 {{/dockerPreCommands}}
 
-COPY assembly/ /
-
-RUN mkdir -p /{{distributionName}}-{{projectVersion}}/bin && \
-    mkdir -p /{{distributionName}}-{{projectVersion}}/lib && \
-    mv /{{distributionExecutableUnix}} /{{distributionName}}-{{projectVersion}}/bin && \
-    chmod +x /{{distributionName}}-{{projectVersion}}/bin/{{distributionExecutableUnix}} && \
-    mv /{{distributionArtifactFile}} /{{distributionName}}-{{projectVersion}}/lib
-
-ENV PATH="${PATH}:/{{distributionName}}-{{projectVersion}}/bin"
+COPY assembly/{{distributionArtifactFile}} /app/{{distributionArtifactFile}}
 
 {{#dockerPostCommands}}
 {{.}}
 {{/dockerPostCommands}}
 
-ENTRYPOINT ["/{{distributionName}}-{{projectVersion}}/bin/{{distributionExecutableUnix}}"]
+ENTRYPOINT {{dockerEntrypoint}}
 {{#dockerCmd}}
 CMD {{dockerCmd}}
 {{/dockerCmd}}
