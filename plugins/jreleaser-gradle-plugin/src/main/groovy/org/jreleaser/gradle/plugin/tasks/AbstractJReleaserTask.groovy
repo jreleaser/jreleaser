@@ -28,9 +28,9 @@ import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.options.Option
 import org.jreleaser.engine.context.ContextCreator
 import org.jreleaser.gradle.plugin.JReleaserExtension
-import org.jreleaser.gradle.plugin.internal.JReleaserExtensionImpl
 import org.jreleaser.gradle.plugin.internal.JReleaserLoggerService
 import org.jreleaser.gradle.plugin.internal.JReleaserProjectConfigurer
+import org.jreleaser.gradle.plugin.internal.JReleaserGradleProjectCapture
 import org.jreleaser.logging.JReleaserLogger
 import org.jreleaser.model.JReleaserVersion
 import org.jreleaser.model.api.JReleaserCommand
@@ -55,7 +55,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
  * @since 0.1.0
  */
 @CompileStatic
-abstract class AbstractJReleaserTask extends DefaultTask {
+abstract class AbstractJReleaserTask extends AbstractJReleaserDefaultTask {
     @Input
     final Property<Boolean> yolo
 
@@ -68,12 +68,6 @@ abstract class AbstractJReleaserTask extends DefaultTask {
     @Input
     final Property<Boolean> strict
 
-    @OutputDirectory
-    final DirectoryProperty outputDirectory
-
-    @Internal
-    final Property<JReleaserLoggerService> jlogger
-
     @Internal
     org.jreleaser.model.api.JReleaserContext.Mode mode
 
@@ -82,13 +76,12 @@ abstract class AbstractJReleaserTask extends DefaultTask {
 
     @Inject
     AbstractJReleaserTask(ObjectFactory objects) {
-        jlogger = objects.property(JReleaserLoggerService)
+        super(objects)
         mode = FULL
-        yolo = objects.property(Boolean)
-        dryrun = objects.property(Boolean)
-        gitRootSearch = objects.property(Boolean)
-        strict = objects.property(Boolean)
-        outputDirectory = objects.directoryProperty().convention(project.layout.buildDirectory.dir('jreleaser'))
+        yolo = objects.property(Boolean).convention(extension.get().yolo)
+        dryrun = objects.property(Boolean).convention(extension.get().dryrun)
+        gitRootSearch = objects.property(Boolean).convention(extension.get().gitRootSearch)
+        strict = objects.property(Boolean).convention(extension.get().strict)
     }
 
     @Option(option = 'yolo', description = 'Skip non-configured operations (OPTIONAL).')
@@ -112,14 +105,13 @@ abstract class AbstractJReleaserTask extends DefaultTask {
     }
 
     protected JReleaserModel createModel() {
-        JReleaserExtensionImpl extension = (JReleaserExtensionImpl) project.extensions.findByType(JReleaserExtension)
-        JReleaserModel model = extension.toModel(project, jlogger.get().logger)
-        JReleaserProjectConfigurer.configureModel(project, model)
+        JReleaserModel model = extension.get().toModel(gradleProjectCapture.get(), jlogger.get().logger)
+        JReleaserProjectConfigurer.configureModel(gradleProjectCapture.get(), model)
         model
     }
 
     private Path resolveSettings() {
-        JReleaserExtensionImpl extension = (JReleaserExtensionImpl) project.extensions.findByType(JReleaserExtension)
+        JReleaserExtension extension = this.extension.get()
         if (extension.getSettingsFile().present) {
             return extension.getSettingsFile().asFile.get().toPath()
         }
@@ -134,7 +126,7 @@ abstract class AbstractJReleaserTask extends DefaultTask {
         logger.info('JReleaser {}', JReleaserVersion.getPlainVersion())
         JReleaserVersion.banner(logger.getTracer())
         logger.increaseIndent()
-        logger.info('- basedir set to {}', project.projectDir.toPath().toAbsolutePath())
+        logger.info('- basedir set to {}', projectDirectory.get().asFile.toPath().toAbsolutePath())
         Path settings = resolveSettings()
         if (settings) {
             logger.info('- settings set to {}', settings.toAbsolutePath())
@@ -144,11 +136,11 @@ abstract class AbstractJReleaserTask extends DefaultTask {
 
         return ContextCreator.create(
             logger,
-            resolveConfigurer(project.extensions.findByType(JReleaserExtension)),
+            resolveConfigurer(extension.get()),
             mode,
             command,
             createModel(),
-            project.projectDir.toPath(),
+            projectDirectory.get().asFile.toPath(),
             settings,
             outputDirectory.get().asFile.toPath(),
             yolo.getOrElse(false),
