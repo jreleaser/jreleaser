@@ -5,9 +5,10 @@ FROM alpine:latest AS extractor
 
 RUN apk add --no-cache unzip
 
-COPY assembly/ /tmp/
+COPY assembly/ /assembly/
 
-RUN unzip /tmp/{{distributionArtifactFile}} -d /opt && \
+RUN unzip /assembly/{{distributionArtifactFile}} -d /opt && \
+    rm /assembly/{{distributionArtifactFile}} && \
     chmod +x /opt/{{distributionArtifactRootEntryName}}/bin/{{distributionExecutableUnix}}
 
 FROM {{dockerBaseImage}}
@@ -20,6 +21,7 @@ LABEL {{.}}
 {{.}}
 {{/dockerPreCommands}}
 
+COPY --from=extractor /assembly /
 COPY --from=extractor /opt/{{distributionArtifactRootEntryName}} /{{distributionArtifactRootEntryName}}
 
 {{#dockerPostCommands}}
