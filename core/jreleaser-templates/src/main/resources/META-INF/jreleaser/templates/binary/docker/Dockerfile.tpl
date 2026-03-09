@@ -1,4 +1,12 @@
 # {{jreleaserCreationStamp}}
+# Multi-stage build to avoid duplicate layers
+
+FROM alpine:latest AS assembler
+
+COPY assembly/ /assembly/
+
+RUN chmod +x /assembly/{{distributionArtifactRootEntryName}}/bin/{{distributionExecutableUnix}}
+
 FROM {{dockerBaseImage}}
 
 {{#dockerLabels}}
@@ -9,8 +17,7 @@ LABEL {{.}}
 {{.}}
 {{/dockerPreCommands}}
 
-COPY assembly/ /
-RUN chmod +x {{distributionArtifactRootEntryName}}/bin/{{distributionExecutableUnix}}
+COPY --from=assembler /assembly/ /
 
 {{#dockerPostCommands}}
 {{.}}
