@@ -7,9 +7,9 @@ COPY assembly/ /assembly/
 
 RUN mkdir -p /opt/{{distributionName}}-{{projectVersion}}/bin && \
     mkdir -p /opt/{{distributionName}}-{{projectVersion}}/lib && \
-    mv /assembly/{{distributionExecutableUnix}} /opt/{{distributionName}}-{{projectVersion}}/bin && \
-    chmod +x /opt/{{distributionName}}-{{projectVersion}}/bin/{{distributionExecutableUnix}} && \
-    mv /assembly/{{distributionArtifactFile}} /opt/{{distributionName}}-{{projectVersion}}/lib
+    mv /assembly/{{distributionExecutableUnix}} /opt/{{distributionExecutableName}}/bin && \
+    chmod +x /opt/{{distributionExecutableName}}/bin/{{distributionExecutableUnix}} && \
+    mv /assembly/{{distributionArtifactFile}} /opt/{{distributionExecutableName}}/lib
 
 FROM {{dockerBaseImage}}
 
@@ -22,15 +22,15 @@ LABEL {{.}}
 {{/dockerPreCommands}}
 
 COPY --from=assembler /assembly /
-COPY --from=assembler /opt/{{distributionName}}-{{projectVersion}} /{{distributionName}}-{{projectVersion}}
+COPY --from=assembler /opt/{{distributionExecutableName}} /{{distributionExecutableName}}
 
-ENV PATH="${PATH}:/{{distributionName}}-{{projectVersion}}/bin"
+ENV PATH="${PATH}:/{{distributionExecutableName}}/bin"
 
 {{#dockerPostCommands}}
 {{.}}
 {{/dockerPostCommands}}
 
-ENTRYPOINT ["/{{distributionName}}-{{projectVersion}}/bin/{{distributionExecutableUnix}}"]
+ENTRYPOINT ["/{{dockerEntrypoint}}"]
 {{#dockerCmd}}
 CMD {{dockerCmd}}
 {{/dockerCmd}}

@@ -419,6 +419,7 @@ distributions:
           username: jreleaser
       labels:
         'org.opencontainers.image.title': 'jreleaser'
+      entrypoint: '["/jreleaser-entrypoint.sh"]'
       postCommands:
         - 'VOLUME /workspace'
       specs:

@@ -70,6 +70,23 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.1.0
  */
 public final class DockerPackagerValidator {
+    private static final Map<org.jreleaser.model.Distribution.DistributionType, String> DEFAULT_ENTRYPOINTS = new LinkedHashMap<>();
+
+    static {
+        DEFAULT_ENTRYPOINTS.put(org.jreleaser.model.Distribution.DistributionType.BINARY,
+            "[\"/{{distributionExecutableName}}/bin/{{distributionExecutableUnix}}\"");
+        DEFAULT_ENTRYPOINTS.put(org.jreleaser.model.Distribution.DistributionType.FLAT_BINARY,
+            "/{{distributionExecutableName}}");
+        DEFAULT_ENTRYPOINTS.put(org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY,
+            "[\"/{{distributionExecutableName}}/bin/{{distributionExecutableUnix}}\"");
+        DEFAULT_ENTRYPOINTS.put(org.jreleaser.model.Distribution.DistributionType.JLINK,
+            "[\"/{{distributionExecutableName}}/bin/{{distributionExecutableUnix}}\"");
+        DEFAULT_ENTRYPOINTS.put(org.jreleaser.model.Distribution.DistributionType.NATIVE_IMAGE,
+            "[\"/{{distributionExecutableName}}/bin/{{distributionExecutableUnix}}\"");
+        DEFAULT_ENTRYPOINTS.put(org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR,
+            "[\"/{{distributionExecutableName}}/bin/{{distributionExecutableUnix}}\"");
+    }
+
     private DockerPackagerValidator() {
         // noop
     }
@@ -135,7 +152,7 @@ public final class DockerPackagerValidator {
             packager.setEntrypoint(parentPackager.getEntrypoint());
         }
         if (isBlank(packager.getEntrypoint())) {
-            packager.setEntrypoint(DockerConfiguration.DEFAULT_ENTRYPOINT);
+            packager.setEntrypoint(DEFAULT_ENTRYPOINTS.get(distribution.getType()));
         }
 
         if (isBlank(packager.getCmd())) {
@@ -267,7 +284,7 @@ public final class DockerPackagerValidator {
             spec.setEntrypoint(docker.getEntrypoint());
         }
         if (isBlank(spec.getEntrypoint())) {
-            spec.setEntrypoint(DockerConfiguration.DEFAULT_ENTRYPOINT);
+            spec.setEntrypoint(DEFAULT_ENTRYPOINTS.get(distribution.getType()));
         }
 
         if (isBlank(spec.getCmd())) {

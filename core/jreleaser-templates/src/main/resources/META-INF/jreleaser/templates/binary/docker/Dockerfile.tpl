@@ -1,11 +1,15 @@
 # {{jreleaserCreationStamp}}
 # Multi-stage build to avoid duplicate layers
 
-FROM alpine:latest AS assembler
+FROM alpine:latest AS extractor
+
+RUN apk add --no-cache unzip
 
 COPY assembly/ /assembly/
 
-RUN chmod +x /assembly/{{distributionArtifactRootEntryName}}/bin/{{distributionExecutableUnix}}
+RUN unzip /assembly/{{distributionArtifactFile}} -d /opt && \
+    rm /assembly/{{distributionArtifactFile}} && \
+    chmod +x /opt/{{distributionArtifactRootEntryName}}/bin/{{distributionExecutableUnix}}
 
 FROM {{dockerBaseImage}}
 
@@ -17,13 +21,14 @@ LABEL {{.}}
 {{.}}
 {{/dockerPreCommands}}
 
-COPY --from=assembler /assembly/ /
+COPY --from=extractor /assembly /
+COPY --from=extractor /opt/{{distributionArtifactRootEntryName}} /{{distributionExecutableName}}
 
 {{#dockerPostCommands}}
 {{.}}
 {{/dockerPostCommands}}
 
-ENV PATH="${PATH}:/{{distributionArtifactRootEntryName}}/bin"
+ENV PATH="${PATH}:/{{distributionExecutableName}}/bin"
 
 ENTRYPOINT {{dockerEntrypoint}}
 {{#dockerCmd}}

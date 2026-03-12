@@ -23,13 +23,13 @@ LABEL {{.}}
 {{/dockerPreCommands}}
 
 COPY --from=extractor /assembly /
-COPY --from=extractor /opt/{{distributionArtifactRootEntryName}} /{{distributionArtifactRootEntryName}}
+COPY --from=extractor /opt/{{distributionArtifactRootEntryName}} /{{distributionExecutableName}}
 
 {{#dockerPostCommands}}
 {{.}}
 {{/dockerPostCommands}}
 
-ENV JAVA_HOME="/{{distributionArtifactRootEntryName}}"
+ENV JAVA_HOME="/{{distributionExecutableName}}"
 ENV PATH="${PATH}:${JAVA_HOME}/bin"
 
 ENTRYPOINT {{dockerEntrypoint}}

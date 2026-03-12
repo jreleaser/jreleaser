@@ -22,13 +22,13 @@ LABEL {{.}}
 {{/dockerPreCommands}}
 
 COPY --from=extractor /assembly /
-COPY --from=extractor /opt/{{distributionArtifactRootEntryName}} /{{distributionArtifactRootEntryName}}
+COPY --from=extractor /opt/{{distributionArtifactRootEntryName}} /{{distributionExecutableName}}
 
 {{#dockerPostCommands}}
 {{.}}
 {{/dockerPostCommands}}
 
-ENV PATH="${PATH}:/{{distributionArtifactRootEntryName}}/bin"
+ENV PATH="${PATH}:/{{distributionExecutableName}}/bin"
 
 ENTRYPOINT {{dockerEntrypoint}}
 {{#dockerCmd}}

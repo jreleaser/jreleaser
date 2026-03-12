@@ -25,7 +25,7 @@ COPY --from=assembler /assembly/ /
 
 ENV PATH="${PATH}:/"
 
-ENTRYPOINT ["/{{distributionExecutableName}}"]
+ENTRYPOINT {{dockerEntrypoint}}
 {{#dockerCmd}}
 CMD {{dockerCmd}}
 {{/dockerCmd}}
