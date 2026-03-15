@@ -58,16 +58,21 @@ public class JdkHelper {
     private final MavenSession session;
     private final BuildPluginManager pluginManager;
     private final ArchiverManager archiverManager;
+    private final int connectTimeout;
+    private final int readTimeout;
 
     public JdkHelper(MavenProject project, Log log, File outputDirectory,
                      MavenSession session, BuildPluginManager pluginManager,
-                     ArchiverManager archiverManager) {
+                     ArchiverManager archiverManager,
+                     int connectTimeout, int readTimeout) {
         this.project = project;
         this.log = log;
         this.outputDirectory = outputDirectory;
         this.session = session;
         this.pluginManager = pluginManager;
         this.archiverManager = archiverManager;
+        this.connectTimeout = connectTimeout;
+        this.readTimeout = readTimeout;
     }
 
     public void setupJdk(Jdk jdk, boolean unpack) throws MojoExecutionException {
@@ -109,16 +114,18 @@ public class JdkHelper {
                 .toAbsolutePath().toString();
 
             executeMojo(
-                plugin("com.googlecode.maven-download-plugin",
+                plugin("io.github.download-maven-plugin",
                     "download-maven-plugin",
-                    "1.8.1"),
+                    "2.1.0"),
                 goal("wget"),
                 configuration(
                     element("uri", jdk.getUrl()),
                     element("followRedirects", "true"),
                     element("outputDirectory", jdkExtractDirectory.getAbsolutePath()),
                     element("cacheDirectory", cacheDirectory),
-                    element("outputFileName", filename)
+                    element("outputFileName", filename),
+                    element("connectTimeOut", String.valueOf(connectTimeout * 1000)),
+                    element("readTimeOut", String.valueOf(readTimeout * 1000))
                 ),
                 executionEnvironment(
                     project,

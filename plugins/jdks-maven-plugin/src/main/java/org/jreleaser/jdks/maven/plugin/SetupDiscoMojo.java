@@ -46,7 +46,8 @@ public class SetupDiscoMojo extends AbstractDiscoMojo {
     @Override
     protected void doExecute(Disco disco) throws MojoExecutionException {
         JdkHelper jdkHelper = new JdkHelper(project, getLog(), outputDirectory,
-            session, pluginManager, archiverManager);
+            session, pluginManager, archiverManager,
+            connectTimeout, readTimeout);
 
         for (Pkg pkg : pkgs) {
             Jdk jdk = resolvePkg(pkg, disco);
