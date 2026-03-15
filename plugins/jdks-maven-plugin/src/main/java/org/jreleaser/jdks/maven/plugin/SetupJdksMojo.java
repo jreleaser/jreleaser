@@ -67,7 +67,8 @@ public class SetupJdksMojo extends AbstractJdksMojo {
     @Override
     protected void doExecute() throws MojoExecutionException {
         JdkHelper jdkHelper = new JdkHelper(project, getLog(), outputDirectory,
-            session, pluginManager, archiverManager);
+            session, pluginManager, archiverManager,
+            connectTimeout, readTimeout);
 
         if (isNotBlank(jdkName)) {
             // find the given JDK

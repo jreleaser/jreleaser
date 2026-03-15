@@ -34,6 +34,12 @@ abstract class AbstractJdksMojo extends AbstractSetupMojo {
     @Parameter(required = true)
     protected List<Jdk> jdks;
 
+    @Parameter(property = "jdks.setup.connect.timeout")
+    protected int connectTimeout;
+
+    @Parameter(property = "jdks.setup.read.timeout")
+    protected int readTimeout;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         Banner.display(project, getLog());
@@ -47,6 +53,13 @@ abstract class AbstractJdksMojo extends AbstractSetupMojo {
     protected abstract void doExecute() throws MojoExecutionException;
 
     protected void validate() throws MojoFailureException {
+        if (connectTimeout <= 0 || connectTimeout > 300) {
+            connectTimeout = 20;
+        }
+        if (readTimeout <= 0 || readTimeout > 300) {
+            readTimeout = 60;
+        }
+
         if (null == jdks || jdks.isEmpty()) return;
 
         Errors errors = new Errors();
