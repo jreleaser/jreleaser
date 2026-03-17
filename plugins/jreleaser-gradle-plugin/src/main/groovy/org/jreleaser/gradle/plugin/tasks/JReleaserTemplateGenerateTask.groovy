@@ -44,7 +44,7 @@ import java.nio.file.Path
  * @since 0.1.0
  */
 @CompileStatic
-abstract class JReleaserTemplateGenerateTask extends DefaultTask {
+abstract class JReleaserTemplateGenerateTask extends AbstractJReleaserDefaultTask {
     static final String NAME = 'jreleaserTemplateGenerate'
 
     @Input
@@ -71,21 +71,15 @@ abstract class JReleaserTemplateGenerateTask extends DefaultTask {
     @Optional
     final Property<String> assemblerName
 
-    @OutputDirectory
-    final DirectoryProperty outputDirectory
-
     @Input
     final Property<Boolean> overwrite
 
     @Input
     final Property<Boolean> snapshot
 
-    @Internal
-    final Property<JReleaserLoggerService> jlogger
-
     @Inject
     JReleaserTemplateGenerateTask(ObjectFactory objects) {
-        jlogger = objects.property(JReleaserLoggerService)
+        super(objects)
         distributionType = objects.property(Distribution.DistributionType).convention(Distribution.DistributionType.JAVA_BINARY)
         distributionName = objects.property(String)
         packagerName = objects.property(String)
@@ -94,8 +88,6 @@ abstract class JReleaserTemplateGenerateTask extends DefaultTask {
         assemblerName = objects.property(String).convention(Providers.<String> notDefined())
         overwrite = objects.property(Boolean).convention(false)
         snapshot = objects.property(Boolean).convention(false)
-
-        outputDirectory = objects.directoryProperty()
     }
 
     @Option(option = 'overwrite', description = 'Overwrite existing files (OPTIONAL).')

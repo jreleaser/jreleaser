@@ -56,6 +56,7 @@ abstract class JReleaserAnnounceTask extends AbstractJReleaserTask {
         excludedAnnouncers = objects.listProperty(String).convention([])
         mode = ANNOUNCE
         command = JReleaserCommand.ANNOUNCE
+        dependOnAssembleDistIfDistributionPluginIsApplied()
     }
 
     @Option(option = 'announcer', description = 'Include an announcer (OPTIONAL).')

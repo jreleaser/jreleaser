@@ -38,6 +38,7 @@ abstract class JReleaserPublishTask extends AbstractJReleaserPackagerTask {
     JReleaserPublishTask(ObjectFactory objects) {
         super(objects)
         command = JReleaserCommand.PUBLISH
+        dependOnAssembleDistIfDistributionPluginIsApplied()
     }
 
     @TaskAction

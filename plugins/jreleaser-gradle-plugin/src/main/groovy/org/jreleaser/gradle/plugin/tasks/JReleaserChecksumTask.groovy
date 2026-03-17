@@ -53,6 +53,7 @@ abstract class JReleaserChecksumTask extends AbstractPlatformAwareJReleaserTask 
         distributions = objects.listProperty(String).convention([])
         excludedDistributions = objects.listProperty(String).convention([])
         command = JReleaserCommand.CHECKSUM
+        dependOnAssembleDistIfDistributionPluginIsApplied()
     }
 
     @Option(option = 'distribution', description = 'Include a distribution (OPTIONAL).')

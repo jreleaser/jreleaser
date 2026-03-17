@@ -40,6 +40,9 @@ import org.jreleaser.gradle.plugin.dsl.project.Project
 import org.jreleaser.gradle.plugin.dsl.release.Release
 import org.jreleaser.gradle.plugin.dsl.signing.Signing
 import org.jreleaser.gradle.plugin.dsl.upload.Upload
+import org.jreleaser.gradle.plugin.internal.JReleaserGradleProjectCapture
+import org.jreleaser.logging.JReleaserLogger
+import org.jreleaser.model.internal.JReleaserModel
 
 /**
  *
@@ -97,6 +100,8 @@ interface JReleaserExtension {
     Signing getSigning()
 
     Checksum getChecksum()
+
+    JReleaserModel toModel(JReleaserGradleProjectCapture gradleProjectCapture, JReleaserLogger logger)
 
     // NamedDomainObjectContainer<Extension> getExtensions()
 

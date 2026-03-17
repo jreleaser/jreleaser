@@ -74,6 +74,7 @@ abstract class JReleaserConfigTask extends AbstractPlatformAwareJReleaserTask {
         deploy = objects.property(Boolean).convention(false)
         download = objects.property(Boolean).convention(false)
         command = JReleaserCommand.CONFIG
+        dependOnAssembleDistIfDistributionPluginIsApplied()
 
         // Disable up-to-date checks: jreleaser/issues/1972
         this.outputs.upToDateWhen { false }

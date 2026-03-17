@@ -103,6 +103,7 @@ abstract class JReleaserFullReleaseTask extends AbstractJReleaserPackagerTask {
         catalogers = objects.listProperty(String).convention([])
         excludedCatalogers = objects.listProperty(String).convention([])
         command = JReleaserCommand.FULL_RELEASE
+        dependOnAssembleDistIfDistributionPluginIsApplied()
     }
 
     @Option(option = 'deployer', description = 'Include a deployer by type (OPTIONAL).')
