@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-107-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-108-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -149,6 +149,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://bruno.verachten.fr"><img src="https://avatars.githubusercontent.com/u/116569?v=4?s=100" width="100px;" alt="Bruno Verachten"/><br /><sub><b>Bruno Verachten</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=gounthar" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://portfolio-rzpb.vercel.app/"><img src="https://avatars.githubusercontent.com/u/157958841?v=4?s=100" width="100px;" alt="Prakarsh"/><br /><sub><b>Prakarsh</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=PrakarshSrivastav" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://www.rockwellautomation.com/"><img src="https://avatars.githubusercontent.com/u/45703410?v=4?s=100" width="100px;" alt="Markus Hoffrogge"/><br /><sub><b>Markus Hoffrogge</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=mhoffrog" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
