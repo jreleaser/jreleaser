@@ -33,7 +33,7 @@ import static org.jreleaser.model.api.JReleaserContext.Mode.CHANGELOG
  * @since 0.1.0
  */
 @CompileStatic
-abstract class JReleaserChangelogTask extends AbstractJReleaserTask {
+abstract class JReleaserChangelogTask extends AbstractJReleaserCommonOptionsTask {
     static final String NAME = 'jreleaserChangelog'
 
     @Inject

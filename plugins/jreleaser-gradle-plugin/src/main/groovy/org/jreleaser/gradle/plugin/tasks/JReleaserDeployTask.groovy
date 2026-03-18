@@ -38,7 +38,7 @@ import static org.jreleaser.model.api.JReleaserContext.Mode.DEPLOY
  * @since 1.3.0
  */
 @CompileStatic
-abstract class JReleaserDeployTask extends AbstractJReleaserTask {
+abstract class JReleaserDeployTask extends AbstractJReleaserCommonOptionsTask {
     static final String NAME = 'jreleaserDeploy'
 
     @Input

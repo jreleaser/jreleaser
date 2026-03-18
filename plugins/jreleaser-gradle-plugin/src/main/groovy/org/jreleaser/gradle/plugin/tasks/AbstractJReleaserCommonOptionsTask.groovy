@@ -18,19 +18,14 @@
 package org.jreleaser.gradle.plugin.tasks
 
 import groovy.transform.CompileStatic
-import org.gradle.api.DefaultTask
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.options.Option
 import org.jreleaser.engine.context.ContextCreator
 import org.jreleaser.gradle.plugin.JReleaserExtension
-import org.jreleaser.gradle.plugin.internal.JReleaserLoggerService
 import org.jreleaser.gradle.plugin.internal.JReleaserProjectConfigurer
-import org.jreleaser.gradle.plugin.internal.JReleaserGradleProjectCapture
 import org.jreleaser.logging.JReleaserLogger
 import org.jreleaser.model.JReleaserVersion
 import org.jreleaser.model.api.JReleaserCommand
@@ -55,7 +50,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank
  * @since 0.1.0
  */
 @CompileStatic
-abstract class AbstractJReleaserTask extends AbstractJReleaserDefaultTask {
+abstract class AbstractJReleaserCommonOptionsTask extends AbstractJReleaserDefaultTask {
     @Input
     final Property<Boolean> yolo
 
@@ -75,7 +70,7 @@ abstract class AbstractJReleaserTask extends AbstractJReleaserDefaultTask {
     JReleaserCommand command
 
     @Inject
-    AbstractJReleaserTask(ObjectFactory objects) {
+    AbstractJReleaserCommonOptionsTask(ObjectFactory objects) {
         super(objects)
         mode = FULL
         yolo = objects.property(Boolean).convention(extension.get().yolo)

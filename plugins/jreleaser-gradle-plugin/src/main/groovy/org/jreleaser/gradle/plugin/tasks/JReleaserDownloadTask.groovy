@@ -38,7 +38,7 @@ import static org.jreleaser.model.api.JReleaserContext.Mode.DOWNLOAD
  * @since 1.1.0
  */
 @CompileStatic
-abstract class JReleaserDownloadTask extends AbstractJReleaserTask {
+abstract class JReleaserDownloadTask extends AbstractJReleaserCommonOptionsTask {
     static final String NAME = 'jreleaserDownload'
 
     @Input

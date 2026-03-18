@@ -34,7 +34,7 @@ import javax.inject.Inject
  * @since 0.6.0
  */
 @CompileStatic
-abstract class AbstractPlatformAwareJReleaserTask extends AbstractJReleaserTask {
+abstract class AbstractPlatformAwareJReleaserTask extends AbstractJReleaserCommonOptionsTask {
     @Input
     @Optional
     final Property<Boolean> selectCurrentPlatform
