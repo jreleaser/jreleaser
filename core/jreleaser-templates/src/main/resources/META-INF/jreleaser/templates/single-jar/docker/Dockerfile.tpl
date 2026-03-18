@@ -5,8 +5,8 @@ FROM alpine:latest AS assembler
 
 COPY assembly/ /assembly/
 
-RUN mkdir -p /opt/{{distributionName}}-{{projectVersion}}/bin && \
-    mkdir -p /opt/{{distributionName}}-{{projectVersion}}/lib && \
+RUN mkdir -p /opt/{{distributionExecutableName}}/bin && \
+    mkdir -p /opt/{{distributionExecutableName}}/lib && \
     mv /assembly/{{distributionExecutableUnix}} /opt/{{distributionExecutableName}}/bin && \
     chmod +x /opt/{{distributionExecutableName}}/bin/{{distributionExecutableUnix}} && \
     mv /assembly/{{distributionArtifactFile}} /opt/{{distributionExecutableName}}/lib
