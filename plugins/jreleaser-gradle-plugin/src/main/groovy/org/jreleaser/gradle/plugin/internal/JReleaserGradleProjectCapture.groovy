@@ -43,6 +43,10 @@ class JReleaserGradleProjectCapture implements Serializable {
 
     // List of Gradle Project properties that are deprecated in Gradle 9
     // and should be ignored to avoid deprecation warnings.
+    // Refer to deprecated Convention APIs:
+    //   org.gradle.api.plugins.internal.NaggingJavaPluginConvention
+    //   org.gradle.api.plugins.BasePluginConvention
+    //   org.gradle.api.plugins.JavaPluginConvention
     private static final List<String> GRADLE_DEPRECATED_PROJECT_PROPS = [
         'archivesBaseName',
         'archivesName',
@@ -54,6 +58,12 @@ class JReleaserGradleProjectCapture implements Serializable {
         'docsDirName',
         'libsDirectory',
         'libsDirName',
+        'manifest',
+        'project',
+        'reportsDir',
+        'sourceSets',
+        'sourceCompatibility',
+        'targetCompatibility',
         'testReportDir',
         'testReportDirName',
         'testResultsDir',
