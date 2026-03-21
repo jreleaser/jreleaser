@@ -198,7 +198,7 @@ public class MavenCentral {
         }
 
         if (deployment.isPresent()) {
-            if (deployment.get().isTransitioning()) {
+            if (deployment.get().isTransitioning(acceptableStates)) {
                 throw new IllegalStateException(RB.$("maven.central.wait.deployment.transitioning", deploymentId));
             }
 
