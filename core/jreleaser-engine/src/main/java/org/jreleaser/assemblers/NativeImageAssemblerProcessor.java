@@ -41,6 +41,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
 
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
@@ -49,6 +51,7 @@ import static org.jreleaser.assemblers.AssemblerUtils.readJavaVersion;
 import static org.jreleaser.model.Constants.KEY_ARCHIVE_FORMAT;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.util.FileType.EXE;
+import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -181,9 +184,6 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<or
             .collect(toList()));
 
         if (isNotBlank(assembler.getJava().getMainModule())) {
-            cmd.arg("--module")
-                .arg(resolveTemplate(context.getLogger(), assembler.getJava().getMainModule(), props) + "/" + resolveTemplate(context.getLogger(), assembler.getJava().getMainClass(), props));
-
             cmd.arg("--module-path")
                 .arg(jars.stream()
                     .map(Path::toAbsolutePath)
@@ -194,21 +194,25 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<or
                     .collect(joining(File.pathSeparator)));
 
         } else {
-            cmd.arg("-jar")
-                .arg(maybeQuote(assembler.getMainJar().getEffectivePath(context, assembler).toAbsolutePath().toString()));
-
-            if (!jars.isEmpty()) {
-                cmd.arg("-cp")
-                    .arg(jars.stream()
-                        .map(Path::toAbsolutePath)
-                        .map(image.getParent()::relativize)
-                        .map(Path::toString)
-                        .map(this::maybeQuote)
-                        .collect(joining(File.pathSeparator)));
-            }
+            cmd.arg("-cp")
+                .arg(jars.stream()
+                    .map(Path::toAbsolutePath)
+                    .map(image.getParent()::relativize)
+                    .map(Path::toString)
+                    .map(this::maybeQuote)
+                    .collect(joining(File.pathSeparator)));
         }
 
         cmd.arg("-H:Name=" + executable);
+        String mainClass = isNotBlank(assembler.getJava().getMainClass()) ? assembler.getJava().getMainClass() : tryAutoDetectMainClass();
+        if (isBlank(mainClass)) {
+            throw new AssemblerProcessingException(RB.$("ERROR_assembler_no_main_class", assembler.getMainJar().getResolvedPath()));
+        } else if (isNotBlank(assembler.getJava().getMainModule())) {
+            cmd.arg("--module")
+                .arg(resolveTemplate(context.getLogger(), assembler.getJava().getMainModule(), props) + "/" + resolveTemplate(context.getLogger(), mainClass, props));
+        } else {
+            cmd.arg(resolveTemplate(context.getLogger(), mainClass, props));
+        }
         context.getLogger().debug(String.join(" ", cmd.getArgs()));
         executeCommand(image.getParent(), cmd);
 
@@ -245,6 +249,15 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<or
             context.getLogger().debug("- {}", imageArchive.getFileName());
         } catch (IOException e) {
             throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
+        }
+    }
+
+    private String tryAutoDetectMainClass() {
+        try (JarFile mainJar = new JarFile(assembler.getMainJar().getEffectivePath(context, assembler).toString())) {
+            return mainJar.getManifest().getMainAttributes().getValue(Attributes.Name.MAIN_CLASS);
+        } catch (Exception e) {
+            context.getLogger().debug(RB.$("ERROR_assembler_autodetect_main_class", assembler.getMainJar().getResolvedPath()), e);
+            return "";
         }
     }
 
