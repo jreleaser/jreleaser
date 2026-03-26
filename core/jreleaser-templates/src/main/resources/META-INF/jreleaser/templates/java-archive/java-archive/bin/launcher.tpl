@@ -12,6 +12,11 @@
 # Resolve links: $0 may be a link
 app_path=$0
 
+case $app_path in
+  */*) ;;
+  *) app_path=$(command -v -- "$app_path" 2>/dev/null || printf '%s' "$app_path") ;;
+esac
+
 # Need this for daisy-chained symlinks.
 while
     APP_HOME=${app_path%"${app_path##*/}"}  # leaves a trailing /; empty if no leading path
