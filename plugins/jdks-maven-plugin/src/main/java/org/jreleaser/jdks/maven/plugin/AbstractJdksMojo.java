@@ -31,13 +31,22 @@ import java.util.List;
  * @since 0.3.0
  */
 abstract class AbstractJdksMojo extends AbstractSetupMojo {
+
+    protected static final int MINIMUM_CONNECT_TIMEOUT = 20;
+
+    protected static final int MAXIMUM_CONNECT_TIMEOUT = 300;
+
+    protected static final int MINIMUM_READ_TIMEOUT = 60;
+
+    protected static final int MAXIMUM_READ_TIMEOUT = 300;
+
     @Parameter(required = true)
     protected List<Jdk> jdks;
 
-    @Parameter(property = "jdks.setup.connect.timeout")
+    @Parameter(property = "jdks.setup.connect.timeout", defaultValue = "" + MINIMUM_CONNECT_TIMEOUT)
     protected int connectTimeout;
 
-    @Parameter(property = "jdks.setup.read.timeout")
+    @Parameter(property = "jdks.setup.read.timeout", defaultValue = "" + MINIMUM_READ_TIMEOUT)
     protected int readTimeout;
 
     @Override
@@ -53,11 +62,19 @@ abstract class AbstractJdksMojo extends AbstractSetupMojo {
     protected abstract void doExecute() throws MojoExecutionException;
 
     protected void validate() throws MojoFailureException {
-        if (connectTimeout <= 0 || connectTimeout > 300) {
-            connectTimeout = 20;
+        if (connectTimeout < MINIMUM_CONNECT_TIMEOUT) {
+            connectTimeout = MINIMUM_CONNECT_TIMEOUT;
+            getLog().warn("Connect timeout cannot be less than " + MINIMUM_CONNECT_TIMEOUT + " seconds. Defaulting to " + connectTimeout + " seconds.");
+        } else if (connectTimeout > MAXIMUM_CONNECT_TIMEOUT) {
+            connectTimeout = MAXIMUM_CONNECT_TIMEOUT;
+            getLog().warn("Connect timeout cannot be greater than " + MAXIMUM_CONNECT_TIMEOUT + " seconds. Defaulting to " + connectTimeout + " seconds.");
         }
-        if (readTimeout <= 0 || readTimeout > 300) {
-            readTimeout = 60;
+        if (readTimeout < MINIMUM_READ_TIMEOUT) {
+            readTimeout = MINIMUM_READ_TIMEOUT;
+            getLog().warn("Read timeout cannot be less than " + MINIMUM_READ_TIMEOUT + " seconds. Defaulting to " + readTimeout + " seconds.");
+        } else if (readTimeout > MAXIMUM_READ_TIMEOUT) {
+            readTimeout = MAXIMUM_READ_TIMEOUT;
+            getLog().warn("Read timeout cannot be greater than " + MAXIMUM_READ_TIMEOUT + " seconds. Defaulting to " + readTimeout + " seconds.");
         }
 
         if (null == jdks || jdks.isEmpty()) return;
