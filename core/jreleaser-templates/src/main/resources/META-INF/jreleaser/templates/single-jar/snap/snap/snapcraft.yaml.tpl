@@ -26,7 +26,7 @@ apps:
     command: ${JAVA_HOME}/bin/java -jar $SNAP/{{distributionArtifactFile}}
     {{/distributionJavaMainModule}}
     environment:
-      JAVA_HOME: "$SNAP/usr/lib/jvm/java"
+      JAVA_HOME: "$SNAP/usr/lib/jvm/java-{{distributionJavaVersion}}-openjdk-${SNAP_ARCH}"
       PATH: "$PATH:$JAVA_HOME/bin"
     {{#snapHasLocalPlugs}}
     plugs:
