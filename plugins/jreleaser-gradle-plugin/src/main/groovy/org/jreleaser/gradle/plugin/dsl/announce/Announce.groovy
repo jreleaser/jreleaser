@@ -68,6 +68,8 @@ interface Announce extends Activatable {
 
     TwitterAnnouncer getTwitter()
 
+    ZernioAnnouncer getZernio()
+
     ZulipAnnouncer getZulip()
 
     NamedDomainObjectContainer<HttpAnnouncer> getHttp()
@@ -113,6 +115,8 @@ interface Announce extends Activatable {
     void telegram(Action<? super TelegramAnnouncer> action)
 
     void twitter(Action<? super TwitterAnnouncer> action)
+
+    void zernio(Action<? super ZernioAnnouncer> action)
 
     void zulip(Action<? super ZulipAnnouncer> action)
 

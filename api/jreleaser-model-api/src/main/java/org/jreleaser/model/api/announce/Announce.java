@@ -71,5 +71,7 @@ public interface Announce extends Domain, Activatable {
 
     Map<String, ? extends WebhookAnnouncer> getWebhooks();
 
+    ZernioAnnouncer getZernio();
+
     ZulipAnnouncer getZulip();
 }

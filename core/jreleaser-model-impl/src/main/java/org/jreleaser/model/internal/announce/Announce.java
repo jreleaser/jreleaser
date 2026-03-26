@@ -38,7 +38,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.1.0
  */
 public final class Announce extends AbstractActivatable<Announce> implements Domain {
-    private static final long serialVersionUID = -2945770875328891983L;
+    private static final long serialVersionUID = -7242767276585894642L;
 
     private final ArticleAnnouncer article = new ArticleAnnouncer();
     private final BlueskyAnnouncer bluesky = new BlueskyAnnouncer();
@@ -58,6 +58,7 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
     private final TeamsAnnouncer teams = new TeamsAnnouncer();
     private final TelegramAnnouncer telegram = new TelegramAnnouncer();
     private final TwitterAnnouncer twitter = new TwitterAnnouncer();
+    private final ZernioAnnouncer zernio = new ZernioAnnouncer();
     private final ZulipAnnouncer zulip = new ZulipAnnouncer();
     @JsonIgnore
     private final HttpAnnouncers httpAnnouncers = new HttpAnnouncers();
@@ -66,7 +67,7 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
 
     @JsonIgnore
     private final org.jreleaser.model.api.announce.Announce immutable = new org.jreleaser.model.api.announce.Announce() {
-        private static final long serialVersionUID = -2082810056468887381L;
+        private static final long serialVersionUID = -4039343801203691197L;
 
         @Override
         public org.jreleaser.model.api.announce.ArticleAnnouncer getArticle() {
@@ -174,6 +175,11 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         }
 
         @Override
+        public org.jreleaser.model.api.announce.ZernioAnnouncer getZernio() {
+            return zernio.asImmutable();
+        }
+
+        @Override
         public org.jreleaser.model.api.announce.ZulipAnnouncer getZulip() {
             return zulip.asImmutable();
         }
@@ -223,6 +229,7 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         setTeams(source.teams);
         setTelegram(source.telegram);
         setTwitter(source.twitter);
+        setZernio(source.zernio);
         setZulip(source.zulip);
         setConfiguredHttp(source.httpAnnouncers);
         setConfiguredWebhooks(source.webhooksAnnouncer);
@@ -464,6 +471,14 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         this.webhooksAnnouncer.addWebhook(webhook);
     }
 
+    public ZernioAnnouncer getZernio() {
+        return zernio;
+    }
+
+    public void setZernio(ZernioAnnouncer zernio) {
+        this.zernio.merge(zernio);
+    }
+
     public ZulipAnnouncer getZulip() {
         return zulip;
     }
@@ -497,6 +512,7 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         map.putAll(telegram.asMap(full));
         map.putAll(twitter.asMap(full));
         map.putAll(webhooksAnnouncer.asMap(full));
+        map.putAll(zernio.asMap(full));
         map.putAll(zulip.asMap(full));
         return map;
     }
@@ -552,6 +568,8 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
                 return (A) getTwitter();
             case org.jreleaser.model.api.announce.WebhooksAnnouncer.TYPE:
                 return (A) getConfiguredWebhooks();
+            case org.jreleaser.model.api.announce.ZernioAnnouncer.TYPE:
+                return (A) getZernio();
             case org.jreleaser.model.api.announce.ZulipAnnouncer.TYPE:
                 return (A) getZulip();
             default:

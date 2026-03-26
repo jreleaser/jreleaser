@@ -43,6 +43,7 @@ import static org.jreleaser.model.internal.validation.announce.TeamsAnnouncerVal
 import static org.jreleaser.model.internal.validation.announce.TelegramAnnouncerValidator.validateTelegram;
 import static org.jreleaser.model.internal.validation.announce.TwitterAnnouncerValidator.validateTwitter;
 import static org.jreleaser.model.internal.validation.announce.WebhooksAnnouncerValidator.validateWebhooks;
+import static org.jreleaser.model.internal.validation.announce.ZernioAnnouncerValidator.validateZernio;
 import static org.jreleaser.model.internal.validation.announce.ZulipAnnouncerValidator.validateZulip;
 import static org.jreleaser.model.internal.validation.common.Validator.mergeErrors;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
@@ -106,6 +107,8 @@ public final class AnnouncersValidator {
         mergeErrors(context, errors, incoming, announce.getTwitter());
         validateWebhooks(context, mode, announce.getConfiguredWebhooks(), incoming);
         mergeErrors(context, errors, incoming, announce.getConfiguredWebhooks());
+        validateZernio(context, announce.getZernio(), incoming);
+        mergeErrors(context, errors, incoming, announce.getZernio());
         validateZulip(context, announce.getZulip(), incoming);
         mergeErrors(context, errors, incoming, announce.getZulip());
 
@@ -134,6 +137,7 @@ public final class AnnouncersValidator {
                 announce.getTelegram().isEnabled() ||
                 announce.getTwitter().isEnabled() ||
                 announce.getConfiguredWebhooks().isEnabled() ||
+                announce.getZernio().isEnabled() ||
                 announce.getZulip().isEnabled();
 
             if (!activeSet && !enabled) {

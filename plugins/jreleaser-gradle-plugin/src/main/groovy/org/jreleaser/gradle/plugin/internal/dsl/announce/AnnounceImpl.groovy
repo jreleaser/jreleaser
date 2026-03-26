@@ -46,6 +46,7 @@ import org.jreleaser.gradle.plugin.dsl.announce.TeamsAnnouncer
 import org.jreleaser.gradle.plugin.dsl.announce.TelegramAnnouncer
 import org.jreleaser.gradle.plugin.dsl.announce.TwitterAnnouncer
 import org.jreleaser.gradle.plugin.dsl.announce.WebhookAnnouncer
+import org.jreleaser.gradle.plugin.dsl.announce.ZernioAnnouncer
 import org.jreleaser.gradle.plugin.dsl.announce.ZulipAnnouncer
 import org.jreleaser.model.Active
 
@@ -79,6 +80,7 @@ class AnnounceImpl implements Announce {
     final TeamsAnnouncerImpl teams
     final TelegramAnnouncerImpl telegram
     final TwitterAnnouncerImpl twitter
+    final ZernioAnnouncerImpl zernio
     final ZulipAnnouncerImpl zulip
     final NamedDomainObjectContainer<HttpAnnouncer> http
     final NamedDomainObjectContainer<WebhookAnnouncer> webhooks
@@ -104,6 +106,7 @@ class AnnounceImpl implements Announce {
         teams = objects.newInstance(TeamsAnnouncerImpl, objects)
         telegram = objects.newInstance(TelegramAnnouncerImpl, objects)
         twitter = objects.newInstance(TwitterAnnouncerImpl, objects)
+        zernio = objects.newInstance(ZernioAnnouncerImpl, objects)
         zulip = objects.newInstance(ZulipAnnouncerImpl, objects)
 
         http = objects.domainObjectContainer(HttpAnnouncer, new NamedDomainObjectFactory<HttpAnnouncer>() {
@@ -238,6 +241,11 @@ class AnnounceImpl implements Announce {
     }
 
     @Override
+    void zernio(Action<? super ZernioAnnouncer> action) {
+        action.execute(zernio)
+    }
+
+    @Override
     void zulip(Action<? super ZulipAnnouncer> action) {
         action.execute(zulip)
     }
@@ -268,6 +276,7 @@ class AnnounceImpl implements Announce {
         if (teams.isSet()) announce.teams = teams.toModel()
         if (telegram.isSet()) announce.telegram = telegram.toModel()
         if (twitter.isSet()) announce.twitter = twitter.toModel()
+        if (zernio.isSet()) announce.zernio = zernio.toModel()
         if (zulip.isSet()) announce.zulip = zulip.toModel()
 
         http.toList().each { http ->
