@@ -21,7 +21,7 @@ apps:
   {{distributionExecutableName}}:
     command: bin/{{distributionExecutableUnix}}
     environment:
-      JAVA_HOME: "$SNAP/usr/lib/jvm/java"
+      JAVA_HOME: "$SNAP/usr/lib/jvm/java-{{distributionJavaVersion}}-openjdk-${SNAP_ARCH}"
       PATH: "$SNAP/bin:$PATH:$JAVA_HOME/bin"
     {{#snapHasLocalPlugs}}
     plugs:
