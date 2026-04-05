@@ -280,20 +280,19 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
             .arg("--module-path")
             .arg(modulePath)
             .arg("--add-modules")
-            .arg(String.join(",", moduleNames));
-        if (isNotBlank(moduleName)) {
-            cmd.arg("--launcher")
-                .arg(assembler.getExecutable() + "=" + moduleName + "/" + mainClass);
+            .arg(join(",", moduleNames));
+        if (assembler.getJava().getJvmOptions().isSet()) {
+            cmd.arg("--add-options=\"" + join(" ", assembler.getJava().getJvmOptions().getResolvedUniversal(context)) + "\"");
         }
         cmd.arg("--output")
             .arg(maybeQuote(imageDirectory.toString()));
 
-        context.getLogger().debug(String.join(" ", cmd.getArgs()));
+        context.getLogger().debug(join(" ", cmd.getArgs()));
         executeCommand(cmd);
 
         if (isBlank(moduleName)) {
             // non modular
-            // copy jars & launcher
+            // copy jars
 
             if (assembler.isCopyJars()) {
                 Path outputJarsDirectory = imageDirectory.resolve(JARS_DIRECTORY);
@@ -311,23 +310,23 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
                         context.relativizeToBasedir(outputJarsDirectory)), e);
                 }
             }
+        }
 
-            Path binDirectory = imageDirectory.resolve(BIN_DIRECTORY);
-            try {
-                Files.createDirectories(binDirectory);
+        Path binDirectory = imageDirectory.resolve(BIN_DIRECTORY);
+        try {
+            Files.createDirectories(binDirectory);
 
-                Optional<Set<Path>> launchers = listFilesAndProcess(inputsDirectory.resolve(BIN_DIRECTORY), files -> files.collect(toSet()));
-                if (launchers.isPresent()) {
-                    for (Path srcLauncher : launchers.get()) {
-                        Path destLauncher = binDirectory.resolve(srcLauncher.getFileName());
-                        Files.copy(srcLauncher, destLauncher);
-                        FileUtils.grantExecutableAccess(destLauncher);
-                    }
+            Optional<Set<Path>> launchers = listFilesAndProcess(inputsDirectory.resolve(BIN_DIRECTORY), files -> files.collect(toSet()));
+            if (launchers.isPresent()) {
+                for (Path srcLauncher : launchers.get()) {
+                    Path destLauncher = binDirectory.resolve(srcLauncher.getFileName());
+                    Files.copy(srcLauncher, destLauncher);
+                    FileUtils.grantExecutableAccess(destLauncher);
                 }
-            } catch (IOException e) {
-                throw new AssemblerProcessingException(RB.$("ERROR_assembler_copy_launcher",
-                    context.relativizeToBasedir(binDirectory)), e);
             }
+        } catch (IOException e) {
+            throw new AssemblerProcessingException(RB.$("ERROR_assembler_copy_launcher",
+                context.relativizeToBasedir(binDirectory)), e);
         }
 
         try {
@@ -427,7 +426,7 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
             calculateJarPath(jarsDirectory, platform, cmd, false);
         }
 
-        context.getLogger().debug(String.join(" ", cmd.getArgs()));
+        context.getLogger().debug(join(" ", cmd.getArgs()));
         Command.Result result = executeCommand(jarsDirectory, cmd);
 
         String output = result.getOut();
