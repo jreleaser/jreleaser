@@ -1,4 +1,4 @@
-name: Push-{{distributionName}}
+name: Push-{{chocolateyPackageName}}
 
 on:
   push:
@@ -7,29 +7,14 @@ on:
     branches-ignore:
       - '**'
 
+permissions:
+  contents: read
+
 jobs:
   push:
-    runs-on: windows-latest
-    
-    steps:
-      - uses: actions/checkout@v4
-      
-      - uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '5.0.x'
-
-      - name: Find package
-        shell: bash
-        run: |
-          echo "PACKAGE_NAME=$(ls {{chocolateyPackageName}}/*.nuspec)" >> $GITHUB_ENV
-
-      - name: Pack
-        shell: powershell
-        run: |
-          choco pack ${{=<% %>=}}{{ env.PACKAGE_NAME }}<%={{ }}=%>
-
-      - name: Publish
-        shell: powershell
-        run: |
-          choco apikey -k ${{=<% %>=}}{{ secrets.CHOCOLATEY_API_KEY }}<%={{ }}=%> -s {{chocolateySource}}
-          choco push $(ls *.nupkg | % {$_.FullName}) -s {{chocolateySource}}
+    uses: ./.github/workflows/choco.yml@main
+    with:
+      choco-package-name: {{chocolateyPackageName}}
+      choco-source: {{chocolateySource}}
+    secrets:
+      choco-api-key: ${{=<% %>=}}{{ secrets.CHOCOLATEY_API_KEY }}<%={{ }}=%>

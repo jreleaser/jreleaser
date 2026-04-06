@@ -149,8 +149,8 @@ public class ChocolateyPackagerProcessor extends AbstractRepositoryPackagerProce
         fileName = trimTplExtension(fileName);
 
         Path outputFile = "binary.nuspec".equals(fileName) ?
-            outputDirectory.resolve(distribution.getName()).resolve(packager.getPackageName().concat(".nuspec")) :
-            fileName.endsWith(".ps1") ? outputDirectory.resolve(distribution.getName()).resolve(fileName) :
+            outputDirectory.resolve(packager.getPackageName()).resolve(packager.getPackageName().concat(".nuspec")) :
+            fileName.endsWith(".ps1") ? outputDirectory.resolve(packager.getPackageName()).resolve(fileName) :
                 outputDirectory.resolve(fileName);
 
         writeFile(content, outputFile);
@@ -158,7 +158,7 @@ public class ChocolateyPackagerProcessor extends AbstractRepositoryPackagerProce
 
     private void createChocolateyPackage(Distribution distribution, TemplateContext props) throws PackagerProcessingException {
         Path packageDirectory = props.get(KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
-        Path execDirectory = packageDirectory.resolve(distribution.getName());
+        Path execDirectory = packageDirectory.resolve(packager.getPackageName());
 
         Command cmd = new Command("choco")
             .arg("pack")
@@ -170,7 +170,7 @@ public class ChocolateyPackagerProcessor extends AbstractRepositoryPackagerProce
 
     private void publishChocolateyPackage(Distribution distribution, TemplateContext props) throws PackagerProcessingException {
         Path packageDirectory = props.get(KEY_DISTRIBUTION_PACKAGE_DIRECTORY);
-        Path execDirectory = packageDirectory.resolve(distribution.getName());
+        Path execDirectory = packageDirectory.resolve(packager.getPackageName());
 
         Command cmd = new Command("choco")
             .arg("apikey")
