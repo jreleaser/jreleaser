@@ -17,6 +17,6 @@ jobs:
     runs-on: ${{=<% %>=}}{{ matrix.os }}<%={{ }}=%>
     steps:
       - name: asdf_plugin_test
-        uses: asdf-vm/actions/plugin-test@v3
+        uses: asdf-vm/actions/plugin-test@b7bcd026f18772e44fe1026d729e1611cc435d47 #v4.0.1
         with:
           command: {{asdfPluginToolCheck}}
