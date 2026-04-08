@@ -30,4 +30,4 @@ jobs:
         id: vars
         shell: bash
         run: |
-          echo "VERSION=$(cat VERSION)" >> $GITHUB_OUTPUT
+          echo "VERSION=$(cat VERSION)" >> "$GITHUB_OUTPUT"

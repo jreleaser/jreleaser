@@ -945,14 +945,15 @@ jobs:
       - name: Rename JaCoCo execution data
         shell: bash
         run: |
-          for execFile in $(find ./ -name "*.exec" -print); do
-              jacoco=$(dirname "$execFile")
-              build=$(dirname "$jacoco")
-              project=$(dirname "$build")
-              projectName=$(basename "$project")
-              mv "$execFile" "${projectName}-${{ runner.os }}.exec"
-          done
-          for execFile in $(find ./ -name "*.exec" -print); do echo "$execFile"; done
+          find ./ -name "*.exec" -exec sh -c '{
+            inputFile="$1"
+            jacoco=$(dirname "$inputFile")
+            build=$(dirname "$jacoco")
+            project=$(dirname "$build")
+            projectName=$(basename "$project")
+            mv "$inputFile" "${projectName}-${{ runner.os }}.exec"
+          }' sh {} \;
+          find ./ -name "*.exec" -exec echo {} \;
 
       - name: JaCoCo upload
         if: always()

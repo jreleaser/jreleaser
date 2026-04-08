@@ -29,11 +29,14 @@ jobs:
           read -r major minor patch <<< "$version"
           IFS="-"
           read -r patch tag <<< "$patch"
+          echo "${major}.${minor}.${patch}${tag}"
           release_version="${major}.${minor}.${patch}"
           next_version="${major}.$((minor + 1)).0-SNAPSHOT"
-          echo "version=${version}" >> $GITHUB_OUTPUT
-          echo "release_version=${release_version}" >> $GITHUB_OUTPUT
-          echo "next_version=${next_version}" >> $GITHUB_OUTPUT
+          {
+            echo "version=${version}"
+            echo "release_version=${release_version}"
+            echo "next_version=${next_version}"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Commit version
         shell: bash

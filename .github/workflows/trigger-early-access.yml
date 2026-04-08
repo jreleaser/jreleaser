@@ -32,11 +32,12 @@ jobs:
           cp plugins/jreleaser-ant-tasks/build/distributions/jreleaser-ant-tasks-*-SNAPSHOT.zip early-access/jreleaser-ant-tasks-early-access.zip
 
       - name: Release early-access artifacts
-        uses: marvinpinto/action-automatic-releases@latest
+        uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe #v2.6.1
         with:
-          automatic_release_tag: early-access
-          repo_token: ${{ secrets.GIT_ACCESS_TOKEN }}
+          generate_release_notes: false
+          tag_name: early-access
+          token: ${{ secrets.GIT_ACCESS_TOKEN }}
           prerelease: true
-          title: JReleaser Early-Access
+          name: JReleaser Early-Access
           files: |
             early-access/*
