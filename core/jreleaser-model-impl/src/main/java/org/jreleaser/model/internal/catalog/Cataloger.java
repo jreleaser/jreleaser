@@ -29,6 +29,7 @@ import org.jreleaser.model.internal.project.Project;
 public interface Cataloger<A extends org.jreleaser.model.api.catalog.Cataloger> extends Domain, Activatable, ExtraProperties {
     String getType();
 
+    @Override
     boolean resolveEnabledWithSnapshot(Project project);
 
     A asImmutable();

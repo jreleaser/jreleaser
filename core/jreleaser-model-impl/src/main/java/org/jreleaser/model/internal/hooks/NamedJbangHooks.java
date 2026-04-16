@@ -203,6 +203,7 @@ public final class NamedJbangHooks extends AbstractActivatable<NamedJbangHooks> 
         this.condition = condition;
     }
 
+    @Override
     public List<JbangHook> getBefore() {
         return before;
     }
@@ -212,6 +213,7 @@ public final class NamedJbangHooks extends AbstractActivatable<NamedJbangHooks> 
         this.before.addAll(before);
     }
 
+    @Override
     public List<JbangHook> getSuccess() {
         return success;
     }
@@ -221,6 +223,7 @@ public final class NamedJbangHooks extends AbstractActivatable<NamedJbangHooks> 
         this.success.addAll(success);
     }
 
+    @Override
     public List<JbangHook> getFailure() {
         return failure;
     }

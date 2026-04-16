@@ -122,6 +122,7 @@ public class CommandExecutor {
         private static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(2, new ThreadFactory() {
             private final AtomicInteger counter = new AtomicInteger(1);
 
+            @Override
             public Thread newThread(Runnable r) {
                 Thread t = Executors.defaultThreadFactory().newThread(r);
                 t.setDaemon(true);

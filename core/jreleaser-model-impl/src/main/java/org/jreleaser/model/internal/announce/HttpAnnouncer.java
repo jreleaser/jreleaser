@@ -272,6 +272,7 @@ public final class HttpAnnouncer extends AbstractAnnouncer<HttpAnnouncer, org.jr
         this.bearerKeyword = bearerKeyword;
     }
 
+    @Override
     public Authorization resolveAuthorization() {
         return delegate.resolveAuthorization();
     }

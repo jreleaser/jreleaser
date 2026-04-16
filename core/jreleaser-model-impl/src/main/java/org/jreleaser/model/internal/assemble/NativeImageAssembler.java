@@ -670,6 +670,7 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
             this.format = merge(this.format, source.format);
         }
 
+        @Override
         public boolean isEnabled() {
             return null != enabled && enabled;
         }

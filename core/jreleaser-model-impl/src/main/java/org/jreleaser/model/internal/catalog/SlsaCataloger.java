@@ -122,6 +122,7 @@ public final class SlsaCataloger extends AbstractCataloger<SlsaCataloger, org.jr
         super("slsa");
     }
 
+    @Override
     public org.jreleaser.model.api.catalog.SlsaCataloger asImmutable() {
         return immutable;
     }

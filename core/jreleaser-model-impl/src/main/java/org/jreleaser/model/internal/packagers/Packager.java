@@ -52,8 +52,6 @@ public interface Packager<A extends org.jreleaser.model.api.packagers.Packager> 
 
     List<Artifact> resolveArtifacts(JReleaserContext context, Distribution distribution);
 
-    boolean isSnapshotSupported();
-
     boolean isContinueOnError();
 
     void setContinueOnError(Boolean continueOnError);

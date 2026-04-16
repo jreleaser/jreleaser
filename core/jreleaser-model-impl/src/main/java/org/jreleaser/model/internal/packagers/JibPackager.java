@@ -586,6 +586,7 @@ public final class JibPackager extends AbstractJibConfiguration<JibPackager> imp
             super("jib", "jib");
         }
 
+        @Override
         public org.jreleaser.model.api.packagers.JibPackager.JibRepository asImmutable() {
             return immutable;
         }

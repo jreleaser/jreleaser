@@ -38,8 +38,6 @@ public interface Uploader<A extends org.jreleaser.model.api.upload.Uploader> ext
 
     void setName(String name);
 
-    boolean isSnapshotSupported();
-
     boolean isArtifacts();
 
     void setArtifacts(Boolean artifacts);

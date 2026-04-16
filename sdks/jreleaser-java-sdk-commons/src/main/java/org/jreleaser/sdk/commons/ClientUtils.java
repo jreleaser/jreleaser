@@ -140,18 +140,18 @@ public final class ClientUtils {
                                int readTimeout,
                                Object message) throws AnnounceException {
         if (message instanceof String) {
-            webhook(logger, webhookUrl, connectTimeout, readTimeout, (String) message);
+            webhook0(logger, webhookUrl, connectTimeout, readTimeout, (String) message);
         }
 
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            webhook(logger, webhookUrl, connectTimeout, readTimeout, objectMapper.writeValueAsString(message));
+            webhook0(logger, webhookUrl, connectTimeout, readTimeout, objectMapper.writeValueAsString(message));
         } catch (JsonProcessingException e) {
             throw new AnnounceException(e);
         }
     }
 
-    public static void webhook(JReleaserLogger logger,
+    private static void webhook0(JReleaserLogger logger,
                                String webhookUrl,
                                int connectTimeout,
                                int readTimeout,

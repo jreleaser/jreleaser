@@ -53,7 +53,7 @@ public final class MarkdownUtils {
         private void rewriteLink(Node node, String title, String destination) {
             boolean hasChild = node.getFirstChild() != null;
             boolean hasTitle = title != null && !title.equals(destination);
-            boolean hasDestination = destination != null && !destination.equals("");
+            boolean hasDestination = destination != null && !destination.isEmpty();
 
             if (hasChild) {
                 textContent.write('[');

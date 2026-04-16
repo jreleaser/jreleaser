@@ -201,6 +201,7 @@ public final class JbangHooks extends AbstractActivatable<JbangHooks> implements
         this.groups.put(hook.getName(), hook);
     }
 
+    @Override
     public List<JbangHook> getBefore() {
         return before;
     }
@@ -210,6 +211,7 @@ public final class JbangHooks extends AbstractActivatable<JbangHooks> implements
         this.before.addAll(before);
     }
 
+    @Override
     public List<JbangHook> getSuccess() {
         return success;
     }
@@ -219,6 +221,7 @@ public final class JbangHooks extends AbstractActivatable<JbangHooks> implements
         this.success.addAll(success);
     }
 
+    @Override
     public List<JbangHook> getFailure() {
         return failure;
     }

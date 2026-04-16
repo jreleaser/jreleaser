@@ -251,7 +251,6 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
 
         // jlink it
         String moduleName = resolveTemplate(context.getLogger(), assembler.getJava().getMainModule(), props);
-        String mainClass = resolveTemplate(context.getLogger(), assembler.getJava().getMainClass(), props);
         String modulePath = maybeQuote(targetJdk.getEffectivePath(context, assembler).resolve("jmods").toAbsolutePath().toString());
         if (isNotBlank(moduleName) || assembler.isCopyJars()) {
             modulePath += File.pathSeparator + maybeQuote(jarsDirectory

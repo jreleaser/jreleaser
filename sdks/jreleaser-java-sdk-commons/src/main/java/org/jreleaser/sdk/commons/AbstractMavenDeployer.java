@@ -147,6 +147,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
         return deployables;
     }
 
+    @Override
     public Set<Deployable> collectDeployables(Set<Deployable> deployables, String stagingRepository) {
         Path root = context.getBasedir().resolve(stagingRepository).normalize();
 

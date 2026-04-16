@@ -575,6 +575,7 @@ public final class DockerPackager extends AbstractDockerConfiguration<DockerPack
             super("docker", "docker");
         }
 
+        @Override
         public org.jreleaser.model.api.packagers.DockerPackager.DockerRepository asImmutable() {
             return immutable;
         }

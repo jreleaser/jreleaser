@@ -121,6 +121,7 @@ public final class GithubCataloger extends AbstractCataloger<GithubCataloger, or
         super("github");
     }
 
+    @Override
     public org.jreleaser.model.api.catalog.GithubCataloger asImmutable() {
         return immutable;
     }

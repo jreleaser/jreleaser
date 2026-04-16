@@ -115,6 +115,7 @@ public class PackagerRepository extends AbstractRepositoryTap<PackagerRepository
         super(basename, tapName);
     }
 
+    @Override
     public org.jreleaser.model.api.packagers.PackagerRepository asImmutable() {
         return immutable;
     }

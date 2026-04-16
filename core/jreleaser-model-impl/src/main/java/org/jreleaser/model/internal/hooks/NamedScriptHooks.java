@@ -173,6 +173,7 @@ public final class NamedScriptHooks extends AbstractActivatable<NamedScriptHooks
         this.condition = condition;
     }
 
+    @Override
     public List<ScriptHook> getBefore() {
         return before;
     }
@@ -182,6 +183,7 @@ public final class NamedScriptHooks extends AbstractActivatable<NamedScriptHooks
         this.before.addAll(before);
     }
 
+    @Override
     public List<ScriptHook> getSuccess() {
         return success;
     }
@@ -191,6 +193,7 @@ public final class NamedScriptHooks extends AbstractActivatable<NamedScriptHooks
         this.success.addAll(success);
     }
 
+    @Override
     public List<ScriptHook> getFailure() {
         return failure;
     }

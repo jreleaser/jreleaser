@@ -48,7 +48,6 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  * @since 1.12.0
  */
 public class BlueskyRecordFactory {
-
     private static final Pattern URL_PATTERN = Pattern.compile(
         "(?:^|[\\W])((ht|f)tp(s?):\\/\\/|www\\.)"
             + "(([\\w\\-]+\\.){1,}?([\\w\\-.~]+\\/?)*"
@@ -171,10 +170,10 @@ public class BlueskyRecordFactory {
 
         @Override
         public CharSequence subSequence(int start, int end) {
-            ByteBuffer buffer = this.buffer.duplicate();
-            buffer.position(buffer.position() + start);
-            buffer.limit(buffer.position() + (end - start));
-            return new BlueskyStringEncodingWrapper(buffer);
+            ByteBuffer b = this.buffer.duplicate();
+            b.position(b.position() + start);
+            b.limit(b.position() + (end - start));
+            return new BlueskyStringEncodingWrapper(b);
         }
 
         @Override

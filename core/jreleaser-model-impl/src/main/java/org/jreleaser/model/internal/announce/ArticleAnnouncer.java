@@ -292,6 +292,7 @@ public final class ArticleAnnouncer extends AbstractAnnouncer<ArticleAnnouncer, 
             super("article", "article");
         }
 
+        @Override
         public org.jreleaser.model.api.announce.ArticleAnnouncer.Repository asImmutable() {
             return immutable;
         }

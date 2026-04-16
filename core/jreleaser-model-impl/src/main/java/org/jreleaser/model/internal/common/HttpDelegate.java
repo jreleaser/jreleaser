@@ -97,6 +97,7 @@ public final class HttpDelegate extends AbstractModelObject<HttpDelegate> implem
         this.authorization = Http.Authorization.of(authorization);
     }
 
+    @Override
     public Map<String, String> getHeaders() {
         return headers;
     }

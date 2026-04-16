@@ -186,6 +186,7 @@ public final class ScriptHooks extends AbstractActivatable<ScriptHooks> implemen
         this.groups.put(hook.getName(), hook);
     }
 
+    @Override
     public List<ScriptHook> getBefore() {
         return before;
     }
@@ -195,6 +196,7 @@ public final class ScriptHooks extends AbstractActivatable<ScriptHooks> implemen
         this.before.addAll(before);
     }
 
+    @Override
     public List<ScriptHook> getSuccess() {
         return success;
     }
@@ -204,6 +206,7 @@ public final class ScriptHooks extends AbstractActivatable<ScriptHooks> implemen
         this.success.addAll(success);
     }
 
+    @Override
     public List<ScriptHook> getFailure() {
         return failure;
     }
