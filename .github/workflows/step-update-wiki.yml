@@ -44,16 +44,19 @@ jobs:
       - name: Download checksums
         shell: bash
         run: |
-          curl -sL https://github.com/jreleaser/jreleaser/releases/download/${{ inputs.project-tag }}/checksums_sha256.txt --output checksums_sha256.txt
+          curl -sL https://github.com/jreleaser/jreleaser/releases/download/${JRELEASER_PROJECT_TAG}/checksums_sha256.txt --output checksums_sha256.txt
+        env:
+          JRELEASER_PROJECT_TAG: ${{ inputs.project-tag }}
 
       - name: Generate wiki page
         uses: jreleaser/release-action@90ac653bb9c79d11179e65d81499f3f34527dcd5 # v2.5.0
         with:
           version: early-access
-          arguments: template eval --changelog --input-file src/jreleaser/templates/wiki-release-page.md.tpl --target-directory wiki/Releases ${{ inputs.template-params }}
+          arguments: template eval --changelog --input-file src/jreleaser/templates/wiki-release-page.md.tpl --target-directory wiki/Releases ${TEMPLATE_PARAMS}
         env:
           JRELEASER_GITHUB_TOKEN: ${{ secrets.gh-access-token }}
           JRELEASER_PROJECT_VERSION: ${{ inputs.project-version }}
+          TEMPLATE_PARAMS: ${{ inputs.template-params }}
 
       - name: Commit
         shell: bash

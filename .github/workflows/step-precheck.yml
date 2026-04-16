@@ -6,6 +6,9 @@ on:
       version:
         description: version
         value: ${{ jobs.precheck.outputs.version }}
+    secrets:
+      github-token:
+        required: true
 
 permissions:
   contents: read
@@ -26,7 +29,7 @@ jobs:
       - name: Cancel previous run
         uses: styfle/cancel-workflow-action@d07a454dad7609a92316b57b23c9ccfd4f59af66 #v0.13.1
         with:
-          access_token: ${{ secrets.GITHUB_TOKEN }}
+          access_token: ${{ secrets.github-token }}
 
       - name: Version
         id: vars

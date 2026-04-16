@@ -20,7 +20,6 @@ jobs:
         with:
           java-version: ${{ vars.JAVA_VERSION }}
           distribution: ${{ vars.JAVA_DISTRO }}
-          cache: gradle
 
       - name: Build
         run: ./gradlew -PreproducibleBuild=true build -S

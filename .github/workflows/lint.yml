@@ -20,15 +20,3 @@ jobs:
       - name: actionlint
         id: actionlint
         uses: raven-actions/actionlint@205b530c5d9fa8f44ae9ed59f341a0db994aa6f8 #v2.1.2
-
-      - name: actionlint Summary
-        if: ${{ steps.actionlint.outputs.exit-code != 0 }}
-        run: |
-          echo "Used actionlint version ${{ steps.actionlint.outputs.version-semver }}"
-          echo "Used actionlint release ${{ steps.actionlint.outputs.version-tag }}"
-          echo "actionlint ended with ${{ steps.actionlint.outputs.exit-code }} exit code"
-          echo "actionlint ended because '${{ steps.actionlint.outputs.exit-message }}'"
-          echo "actionlint found ${{ steps.actionlint.outputs.total-errors }} errors"
-          echo "actionlint checked ${{ steps.actionlint.outputs.total-files }} files"
-          echo "actionlint cache used: ${{ steps.actionlint.outputs.cache-hit }}"
-          echo "actionlint exit code: ${{ steps.actionlint.outputs.exit-code }}"

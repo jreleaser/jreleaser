@@ -56,7 +56,9 @@ jobs:
       - name: Version
         if: ${{ endsWith(inputs.project-version, '-SNAPSHOT') != true }}
         run: |
-          echo ${{ inputs.project-version }} > VERSION
+          echo ${PROJECT_VERSION} > VERSION
+        env:
+          PROJECT_VERSION: ${{ inputs.project-version }}
 
       - name: Jdks
         shell: bash

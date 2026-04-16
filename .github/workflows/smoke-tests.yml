@@ -13,7 +13,8 @@ jobs:
   precheck:
     name: Precheck
     uses: jreleaser/jreleaser/.github/workflows/step-precheck.yml@main
-    secrets: inherit
+    secrets:
+      github-token: ${{ secrets.GITHUB_TOKEN }}
 
   build-cli:
     name: 'CLI ${{ matrix.job.os }}'
