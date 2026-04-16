@@ -43,5 +43,5 @@ jobs:
         env:
           TAG: ${{ inputs.project-tag }}
           VERSION: ${{ inputs.project-version }}
-          GH_BOT_EMAIL: ${{ vars.GH_BOT_EMAIL }}
+          COMMIT_EMAIL: ${{ vars.COMMIT_EMAIL }}
         run: sh update-bach-info.sh

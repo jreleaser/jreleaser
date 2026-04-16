@@ -3,7 +3,7 @@
 # env vars:
 # RELEASE_VERSION
 # NEXT_VERSION
-# GH_BOT_EMAIL
+# COMMIT_EMAIL
 
 set -e
 
@@ -68,7 +68,7 @@ EOF
 
 echo "⬆️  Updating website"
 git add VERSION
-git config --global user.email "${GH_BOT_EMAIL}"
+git config --global user.email "${COMMIT_EMAIL}"
 git config --global user.name "GitHub Action"
 git commit -a -m "Releasing version ${RELEASE_VERSION}"
 git push origin main

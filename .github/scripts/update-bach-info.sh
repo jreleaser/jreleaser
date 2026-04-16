@@ -3,7 +3,7 @@
 # env vars:
 # VERSION: x.y.z or early-access
 # TAG: vx.y.z or early-access
-# GH_BOT_EMAIL
+# COMMIT_EMAIL
 
 set -e
 
@@ -51,7 +51,7 @@ cat "${TARGET_FILE}"
 
 echo "⬆️ Updating bach-info repository"
 git add "${TARGET_FILE}"
-git config --global user.email "${GH_BOT_EMAIL}"
+git config --global user.email "${COMMIT_EMAIL}"
 git config --global user.name "GitHub Action"
 git commit -a -m "Releasing ${TAG} (${VERSION})"
 git push origin main

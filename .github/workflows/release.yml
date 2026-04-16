@@ -214,6 +214,7 @@ jobs:
     with:
       project-version: ${{ needs.precheck.outputs.release-version }}
       project-tag: ${{ needs.release.outputs.tagname }}
+      commit-email: ${{ vars.GH_BOT_EMAIL }}
       template-params: '-PincludeSboms'
     secrets:
       gh-access-token: ${{ secrets.GIT_ACCESS_TOKEN }}
@@ -263,7 +264,7 @@ jobs:
           TAG: ${{ needs.release.outputs.tagname }}
           RELEASE_VERSION: ${{ needs.precheck.outputs.release-version }}
           NEXT_VERSION: ${{ needs.precheck.outputs.next-version }}
-          GH_BOT_EMAIL: ${{ vars.GH_BOT_EMAIL }}
+          COMMIT_EMAIL: ${{ vars.COMMIT_EMAIL }}
         run: |
           chmod +x update-website.sh
           ./update-website.sh

@@ -148,6 +148,7 @@ jobs:
     with:
       project-version: ${{ needs.precheck.outputs.version }}
       project-tag: ${{ needs.release.outputs.tagname }}
+      commit-email: ${{ vars.GH_BOT_EMAIL }}
     secrets:
       gh-access-token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
