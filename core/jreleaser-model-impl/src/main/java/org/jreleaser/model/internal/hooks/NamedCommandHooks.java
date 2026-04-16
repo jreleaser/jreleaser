@@ -173,6 +173,7 @@ public final class NamedCommandHooks extends AbstractActivatable<NamedCommandHoo
         this.condition = condition;
     }
 
+    @Override
     public List<CommandHook> getBefore() {
         return before;
     }
@@ -182,6 +183,7 @@ public final class NamedCommandHooks extends AbstractActivatable<NamedCommandHoo
         this.before.addAll(before);
     }
 
+    @Override
     public List<CommandHook> getSuccess() {
         return success;
     }
@@ -191,6 +193,7 @@ public final class NamedCommandHooks extends AbstractActivatable<NamedCommandHoo
         this.success.addAll(success);
     }
 
+    @Override
     public List<CommandHook> getFailure() {
         return failure;
     }

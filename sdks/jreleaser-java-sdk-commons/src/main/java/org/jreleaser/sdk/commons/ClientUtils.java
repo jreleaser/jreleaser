@@ -101,7 +101,7 @@ public final class ClientUtils {
     public static Feign.Builder builder(JReleaserContext context,
                                         int connectTimeout,
                                         int readTimeout) {
-        requireNonNull(context, "'logger' must not be null");
+        requireNonNull(context, "'context' must not be null");
 
         Feign.Builder builder = Feign.builder();
 

@@ -55,7 +55,7 @@ jobs:
         uses: jreleaser/release-action@90ac653bb9c79d11179e65d81499f3f34527dcd5 # v2.5.0
         with:
           version: early-access
-          arguments: template eval --changelog --input-file src/jreleaser/templates/wiki-release-page.md.tpl --target-directory wiki/Releases "${TEMPLATE_PARAMS}"
+          arguments: template eval --changelog --input-file src/jreleaser/templates/wiki-release-page.md.tpl --target-directory wiki/Releases ${TEMPLATE_PARAMS}
         env:
           JRELEASER_GITHUB_TOKEN: ${{ secrets.gh-access-token }}
           JRELEASER_PROJECT_VERSION: ${{ inputs.project-version }}
