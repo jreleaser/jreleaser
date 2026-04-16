@@ -50,7 +50,7 @@ jobs:
         run: |
           cd out/jreleaser/assemble/jreleaser-standalone/jlink
           ls -l
-          unzip -q -d work-${{ matrix.job.platform }} jreleaser-standalone-${PROJECT_EFFECTIVE_VERSION}-${{ matrix.job.platformReplaced }}.zip
+          unzip -q -d work-${{ matrix.job.platform }} "jreleaser-standalone-${PROJECT_EFFECTIVE_VERSION}-${{ matrix.job.platformReplaced }}.zip"
         env:
           PROJECT_EFFECTIVE_VERSION: ${{ inputs.project-effective-version }}
 
@@ -64,7 +64,7 @@ jobs:
       - name: Version
         if: ${{ endsWith(inputs.project-version, '-SNAPSHOT') != true }}
         run: |
-          echo ${PROJECT_VERSION} > VERSION
+          echo "${PROJECT_VERSION}" > VERSION
         env:
           PROJECT_VERSION: ${{ inputs.project-version }}
 
