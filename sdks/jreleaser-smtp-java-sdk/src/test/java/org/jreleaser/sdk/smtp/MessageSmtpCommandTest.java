@@ -74,7 +74,7 @@ class MessageSmtpCommandTest {
     }
 
     @Test
-    void testDryRun() throws SmtpException, MessagingException {
+    void testDryRun() throws SmtpException {
         // given:
         String sender = "test@acme.com";
         String receiver = "jreleaser@acme.com";

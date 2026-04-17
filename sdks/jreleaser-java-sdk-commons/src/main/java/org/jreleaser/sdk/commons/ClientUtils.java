@@ -141,6 +141,7 @@ public final class ClientUtils {
                                Object message) throws AnnounceException {
         if (message instanceof String) {
             webhook0(logger, webhookUrl, connectTimeout, readTimeout, (String) message);
+            return;
         }
 
         try {

@@ -18,7 +18,6 @@
 package org.jreleaser.sdk.commons;
 
 import feign.form.FormData;
-import org.apache.commons.io.IOUtils;
 import org.jreleaser.bundle.RB;
 import org.jreleaser.model.JReleaserException;
 import org.jreleaser.model.Signing;
@@ -380,10 +379,8 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
 
     private boolean hasJavaClass(Deployable deployable, String baseFilename) {
         Deployable jar = deployable.deriveByFilename(PACKAGING_JAR, baseFilename + EXT_JAR);
-        JarFile jarFile = null;
 
-        try {
-            jarFile = new JarFile(jar.getLocalPath().toFile());
+        try (JarFile jarFile = new JarFile(jar.getLocalPath().toFile())) {
             Enumeration<JarEntry> entries = jarFile.entries();
             while (entries.hasMoreElements()) {
                 JarEntry entry = entries.nextElement();
@@ -395,8 +392,6 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
         } catch (IOException e) {
             context.getLogger().warn(RB.$("ERROR_deployer_read_local_file", jar.getLocalPath()), e);
             return false;
-        } finally {
-            IOUtils.closeQuietly(jarFile);
         }
     }
 

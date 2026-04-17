@@ -10,7 +10,7 @@ LABEL {{.}}
 {{/dockerPreCommands}}
 
 RUN curl -Ls "{{distributionUrl}}" --output {{distributionArtifactFile}} && \
-    mv {{distributionArtifactFile}} {{distributionExecutableName}} &&
+    mv {{distributionArtifactFile}} {{distributionExecutableName}} && \
     chmod +x {{distributionExecutableName}}
 
 {{#dockerPostCommands}}

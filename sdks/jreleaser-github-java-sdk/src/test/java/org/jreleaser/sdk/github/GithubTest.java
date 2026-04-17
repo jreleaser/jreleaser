@@ -27,7 +27,6 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.io.IOException;
 import java.util.Optional;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -47,7 +46,7 @@ class GithubTest {
     @ParameterizedTest
     @ValueSource(strings = {"jreleaserbot", "12345+jreleaserbot"})
     @DisplayName("Github user from private email id")
-    void userFromPrivateEmailId(String username) throws IOException {
+    void userFromPrivateEmailId(String username) {
         Github github = new Github(JReleaserContext.empty().asImmutable(),
             api.baseUrl(),
             "GH_TOKEN",
@@ -72,7 +71,7 @@ class GithubTest {
 
     @Test
     @DisplayName("Github user not found")
-    void userNotFound() throws IOException {
+    void userNotFound() {
         Github github = new Github(JReleaserContext.empty().asImmutable(),
             api.baseUrl(),
             "GH_TOKEN",
@@ -88,7 +87,7 @@ class GithubTest {
 
     @Test
     @DisplayName("Github user found with Email")
-    void userFoundByEmail() throws IOException {
+    void userFoundByEmail() {
         Github github = new Github(JReleaserContext.empty().asImmutable(),
             api.baseUrl(),
             "GH_TOKEN",
@@ -114,9 +113,10 @@ class GithubTest {
             .extracting(u -> u.asLink("test"))
             .isEqualTo("[test](https://github.com/jreleaserbot)");
     }
+
     @Test
     @DisplayName("Github tag deletion - Success")
-    void tagDeletion_Success() throws IOException {
+    void tagDeletion_Success() {
         Github github = new Github(JReleaserContext.empty().asImmutable(),
             api.baseUrl(),
             "GH_TOKEN",
@@ -131,9 +131,10 @@ class GithubTest {
         assertThat(restAPIException).isNull();
 
     }
+    
     @Test
     @DisplayName("Github tag deletion - NotFound")
-    void tagDeletion_NotFound() throws IOException {
+    void tagDeletion_NotFound() {
         Github github = new Github(JReleaserContext.empty().asImmutable(),
             api.baseUrl(),
             "GH_TOKEN",
@@ -146,6 +147,5 @@ class GithubTest {
 
         RestAPIException restAPIException = catchThrowableOfType(RestAPIException.class, () -> github.deleteTag("jreleaserbot", "tests", "test-tag"));
         assertThat(restAPIException).isNull();
-
     }
 }
