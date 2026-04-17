@@ -19,7 +19,7 @@ RUN curl -Ls "{{distributionUrl}}" --output {{distributionArtifactFile}} && \
 
 ENV PATH="${PATH}:/"
 
-ENTRYPOINT ["/{{distributionExecutableName}}"]
+ENTRYPOINT {{dockerEntrypoint}}
 {{#dockerCmd}}
 CMD {{dockerCmd}}
 {{/dockerCmd}}

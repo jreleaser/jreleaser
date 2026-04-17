@@ -74,17 +74,17 @@ public final class DockerPackagerValidator {
 
     static {
         DEFAULT_ENTRYPOINTS.put(org.jreleaser.model.Distribution.DistributionType.BINARY,
-            "[\"/{{distributionExecutableName}}/bin/{{distributionExecutableUnix}}\"");
+            "[\"/{{distributionExecutableName}}/bin/{{distributionExecutableUnix}}\"]");
         DEFAULT_ENTRYPOINTS.put(org.jreleaser.model.Distribution.DistributionType.FLAT_BINARY,
-            "/{{distributionExecutableName}}");
+            "[\"/{{distributionExecutableName}}\"]");
         DEFAULT_ENTRYPOINTS.put(org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY,
-            "[\"/{{distributionExecutableName}}/bin/{{distributionExecutableUnix}}\"");
+            "[\"/{{distributionExecutableName}}/bin/{{distributionExecutableUnix}}\"]");
         DEFAULT_ENTRYPOINTS.put(org.jreleaser.model.Distribution.DistributionType.JLINK,
-            "[\"/{{distributionExecutableName}}/bin/{{distributionExecutableUnix}}\"");
+            "[\"/{{distributionExecutableName}}/bin/{{distributionExecutableUnix}}\"]");
         DEFAULT_ENTRYPOINTS.put(org.jreleaser.model.Distribution.DistributionType.NATIVE_IMAGE,
-            "[\"/{{distributionExecutableName}}/bin/{{distributionExecutableUnix}}\"");
+            "[\"/{{distributionExecutableName}}/bin/{{distributionExecutableUnix}}\"]");
         DEFAULT_ENTRYPOINTS.put(org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR,
-            "[\"/{{distributionExecutableName}}/bin/{{distributionExecutableUnix}}\"");
+            "[\"/{{distributionExecutableName}}/bin/{{distributionExecutableUnix}}\"]");
     }
 
     private DockerPackagerValidator() {

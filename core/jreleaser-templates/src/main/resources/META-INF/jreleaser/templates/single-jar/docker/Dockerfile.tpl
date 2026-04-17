@@ -30,7 +30,7 @@ ENV PATH="${PATH}:/{{distributionExecutableName}}/bin"
 {{.}}
 {{/dockerPostCommands}}
 
-ENTRYPOINT ["/{{dockerEntrypoint}}"]
+ENTRYPOINT {{dockerEntrypoint}}
 {{#dockerCmd}}
 CMD {{dockerCmd}}
 {{/dockerCmd}}
