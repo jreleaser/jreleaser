@@ -131,13 +131,13 @@ public class MessageSmtpCommand implements SmtpCommand {
             }
 
             if (isNotBlank(to)) {
-                message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
+                message.addRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
             }
             if (isNotBlank(cc)) {
-                message.setRecipients(Message.RecipientType.CC, InternetAddress.parse(cc));
+                message.addRecipients(Message.RecipientType.CC, InternetAddress.parse(cc));
             }
             if (isNotBlank(bcc)) {
-                message.setRecipients(Message.RecipientType.BCC, InternetAddress.parse(bcc));
+                message.addRecipients(Message.RecipientType.BCC, InternetAddress.parse(bcc));
             }
 
             message.setSubject(subject);

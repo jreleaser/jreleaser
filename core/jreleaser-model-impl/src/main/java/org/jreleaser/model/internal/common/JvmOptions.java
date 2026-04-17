@@ -38,7 +38,7 @@ import static org.jreleaser.mustache.Templates.resolveTemplate;
  * @since 0.13.0
  */
 public final class JvmOptions extends AbstractModelObject<JvmOptions> implements Domain {
-    //private static final long serialVersionUID = 4713757280623221679L;
+    private static final long serialVersionUID = -273055610845441218L;
 
     private final List<String> universal = new ArrayList<>();
     private final List<String> unix = new ArrayList<>();

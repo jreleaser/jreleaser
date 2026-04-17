@@ -31,10 +31,13 @@ import java.util.Optional;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.delete;
+import static com.github.tomakehurst.wiremock.client.WireMock.deleteRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.exactly;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
@@ -129,9 +132,10 @@ class GithubTest {
 
         RestAPIException restAPIException = catchThrowableOfType(RestAPIException.class, () -> github.deleteTag("jreleaserbot", "tests", "test-tag"));
         assertThat(restAPIException).isNull();
-
+        verify(exactly(1), deleteRequestedFor(urlPathEqualTo(ApiEndpoints.DELETE_TAG))
+            .withHeader("Authorization", equalTo("Bearer GH_TOKEN")));
     }
-    
+
     @Test
     @DisplayName("Github tag deletion - NotFound")
     void tagDeletion_NotFound() {
@@ -147,5 +151,7 @@ class GithubTest {
 
         RestAPIException restAPIException = catchThrowableOfType(RestAPIException.class, () -> github.deleteTag("jreleaserbot", "tests", "test-tag"));
         assertThat(restAPIException).isNull();
+        verify(deleteRequestedFor(urlPathEqualTo(ApiEndpoints.DELETE_TAG))
+            .withHeader("Authorization", equalTo("Bearer GH_TOKEN")));
     }
 }

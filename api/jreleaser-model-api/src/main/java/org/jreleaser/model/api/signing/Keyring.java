@@ -47,7 +47,7 @@ public abstract class Keyring {
     private PGPPublicKeyRingCollection publicKeyRings;
     private PGPSecretKeyRingCollection secretKeyRings;
 
-    protected Keyring() throws IOException, PGPException {
+    protected Keyring() {
         this.publicKeyRings = new PGPPublicKeyRingCollection(Collections.emptyList());
         this.secretKeyRings = new PGPSecretKeyRingCollection(Collections.emptyList());
     }

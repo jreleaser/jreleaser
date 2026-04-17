@@ -66,7 +66,7 @@ public class Nexus3MavenDeployer extends AbstractMavenDeployer<org.jreleaser.mod
         String password = deployer.getPassword();
 
         Nexus3 nexus = new Nexus3(context.asImmutable(), baseUrl, username, password,
-            deployer.getConnectTimeout(), deployer.getReadTimeout(), context.isDryrun());
+            deployer.getConnectTimeout(), deployer.getReadTimeout());
 
         Map<String, Map<String, Set<Deployable>>> groupedArtifacts = new LinkedHashMap<>();
         for (Deployable deployable : deployables) {

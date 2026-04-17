@@ -146,7 +146,7 @@ public final class Matrix extends AbstractModelObject<Matrix> implements Domain 
     private <T> List<List<T>> combinations(Collection<List<T>> input) {
         if (input == null) return emptyList();
         return input.stream()
-            .filter(list -> list != null && list.size() > 0)
+            .filter(list -> list != null && !list.isEmpty())
             .map(list -> list.stream().map(Collections::singletonList)
                 .collect(toList()))
             .reduce((l1, l2) -> l1.stream()

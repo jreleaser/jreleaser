@@ -166,7 +166,7 @@ public final class StringUtils {
      */
     public static String getClassNameRepresentation(String name) {
         StringBuilder buf = new StringBuilder();
-        if (null != name && name.length() > 0) {
+        if (null != name && !name.isEmpty()) {
             String[] tokens = name.split("[^\\w\\d]");
             for (String token1 : tokens) {
                 String token = token1.trim();
@@ -194,7 +194,7 @@ public final class StringUtils {
             StringBuilder buf = new StringBuilder();
             String[] tokens = name.split("-");
             for (String token : tokens) {
-                if (null == token || token.length() == 0) {
+                if (null == token || token.isEmpty()) {
                     continue;
                 }
 
@@ -224,7 +224,7 @@ public final class StringUtils {
             StringBuilder buf = new StringBuilder();
             String[] tokens = name.split("-");
             for (String token : tokens) {
-                if (null == token || token.length() == 0) {
+                if (null == token || token.isEmpty()) {
                     continue;
                 }
                 if (buf.length() > 0) {
@@ -422,7 +422,7 @@ public final class StringUtils {
             }
 
             if (Character.isLowerCase(c) || Character.isDigit(c)) {
-                if (Character.isLowerCase(c) && w.length() == 0) {
+                if (Character.isLowerCase(c) && w.isEmpty()) {
                     c = Character.toUpperCase(c);
                 } else if (w.length() > 1 && Character.isUpperCase(w.charAt(w.length() - 1))) {
                     w = "";
@@ -431,7 +431,7 @@ public final class StringUtils {
 
                 words.set(i, w + c);
             } else if (Character.isUpperCase(c)) {
-                if (i == 0 && w.length() == 0 || Character.isUpperCase(w.charAt(w.length() - 1))) {
+                if (i == 0 && w.isEmpty() || Character.isUpperCase(w.charAt(w.length() - 1))) {
                     words.set(i, w + c);
                 } else {
                     words.add(++i, String.valueOf(c));
@@ -463,7 +463,7 @@ public final class StringUtils {
      * blank.
      */
     public static boolean isBlank(String str) {
-        if (null == str || str.length() == 0) {
+        if (null == str || str.isEmpty()) {
             return true;
         }
 
@@ -757,7 +757,7 @@ public final class StringUtils {
     }
 
     private static String applyQuotes(String string) {
-        if (null == string || string.length() == 0) {
+        if (null == string || string.isEmpty()) {
             return "\"\"";
         }
 

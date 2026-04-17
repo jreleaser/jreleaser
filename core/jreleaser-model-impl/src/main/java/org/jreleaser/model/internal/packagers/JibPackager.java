@@ -67,7 +67,7 @@ import static org.jreleaser.util.StringUtils.isFalse;
  */
 public final class JibPackager extends AbstractJibConfiguration<JibPackager> implements RepositoryPackager<org.jreleaser.model.api.packagers.JibPackager>, CommitAuthorAware {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
-    //private static final long serialVersionUID = -5161609035832200577L;
+    private static final long serialVersionUID = 7360117488310416457L;
 
     static {
         Set<String> extensions = setOf(ZIP.extension());

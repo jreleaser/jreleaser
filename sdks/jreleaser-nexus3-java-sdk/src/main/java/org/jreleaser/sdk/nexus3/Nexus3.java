@@ -41,7 +41,6 @@ import static org.jreleaser.util.StringUtils.requireNonBlank;
  */
 public class Nexus3 {
     private final JReleaserContext context;
-    private final boolean dryrun;
     private final String publishUrl;
     private final String username;
     private final String password;
@@ -53,14 +52,12 @@ public class Nexus3 {
                   String username,
                   String password,
                   int connectTimeout,
-                  int readTimeout,
-                  boolean dryrun) {
+                  int readTimeout) {
         this.context = requireNonNull(context, "'context' must not be blank");
         this.publishUrl = requireNonBlank(publishUrl, "'publishUrl' must not be blank").trim();
         this.username = requireNonBlank(username, "'username' must not be blank").trim();
         this.password = requireNonBlank(password, "'password' must not be blank").trim();
 
-        this.dryrun = dryrun;
         this.connectTimeout = connectTimeout;
         this.readTimeout = readTimeout;
     }
@@ -97,10 +94,6 @@ public class Nexus3 {
             context.getLogger().error(" x {}:{}", groupId, artifactId, e);
             throw fail(RB.$("ERROR_nexus3_deploy_artifact", groupId, artifactId, e.getMessage()), e);
         }
-    }
-
-    private Nexus3Exception fail(String message) {
-        return new Nexus3Exception(message);
     }
 
     private Nexus3Exception fail(String message, Exception e) {

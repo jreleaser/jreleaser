@@ -80,7 +80,7 @@ public abstract class AbstractJReleaserLogger implements JReleaserLogger {
 
     @Override
     public void decreaseIndent() {
-        if (indent.length() > 0) {
+        if (!indent.isEmpty()) {
             indent = indent.substring(0, indent.length() - 2);
         }
     }

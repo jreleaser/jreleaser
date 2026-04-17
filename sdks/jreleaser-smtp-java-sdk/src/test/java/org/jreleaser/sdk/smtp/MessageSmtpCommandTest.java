@@ -42,7 +42,7 @@ class MessageSmtpCommandTest {
         String receiver = "jreleaser@acme.com";
         String cc = "copy@acme.com";
         String bcc = "hidden@acme.com";
-        String message = "<html><body>Test<body></html>";
+        String message = "<html><body>Test</body></html>";
 
         MessageSmtpCommand command = MessageSmtpCommand
             .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))
@@ -70,7 +70,6 @@ class MessageSmtpCommandTest {
         assertThat(receiver, equalTo(greenMail.getReceivedMessages()[0].getRecipients(TO)[0].toString()));
         assertThat(sender, equalTo(greenMail.getReceivedMessages()[0].getFrom()[0].toString()));
         assertThat(cc, equalTo(greenMail.getReceivedMessages()[0].getRecipients(CC)[0].toString()));
-        assertThat(sender, equalTo(greenMail.getReceivedMessages()[0].getFrom()[0].toString()));
     }
 
     @Test
@@ -80,7 +79,7 @@ class MessageSmtpCommandTest {
         String receiver = "jreleaser@acme.com";
         String cc = "copy@acme.com";
         String bcc = "hidden@acme.com";
-        String message = "<html><body>Test<body></html>";
+        String message = "<html><body>Test</body></html>";
 
         MessageSmtpCommand command = MessageSmtpCommand
             .builder(new SimpleJReleaserLoggerAdapter(SimpleJReleaserLoggerAdapter.Level.DEBUG))

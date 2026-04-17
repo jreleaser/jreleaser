@@ -129,7 +129,6 @@ public final class ModelValidator {
             }
 
             for (Extension.Provider provider : extension.getProviders()) {
-                System.out.println(provider.asImmutable());
                 builder = builder.withExtensionPoint(provider.getType(), provider.getProperties());
             }
 

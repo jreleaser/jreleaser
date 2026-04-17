@@ -557,7 +557,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
                     notfound = true;
                 }
 
-                if (!notfound) {
+                if (notfound) {
                     // 2nd try with fingerprint
                     url = new URI(String.format(e.getValue(), keyID)).toURL();
                     connection = (HttpURLConnection) url.openConnection();
@@ -570,7 +570,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
                     }
                 }
 
-                if (!notfound) {
+                if (notfound) {
                     context.getLogger().debug(" x " + e.getKey());
                 }
             } catch (MalformedURLException | URISyntaxException ignored) {
