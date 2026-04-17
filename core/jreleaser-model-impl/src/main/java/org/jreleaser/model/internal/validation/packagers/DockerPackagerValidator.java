@@ -78,7 +78,7 @@ public final class DockerPackagerValidator {
         DEFAULT_ENTRYPOINTS.put(org.jreleaser.model.Distribution.DistributionType.FLAT_BINARY,
             "/{{distributionExecutableName}}");
         DEFAULT_ENTRYPOINTS.put(org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY,
-            "[\"/{{distributionExecutableName}}/bin/{{distributionExecutableUnix}}\"");
+            "[\"/{{distributionExecutableName}}/bin/{{distributionExecutableUnix}}\"]");
         DEFAULT_ENTRYPOINTS.put(org.jreleaser.model.Distribution.DistributionType.JLINK,
             "[\"/{{distributionExecutableName}}/bin/{{distributionExecutableUnix}}\"");
         DEFAULT_ENTRYPOINTS.put(org.jreleaser.model.Distribution.DistributionType.NATIVE_IMAGE,
