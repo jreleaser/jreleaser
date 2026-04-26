@@ -52,6 +52,7 @@ public final class ContextCreator {
                                           boolean dryrun,
                                           boolean gitRootSearch,
                                           boolean strict,
+                                          boolean reproducible,
                                           List<String> selectedPlatforms,
                                           List<String> rejectedPlatforms) {
         return create(logger,
@@ -66,6 +67,7 @@ public final class ContextCreator {
             dryrun,
             gitRootSearch,
             strict,
+            reproducible,
             selectedPlatforms,
             rejectedPlatforms);
     }
@@ -82,6 +84,7 @@ public final class ContextCreator {
                                           boolean dryrun,
                                           boolean gitRootSearch,
                                           boolean strict,
+                                          boolean reproducible,
                                           List<String> selectedPlatforms,
                                           List<String> rejectedPlatforms) {
         JReleaserContext context = new JReleaserContext(
@@ -97,6 +100,7 @@ public final class ContextCreator {
             dryrun,
             gitRootSearch,
             strict,
+            reproducible,
             selectedPlatforms,
             rejectedPlatforms);
 

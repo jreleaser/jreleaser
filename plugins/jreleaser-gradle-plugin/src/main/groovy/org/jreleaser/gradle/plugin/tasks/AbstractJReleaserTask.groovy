@@ -68,6 +68,9 @@ abstract class AbstractJReleaserTask extends AbstractJReleaserDefaultTask {
     @Input
     final Property<Boolean> strict
 
+    @Input
+    final Property<Boolean> reproducible
+
     @Internal
     org.jreleaser.model.api.JReleaserContext.Mode mode
 
@@ -82,6 +85,7 @@ abstract class AbstractJReleaserTask extends AbstractJReleaserDefaultTask {
         dryrun = objects.property(Boolean).convention(extension.get().dryrun)
         gitRootSearch = objects.property(Boolean).convention(extension.get().gitRootSearch)
         strict = objects.property(Boolean).convention(extension.get().strict)
+        reproducible = objects.property(Boolean).convention(extension.get().strict)
     }
 
     @Option(option = 'yolo', description = 'Skip non-configured operations (OPTIONAL).')
@@ -102,6 +106,11 @@ abstract class AbstractJReleaserTask extends AbstractJReleaserDefaultTask {
     @Option(option = 'strict', description = 'Enable strict mode (OPTIONAL).')
     void setStrict(boolean strict) {
         this.strict.set(strict)
+    }
+
+    @Option(option = 'reproducible', description = 'Enable reproducible artifacts (OPTIONAL).')
+    void setReproducible(boolean reproducible) {
+        this.reproducible.set(reproducible)
     }
 
     protected JReleaserModel createModel() {
@@ -147,6 +156,7 @@ abstract class AbstractJReleaserTask extends AbstractJReleaserDefaultTask {
             dryrun.getOrElse(false),
             gitRootSearch.getOrElse(false),
             strict.getOrElse(false),
+            reproducible.getOrElse(false),
             collectSelectedPlatforms(),
             collectRejectedPlatforms())
     }

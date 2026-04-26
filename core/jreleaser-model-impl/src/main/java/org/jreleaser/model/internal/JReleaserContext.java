@@ -128,6 +128,7 @@ public class JReleaserContext {
     private final boolean yolo;
     private final boolean dryrun;
     private final boolean strict;
+    private final boolean reproducible;
     private final boolean gitRootSearch;
     private final org.jreleaser.model.api.JReleaserContext.Mode mode;
     private final JReleaserCommand command;
@@ -167,7 +168,7 @@ public class JReleaserContext {
 
     @JsonIgnore
     private final org.jreleaser.model.api.JReleaserContext immutable = new org.jreleaser.model.api.JReleaserContext() {
-        private static final long serialVersionUID = 3397521336933553959L;
+        private static final long serialVersionUID = -4818352915319114822L;
 
         @Override
         public Path relativize(Path basedir, Path other) {
@@ -272,6 +273,11 @@ public class JReleaserContext {
         @Override
         public boolean isStrict() {
             return JReleaserContext.this.isStrict();
+        }
+
+        @Override
+        public boolean isReproducible() {
+            return JReleaserContext.this.isReproducible();
         }
 
         @Override
@@ -429,6 +435,7 @@ public class JReleaserContext {
             true,
             true,
             false,
+            false,
             Collections.emptyList(),
             Collections.emptyList());
     }
@@ -445,6 +452,7 @@ public class JReleaserContext {
                             boolean dryrun,
                             boolean gitRootSearch,
                             boolean strict,
+                            boolean reproducible,
                             List<String> selectedPlatforms,
                             List<String> rejectedPlatforms) {
         this.logger = logger;
@@ -459,6 +467,7 @@ public class JReleaserContext {
         this.dryrun = dryrun;
         this.gitRootSearch = gitRootSearch;
         this.strict = strict;
+        this.reproducible = reproducible;
         this.selectedPlatforms.addAll(selectedPlatforms.stream()
             .filter(PlatformUtils::isSupported)
             .collect(toList()));
@@ -536,6 +545,7 @@ public class JReleaserContext {
 
         logger.info(RB.$("context.configuration.validation"));
         logger.info(RB.$("context.configuration.strict", strict));
+        logger.info(RB.$("context.configuration.reproducible", reproducible));
 
         if (mode.validateConfig()) {
             adjustDistributions();
@@ -839,6 +849,10 @@ public class JReleaserContext {
         return strict;
     }
 
+    public boolean isReproducible() {
+        return reproducible;
+    }
+
     public Changelog getChangelog() {
         return changelog;
     }
@@ -1125,6 +1139,7 @@ public class JReleaserContext {
             ", dryrun=" + dryrun +
             ", gitRootSearch=" + gitRootSearch +
             ", strict=" + strict +
+            ", reproducible=" + reproducible +
             ", mode=" + mode +
             "]";
     }

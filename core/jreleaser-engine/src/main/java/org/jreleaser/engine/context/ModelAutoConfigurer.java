@@ -69,6 +69,7 @@ public final class ModelAutoConfigurer {
     private Boolean dryrun;
     private Boolean gitRootSearch;
     private Boolean strict;
+    private Boolean reproducible;
     private String projectName;
     private String projectVersion;
     private String projectVersionPattern;
@@ -142,6 +143,11 @@ public final class ModelAutoConfigurer {
 
     public ModelAutoConfigurer strict(Boolean strict) {
         this.strict = strict;
+        return this;
+    }
+
+    public ModelAutoConfigurer reproducible(Boolean reproducible) {
+        this.reproducible = reproducible;
         return this;
     }
 
@@ -418,6 +424,7 @@ public final class ModelAutoConfigurer {
             resolveBoolean(org.jreleaser.model.api.JReleaserContext.DRY_RUN, dryrun),
             resolveBoolean(org.jreleaser.model.api.JReleaserContext.GIT_ROOT_SEARCH, gitRootSearch),
             resolveBoolean(org.jreleaser.model.api.JReleaserContext.STRICT, strict),
+            resolveBoolean(org.jreleaser.model.api.JReleaserContext.REPRODUCIBLE, reproducible),
             selectedPlatforms,
             rejectedPlatforms);
     }

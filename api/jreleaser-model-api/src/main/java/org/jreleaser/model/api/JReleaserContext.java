@@ -42,6 +42,7 @@ public interface JReleaserContext extends Serializable {
     String DRY_RUN = "DRY_RUN";
     String GIT_ROOT_SEARCH = "GIT_ROOT_SEARCH";
     String STRICT = "STRICT";
+    String REPRODUCIBLE = "REPRODUCIBLE";
     String SELECT_CURRENT_PLATFORM = "SELECT_CURRENT_PLATFORM";
     String SELECT_PLATFORMS = "SELECT_PLATFORMS";
     String REJECT_PLATFORMS = "REJECT_PLATFORMS";
@@ -89,6 +90,8 @@ public interface JReleaserContext extends Serializable {
     boolean isGitRootSearch();
 
     boolean isStrict();
+
+    boolean isReproducible();
 
     List<String> getIncludedAnnouncers();
 

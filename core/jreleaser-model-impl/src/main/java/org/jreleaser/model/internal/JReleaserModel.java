@@ -471,7 +471,8 @@ public class JReleaserModel {
         TemplateContext props = new TemplateContext();
         props.set("Model", this.asImmutable());
 
-        String jreleaserCreationStamp = String.format("Generated with JReleaser %s at %s",
+        String jreleaserCreationStamp = context.isReproducible() ? String.format("Generated with JReleaser %s",
+            JReleaserVersion.getPlainVersion()) : String.format("Generated with JReleaser %s at %s",
             JReleaserVersion.getPlainVersion(), timestamp);
         props.set("jreleaserCreationStamp", jreleaserCreationStamp);
 

@@ -66,6 +66,7 @@ abstract class AbstractJReleaserTask extends Task {
     protected Boolean dryrun;
     protected Boolean gitRootSearch;
     protected Boolean strict;
+    protected Boolean reproducible;
     protected boolean skip;
     protected Path outputDir;
 
@@ -99,6 +100,10 @@ abstract class AbstractJReleaserTask extends Task {
 
     public void setStrict(Boolean strict) {
         this.strict = strict;
+    }
+
+    public void setReproducible(Boolean reproducible) {
+        this.reproducible = reproducible;
     }
 
     public void setSkip(boolean skip) {
@@ -204,6 +209,7 @@ abstract class AbstractJReleaserTask extends Task {
             resolveBoolean(org.jreleaser.model.api.JReleaserContext.DRY_RUN, dryrun),
             resolveBoolean(org.jreleaser.model.api.JReleaserContext.GIT_ROOT_SEARCH, gitRootSearch),
             resolveBoolean(org.jreleaser.model.api.JReleaserContext.STRICT, strict),
+            resolveBoolean(org.jreleaser.model.api.JReleaserContext.REPRODUCIBLE, reproducible),
             collectSelectedPlatforms(),
             collectRejectedPlatforms());
     }

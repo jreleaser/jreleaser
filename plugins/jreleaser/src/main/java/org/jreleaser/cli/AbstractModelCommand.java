@@ -67,6 +67,9 @@ public abstract class AbstractModelCommand<C extends IO> extends AbstractLogging
     @CommandLine.Option(names = {"--strict"})
     Boolean strict;
 
+    @CommandLine.Option(names = {"--reproducible"})
+    Boolean reproducible;
+
     @CommandLine.Option(names = {"-P", "--set-property"},
         paramLabel = "<key=value>")
     String[] properties;
@@ -178,6 +181,7 @@ public abstract class AbstractModelCommand<C extends IO> extends AbstractLogging
             resolveBoolean(org.jreleaser.model.api.JReleaserContext.DRY_RUN, dryrun()),
             resolveBoolean(org.jreleaser.model.api.JReleaserContext.GIT_ROOT_SEARCH, gitRootSearch()),
             resolveBoolean(org.jreleaser.model.api.JReleaserContext.STRICT, strict()),
+            resolveBoolean(org.jreleaser.model.api.JReleaserContext.REPRODUCIBLE, reproducible()),
             collectSelectedPlatforms(),
             collectRejectedPlatforms());
     }
@@ -228,6 +232,10 @@ public abstract class AbstractModelCommand<C extends IO> extends AbstractLogging
 
     protected Boolean strict() {
         return strict;
+    }
+
+    protected Boolean reproducible() {
+        return reproducible;
     }
 
     protected Boolean gitRootSearch() {

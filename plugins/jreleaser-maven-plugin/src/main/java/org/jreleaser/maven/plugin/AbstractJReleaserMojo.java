@@ -108,6 +108,12 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
     @Parameter(property = "jreleaser.strict")
     protected Boolean strict;
 
+    /**
+     * Enable reproducible artifacts.
+     */
+    @Parameter(property = "jreleaser.reproducible")
+    protected Boolean reproducible;
+
     @Parameter(defaultValue = "${session}", required = true)
     private MavenSession session;
 
@@ -199,6 +205,7 @@ abstract class AbstractJReleaserMojo extends AbstractMojo {
                 resolveBoolean(org.jreleaser.model.api.JReleaserContext.DRY_RUN, dryrun),
                 resolveBoolean(org.jreleaser.model.api.JReleaserContext.GIT_ROOT_SEARCH, gitRootSearch),
                 resolveBoolean(org.jreleaser.model.api.JReleaserContext.STRICT, strict),
+                resolveBoolean(org.jreleaser.model.api.JReleaserContext.REPRODUCIBLE, reproducible),
                 collectSelectedPlatforms(),
                 collectRejectedPlatforms());
         } catch (JReleaserException e) {
