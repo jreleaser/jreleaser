@@ -143,15 +143,6 @@ public final class SigningValidator {
                         ""));
             }
         } else {
-            if (pgp.isVerify()) {
-                pgp.setPublicKey(
-                    checkProperty(context,
-                        GPG_PUBLIC_KEY,
-                        "signing.pgp.publicKey",
-                        pgp.getPublicKey(),
-                        errors));
-            }
-
             pgp.setSecretKey(
                 checkProperty(context,
                     GPG_SECRET_KEY,

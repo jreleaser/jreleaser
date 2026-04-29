@@ -1219,14 +1219,14 @@ public class JReleaserContext {
 
             if (pgp.getMode() == Signing.Mode.FILE) {
                 return new FilesKeyring(
-                    pgp.isVerify() ? basedir.resolve(pgp.getPublicKey()) : null,
-                    basedir.resolve(pgp.getSecretKey())
+                        pgp.isVerify() && isNotBlank(pgp.getPublicKey()) ? basedir.resolve(pgp.getPublicKey()) : null,
+                        basedir.resolve(pgp.getSecretKey())
                 ).initialize(pgp.isArmored());
             }
 
             return new InMemoryKeyring(
-                pgp.isVerify() ? pgp.getPublicKey().getBytes(UTF_8) : null,
-                pgp.getSecretKey().getBytes(UTF_8)
+                    pgp.isVerify() && isNotBlank(pgp.getPublicKey()) ? pgp.getPublicKey().getBytes(UTF_8) : null,
+                    pgp.getSecretKey().getBytes(UTF_8)
             ).initialize(pgp.isArmored());
         } catch (IOException | PGPException e) {
             throw new SigningException(RB.$("ERROR_signing_init_keyring"), e);

@@ -608,7 +608,7 @@ public final class Signing extends AbstractActivatable<Signing> implements Domai
     }
 
     public static class Pgp extends AbstractSigningTool<Pgp> implements Domain {
-        private static final long serialVersionUID = -5762843351226833958L;
+        private static final long serialVersionUID = 2485666250670916614L;
 
         private final Command command = new Command();
 
@@ -739,6 +739,12 @@ public final class Signing extends AbstractActivatable<Signing> implements Domai
 
         public void setCommand(Command command) {
             this.command.merge(command);
+        }
+
+        @Override
+        public void setPublicKey(String publicKey) {
+            nag("pgp.publicKey is deprecated since 1.24.0 and will be removed in 2.0.0.");
+            super.setPublicKey(publicKey);
         }
 
         @Override

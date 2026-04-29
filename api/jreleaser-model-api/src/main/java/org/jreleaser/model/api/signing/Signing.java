@@ -97,6 +97,7 @@ public interface Signing extends Domain, Activatable {
     interface Pgp extends SigningTool {
         boolean isArmored();
 
+        @Deprecated
         String getPublicKey();
 
         String getSecretKey();

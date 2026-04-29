@@ -103,15 +103,15 @@ public abstract class Keyring {
     }
 
     public PGPPublicKey readPublicKey() throws SigningException {
-        Iterator<PGPPublicKeyRing> keyRingIter = publicKeyRings.getKeyRings();
+        Iterator<PGPSecretKeyRing> keyRingIter = secretKeyRings.getKeyRings();
         while (keyRingIter.hasNext()) {
-            PGPPublicKeyRing keyRing = keyRingIter.next();
+            PGPSecretKeyRing keyRing = keyRingIter.next();
 
-            Iterator<PGPPublicKey> keyIter = keyRing.getPublicKeys();
+            Iterator<PGPSecretKey> keyIter = keyRing.getSecretKeys();
             while (keyIter.hasNext()) {
-                PGPPublicKey key = keyIter.next();
-                if (isSigningKey(key)) {
-                    return key;
+                PGPSecretKey key = keyIter.next();
+                if (key.isSigningKey() && !key.isPrivateKeyEmpty()) {
+                    return key.getPublicKey();
                 }
             }
         }
@@ -127,7 +127,7 @@ public abstract class Keyring {
             Iterator<PGPSecretKey> keyIter = keyRing.getSecretKeys();
             while (keyIter.hasNext()) {
                 PGPSecretKey key = keyIter.next();
-                if (key.isSigningKey()) {
+                if (key.isSigningKey() && !key.isPrivateKeyEmpty()) {
                     return key;
                 }
             }
