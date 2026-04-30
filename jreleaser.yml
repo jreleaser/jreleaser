@@ -297,7 +297,7 @@ distributions:
       componentId: org.jreleaser.cli
       developerName: JReleaser
       runtime: FREEDESKTOP
-      runtimeVersion: 21.08
+      runtimeVersion: 25.08
       finishArgs:
         - --share=network
         - --filesystem=host
