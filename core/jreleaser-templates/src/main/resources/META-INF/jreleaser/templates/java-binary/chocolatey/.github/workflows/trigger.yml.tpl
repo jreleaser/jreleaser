@@ -8,7 +8,7 @@ permissions:
 
 jobs:
   trigger:
-    uses: ./.github/workflows/choco.yml@main
+    uses: ./.github/workflows/choco.yml
     with:
       choco-package-name: {{chocolateyPackageName}}
       choco-source: {{chocolateySource}}
