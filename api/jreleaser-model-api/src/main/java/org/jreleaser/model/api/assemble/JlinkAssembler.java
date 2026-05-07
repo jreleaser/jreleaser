@@ -43,7 +43,10 @@ public interface JlinkAssembler extends Assembler, JavaAssembler, SwidTagAware {
 
     String getImageNameTransform();
 
+    @Deprecated
     Archive.Format getArchiveFormat();
+
+    Set<Archive.Format> getFormats();
 
     ArchiveOptions getOptions();
 

@@ -23,6 +23,7 @@ import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.JlinkAssembler;
 import org.jreleaser.model.internal.common.Artifact;
+import org.jreleaser.util.CollectionUtils;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.PlatformUtils;
 
@@ -107,6 +108,10 @@ public final class JlinkAssemblerValidator {
                 Artifact targetJdk = new Artifact();
                 targetJdk.setPlatform(matrixRow.get(KEY_PLATFORM));
                 targetJdk.setPath(replaceWithMatrix(assembler.getTargetJdkPattern().getPath(), matrixRow));
+                matrixRow.forEach((k, v) -> {
+                    if (k.equalsIgnoreCase("platform")) return;
+                    targetJdk.getExtraProperties().put(k, v);
+                });
                 assembler.addTargetJdk(targetJdk);
             }
         }
@@ -194,8 +199,8 @@ public final class JlinkAssemblerValidator {
             assembler.getMainJar().resolveActiveAndSelected(context);
         }
 
-        if (null == assembler.getArchiveFormat()) {
-            assembler.setArchiveFormat(Archive.Format.ZIP);
+        if (assembler.getFormats().isEmpty()) {
+            assembler.setFormats(CollectionUtils.setOf(Archive.Format.ZIP));
         }
 
         if (null == assembler.getOptions().getTimestamp()) {

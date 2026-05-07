@@ -51,6 +51,11 @@ public class Archive {
             return extension();
         }
 
+        public String normalized() {
+            return extension()
+                .replace(".", "");
+        }
+
         public static Format of(String str) {
             if (isBlank(str)) return null;
             return valueOf(str.toUpperCase(Locale.ENGLISH).trim()

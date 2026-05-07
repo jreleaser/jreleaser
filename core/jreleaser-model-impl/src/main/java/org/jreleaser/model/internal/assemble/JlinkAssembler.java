@@ -47,6 +47,7 @@ import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
+import static org.jreleaser.model.JReleaserOutput.nag;
 import static org.jreleaser.model.api.assemble.JlinkAssembler.TYPE;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -57,7 +58,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.2.0
  */
 public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, org.jreleaser.model.api.assemble.JlinkAssembler> implements SwidTagAware, MatrixAware {
-    private static final long serialVersionUID = -2723965471823676369L;
+    private static final long serialVersionUID = -6447627310224610567L;
 
     private final Set<Artifact> targetJdks = new LinkedHashSet<>();
     private final Set<String> moduleNames = new LinkedHashSet<>();
@@ -69,16 +70,16 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
     private final JavaArchive javaArchive = new JavaArchive();
     private final Matrix matrix = new Matrix();
     private final Artifact targetJdkPattern = new Artifact();
+    private final Set<Archive.Format> formats = new LinkedHashSet<>();
 
     private String imageName;
     private String imageNameTransform;
-    private Archive.Format archiveFormat;
     private Boolean copyJars;
     private Boolean applyDefaultMatrix;
 
     @JsonIgnore
     private final org.jreleaser.model.api.assemble.JlinkAssembler immutable = new org.jreleaser.model.api.assemble.JlinkAssembler() {
-        private static final long serialVersionUID = -1451343134953991242L;
+        private static final long serialVersionUID = 2090178307604210114L;
 
         private Set<? extends org.jreleaser.model.api.common.Artifact> artifacts;
         private List<? extends org.jreleaser.model.api.common.FileSet> fileSets;
@@ -109,7 +110,12 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
 
         @Override
         public Archive.Format getArchiveFormat() {
-            return archiveFormat;
+            return formats.stream().findFirst().orElse(null);
+        }
+
+        @Override
+        public Set<Archive.Format> getFormats() {
+            return unmodifiableSet(formats);
         }
 
         @Override
@@ -317,7 +323,7 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
         super.merge(source);
         this.imageName = merge(this.imageName, source.imageName);
         this.imageNameTransform = merge(this.imageNameTransform, source.imageNameTransform);
-        this.archiveFormat = merge(this.archiveFormat, source.archiveFormat);
+        setFormats(merge(this.formats, source.formats));
         this.copyJars = merge(this.copyJars, source.copyJars);
         this.applyDefaultMatrix = merge(this.applyDefaultMatrix, source.applyDefaultMatrix);
         setJavaArchive(source.javaArchive);
@@ -377,16 +383,38 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
         this.imageNameTransform = imageNameTransform;
     }
 
+    @Deprecated
     public Archive.Format getArchiveFormat() {
-        return archiveFormat;
+        return formats.stream().findFirst().orElse(null);
     }
 
+    @Deprecated
     public void setArchiveFormat(Archive.Format archiveFormat) {
-        this.archiveFormat = archiveFormat;
+        nag("jlink.archiveFormat is deprecated since 1.24.0 and will be removed in 2.0.0");
+        formats.clear();
+        formats.add(archiveFormat);
     }
 
+    @Deprecated
     public void setArchiveFormat(String archiveFormat) {
-        this.archiveFormat = Archive.Format.of(archiveFormat);
+        setArchiveFormat(Archive.Format.of(archiveFormat));
+    }
+
+    public Set<Archive.Format> getFormats() {
+        return formats;
+    }
+
+    public void setFormats(Set<Archive.Format> formats) {
+        this.formats.clear();
+        this.formats.addAll(formats);
+    }
+
+    public void addFormat(Archive.Format format) {
+        this.formats.add(format);
+    }
+
+    public void addFormat(String str) {
+        this.formats.add(Archive.Format.of(str));
     }
 
     public ArchiveOptions getOptions() {
@@ -497,7 +525,7 @@ public final class JlinkAssembler extends AbstractJavaAssembler<JlinkAssembler, 
         super.asMap(full, props);
         props.put("imageName", imageName);
         props.put("imageNameTransform", imageNameTransform);
-        props.put("archiveFormat", archiveFormat);
+        props.put("formats", formats);
         props.put("options", options.asMap(full));
         props.put("moduleNames", moduleNames);
         props.put("additionalModuleNames", additionalModuleNames);

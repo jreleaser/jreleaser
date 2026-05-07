@@ -48,7 +48,6 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import static org.jreleaser.assemblers.AssemblerUtils.copyJars;
 import static org.jreleaser.assemblers.AssemblerUtils.readJavaVersion;
-import static org.jreleaser.model.Constants.KEY_ARCHIVE_FORMAT;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_EXECUTABLE;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_ENVIRONMENT_VARIABLES_LINUX;
@@ -70,8 +69,10 @@ import static org.jreleaser.util.FileType.BAT;
 import static org.jreleaser.util.FileType.JAR;
 import static org.jreleaser.util.FileUtils.listFilesAndConsume;
 import static org.jreleaser.util.FileUtils.listFilesAndProcess;
+import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.StringUtils.isTrue;
 
 /**
  * @author Andres Almiray
@@ -222,20 +223,24 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
             }
             context.getLogger().debug(RB.$("assembler.module.names"), moduleNames);
 
-            String str = targetJdk.getExtraProperties()
-                .getOrDefault(KEY_ARCHIVE_FORMAT, assembler.getArchiveFormat())
-                .toString();
-            Archive.Format archiveFormat = Archive.Format.of(str);
-
-            jlink(props, assembleDirectory, jdkPath, targetJdk, moduleNames, imageName, archiveFormat);
+            String finalImageName = jlink(props, assembleDirectory, jdkPath, targetJdk, moduleNames, imageName);
+            Path workDirectory = assembleDirectory.resolve(WORK_DIRECTORY + "-" + platform);
+            // run archive x format
+            for (Archive.Format format : assembler.getFormats()) {
+                String propertyName = "skip" + capitalize(format.normalized());
+                if (isTrue(targetJdk.getExtraProperties().getOrDefault(propertyName, false))) {
+                    continue;
+                }
+                archive(assembleDirectory, finalImageName, workDirectory, format);
+            }
         }
     }
 
-    private void jlink(TemplateContext props, Path assembleDirectory, Path jdkPath, Artifact targetJdk, Set<String> moduleNames, String imageName, Archive.Format archiveFormat) throws AssemblerProcessingException {
+    private String jlink(TemplateContext props, Path assembleDirectory, Path jdkPath, Artifact targetJdk, Set<String> moduleNames, String imageName) throws AssemblerProcessingException {
         String platform = targetJdk.getPlatform();
         String platformReplaced = assembler.getPlatform().applyReplacements(platform);
         String finalImageName = imageName + "-" + platformReplaced;
-        context.getLogger().info("- {}", finalImageName);
+        context.getLogger().debug("- {}", finalImageName);
 
         boolean hasJavaArchive = assembler.getJavaArchive().isSet();
         Path inputsDirectory = assembleDirectory.resolve(INPUTS_DIRECTORY);
@@ -329,7 +334,6 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
         }
 
         try {
-            Path imageArchive = assembleDirectory.resolve(finalImageName + "." + archiveFormat.extension());
             FileUtils.copyFiles(context.getLogger(),
                 context.getBasedir(),
                 imageDirectory, path -> path.getFileName().startsWith(LICENSE));
@@ -363,10 +367,17 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
             copyFiles(context, imageDirectory);
             copyFileSets(context, imageDirectory);
             generateSwidTag(context, imageDirectory);
+            return finalImageName;
+        } catch (IOException e) {
+            throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
+        }
+    }
 
+    private void archive(Path assembleDirectory, String finalImageName, Path workDirectory, Archive.Format archiveFormat) throws AssemblerProcessingException {
+        try {
+            Path imageArchive = assembleDirectory.resolve(finalImageName + "." + archiveFormat.extension());
             FileUtils.packArchive(workDirectory, imageArchive, assembler.getOptions().toOptions());
-
-            context.getLogger().debug("- {}", imageArchive.getFileName());
+            context.getLogger().info("- {}", imageArchive.getFileName());
         } catch (IOException e) {
             throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
         }
