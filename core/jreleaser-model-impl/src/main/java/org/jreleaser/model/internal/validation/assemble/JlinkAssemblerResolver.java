@@ -28,8 +28,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import static org.jreleaser.model.Constants.KEY_ARCHIVE_FORMAT;
+import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.StringUtils.isTrue;
 
 /**
  * @author Andres Almiray
@@ -68,24 +69,28 @@ public final class JlinkAssemblerResolver {
 
             String platform = targetJdk.getPlatform();
             String platformReplaced = assembler.getPlatform().applyReplacements(platform);
-            String str = targetJdk.getExtraProperties()
-                .getOrDefault(KEY_ARCHIVE_FORMAT, assembler.getArchiveFormat())
-                .toString();
-            Archive.Format archiveFormat = Archive.Format.of(str);
 
-            Path image = baseOutputDirectory
-                .resolve(imageName + "-" + platformReplaced + "." + archiveFormat.extension())
-                .toAbsolutePath();
+            for (Archive.Format archiveFormat : assembler.getFormats()) {
+                String propertyName = "skip" + capitalize(archiveFormat.normalized());
+                if (isTrue(targetJdk.getExtraProperties().getOrDefault(propertyName, false))) {
+                    continue;
+                }
 
-            if (!Files.exists(image)) {
-                errors.assembly(RB.$("validation_missing_assembly",
-                    assembler.getType(), assembler.getName(), assembler.getName()));
-                errors.assembly(context.relativizeToBasedir(image.toAbsolutePath()).toString());
-            } else {
-                Artifact artifact = Artifact.of(image, platform);
-                artifact.resolveActiveAndSelected(context);
-                artifact.setExtraProperties(assembler.getExtraProperties());
-                assembler.addOutput(artifact);
+                Path image = baseOutputDirectory
+                    .resolve(imageName + "-" + platformReplaced + "." + archiveFormat.extension())
+                    .toAbsolutePath();
+
+                if (!Files.exists(image)) {
+                    errors.assembly(RB.$("validation_missing_assembly",
+                        assembler.getType(), assembler.getName(), assembler.getName()));
+                    errors.assembly(context.relativizeToBasedir(image.toAbsolutePath()).toString());
+                } else {
+                    Artifact artifact = Artifact.of(image, platform);
+                    artifact.resolveActiveAndSelected(context);
+                    artifact.setExtraProperties(assembler.getExtraProperties());
+                    artifact.addExtraProperties(targetJdk.getExtraProperties());
+                    assembler.addOutput(artifact);
+                }
             }
         }
     }
