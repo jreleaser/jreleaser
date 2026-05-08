@@ -609,7 +609,7 @@ public class JReleaserContext {
                     distribution.getExecutable().setWindowsExtension(FileType.EXE.type());
                     distribution.getExtraProperties().put(KEY_GRAALVM_NAGIVE_IMAGE, "true");
                     NativeImageAssembler nia = (NativeImageAssembler) assembler;
-                    if (!nia.getArchiving().isEnabled()) {
+                    if (!nia.isArchive()) {
                         distribution.setType(org.jreleaser.model.Distribution.DistributionType.FLAT_BINARY);
                     }
                 }

@@ -59,12 +59,13 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.2.0
  */
 public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImageAssembler, org.jreleaser.model.api.assemble.NativeImageAssembler> implements SwidTagAware, MatrixAware {
-    private static final long serialVersionUID = 629659372890762847L;
+    private static final long serialVersionUID = -1260580059356637966L;
 
     private final List<String> args = new ArrayList<>();
     private final Set<String> components = new LinkedHashSet<>();
     private final Artifact graal = new Artifact();
     private final Set<Artifact> graalJdks = new LinkedHashSet<>();
+    private final Set<Archive.Format> formats = new LinkedHashSet<>();
     private final Archiving archiving = new Archiving();
     private final Matrix matrix = new Matrix();
     private final Artifact graalJdkPattern = new Artifact();
@@ -79,10 +80,11 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
     private String imageName;
     private String imageNameTransform;
     private Boolean applyDefaultMatrix;
+    private Boolean archive;
 
     @JsonIgnore
     private final org.jreleaser.model.api.assemble.NativeImageAssembler immutable = new org.jreleaser.model.api.assemble.NativeImageAssembler() {
-        private static final long serialVersionUID = 2532557224813258883L;
+        private static final long serialVersionUID = -2214209813128687996L;
 
         private Set<? extends org.jreleaser.model.api.common.Artifact> artifacts;
         private Set<? extends org.jreleaser.model.api.common.Artifact> graalJdks;
@@ -103,11 +105,22 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
 
         @Override
         @Deprecated
-        public Archive.Format getArchiveFormat() {
-            return NativeImageAssembler.this.getArchiveFormat();
+        public boolean isArchive() {
+            return NativeImageAssembler.this.isArchive();
         }
 
         @Override
+        public Archive.Format getArchiveFormat() {
+            return formats.stream().findFirst().orElse(null);
+        }
+
+        @Override
+        public Set<Archive.Format> getFormats() {
+            return unmodifiableSet(formats);
+        }
+
+        @Override
+        @Deprecated
         public Archiving getArchiving() {
             return archiving.asImmutable();
         }
@@ -357,7 +370,8 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
         super.merge(source);
         this.imageName = merge(this.imageName, source.imageName);
         this.imageNameTransform = merge(this.imageNameTransform, source.imageNameTransform);
-        this.applyDefaultMatrix = merge(this.applyDefaultMatrix, source.applyDefaultMatrix);
+        this.archive = merge(this.archive, source.archive);
+        setFormats(merge(this.formats, source.formats));
         setArchiving(source.archiving);
         setOptions(source.options);
         setGraal(source.graal);
@@ -413,6 +427,35 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
         this.imageNameTransform = imageNameTransform;
     }
 
+    public Set<Archive.Format> getFormats() {
+        return formats;
+    }
+
+    public void setFormats(Set<Archive.Format> formats) {
+        this.formats.clear();
+        this.formats.addAll(formats);
+    }
+
+    public void addFormat(Archive.Format format) {
+        this.formats.add(format);
+    }
+
+    public void addFormat(String str) {
+        this.formats.add(Archive.Format.of(str));
+    }
+
+    public boolean isArchiveSet() {
+        return null != archive;
+    }
+
+    public boolean isArchive() {
+        return null != archive && archive;
+    }
+
+    public void setArchive(Boolean archive) {
+        this.archive = archive;
+    }
+
     @Deprecated
     public Archive.Format getArchiveFormat() {
         return archiving.getFormat();
@@ -430,11 +473,14 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
         setArchiveFormat(Archive.Format.of(archiveFormat));
     }
 
+    @Deprecated
     public Archiving getArchiving() {
         return archiving;
     }
 
+    @Deprecated
     public void setArchiving(Archiving archiving) {
+        nag("nativeImage.archiving is deprecated since 1.24.0 and will be removed in 2.0.0. Use nativeImage.formats and nativeImage.archive instead");
         this.archiving.merge(archiving);
     }
 
@@ -610,7 +656,8 @@ public final class NativeImageAssembler extends AbstractJavaAssembler<NativeImag
         super.asMap(full, props);
         props.put("imageName", imageName);
         props.put("imageNameTransform", imageNameTransform);
-        props.put("archiving", archiving.asMap(full));
+        props.put("archive", isArchive());
+        props.put("formats", formats);
         props.put("options", options.asMap(full));
         props.put("applyDefaultMatrix", isApplyDefaultMatrix());
         matrix.asMap(props);

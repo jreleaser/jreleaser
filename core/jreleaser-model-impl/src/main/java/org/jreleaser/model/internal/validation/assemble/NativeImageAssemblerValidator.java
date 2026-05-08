@@ -90,18 +90,18 @@ public final class NativeImageAssemblerValidator {
 
         assembler.setPlatform(assembler.getPlatform().mergeValues(context.getModel().getPlatform()));
 
-        if (!assembler.getArchiving().isEnabledSet()) {
-            assembler.getArchiving().setEnabled(true);
+        if (!assembler.isArchiveSet()) {
+            assembler.setArchive(true);
         }
-        if (assembler.getArchiving().isEnabled() && null == assembler.getArchiving().getFormat()) {
-            assembler.getArchiving().setFormat(Archive.Format.ZIP);
+        if (assembler.isArchive() && assembler.getFormats().isEmpty()) {
+            assembler.getFormats().add(Archive.Format.ZIP);
         }
 
         if (isBlank(assembler.getExecutable())) {
             assembler.setExecutable(assembler.getName());
         }
         if (isBlank(assembler.getImageName())) {
-            if (assembler.getArchiving().isEnabled()) {
+            if (assembler.isArchive()) {
                 assembler.setImageName(assembler.getExecutable() + "-" +
                     context.getModel().getProject().getResolvedVersion());
             } else {

@@ -48,11 +48,12 @@ import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toList;
 import static org.jreleaser.assemblers.AssemblerUtils.copyJars;
 import static org.jreleaser.assemblers.AssemblerUtils.readJavaVersion;
-import static org.jreleaser.model.Constants.KEY_ARCHIVE_FORMAT;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.util.FileType.EXE;
+import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.StringUtils.isTrue;
 
 /**
  * @author Andres Almiray
@@ -97,7 +98,19 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<or
             imageName = assembler.getResolvedImageNameTransform(context);
         }
 
-        nativeImage(props, assembleDirectory, graalPath, jars, imageName);
+        String finalImageName = nativeImage(props, assembleDirectory, graalPath, jars, imageName);
+
+        if (assembler.isArchive()) {
+            Path workDirectory = assembleDirectory.resolve(WORK_DIRECTORY);
+            // run archive x format
+            for (Archive.Format format : assembler.getFormats()) {
+                String propertyName = "skip" + capitalize(format.normalized());
+                if (isTrue(assembler.getGraal().getExtraProperties().getOrDefault(propertyName, false))) {
+                    continue;
+                }
+                archive(assembleDirectory, finalImageName, workDirectory, format);
+            }
+        }
     }
 
     private void installNativeImage(Path graalPath) throws AssemblerProcessingException {
@@ -139,7 +152,7 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<or
         }
     }
 
-    private void nativeImage(TemplateContext props, Path assembleDirectory, Path graalPath, Set<Path> jars, String imageName) throws AssemblerProcessingException {
+    private String nativeImage(TemplateContext props, Path assembleDirectory, Path graalPath, Set<Path> jars, String imageName) throws AssemblerProcessingException {
         String platform = assembler.getGraal().getPlatform();
         String platformReplaced = assembler.getPlatform().applyReplacements(platform);
         String finalImageName = imageName + "-" + platformReplaced;
@@ -152,7 +165,12 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<or
         if (PlatformUtils.isWindows()) {
             executableFileName += EXE.extension();
         }
-        context.getLogger().info("- {}", finalImageName);
+
+        if (assembler.isArchive()) {
+            context.getLogger().debug("- {}", finalImageName);
+        } else {
+            context.getLogger().info("- {}", finalImageName);
+        }
 
         Path image = assembleDirectory.resolve(executableFileName).toAbsolutePath();
         try {
@@ -220,33 +238,36 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<or
             upx(image);
         }
 
-        if (!assembler.getArchiving().isEnabled()) return;
+        if (assembler.isArchive()) {
+            try {
+                Path workDirectory = assembleDirectory.resolve(WORK_DIRECTORY);
+                Path distDirectory = workDirectory.resolve(finalImageName);
+                Files.createDirectories(distDirectory);
+                Path binDirectory = distDirectory.resolve(BIN_DIRECTORY);
+                Files.createDirectories(binDirectory);
+                Files.copy(image, binDirectory.resolve(image.getFileName()));
+                FileUtils.copyFiles(context.getLogger(),
+                    context.getBasedir(),
+                    distDirectory, path -> path.getFileName().startsWith(LICENSE));
+                copyTemplates(context, props, distDirectory);
+                copyArtifacts(context, distDirectory, platform, true);
+                copyFiles(context, distDirectory);
+                copyFileSets(context, distDirectory);
+                generateSwidTag(context, distDirectory);
+            } catch (IOException e) {
+                throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
+            }
+        }
 
+        return finalImageName;
+    }
+
+    private void archive(Path assembleDirectory, String finalImageName, Path workDirectory, Archive.Format archiveFormat) throws AssemblerProcessingException {
         try {
-            Path tempDirectory = Files.createTempDirectory("jreleaser");
-            Path distDirectory = tempDirectory.resolve(finalImageName);
-            Files.createDirectories(distDirectory);
-            Path binDirectory = distDirectory.resolve(BIN_DIRECTORY);
-            Files.createDirectories(binDirectory);
-            Files.copy(image, binDirectory.resolve(image.getFileName()));
-            FileUtils.copyFiles(context.getLogger(),
-                context.getBasedir(),
-                distDirectory, path -> path.getFileName().startsWith(LICENSE));
-            copyTemplates(context, props, distDirectory);
-            copyArtifacts(context, distDirectory, platform, true);
-            copyFiles(context, distDirectory);
-            copyFileSets(context, distDirectory);
-            generateSwidTag(context, distDirectory);
-
-            String str = assembler.getGraal().getExtraProperties()
-                .getOrDefault(KEY_ARCHIVE_FORMAT, assembler.getArchiveFormat())
-                .toString();
-            Archive.Format archiveFormat = Archive.Format.of(str);
-
             Path imageArchive = assembleDirectory.resolve(finalImageName + "." + archiveFormat.extension());
-            FileUtils.packArchive(tempDirectory, imageArchive, assembler.getOptions().toOptions());
+            FileUtils.packArchive(workDirectory, imageArchive, assembler.getOptions().toOptions());
 
-            context.getLogger().debug("- {}", imageArchive.getFileName());
+            context.getLogger().info("- {}", imageArchive.getFileName());
         } catch (IOException e) {
             throw new AssemblerProcessingException(RB.$("ERROR_unexpected_error"), e);
         }

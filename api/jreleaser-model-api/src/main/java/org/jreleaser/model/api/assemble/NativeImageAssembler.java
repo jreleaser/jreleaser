@@ -42,6 +42,11 @@ public interface NativeImageAssembler extends Assembler, JavaAssembler, SwidTagA
     @Deprecated
     Archive.Format getArchiveFormat();
 
+    Set<Archive.Format> getFormats();
+
+    boolean isArchive();
+
+    @Deprecated
     Archiving getArchiving();
 
     ArchiveOptions getOptions();
@@ -81,9 +86,12 @@ public interface NativeImageAssembler extends Assembler, JavaAssembler, SwidTagA
 
     MacosArm getMacosArm();
 
+    @Deprecated
     interface Archiving extends Domain {
+        @Deprecated
         boolean isEnabled();
 
+        @Deprecated
         Archive.Format getFormat();
     }
 

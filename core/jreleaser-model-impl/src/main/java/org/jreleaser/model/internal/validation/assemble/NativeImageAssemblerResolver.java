@@ -29,9 +29,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import static org.jreleaser.model.Constants.KEY_ARCHIVE_FORMAT;
 import static org.jreleaser.util.FileType.EXE;
+import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.util.StringUtils.isTrue;
 
 /**
  * @author Andres Almiray
@@ -71,24 +72,28 @@ public final class NativeImageAssemblerResolver {
             String platform = graalJdk.getPlatform();
             String platformReplaced = assembler.getPlatform().applyReplacements(platform);
 
-            if (assembler.getArchiving().isEnabled()) {
-                String str = graalJdk.getExtraProperties()
-                    .getOrDefault(KEY_ARCHIVE_FORMAT, assembler.getArchiving().getFormat())
-                    .toString();
-                Archive.Format archiveFormat = Archive.Format.of(str);
+            if (assembler.isArchive()) {
+                for (Archive.Format archiveFormat : assembler.getFormats()) {
+                    String propertyName = "skip" + capitalize(archiveFormat.normalized());
+                    if (isTrue(graalJdk.getExtraProperties().getOrDefault(propertyName, false))) {
+                        continue;
+                    }
 
-                Path image = baseOutputDirectory
-                    .resolve(imageName + "-" + platformReplaced + "." + archiveFormat.extension())
-                    .toAbsolutePath();
+                    Path image = baseOutputDirectory
+                        .resolve(imageName + "-" + platformReplaced + "." + archiveFormat.extension())
+                        .toAbsolutePath();
 
-                if (!Files.exists(image)) {
-                    errors.assembly(RB.$("validation_missing_assembly",
-                        assembler.getType(), assembler.getName(), assembler.getName()));
-                } else {
-                    Artifact artifact = Artifact.of(image, platform);
-                    artifact.resolveActiveAndSelected(context);
-                    artifact.setExtraProperties(assembler.getExtraProperties());
-                    assembler.addOutput(artifact);
+                    if (!Files.exists(image)) {
+                        errors.assembly(RB.$("validation_missing_assembly",
+                            assembler.getType(), assembler.getName(), assembler.getName()));
+                        errors.assembly(context.relativizeToBasedir(image.toAbsolutePath()).toString());
+                    } else {
+                        Artifact artifact = Artifact.of(image, platform);
+                        artifact.resolveActiveAndSelected(context);
+                        artifact.setExtraProperties(assembler.getExtraProperties());
+                        artifact.addExtraProperties(graalJdk.getExtraProperties());
+                        assembler.addOutput(artifact);
+                    }
                 }
             } else {
                 String finalImageName = imageName + "-" + platformReplaced;

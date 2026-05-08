@@ -23,7 +23,6 @@ import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import org.jreleaser.model.internal.assemble.JlinkAssembler;
 import org.jreleaser.model.internal.common.Artifact;
-import org.jreleaser.util.CollectionUtils;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.PlatformUtils;
 
@@ -200,7 +199,7 @@ public final class JlinkAssemblerValidator {
         }
 
         if (assembler.getFormats().isEmpty()) {
-            assembler.setFormats(CollectionUtils.setOf(Archive.Format.ZIP));
+            assembler.addFormat(Archive.Format.ZIP);
         }
 
         if (null == assembler.getOptions().getTimestamp()) {

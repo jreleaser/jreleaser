@@ -71,6 +71,8 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
     private final MacosX86Impl macosX86
     private final LinuxArmImpl linuxArm
     private final MacosArmImpl macosArm
+    final SetProperty<Archive.Format> formats
+    final Property<Boolean> archive
     final NamedDomainObjectContainer<ArtifactImpl> graalJdks
     final Property<Boolean> applyDefaultMatrix
     final ArtifactImpl graalJdkPattern
@@ -110,16 +112,28 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
         applyDefaultMatrix = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         graalJdkPattern = objects.newInstance(ArtifactImpl, objects)
         matrix = objects.newInstance(MatrixImpl, objects)
+
+        formats = objects.setProperty(Archive.Format).convention(Providers.<Set<Archive.Format>> notDefined())
+        archive = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
     }
 
     @Override
+    @Deprecated
     void setArchiveFormat(String str) {
         archiving.setFormat(str)
     }
 
     @Override
+    @Deprecated
     Property<Archive.Format> getArchiveFormat() {
         return archiving.format
+    }
+
+    @Override
+    void format(String format) {
+        if (isNotBlank(format)) {
+            formats.add(Archive.Format.of(format))
+        }
     }
 
     @Internal
@@ -127,6 +141,8 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
         super.isSet() ||
             imageName.present ||
             imageNameTransform.present ||
+            formats.present ||
+            archive.present ||
             args.present ||
             components.present ||
             java.isSet() ||
@@ -260,7 +276,11 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
         assembler.args = (List<String>) args.getOrElse([])
         assembler.components = (Set<String>) components.getOrElse([] as Set)
         if (graal.isSet()) assembler.graal = graal.toModel()
-        if (archiving.isSet()) assembler.archiving = archiving.toModel()
+        if (archiving.isSet()) {
+            if (archiving.enabled.present && !archive.present) archive.set(archiving.enabled)
+            if (archiving.format.present && formats.empty()) formats.add(archiving.format)
+        }
+        assembler.formats = (Set<Archive.Format>) formats.getOrElse([] as Set<Archive.Format>)
         if (upx.isSet()) assembler.upx = upx.toModel()
         if (linuxX86.isSet()) assembler.linuxX86 = linuxX86.toModel()
         if (windowsX86.isSet()) assembler.windowsX86 = windowsX86.toModel()
@@ -278,6 +298,7 @@ class NativeImageAssemblerImpl extends AbstractJavaAssembler implements NativeIm
         assembler
     }
 
+    @Deprecated
     @CompileStatic
     static class ArchivingImpl implements Archiving {
         final Property<Boolean> enabled

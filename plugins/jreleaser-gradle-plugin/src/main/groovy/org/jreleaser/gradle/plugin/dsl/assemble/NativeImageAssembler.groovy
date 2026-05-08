@@ -47,8 +47,15 @@ interface NativeImageAssembler extends JavaAssembler, SwidTagAware {
     @Deprecated
     Property<Archive.Format> getArchiveFormat()
 
+    SetProperty<Archive.Format> getFormats()
+
+    void format(String format)
+
+    Property<Boolean> getArchive()
+
     Property<Boolean> getApplyDefaultMatrix()
 
+    @Deprecated
     void setArchiveFormat(String str)
 
     void arg(String arg)
@@ -59,6 +66,7 @@ interface NativeImageAssembler extends JavaAssembler, SwidTagAware {
 
     void upx(Action<? super Upx> action)
 
+    @Deprecated
     void archiving(Action<? super Archiving> action)
 
     @Deprecated
@@ -88,11 +96,15 @@ interface NativeImageAssembler extends JavaAssembler, SwidTagAware {
 
     void options(Action<? super ArchiveOptions> action)
 
+    @Deprecated
     interface Archiving {
+        @Deprecated
         Property<Boolean> getEnabled()
 
+        @Deprecated
         Property<Archive.Format> getFormat()
 
+        @Deprecated
         void setFormat(String str)
     }
 
