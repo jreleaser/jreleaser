@@ -39,9 +39,15 @@ interface JlinkAssembler extends JavaAssembler, SwidTagAware {
 
     Property<String> getImageNameTransform()
 
+    @Deprecated
     Property<Archive.Format> getArchiveFormat()
 
+    @Deprecated
     void setArchiveFormat(String str)
+
+    SetProperty<Archive.Format> getFormats()
+
+    void format(String format)
 
     Property<Boolean> getCopyJars()
 

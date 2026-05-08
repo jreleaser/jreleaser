@@ -57,6 +57,7 @@ class JlinkAssemblerImpl extends AbstractJavaAssembler implements JlinkAssembler
     final Property<String> imageName
     final Property<String> imageNameTransform
     final Property<Archive.Format> archiveFormat
+    final SetProperty<Archive.Format> formats
     final Property<Boolean> copyJars
     final ListProperty<String> args
     final SetProperty<String> moduleNames
@@ -81,6 +82,7 @@ class JlinkAssemblerImpl extends AbstractJavaAssembler implements JlinkAssembler
         imageName = objects.property(String).convention(Providers.<String> notDefined())
         imageNameTransform = objects.property(String).convention(Providers.<String> notDefined())
         archiveFormat = objects.property(Archive.Format).convention(Archive.Format.ZIP)
+        formats = objects.setProperty(Archive.Format).convention(Providers.<Set<Archive.Format>> notDefined())
         copyJars = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         args = objects.listProperty(String).convention(Providers.<List<String>> notDefined())
         moduleNames = objects.setProperty(String).convention(Providers.<Set<String>> notDefined())
@@ -120,6 +122,8 @@ class JlinkAssemblerImpl extends AbstractJavaAssembler implements JlinkAssembler
         super.isSet() ||
             imageName.present ||
             imageNameTransform.present ||
+            archiveFormat.present ||
+            formats.present ||
             copyJars.present ||
             args.present ||
             java.isSet() ||
@@ -134,6 +138,13 @@ class JlinkAssemblerImpl extends AbstractJavaAssembler implements JlinkAssembler
             matrix.isSet() ||
             platform.isSet() ||
             options.isSet()
+    }
+
+    @Override
+    void format(String format) {
+        if (isNotBlank(format)) {
+            formats.add(Archive.Format.of(format))
+        }
     }
 
     @Override
@@ -198,11 +209,12 @@ class JlinkAssemblerImpl extends AbstractJavaAssembler implements JlinkAssembler
         if (jdeps.isSet()) assembler.jdeps = jdeps.toModel()
         if (javaArchive.isSet()) assembler.javaArchive = javaArchive.toModel()
         if (jdk.isSet()) assembler.jdk = jdk.toModel()
-        assembler.archiveFormat = archiveFormat.get()
         assembler.java = java.toModel()
         assembler.platform = platform.toModel()
         if (imageName.present) assembler.imageName = imageName.get()
         if (imageNameTransform.present) assembler.imageNameTransform = imageNameTransform.get()
+        if(archiveFormat.present) formats.add(archiveFormat.get())
+        assembler.formats = (Set<Archive.Format>) formats.getOrElse([] as Set<Archive.Format>)
         if (copyJars.present) assembler.copyJars = copyJars.get()
         assembler.moduleNames = (Set<String>) moduleNames.getOrElse([] as Set)
         assembler.additionalModuleNames = (Set<String>) additionalModuleNames.getOrElse([] as Set)
