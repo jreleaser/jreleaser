@@ -286,7 +286,7 @@ public class JlinkAssemblerProcessor extends AbstractAssemblerProcessor<org.jrel
             .arg("--add-modules")
             .arg(join(",", moduleNames));
         if (assembler.getJava().getJvmOptions().isSet()) {
-            cmd.arg("--add-options=\"" + join(" ", assembler.getJava().getJvmOptions().getResolvedUniversal(context)) + "\"");
+            cmd.arg("--add-options=" + join(" ", assembler.getJava().getJvmOptions().getResolvedUniversal(context)));
         }
         cmd.arg("--output")
             .arg(maybeQuote(imageDirectory.toString()));
