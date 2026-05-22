@@ -124,8 +124,11 @@ public class JdkHelper {
                     element("outputDirectory", jdkExtractDirectory.getAbsolutePath()),
                     element("cacheDirectory", cacheDirectory),
                     element("outputFileName", filename),
-                    element("connectTimeOut", String.valueOf(connectTimeout * 1000)),
-                    element("readTimeOut", String.valueOf(readTimeout * 1000))
+                    // download-maven-plugin 2.1.0 does not expose a separate connect timeout
+                    // parameter; WGetMojo wires readTimeOut into both connect and socket
+                    // timeouts internally. Pass the larger of the two so neither caller-set
+                    // value is silently dropped.
+                    element("readTimeOut", String.valueOf(Math.max(connectTimeout, readTimeout) * 1000))
                 ),
                 executionEnvironment(
                     project,
