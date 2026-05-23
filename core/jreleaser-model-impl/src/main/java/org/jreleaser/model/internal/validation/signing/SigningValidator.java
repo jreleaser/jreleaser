@@ -46,6 +46,7 @@ import static org.jreleaser.model.api.signing.Signing.MINISIGN_PASSWORD;
 import static org.jreleaser.model.api.signing.Signing.MINISIGN_PUBLIC_KEY;
 import static org.jreleaser.model.api.signing.Signing.MINISIGN_SECRET_KEY;
 import static org.jreleaser.model.internal.validation.common.Validator.checkProperty;
+import static org.jreleaser.model.internal.validation.common.Validator.mergeErrors;
 import static org.jreleaser.model.internal.validation.common.Validator.resolveActivatable;
 import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.Env.envKey;
@@ -73,9 +74,13 @@ public final class SigningValidator {
         boolean activeSet = signing.isActiveSet();
         resolveActivatable(context, signing, "signing", "");
 
-        validatePgp(context, mode, signing.getPgp(), errors);
-        validateCosign(context, mode, signing.getCosign(), errors);
-        validateMinisign(context, mode, signing.getMinisign(), errors);
+        Errors incoming = new Errors();
+        validatePgp(context, mode, signing.getPgp(), incoming);
+        mergeErrors(context, errors, incoming, signing.getPgp());
+        validateCosign(context, mode, signing.getCosign(), incoming);
+        mergeErrors(context, errors, incoming, signing.getCosign());
+        validateMinisign(context, mode, signing.getMinisign(), incoming);
+        mergeErrors(context, errors, incoming, signing.getMinisign());
 
         if (!activeSet) {
             boolean enabled = signing.getPgp().isEnabled() ||
