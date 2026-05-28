@@ -92,7 +92,7 @@ public final class GitlabMavenDeployerValidator {
         }
 
         if (isBlank(mavenDeployer.getProjectIdentifier())) {
-            errors.configuration(RB.$("validation_must_not_be_blank", "deploy.maven.gitea." + mavenDeployer.getName() + ".projectIdentifier"));
+            errors.configuration(RB.$("validation_must_not_be_blank", "deploy.maven.gitlab." + mavenDeployer.getName() + ".projectIdentifier"));
         }
     }
 }
