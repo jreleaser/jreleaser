@@ -233,6 +233,8 @@ public class ChangelogGenerator {
                             .filter(ref -> !defaultVersion.equals(version(context, ref, versionPattern, true)))
                             .findFirst();
                     }
+                } else if (previousTag.isPresent()) {
+                    tag = previousTag;
                 } else {
                     previousTag = tags.stream()
                         .filter(ref -> extractTagName(ref).matches(tagPattern))
