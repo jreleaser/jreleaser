@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-110-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-111-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -152,6 +152,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://www.rockwellautomation.com/"><img src="https://avatars.githubusercontent.com/u/45703410?v=4?s=100" width="100px;" alt="Markus Hoffrogge"/><br /><sub><b>Markus Hoffrogge</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=mhoffrog" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/XiaoPengMei"><img src="https://avatars.githubusercontent.com/u/16916029?v=4?s=100" width="100px;" alt="DavidMei"/><br /><sub><b>DavidMei</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=XiaoPengMei" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/seonwooj0810"><img src="https://avatars.githubusercontent.com/u/79202163?v=4?s=100" width="100px;" alt="seonwoojung"/><br /><sub><b>seonwoojung</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=seonwooj0810" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/mvanhorn"><img src="https://avatars.githubusercontent.com/u/455140?v=4?s=100" width="100px;" alt="Matt Van Horn"/><br /><sub><b>Matt Van Horn</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=mvanhorn" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
