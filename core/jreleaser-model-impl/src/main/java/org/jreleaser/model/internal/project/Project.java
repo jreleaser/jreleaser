@@ -735,7 +735,7 @@ public final class Project extends AbstractModelObject<Project> implements Domai
     }
 
     public static class Snapshot extends AbstractModelObject<Snapshot> implements Domain {
-        private static final long serialVersionUID = 505258495859356548L;
+        private static final long serialVersionUID = 3918726439729570156L;
 
         private Boolean enabled;
         private String pattern;
@@ -746,7 +746,11 @@ public final class Project extends AbstractModelObject<Project> implements Domai
 
         @JsonIgnore
         private final org.jreleaser.model.api.project.Project.Snapshot immutable = new org.jreleaser.model.api.project.Project.Snapshot() {
-            private static final long serialVersionUID = 2581314557970795502L;
+            private static final long serialVersionUID = -6918621888165072010L;
+
+            public boolean isEnabled() {
+                return enabled;
+            }
 
             @Override
             public String getPattern() {
@@ -779,6 +783,10 @@ public final class Project extends AbstractModelObject<Project> implements Domai
             this.pattern = this.merge(this.pattern, source.pattern);
             this.label = this.merge(this.label, source.label);
             this.fullChangelog = this.merge(this.fullChangelog, source.fullChangelog);
+        }
+
+        public boolean isEnabled() {
+            return enabled;
         }
 
         public boolean isSnapshot(String version) {
