@@ -137,7 +137,7 @@ public final class BaseReleaserValidator {
                 BRANCH,
                 baseKey + "branch",
                 service.getBranch(),
-                "main"));
+                resolveDefaultBranch(context)));
 
         service.setBranchPush(
             checkProperty(context,
@@ -295,6 +295,21 @@ public final class BaseReleaserValidator {
                 }
             }
         }
+    }
+
+    private static String resolveDefaultBranch(JReleaserContext context) {
+        // Prefer the branch the repository is actually on (the checked-out HEAD)
+        // so repositories that still use "master" (or any non-"main" default branch)
+        // are not forced onto a non-existent "main" branch.
+        if (null != context.getModel().getCommit()) {
+            String refName = context.getModel().getCommit().getRefName();
+            if (isNotBlank(refName)) {
+                return refName;
+            }
+        }
+        // Last-resort fallback when no Git context is available (e.g. detached HEAD
+        // or standalone validation), preserving backward-compatible behavior.
+        return "main";
     }
 
     private static void validateChangelog(JReleaserContext context, BaseReleaser<?, ?> service, Errors errors) {
