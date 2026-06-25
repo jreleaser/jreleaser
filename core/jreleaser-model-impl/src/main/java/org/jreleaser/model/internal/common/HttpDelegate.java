@@ -23,9 +23,7 @@ import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.jreleaser.model.Constants.HIDE;
-import static org.jreleaser.model.Constants.UNSET;
-import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.model.internal.common.Secrets.sanitizeSecret;
 
 /**
  * @author Andres Almiray
@@ -108,8 +106,8 @@ public final class HttpDelegate extends AbstractModelObject<HttpDelegate> implem
 
     public void asMap(Map<String, Object> props) {
         props.put("authorization", authorization);
-        props.put("username", isNotBlank(username) ? HIDE : UNSET);
-        props.put("password", isNotBlank(password) ? HIDE : UNSET);
+        props.put("username", sanitizeSecret(username));
+        props.put("password", sanitizeSecret(password));
         props.put("method", method);
         props.put("headers", headers);
     }

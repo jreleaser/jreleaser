@@ -18,15 +18,15 @@
 package org.jreleaser.model.internal;
 
 import org.jreleaser.model.JReleaserException;
+import org.jreleaser.model.internal.common.Secrets;
 
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Locale;
 import java.util.Map;
 
-import static org.jreleaser.model.Constants.HIDE;
 import static org.jreleaser.model.Constants.UNSET;
+import static org.jreleaser.model.internal.common.Secrets.isSecret;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -34,8 +34,6 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public abstract class JReleaserModelPrinter {
-    private static final String SECRET_KEYWORDS = "password,secret,credential,token,apikey,login,passphrase,consumerkey,publickey,accesskey,webhook";
-
     private final PrintWriter out;
 
     protected JReleaserModelPrinter(PrintWriter out) {
@@ -201,7 +199,7 @@ public abstract class JReleaserModelPrinter {
         } else if (null != value) {
             String s = String.valueOf(value);
             if (secret && !UNSET.equals(s)) {
-                s = HIDE;
+                s = Secrets.sanitizeSecret(s);
             }
 
             String r = parseAsBoolean(s);
@@ -265,16 +263,6 @@ public abstract class JReleaserModelPrinter {
     }
 
     protected abstract String color(String color, String input);
-
-    public static boolean isSecret(String key) {
-        String lower = key.toLowerCase(Locale.ENGLISH);
-
-        for (String keyword : SECRET_KEYWORDS.split(",")) {
-            if (lower.contains(keyword.trim().toLowerCase(Locale.ENGLISH))) return true;
-        }
-
-        return false;
-    }
 
     private static String multiply(CharSequence self, Number factor) {
         int size = factor.intValue();

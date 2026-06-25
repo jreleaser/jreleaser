@@ -31,11 +31,10 @@ import java.nio.file.Path;
 import java.util.Map;
 
 import static java.util.Collections.unmodifiableMap;
-import static org.jreleaser.model.Constants.HIDE;
 import static org.jreleaser.model.Constants.KEY_TAG_NAME;
-import static org.jreleaser.model.Constants.UNSET;
 import static org.jreleaser.model.JReleaserOutput.nag;
 import static org.jreleaser.model.api.announce.MattermostAnnouncer.TYPE;
+import static org.jreleaser.model.internal.common.Secrets.sanitizeSecret;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplate;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
@@ -220,7 +219,7 @@ public final class MattermostAnnouncer extends AbstractAnnouncer<MattermostAnnou
 
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
-        props.put("webhook", isNotBlank(webhook) ? HIDE : UNSET);
+        props.put("webhook", sanitizeSecret(webhook));
         props.put("message", message);
         props.put("messageTemplate", messageTemplate);
         props.put("structuredMessage", isStructuredMessage());

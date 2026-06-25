@@ -25,8 +25,7 @@ import org.jreleaser.mustache.TemplateContext;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.jreleaser.model.Constants.HIDE;
-import static org.jreleaser.model.Constants.UNSET;
+import static org.jreleaser.model.internal.common.Secrets.sanitizeSecret;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -213,7 +212,7 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
         map.put("branch", branch);
         map.put("branchPush", branchPush);
         map.put("username", username);
-        map.put("token", isNotBlank(token) ? HIDE : UNSET);
+        map.put("token", sanitizeSecret(token));
         map.put("commitMessage", commitMessage);
         map.put("extraProperties", getExtraProperties());
         return map;

@@ -33,14 +33,12 @@ import java.util.Map;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
-import static org.jreleaser.model.Constants.HIDE;
 import static org.jreleaser.model.Constants.KEY_PREVIOUS_TAG_NAME;
 import static org.jreleaser.model.Constants.KEY_TAG_NAME;
-import static org.jreleaser.model.Constants.UNSET;
 import static org.jreleaser.model.api.announce.BlueskyAnnouncer.TYPE;
+import static org.jreleaser.model.internal.common.Secrets.sanitizeSecret;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplate;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
-import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Simon Verhoeven
@@ -232,8 +230,8 @@ public final class BlueskyAnnouncer extends AbstractAnnouncer<BlueskyAnnouncer, 
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("host", host);
-        props.put("handle", isNotBlank(handle) ? HIDE : UNSET);
-        props.put("password", isNotBlank(password) ? HIDE : UNSET);
+        props.put("handle", sanitizeSecret(handle));
+        props.put("password", sanitizeSecret(password));
         props.put("status", status);
         props.put("statuses", statuses);
         props.put("statusTemplate", statusTemplate);

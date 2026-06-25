@@ -25,12 +25,10 @@ import org.jreleaser.mustache.TemplateContext;
 import java.util.Map;
 
 import static java.util.Collections.unmodifiableMap;
-import static org.jreleaser.model.Constants.HIDE;
-import static org.jreleaser.model.Constants.UNSET;
 import static org.jreleaser.model.api.announce.LinkedinAnnouncer.TYPE;
+import static org.jreleaser.model.internal.common.Secrets.sanitizeSecret;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
-import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -172,8 +170,8 @@ public final class LinkedinAnnouncer extends AbstractMessageAnnouncer<LinkedinAn
 
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
-        props.put("owner", isNotBlank(owner) ? HIDE : UNSET);
-        props.put("accessToken", isNotBlank(accessToken) ? HIDE : UNSET);
+        props.put("owner", sanitizeSecret(owner));
+        props.put("accessToken", sanitizeSecret(accessToken));
         props.put("subject", subject);
         super.asMap(full, props);
     }

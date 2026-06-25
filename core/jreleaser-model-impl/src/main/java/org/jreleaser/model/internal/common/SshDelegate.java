@@ -20,9 +20,7 @@ package org.jreleaser.model.internal.common;
 import java.io.Serializable;
 import java.util.Map;
 
-import static org.jreleaser.model.Constants.HIDE;
-import static org.jreleaser.model.Constants.UNSET;
-import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.model.internal.common.Secrets.sanitizeSecret;
 
 /**
  * @author Andres Almiray
@@ -145,14 +143,14 @@ public final class SshDelegate extends AbstractModelObject<SshDelegate> implemen
     }
 
     public void asMap(Map<String, Object> props) {
-        props.put("host", isNotBlank(host) ? HIDE : UNSET);
+        props.put("host", sanitizeSecret(host));
         props.put("port", getPort());
-        props.put("username", isNotBlank(username) ? HIDE : UNSET);
-        props.put("password", isNotBlank(password) ? HIDE : UNSET);
+        props.put("username", sanitizeSecret(username));
+        props.put("password", sanitizeSecret(password));
         props.put("knownHostsFile", knownHostsFile);
-        props.put("publicKey", isNotBlank(publicKey) ? HIDE : UNSET);
-        props.put("privateKey", isNotBlank(privateKey) ? HIDE : UNSET);
-        props.put("passphrase", isNotBlank(passphrase) ? HIDE : UNSET);
-        props.put("fingerprint", isNotBlank(fingerprint) ? HIDE : UNSET);
+        props.put("publicKey", sanitizeSecret(publicKey));
+        props.put("privateKey", sanitizeSecret(privateKey));
+        props.put("passphrase", sanitizeSecret(passphrase));
+        props.put("fingerprint", sanitizeSecret(fingerprint));
     }
 }

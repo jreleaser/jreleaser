@@ -25,12 +25,10 @@ import org.jreleaser.mustache.TemplateContext;
 import java.util.Map;
 
 import static java.util.Collections.unmodifiableMap;
-import static org.jreleaser.model.Constants.HIDE;
-import static org.jreleaser.model.Constants.UNSET;
 import static org.jreleaser.model.api.announce.ZulipAnnouncer.TYPE;
+import static org.jreleaser.model.internal.common.Secrets.sanitizeSecret;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
-import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -203,7 +201,7 @@ public final class ZulipAnnouncer extends AbstractMessageAnnouncer<ZulipAnnounce
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("account", account);
-        props.put("apiKey", isNotBlank(apiKey) ? HIDE : UNSET);
+        props.put("apiKey", sanitizeSecret(apiKey));
         props.put("apiHost", apiHost);
         props.put("channel", channel);
         props.put("subject", subject);

@@ -26,9 +26,8 @@ import java.util.Map;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
-import static org.jreleaser.model.Constants.HIDE;
-import static org.jreleaser.model.Constants.UNSET;
 import static org.jreleaser.model.api.announce.SlackAnnouncer.TYPE;
+import static org.jreleaser.model.internal.common.Secrets.sanitizeSecret;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
@@ -188,8 +187,8 @@ public final class SlackAnnouncer extends AbstractMessageAnnouncer<SlackAnnounce
 
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
-        props.put("webhook", isNotBlank(webhook) ? HIDE : UNSET);
-        props.put("token", isNotBlank(token) ? HIDE : UNSET);
+        props.put("webhook", sanitizeSecret(webhook));
+        props.put("token", sanitizeSecret(token));
         props.put("channel", channel);
         props.put("channels", channels);
         super.asMap(full, props);

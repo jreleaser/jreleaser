@@ -30,15 +30,13 @@ import java.nio.file.Path;
 import java.util.Map;
 
 import static java.util.Collections.unmodifiableMap;
-import static org.jreleaser.model.Constants.HIDE;
 import static org.jreleaser.model.Constants.KEY_PREVIOUS_TAG_NAME;
 import static org.jreleaser.model.Constants.KEY_TAG_NAME;
-import static org.jreleaser.model.Constants.UNSET;
 import static org.jreleaser.model.api.announce.RedditAnnouncer.TYPE;
+import static org.jreleaser.model.internal.common.Secrets.sanitizeSecret;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplate;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
-import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Usman Shaikh
@@ -227,10 +225,10 @@ public final class RedditAnnouncer extends AbstractAnnouncer<RedditAnnouncer, or
 
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
-        props.put("clientId", isNotBlank(getClientId()) ? HIDE : UNSET);
-        props.put("clientSecret", isNotBlank(getClientSecret()) ? HIDE : UNSET);
-        props.put("username", isNotBlank(getUsername()) ? HIDE : UNSET);
-        props.put("password", isNotBlank(getPassword()) ? HIDE : UNSET);
+        props.put("clientId", sanitizeSecret(getClientId()));
+        props.put("clientSecret", sanitizeSecret(getClientSecret()));
+        props.put("username", sanitizeSecret(getUsername()));
+        props.put("password", sanitizeSecret(getPassword()));
         props.put("subreddit", subreddit);
         props.put("submissionType", submissionType);
         props.put("title", title);

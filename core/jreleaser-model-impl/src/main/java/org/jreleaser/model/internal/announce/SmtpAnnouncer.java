@@ -28,14 +28,12 @@ import java.util.Locale;
 import java.util.Map;
 
 import static java.util.Collections.unmodifiableMap;
-import static org.jreleaser.model.Constants.HIDE;
 import static org.jreleaser.model.Constants.KEY_PREVIOUS_TAG_NAME;
 import static org.jreleaser.model.Constants.KEY_TAG_NAME;
-import static org.jreleaser.model.Constants.UNSET;
 import static org.jreleaser.model.api.announce.SmtpAnnouncer.TYPE;
+import static org.jreleaser.model.internal.common.Secrets.sanitizeSecret;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
-import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -351,7 +349,7 @@ public final class SmtpAnnouncer extends AbstractMessageAnnouncer<SmtpAnnouncer,
         props.put("port", port);
         props.put("auth", isAuth());
         props.put("username", username);
-        props.put("password", isNotBlank(password) ? HIDE : UNSET);
+        props.put("password", sanitizeSecret(password));
         props.put("from", from);
         props.put("to", to);
         props.put("cc", cc);

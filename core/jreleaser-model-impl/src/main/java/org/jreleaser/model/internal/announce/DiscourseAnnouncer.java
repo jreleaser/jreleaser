@@ -25,12 +25,10 @@ import org.jreleaser.mustache.TemplateContext;
 import java.util.Map;
 
 import static java.util.Collections.unmodifiableMap;
-import static org.jreleaser.model.Constants.HIDE;
-import static org.jreleaser.model.Constants.UNSET;
 import static org.jreleaser.model.api.announce.DiscourseAnnouncer.TYPE;
+import static org.jreleaser.model.internal.common.Secrets.sanitizeSecret;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
-import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author shblue21
@@ -203,8 +201,8 @@ public final class DiscourseAnnouncer extends AbstractMessageAnnouncer<Discourse
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("host", host);
-        props.put("apiKey", isNotBlank(apiKey) ? HIDE : UNSET);
-        props.put("username", isNotBlank(username) ? HIDE : UNSET);
+        props.put("apiKey", sanitizeSecret(apiKey));
+        props.put("username", sanitizeSecret(username));
         props.put("categoryName", categoryName);
         props.put("title", title);
         super.asMap(full, props);

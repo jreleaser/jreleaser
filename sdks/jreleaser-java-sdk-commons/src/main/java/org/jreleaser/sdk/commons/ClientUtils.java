@@ -35,7 +35,7 @@ import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.Constants;
 import org.jreleaser.model.JReleaserVersion;
 import org.jreleaser.model.api.JReleaserContext;
-import org.jreleaser.model.internal.JReleaserModelPrinter;
+import org.jreleaser.model.internal.common.Secrets;
 import org.jreleaser.model.spi.announce.AnnounceException;
 import org.jreleaser.model.spi.upload.UploadException;
 import org.jreleaser.sdk.commons.feign.FeignLogger;
@@ -153,10 +153,10 @@ public final class ClientUtils {
     }
 
     private static void webhook0(JReleaserLogger logger,
-                               String webhookUrl,
-                               int connectTimeout,
-                               int readTimeout,
-                               String message) throws AnnounceException {
+                                 String webhookUrl,
+                                 int connectTimeout,
+                                 int readTimeout,
+                                 String message) throws AnnounceException {
         post(logger, webhookUrl, connectTimeout, readTimeout, message, emptyMap());
     }
 
@@ -291,8 +291,8 @@ public final class ClientUtils {
             headers.forEach(connection::setRequestProperty);
 
             connection.getRequestProperties().forEach((k, v) -> {
-                if (JReleaserModelPrinter.isSecret(k)) {
-                    logger.debug("{}: {}", k, Constants.HIDE);
+                if (Secrets.isSecret(k)) {
+                    logger.debug("{}: {}", k, Secrets.sanitizeSecret(String.join("", v)));
                 } else {
                     logger.debug("{}: {}", k, v);
                 }
@@ -383,7 +383,7 @@ public final class ClientUtils {
             headers.forEach(connection::setRequestProperty);
 
             connection.getRequestProperties().forEach((k, v) -> {
-                if (JReleaserModelPrinter.isSecret(k)) {
+                if (Secrets.isSecret(k)) {
                     logger.debug("{}: {}", k, Constants.HIDE);
                 } else {
                     logger.debug("{}: {}", k, v);

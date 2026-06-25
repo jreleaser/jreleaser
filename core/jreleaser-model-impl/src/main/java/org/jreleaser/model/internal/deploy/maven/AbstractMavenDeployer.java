@@ -32,8 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.jreleaser.model.Constants.HIDE;
-import static org.jreleaser.model.Constants.UNSET;
+import static org.jreleaser.model.internal.common.Secrets.sanitizeSecret;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.StringUtils.isNotBlank;
@@ -338,8 +337,8 @@ public abstract class AbstractMavenDeployer<S extends AbstractMavenDeployer<S, A
         props.put("readTimeout", readTimeout);
         props.put("authorization", authorization);
         props.put("url", url);
-        props.put("username", isNotBlank(username) ? HIDE : UNSET);
-        props.put("password", isNotBlank(password) ? HIDE : UNSET);
+        props.put("username", sanitizeSecret(username));
+        props.put("password", sanitizeSecret(password));
         props.put("sign", isSign());
         props.put("checksums", isChecksums());
         props.put("sourceJar", isSourceJar());

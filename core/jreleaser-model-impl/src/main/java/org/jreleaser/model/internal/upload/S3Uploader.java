@@ -27,9 +27,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static java.util.Collections.unmodifiableMap;
-import static org.jreleaser.model.Constants.HIDE;
-import static org.jreleaser.model.Constants.UNSET;
 import static org.jreleaser.model.api.upload.S3Uploader.TYPE;
+import static org.jreleaser.model.internal.common.Secrets.sanitizeSecret;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.util.StringUtils.capitalize;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -304,9 +303,9 @@ public final class S3Uploader extends AbstractUploader<org.jreleaser.model.api.u
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("region", region);
         props.put("bucket", bucket);
-        props.put("accessKeyId", isNotBlank(accessKeyId) ? HIDE : UNSET);
-        props.put("secretKey", isNotBlank(secretKey) ? HIDE : UNSET);
-        props.put("sessionToken", isNotBlank(sessionToken) ? HIDE : UNSET);
+        props.put("accessKeyId", sanitizeSecret(accessKeyId));
+        props.put("secretKey", sanitizeSecret(secretKey));
+        props.put("sessionToken", sanitizeSecret(sessionToken));
         props.put("path", path);
         props.put("downloadUrl", downloadUrl);
         props.put("endpoint", endpoint);

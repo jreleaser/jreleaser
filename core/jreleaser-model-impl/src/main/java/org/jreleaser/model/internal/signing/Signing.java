@@ -37,6 +37,7 @@ import static java.util.Collections.unmodifiableList;
 import static org.jreleaser.model.Constants.HIDE;
 import static org.jreleaser.model.Constants.UNSET;
 import static org.jreleaser.model.JReleaserOutput.nag;
+import static org.jreleaser.model.internal.common.Secrets.sanitizeSecret;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -759,8 +760,8 @@ public final class Signing extends AbstractActivatable<Signing> implements Domai
             if (mode == org.jreleaser.model.Signing.Mode.COMMAND) {
                 props.put("command", command.asMap(full));
             } else {
-                props.put("publicKey", isNotBlank(publicKey) ? HIDE : UNSET);
-                props.put("secretKey", isNotBlank(secretKey) ? HIDE : UNSET);
+                props.put("publicKey", sanitizeSecret(publicKey));
+                props.put("secretKey", sanitizeSecret(secretKey));
             }
 
             return props;
@@ -894,7 +895,7 @@ public final class Signing extends AbstractActivatable<Signing> implements Domai
             props.put("version", version);
             props.put("secretKeyFile", null != secretKeyFile ? HIDE : UNSET);
             props.put("publicKeyFile", publicKeyFile);
-            props.put("passphrase", isNotBlank(passphrase) ? HIDE : UNSET);
+            props.put("passphrase", sanitizeSecret(passphrase));
 
             return props;
         }
@@ -1061,7 +1062,7 @@ public final class Signing extends AbstractActivatable<Signing> implements Domai
             props.put("version", version);
             props.put("secretKeyFile", null != secretKeyFile ? HIDE : UNSET);
             props.put("publicKeyFile", publicKeyFile);
-            props.put("passphrase", isNotBlank(passphrase) ? HIDE : UNSET);
+            props.put("passphrase", sanitizeSecret(passphrase));
 
             return props;
         }

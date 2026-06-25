@@ -33,8 +33,6 @@ import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
-import static org.jreleaser.model.Constants.HIDE;
-import static org.jreleaser.model.Constants.UNSET;
 import static org.jreleaser.model.Distribution.DistributionType.BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JLINK;
@@ -43,13 +41,13 @@ import static org.jreleaser.model.Distribution.DistributionType.NATIVE_PACKAGE;
 import static org.jreleaser.model.JReleaserOutput.nag;
 import static org.jreleaser.model.api.packagers.ChocolateyPackager.SKIP_CHOCOLATEY;
 import static org.jreleaser.model.api.packagers.ChocolateyPackager.TYPE;
+import static org.jreleaser.model.internal.common.Secrets.sanitizeSecret;
 import static org.jreleaser.util.CollectionUtils.setOf;
 import static org.jreleaser.util.FileType.EXE;
 import static org.jreleaser.util.FileType.MSI;
 import static org.jreleaser.util.FileType.ZIP;
 import static org.jreleaser.util.StringUtils.isBlank;
 import static org.jreleaser.util.StringUtils.isFalse;
-import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -340,7 +338,7 @@ public final class ChocolateyPackager extends AbstractRepositoryPackager<org.jre
         props.put("packageName", packageName);
         props.put("packageVersion", packageVersion);
         props.put("username", username);
-        props.put("apiKey", isNotBlank(apiKey) ? HIDE : UNSET);
+        props.put("apiKey", sanitizeSecret(apiKey));
         props.put("remoteBuild", isRemoteBuild());
         props.put("title", title);
         props.put("iconUrl", iconUrl);

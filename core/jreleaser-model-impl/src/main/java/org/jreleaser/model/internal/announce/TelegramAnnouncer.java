@@ -23,10 +23,8 @@ import org.jreleaser.model.Active;
 import java.util.Map;
 
 import static java.util.Collections.unmodifiableMap;
-import static org.jreleaser.model.Constants.HIDE;
-import static org.jreleaser.model.Constants.UNSET;
 import static org.jreleaser.model.api.announce.TelegramAnnouncer.TYPE;
-import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.model.internal.common.Secrets.sanitizeSecret;
 
 /**
  * @author Andres Almiray
@@ -147,8 +145,8 @@ public final class TelegramAnnouncer extends AbstractMessageAnnouncer<TelegramAn
 
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
-        props.put("token", isNotBlank(token) ? HIDE : UNSET);
-        props.put("chatId", isNotBlank(chatId) ? HIDE : UNSET);
+        props.put("token", sanitizeSecret(token));
+        props.put("chatId", sanitizeSecret(chatId));
         super.asMap(full, props);
     }
 }

@@ -32,14 +32,12 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Collections.unmodifiableMap;
-import static org.jreleaser.model.Constants.HIDE;
 import static org.jreleaser.model.Constants.KEY_PREVIOUS_TAG_NAME;
 import static org.jreleaser.model.Constants.KEY_TAG_NAME;
-import static org.jreleaser.model.Constants.UNSET;
 import static org.jreleaser.model.api.announce.MastodonAnnouncer.TYPE;
+import static org.jreleaser.model.internal.common.Secrets.sanitizeSecret;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplate;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
-import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -215,7 +213,7 @@ public final class MastodonAnnouncer extends AbstractAnnouncer<MastodonAnnouncer
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("host", host);
-        props.put("accessToken", isNotBlank(accessToken) ? HIDE : UNSET);
+        props.put("accessToken", sanitizeSecret(accessToken));
         props.put("status", status);
         props.put("statuses", statuses);
         props.put("statusTemplate", statusTemplate);

@@ -32,17 +32,15 @@ import java.util.Set;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
-import static org.jreleaser.model.Constants.HIDE;
-import static org.jreleaser.model.Constants.UNSET;
 import static org.jreleaser.model.Distribution.DistributionType.BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JLINK;
 import static org.jreleaser.model.api.packagers.SdkmanPackager.SKIP_SDKMAN;
 import static org.jreleaser.model.api.packagers.SdkmanPackager.TYPE;
+import static org.jreleaser.model.internal.common.Secrets.sanitizeSecret;
 import static org.jreleaser.util.CollectionUtils.setOf;
 import static org.jreleaser.util.FileType.ZIP;
 import static org.jreleaser.util.StringUtils.isFalse;
-import static org.jreleaser.util.StringUtils.isNotBlank;
 
 /**
  * @author Andres Almiray
@@ -289,8 +287,8 @@ public final class SdkmanPackager extends AbstractPackager<org.jreleaser.model.a
         props.put("releaseNotesUrl", releaseNotesUrl);
         props.put("connectTimeout", connectTimeout);
         props.put("readTimeout", readTimeout);
-        props.put("consumerKey", isNotBlank(consumerKey) ? HIDE : UNSET);
-        props.put("consumerToken", isNotBlank(consumerToken) ? HIDE : UNSET);
+        props.put("consumerKey", sanitizeSecret(consumerKey));
+        props.put("consumerToken", sanitizeSecret(consumerToken));
     }
 
     @Override

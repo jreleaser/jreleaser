@@ -23,10 +23,8 @@ import org.jreleaser.model.Active;
 import java.util.Map;
 
 import static java.util.Collections.unmodifiableMap;
-import static org.jreleaser.model.Constants.HIDE;
-import static org.jreleaser.model.Constants.UNSET;
 import static org.jreleaser.model.api.announce.ZernioAnnouncer.TYPE;
-import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.model.internal.common.Secrets.sanitizeSecret;
 
 /**
  * @author Andres Almiray
@@ -163,7 +161,7 @@ public final class ZernioAnnouncer extends AbstractMessageAnnouncer<ZernioAnnoun
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("apiHost", apiHost);
-        props.put("token", isNotBlank(token) ? HIDE : UNSET);
+        props.put("token", sanitizeSecret(token));
         props.put("profileId", profileId);
         super.asMap(full, props);
     }

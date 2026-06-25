@@ -30,9 +30,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import static java.util.Collections.unmodifiableMap;
-import static org.jreleaser.model.Constants.HIDE;
-import static org.jreleaser.model.Constants.UNSET;
-import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.model.internal.common.Secrets.sanitizeSecret;
 
 /**
  * @author Andres Almiray
@@ -272,12 +270,12 @@ public interface JibConfiguration extends Domain, ExtraProperties, Activatable {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("name", name);
             map.put("server", server);
-            map.put("username", isNotBlank(username) ? HIDE : UNSET);
-            map.put("toUsername", isNotBlank(toUsername) ? HIDE : UNSET);
-            map.put("fromUsername", isNotBlank(fromUsername) ? HIDE : UNSET);
-            map.put("password", isNotBlank(password) ? HIDE : UNSET);
-            map.put("toPassword", isNotBlank(toPassword) ? HIDE : UNSET);
-            map.put("fromPassword", isNotBlank(fromPassword) ? HIDE : UNSET);
+            map.put("username", sanitizeSecret(username));
+            map.put("toUsername", sanitizeSecret(toUsername));
+            map.put("fromUsername", sanitizeSecret(fromUsername));
+            map.put("password", sanitizeSecret(password));
+            map.put("toPassword", sanitizeSecret(toPassword));
+            map.put("fromPassword", sanitizeSecret(fromPassword));
             return map;
         }
 

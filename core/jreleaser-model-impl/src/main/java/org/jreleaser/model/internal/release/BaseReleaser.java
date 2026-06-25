@@ -40,6 +40,7 @@ import java.util.Set;
 
 import static java.util.Collections.unmodifiableMap;
 import static java.util.Collections.unmodifiableSet;
+import static org.jreleaser.model.internal.common.Secrets.sanitizeSecret;
 import static org.jreleaser.mustache.MustacheUtils.applyTemplates;
 import static org.jreleaser.mustache.Templates.resolveTemplate;
 import static org.jreleaser.util.StringUtils.getCapitalizedName;
@@ -685,7 +686,7 @@ public abstract class BaseReleaser<A extends org.jreleaser.model.api.release.Rel
         map.put("owner", owner);
         map.put("name", name);
         map.put("username", username);
-        map.put("token", isNotBlank(token) ? Constants.HIDE : Constants.UNSET);
+        map.put("token", sanitizeSecret(token));
         if (releaseSupported) {
             map.put("uploadAssets", uploadAssets);
             map.put("artifacts", isArtifacts());

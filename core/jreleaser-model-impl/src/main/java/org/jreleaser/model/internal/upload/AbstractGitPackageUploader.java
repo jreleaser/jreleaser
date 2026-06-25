@@ -22,9 +22,7 @@ import org.jreleaser.model.internal.common.Artifact;
 
 import java.util.Map;
 
-import static org.jreleaser.model.Constants.HIDE;
-import static org.jreleaser.model.Constants.UNSET;
-import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.model.internal.common.Secrets.sanitizeSecret;
 
 /**
  * @author Andres Almiray
@@ -86,7 +84,7 @@ public abstract class AbstractGitPackageUploader<A extends org.jreleaser.model.a
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
         props.put("host", host);
-        props.put("token", isNotBlank(token) ? HIDE : UNSET);
+        props.put("token", sanitizeSecret(token));
         props.put("packageName", packageName);
         props.put("packageVersion", packageVersion);
     }

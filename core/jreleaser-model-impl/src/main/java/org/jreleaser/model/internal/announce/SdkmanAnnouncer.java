@@ -24,10 +24,8 @@ import org.jreleaser.model.Sdkman;
 import java.util.Map;
 
 import static java.util.Collections.unmodifiableMap;
-import static org.jreleaser.model.Constants.HIDE;
-import static org.jreleaser.model.Constants.UNSET;
 import static org.jreleaser.model.api.announce.SdkmanAnnouncer.TYPE;
-import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.model.internal.common.Secrets.sanitizeSecret;
 
 /**
  * @author Andres Almiray
@@ -220,8 +218,8 @@ public final class SdkmanAnnouncer extends AbstractAnnouncer<SdkmanAnnouncer, or
 
     @Override
     protected void asMap(boolean full, Map<String, Object> props) {
-        props.put("consumerKey", isNotBlank(consumerKey) ? HIDE : UNSET);
-        props.put("consumerToken", isNotBlank(consumerToken) ? HIDE : UNSET);
+        props.put("consumerKey", sanitizeSecret(consumerKey));
+        props.put("consumerToken", sanitizeSecret(consumerToken));
         props.put("candidate", candidate);
         props.put("releaseNotesUrl", releaseNotesUrl);
         props.put("downloadUrl", downloadUrl);

@@ -36,9 +36,7 @@ import java.util.Set;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Collections.unmodifiableMap;
 import static org.jreleaser.model.Constants.DOCKER_IO;
-import static org.jreleaser.model.Constants.HIDE;
-import static org.jreleaser.model.Constants.UNSET;
-import static org.jreleaser.util.StringUtils.isNotBlank;
+import static org.jreleaser.model.internal.common.Secrets.sanitizeSecret;
 
 /**
  * @author Andres Almiray
@@ -264,7 +262,7 @@ public interface DockerConfiguration extends Domain, ExtraProperties, Activatabl
             map.put("serverName", serverName);
             map.put("repositoryName", repositoryName);
             map.put("username", username);
-            map.put("password", isNotBlank(password) ? HIDE : UNSET);
+            map.put("password", sanitizeSecret(password));
             map.put("externalLogin", isExternalLogin());
             return map;
         }
