@@ -39,7 +39,6 @@ import static org.jreleaser.model.api.signing.Signing.GPG_EXECUTABLE;
 import static org.jreleaser.model.api.signing.Signing.GPG_HOMEDIR;
 import static org.jreleaser.model.api.signing.Signing.GPG_KEYNAME;
 import static org.jreleaser.model.api.signing.Signing.GPG_PASSPHRASE;
-import static org.jreleaser.model.api.signing.Signing.GPG_PUBLIC_KEY;
 import static org.jreleaser.model.api.signing.Signing.GPG_PUBLIC_KEYRING;
 import static org.jreleaser.model.api.signing.Signing.GPG_SECRET_KEY;
 import static org.jreleaser.model.api.signing.Signing.MINISIGN_PASSWORD;
@@ -289,16 +288,6 @@ public final class SigningValidator {
                             "signing.pgp.command.publicKeyRing",
                             pgp.getCommand().getPublicKeyring(),
                             ""));
-                }
-            } else if (pgp.resolveMode() == org.jreleaser.model.Signing.Mode.MEMORY ||
-                pgp.resolveMode() == org.jreleaser.model.Signing.Mode.FILE) {
-                if (pgp.isVerify()) {
-                    pgp.setPublicKey(
-                        checkProperty(context,
-                            GPG_PUBLIC_KEY,
-                            "signing.pgp.publicKey",
-                            pgp.getPublicKey(),
-                            errors));
                 }
             }
         }
