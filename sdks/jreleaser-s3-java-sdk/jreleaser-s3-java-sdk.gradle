@@ -21,16 +21,16 @@ dependencies {
 
     api project(':jreleaser-java-sdk-commons')
 
-    api("org.apache.httpcomponents:httpclient:$httpclientVersion") {
+    api("org.apache.httpcomponents.client5:httpclient5:$httpclient5Version") {
         transitive = false
     }
-    api "org.apache.httpcomponents:httpcore:$httpcoreVersion"
+    api "org.apache.httpcomponents.core5:httpcore5:$httpcore5Version"
     api "commons-codec:commons-codec:$commonsCodecVersion"
-    api("software.amazon.awssdk:apache-client:$awsSdkVersion") {
-        exclude group: 'org.apache.httpcomponents', module: 'httpclient'
+    api("software.amazon.awssdk:apache5-client:$awsSdkVersion") {
+        exclude group: 'org.apache.httpcomponents.client5', module: 'httpclient5'
     }
     api("software.amazon.awssdk:s3:$awsSdkVersion") {
         exclude group: 'software.amazon.awssdk', module: 'netty-nio-client'
-        exclude group: 'software.amazon.awssdk', module: 'apache-client'
+        exclude group: 'software.amazon.awssdk', module: 'apache5-client'
     }
 }

@@ -17,10 +17,10 @@
  */
 dependencies {
     api project(':jreleaser-utils')
-    api("org.apache.httpcomponents:httpclient:$httpclientVersion") {
+    api("org.apache.httpcomponents.client5:httpclient5:$httpclient5Version") {
         transitive = false
     }
-    api "org.apache.httpcomponents:httpcore:$httpcoreVersion"
+    api "org.apache.httpcomponents.core5:httpcore5:$httpcore5Version"
     api "commons-codec:commons-codec:$commonsCodecVersion"
     api "io.github.openfeign:feign-core:$feignVersion"
     api "io.github.openfeign:feign-jackson:$feignVersion"
