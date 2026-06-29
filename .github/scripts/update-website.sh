@@ -25,7 +25,7 @@ PAGE="docs/modules/ROOT/pages/release-history.adoc"
 AS=$(grep -hn "${ANCHOR_START}" ${PAGE} | awk -F: '{print $1}')
 AE=$(grep -hn "${ANCHOR_END}" ${PAGE} | awk -F: '{print $1}')
 AE=$((AE + 1))
-PREVIOUS_RELEASE=$(grep -h -A5 "${ANCHOR_START}" ${PAGE} | tail -n 5)
+PREVIOUS_RELEASE=$(grep -h -A5 "${ANCHOR_START}" ${PAGE} | tail -n 4)
 
 HEAD=$(head -n "${AS}" "${PAGE}")
 TAIL=$(tail -n +"${AE}" "${PAGE}")
