@@ -35,6 +35,7 @@ import org.jreleaser.mustache.TemplateContext;
 import org.jreleaser.sdk.command.Command;
 import org.jreleaser.util.PlatformUtils;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -57,6 +58,7 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -188,6 +190,45 @@ class NativeImageAssemblerProcessorTest {
         } else {
             assertThat(exception).isNull();
         }
+    }
+
+    @Test
+    void testAssembleBinary_ArchiveUsesConfiguredExecutableName() throws Exception {
+        Artifact mainJar = mockMainJar(Mode.DEFAULT);
+        when(assembler.getMainJar()).thenReturn(mainJar);
+        when(assembler.isArchive()).thenReturn(true);
+        when(assembler.getTemplateDirectory()).thenReturn("");
+        when(assembler.getType()).thenReturn("native-image");
+        when(assembler.getSwid()).thenReturn(mock(org.jreleaser.model.internal.catalog.swid.SwidTag.class));
+
+        // Simulate native-image actually producing the binary named after the
+        // "-H:Name=" argument, since executeCommand() is otherwise a no-op mock.
+        Command.Result commandResult = mock(Command.Result.class);
+        when(commandResult.getExitValue()).thenReturn(0);
+        doAnswer(invocation -> {
+            Path parent = invocation.getArgument(0);
+            Command cmd = invocation.getArgument(1);
+            String name = cmd.getArgs().stream()
+                .filter(arg -> arg.startsWith("-H:Name="))
+                .findFirst()
+                .map(arg -> arg.substring("-H:Name=".length()))
+                .orElseThrow();
+            Files.createFile(parent.resolve(name + (PlatformUtils.isWindows() ? ".exe" : "")));
+            return commandResult;
+        }).when(nativeImageAssemblerProcessor).executeCommand(any(Path.class), any(Command.class));
+
+        nativeImageAssemblerProcessor.assemble(props);
+
+        String executableFileName = IMAGE_NAME + (PlatformUtils.isWindows() ? ".exe" : "");
+        Path binDirectory = props.<Path>get(Constants.KEY_DISTRIBUTION_ASSEMBLE_DIRECTORY)
+            .resolve(NativeImageAssemblerProcessor.WORK_DIRECTORY)
+            .resolve(IMAGE_NAME + "-" + DETECTED_OS_ARCH)
+            .resolve(NativeImageAssemblerProcessor.BIN_DIRECTORY);
+
+        // The archived binary must keep the configured executable name (e.g. "jreleaser"),
+        // not the fully versioned/platformed image name, see #2146.
+        assertThat(binDirectory.resolve(executableFileName)).exists();
+        assertThat(binDirectory.resolve(IMAGE_NAME + "-" + DETECTED_OS_ARCH)).doesNotExist();
     }
 
     private void testAssembleBinary(Command expectedCommand) throws Exception {
