@@ -128,7 +128,7 @@ abstract class JReleaserConfigTask extends AbstractPlatformAwareJReleaserTask {
 
         JReleaserContext context = createContext()
         ModelValidator.validate(context)
-        new GradleJReleaserModelPrinter(project)
+        new GradleJReleaserModelPrinter(jlogger.get().console)
             .print(context.model.asMap(full.get()))
         context.report()
     }

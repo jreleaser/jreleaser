@@ -88,15 +88,14 @@ class JReleaserGradleProjectCapture implements Serializable {
 
     private static Map <String, Serializable> captureGradleProjectSerializableProperties(
         Project gradleProject, JReleaserLogger logger) {
-        Set<String> propertyKeys = collectGradleProjectPropertyKeys(gradleProject)
+        Map<String, Object> properties = collectGradleProjectProperties(gradleProject)
         Map <String, Serializable> projectProperties = [:]
-        propertyKeys.each { key ->
+        properties.each { key, value ->
             // Avoid useless Gradle deprecation log
             if (GRADLE_DEPRECATED_PROJECT_PROPS.contains(key)) {
                 logger.debug("GradleProjectCapture: IGNORE deprecated Gradle project property '${key}'.")
                 return // continue
             }
-            Object value = gradleProject.findProperty(key)
             if (value instanceof Provider) {
                 Provider p = (Provider) value
                 value = p.present ? p.get() : null
@@ -116,15 +115,28 @@ class JReleaserGradleProjectCapture implements Serializable {
         return projectProperties
     }
 
-    private static Set<String> collectGradleProjectPropertyKeys(Project gradleProject) {
-        Set<String> propertyKeys = gradleProject.properties.keySet()
-        ExtraPropertiesExtension extraPropertiesExtension = gradleProject.extensions.extraProperties
-        Set<String> extraPropertyKeys = extraPropertiesExtension?.properties?.keySet()
-        if (extraPropertyKeys) {
-            propertyKeys += extraPropertyKeys
-            propertyKeys = propertyKeys.toSet()
+    private static Map<String, Object> collectGradleProjectProperties(Project gradleProject) {
+        Map<String, Object> properties = [
+            'name': gradleProject.name,
+            'group': gradleProject.group,
+            'version': gradleProject.version,
+            'description': gradleProject.description,
+            'path': gradleProject.path,
+            'displayName': gradleProject.displayName,
+            'projectDir': gradleProject.layout.projectDirectory.asFile,
+            'rootDir': gradleProject.rootProject.layout.projectDirectory.asFile,
+            'buildDir': gradleProject.layout.buildDirectory.get().asFile
+        ]
+        Provider<Map<String, String>> gradleProperties = gradleProject.providers.gradlePropertiesPrefixedBy('')
+        if (gradleProperties.present) {
+            properties.putAll(gradleProperties.get())
         }
-        return propertyKeys
+        ExtraPropertiesExtension extraPropertiesExtension = gradleProject.extensions.extraProperties
+        Map<String, Object> extraProperties = extraPropertiesExtension?.properties
+        if (extraProperties) {
+            properties.putAll(extraProperties)
+        }
+        return properties
     }
 
     Map<String, Serializable> getProperties() {

@@ -66,6 +66,10 @@ public abstract class JReleaserLoggerService implements BuildService<JReleaserLo
         return logger;
     }
 
+    public AnsiConsole getConsole() {
+        return getParameters().getConsole().get();
+    }
+
     @Override
     public void close() {
         logger.close();

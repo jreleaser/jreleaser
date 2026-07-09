@@ -36,9 +36,17 @@ class GradleJReleaserModelPrinter extends JReleaserModelPrinter {
         this(project, newPrintWriter(System.out))
     }
 
+    GradleJReleaserModelPrinter(AnsiConsole console) {
+        this(console, newPrintWriter(System.out))
+    }
+
     GradleJReleaserModelPrinter(Project project, PrintWriter out) {
+        this(new AnsiConsole(project, 'JRELEASER'), out)
+    }
+
+    GradleJReleaserModelPrinter(AnsiConsole console, PrintWriter out) {
         super(out)
-        this.console = new AnsiConsole(project, 'JRELEASER')
+        this.console = console
     }
 
     @Override
