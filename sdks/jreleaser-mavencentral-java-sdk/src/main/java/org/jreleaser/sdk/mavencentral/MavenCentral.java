@@ -251,9 +251,14 @@ public class MavenCentral {
             RetryPolicy<R> policy = RetryPolicy.<R>builder()
                 .handle(IllegalStateException.class)
                 .handleIf(exception -> {
-                    if (exception instanceof MavenCentralAPIException) {
-                        MavenCentralAPIException mavenCentralException = (MavenCentralAPIException) exception;
-                        return !mavenCentralException.isUnauthorized();
+                    for (Throwable cause = exception; null != cause; cause = cause.getCause()) {
+                        if (cause instanceof MavenCentralAPIException) {
+                            MavenCentralAPIException mavenCentralException = (MavenCentralAPIException) cause;
+                            return !mavenCentralException.isUnauthorized();
+                        }
+                        if (cause instanceof RetryableException) {
+                            return true;
+                        }
                     }
 
                     return false;
