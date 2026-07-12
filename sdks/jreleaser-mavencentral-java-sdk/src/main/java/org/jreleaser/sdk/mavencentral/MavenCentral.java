@@ -36,13 +36,12 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.Http;
 import org.jreleaser.model.api.JReleaserContext;
-import org.jreleaser.model.spi.deploy.maven.Deployable;
-import org.jreleaser.mustache.Templates;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.commons.feign.TokenAuthRequestInterceptor;
 import org.jreleaser.sdk.mavencentral.api.Deployment;
 import org.jreleaser.sdk.mavencentral.api.MavenCentralAPI;
 import org.jreleaser.sdk.mavencentral.api.MavenCentralAPIException;
+import org.jreleaser.sdk.mavencentral.api.PublishedStatus;
 import org.jreleaser.sdk.mavencentral.api.State;
 
 import java.io.IOException;
@@ -62,7 +61,6 @@ import java.util.concurrent.Callable;
 import static java.lang.System.lineSeparator;
 import static java.util.Objects.requireNonNull;
 import static org.jreleaser.util.IoUtils.newInputStreamReader;
-import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 
 /**
@@ -109,18 +107,13 @@ public class MavenCentral {
             .target(MavenCentralAPI.class, apiHost);
     }
 
-    public boolean artifactExists(Deployable deployable, String verifyUrl) {
-        if (isNotBlank(verifyUrl)) {
-            verifyUrl = Templates.resolveTemplate(context.getLogger(), verifyUrl, deployable.props());
-            if (ClientUtils.head(context.getLogger(), verifyUrl, connectTimeout, readTimeout)) {
-                context.getLogger().warn(" ! " + RB.$("nexus.deploy.artifact.exists",
-                    deployable.getDeployPath(),
-                    deployable.getLocalPath().getFileName().toString()));
-                return true;
-            }
-        }
+    public boolean isPublished(String groupId, String artifactId, String version) throws MavenCentralException {
+        Optional<PublishedStatus> status = wrap(() -> {
+            context.getLogger().debug(RB.$("maven.central.published.check"), groupId, artifactId, version);
+            return Optional.ofNullable(api.published(groupId, artifactId, version));
+        });
 
-        return false;
+        return null != status && status.map(PublishedStatus::isPublished).orElse(false);
     }
 
     public Optional<Deployment> status(String deploymentId) throws MavenCentralException {

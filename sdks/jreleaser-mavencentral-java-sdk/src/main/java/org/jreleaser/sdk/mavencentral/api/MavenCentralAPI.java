@@ -47,7 +47,7 @@ public interface MavenCentralAPI {
     @Headers("Content-Type: application/json")
     Deployment status(@QueryMap Map<String, Object> params);
 
-    @RequestLine("GET /published")
+    @RequestLine("GET /published?namespace={namespace}&name={name}&version={version}")
     @Headers("Content-Type: application/json")
-    Deployment published(@Param("namespace") String namespace, @Param("name") String name, @Param("version") String version);
+    PublishedStatus published(@Param("namespace") String namespace, @Param("name") String name, @Param("version") String version);
 }
