@@ -287,7 +287,7 @@ public class MavenCentral {
                 return exception;
             }
 
-            if (response.status() >= 500) {
+            if (response.status() >= 500 || 429 == response.status()) {
                 logger.trace(response.request().httpMethod() + " " + response.request().url());
                 logger.trace(response.status() + " " + response.reason());
                 if (null != response.body() && null != response.body().length() && response.body().length() > 0) {
