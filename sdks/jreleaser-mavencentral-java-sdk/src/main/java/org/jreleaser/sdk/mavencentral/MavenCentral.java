@@ -108,12 +108,12 @@ public class MavenCentral {
     }
 
     public boolean isPublished(String groupId, String artifactId, String version) throws MavenCentralException {
-        Optional<PublishedStatus> status = wrap(() -> {
+        PublishedStatus status = wrap(() -> {
             context.getLogger().debug(RB.$("maven.central.published.check"), groupId, artifactId, version);
-            return Optional.ofNullable(api.published(groupId, artifactId, version));
+            return api.published(groupId, artifactId, version);
         });
 
-        return null != status && status.map(PublishedStatus::isPublished).orElse(false);
+        return null != status && status.isPublished();
     }
 
     public Optional<Deployment> status(String deploymentId) throws MavenCentralException {
