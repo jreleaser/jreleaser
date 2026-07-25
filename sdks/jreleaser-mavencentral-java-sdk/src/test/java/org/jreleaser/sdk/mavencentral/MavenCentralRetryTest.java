@@ -84,8 +84,7 @@ class MavenCentralRetryTest {
     }
 
     private RetryableException retryable503() {
-        Request request = Request.create(Request.HttpMethod.HEAD, "http://localhost", Collections.emptyMap(), null,
-            new RequestTemplate());
-        return new RetryableException(503, "Service Unavailable", Request.HttpMethod.HEAD, (Long) null, request);
+        return new RetryableException(503, "Service Unavailable", Request.HttpMethod.HEAD, (Long) null,
+            Request.create(Request.HttpMethod.HEAD, "http://localhost", Collections.emptyMap(), null, new RequestTemplate()));
     }
 }
