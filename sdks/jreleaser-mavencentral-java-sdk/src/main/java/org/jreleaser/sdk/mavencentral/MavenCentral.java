@@ -113,7 +113,7 @@ public class MavenCentral {
             return api.published(groupId, artifactId, version);
         });
 
-        return null != status && status.isPublished();
+        return status.isPublished();
     }
 
     public Optional<Deployment> status(String deploymentId) throws MavenCentralException {
