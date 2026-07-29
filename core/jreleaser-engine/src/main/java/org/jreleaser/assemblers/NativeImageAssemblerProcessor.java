@@ -158,7 +158,7 @@ public class NativeImageAssemblerProcessor extends AbstractAssemblerProcessor<or
         String finalImageName = imageName + "-" + platformReplaced;
 
         String executable = assembler.getExecutable();
-        if (!assembler.getArchiving().isEnabled()) {
+        if (!assembler.isArchive()) {
             executable = finalImageName;
         }
         String executableFileName = executable;
