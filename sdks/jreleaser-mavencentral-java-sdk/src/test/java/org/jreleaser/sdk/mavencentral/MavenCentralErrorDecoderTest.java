@@ -77,6 +77,15 @@ class MavenCentralErrorDecoderTest {
 
 
     @Test
+    void returnsRetryableExceptionFor429() {
+        MavenCentral.MavenCentralErrorDecoder decoder = new MavenCentral.MavenCentralErrorDecoder(logger, "testDeployer");
+        Response response = buildResponse(429, "Too Many Requests");
+        Exception ex = decoder.decode("method", response);
+        assertThat(ex).isInstanceOf(RetryableException.class);
+    }
+
+
+    @Test
     void returnsDefaultExceptionForOtherStatus() {
         MavenCentral.MavenCentralErrorDecoder decoder = new MavenCentral.MavenCentralErrorDecoder(logger, "testDeployer");
         Response response = buildResponse(404, "Not Found");

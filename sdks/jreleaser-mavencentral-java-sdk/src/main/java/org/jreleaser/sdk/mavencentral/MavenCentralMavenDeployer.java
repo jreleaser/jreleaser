@@ -201,15 +201,26 @@ public class MavenCentralMavenDeployer extends AbstractMavenDeployer<org.jreleas
     private Optional<String> uploadArtifacts(MavenCentral mavenCentral, Path bundleZip) throws DeployException {
         context.getLogger().info(" - {}", bundleZip.getFileName());
 
-        boolean success = true;
-        for (Deployable deployable : collectDeployableArtifacts()) {
-            if (mavenCentral.artifactExists(deployable, context.getModel().getProject().isSnapshot() ? null : getDeployer().getVerifyUrl())) {
-                success = false;
+        if (!context.getModel().getProject().isSnapshot() && !context.isDryrun()) {
+            boolean success = true;
+            for (Deployable deployable : collectDeployableArtifacts()) {
+                if (!deployable.isPom()) continue;
+                try {
+                    if (mavenCentral.isPublished(deployable.getGroupId(), deployable.getArtifactId(), deployable.getVersion())) {
+                        context.getLogger().warn(" ! " + RB.$("nexus.deploy.artifact.exists",
+                            deployable.getDeployPath(),
+                            deployable.getLocalPath().getFileName().toString()));
+                        success = false;
+                    }
+                } catch (MavenCentralException e) {
+                    context.getLogger().trace(e);
+                    throw new DeployException(RB.$("ERROR_unexpected_error"), e);
+                }
             }
-        }
 
-        if (!success) {
-            throw new DeployException(RB.$("ERROR_nexus_deploy_artifacts"));
+            if (!success) {
+                throw new DeployException(RB.$("ERROR_nexus_deploy_artifacts"));
+            }
         }
 
         if (!context.isDryrun()) {

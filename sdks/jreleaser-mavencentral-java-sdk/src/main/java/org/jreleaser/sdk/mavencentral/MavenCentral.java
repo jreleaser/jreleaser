@@ -36,13 +36,12 @@ import org.jreleaser.bundle.RB;
 import org.jreleaser.logging.JReleaserLogger;
 import org.jreleaser.model.Http;
 import org.jreleaser.model.api.JReleaserContext;
-import org.jreleaser.model.spi.deploy.maven.Deployable;
-import org.jreleaser.mustache.Templates;
 import org.jreleaser.sdk.commons.ClientUtils;
 import org.jreleaser.sdk.commons.feign.TokenAuthRequestInterceptor;
 import org.jreleaser.sdk.mavencentral.api.Deployment;
 import org.jreleaser.sdk.mavencentral.api.MavenCentralAPI;
 import org.jreleaser.sdk.mavencentral.api.MavenCentralAPIException;
+import org.jreleaser.sdk.mavencentral.api.PublishedStatus;
 import org.jreleaser.sdk.mavencentral.api.State;
 
 import java.io.IOException;
@@ -62,7 +61,6 @@ import java.util.concurrent.Callable;
 import static java.lang.System.lineSeparator;
 import static java.util.Objects.requireNonNull;
 import static org.jreleaser.util.IoUtils.newInputStreamReader;
-import static org.jreleaser.util.StringUtils.isNotBlank;
 import static org.jreleaser.util.StringUtils.requireNonBlank;
 
 /**
@@ -109,18 +107,13 @@ public class MavenCentral {
             .target(MavenCentralAPI.class, apiHost);
     }
 
-    public boolean artifactExists(Deployable deployable, String verifyUrl) {
-        if (isNotBlank(verifyUrl)) {
-            verifyUrl = Templates.resolveTemplate(context.getLogger(), verifyUrl, deployable.props());
-            if (ClientUtils.head(context.getLogger(), verifyUrl, connectTimeout, readTimeout)) {
-                context.getLogger().warn(" ! " + RB.$("nexus.deploy.artifact.exists",
-                    deployable.getDeployPath(),
-                    deployable.getLocalPath().getFileName().toString()));
-                return true;
-            }
-        }
+    public boolean isPublished(String groupId, String artifactId, String version) throws MavenCentralException {
+        PublishedStatus status = wrap(() -> {
+            context.getLogger().debug(RB.$("maven.central.published.check"), groupId, artifactId, version);
+            return api.published(groupId, artifactId, version);
+        });
 
-        return false;
+        return status.isPublished();
     }
 
     public Optional<Deployment> status(String deploymentId) throws MavenCentralException {
@@ -251,9 +244,14 @@ public class MavenCentral {
             RetryPolicy<R> policy = RetryPolicy.<R>builder()
                 .handle(IllegalStateException.class)
                 .handleIf(exception -> {
-                    if (exception instanceof MavenCentralAPIException) {
-                        MavenCentralAPIException mavenCentralException = (MavenCentralAPIException) exception;
-                        return !mavenCentralException.isUnauthorized();
+                    for (Throwable cause = exception; null != cause; cause = cause.getCause()) {
+                        if (cause instanceof MavenCentralAPIException) {
+                            MavenCentralAPIException mavenCentralException = (MavenCentralAPIException) cause;
+                            return !mavenCentralException.isUnauthorized();
+                        }
+                        if (cause instanceof RetryableException) {
+                            return true;
+                        }
                     }
 
                     return false;
@@ -289,7 +287,7 @@ public class MavenCentral {
                 return exception;
             }
 
-            if (response.status() >= 500) {
+            if (response.status() >= 500 || 429 == response.status()) {
                 logger.trace(response.request().httpMethod() + " " + response.request().url());
                 logger.trace(response.status() + " " + response.reason());
                 if (null != response.body() && null != response.body().length() && response.body().length() > 0) {
