@@ -1047,6 +1047,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "lprimak",
+      "name": "Lenny Primak",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1002484?v=4",
+      "profile": "https://hope.nyc.ny.us",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
