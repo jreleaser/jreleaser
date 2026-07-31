@@ -1,6 +1,6 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-112-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-113-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 ## Contributors ✨
 
@@ -154,6 +154,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/seonwooj0810"><img src="https://avatars.githubusercontent.com/u/79202163?v=4?s=100" width="100px;" alt="seonwoojung"/><br /><sub><b>seonwoojung</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=seonwooj0810" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/mvanhorn"><img src="https://avatars.githubusercontent.com/u/455140?v=4?s=100" width="100px;" alt="Matt Van Horn"/><br /><sub><b>Matt Van Horn</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=mvanhorn" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://www.exoego.net/"><img src="https://avatars.githubusercontent.com/u/127635?v=4?s=100" width="100px;" alt="TATSUNO “Taz” Yasuhiro"/><br /><sub><b>TATSUNO “Taz” Yasuhiro</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=exoego" title="Code">💻</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://hope.nyc.ny.us"><img src="https://avatars.githubusercontent.com/u/1002484?v=4?s=100" width="100px;" alt="Lenny Primak"/><br /><sub><b>Lenny Primak</b></sub></a><br /><a href="https://github.com/jreleaser/jreleaser/commits?author=lprimak" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
