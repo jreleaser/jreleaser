@@ -17,12 +17,16 @@
  */
 package org.jreleaser.util;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junitpioneer.jupiter.ClearSystemProperty;
 import org.junitpioneer.jupiter.ReadsEnvironmentVariable;
 import org.junitpioneer.jupiter.SetEnvironmentVariable;
+import org.junitpioneer.jupiter.SetSystemProperty;
 
 import java.util.stream.Stream;
 
@@ -31,6 +35,12 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
 class EnvTests {
+    @BeforeEach
+    @AfterEach
+    void reset() {
+        Env.setOverride(false);
+    }
+
     @ParameterizedTest
     @MethodSource("variable_factory")
     @ReadsEnvironmentVariable
@@ -60,5 +70,44 @@ class EnvTests {
             Arguments.of("foobar-sys", "foo.bar", null, true),
             Arguments.of("foobar-env", "foo.bar", null, false)
         );
+    }
+
+    @Test
+    @ReadsEnvironmentVariable
+    @SetEnvironmentVariable(key = "JRELEASER_FOO", value = "foo-env")
+    @ClearSystemProperty(key = "jreleaser.foo")
+    void testEnvVariableOverridesExplicitValue() {
+        // given:
+        Env.setOverride(true);
+
+        // expect:
+        assertThat(Env.resolve("foo", "value"), equalTo("foo-env"));
+        assertThat(Env.env("foo", "value"), equalTo("foo-env"));
+    }
+
+    @Test
+    @ReadsEnvironmentVariable
+    @SetEnvironmentVariable(key = "JRELEASER_FOO", value = "foo-env")
+    @SetSystemProperty(key = "jreleaser.foo", value = "foo-sys")
+    void testSystemPropertyWinsOverEnvVariableWhenOverriding() {
+        // given:
+        Env.setOverride(true);
+
+        // expect:
+        assertThat(Env.resolve("foo", "value"), equalTo("foo-sys"));
+        assertThat(Env.sys("foo", "value"), equalTo("foo-sys"));
+    }
+
+    @Test
+    @ReadsEnvironmentVariable
+    @ClearSystemProperty(key = "jreleaser.bar")
+    void testExplicitValueSurvivesWhenNothingIsSet() {
+        // given:
+        Env.setOverride(true);
+
+        // expect:
+        assertThat(Env.resolve("bar", "value"), equalTo("value"));
+        assertThat(Env.env("bar", "value"), equalTo("value"));
+        assertThat(Env.sys("bar", "value"), equalTo("value"));
     }
 }

@@ -27,9 +27,13 @@ import java.util.Properties;
  * @since 0.1.0
  */
 public interface Environment extends Domain {
+    String ENVIRONMENT_OVERRIDE = "ENVIRONMENT_OVERRIDE";
+
     Properties getVars();
 
     String getVariables();
+
+    boolean isOverride();
 
     Map<String, Object> getProperties();
 

@@ -460,6 +460,7 @@ public class JReleaserContext {
         this.mode = mode;
         this.command = command;
         this.model = model;
+        this.model.getEnvironment().initOverride();
         this.basedir = basedir;
         this.settings = settings;
         this.outputDirectory = outputDirectory;

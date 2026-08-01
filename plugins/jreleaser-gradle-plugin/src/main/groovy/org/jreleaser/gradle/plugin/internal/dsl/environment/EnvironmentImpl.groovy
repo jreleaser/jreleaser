@@ -22,6 +22,7 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.provider.Providers
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.MapProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.jreleaser.gradle.plugin.dsl.environment.Environment
 import org.jreleaser.gradle.plugin.internal.JReleaserGradleProjectCapture
@@ -36,11 +37,13 @@ import javax.inject.Inject
 @CompileStatic
 class EnvironmentImpl implements Environment {
     final RegularFileProperty variables
+    final Property<Boolean> override
     final MapProperty<String, Object> properties
 
     @Inject
     EnvironmentImpl(ObjectFactory objects) {
         variables = objects.fileProperty().convention(Providers.notDefined())
+        override = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         properties = objects.mapProperty(String, Object).convention(Providers.notDefined())
     }
 
@@ -54,6 +57,7 @@ class EnvironmentImpl implements Environment {
         environment.propertiesSource = new org.jreleaser.model.internal.environment.Environment.MapPropertiesSource(
             filterProperties(gradleProjectCapture.properties))
         if (variables.present) environment.variables = variables.asFile.get().absolutePath
+        if (override.present) environment.override = override.get()
         if (properties.present) environment.properties.putAll(properties.get())
         environment
     }

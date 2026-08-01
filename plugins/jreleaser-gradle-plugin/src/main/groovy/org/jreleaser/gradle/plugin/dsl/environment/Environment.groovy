@@ -20,6 +20,7 @@ package org.jreleaser.gradle.plugin.dsl.environment
 import groovy.transform.CompileStatic
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.MapProperty
+import org.gradle.api.provider.Property
 
 /**
  *
@@ -31,6 +32,8 @@ interface Environment {
     RegularFileProperty getVariables()
 
     void setVariables(String variables)
+
+    Property<Boolean> getOverride()
 
     MapProperty<String, Object> getProperties()
 }
