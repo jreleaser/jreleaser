@@ -24,8 +24,8 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.provider.Provider
+import org.gradle.util.GradleVersion
 import org.jreleaser.gradle.plugin.internal.JReleaserExtensionImpl
-import org.jreleaser.gradle.plugin.internal.JReleaserLoggerAdapter
 import org.jreleaser.gradle.plugin.internal.JReleaserProjectConfigurer
 import org.jreleaser.gradle.plugin.tasks.JReleaseAutoConfigReleaseTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserAnnounceTask
@@ -48,11 +48,8 @@ import org.jreleaser.gradle.plugin.tasks.JReleaserSignTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserTemplateEvalTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserTemplateGenerateTask
 import org.jreleaser.gradle.plugin.tasks.JReleaserUploadTask
-import org.kordamp.gradle.util.AnsiConsole
 
 import static org.jreleaser.model.JReleaserOutput.JRELEASER_QUIET
-import static org.jreleaser.util.IoUtils.newPrintWriter
-
 /**
  *
  * @author Andres Almiray
@@ -100,7 +97,11 @@ class JReleaserPlugin implements Plugin<Project> {
     }
 
     private boolean hasKordampBasePluginApplied(Project project) {
-        project.rootProject.plugins.findPlugin('org.kordamp.gradle.base')
+        !isGradleCompatible("9.7.0") && project.rootProject.plugins.findPlugin('org.kordamp.gradle.base')
+    }
+
+    static boolean isGradleCompatible(String version) {
+        GradleVersion.current() >= GradleVersion.version(version)
     }
 
     @CompileDynamic
