@@ -4,6 +4,21 @@ version: "{{projectVersion}}"
 summary: {{projectDescription}}
 description: {{projectLongDescription}}
 
+title: {{projectNameCapitalized}}
+license: {{projectLicense}}
+{{#projectLinkContact}}
+contact: {{.}}
+{{/projectLinkContact}}
+{{#projectLinkBugTracker}}
+issues: {{.}}
+{{/projectLinkBugTracker}}
+{{#projectLinkVcsBrowser}}
+source-code: {{.}}
+{{/projectLinkVcsBrowser}}
+{{#projectLinkHomepage}}
+website: {{.}}
+{{/projectLinkHomepage}}
+
 grade: {{snapGrade}}
 confinement: {{snapConfinement}}
 base: {{snapBase}}
