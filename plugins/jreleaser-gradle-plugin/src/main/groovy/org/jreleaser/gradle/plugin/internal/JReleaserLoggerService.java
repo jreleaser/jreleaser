@@ -39,6 +39,7 @@ import java.nio.file.Path;
  */
 public abstract class JReleaserLoggerService implements BuildService<JReleaserLoggerService.Params>, AutoCloseable {
     private final JReleaserLogger logger;
+    private final AnsiConsole console;
 
     public interface Params extends BuildServiceParameters {
         Property<AnsiConsole> getConsole();
@@ -55,7 +56,8 @@ public abstract class JReleaserLoggerService implements BuildService<JReleaserLo
             File traceLogFile = outputDirectoryPath.resolve("trace.log").toFile();
             PrintWriter tracer = IoUtils.newPrintWriter(new FileOutputStream(traceLogFile));
 
-            logger = new JReleaserLoggerAdapter(getParameters().getConsole().get(),
+            console = getParameters().getConsole().get();
+            logger = new JReleaserLoggerAdapter(console,
                 getParameters().getLogLevel().get(), tracer);
         } catch (IOException e) {
             throw new IllegalStateException(e);
@@ -64,6 +66,10 @@ public abstract class JReleaserLoggerService implements BuildService<JReleaserLo
 
     public JReleaserLogger getLogger() {
         return logger;
+    }
+
+    public AnsiConsole getConsole() {
+        return console;
     }
 
     @Override
