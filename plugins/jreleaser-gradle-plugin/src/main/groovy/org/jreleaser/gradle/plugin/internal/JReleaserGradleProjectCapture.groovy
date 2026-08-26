@@ -18,10 +18,10 @@
 package org.jreleaser.gradle.plugin.internal
 
 import org.gradle.api.Project
+import org.gradle.api.logging.Logger
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.plugins.JavaApplication
 import org.gradle.api.provider.Provider
-import org.jreleaser.logging.JReleaserLogger
 
 /**
  * Captures relevant information from a Gradle Project
@@ -70,11 +70,14 @@ class JReleaserGradleProjectCapture implements Serializable {
         'testResultsDirName'
     ]
 
-    static JReleaserGradleProjectCapture of(Project gradleProject, JReleaserLogger logger) {
+    // Takes the Gradle logger rather than the JReleaserLogger on purpose: the capture happens at
+    // configuration time, and resolving the JReleaserLoggerService here would open build/jreleaser/trace.log
+    // before Gradle gets a chance to clean that directory as a stale task output.
+    static JReleaserGradleProjectCapture of(Project gradleProject, Logger logger) {
         return new JReleaserGradleProjectCapture(gradleProject, logger)
     }
 
-    private JReleaserGradleProjectCapture(Project gradleProject, JReleaserLogger logger) {
+    private JReleaserGradleProjectCapture(Project gradleProject, Logger logger) {
         this.name = gradleProject.name
         this.group = gradleProject.group?.toString()
         this.version = gradleProject.version?.toString()
@@ -87,7 +90,7 @@ class JReleaserGradleProjectCapture implements Serializable {
     }
 
     private static Map <String, Serializable> captureGradleProjectSerializableProperties(
-        Project gradleProject, JReleaserLogger logger) {
+        Project gradleProject, Logger logger) {
         Set<String> propertyKeys = collectGradleProjectPropertyKeys(gradleProject)
         Map <String, Serializable> projectProperties = [:]
         propertyKeys.each { key ->

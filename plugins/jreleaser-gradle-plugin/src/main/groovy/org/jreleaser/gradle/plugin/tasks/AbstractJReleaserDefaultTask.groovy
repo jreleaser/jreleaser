@@ -70,7 +70,7 @@ abstract class AbstractJReleaserDefaultTask extends DefaultTask {
             = JReleaserProjectConfigurer.getJReleaserLoggerServiceProvider(project)
         jlogger.convention(jloggerServiceProvider)
         usesService(jloggerServiceProvider)
-        gradleProjectCapture.convention(JReleaserGradleProjectCapture.of(project, jlogger.get().logger))
+        gradleProjectCapture.convention(JReleaserGradleProjectCapture.of(project, logger))
         projectDirectory.convention(project.layout.projectDirectory)
         outputDirectory.convention(JReleaserProjectConfigurer.getJReleaserOutputDirectoryProvider(project))
     }
