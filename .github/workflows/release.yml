@@ -18,7 +18,7 @@ jobs:
       next-version: ${{ steps.version.outputs.next_version }}
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: true
 
@@ -87,7 +87,7 @@ jobs:
       tagname: ${{ steps.slsa.outputs.TAGNAME }}
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: true
           ref: main
@@ -126,7 +126,7 @@ jobs:
           path: out/jreleaser/assemble/jreleaser-native/native-image
 
       - name: Setup Java
-        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+        uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c # v6.0.0
         with:
           java-version: ${{ vars.JAVA_VERSION }}
           distribution: ${{ vars.JAVA_DISTRO }}
@@ -141,7 +141,7 @@ jobs:
           ./gradlew cleanupStagedRepository
 
       - name: Upload deploy artifacts
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           retention-days: 7
           name: deploy
@@ -173,7 +173,7 @@ jobs:
 
       - name: JReleaser release output
         if: always()
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: jreleaser-release
           path: |
@@ -235,7 +235,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: true
           repository: jreleaser/jreleaser.github.io
@@ -244,7 +244,7 @@ jobs:
           token: ${{ secrets.GIT_ACCESS_TOKEN }}
 
       - name: Setup Java
-        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+        uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c # v6.0.0
         with:
           java-version: ${{ vars.JAVA_VERSION }}
           distribution: ${{ vars.JAVA_DISTRO }}

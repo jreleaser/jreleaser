@@ -31,7 +31,7 @@ jobs:
     runs-on: ${{ matrix.job.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
           fetch-depth: 0
@@ -48,7 +48,7 @@ jobs:
           distribution: graalvm-community
 
       - name: Setup Java
-        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+        uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c # v6.0.0
         with:
           java-version: ${{ vars.JAVA_VERSION }}
           distribution: ${{ vars.JAVA_DISTRO }}
@@ -59,7 +59,7 @@ jobs:
         run: ./gradlew -PreproducibleBuild=true build publishToMavenLocal -S
 
       - name: Checkout smoketests repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
           repository: jreleaser/smoketests-jreleaser
@@ -170,7 +170,7 @@ jobs:
 
       - name: JReleaser output
         if: always()
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           retention-days: 7
           name: 'jreleaser-cli-${{ runner.os }}'
@@ -182,7 +182,7 @@ jobs:
 
       - name: JaCoCo upload
         if: always()
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           retention-days: 1
           name: 'jacoco-cli-${{ runner.os }}'
@@ -211,7 +211,7 @@ jobs:
     runs-on: ${{ matrix.job.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
           fetch-depth: 0
@@ -228,7 +228,7 @@ jobs:
           distribution: graalvm-community
 
       - name: Setup Java
-        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+        uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c # v6.0.0
         with:
           java-version: ${{ vars.JAVA_VERSION }}
           distribution: ${{ vars.JAVA_DISTRO }}
@@ -239,7 +239,7 @@ jobs:
         run: ./gradlew -PreproducibleBuild=true build publishToMavenLocal -S
 
       - name: Checkout smoketests repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
           repository: jreleaser/smoketests-jreleaser
@@ -350,7 +350,7 @@ jobs:
 
       - name: JReleaser output
         if: always()
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           retention-days: 7
           name: 'jreleaser-tool-${{ runner.os }}'
@@ -362,7 +362,7 @@ jobs:
 
       - name: JaCoCo upload
         if: always()
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           retention-days: 1
           name: 'jacoco-tool-${{ runner.os }}'
@@ -391,7 +391,7 @@ jobs:
     runs-on: ${{ matrix.job.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
           fetch-depth: 0
@@ -408,7 +408,7 @@ jobs:
           distribution: graalvm-community
 
       - name: Setup Java
-        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+        uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c # v6.0.0
         with:
           java-version: ${{ vars.JAVA_VERSION }}
           distribution: ${{ vars.JAVA_DISTRO }}
@@ -419,7 +419,7 @@ jobs:
         run: ./gradlew -PreproducibleBuild=true build publishToMavenLocal -S
 
       - name: Checkout smoketests repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
           repository: jreleaser/smoketests-jreleaser
@@ -528,7 +528,7 @@ jobs:
 
       - name: JReleaser output
         if: always()
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           retention-days: 7
           name: 'jreleaser-ant-${{ runner.os }}'
@@ -540,7 +540,7 @@ jobs:
 
       - name: JaCoCo upload
         if: always()
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           retention-days: 1
           name: 'jacoco-ant-${{ runner.os }}'
@@ -569,7 +569,7 @@ jobs:
     runs-on: ${{ matrix.job.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
           fetch-depth: 0
@@ -586,7 +586,7 @@ jobs:
           distribution: graalvm-community
 
       - name: Setup Java
-        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+        uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c # v6.0.0
         with:
           java-version: ${{ vars.JAVA_VERSION }}
           distribution: ${{ vars.JAVA_DISTRO }}
@@ -597,7 +597,7 @@ jobs:
         run: ./gradlew -PreproducibleBuild=true build publishToMavenLocal -S
 
       - name: Checkout smoketests repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
           repository: jreleaser/smoketests-jreleaser
@@ -705,7 +705,7 @@ jobs:
 
       - name: JReleaser output
         if: always()
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           retention-days: 7
           name: 'jreleaser-gradle-${{ runner.os }}'
@@ -717,7 +717,7 @@ jobs:
 
       - name: JaCoCo upload
         if: always()
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           retention-days: 1
           name: 'jacoco-gradle-${{ runner.os }}'
@@ -759,7 +759,7 @@ jobs:
     runs-on: ${{ matrix.job.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
           fetch-depth: 0
@@ -776,7 +776,7 @@ jobs:
           distribution: graalvm-community
 
       - name: Setup Java
-        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+        uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c # v6.0.0
         with:
           java-version: ${{ vars.JAVA_VERSION }}
           distribution: ${{ vars.JAVA_DISTRO }}
@@ -787,7 +787,7 @@ jobs:
         run: ./gradlew -PreproducibleBuild=true build publishToMavenLocal -S
 
       - name: Checkout smoketests repository
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
           repository: jreleaser/smoketests-jreleaser
@@ -897,7 +897,7 @@ jobs:
 
       - name: JReleaser output
         if: always()
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           retention-days: 7
           name: 'jreleaser-maven-${{ runner.os }}'
@@ -909,7 +909,7 @@ jobs:
 
       - name: JaCoCo upload
         if: always()
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           retention-days: 1
           name: 'jacoco-maven-${{ runner.os }}'
@@ -934,7 +934,7 @@ jobs:
         os: [ubuntu-latest, macos-15-intel, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
 
@@ -943,7 +943,7 @@ jobs:
         run: sh .github/scripts/decrypt-secrets.sh
 
       - name: Setup Java
-        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+        uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c # v6.0.0
         with:
           java-version: ${{ vars.JAVA_VERSION }}
           distribution: ${{ vars.JAVA_DISTRO }}
@@ -970,7 +970,7 @@ jobs:
 
       - name: JaCoCo upload
         if: always()
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           retention-days: 1
           name: 'jacoco-${{ runner.os }}'
@@ -991,7 +991,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
           fetch-depth: 0
@@ -1001,7 +1001,7 @@ jobs:
         run: sh .github/scripts/decrypt-secrets.sh
 
       - name: Setup Java
-        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+        uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c # v6.0.0
         with:
           java-version: ${{ vars.JAVA_VERSION }}
           distribution: ${{ vars.JAVA_DISTRO }}
@@ -1043,7 +1043,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
           fetch-depth: 0
@@ -1053,7 +1053,7 @@ jobs:
         run: sh .github/scripts/decrypt-secrets.sh
 
       - name: Setup Java
-        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+        uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c # v6.0.0
         with:
           java-version: ${{ vars.JAVA_VERSION }}
           distribution: ${{ vars.JAVA_DISTRO }}
@@ -1100,7 +1100,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
           fetch-depth: 0
@@ -1110,7 +1110,7 @@ jobs:
         run: sh .github/scripts/decrypt-secrets.sh
 
       - name: Setup Java
-        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+        uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c # v6.0.0
         with:
           java-version: ${{ vars.JAVA_VERSION }}
           distribution: ${{ vars.JAVA_DISTRO }}
