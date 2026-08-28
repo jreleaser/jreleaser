@@ -23,7 +23,6 @@ import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheException;
 import com.github.mustachejava.MustacheFactory;
-import com.github.mustachejava.TemplateFunction;
 import com.github.mustachejava.reflect.GuardedBinding;
 import com.github.mustachejava.reflect.MissingWrapper;
 import com.github.mustachejava.reflect.ReflectionObjectHandler;
@@ -72,23 +71,9 @@ public final class MustacheUtils {
         Mustache mustache = mf.compile(reader, templateName);
         context.setAll(envVars());
         applyFunctions(context);
-        mustache.execute(input, decorate(context.asMap()));
+        mustache.execute(input, context.asMap());
         input.flush();
         return input.toString();
-    }
-
-    private static Map<String, Object> decorate(Map<String, Object> context) {
-        for (Map.Entry<String, Object> e : new LinkedHashSet<>(context.entrySet())) {
-            Object value = e.getValue();
-
-            if (value instanceof CharSequence) {
-                String val = String.valueOf(value);
-                if (val.contains("{{")) {
-                    context.put(e.getKey(), (TemplateFunction) s -> val);
-                }
-            }
-        }
-        return context;
     }
 
     public static String applyTemplate(JReleaserLogger logger, Reader reader, TemplateContext context) {

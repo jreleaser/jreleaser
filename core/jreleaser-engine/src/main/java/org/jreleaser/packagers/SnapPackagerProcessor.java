@@ -32,6 +32,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toList;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_CLASS;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_JAVA_MAIN_MODULE;
 import static org.jreleaser.model.Constants.KEY_DISTRIBUTION_PACKAGE_DIRECTORY;
@@ -44,11 +45,13 @@ import static org.jreleaser.model.Constants.KEY_SNAP_GRADE;
 import static org.jreleaser.model.Constants.KEY_SNAP_HAS_ARCHITECTURES;
 import static org.jreleaser.model.Constants.KEY_SNAP_HAS_LOCAL_PLUGS;
 import static org.jreleaser.model.Constants.KEY_SNAP_HAS_LOCAL_SLOTS;
+import static org.jreleaser.model.Constants.KEY_SNAP_HAS_PLATFORMS;
 import static org.jreleaser.model.Constants.KEY_SNAP_HAS_PLUGS;
 import static org.jreleaser.model.Constants.KEY_SNAP_HAS_SLOTS;
 import static org.jreleaser.model.Constants.KEY_SNAP_LOCAL_PLUGS;
 import static org.jreleaser.model.Constants.KEY_SNAP_LOCAL_SLOTS;
 import static org.jreleaser.model.Constants.KEY_SNAP_PACKAGE_NAME;
+import static org.jreleaser.model.Constants.KEY_SNAP_PLATFORMS;
 import static org.jreleaser.model.Constants.KEY_SNAP_PLUGS;
 import static org.jreleaser.model.Constants.KEY_SNAP_REPOSITORY_CLONE_URL;
 import static org.jreleaser.model.Constants.KEY_SNAP_REPOSITORY_URL;
@@ -146,6 +149,28 @@ public class SnapPackagerProcessor extends AbstractRepositoryPackagerProcessor<S
         props.set(KEY_SNAP_LOCAL_SLOTS, packager.getLocalSlots());
         props.set(KEY_SNAP_HAS_ARCHITECTURES, !packager.getArchitectures().isEmpty());
         props.set(KEY_SNAP_ARCHITECTURES, packager.getArchitectures());
+        props.set(KEY_SNAP_HAS_PLATFORMS, !packager.getPlatforms().isEmpty());
+        props.set(KEY_SNAP_PLATFORMS, packager.getPlatforms().entrySet().stream()
+            .map(entry -> new PlatformWrapper(entry.getKey(), entry.getValue()))
+            .collect(toList()));
+    }
+
+    public static class PlatformWrapper {
+        private final String key;
+        private final SnapPackager.Architecture value;
+
+        public PlatformWrapper(String key, SnapPackager.Architecture value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public SnapPackager.Architecture getValue() {
+            return value;
+        }
     }
 
     @Override

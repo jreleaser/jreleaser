@@ -33,6 +33,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableList;
@@ -69,7 +70,7 @@ import static org.jreleaser.util.StringUtils.isFalse;
  */
 public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser.model.api.packagers.SnapPackager, SnapPackager> {
     private static final Map<org.jreleaser.model.Distribution.DistributionType, Set<String>> SUPPORTED = new LinkedHashMap<>();
-    private static final long serialVersionUID = 478495088345166846L;
+    private static final long serialVersionUID = 7608927300946207141L;
 
     static {
         Set<String> extensions = setOf(
@@ -95,6 +96,7 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
     private final List<Plug> plugs = new ArrayList<>();
     private final List<Slot> slots = new ArrayList<>();
     private final List<Architecture> architectures = new ArrayList<>();
+    private final Map<String, Architecture> platforms = new LinkedHashMap<>();
     private final SnapRepository repository = new SnapRepository();
 
     private String packageName;
@@ -106,8 +108,9 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
 
     @JsonIgnore
     private final org.jreleaser.model.api.packagers.SnapPackager immutable = new org.jreleaser.model.api.packagers.SnapPackager() {
-        private static final long serialVersionUID = 1130318970087212327L;
+        private static final long serialVersionUID = 3464322538302049179L;
 
+        private Map<String, ? extends org.jreleaser.model.api.packagers.SnapPackager.Architecture> platforms;
         private List<? extends org.jreleaser.model.api.packagers.SnapPackager.Architecture> architectures;
         private List<? extends org.jreleaser.model.api.packagers.SnapPackager.Slot> slots;
         private List<? extends org.jreleaser.model.api.packagers.SnapPackager.Plug> plugs;
@@ -160,6 +163,15 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
                     .collect(toList());
             }
             return slots;
+        }
+
+        @Override
+        public Map<String, ? extends org.jreleaser.model.api.packagers.SnapPackager.Architecture> getPlatforms() {
+            if (null == platforms) {
+                platforms = SnapPackager.this.platforms.entrySet().stream()
+                    .collect(Collectors.toMap(e-> e.getKey(), v -> v.getValue().asImmutable()));
+            }
+            return platforms;
         }
 
         @Override
@@ -306,6 +318,7 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
         setPlugs(merge(this.plugs, source.plugs));
         setSlots(merge(this.slots, source.slots));
         setArchitectures(merge(this.architectures, source.architectures));
+        setPlatforms(merge(this.platforms, source.platforms));
         setRepository(source.repository);
     }
 
@@ -396,6 +409,19 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
         }
     }
 
+    public Map<String, Architecture> getPlatforms() {
+        return platforms;
+    }
+
+    public void setPlatforms(Map<String, Architecture> platforms) {
+        this.platforms.clear();
+        this.platforms.putAll(platforms);
+    }
+
+    public void addPlatforms(Map<String, Architecture> platforms) {
+        this.platforms.putAll(platforms);
+    }
+
     public String getExportedLogin() {
         return exportedLogin;
     }
@@ -465,6 +491,10 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
             mapped.put("architecture " + i, architectures.get(i).asMap(full));
         }
         props.put("architectures", mapped);
+
+        Map<String, Map<String, Object>> m = new LinkedHashMap<>();
+        platforms.forEach((k, v) -> m.put(k, v.asMap(full)));
+        props.put("platforms", m);
     }
 
     @Override

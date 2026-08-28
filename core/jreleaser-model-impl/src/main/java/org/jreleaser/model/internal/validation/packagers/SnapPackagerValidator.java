@@ -114,7 +114,7 @@ public final class SnapPackagerValidator {
         if (isBlank(packager.getBase())) {
             packager.setBase(parentPackager.getBase());
             if (isBlank(packager.getBase())) {
-                packager.setBase("core20");
+                packager.setBase("core24");
             }
         }
         if (isBlank(packager.getGrade())) {
@@ -144,12 +144,23 @@ public final class SnapPackagerValidator {
 
         validateArtifactPlatforms(distribution, packager, candidateArtifacts, errors);
 
+        packager.addPlatforms(parentPackager.getPlatforms());
+        packager.getPlatforms().forEach((key, arch) -> {
+            if (!arch.hasBuildOn()) {
+                errors.configuration(RB.$("validation_snap_missing_buildon", "distribution." + distribution.getName() + ".snap.architectures", key));
+            }
+        });
+
         packager.addArchitecture(parentPackager.getArchitectures());
         for (int i = 0; i < packager.getArchitectures().size(); i++) {
             SnapPackager.Architecture arch = packager.getArchitectures().get(i);
             if (!arch.hasBuildOn()) {
                 errors.configuration(RB.$("validation_snap_missing_buildon", "distribution." + distribution.getName() + ".snap.architectures", i));
             }
+        }
+
+        if (!packager.getPlatforms().isEmpty() && !packager.getArchitectures().isEmpty()) {
+            errors.configuration(RB.$("validation_snap_deprecated_architectures", "distribution." + distribution.getName()));
         }
 
         if (errors.hasErrors()) packager.disable();

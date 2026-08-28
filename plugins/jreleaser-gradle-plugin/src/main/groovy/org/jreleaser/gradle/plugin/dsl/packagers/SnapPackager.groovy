@@ -55,6 +55,8 @@ interface SnapPackager extends RepositoryPackager {
 
     NamedDomainObjectContainer<Slot> getSlots()
 
+    NamedDomainObjectContainer<Architecture> getPlatforms()
+
     void localPlug(String plug)
 
     void localSlot(String slot)
@@ -74,6 +76,8 @@ interface SnapPackager extends RepositoryPackager {
     void plugs(Action<? super NamedDomainObjectContainer<Plug>> action)
 
     void slots(Action<? super NamedDomainObjectContainer<Slot>> action)
+
+    void platform(Action<? super NamedDomainObjectContainer<Architecture>> action)
 
     @CompileStatic
     interface Slot {

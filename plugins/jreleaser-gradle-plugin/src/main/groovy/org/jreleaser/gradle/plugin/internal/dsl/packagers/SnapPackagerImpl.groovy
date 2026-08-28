@@ -17,7 +17,6 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.packagers
 
-
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
@@ -38,7 +37,6 @@ import org.jreleaser.gradle.plugin.internal.dsl.common.CommitAuthorImpl
 import javax.inject.Inject
 
 import static org.jreleaser.util.StringUtils.isNotBlank
-
 /**
  *
  * @author Andres Almiray
@@ -58,6 +56,7 @@ class SnapPackagerImpl extends AbstractRepositoryPackager implements SnapPackage
     final SetProperty<String> localSlots
     final NamedDomainObjectContainer<Plug> plugs
     final NamedDomainObjectContainer<Slot> slots
+    final NamedDomainObjectContainer<Architecture> platforms
 
     private final NamedDomainObjectContainer<ArchitectureImpl> architectures
 
@@ -90,6 +89,15 @@ class SnapPackagerImpl extends AbstractRepositoryPackager implements SnapPackage
                 SlotImpl slot = objects.newInstance(SlotImpl, objects)
                 slot.name = name
                 return slot
+            }
+        })
+
+        platforms = objects.domainObjectContainer(Architecture, new NamedDomainObjectFactory<Architecture>() {
+            @Override
+            Architecture create(String name) {
+                ArchitectureImpl arch = objects.newInstance(ArchitectureImpl, objects)
+                arch.name = name
+                return arch
             }
         })
 
@@ -175,6 +183,11 @@ class SnapPackagerImpl extends AbstractRepositoryPackager implements SnapPackage
         action.execute(slots)
     }
 
+    @Override
+    void platform(Action<? super NamedDomainObjectContainer<Architecture>> action) {
+        action.execute(platforms)
+    }
+
     org.jreleaser.model.internal.packagers.SnapPackager toModel() {
         org.jreleaser.model.internal.packagers.SnapPackager packager = new org.jreleaser.model.internal.packagers.SnapPackager()
         fillPackagerProperties(packager)
@@ -201,6 +214,13 @@ class SnapPackagerImpl extends AbstractRepositoryPackager implements SnapPackage
         for (ArchitectureImpl architecture : architectures) {
             packager.addArchitecture(architecture.toModel())
         }
+
+        Map<String, org.jreleaser.model.internal.packagers.SnapPackager.Architecture> m = [:]
+        platforms.each { v ->
+            ArchitectureImpl arch = (ArchitectureImpl) v
+            m[arch.name] = arch.toModel()
+        }
+        packager.platforms = m
         packager
     }
 

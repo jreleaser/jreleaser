@@ -9,6 +9,14 @@ confinement: {{snapConfinement}}
 base: {{snapBase}}
 type: app
 
+{{#snapHasPlatforms}}
+platforms:
+  {{#snapPlatforms}}
+  {{key}}:
+    build-on: {{value.buildOn}}
+    {{#value.hasRunOn}}build-for: {{value.runOn}}{{/value.hasRunOn}}
+  {{/snapPlatforms}}
+{{/snapHasPlatforms}}
 {{#snapHasArchitectures}}
 architectures:
   {{#snapArchitectures}}

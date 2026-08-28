@@ -49,6 +49,8 @@ public interface SnapPackager extends RepositoryPackager {
 
     List<? extends Architecture> getArchitectures();
 
+    Map<String, ? extends Architecture> getPlatforms();
+
     String getExportedLogin();
 
     boolean isRemoteBuild();
