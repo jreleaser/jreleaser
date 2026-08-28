@@ -326,20 +326,32 @@ class SnapPackagerImpl extends AbstractRepositoryPackager implements SnapPackage
     static class ArchitectureImpl implements Architecture {
         String name
         final ListProperty<String> buildOn
-        final ListProperty<String> runOn
+        final ListProperty<String> buildFor
         final Property<Boolean> ignoreError
 
         @Inject
         ArchitectureImpl(ObjectFactory objects) {
             buildOn = objects.listProperty(String).convention(Providers.<List<String>> notDefined())
-            runOn = objects.listProperty(String).convention(Providers.<List<String>> notDefined())
+            buildFor = objects.listProperty(String).convention(Providers.<List<String>> notDefined())
             ignoreError = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         }
 
+        @Deprecated
+        @Override
+        ListProperty<String> getRunOn() {
+            buildFor
+        }
+
+        @Deprecated
         @Override
         void runOn(String str) {
+            buildFor(str)
+        }
+
+        @Override
+        void buildFor(String str) {
             if (isNotBlank(str)) {
-                runOn.add(str.trim())
+                buildFor.add(str.trim())
             }
         }
 
@@ -353,7 +365,7 @@ class SnapPackagerImpl extends AbstractRepositoryPackager implements SnapPackage
         org.jreleaser.model.internal.packagers.SnapPackager.Architecture toModel() {
             org.jreleaser.model.internal.packagers.SnapPackager.Architecture architecture = new org.jreleaser.model.internal.packagers.SnapPackager.Architecture()
             architecture.buildOn = (List<String>) buildOn.getOrElse([])
-            architecture.runOn = (List<String>) runOn.getOrElse([])
+            architecture.buildFor = (List<String>) buildFor.getOrElse([])
             architecture.ignoreError = ignoreError.getOrElse(false)
             architecture
         }

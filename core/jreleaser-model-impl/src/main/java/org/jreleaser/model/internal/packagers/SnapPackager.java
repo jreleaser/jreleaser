@@ -169,7 +169,7 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
         public Map<String, ? extends org.jreleaser.model.api.packagers.SnapPackager.Architecture> getPlatforms() {
             if (null == platforms) {
                 platforms = SnapPackager.this.platforms.entrySet().stream()
-                    .collect(Collectors.toMap(e-> e.getKey(), v -> v.getValue().asImmutable()));
+                    .collect(Collectors.toMap(e -> e.getKey(), v -> v.getValue().asImmutable()));
             }
             return platforms;
         }
@@ -781,15 +781,15 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
     }
 
     public static final class Architecture extends AbstractModelObject<Architecture> implements Domain {
-        private static final long serialVersionUID = 1878739013053454056L;
+        private static final long serialVersionUID = -3043046606017192679L;
 
         private final List<String> buildOn = new ArrayList<>();
-        private final List<String> runOn = new ArrayList<>();
+        private final List<String> buildFor = new ArrayList<>();
         private Boolean ignoreError;
 
         @JsonIgnore
         private final org.jreleaser.model.api.packagers.SnapPackager.Architecture immutable = new org.jreleaser.model.api.packagers.SnapPackager.Architecture() {
-            private static final long serialVersionUID = 7707062117835809382L;
+            private static final long serialVersionUID = 465014428689825466L;
 
             @Override
             public List<String> getBuildOn() {
@@ -797,8 +797,13 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
             }
 
             @Override
+            public List<String> getBuildFor() {
+                return unmodifiableList(buildFor);
+            }
+
+            @Override
             public List<String> getRunOn() {
-                return unmodifiableList(runOn);
+                return unmodifiableList(buildFor);
             }
 
             @Override
@@ -818,9 +823,8 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
 
         @Override
         public void merge(Architecture source) {
-            this.ignoreError = merge(this.ignoreError, source.ignoreError);
             setBuildOn(merge(this.buildOn, source.buildOn));
-            setRunOn(merge(this.runOn, source.runOn));
+            setBuildFor(merge(this.buildFor, source.buildFor));
         }
 
         public List<String> getBuildOn() {
@@ -832,31 +836,48 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
             this.buildOn.addAll(buildOn);
         }
 
+        public List<String> getBuildFor() {
+            return buildFor;
+        }
+
+        public void setBuildFor(List<String> buildFor) {
+            this.buildFor.clear();
+            this.buildFor.addAll(buildFor);
+        }
+
         public List<String> getRunOn() {
-            return runOn;
+            return getBuildFor();
         }
 
         public void setRunOn(List<String> runOn) {
-            this.runOn.clear();
-            this.runOn.addAll(runOn);
+            nag("snap.runOn is deprecated since 1.26.0 and will be removed in 2.0.0. Use snap.buildFor instead");
+            setBuildFor(runOn);
         }
 
         public boolean hasBuildOn() {
             return !buildOn.isEmpty();
         }
 
-        public boolean hasRunOn() {
-            return !runOn.isEmpty();
+        public boolean hasBuildFor() {
+            return !buildFor.isEmpty();
         }
 
+        @Deprecated
+        public boolean hasRunOn() {
+            return hasBuildFor();
+        }
+
+        @Deprecated
         public boolean isIgnoreError() {
             return null != ignoreError && ignoreError;
         }
 
+        @Deprecated
         public void setIgnoreError(Boolean ignoreError) {
             this.ignoreError = ignoreError;
         }
 
+        @Deprecated
         public boolean isIgnoreErrorSet() {
             return null != ignoreError;
         }
@@ -865,8 +886,7 @@ public final class SnapPackager extends AbstractRepositoryPackager<org.jreleaser
         public Map<String, Object> asMap(boolean full) {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("buildOn", buildOn);
-            map.put("runOn", runOn);
-            map.put("ignoreError", isIgnoreError());
+            map.put("buildFor", buildFor);
             return map;
         }
     }

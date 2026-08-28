@@ -83,6 +83,8 @@ public interface SnapPackager extends RepositoryPackager {
     interface Architecture extends Domain {
         List<String> getBuildOn();
 
+        List<String> getBuildFor();
+
         List<String> getRunOn();
 
         boolean isIgnoreError();

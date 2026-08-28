@@ -362,7 +362,9 @@ public interface Constants {
     String KEY_SNAP_LOCAL_PLUGS = "snapLocalPlugs";
     String KEY_SNAP_HAS_LOCAL_SLOTS = "snapHasLocalSlots";
     String KEY_SNAP_LOCAL_SLOTS = "snapLocalSlots";
+    @Deprecated
     String KEY_SNAP_HAS_ARCHITECTURES = "snapHasArchitectures";
+    @Deprecated
     String KEY_SNAP_ARCHITECTURES = "snapArchitectures";
     String KEY_SNAP_HAS_PLATFORMS = "snapHasPlatforms";
     String KEY_SNAP_PLATFORMS = "snapPlatforms";

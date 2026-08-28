@@ -14,15 +14,14 @@ platforms:
   {{#snapPlatforms}}
   {{key}}:
     build-on: {{value.buildOn}}
-    {{#value.hasRunOn}}build-for: {{value.runOn}}{{/value.hasRunOn}}
+    {{#value.hasBuildFor}}build-for: {{value.buildFor}}{{/value.hasBuildFor}}
   {{/snapPlatforms}}
 {{/snapHasPlatforms}}
 {{#snapHasArchitectures}}
 architectures:
   {{#snapArchitectures}}
   - build-on: {{buildOn}}
-    {{#hasRunOn}}run-on: {{runOn}}{{/hasRunOn}}
-    {{#ignoreError}}build-error: ignore{{/ignoreError}}
+    {{#hasBuildFor}}build-for: {{buildFor}}{{/hasBuildFor}}
   {{/snapArchitectures}}
 {{/snapHasArchitectures}}
 apps:

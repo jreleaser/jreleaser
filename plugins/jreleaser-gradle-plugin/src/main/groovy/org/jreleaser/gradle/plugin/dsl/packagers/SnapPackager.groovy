@@ -115,10 +115,17 @@ interface SnapPackager extends RepositoryPackager {
 
         void buildOn(String str)
 
+        ListProperty<String> getBuildFor()
+
+        void buildFor(String str)
+
+        @Deprecated
         ListProperty<String> getRunOn()
 
+        @Deprecated
         void runOn(String str)
 
+        @Deprecated
         Property<String> getIgnoreError()
     }
 }
