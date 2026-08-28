@@ -18,7 +18,6 @@
 package org.jreleaser.gradle.plugin.internal
 
 import groovy.transform.CompileStatic
-import org.gradle.api.Project
 import org.jreleaser.model.internal.JReleaserModelPrinter
 import org.kordamp.gradle.util.AnsiConsole
 
@@ -32,13 +31,13 @@ import static org.jreleaser.util.IoUtils.newPrintWriter
 class GradleJReleaserModelPrinter extends JReleaserModelPrinter {
     private final AnsiConsole console
 
-    GradleJReleaserModelPrinter(Project project) {
-        this(project, newPrintWriter(System.out))
+    GradleJReleaserModelPrinter(AnsiConsole console) {
+        this(console, newPrintWriter(System.out))
     }
 
-    GradleJReleaserModelPrinter(Project project, PrintWriter out) {
+    GradleJReleaserModelPrinter(AnsiConsole console, PrintWriter out) {
         super(out)
-        this.console = new AnsiConsole(project, 'JRELEASER')
+        this.console = console
     }
 
     @Override
