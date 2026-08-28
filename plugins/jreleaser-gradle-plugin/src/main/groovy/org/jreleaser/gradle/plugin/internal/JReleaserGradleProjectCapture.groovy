@@ -21,8 +21,6 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.plugins.JavaApplication
 import org.gradle.api.provider.Provider
-import org.jreleaser.logging.JReleaserLogger
-
 /**
  * Captures relevant information from a Gradle Project
  * to be used in JReleaser plugin configuration and tasks.
@@ -70,30 +68,30 @@ class JReleaserGradleProjectCapture implements Serializable {
         'testResultsDirName'
     ]
 
-    static JReleaserGradleProjectCapture of(Project gradleProject, JReleaserLogger logger) {
-        return new JReleaserGradleProjectCapture(gradleProject, logger)
+    static JReleaserGradleProjectCapture of(Project gradleProject) {
+        return new JReleaserGradleProjectCapture(gradleProject)
     }
 
-    private JReleaserGradleProjectCapture(Project gradleProject, JReleaserLogger logger) {
+    private JReleaserGradleProjectCapture(Project gradleProject) {
         this.name = gradleProject.name
         this.group = gradleProject.group?.toString()
         this.version = gradleProject.version?.toString()
         this.description = gradleProject.description
-        this.properties = captureGradleProjectSerializableProperties(gradleProject, logger)
+        this.properties = captureGradleProjectSerializableProperties(gradleProject)
         this.multiProject = !gradleProject.rootProject.childProjects.isEmpty()
         JavaApplication javaApplication = (JavaApplication) gradleProject.extensions.findByType(JavaApplication)
         this.javaApplicationMainClass = javaApplication?.mainClass?.orNull
         this.javaApplicationMainModule = javaApplication?.mainModule?.orNull
     }
 
-    private static Map <String, Serializable> captureGradleProjectSerializableProperties(
-        Project gradleProject, JReleaserLogger logger) {
+    private static Map<String, Serializable> captureGradleProjectSerializableProperties(
+        Project gradleProject) {
         Set<String> propertyKeys = collectGradleProjectPropertyKeys(gradleProject)
-        Map <String, Serializable> projectProperties = [:]
+        Map<String, Serializable> projectProperties = [:]
         propertyKeys.each { key ->
             // Avoid useless Gradle deprecation log
             if (GRADLE_DEPRECATED_PROJECT_PROPS.contains(key)) {
-                logger.debug("GradleProjectCapture: IGNORE deprecated Gradle project property '${key}'.")
+                gradleProject.logger.debug("GradleProjectCapture: IGNORE deprecated Gradle project property '${key}'.")
                 return // continue
             }
             Object value = gradleProject.findProperty(key)
@@ -105,12 +103,12 @@ class JReleaserGradleProjectCapture implements Serializable {
                 value = ((File) value).absolutePath
             }
             if (value instanceof CharSequence || value instanceof Number || value instanceof Boolean) {
-                logger.debug("GradleProjectCapture: CAPTURE project property '${key}'.")
+                gradleProject.logger.debug("GradleProjectCapture: CAPTURE project property '${key}'.")
                 projectProperties.put(key, value instanceof Serializable ? (Serializable) value : value.toString())
             } else if (value) {
-                logger.debug("GradleProjectCapture: SKIP complex project property '${key}' of type '${value.getClass().name}'.")
+                gradleProject.logger.debug("GradleProjectCapture: SKIP complex project property '${key}' of type '${value.getClass().name}'.")
             } else {
-                logger.debug("GradleProjectCapture: SKIP null or empty project property '${key}'.")
+                gradleProject.logger.debug("GradleProjectCapture: SKIP null or empty project property '${key}'.")
             }
         }
         return projectProperties
