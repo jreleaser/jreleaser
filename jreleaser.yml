@@ -346,9 +346,10 @@ distributions:
       active: ALWAYS
       continueOnError: true
       remoteBuild: true
-      base: core18
-      architectures:
-        - buildOn: [ amd64, arm64 ]
+      base: core24
+      platforms:
+        amd64:
+          buildOn: [ amd64, arm64 ]
       plugs:
         - name: dot-config-files
           attributes:
