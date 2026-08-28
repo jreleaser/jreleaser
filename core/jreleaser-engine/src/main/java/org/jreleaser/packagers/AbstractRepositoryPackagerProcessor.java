@@ -157,15 +157,17 @@ public abstract class AbstractRepositoryPackagerProcessor<T extends RepositoryPa
                     .call();
             }
 
-            String tagName = tap.getResolvedTagName(context, props);
-            context.getLogger().debug(RB.$("git.releaser.repository.tag"), tagName, tagName);
-            git.tag()
-                .setSigned(signingEnabled)
-                .setSigningKey(signingKey)
-                .setGpgSigner(signer)
-                .setName(tagName)
-                .setForceUpdate(true)
-                .call();
+            if (tap.isTagRepository()) {
+                String tagName = tap.getResolvedTagName(context, props);
+                context.getLogger().debug(RB.$("git.releaser.repository.tag"), tagName, tagName);
+                git.tag()
+                    .setSigned(signingEnabled)
+                    .setSigningKey(signingKey)
+                    .setGpgSigner(signer)
+                    .setName(tagName)
+                    .setForceUpdate(true)
+                    .call();
+            }
 
             context.getLogger().info(RB.$("repository.push"), target);
             if (!context.isDryrun()) {

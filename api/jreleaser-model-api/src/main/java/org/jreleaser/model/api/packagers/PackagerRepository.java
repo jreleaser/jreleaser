@@ -44,4 +44,6 @@ public interface PackagerRepository extends Domain, OwnerAware, Activatable, Ext
     String getToken();
 
     String getCommitMessage();
+
+    Boolean isTagRepository();
 }

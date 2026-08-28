@@ -34,7 +34,7 @@ import static org.jreleaser.util.StringUtils.isNotBlank;
  * @since 0.1.0
  */
 public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> extends AbstractActivatable<S> implements RepositoryTap {
-    private static final long serialVersionUID = 8737648708964053648L;
+    private static final long serialVersionUID = -355123719738032247L;
 
     private final Map<String, Object> extraProperties = new LinkedHashMap<>();
     @JsonIgnore
@@ -49,6 +49,7 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
     private String username;
     private String token;
     private String commitMessage;
+    protected Boolean tagRepository;
 
     protected AbstractRepositoryTap(String basename, String tapName) {
         this.basename = basename;
@@ -74,6 +75,7 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
         this.owner = merge(this.owner, source.getOwner());
         this.name = merge(this.name, source.getName());
         this.tagName = merge(this.tagName, source.getTagName());
+        this.tagRepository = merge(this.tagRepository, source.tagRepository);
         this.branch = merge(this.branch, source.getBranch());
         this.branchPush = merge(this.branchPush, source.getBranchPush());
         this.username = merge(this.username, source.getUsername());
@@ -133,6 +135,21 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
     @Override
     public void setTagName(String tagName) {
         this.tagName = tagName;
+    }
+
+    @Override
+    public boolean isTagRepositorySet() {
+        return null != tagRepository;
+    }
+
+    @Override
+    public boolean isTagRepository() {
+        return null != tagRepository && tagRepository;
+    }
+
+    @Override
+    public void setTagRepository(Boolean tagRepository) {
+        this.tagRepository = tagRepository;
     }
 
     @Override
@@ -209,6 +226,7 @@ public abstract class AbstractRepositoryTap<S extends AbstractRepositoryTap<S>> 
         map.put("owner", owner);
         map.put("name", getResolvedName());
         map.put("tagName", tagName);
+        map.put("tagRepository", isTagRepository());
         map.put("branch", branch);
         map.put("branchPush", branchPush);
         map.put("username", username);

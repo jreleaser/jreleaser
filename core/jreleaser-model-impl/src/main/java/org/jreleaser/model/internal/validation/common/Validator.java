@@ -239,6 +239,13 @@ public final class Validator {
         if (isBlank(repository.getTagName()) && isNotBlank(parentRepository.getTagName())) {
             repository.setTagName(parentRepository.getTagName());
         }
+        if (!repository.isTagRepositorySet()) {
+            if (parentRepository.isTagRepositorySet()) {
+                repository.setTagRepository(parentRepository.isTagRepository());
+            } else {
+                repository.setTagRepository(true);
+            }
+        }
         if (isBlank(repository.getName()) && isNotBlank(parentRepository.getName())) {
             repository.setName(parentRepository.getName());
         }

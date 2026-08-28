@@ -43,6 +43,12 @@ public interface RepositoryTap extends Domain, OwnerAware, Activatable, ExtraPro
 
     void setTagName(String tagName);
 
+    void setTagRepository(Boolean tagRepository);
+
+    boolean isTagRepository();
+
+    boolean isTagRepositorySet();
+
     String getBranch();
 
     void setBranch(String branch);

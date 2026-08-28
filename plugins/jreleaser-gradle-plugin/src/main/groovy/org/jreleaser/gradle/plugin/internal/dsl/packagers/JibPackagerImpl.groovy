@@ -122,6 +122,7 @@ class JibPackagerImpl extends AbstractJibConfiguration implements JibPackager {
         final Property<String> repoOwner
         final Property<String> name
         final Property<String> tagName
+        final Property<Boolean> tagRepository
         final Property<String> branch
         final Property<String> branchPush
         final Property<String> username
@@ -136,6 +137,7 @@ class JibPackagerImpl extends AbstractJibConfiguration implements JibPackager {
             repoOwner = objects.property(String).convention(Providers.<String> notDefined())
             name = objects.property(String).convention(Providers.<String> notDefined())
             tagName = objects.property(String).convention(Providers.<String> notDefined())
+            tagRepository = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
             branch = objects.property(String).convention(Providers.<String> notDefined())
             branchPush = objects.property(String).convention(Providers.<String> notDefined())
             username = objects.property(String).convention(Providers.<String> notDefined())
@@ -158,6 +160,7 @@ class JibPackagerImpl extends AbstractJibConfiguration implements JibPackager {
                 repoOwner.present ||
                 name.present ||
                 tagName.present ||
+                tagRepository.present ||
                 branch.present ||
                 branchPush.present ||
                 username.present ||
@@ -173,6 +176,7 @@ class JibPackagerImpl extends AbstractJibConfiguration implements JibPackager {
             if (repoOwner.present) tap.owner = repoOwner.get()
             if (name.present) tap.name = name.get()
             if (tagName.present) tap.tagName = tagName.get()
+            if (tagRepository.present) tap.tagRepository = tagRepository.get()
             if (branch.present) tap.branch = branch.get()
             if (branchPush.present) tap.branchPush = branchPush.get()
             if (username.present) tap.name = username.get()

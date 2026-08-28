@@ -39,6 +39,8 @@ interface Tap extends Activatable, ExtraProperties {
 
     Property<String> getTagName()
 
+    Property<Boolean> getTagRepository()
+
     Property<String> getBranch()
 
     Property<String> getBranchPush()

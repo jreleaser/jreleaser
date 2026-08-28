@@ -55,6 +55,7 @@ class TapImpl implements Tap {
     final Property<String> repoOwner
     final Property<String> name
     final Property<String> tagName
+    final Property<Boolean> tagRepository
     final Property<String> branch
     final Property<String> branchPush
     final Property<String> username
@@ -68,6 +69,7 @@ class TapImpl implements Tap {
         repoOwner = objects.property(String).convention(Providers.<String> notDefined())
         name = objects.property(String).convention(Providers.<String> notDefined())
         tagName = objects.property(String).convention(Providers.<String> notDefined())
+        tagRepository = objects.property(Boolean).convention(Providers.<Boolean> notDefined())
         branch = objects.property(String).convention(Providers.<String> notDefined())
         branchPush = objects.property(String).convention(Providers.<String> notDefined())
         username = objects.property(String).convention(Providers.<String> notDefined())
@@ -89,6 +91,7 @@ class TapImpl implements Tap {
             repoOwner.present ||
             name.present ||
             tagName.present ||
+            tagRepository.present ||
             branch.present ||
             branchPush.present ||
             username.present ||
@@ -102,6 +105,7 @@ class TapImpl implements Tap {
         if (repoOwner.present) into.owner = repoOwner.get()
         if (name.present) into.name = name.get()
         if (tagName.present) into.tagName = tagName.get()
+        if (tagRepository.present) into.tagRepository = tagRepository.get()
         if (branch.present) into.branch = branch.get()
         if (branchPush.present) into.branchPush = branchPush.get()
         if (username.present) into.username = username.get()

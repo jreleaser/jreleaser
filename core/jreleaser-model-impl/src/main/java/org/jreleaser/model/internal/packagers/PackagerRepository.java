@@ -33,7 +33,7 @@ public class PackagerRepository extends AbstractRepositoryTap<PackagerRepository
 
     @JsonIgnore
     private final org.jreleaser.model.api.packagers.PackagerRepository immutable = new org.jreleaser.model.api.packagers.PackagerRepository() {
-        private static final long serialVersionUID = -7091986811979877948L;
+        private static final long serialVersionUID = -4579159681683902102L;
 
         @Override
         public String getBasename() {
@@ -53,6 +53,11 @@ public class PackagerRepository extends AbstractRepositoryTap<PackagerRepository
         @Override
         public String getTagName() {
             return PackagerRepository.this.getTagName();
+        }
+
+        @Override
+        public Boolean isTagRepository() {
+            return PackagerRepository.this.isTagRepository();
         }
 
         @Override

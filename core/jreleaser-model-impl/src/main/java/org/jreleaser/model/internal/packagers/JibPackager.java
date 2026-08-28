@@ -499,7 +499,7 @@ public final class JibPackager extends AbstractJibConfiguration<JibPackager> imp
 
         @JsonIgnore
         private final org.jreleaser.model.api.packagers.JibPackager.JibRepository immutable = new org.jreleaser.model.api.packagers.JibPackager.JibRepository() {
-            private static final long serialVersionUID = -8630728744390799997L;
+            private static final long serialVersionUID = 596301085865912064L;
 
             @Override
             public boolean isVersionedSubfolders() {
@@ -524,6 +524,11 @@ public final class JibPackager extends AbstractJibConfiguration<JibPackager> imp
             @Override
             public String getTagName() {
                 return JibRepository.this.getTagName();
+            }
+
+            @Override
+            public Boolean isTagRepository() {
+                return JibRepository.this.isTagRepository();
             }
 
             @Override
