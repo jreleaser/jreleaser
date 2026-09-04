@@ -108,6 +108,24 @@ class AbstractMavenDeployerTest {
               <profiles>
                 <profile>
                   <packaging>pom</packaging>
+                </profile>
+              </profiles>
+            </project>
+            """);
+
+        var result = AbstractMavenDeployer.DeployableCollector.parsePom(path);
+
+        assertThat(result.packaging).isEqualTo("jar");
+    }
+
+    // A relocation declared in a profile is not detected. That needs a fully resolved model.
+    @Test
+    void profileScopedRelocationIsNotDetected() throws IOException {
+        var path = pom("""
+            <project xmlns="http://maven.apache.org/POM/4.0.0">
+              <artifactId>old</artifactId>
+              <profiles>
+                <profile>
                   <distributionManagement>
                     <relocation>
                       <artifactId>new</artifactId>
@@ -120,7 +138,6 @@ class AbstractMavenDeployerTest {
 
         var result = AbstractMavenDeployer.DeployableCollector.parsePom(path);
 
-        assertThat(result.packaging).isEqualTo("jar");
         assertThat(result.relocated).isFalse();
     }
 
