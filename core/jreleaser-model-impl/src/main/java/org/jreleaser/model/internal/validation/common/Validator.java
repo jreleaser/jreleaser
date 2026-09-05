@@ -40,6 +40,7 @@ import org.jreleaser.util.Errors;
 import java.util.Collection;
 import java.util.List;
 
+import static java.util.Collections.singletonList;
 import static org.jreleaser.model.internal.validation.common.ExtraPropertiesValidator.mergeExtraProperties;
 import static org.jreleaser.util.CollectionUtils.listOf;
 import static org.jreleaser.util.Env.check;
@@ -70,113 +71,73 @@ public final class Validator {
     }
 
     public static String checkProperty(JReleaserContext context, String key, String property, String value, Errors errors) {
-        if (isNotBlank(value)) return value;
-        Environment environment = context.getModel().getEnvironment();
-        String dsl = context.getConfigurer().toString();
-        String configFilePath = environment.getPropertiesFile().toAbsolutePath().normalize().toString();
-        return check(key, environment.resolve(key), property, dsl, configFilePath, errors);
+        return checkProperty(context, key, property, value, errors, false);
     }
 
     public static String checkProperty(JReleaserContext context, String key, String property, String value, Errors errors, boolean dryrun) {
-        if (isNotBlank(value)) return value;
         Environment environment = context.getModel().getEnvironment();
-        String dsl = context.getConfigurer().toString();
-        String configFilePath = environment.getPropertiesFile().toAbsolutePath().normalize().toString();
-        return check(key, environment.resolve(key), property, dsl, configFilePath, dryrun ? new Errors() : errors);
+        String resolved = environment.resolve(key, value);
+        if (isNotBlank(resolved)) return resolved;
+        return check(key, resolved, property, context.getConfigurer().toString(),
+            configFilePath(environment), dryrun ? new Errors() : errors);
     }
 
     public static Integer checkProperty(JReleaserContext context, String key, String property, Integer value, Errors errors, boolean dryrun) {
-        if (null != value) return value;
-        Environment environment = context.getModel().getEnvironment();
-        String dsl = context.getConfigurer().toString();
-        String configFilePath = environment.getPropertiesFile().toAbsolutePath().normalize().toString();
-        String val = check(key, environment.resolve(key), property, dsl, configFilePath, dryrun ? new Errors() : errors);
-        return isNotBlank(val) ? Integer.parseInt(val) : null;
+        String resolved = checkProperty(context, key, property, toString(value), errors, dryrun);
+        return isNotBlank(resolved) ? Integer.parseInt(resolved) : null;
     }
 
     public static String checkProperty(JReleaserContext context, String key, String property, String value, String defaultValue) {
-        if (isNotBlank(value)) return value;
-        Environment environment = context.getModel().getEnvironment();
-        String dsl = context.getConfigurer().toString();
-        String configFilePath = environment.getPropertiesFile().toAbsolutePath().normalize().toString();
-        Errors errors = new Errors();
-        String result = check(key, environment.resolve(key), property, dsl, configFilePath, errors);
-        return !errors.hasErrors() ? result : defaultValue;
+        return context.getModel().getEnvironment().resolveOrDefault(key, value, defaultValue);
     }
 
     public static boolean checkProperty(JReleaserContext context, String key, String property, Boolean value, boolean defaultValue) {
-        if (null != value) return value;
-        Environment environment = context.getModel().getEnvironment();
-        String dsl = context.getConfigurer().toString();
-        String configFilePath = environment.getPropertiesFile().toAbsolutePath().normalize().toString();
-        Errors errors = new Errors();
-        String result = check(key, environment.resolve(key), property, dsl, configFilePath, errors);
-        return !errors.hasErrors() ? Boolean.parseBoolean(result) : defaultValue;
+        return Boolean.parseBoolean(checkProperty(context, key, property, toString(value), String.valueOf(defaultValue)));
     }
 
     public static <T extends Enum<T>> String checkProperty(JReleaserContext context, String key, String property, T value, T defaultValue) {
-        if (null != value) return value.name();
-        Environment environment = context.getModel().getEnvironment();
-        String dsl = context.getConfigurer().toString();
-        String configFilePath = environment.getPropertiesFile().toAbsolutePath().normalize().toString();
-        Errors errors = new Errors();
-        String result = check(key, environment.resolve(key), property, dsl, configFilePath, errors);
-        return !errors.hasErrors() ? result : (null != defaultValue ? defaultValue.name() : null);
+        return checkProperty(context, key, property, name(value), name(defaultValue));
     }
 
     public static String checkProperty(JReleaserContext context, Collection<String> keys, String property, String value, Errors errors) {
-        if (isNotBlank(value)) return value;
-        Environment environment = context.getModel().getEnvironment();
-        String dsl = context.getConfigurer().toString();
-        String configFilePath = environment.getPropertiesFile().toAbsolutePath().normalize().toString();
-        return check(keys, environment.getVars(), property, dsl, configFilePath, errors);
+        return checkProperty(context, keys, property, value, errors, false);
     }
 
     public static String checkProperty(JReleaserContext context, Collection<String> keys, String property, String value, Errors errors, boolean dryrun) {
-        if (isNotBlank(value)) return value;
         Environment environment = context.getModel().getEnvironment();
-        String dsl = context.getConfigurer().toString();
-        String configFilePath = environment.getPropertiesFile().toAbsolutePath().normalize().toString();
-        return check(keys, environment.getVars(), property, dsl, configFilePath, dryrun ? new Errors() : errors);
+        String resolved = environment.resolve(keys, value);
+        if (isNotBlank(resolved)) return resolved;
+        return check(keys, resolved, property, context.getConfigurer().toString(),
+            configFilePath(environment), dryrun ? new Errors() : errors);
     }
 
     public static Integer checkProperty(JReleaserContext context, Collection<String> keys, String property, Integer value, Errors errors, boolean dryrun) {
-        if (null != value) return value;
-        Environment environment = context.getModel().getEnvironment();
-        String dsl = context.getConfigurer().toString();
-        String configFilePath = environment.getPropertiesFile().toAbsolutePath().normalize().toString();
-        String val = check(keys, environment.getVars(), property, dsl, configFilePath, dryrun ? new Errors() : errors);
-        return isNotBlank(val) ? Integer.parseInt(val) : null;
+        String resolved = checkProperty(context, keys, property, toString(value), errors, dryrun);
+        return isNotBlank(resolved) ? Integer.parseInt(resolved) : null;
     }
 
     public static String checkProperty(JReleaserContext context, Collection<String> keys, String property, String value, String defaultValue) {
-        if (isNotBlank(value)) return value;
-        Environment environment = context.getModel().getEnvironment();
-        String dsl = context.getConfigurer().toString();
-        String configFilePath = environment.getPropertiesFile().toAbsolutePath().normalize().toString();
-        Errors errors = new Errors();
-        String result = check(keys, environment.getVars(), property, dsl, configFilePath, errors);
-        return !errors.hasErrors() ? result : defaultValue;
+        return context.getModel().getEnvironment().resolveOrDefault(keys, value, defaultValue);
     }
 
     public static boolean checkProperty(JReleaserContext context, Collection<String> keys, String property, Boolean value, boolean defaultValue) {
-        if (null != value) return value;
-        Environment environment = context.getModel().getEnvironment();
-        String dsl = context.getConfigurer().toString();
-        String configFilePath = environment.getPropertiesFile().toAbsolutePath().normalize().toString();
-        Errors errors = new Errors();
-        String result = check(keys, environment.getVars(), property, dsl, configFilePath, errors);
-        return !errors.hasErrors() ? Boolean.parseBoolean(result) : defaultValue;
+        return Boolean.parseBoolean(checkProperty(context, keys, property, toString(value), String.valueOf(defaultValue)));
     }
 
     public static <T extends Enum<T>> String checkProperty(JReleaserContext context, Collection<String> keys, String property, T value, T defaultValue) {
-        if (null != value) return value.name();
-        Environment environment = context.getModel().getEnvironment();
-        String dsl = context.getConfigurer().toString();
-        String configFilePath = environment.getPropertiesFile().toAbsolutePath().normalize().toString();
-        Errors errors = new Errors();
-        String result = check(keys, environment.getVars(), property, dsl, configFilePath, errors);
-        return !errors.hasErrors() ? result : (null != defaultValue ? defaultValue.name() : null);
+        return checkProperty(context, keys, property, name(value), name(defaultValue));
+    }
+
+    private static String configFilePath(Environment environment) {
+        return environment.getPropertiesFile().toAbsolutePath().normalize().toString();
+    }
+
+    private static String toString(Object value) {
+        return null != value ? String.valueOf(value) : "";
+    }
+
+    private static <T extends Enum<T>> String name(T value) {
+        return null != value ? value.name() : null;
     }
 
     public static void validateOwner(OwnerAware self, OwnerAware other) {
@@ -381,36 +342,36 @@ public final class Validator {
     }
 
     public static void resolveActivatable(JReleaserContext context, Activatable activatable, String key, Activatable parentActivatable) {
-        if (!activatable.isActiveSet()) {
-            String value = context.getModel().getEnvironment().resolve(key + ".active", "");
-            // defaultValue may be blank
-            if (isNotBlank(value)) {
-                activatable.setActive(value);
-            } else {
-                activatable.setActive(parentActivatable.getActive());
-            }
+        String value = resolveActive(context, activatable, singletonList(key));
+        // defaultValue may be blank
+        if (isNotBlank(value)) {
+            activatable.setActive(value);
+        } else {
+            activatable.setActive(parentActivatable.getActive());
         }
     }
 
     public static void resolveActivatable(JReleaserContext context, Activatable activatable, String key, String defaultValue) {
-        if (!activatable.isActiveSet()) {
-            String value = context.getModel().getEnvironment().resolveOrDefault(key + ".active", "", defaultValue);
-            // defaultValue may be blank
-            if (isNotBlank(value)) activatable.setActive(value);
-        }
+        resolveActivatable(context, activatable, singletonList(key), defaultValue);
     }
 
     public static void resolveActivatable(JReleaserContext context, Activatable activatable, List<String> keys, String defaultValue) {
-        if (!activatable.isActiveSet()) {
-            String value = null;
-            for (String key : keys) {
-                value = context.getModel().getEnvironment().resolve(key + ".active", "");
-                if (isNotBlank(value)) break;
-            }
+        String value = resolveActive(context, activatable, keys);
+        // defaultValue may be blank
+        value = isNotBlank(value) ? value : defaultValue;
+        if (isNotBlank(value)) activatable.setActive(value);
+    }
 
-            // defaultValue may be blank
-            value = isNotBlank(value) ? value : defaultValue;
-            if (isNotBlank(value)) activatable.setActive(value);
+    private static String resolveActive(JReleaserContext context, Activatable activatable, List<String> keys) {
+        Environment environment = context.getModel().getEnvironment();
+        String current = null != activatable.getActive() ? activatable.getActive().name() : "";
+        if (!environment.isOverride() && isNotBlank(current)) return current;
+
+        for (String key : keys) {
+            String value = environment.resolve(key + ".active", "");
+            if (isNotBlank(value)) return value;
         }
+
+        return current;
     }
 }

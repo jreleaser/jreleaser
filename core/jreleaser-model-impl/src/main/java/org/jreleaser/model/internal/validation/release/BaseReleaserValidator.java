@@ -146,47 +146,40 @@ public final class BaseReleaserValidator {
                 service.getBranchPush(),
                 service.getBranch()));
 
-        if (!service.isOverwriteSet()) {
-            service.setOverwrite(
-                checkProperty(context,
-                    OVERWRITE,
-                    baseKey + "overwrite",
-                    null,
-                    false));
-        }
+        service.setOverwrite(
+            checkProperty(context,
+                OVERWRITE,
+                baseKey + "overwrite",
+                service.isOverwriteSet() ? service.isOverwrite() : null,
+                false));
 
         if (service.isReleaseSupported()) {
-            if (!service.getUpdate().isEnabledSet()) {
-                service.getUpdate().setEnabled(
-                    checkProperty(context,
-                        UPDATE,
-                        baseKey + "update",
-                        null,
-                        false));
-            }
-
-            if (service.getUpdate().isEnabled() && service.getUpdate().getSections().isEmpty()) {
-                service.getUpdate().getSections().add(UpdateSection.ASSETS);
-            }
-        }
-
-        if (!service.isSkipTagSet()) {
-            service.setSkipTag(
+            BaseReleaser.Update update = service.getUpdate();
+            update.setEnabled(
                 checkProperty(context,
-                    SKIP_TAG,
-                    baseKey + "skipTag",
-                    null,
+                    UPDATE,
+                    baseKey + "update",
+                    update.isEnabledSet() ? update.isEnabled() : null,
                     false));
+
+            if (update.isEnabled() && update.getSections().isEmpty()) {
+                update.getSections().add(UpdateSection.ASSETS);
+            }
         }
 
-        if (!service.isSkipReleaseSet()) {
-            service.setSkipRelease(
-                checkProperty(context,
-                    SKIP_RELEASE,
-                    baseKey + "skipRelease",
-                    null,
-                    false));
-        }
+        service.setSkipTag(
+            checkProperty(context,
+                SKIP_TAG,
+                baseKey + "skipTag",
+                service.isSkipTagSet() ? service.isSkipTag() : null,
+                false));
+
+        service.setSkipRelease(
+            checkProperty(context,
+                SKIP_RELEASE,
+                baseKey + "skipRelease",
+                service.isSkipReleaseSet() ? service.isSkipRelease() : null,
+                false));
 
         if (isBlank(service.getTagName())) {
             service.setTagName("v" + project.getVersion());

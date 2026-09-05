@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.util.stream.Collectors.toList;
 import static org.jreleaser.util.StringUtils.isBlank;
@@ -37,8 +38,18 @@ public final class Env {
     public static final String JRELEASER_ENV_PREFIX = "JRELEASER_";
     public static final String JRELEASER_SYS_PREFIX = "jreleaser.";
 
+    private static final AtomicBoolean OVERRIDE = new AtomicBoolean(false);
+
     private Env() {
         // noop
+    }
+
+    public static boolean isOverride() {
+        return OVERRIDE.get();
+    }
+
+    public static void setOverride(boolean override) {
+        OVERRIDE.set(override);
     }
 
     public static String toVar(String str) {
@@ -66,51 +77,59 @@ public final class Env {
     }
 
     public static String env(String key, String value) {
-        if (isNotBlank(value)) {
+        if (!isOverride() && isNotBlank(value)) {
             return value;
         }
-        return System.getenv(envKey(key));
+
+        String envValue = System.getenv(envKey(key));
+        return isNotBlank(envValue) ? envValue : value;
     }
 
     public static String env(Collection<String> keys, String value) {
-        if (isNotBlank(value)) {
+        if (!isOverride() && isNotBlank(value)) {
             return value;
         }
 
-        return keys.stream()
+        String envValue = keys.stream()
             .map(Env::envKey)
             .filter(key -> System.getenv().containsKey(key))
             .map(System::getenv)
             .findFirst()
             .orElse(null);
+
+        return isNotBlank(envValue) ? envValue : value;
     }
 
     public static String sys(String key, String value) {
-        if (isNotBlank(value)) {
+        if (!isOverride() && isNotBlank(value)) {
             return value;
         }
-        return System.getProperty(sysKey(key));
+
+        String sysValue = System.getProperty(sysKey(key));
+        return isNotBlank(sysValue) ? sysValue : value;
     }
 
     public static String sys(Collection<String> keys, String value) {
-        if (isNotBlank(value)) {
+        if (!isOverride() && isNotBlank(value)) {
             return value;
         }
 
-        return keys.stream()
+        String sysValue = keys.stream()
             .map(Env::sysKey)
             .filter(key -> System.getProperties().containsKey(key))
             .map(System::getProperty)
             .findFirst()
             .orElse(null);
+
+        return isNotBlank(sysValue) ? sysValue : value;
     }
 
     public static String resolve(String key, String value) {
-        return env(key, sys(key, value));
+        return isOverride() ? sys(key, env(key, value)) : env(key, sys(key, value));
     }
 
     public static String resolveOrDefault(String key, String value, String defaultValue) {
-        String result = env(key, sys(key, value));
+        String result = resolve(key, value);
         return isNotBlank(result) ? result : defaultValue;
     }
 
@@ -126,29 +145,19 @@ public final class Env {
     }
 
     public static String check(Collection<String> keys, Properties values, String property, String dsl, String configFilePath, Errors errors) {
-        List<String> sysKeys = keys.stream()
-            .map(Env::sysKey)
-            .collect(toList());
+        return check(keys, resolve(keys, values), property, dsl, configFilePath, errors);
+    }
 
-        List<String> envKeys = keys.stream()
-            .map(Env::envKey)
-            .collect(toList());
-
-        String value = sysKeys.stream()
-            .filter(System.getProperties()::containsKey)
-            .map(System::getProperty)
-            .findFirst()
-            .orElse(null);
-
+    public static String check(Collection<String> keys, String value, String property, String dsl, String configFilePath, Errors errors) {
         if (isBlank(value)) {
-            value = envKeys.stream()
-                .filter(values::containsKey)
-                .map(values::getProperty)
-                .findFirst()
-                .orElse(null);
-        }
+            List<String> sysKeys = keys.stream()
+                .map(Env::sysKey)
+                .collect(toList());
 
-        if (isBlank(value)) {
+            List<String> envKeys = keys.stream()
+                .map(Env::envKey)
+                .collect(toList());
+
             errors.configuration(RB.$("ERROR_environment_property_check2",
                 property, dsl, sysKeys, envKeys, configFilePath, envKeys));
         }

@@ -55,14 +55,12 @@ public final class CodebergReleaserValidator {
                 ""));
         service.getPrerelease().isPrerelease(context.getModel().getProject().getResolvedVersion());
 
-        if (!service.isDraftSet()) {
-            service.setDraft(
-                checkProperty(context,
-                    DRAFT,
-                    "release.codeberg.draft",
-                    null,
-                    false));
-        }
+        service.setDraft(
+            checkProperty(context,
+                DRAFT,
+                "release.codeberg.draft",
+                service.isDraftSet() ? service.isDraft() : null,
+                false));
 
         if (service.isDraft()) {
             service.getMilestone().setClose(false);

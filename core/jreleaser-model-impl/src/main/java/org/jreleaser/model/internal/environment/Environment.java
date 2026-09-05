@@ -33,6 +33,7 @@ import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -46,6 +47,7 @@ import static java.util.Collections.unmodifiableMap;
 import static org.jreleaser.model.Constants.DEFAULT_GIT_REMOTE;
 import static org.jreleaser.model.Constants.JRELEASER_USER_HOME;
 import static org.jreleaser.model.Constants.XDG_CONFIG_HOME;
+import static org.jreleaser.model.api.environment.Environment.ENVIRONMENT_OVERRIDE;
 import static org.jreleaser.util.Env.JRELEASER_ENV_PREFIX;
 import static org.jreleaser.util.Env.JRELEASER_SYS_PREFIX;
 import static org.jreleaser.util.Env.envKey;
@@ -66,6 +68,7 @@ public final class Environment extends AbstractModelObject<Environment> implemen
     @JsonIgnore
     private PropertiesSource propertiesSource;
     private String variables;
+    private Boolean override;
     @JsonIgnore
     private Properties vars;
     @JsonIgnore
@@ -86,6 +89,11 @@ public final class Environment extends AbstractModelObject<Environment> implemen
         }
 
         @Override
+        public boolean isOverride() {
+            return Environment.this.isOverride();
+        }
+
+        @Override
         public Map<String, Object> getProperties() {
             return unmodifiableMap(properties);
         }
@@ -103,28 +111,48 @@ public final class Environment extends AbstractModelObject<Environment> implemen
     @Override
     public void merge(Environment source) {
         this.variables = merge(this.variables, source.variables);
+        this.override = merge(this.override, source.override);
         setProperties(merge(this.properties, source.properties));
         setPropertiesSource(merge(this.propertiesSource, source.propertiesSource));
     }
 
-    public String resolve(String key) {
-        return env(key, Env.sys(key, ""));
+    public String resolve(String key, String value) {
+        if (isOverride()) {
+            String result = external(key);
+            return isNotBlank(result) ? result : value;
+        }
+
+        if (isNotBlank(value)) return value;
+        return external(key);
     }
 
-    public String resolve(String key, String value) {
-        return env(key, Env.sys(key, value));
+    public String resolve(Collection<String> keys, String value) {
+        if (isOverride()) {
+            String result = external(keys);
+            return isNotBlank(result) ? result : value;
+        }
+
+        if (isNotBlank(value)) return value;
+        return external(keys);
     }
 
     public String resolveOrDefault(String key, String value, String defaultValue) {
-        String result = env(key, Env.sys(key, value));
+        String result = resolve(key, value);
         return isNotBlank(result) ? result : defaultValue;
     }
 
-    private String env(String key, String value) {
-        if (isNotBlank(value)) {
-            return value;
-        }
-        return getVariable(envKey(key));
+    public String resolveOrDefault(Collection<String> keys, String value, String defaultValue) {
+        String result = resolve(keys, value);
+        return isNotBlank(result) ? result : defaultValue;
+    }
+
+    private String external(String key) {
+        String result = System.getProperty(Env.sysKey(key));
+        return isNotBlank(result) ? result : getVariable(key);
+    }
+
+    private String external(Collection<String> keys) {
+        return null != vars ? Env.resolve(keys, vars) : null;
     }
 
     public Properties getVars() {
@@ -132,12 +160,21 @@ public final class Environment extends AbstractModelObject<Environment> implemen
     }
 
     public String getVariable(String key) {
-        return vars.getProperty(Env.envKey(key));
+        return null != vars ? vars.getProperty(Env.envKey(key)) : null;
     }
 
     public boolean isSet() {
         return isNotBlank(variables) ||
+            null != override ||
             !properties.isEmpty();
+    }
+
+    public boolean isOverride() {
+        return null != override && override;
+    }
+
+    public void setOverride(Boolean override) {
+        this.override = override;
     }
 
     public PropertiesSource getPropertiesSource() {
@@ -179,6 +216,7 @@ public final class Environment extends AbstractModelObject<Environment> implemen
     public Map<String, Object> asMap(boolean full) {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("variables", variables);
+        map.put("override", override);
         map.put("properties", properties);
 
         return map;
@@ -247,7 +285,20 @@ public final class Environment extends AbstractModelObject<Environment> implemen
             if (null != propertiesSource) {
                 sourcedProperties.putAll(propertiesSource.getProperties());
             }
+
+            if (isOverride()) {
+                context.getLogger().info(RB.$("environment.override.enabled"));
+            }
         }
+    }
+
+    public void initOverride() {
+        if (null == override) {
+            String value = Env.resolve(ENVIRONMENT_OVERRIDE, "");
+            if (isNotBlank(value)) override = Boolean.parseBoolean(value);
+        }
+
+        Env.setOverride(isOverride());
     }
 
     private void loadSettings(JReleaserContext context) {

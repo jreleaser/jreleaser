@@ -60,14 +60,12 @@ public final class GiteaReleaserValidator {
                 ""));
         service.getPrerelease().isPrerelease(context.getModel().getProject().getResolvedVersion());
 
-        if (!service.isDraftSet()) {
-            service.setDraft(
-                checkProperty(context,
-                    DRAFT,
-                    "release.gitea.draft",
-                    null,
-                    false));
-        }
+        service.setDraft(
+            checkProperty(context,
+                DRAFT,
+                "release.gitea.draft",
+                service.isDraftSet() ? service.isDraft() : null,
+                false));
 
         if (!service.getUpdate().isEnabled()) {
             if (!service.getPrerelease().isEnabledSet()) {

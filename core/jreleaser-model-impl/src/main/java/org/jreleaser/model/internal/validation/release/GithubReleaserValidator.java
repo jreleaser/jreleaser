@@ -62,14 +62,12 @@ public final class GithubReleaserValidator {
                 service.getMakeLatest(),
                 org.jreleaser.model.api.release.GithubReleaser.MakeLatest.TRUE));
 
-        if (!service.isDraftSet()) {
-            service.setDraft(
-                checkProperty(context,
-                    DRAFT,
-                    "release.github.draft",
-                    null,
-                    false));
-        }
+        service.setDraft(
+            checkProperty(context,
+                DRAFT,
+                "release.github.draft",
+                service.isDraftSet() ? service.isDraft() : null,
+                false));
 
         if (!service.getUpdate().isEnabled()) {
             if (!service.getPrerelease().isEnabledSet()) {
