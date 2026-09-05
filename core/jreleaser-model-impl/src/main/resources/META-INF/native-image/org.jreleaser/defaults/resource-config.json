@@ -5,10 +5,5 @@
                 "pattern": "META-INF/jreleaser/changelog/.*.yml"
             }
         ]
-    },
-    "bundles": [
-        {
-            "name": "com.sun.org.apache.xml.internal.res.XMLErrorResources"
-        }
-    ]
+    }
 }

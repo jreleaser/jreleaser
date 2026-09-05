@@ -39,13 +39,13 @@ import org.jreleaser.util.CollectionUtils;
 import org.jreleaser.util.Errors;
 import org.jreleaser.util.FileUtils;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -163,7 +163,7 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
         }
 
         try {
-            DeployableCollector collector = new DeployableCollector(root, context.getModel().getProject().isSnapshot());
+            DeployableCollector collector = new DeployableCollector(context, root, context.getModel().getProject().isSnapshot());
 
             java.nio.file.Files.walkFileTree(root, collector);
             if (collector.failed) {
@@ -672,13 +672,15 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
         // noop
     }
 
-    private class DeployableCollector extends SimpleFileVisitor<Path> {
+    static class DeployableCollector extends SimpleFileVisitor<Path> {
+        private final JReleaserContext context;
         private final Path root;
         private final Set<Deployable> deployables = new TreeSet<>();
         private final boolean projectIsSnapshot;
         private boolean failed;
 
-        public DeployableCollector(Path root, boolean projectIsSnapshot) {
+        public DeployableCollector(JReleaserContext context, Path root, boolean projectIsSnapshot) {
+            this.context = context;
             this.root = root;
             this.projectIsSnapshot = projectIsSnapshot;
         }
@@ -711,7 +713,9 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
             ));
         }
 
-        private PomResult parsePom(Path artifactPath) {
+        // Walks the document with plain DOM calls. XPath reaches JDK internals that are
+        // instantiated reflectively, which does not survive a GraalVM native-image build.
+        static PomResult parsePom(Path artifactPath) {
             // only inspect if artifactPath ends with .pom
             if (artifactPath.getFileName().toString().endsWith(EXT_JAR)) return new PomResult(PACKAGING_JAR);
             if (!artifactPath.getFileName().toString().endsWith(EXT_POM)) return new PomResult("");
@@ -722,23 +726,35 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
                 Document document = factory
                     .newDocumentBuilder()
                     .parse(artifactPath.toFile());
-                String query = "/project/packaging";
-                String packaging = (String) XPathFactory.newInstance()
-                    .newXPath()
-                    .compile(query)
-                    .evaluate(document, XPathConstants.STRING);
 
-                query = "/project/distributionManagement/relocation";
-                Object relocation = XPathFactory.newInstance()
-                    .newXPath()
-                    .compile(query)
-                    .evaluate(document, XPathConstants.NODE);
+                Element project = document.getDocumentElement();
+                if (!"project".equals(project.getTagName())) return new PomResult(PACKAGING_JAR);
+
+                String packaging = textOf(findChild(project, "packaging"));
+                Element relocation = findChild(findChild(project, "distributionManagement"), "relocation");
 
                 return new PomResult(isNotBlank(packaging) ? packaging.trim() : PACKAGING_JAR,
                     relocation != null);
-            } catch (ParserConfigurationException | IOException | SAXException | XPathExpressionException e) {
+            } catch (ParserConfigurationException | IOException | SAXException e) {
                 throw new IllegalStateException(e);
             }
+        }
+
+        private static Element findChild(Element parent, String tagName) {
+            if (parent == null) return null;
+
+            NodeList children = parent.getChildNodes();
+            for (int i = 0; i < children.getLength(); i++) {
+                Node child = children.item(i);
+                if (child instanceof Element && tagName.equals(((Element) child).getTagName())) {
+                    return (Element) child;
+                }
+            }
+            return null;
+        }
+
+        private static String textOf(Element element) {
+            return element != null ? element.getTextContent() : "";
         }
 
         @Override
@@ -756,9 +772,9 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
             return CONTINUE;
         }
 
-        private final class PomResult {
-            private String packaging;
-            private boolean relocated;
+        static final class PomResult {
+            String packaging;
+            boolean relocated;
 
             private PomResult(String packaging) {
                 this.packaging = packaging;
