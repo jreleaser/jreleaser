@@ -84,6 +84,7 @@ public final class ReleaseUtils {
 
             try (Git git = gitSdk.open()) {
                 git.push()
+                    .setRemote(GitSdk.resolveDefaultGitRemoteName())
                     .setDryRun(context.isDryrun())
                     .setPushTags()
                     .setCredentialsProvider(credentialsProvider)
