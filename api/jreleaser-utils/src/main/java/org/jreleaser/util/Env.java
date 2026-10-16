@@ -48,6 +48,13 @@ public final class Env {
             .toUpperCase(Locale.ENGLISH);
     }
 
+    public static String toProperty(String str) {
+        return str.replace(" ", ".")
+            .replace("-", ".")
+            .replace("_", ".")
+            .toLowerCase(Locale.ENGLISH);
+    }
+
     public static String envKey(String key) {
         if (!key.startsWith(JRELEASER_ENV_PREFIX)) {
             key = JRELEASER_ENV_PREFIX + key;
@@ -59,10 +66,7 @@ public final class Env {
         if (!key.startsWith(JRELEASER_SYS_PREFIX)) {
             key = JRELEASER_SYS_PREFIX + key;
         }
-        return key.replace(" ", ".")
-            .replace("-", ".")
-            .replace("_", ".")
-            .toLowerCase(Locale.ENGLISH);
+        return toProperty(key);
     }
 
     public static String env(String key, String value) {

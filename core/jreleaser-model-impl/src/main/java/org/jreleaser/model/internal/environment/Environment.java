@@ -124,7 +124,13 @@ public final class Environment extends AbstractModelObject<Environment> implemen
         if (isNotBlank(value)) {
             return value;
         }
-        return getVariable(envKey(key));
+
+        value = getVariable(envKey(key));
+        if (isNotBlank(value)) {
+            return value;
+        }
+
+        return getProperty(key);
     }
 
     public Properties getVars() {
@@ -133,6 +139,23 @@ public final class Environment extends AbstractModelObject<Environment> implemen
 
     public String getVariable(String key) {
         return vars.getProperty(Env.envKey(key));
+    }
+
+    public String getProperty(String key) {
+        String sk = normalizePropertyName(Env.sysKey(key));
+        String pk = normalizePropertyName(Env.toProperty(key));
+
+        if (properties.containsKey(sk)) {
+            return String.valueOf(properties.get(sk));
+        } else if (properties.containsKey(pk)) {
+            return String.valueOf(properties.get(pk));
+        } else if (sourcedProperties.containsKey(sk)) {
+            return String.valueOf(sourcedProperties.get(sk));
+        } else if (sourcedProperties.containsKey(pk)) {
+            return String.valueOf(sourcedProperties.get(pk));
+        }
+
+        return null;
     }
 
     public boolean isSet() {
@@ -327,6 +350,10 @@ public final class Environment extends AbstractModelObject<Environment> implemen
         Map<String, String> getProperties();
     }
 
+    private static String normalizePropertyName(String key) {
+        return getPropertyNameForLowerCaseHyphenSeparatedName(key.replace(".", "-"));
+    }
+
     public abstract static class AbstractPropertiesSource implements PropertiesSource {
         private static final long serialVersionUID = 9102569253517657171L;
 
@@ -337,9 +364,7 @@ public final class Environment extends AbstractModelObject<Environment> implemen
 
             props.forEach((key, value) -> {
                 if (key.startsWith("JRELEASER_")) return;
-                String k = key.replace(".", "-");
-                k = getPropertyNameForLowerCaseHyphenSeparatedName(k);
-                map.put(k, value);
+                map.put(normalizePropertyName(key), value);
             });
 
             return map;
