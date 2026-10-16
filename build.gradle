@@ -52,6 +52,8 @@ config {
             autoLinks {
                 enabled = false
             }
+            // enable when running Java 23+
+            // options.addBooleanOption('-no-fonts', true)
         }
     }
 
