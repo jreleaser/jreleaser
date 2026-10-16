@@ -34,11 +34,19 @@ public final class Templates {
 
     public static String resolveTemplate(JReleaserLogger logger, String input, TemplateContext props) {
         if (isBlank(input)) return input;
-        input = applyTemplate(logger, input, props);
-        if (input.contains("{{")) {
-            // TODO: print which template placeholders are unresolved
-            logger.debug(RB.$("ERROR_input_can_not_resolve"));
+
+        int count = 0;
+
+        while (input.contains("{{")) {
+            input = applyTemplate(logger, input, props);
+            count++;
+
+            if (input.contains("{{") && count >= 10) {
+                // TODO: print which template placeholders are unresolved
+                logger.debug(RB.$("ERROR_input_can_not_resolve"));
+            }
         }
+
         return input;
     }
 }
