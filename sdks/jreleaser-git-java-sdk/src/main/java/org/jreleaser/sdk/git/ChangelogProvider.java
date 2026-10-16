@@ -128,7 +128,7 @@ public final class ChangelogProvider {
         String p1 = StringUtils.escapeRegexChars(issueTracker);
         String p2 = StringUtils.escapeRegexChars(releaser.getCanonicalRepoName());
         String p3 = StringUtils.escapeRegexChars(releaser.getName());
-        String regex = "(?:" + p2 + "|(?<!/)" + p3 + ")#(?<repo>\\d+)|[^a-zA-Z0-9]#(?<hash>\\d+)";
+        String regex = "(?:" + p2 + "|(?<!/)" + p3 + ")#(?<repo>\\d{1,7})|[^a-zA-Z0-9]#(?<hash>\\d+)";
         regex += isNotBlank(p1) ? "|" + p1 + "(?<tracker>\\d+)" : "";
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(content);
