@@ -88,4 +88,43 @@ class DeployableTest {
         assertThat(deployable.getGroupId()).isEqualTo("com.example");
         assertThat(deployable.getArtifactId()).isEqualTo("artifact");
     }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+        "artifact-1.0.0-SNAPSHOT.jar",
+        "artifact-1.0.0-SNAPSHOT.pom",
+        "artifact-1.0.0-SNAPSHOT-sources.jar",
+        "artifact-1.0.0-SNAPSHOT.jar.asc"
+    })
+    void testPlainSnapshotFilenameIsRefusedWithTheFileName(String filename) {
+        // Given: a snapshot staged the way 'mvn install' does, without a timestamp in the file name (#2179)
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+            () -> new Deployable(
+                true,
+                "/staging/repo",
+                "/com/example/artifact/1.0.0-SNAPSHOT",
+                "jar",
+                filename,
+                false));
+
+        // Then: the error names the file and the expected layout instead of failing on a substring
+        assertThat(e.getMessage())
+            .contains("/com/example/artifact/1.0.0-SNAPSHOT/" + filename)
+            .contains("artifact-1.0.0-<yyyyMMdd.HHmmss>-<buildNumber>");
+    }
+
+    @Test
+    void testTimestampedSnapshotWithClassifierIsParsed() {
+        Deployable deployable = new Deployable(
+            true,
+            "/staging/repo",
+            "/com/example/artifact/1.0.0-SNAPSHOT",
+            "jar",
+            "artifact-1.0.0-20261017.120000-1-sources.jar",
+            false
+        );
+
+        assertThat(deployable.getClassifier()).isEqualTo("sources");
+        assertThat(deployable.getExtension()).isEqualTo("jar");
+    }
 }

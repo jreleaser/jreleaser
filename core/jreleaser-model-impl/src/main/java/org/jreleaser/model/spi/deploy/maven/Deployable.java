@@ -114,6 +114,12 @@ public class Deployable implements Comparable<Deployable> {
                 }
                 // SNAPSHOT replaced with YYYYMMDD.HHmmSS-#
                 v = version.substring(0, version.length() - "SNAPSHOT".length());
+                // a file staged the way 'mvn install' does keeps the plain version in its name, which cannot be parsed
+                // as a timestamped snapshot, so name the file and the layout instead of failing on it later
+                if (filename.startsWith(artifactId + "-" + version)) {
+                    throw new IllegalArgumentException(RB.$("ERROR_snapshot_filename_not_timestamped",
+                        path.replace("\\", "/") + "/" + filename, artifactId + "-" + v + "<yyyyMMdd.HHmmss>-<buildNumber>"));
+                }
                 l = v.length() + 17;
             }
 
