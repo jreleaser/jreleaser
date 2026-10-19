@@ -82,6 +82,7 @@ public class Deployable implements Comparable<Deployable> {
     private final String packaging;
     private final boolean relocated;
     private final boolean snapshot;
+    private final boolean unstamped;
 
     public Deployable(boolean snapshot, String stagingRepository, String path, String packaging, String filename, boolean relocated) {
         this.snapshot = snapshot;
@@ -107,20 +108,18 @@ public class Deployable implements Comparable<Deployable> {
 
             String v = version;
             int l = version.length();
+            // a file staged the way 'mvn install' does keeps the plain version in its name, see stamp()
+            this.unstamped = snapshot && filename.startsWith(artifactId + "-" + version);
             if (snapshot) {
                 // Maven requires snapshot versions to contain the literal "-SNAPSHOT" suffix
                 if (!version.contains("SNAPSHOT")) {
                     throw new IllegalArgumentException(RB.$("ERROR_snapshot_version_missing_suffix", version));
                 }
-                // SNAPSHOT replaced with YYYYMMDD.HHmmSS-#
-                v = version.substring(0, version.length() - "SNAPSHOT".length());
-                // a file staged the way 'mvn install' does keeps the plain version in its name, which cannot be parsed
-                // as a timestamped snapshot, so name the file and the layout instead of failing on it later
-                if (filename.startsWith(artifactId + "-" + version)) {
-                    throw new IllegalArgumentException(RB.$("ERROR_snapshot_filename_not_timestamped",
-                        path.replace("\\", "/") + "/" + filename, artifactId + "-" + v + "<yyyyMMdd.HHmmss>-<buildNumber>"));
+                if (!unstamped) {
+                    // SNAPSHOT replaced with YYYYMMDD.HHmmSS-#
+                    v = version.substring(0, version.length() - "SNAPSHOT".length());
+                    l = v.length() + 17;
                 }
-                l = v.length() + 17;
             }
 
             if (filename.contains(v)) {
@@ -147,7 +146,21 @@ public class Deployable implements Comparable<Deployable> {
             this.groupId = "";
             this.classifier = "";
             this.extension = "";
+            this.unstamped = false;
         }
+    }
+
+    /**
+     * The same file under the name 'mvn deploy' gives a snapshot, in another staging repository, eg
+     * {@code lib-1.0.0-SNAPSHOT-sources.jar} as {@code lib-1.0.0-20261017.120000-1-sources.jar}.
+     *
+     * @param stagingRepository where the renamed copy lives
+     * @param timestampedVersion the version with SNAPSHOT replaced, eg {@code 1.0.0-20261017.120000-1}
+     */
+    public Deployable stamp(String stagingRepository, String timestampedVersion) {
+        String prefix = artifactId + "-" + version;
+        return new Deployable(snapshot, stagingRepository, path, packaging,
+            artifactId + "-" + timestampedVersion + filename.substring(prefix.length()), relocated);
     }
 
     public TemplateContext props() {
@@ -226,6 +239,14 @@ public class Deployable implements Comparable<Deployable> {
 
     public boolean isRelocated() {
         return relocated;
+    }
+
+    /**
+     * Whether this is a snapshot file staged with the plain version in its name, which has to be
+     * {@link #stamp(String, String) stamped} before deploying.
+     */
+    public boolean isUnstamped() {
+        return unstamped;
     }
 
     public Deployable deriveByFilename(String filename) {

@@ -19,6 +19,7 @@ package org.jreleaser.model.spi.deploy.maven;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -90,27 +91,33 @@ class DeployableTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {
-        "artifact-1.0.0-SNAPSHOT.jar",
-        "artifact-1.0.0-SNAPSHOT.pom",
-        "artifact-1.0.0-SNAPSHOT-sources.jar",
-        "artifact-1.0.0-SNAPSHOT.jar.asc"
+    @CsvSource({
+        "artifact-1.0.0-SNAPSHOT.jar,             '',      jar,     artifact-1.0.0-20261017.120000-1.jar",
+        "artifact-1.0.0-SNAPSHOT.pom,             '',      pom,     artifact-1.0.0-20261017.120000-1.pom",
+        "artifact-1.0.0-SNAPSHOT-sources.jar,     sources, jar,     artifact-1.0.0-20261017.120000-1-sources.jar",
+        "artifact-1.0.0-SNAPSHOT.jar.asc,         '',      jar.asc, artifact-1.0.0-20261017.120000-1.jar.asc"
     })
-    void testPlainSnapshotFilenameIsRefusedWithTheFileName(String filename) {
+    void testPlainSnapshotFilenameIsParsedAndStamped(String filename, String classifier, String extension, String stampedName) {
         // Given: a snapshot staged the way 'mvn install' does, without a timestamp in the file name (#2179)
-        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
-            () -> new Deployable(
-                true,
-                "/staging/repo",
-                "/com/example/artifact/1.0.0-SNAPSHOT",
-                "jar",
-                filename,
-                false));
+        Deployable deployable = new Deployable(
+            true,
+            "/staging/repo",
+            "/com/example/artifact/1.0.0-SNAPSHOT",
+            "jar",
+            filename,
+            false);
 
-        // Then: the error names the file and the expected layout instead of failing on a substring
-        assertThat(e.getMessage())
-            .contains("/com/example/artifact/1.0.0-SNAPSHOT/" + filename)
-            .contains("artifact-1.0.0-<yyyyMMdd.HHmmss>-<buildNumber>");
+        // Then: it is read like a release file and gets the name 'mvn deploy' would give it
+        assertThat(deployable.isUnstamped()).isTrue();
+        assertThat(deployable.getClassifier()).isEqualTo(classifier);
+        assertThat(deployable.getExtension()).isEqualTo(extension);
+
+        Deployable stamped = deployable.stamp("/stamped/repo", "1.0.0-20261017.120000-1");
+        assertThat(stamped.getFilename()).isEqualTo(stampedName);
+        assertThat(stamped.getStagingRepository()).isEqualTo("/stamped/repo");
+        assertThat(stamped.isUnstamped()).isFalse();
+        assertThat(stamped.getClassifier()).isEqualTo(classifier);
+        assertThat(stamped.getExtension()).isEqualTo(extension);
     }
 
     @Test

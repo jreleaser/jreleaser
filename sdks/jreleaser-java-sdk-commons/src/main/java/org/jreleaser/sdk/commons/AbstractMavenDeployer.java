@@ -119,7 +119,28 @@ public abstract class AbstractMavenDeployer<A extends org.jreleaser.model.api.de
             collectDeployables(deployables, stagingRepository);
         }
 
+        if (context.getModel().getProject().isSnapshot()) {
+            return stampSnapshots(deployables);
+        }
+
         return deployables;
+    }
+
+    private Set<Deployable> stampSnapshots(Set<Deployable> deployables) {
+        Path target = context.getDeployDirectory()
+            .resolve(getDeployer().getType())
+            .resolve(getDeployer().getName())
+            .resolve("snapshot");
+
+        try {
+            Set<Deployable> stamped = SnapshotStamper.stamp(deployables, target, context.getModel().getNow());
+            if (stamped != deployables) {
+                context.getLogger().info(RB.$("deployers.maven.snapshot.stamped", context.relativizeToBasedir(target)));
+            }
+            return stamped;
+        } catch (IOException e) {
+            throw new JReleaserException(RB.$("ERROR_deployer_unexpected_error_stage"), e);
+        }
     }
 
     protected Set<Deployable> collectDeployables() {
