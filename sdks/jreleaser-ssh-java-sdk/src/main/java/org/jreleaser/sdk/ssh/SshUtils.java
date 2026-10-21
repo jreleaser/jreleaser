@@ -18,8 +18,6 @@
 package org.jreleaser.sdk.ssh;
 
 import net.schmizz.sshj.SSHClient;
-import net.schmizz.sshj.common.SSHException;
-import net.schmizz.sshj.connection.channel.direct.Session;
 import net.schmizz.sshj.sftp.SFTPClient;
 import net.schmizz.sshj.transport.verification.FingerprintVerifier;
 import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
@@ -37,7 +35,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.concurrent.TimeUnit;
 
 import static org.jreleaser.util.StringUtils.isNotBlank;
 
@@ -148,13 +145,14 @@ public class SshUtils {
     }
 
     public static void createDirectories(JReleaserContext context, SshUploader<?> uploader, SSHClient ssh, Path path) throws UploadException {
-        try (Session session = ssh.startSession()) {
-            Session.Command cmd = session.exec("mkdir -p " + path.toAbsolutePath());
-            cmd.join(uploader.getReadTimeout(), TimeUnit.SECONDS);
-        } catch (SSHException e) {
+        SFTPClient sftp = createSFTPClient(uploader, ssh);
+        try {
+            sftp.mkdirs(path.toAbsolutePath().toString());
+        } catch (IOException e) {
             context.getLogger().trace(e);
             throw new UploadException(RB.$("ERROR_ssh_mkdir", path), e);
         }
+        close(uploader, sftp);
     }
 
     public static void disconnect(SshUploader<?> uploader, SSHClient ssh) throws UploadException {
