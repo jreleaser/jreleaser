@@ -89,6 +89,9 @@ enforce {
         r.dependency("com.google.guava:guava:$guavaVersion".toString()) { d->
             d.ignore('com.google.common.*')
         }
+        r.dependency("org.checkerframework:checker-qual:$checkerqualVersion".toString()) { d->
+            d.ignore('org.checkerframework.*')
+        }
     }
 
     rule(enforcer.rules.EnforceBytecodeVersion) { r ->
