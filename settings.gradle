@@ -181,7 +181,7 @@ enforce {
             "org.checkerframework:checker-qual:$checkerqualVersion",
             "org.codehaus.plexus:plexus-classworlds:$classworldsVersion",
             "org.codehaus.plexus:plexus-component-annotations:$plexusAnnotationsVersion",
-            "org.codehaus.plexus:plexus-utils:$plexusVersion",
+            "org.codehaus.plexus:plexus-utils:$plexusUtilsVersion",
             "org.codehaus.woodstox:stax2-api:$woodstoxStaxVersion",
             "org.hamcrest:hamcrest-core:$hamcrestVersion",
             "org.hamcrest:hamcrest:$hamcrestVersion",
