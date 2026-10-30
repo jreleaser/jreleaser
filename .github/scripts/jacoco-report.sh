@@ -2,9 +2,9 @@
 
 set -e
 
-JACOCO_VERSION="0.8.13"
-ASM_VERSION="9.8"
-ARGS4J_VERSION="2.0.28"
+JACOCO_VERSION="0.8.16"
+ASM_VERSION="9.11.1"
+ARGS4J_VERSION="2.37"
 
 echo "⬇️  Downloading JaCoCo CLI"
 mkdir -p libs
