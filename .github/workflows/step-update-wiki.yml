@@ -59,6 +59,9 @@ jobs:
         env:
           JRELEASER_GITHUB_TOKEN: ${{ secrets.gh-access-token }}
           JRELEASER_PROJECT_VERSION: ${{ inputs.project-version }}
+          JRELEASER_PROJECT_EFFECTIVE_VERSION: ${{ inputs.project-version }}
+          JRELEASER_PROJECT_SNAPSHOT_LABEL: ${{ inputs.project-version }}
+          JRELEASER_BRANCH: development-2.x
           TEMPLATE_PARAMS: ${{ inputs.template-params }}
 
       - name: Commit

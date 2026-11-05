@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # env vars:
-# VERSION: x.y.z or early-access
-# TAG: vx.y.z or early-access
+# VERSION: x.y.z or early-access|2.0.0-SNAPSHOT
+# TAG: vx.y.z or early-access|2.0.0-SNAPSHOT
 # COMMIT_EMAIL
 # JAVA_HOME
 
@@ -13,7 +13,7 @@ PAGE="wiki/Releases/Release-${TAG}.md"
 mv "wiki/Releases/wiki-release-page.md" "${PAGE}"
 java .github/scripts/update_release_page.java checksums_sha256.txt ${PAGE}
 
-if [ "${TAG}" != "early-access" ]; then
+if [ "${TAG}" != "early-access" ] && [ "${TAG}" != "2.0.0-SNAPSHOT" ]; then
     echo "🚀️ Updating releases"
     RELEASES="wiki/Releases/Releases.md"
     HEAD=$(head -n 3 "${RELEASES}")
