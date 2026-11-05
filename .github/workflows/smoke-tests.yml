@@ -2,7 +2,7 @@ name: SmokeTests
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, development-2.x ]
 
 env:
   CI: true
@@ -25,9 +25,9 @@ jobs:
       fail-fast: false
       matrix:
         job:
-          - { os: macos-15-intel  , args: '-xp docker' }
-          - { os: ubuntu-latest , args: '' }
-          - { os: windows-latest, args: '-xp docker' }
+          - { os: xcode-27,     args: '--exclude-packager docker' }
+          - { os: ubuntu-26.04, args: '' }
+          - { os: windows-2025, args: '--exclude-packager docker' }
     runs-on: ${{ matrix.job.os }}
     steps:
       - name: Checkout
@@ -205,9 +205,9 @@ jobs:
       fail-fast: false
       matrix:
         job:
-          - { os: macos-15-intel  , args: '-xp docker' }
-          - { os: ubuntu-latest , args: '' }
-          - { os: windows-latest, args: '-xp docker' }
+          - { os: xcode-27,     args: '--exclude-packager docker' }
+          - { os: ubuntu-26.04, args: '' }
+          - { os: windows-2025, args: '--exclude-packager docker' }
     runs-on: ${{ matrix.job.os }}
     steps:
       - name: Checkout
@@ -385,9 +385,9 @@ jobs:
       fail-fast: false
       matrix:
         job:
-          - { os: macos-15-intel  , args: '-Djreleaser.excluded.packagers=docker' }
-          - { os: ubuntu-latest , args: '' }
-          - { os: windows-latest, args: '-Djreleaser.excluded.packagers=docker' }
+          - { os: xcode-27,     args: '-Djreleaser.excluded.packagers=docker' }
+          - { os: ubuntu-26.04, args: '' }
+          - { os: windows-2025, args: '-Djreleaser.excluded.packagers=docker' }
     runs-on: ${{ matrix.job.os }}
     steps:
       - name: Checkout
@@ -563,9 +563,9 @@ jobs:
       fail-fast: false
       matrix:
         job:
-          - { os: macos-15-intel  , args: '--exclude-packager docker' }
-          - { os: ubuntu-latest , args: '' }
-          - { os: windows-latest, args: '--exclude-packager docker' }
+          - { os: xcode-27,     args: '--exclude-packager docker' }
+          - { os: ubuntu-26.04, args: '' }
+          - { os: windows-2025, args: '--exclude-packager docker' }
     runs-on: ${{ matrix.job.os }}
     steps:
       - name: Checkout
@@ -753,9 +753,9 @@ jobs:
       fail-fast: false
       matrix:
         job:
-          - { os: macos-15-intel  , args: '-Djreleaser.excluded.packagers=docker' }
-          - { os: ubuntu-latest , args: '' }
-          - { os: windows-latest, args: '-Djreleaser.excluded.packagers=docker' }
+          - { os: xcode-27,     args: '-Djreleaser.excluded.packagers=docker' }
+          - { os: ubuntu-26.04, args: '' }
+          - { os: windows-2025, args: '-Djreleaser.excluded.packagers=docker' }
     runs-on: ${{ matrix.job.os }}
     steps:
       - name: Checkout
@@ -931,7 +931,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [ubuntu-latest, macos-15-intel, windows-latest]
+        os: [ubuntu-26.04, xcode-27, windows-2025]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -988,7 +988,7 @@ jobs:
     needs: [ precheck, build-cli, build-tool, build-ant, build-gradle, build-maven, unit-tests ]
     if: ${{ endsWith(needs.precheck.outputs.version, '-SNAPSHOT') }}
     continue-on-error: true
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -1040,7 +1040,7 @@ jobs:
     needs: [ precheck, build-cli, build-tool, build-ant, build-gradle, build-maven, unit-tests ]
     if: ${{ endsWith(needs.precheck.outputs.version, '-SNAPSHOT') }}
     continue-on-error: true
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -1097,7 +1097,7 @@ jobs:
     needs: [ precheck, build-cli, build-tool, build-ant, build-gradle, build-maven, unit-tests ]
     if: ${{ endsWith(needs.precheck.outputs.version, '-SNAPSHOT') }}
     continue-on-error: true
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

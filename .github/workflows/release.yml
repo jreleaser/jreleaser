@@ -11,7 +11,7 @@ permissions:
 jobs:
   precheck:
     name: Precheck
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     outputs:
       version: ${{ steps.version.outputs.version }}
       release-version: ${{ steps.version.outputs.release_version }}
@@ -81,7 +81,7 @@ jobs:
   release:
     name: Release
     needs: [precheck, jlink, jpackage, native-image]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     outputs:
       hashes: ${{ steps.slsa.outputs.HASHES }}
       tagname: ${{ steps.slsa.outputs.TAGNAME }}
@@ -232,7 +232,7 @@ jobs:
   update-website:
     name: Update Website
     needs: [precheck, release]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1

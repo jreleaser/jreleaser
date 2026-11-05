@@ -17,7 +17,7 @@ jobs:
   precheck:
     name: Precheck
     if: github.repository == 'jreleaser/jreleaser' && startsWith(github.event.head_commit.message, 'Releasing version') != true
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     outputs:
       version: ${{ steps.vars.outputs.VERSION }}
     steps:

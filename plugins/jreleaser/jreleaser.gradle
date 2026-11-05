@@ -115,20 +115,10 @@ jdks {
         url = 'https://cdn.azul.com/zulu/bin/zulu25.30.17-ca-jdk25.0.1-win_aarch64.zip'
         checksum = '4883cf39e8d83679c8a051ace4dd72759d97195a72aaa6727a83bd4bcb97b022'
     }
-    zulu25Osx {
-        platform = 'osx-x86_64'
-        url = 'https://cdn.azul.com/zulu/bin/zulu25.30.17-ca-jdk25.0.1-macosx_x64.tar.gz'
-        checksum = '0154482b317aa63d5158a358e2fab7f0fd6c3c0ba2000b05655c3bcbdd202584'
-    }
     zulu25OsxArm {
         platform = 'osx-aarch64'
         url = 'https://cdn.azul.com/zulu/bin/zulu25.30.17-ca-jdk25.0.1-macosx_aarch64.tar.gz'
         checksum = '126061d6046b0c0df0472b361ca7895951d34fef1dd522f222f2c7d8738a39d8'
-    }
-    graal25Osx {
-        platform = 'osx-x86_64'
-        url = 'https://download.oracle.com/graalvm/25/archive/graalvm-jdk-25.0.1_macos-x64_bin.tar.gz'
-        checksum = 'a762ca1d9a163e32790b9286f3af4c16369729ff27999d8dbab60d7be16cff2f'
     }
     graal25OsxArm {
         platform = 'osx-aarch64'
@@ -166,8 +156,8 @@ assemble.dependsOn(copyDependencies, tasks.register('copyGraalvmJavaSdk', Copy) 
 afterEvaluate {
     def copyJdksToCache = project.tasks.findByName('copyJdksToCache')
     ['zulu25Linux', 'zulu25LinuxArm', 'zulu25LinuxMusl', 'zulu25LinuxMuslArm',
-     'zulu25Windows', 'zulu25WindowsArm', 'zulu25Osx', 'zulu25OsxArm',
-     'graal25Osx', 'graal25OsxArm', 'graal25Linux', 'graal25LinuxArm', 'graal25Windows'].each { jdk ->
+     'zulu25Windows', 'zulu25WindowsArm', 'zulu25OsxArm',
+     'graal25OsxArm', 'graal25Linux', 'graal25LinuxArm', 'graal25Windows'].each { jdk ->
         def copyTask = project.tasks.findByName('copyJdkFromCache' + jdk.capitalize())
         if (copyJdksToCache && copyTask) copyTask.dependsOn(copyJdksToCache)
     }

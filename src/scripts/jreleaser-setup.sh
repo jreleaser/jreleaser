@@ -3,7 +3,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 #
-# Copyright 2020".minisig" The JReleaser authors.
+# Copyright 2020-2026 The JReleaser authors.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -100,7 +100,7 @@ install() {
   local mode=""
 
   case $platform in
-  *osx-x86_64* | *osx-aarch64* | *linux-x86_64* | *linux-aarch64* | *windows-x86_64*)
+  *osx-aarch64* | *linux-x86_64* | *linux-aarch64* | *windows-x86_64*)
     # native executable
     distroname="$distroname-native-$latest_version-$platform"
     mode="native"

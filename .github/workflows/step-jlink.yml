@@ -18,7 +18,7 @@ permissions:
 jobs:
   jlink:
     name: Jlink
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     env:
       CI: true
     steps:
@@ -26,7 +26,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          ref: main
+          #ref: main
 
       - name: Decrypt secrets
         shell: bash
@@ -64,6 +64,8 @@ jobs:
           setup-java: false
         env:
           JRELEASER_PROJECT_VERSION: ${{ inputs.project-version }}
+          JRELEASER_PROJECT_SNAPSHOT_LABEL: ${{ inputs.project-version }}
+          JRELEASER_BRANCH: development-2.x
 
       - name: Jlink
         uses: jreleaser/release-action@90ac653bb9c79d11179e65d81499f3f34527dcd5 # v2.5.0
@@ -73,6 +75,8 @@ jobs:
           setup-java: false
         env:
           JRELEASER_PROJECT_VERSION: ${{ inputs.project-version }}
+          JRELEASER_PROJECT_SNAPSHOT_LABEL: ${{ inputs.project-version }}
+          JRELEASER_BRANCH: development-2.x
 
       - name: JReleaser output
         if: always()

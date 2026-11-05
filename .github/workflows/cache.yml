@@ -8,7 +8,7 @@ on:
 jobs:
   clear:
     name: Delete all caches
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - name: Clear caches
         uses: easimon/wipe-cache@e7ab82e64c328fd39c2e96933d426cd72ac2beba

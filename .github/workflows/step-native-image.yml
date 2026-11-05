@@ -20,18 +20,17 @@ jobs:
       fail-fast: false
       matrix:
         job:
-          - { runner: ubuntu-latest,    jdkOs: Linux }
-          - { runner: ubuntu-22.04-arm, jdkOs: LinuxArm }
-          - { runner: macos-15-intel,   jdkOs: Osx }
-          - { runner: macos-15,         jdkOs: OsxArm }
-          - { runner: windows-latest,   jdkOs: Windows }
+          - { runner: ubuntu-26.04,     jdkOs: Linux }
+          - { runner: ubuntu-26.04-arm, jdkOs: LinuxArm }
+          - { runner: xcode-27,         jdkOs: OsxArm }
+          - { runner: windows-2025,     jdkOs: Windows }
     runs-on: ${{ matrix.job.runner }}
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-          ref: main
+          #ref: main
 
       - name: Download artifacts
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
@@ -75,6 +74,8 @@ jobs:
           setup-java: false
         env:
           JRELEASER_PROJECT_VERSION: ${{ inputs.project-version }}
+          JRELEASER_PROJECT_SNAPSHOT_LABEL: ${{ inputs.project-version }}
+          JRELEASER_BRANCH: development-2.x
 
       - name: JReleaser output
         if: always()

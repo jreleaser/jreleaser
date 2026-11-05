@@ -200,8 +200,6 @@ assemble:
         - 'jdk.security.auth'
         - 'jdk.security.jgss'
       targetJdks:
-        - path: '{{jdkPathPrefix}}/zulu25Osx/{{jdkFilePrefix}}-macosx_x64/zulu-25.jdk/Contents/Home'
-          platform: 'osx-x86_64'
         - path: '{{jdkPathPrefix}}/zulu25OsxArm/{{jdkFilePrefix}}-macosx_aarch64/zulu-25.jdk/Contents/Home'
           platform: 'osx-aarch_64'
         - path: '{{jdkPathPrefix}}/zulu25Linux/{{jdkFilePrefix}}-linux_x64'
@@ -271,8 +269,6 @@ assemble:
         - pattern: 'plugins/jreleaser/build/dependencies/flat/*.jar'
         - pattern: 'plugins/jreleaser/build/dependencies/graalvm/*.jar'
       graalJdks:
-        - path: '{{jdkPathPrefix}}/graal25Osx/{{graalFilePrefix}}/Contents/Home'
-          platform: 'osx-x86_64'
         - path: '{{jdkPathPrefix}}/graal25OsxArm/{{graalFilePrefix}}/Contents/Home'
           platform: 'osx-aarch_64'
         - path: '{{jdkPathPrefix}}/graal25Linux/{{graalFilePrefix}}'
@@ -468,9 +464,6 @@ distributions:
       name: jreleaser
       windowsExtension: exe
     artifacts:
-      - path: '{{jpackageDir}}/JReleaser-{{projectVersionNumber}}-osx-x86_64.pkg'
-        transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}-osx-x86_64.pkg'
-        platform: 'osx-x86_64'
       - path: '{{jpackageDir}}/JReleaser-{{projectVersionNumber}}-osx-aarch64.pkg'
         transform: '{{distributionName}}/{{distributionName}}-{{projectEffectiveVersion}}-osx-aarch64.pkg'
         platform: 'osx-aarch_64'
@@ -494,8 +487,6 @@ distributions:
     artifacts:
       - path: '{{nativeImageDir}}/{{distributionName}}-{{projectEffectiveVersion}}-osx-aarch64.zip'
         platform: 'osx-aarch_64'
-      - path: '{{nativeImageDir}}/{{distributionName}}-{{projectEffectiveVersion}}-osx-x86_64.zip'
-        platform: 'osx-x86_64'
       - path: '{{nativeImageDir}}/{{distributionName}}-{{projectEffectiveVersion}}-linux-x86_64.zip'
         platform: 'linux-x86_64'
       - path: '{{nativeImageDir}}/{{distributionName}}-{{projectEffectiveVersion}}-linux-aarch64.zip'
