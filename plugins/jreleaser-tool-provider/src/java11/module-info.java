@@ -223,54 +223,62 @@ module org.jreleaser.tool {
     uses jreleaser.shadow.software.amazon.awssdk.http.SdkHttpService;
     uses jreleaser.shadow.software.amazon.awssdk.thirdparty.jackson.core.JsonFactory;
 
-    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.asymmetric.cmce to
-        java.base;
-    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.asymmetric.edec to
-        java.base;
-    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.asymmetric.frodokem to
-        java.base;
-    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.asymmetric.mldsa to
-        java.base;
-    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.asymmetric.mlkem to
-        java.base;
-    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.asymmetric.rsa to
-        java.base;
-    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.asymmetric.slhdsa to
-        java.base;
-    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.digest to
-        java.base;
-    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.symmetric to
-        java.base;
-    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.aimer to
-        java.base;
-    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.dilithium to
-        java.base;
-    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.faest to
-        java.base;
-    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.falcon to
-        java.base;
-    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.haetae to
-        java.base;
-    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.hawk to
-        java.base;
-    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.lms to
-        java.base;
-    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.mayo to
-        java.base;
-    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.mqom to
-        java.base;
-    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.ntruplus to
-        java.base;
-    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.qruov to
-        java.base;
-    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.sdith to
-        java.base;
-    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.snova to
-        java.base;
-    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.sqisign to
-        java.base;
-    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.uov to
-        java.base;
+    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.asymmetric to java.base;
+    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.asymmetric.cmce to java.base;
+    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.asymmetric.compositekem to java.base;
+    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.asymmetric.compositesignatures to java.base;
+    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.asymmetric.dh to java.base;
+    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.asymmetric.dsa to java.base;
+    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.asymmetric.dstu to java.base;
+    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.asymmetric.ec to java.base;
+    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.asymmetric.ecgost to java.base;
+    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.asymmetric.ecgost12 to java.base;
+    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.asymmetric.edec to java.base;
+    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.asymmetric.elgamal to java.base;
+    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.asymmetric.frodokem to java.base;
+    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.asymmetric.gost to java.base;
+    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.asymmetric.ies to java.base;
+    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.asymmetric.mldsa to java.base;
+    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.asymmetric.mlkem to java.base;
+    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.asymmetric.rsa to java.base;
+    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.asymmetric.slhdsa to java.base;
+    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.asymmetric.sm9 to java.base;
+    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.asymmetric.x509 to java.base;
+    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.config to java.base;
+    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.digest to java.base;
+    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.drbg to java.base;
+    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.kdf to java.base;
+    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.kdf.hkdf to java.base;
+    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.kdf.pbkdf2 to java.base;
+    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.kdf.scrypt to java.base;
+    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.keystore to java.base;
+    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.keystore.bc to java.base;
+    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.keystore.bcfks to java.base;
+    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.keystore.pkcs12 to java.base;
+    opens jreleaser.shadow.org.bouncycastle.jcajce.provider.symmetric to java.base;
+    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.aimer to java.base;
+    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.bike to java.base;
+    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.faest to java.base;
+    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.falcon to java.base;
+    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.haetae to java.base;
+    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.hqc to java.base;
+    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.lms to java.base;
+    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.mayo to java.base;
+    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.mqom to java.base;
+    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.newhope to java.base;
+    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.ntru to java.base;
+    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.ntruplus to java.base;
+    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.ntruprime to java.base;
+    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.qruov to java.base;
+    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.saber to java.base;
+    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.sdith to java.base;
+    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.smaugt to java.base;
+    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.snova to java.base;
+    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.sphincs to java.base;
+    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.sqisign to java.base;
+    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.uov to java.base;
+    opens jreleaser.shadow.org.bouncycastle.pqc.jcajce.provider.xmss to java.base;
+
     opens jreleaser.shadow.com.fasterxml.jackson.datatype.jsr310.deser;
     opens jreleaser.shadow.com.fasterxml.jackson.datatype.jsr310.deser.key;
     opens jreleaser.shadow.com.fasterxml.jackson.datatype.jsr310.ser;
