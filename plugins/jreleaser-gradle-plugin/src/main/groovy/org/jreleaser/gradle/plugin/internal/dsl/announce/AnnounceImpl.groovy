@@ -17,7 +17,6 @@
  */
 package org.jreleaser.gradle.plugin.internal.dsl.announce
 
-
 import groovy.transform.CompileStatic
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
@@ -44,7 +43,6 @@ import org.jreleaser.gradle.plugin.dsl.announce.SlackAnnouncer
 import org.jreleaser.gradle.plugin.dsl.announce.SmtpAnnouncer
 import org.jreleaser.gradle.plugin.dsl.announce.TeamsAnnouncer
 import org.jreleaser.gradle.plugin.dsl.announce.TelegramAnnouncer
-import org.jreleaser.gradle.plugin.dsl.announce.TwitterAnnouncer
 import org.jreleaser.gradle.plugin.dsl.announce.WebhookAnnouncer
 import org.jreleaser.gradle.plugin.dsl.announce.ZernioAnnouncer
 import org.jreleaser.gradle.plugin.dsl.announce.ZulipAnnouncer
@@ -79,7 +77,6 @@ class AnnounceImpl implements Announce {
     final SlackAnnouncerImpl slack
     final TeamsAnnouncerImpl teams
     final TelegramAnnouncerImpl telegram
-    final TwitterAnnouncerImpl twitter
     final ZernioAnnouncerImpl zernio
     final ZulipAnnouncerImpl zulip
     final NamedDomainObjectContainer<HttpAnnouncer> http
@@ -105,7 +102,6 @@ class AnnounceImpl implements Announce {
         slack = objects.newInstance(SlackAnnouncerImpl, objects)
         teams = objects.newInstance(TeamsAnnouncerImpl, objects)
         telegram = objects.newInstance(TelegramAnnouncerImpl, objects)
-        twitter = objects.newInstance(TwitterAnnouncerImpl, objects)
         zernio = objects.newInstance(ZernioAnnouncerImpl, objects)
         zulip = objects.newInstance(ZulipAnnouncerImpl, objects)
 
@@ -236,11 +232,6 @@ class AnnounceImpl implements Announce {
     }
 
     @Override
-    void twitter(Action<? super TwitterAnnouncer> action) {
-        action.execute(twitter)
-    }
-
-    @Override
     void zernio(Action<? super ZernioAnnouncer> action) {
         action.execute(zernio)
     }
@@ -275,7 +266,6 @@ class AnnounceImpl implements Announce {
         if (slack.isSet()) announce.slack = slack.toModel()
         if (teams.isSet()) announce.teams = teams.toModel()
         if (telegram.isSet()) announce.telegram = telegram.toModel()
-        if (twitter.isSet()) announce.twitter = twitter.toModel()
         if (zernio.isSet()) announce.zernio = zernio.toModel()
         if (zulip.isSet()) announce.zulip = zulip.toModel()
 

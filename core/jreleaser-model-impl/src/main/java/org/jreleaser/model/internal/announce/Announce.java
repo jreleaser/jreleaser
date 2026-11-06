@@ -38,7 +38,7 @@ import static org.jreleaser.util.StringUtils.isBlank;
  * @since 0.1.0
  */
 public final class Announce extends AbstractActivatable<Announce> implements Domain {
-    private static final long serialVersionUID = -7242767276585894642L;
+    private static final long serialVersionUID = 1222403473228219284L;
 
     private final ArticleAnnouncer article = new ArticleAnnouncer();
     private final BlueskyAnnouncer bluesky = new BlueskyAnnouncer();
@@ -57,7 +57,6 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
     private final SlackAnnouncer slack = new SlackAnnouncer();
     private final TeamsAnnouncer teams = new TeamsAnnouncer();
     private final TelegramAnnouncer telegram = new TelegramAnnouncer();
-    private final TwitterAnnouncer twitter = new TwitterAnnouncer();
     private final ZernioAnnouncer zernio = new ZernioAnnouncer();
     private final ZulipAnnouncer zulip = new ZulipAnnouncer();
     @JsonIgnore
@@ -67,7 +66,7 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
 
     @JsonIgnore
     private final org.jreleaser.model.api.announce.Announce immutable = new org.jreleaser.model.api.announce.Announce() {
-        private static final long serialVersionUID = -4039343801203691197L;
+        private static final long serialVersionUID = 2039965571277280428L;
 
         @Override
         public org.jreleaser.model.api.announce.ArticleAnnouncer getArticle() {
@@ -160,11 +159,6 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         }
 
         @Override
-        public org.jreleaser.model.api.announce.TwitterAnnouncer getTwitter() {
-            return twitter.asImmutable();
-        }
-
-        @Override
         public Map<String, ? extends org.jreleaser.model.api.announce.HttpAnnouncer> getHttp() {
             return httpAnnouncers.asImmutable().getHttpAnnouncers();
         }
@@ -228,7 +222,6 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         setSlack(source.slack);
         setTeams(source.teams);
         setTelegram(source.telegram);
-        setTwitter(source.twitter);
         setZernio(source.zernio);
         setZulip(source.zulip);
         setConfiguredHttp(source.httpAnnouncers);
@@ -417,18 +410,6 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         this.telegram.merge(telegram);
     }
 
-    @Deprecated
-    @JsonPropertyDescription("announce.twitter is deprecated since 1.17.0 and will be removed in 2.0.0")
-    public TwitterAnnouncer getTwitter() {
-        return twitter;
-    }
-
-    @Deprecated
-    @JsonPropertyDescription("announce.twitter is deprecated since 1.17.0 and will be removed in 2.0.0")
-    public void setTwitter(TwitterAnnouncer twitter) {
-        this.twitter.merge(twitter);
-    }
-
     @JsonIgnore
     public HttpAnnouncers getConfiguredHttp() {
         return this.httpAnnouncers;
@@ -510,7 +491,6 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
         map.putAll(slack.asMap(full));
         map.putAll(teams.asMap(full));
         map.putAll(telegram.asMap(full));
-        map.putAll(twitter.asMap(full));
         map.putAll(webhooksAnnouncer.asMap(full));
         map.putAll(zernio.asMap(full));
         map.putAll(zulip.asMap(full));
@@ -564,8 +544,6 @@ public final class Announce extends AbstractActivatable<Announce> implements Dom
                 return (A) getTeams();
             case org.jreleaser.model.api.announce.TelegramAnnouncer.TYPE:
                 return (A) getTelegram();
-            case org.jreleaser.model.api.announce.TwitterAnnouncer.TYPE:
-                return (A) getTwitter();
             case org.jreleaser.model.api.announce.WebhooksAnnouncer.TYPE:
                 return (A) getConfiguredWebhooks();
             case org.jreleaser.model.api.announce.ZernioAnnouncer.TYPE:

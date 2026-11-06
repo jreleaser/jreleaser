@@ -29,7 +29,6 @@ module org.jreleaser.tool {
     requires java.desktop;
     requires java.scripting;
     requires java.xml;
-    // requires java.management; // twitter4j
 
     provides java.util.spi.ToolProvider
         with org.jreleaser.tool.JReleaser;
@@ -94,7 +93,6 @@ module org.jreleaser.tool {
              jreleaser.shadow.org.jreleaser.sdk.smtp.SmtpAnnouncerBuilderFactory,
              jreleaser.shadow.org.jreleaser.sdk.teams.TeamsAnnouncerBuilderFactory,
              jreleaser.shadow.org.jreleaser.sdk.telegram.TelegramAnnouncerBuilderFactory,
-             jreleaser.shadow.org.jreleaser.sdk.twitter.TwitterAnnouncerBuilderFactory,
              jreleaser.shadow.org.jreleaser.sdk.webhooks.WebhooksAnnouncerBuilderFactory,
              jreleaser.shadow.org.jreleaser.sdk.zernio.ZernioAnnouncerBuilderFactory,
              jreleaser.shadow.org.jreleaser.sdk.zulip.ZulipAnnouncerBuilderFactory;

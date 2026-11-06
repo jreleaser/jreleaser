@@ -65,8 +65,6 @@ public interface Announce extends Domain, Activatable {
 
     TelegramAnnouncer getTelegram();
 
-    TwitterAnnouncer getTwitter();
-
     Map<String, ? extends HttpAnnouncer> getHttp();
 
     Map<String, ? extends WebhookAnnouncer> getWebhooks();
