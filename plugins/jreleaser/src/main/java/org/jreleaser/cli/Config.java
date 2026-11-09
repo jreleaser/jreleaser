@@ -24,8 +24,6 @@ import org.jreleaser.model.api.JReleaserContext.Mode;
 import org.jreleaser.model.internal.JReleaserContext;
 import picocli.CommandLine;
 
-import java.util.Set;
-
 /**
  * @author Andres Almiray
  * @since 0.1.0
@@ -42,24 +40,17 @@ public class Config extends AbstractPlatformAwareModelCommand<Main> {
         @CommandLine.Option(names = {"--announce"}, required = true)
         boolean announce;
 
-        @CommandLine.Option(names = {"-a", "--assembly"}, required = true)
+        @CommandLine.Option(names = {"--assembly"}, required = true)
         boolean assembly;
 
         @CommandLine.Option(names = {"--changelog"}, required = true)
         boolean changelog;
 
-        @CommandLine.Option(names = {"-d", "--download"}, required = true)
+        @CommandLine.Option(names = {"--download"}, required = true)
         boolean download;
 
         @CommandLine.Option(names = {"--deploy"}, required = true)
         boolean deploy;
-    }
-
-    @Override
-    protected void collectCandidateDeprecatedArgs(Set<AbstractCommand.DeprecatedArg> args) {
-        super.collectCandidateDeprecatedArgs(args);
-        args.add(new DeprecatedArg("-a", "--assembly", "1.5.0"));
-        args.add(new DeprecatedArg("-d", "--download", "1.5.0"));
     }
 
     @Override
