@@ -17,11 +17,11 @@
  */
 package org.jreleaser.cli;
 
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
 /**
  * @author Anyul Rivas
@@ -29,24 +29,38 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class ConfigTest {
     @Test
     void shouldAcceptLongFlags() {
-        Config config = new Config();
-        CommandLine cmd = new CommandLine(config);
-        cmd.parseArgs("--assembly");
-        assertThat(config.exclusive.assembly).isTrue();
+        // given:
+        Config assemblyConfig = new Config();
+        CommandLine assemblyCmd = new CommandLine(assemblyConfig);
 
-        config = new Config();
-        cmd = new CommandLine(config);
-        cmd.parseArgs("--download");
-        assertThat(config.exclusive.download).isTrue();
+        Config downloadConfig = new Config();
+        CommandLine downloadCmd = new CommandLine(downloadConfig);
+
+        // when:
+        assemblyCmd.parseArgs("--assembly");
+        downloadCmd.parseArgs("--download");
+
+        // then:
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(assemblyConfig.exclusive.assembly).isTrue();
+            softly.assertThat(downloadConfig.exclusive.download).isTrue();
+        });
     }
 
     @Test
     void shouldRejectShortFlags() {
-        Config config = new Config();
-        CommandLine cmd = new CommandLine(config);
-        assertThatThrownBy(() -> cmd.parseArgs("-a"))
-            .isInstanceOf(CommandLine.UnmatchedArgumentException.class);
-        assertThatThrownBy(() -> cmd.parseArgs("-d"))
-            .isInstanceOf(CommandLine.UnmatchedArgumentException.class);
+        // given:
+        CommandLine assemblyCmd = new CommandLine(new Config());
+        CommandLine downloadCmd = new CommandLine(new Config());
+
+        // when:
+        Throwable assemblyException = catchThrowable(() -> assemblyCmd.parseArgs("-a"));
+        Throwable downloadException = catchThrowable(() -> downloadCmd.parseArgs("-d"));
+
+        // then:
+        SoftAssertions.assertSoftly(softly -> {
+            softly.assertThat(assemblyException).isInstanceOf(CommandLine.UnmatchedArgumentException.class);
+            softly.assertThat(downloadException).isInstanceOf(CommandLine.UnmatchedArgumentException.class);
+        });
     }
 }
