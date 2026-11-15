@@ -36,7 +36,6 @@ import static java.util.Collections.unmodifiableSet;
 import static org.jreleaser.model.Distribution.DistributionType.BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JLINK;
-import static org.jreleaser.model.Distribution.DistributionType.NATIVE_IMAGE;
 import static org.jreleaser.model.Distribution.DistributionType.NATIVE_PACKAGE;
 import static org.jreleaser.model.JReleaserOutput.nag;
 import static org.jreleaser.model.api.packagers.ChocolateyPackager.SKIP_CHOCOLATEY;
@@ -59,7 +58,6 @@ public final class ChocolateyPackager extends AbstractRepositoryPackager<org.jre
 
     static {
         Set<String> extensions = setOf(ZIP.extension());
-        SUPPORTED.put(NATIVE_IMAGE, extensions);
         SUPPORTED.put(BINARY, extensions);
         SUPPORTED.put(JAVA_BINARY, extensions);
         SUPPORTED.put(JLINK, extensions);

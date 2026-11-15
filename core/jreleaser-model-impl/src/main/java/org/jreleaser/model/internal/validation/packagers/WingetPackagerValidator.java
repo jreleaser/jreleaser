@@ -249,8 +249,7 @@ public final class WingetPackagerValidator {
             packager.getInstaller().getModes().add(SILENT_WITH_PROGRESS);
         }
 
-        if (distribution.getType() == org.jreleaser.model.Distribution.DistributionType.NATIVE_IMAGE ||
-            distribution.getType() == org.jreleaser.model.Distribution.DistributionType.BINARY ||
+        if (distribution.getType() == org.jreleaser.model.Distribution.DistributionType.BINARY ||
             distribution.getType() == org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY ||
             distribution.getType() == org.jreleaser.model.Distribution.DistributionType.JLINK) {
             packager.getInstaller().setType(Installer.Type.ZIP);
