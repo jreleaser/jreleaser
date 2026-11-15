@@ -32,8 +32,6 @@ public class Distribution {
         JAVA_BINARY("java"),
         JLINK("jlink"),
         SINGLE_JAR("uberjar"),
-        @Deprecated
-        NATIVE_IMAGE("graal"),
         NATIVE_PACKAGE("jpackage");
 
         private final String alias;

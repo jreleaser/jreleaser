@@ -40,7 +40,6 @@ import static org.jreleaser.model.Distribution.DistributionType.BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.FLAT_BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JAVA_BINARY;
 import static org.jreleaser.model.Distribution.DistributionType.JLINK;
-import static org.jreleaser.model.Distribution.DistributionType.NATIVE_IMAGE;
 import static org.jreleaser.model.Distribution.DistributionType.SINGLE_JAR;
 import static org.jreleaser.model.api.packagers.AppImagePackager.SKIP_APPIMAGE;
 import static org.jreleaser.model.api.packagers.AppImagePackager.TYPE;
@@ -71,8 +70,6 @@ public final class AppImagePackager extends AbstractAppdataPackager<org.jrelease
             TXZ.extension(),
             TAR.extension(),
             ZIP.extension());
-
-        SUPPORTED.put(NATIVE_IMAGE, extensions);
         SUPPORTED.put(BINARY, extensions);
         SUPPORTED.put(JAVA_BINARY, extensions);
         SUPPORTED.put(JLINK, extensions);
